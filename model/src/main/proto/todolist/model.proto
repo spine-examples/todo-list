@@ -55,8 +55,6 @@ message Task {
     // Optional. Has no default value.
     //
     google.protobuf.Timestamp due_date = 4;
-
-
 }
 
 // Text label set to one or more tasks.
