@@ -31,6 +31,7 @@ import "spine/annotations.proto";
 import "spine/validate.proto";
 
 import "todolist/identifiers.proto";
+import "todolist/attributes.proto";
 
 // Represents a single task.
 //
@@ -46,15 +47,50 @@ message Task {
     //
     string description = 2 [(required) = true];
 
+    // Task priority.
+    //
+    // If a task is created in "Quick" mode, its priority is "NORMAL".
+    // If a task is created in scope of a wizard, the end-user is prompted to set the priority explicitly.
+    //
+    TaskPriority priority = 3;
+
     // Task creation date.
     //
-    google.protobuf.Timestamp created = 3 [(required) = true];
+    google.protobuf.Timestamp created = 4 [(required) = true];
 
     // The due date for the task.
     //
     // Optional. Has no default value.
     //
-    google.protobuf.Timestamp due_date = 4;
+    google.protobuf.Timestamp due_date = 5;
+
+
+    // Reserved fields for future expansion.
+    //
+    reserved 6 to 10;
+
+    // TODO[alex.tymchenko]: Think of introducing a finite state machine for state transition instead,
+    // TODO[alex.tymchenko]: but avoid overengineering in such a simple sample application.
+
+    // Whether a task is completed or not.
+    //
+    // An incomplete task can be marked completed. A completed task can be set incompleted again.
+    //
+    bool completed = 11;
+
+    // `True`, if this task is still in creation. Once the task is created, it cannot be put back into draft.
+    //
+    // `False`, if the creation of this task is already completed.
+    //
+    // NOTE: draft tasks cannot be completed.
+    //
+    bool draft = 12;
+
+    // Marks a task as 'deleted'.
+    //
+    // NOTE: deleted tasks cannot be completed.
+    //
+    bool deleted = 13;
 }
 
 // Text label set to one or more tasks.
@@ -79,22 +115,5 @@ message TaskLabel {
     // Optional. Defaults to the `LabelColor.LC_UNDEFINED`.
     //
     LabelColor color = 3;
-}
-
-// Variety of choices used for `TaskLabel` coloring.
-//
-enum LabelColor {
-
-    // Used as an undefined value marker.
-    //
-    LC_UNDEFINED = 0;
-
-    RED = 1;
-
-    GREEN = 2;
-
-    BLUE = 3;
-
-    GRAY = 4;
 }
 

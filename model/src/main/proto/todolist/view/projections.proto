@@ -25,18 +25,75 @@ option java_outer_classname = "ProjectionsProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
+import "google/protobuf/timestamp.proto";
+
 import "spine/annotations.proto";
+import "spine/validate.proto";
 
 import "todolist/identifiers.proto";
 
-// A projection state of current user's tasks.
+// A projection state of created tasks.
+//
+// This view includes all tasks that are not in a draft state and not deleted.
+//
+// Sorting:
+//      * incompleted on top; completed at bottom;
+//      * by priority (HIGH, then NORMAL, then LOW);
+//      * most recent on top.
 //
 message MyListView {
 
+    TaskListView my_list = 1;
+}
+
+// A projection state of tasks in a "draft" state.
+//
+// This view includes all non-deleted tasks, which creation is in progress.
+//
+// Sorting:
+//      * most recent on top.
+//
+message DraftTasksView {
+
+    TaskListView draft_tasks = 1;
+}
+
+
+// A projection state of the created tasks marked with a certain label.
+//
+// This view includes all tasks per label that are neither in a draft state nor deleted.
+//
+// Sorting:
+//      * incompleted on top; completed at bottom;
+//      * by priority (HIGH, then NORMAL, then LOW);
+//      * most recent on top.
+//
+message LabelledTasksView {
+
+    TaskLabelId label_id = 1;
+
+    string label_title = 2[(required) = true];
+
+    // A color of the label in hexadecimal format.
+    //
+    // E.g. RED ~ "#ff0000".
+    //
+    string label_color = 3;
+
+    TaskListView labelled_tasks = 4;
+}
+
+// Generic definition of a task list container.
+//
+message TaskListView {
+
+    // A list of tasks.
+    //
     repeated TaskView items = 1;
 }
 
-// A view of a task.
+
+// Generic definition of a task view model.
 //
 message TaskView {
 
@@ -47,5 +104,23 @@ message TaskView {
     // Task description.
     //
     string description = 2;
+
+    TaskLabelId label_id = 3;
+
+    // A color of the label in hexadecimal format.
+    //
+    // E.g. RED ~ "#ff0000".
+    //
+    string label_color = 4;
+
+    // The due date for the task.
+    //
+    google.protobuf.Timestamp due_date = 5;
+
+    // Reserved for future expansion
+    //
+    reserved 6 to 20;
+
+    bool completed = 21;
 }
 
