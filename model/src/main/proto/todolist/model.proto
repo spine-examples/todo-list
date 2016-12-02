@@ -59,9 +59,14 @@ message Task {
     // Optional. Has no default value.
     google.protobuf.Timestamp due_date = 5;
 
+    // Task labels.
+    //
+    // Task can have any number of labels assigned, i.e. [0; +inf).
+    // Optional. Empty by default.
+    repeated TaskLabelId label_ids = 6;
 
     // Reserved fields for future extension.
-    reserved 6 to 10;
+    reserved 7 to 20;
 
     // TODO[alex.tymchenko]: Think of introducing a finite state machine for state transition instead,
     // TODO[alex.tymchenko]: but avoid overengineering in such a simple sample application.
@@ -69,23 +74,24 @@ message Task {
     // Whether a task is completed or not.
     //
     // An incomplete task can be marked completed. A completed task can be set incompleted again.
-    bool completed = 11;
+    bool completed = 21;
 
     // `True`, if this task is still in creation. Once the task is created, it cannot be put back into draft.
     // `False`, if the task is already finalized.
     //
     // NOTE: draft tasks cannot be completed.
-    bool draft = 12;
+    bool draft = 22;
 
     // Marks a task as 'deleted'.
     //
     // NOTE: deleted tasks cannot be completed.
-    bool deleted = 13;
+    bool deleted = 23;
 }
 
 // Text label set to one or more tasks.
 //
 // Serves for grouping and filtering.
+// A label can be assigned to any number of tasks, i.e. [0; +inf).
 // Similar to Google Mail labels, can be used for color-coding the task list.
 //
 message TaskLabel {

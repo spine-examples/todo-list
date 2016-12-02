@@ -110,6 +110,40 @@ message UpdateTaskPriority {
     reserved 3 to 10;
 }
 
+// Assing a label to a task.
+//
+// Applicable to both drafts and finalized tasks.
+// Cannot be applied to the deleted tasks.
+// Cannot be applied to the completed tasks.
+//
+// The command shouldn't affect the task in case this label is already assigned to it.
+//
+message AssignLabelToTask {
+
+    // An identifier of the target task.
+    TaskId id = 1;
+
+    // An identifier of the label to assign to the target task.
+    TaskLabelId label_id = 2;
+}
+
+// Remove the previously assigned label from a task.
+//
+// Applicable to both drafts and finalized tasks.
+// Cannot be applied to the deleted tasks.
+// Cannot be applied to the completed tasks.
+//
+// The command shouldn't affect the task in case there is no such label assigned.
+//
+message RemoveLabelFromTask {
+
+    // An identifier of the target task.
+    TaskId id = 1;
+
+    // An identifier of the label to assign to the target task.
+    TaskLabelId label_id = 2;
+}
+
 // TODO[alex.tymchenko]: define the draft creation.
 message CreateDraft {
 
