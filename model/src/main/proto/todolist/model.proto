@@ -38,35 +38,29 @@ import "todolist/attributes.proto";
 message Task {
 
     // Task identifier.
-    //
     TaskId id = 1;
 
     // A description of the task.
     //
     // Cannot be empty; must contain at least 3 alphanumeric symbols.
-    //
     string description = 2 [(required) = true];
 
     // Task priority.
     //
     // If a task is created in "Quick" mode, its priority is "NORMAL".
     // If a task is created in scope of a wizard, the end-user is prompted to set the priority explicitly.
-    //
     TaskPriority priority = 3;
 
     // Task creation date.
-    //
     google.protobuf.Timestamp created = 4 [(required) = true];
 
     // The due date for the task.
     //
     // Optional. Has no default value.
-    //
     google.protobuf.Timestamp due_date = 5;
 
 
     // Reserved fields for future extension.
-    //
     reserved 6 to 10;
 
     // TODO[alex.tymchenko]: Think of introducing a finite state machine for state transition instead,
@@ -75,21 +69,17 @@ message Task {
     // Whether a task is completed or not.
     //
     // An incomplete task can be marked completed. A completed task can be set incompleted again.
-    //
     bool completed = 11;
 
     // `True`, if this task is still in creation. Once the task is created, it cannot be put back into draft.
-    //
     // `False`, if the task is already finalized.
     //
     // NOTE: draft tasks cannot be completed.
-    //
     bool draft = 12;
 
     // Marks a task as 'deleted'.
     //
     // NOTE: deleted tasks cannot be completed.
-    //
     bool deleted = 13;
 }
 
@@ -101,19 +91,16 @@ message Task {
 message TaskLabel {
 
     // Label identifier.
-    //
     TaskLabelId id = 1;
 
     // Label title.
     //
     // Cannot be empty.
-    //
     string title = 2 [(required) = true];
 
     // Label color.
     //
     // Optional. Defaults to the `LabelColor.LC_UNDEFINED`.
-    //
     LabelColor color = 3;
 }
 

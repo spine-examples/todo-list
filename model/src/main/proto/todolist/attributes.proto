@@ -32,7 +32,6 @@ import "spine/annotations.proto";
 enum LabelColor {
 
     // Used as an undefined value marker.
-    //
     LC_UNDEFINED = 0;
 
     RED = 1;
@@ -49,7 +48,6 @@ enum LabelColor {
 enum TaskPriority {
 
     // Used as an undefined value marker.
-    //
     TP_UNDEFINED = 0;
 
     HIGH = 1;

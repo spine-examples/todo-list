@@ -48,11 +48,9 @@ import "todolist/attributes.proto";
 message CreateBasicTask {
 
     // A description for the task created.
-    //
     string description = 1 [(required) = true];
 
     // Reserved for future extension.
-    //
     reserved 2 to 10;
 }
 
@@ -65,15 +63,12 @@ message CreateBasicTask {
 message UpdateTaskDescription {
 
     // An identifier of the target task.
-    //
     TaskId id = 1;
 
     // The description to set for the target task.
-    //
     string updated_description = 2 [(required) = true];
 
     // Reserved for future extension.
-    //
     reserved 3 to 10;
 }
 
@@ -86,17 +81,14 @@ message UpdateTaskDescription {
 message UpdateTaskDueDate {
 
     // An identifier of the target task.
-    //
     TaskId id = 1;
 
     // The due date to set for the target task.
     //
     // The updated value cannot be in the past.
-    //
     google.protobuf.Timestamp updated_due_date = 2 [(required) = true];
 
     // Reserved for future extension.
-    //
     reserved 3 to 10;
 }
 
@@ -109,15 +101,12 @@ message UpdateTaskDueDate {
 message UpdateTaskPriority {
 
     // An identifier of the target task.
-    //
     TaskId id = 1;
 
     // The priority to set for the target task.
-    //
     TaskPriority updated_priority = 2 [(required) = true];
 
     // Reserved for future extension.
-    //
     reserved 3 to 10;
 }
 
@@ -134,11 +123,9 @@ message CreateDraft {
 message FinalizeDraft {
 
     // An identifier of the target task.
-    //
     TaskId id = 1;
 
     // Reserved for future extension.
-    //
     reserved 2 to 10;
 }
 
@@ -150,11 +137,9 @@ message FinalizeDraft {
 message CompleteTask {
 
     // An identifier of the target task.
-    //
     TaskId id = 1;
 
     // Reserved for future extension.
-    //
     reserved 2 to 10;
 }
 
@@ -165,11 +150,9 @@ message CompleteTask {
 message ReopenTask {
 
     // An identifier of the target task.
-    //
     TaskId id = 1;
 
     // Reserved for future extension.
-    //
     reserved 2 to 10;
 }
 
@@ -181,11 +164,9 @@ message ReopenTask {
 message DeleteTask {
 
     // An identifier of the target task.
-    //
     TaskId id = 1;
 
     // Reserved for future extension.
-    //
     reserved 2 to 10;
 }
 
@@ -196,11 +177,9 @@ message DeleteTask {
 message RestoreDeletedTask {
 
     // An identifier of the target task.
-    //
     TaskId id = 1;
 
     // Reserved for future extension.
-    //
     reserved 2 to 10;
 }
 
@@ -214,11 +193,9 @@ message RestoreDeletedTask {
 message CreateBasicLabel {
 
     // A title for the label.
-    //
     string label_title = 1 [(required) = true];
 
     // Reserved for future extension.
-    //
     reserved 2 to 10;
 }
 
@@ -227,22 +204,18 @@ message CreateBasicLabel {
 message UpdateLabelDetails {
 
     // An identifier of the target label.
-    //
     TaskLabelId id = 1;
 
     // A title to set to the label.
     //
     // Optional field. If unset, the title of the target label is not updated.
-    //
     string new_title = 2;
 
     // A color to set to the label.
     //
     // Optional field. If unset, the color of the target label is not updated.
-    //
     LabelColor color = 3;
 
     // Reserved for future extension.
-    //
     reserved 4 to 10;
 }

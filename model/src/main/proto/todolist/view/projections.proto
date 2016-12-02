@@ -71,12 +71,11 @@ message LabelledTasksView {
 
     TaskLabelId label_id = 1;
 
-    string label_title = 2[(required) = true];
+    string label_title = 2 [(required) = true];
 
     // A color of the label in hexadecimal format.
     //
     // E.g. RED ~ "#ff0000".
-    //
     string label_color = 3;
 
     TaskListView labelled_tasks = 4;
@@ -87,7 +86,6 @@ message LabelledTasksView {
 message TaskListView {
 
     // A list of tasks.
-    //
     repeated TaskView items = 1;
 }
 
@@ -96,29 +94,25 @@ message TaskListView {
 message TaskView {
 
     // Task identifier.
-    //
     TaskId id = 1;
 
     // Task description.
-    //
     string description = 2;
 
     TaskLabelId label_id = 3;
 
     // A color of the label in hexadecimal format.
     //
-    // E.g. RED ~ "#ff0000".
-    //
+    // E.g. GREEN ~ "#00ff00".
     string label_color = 4;
 
     // The due date for the task.
-    //
     google.protobuf.Timestamp due_date = 5;
 
     // Reserved for future extension.
-    //
     reserved 6 to 20;
 
+    // Whether the task is completed.
     bool completed = 21;
 }
 
