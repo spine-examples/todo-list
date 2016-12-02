@@ -37,6 +37,7 @@ import "todolist/identifiers.proto";
 // This view includes all tasks that are not in a draft state and not deleted.
 //
 // Sorting:
+//
 //      * incompleted on top; completed at bottom;
 //      * by priority (HIGH, then NORMAL, then LOW);
 //      * most recent on top.
@@ -51,6 +52,7 @@ message MyListView {
 // This view includes all non-deleted tasks, which creation is in progress.
 //
 // Sorting:
+//
 //      * most recent on top.
 //
 message DraftTasksView {
@@ -63,6 +65,7 @@ message DraftTasksView {
 // This view includes all tasks per label that are neither in a draft state nor deleted.
 //
 // Sorting:
+//
 //      * incompleted on top; completed at bottom;
 //      * by priority (HIGH, then NORMAL, then LOW);
 //      * most recent on top.
