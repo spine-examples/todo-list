@@ -1,0 +1,248 @@
+//
+// Copyright 2016, TeamDev Ltd. All rights reserved.
+//
+// Redistribution and use in source and/or binary forms, with or without
+// modification, must retain the above copyright notice and the following
+// disclaimer.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
+syntax = "proto3";
+
+option (type_url_prefix) = "type.spine.examples.todolist";
+option java_package = "org.spine3.examples.todolist";
+option java_outer_classname = "CommandsProto";
+option java_multiple_files = true;
+option java_generate_equals_and_hash = true;
+
+import "google/protobuf/timestamp.proto";
+
+import "spine/annotations.proto";
+import "spine/validate.proto";
+
+import "todolist/identifiers.proto";
+import "todolist/attributes.proto";
+
+// An attempt to create a task in a "Quick" mode.
+//
+// "Quick" task creation mode allows users to enter the description only.
+// The rest of the fields are set according to the default values:
+//
+//      * priority = NORMAL;
+//      * label = [no label];
+//      * due_date = [no due date].
+//
+// In case of a successful command propagation, the domain model is appended with a new task.
+// The creation date for the task is set according to the local server time and time zone.
+//
+message CreateBasicTask {
+
+    // A description for the task created.
+    //
+    string description = 1 [(required) = true];
+
+    // Reserved for future extension.
+    //
+    reserved 2 to 10;
+}
+
+// Update a description of an existing task.
+//
+// Applicable to both drafts and finalized tasks.
+// Cannot be applied to the deleted tasks.
+// Cannot be applied to the completed tasks.
+//
+message UpdateTaskDescription {
+
+    // An identifier of the target task.
+    //
+    TaskId id = 1;
+
+    // The description to set for the target task.
+    //
+    string updated_description = 2 [(required) = true];
+
+    // Reserved for future extension.
+    //
+    reserved 3 to 10;
+}
+
+// Update a due date of an existing task.
+//
+// Applicable to both drafts and finalized tasks.
+// Cannot be applied to the deleted tasks.
+// Cannot be applied to the completed tasks.
+//
+message UpdateTaskDueDate {
+
+    // An identifier of the target task.
+    //
+    TaskId id = 1;
+
+    // The due date to set for the target task.
+    //
+    // The updated value cannot be in the past.
+    //
+    google.protobuf.Timestamp updated_due_date = 2 [(required) = true];
+
+    // Reserved for future extension.
+    //
+    reserved 3 to 10;
+}
+
+// Update a priority of an existing task.
+//
+// Applicable to both drafts and finalized tasks.
+// Cannot be applied to the deleted tasks.
+// Cannot be applied to the completed tasks.
+//
+message UpdateTaskPriority {
+
+    // An identifier of the target task.
+    //
+    TaskId id = 1;
+
+    // The priority to set for the target task.
+    //
+    TaskPriority updated_priority = 2 [(required) = true];
+
+    // Reserved for future extension.
+    //
+    reserved 3 to 10;
+}
+
+// TODO[alex.tymchenko]: define the draft creation.
+message CreateDraft {
+
+}
+
+// Finalize a task, moving it from the draft state into the actual state.
+//
+// Applicable to the draft tasks only.
+// Cannot be applied to the deleted drafts.
+//
+message FinalizeDraft {
+
+    // An identifier of the target task.
+    //
+    TaskId id = 1;
+
+    // Reserved for future extension.
+    //
+    reserved 2 to 10;
+}
+
+// Complete a task.
+//
+// Cannot be applied to the deleted tasks.
+// Cannot be applied to the tasks in a draft state.
+//
+message CompleteTask {
+
+    // An identifier of the target task.
+    //
+    TaskId id = 1;
+
+    // Reserved for future extension.
+    //
+    reserved 2 to 10;
+}
+
+// Complete a task.
+//
+// Applicable to the completed tasks only.
+//
+message ReopenTask {
+
+    // An identifier of the target task.
+    //
+    TaskId id = 1;
+
+    // Reserved for future extension.
+    //
+    reserved 2 to 10;
+}
+
+// Delete a task.
+//
+// Applicable to non-completed tasks only.
+// Cannot be applied to the deleted tasks as well.
+//
+message DeleteTask {
+
+    // An identifier of the target task.
+    //
+    TaskId id = 1;
+
+    // Reserved for future extension.
+    //
+    reserved 2 to 10;
+}
+
+// Restore a deleted task.
+//
+// Applicable to deleted tasks only.
+//
+message RestoreDeletedTask {
+
+    // An identifier of the target task.
+    //
+    TaskId id = 1;
+
+    // Reserved for future extension.
+    //
+    reserved 2 to 10;
+}
+
+// An attempt to create a label in a "Quick" mode.
+//
+// "Quick" label creation mode allows users to enter the label title only.
+// The created label will have the rest of the fields set according to defaults:
+//
+//      * color = GRAY.
+//
+message CreateBasicLabel {
+
+    // A title for the label.
+    //
+    string label_title = 1 [(required) = true];
+
+    // Reserved for future extension.
+    //
+    reserved 2 to 10;
+}
+
+// Update the details of a label.
+//
+message UpdateLabelDetails {
+
+    // An identifier of the target label.
+    //
+    TaskLabelId id = 1;
+
+    // A title to set to the label.
+    //
+    // Optional field. If unset, the title of the target label is not updated.
+    //
+    string new_title = 2;
+
+    // A color to set to the label.
+    //
+    // Optional field. If unset, the color of the target label is not updated.
+    //
+    LabelColor color = 3;
+
+    // Reserved for future extension.
+    //
+    reserved 4 to 10;
+}

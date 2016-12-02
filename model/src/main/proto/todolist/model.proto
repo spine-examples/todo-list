@@ -65,7 +65,7 @@ message Task {
     google.protobuf.Timestamp due_date = 5;
 
 
-    // Reserved fields for future expansion.
+    // Reserved fields for future extension.
     //
     reserved 6 to 10;
 
@@ -80,7 +80,7 @@ message Task {
 
     // `True`, if this task is still in creation. Once the task is created, it cannot be put back into draft.
     //
-    // `False`, if the creation of this task is already completed.
+    // `False`, if the task is already finalized.
     //
     // NOTE: draft tasks cannot be completed.
     //
@@ -96,7 +96,7 @@ message Task {
 // Text label set to one or more tasks.
 //
 // Serves for grouping and filtering.
-// Similar to Google Mail labels, can be color-coded.
+// Similar to Google Mail labels, can be used for color-coding the task list.
 //
 message TaskLabel {
 

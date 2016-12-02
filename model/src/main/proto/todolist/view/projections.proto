@@ -115,7 +115,7 @@ message TaskView {
     //
     google.protobuf.Timestamp due_date = 5;
 
-    // Reserved for future expansion
+    // Reserved for future extension.
     //
     reserved 6 to 20;
 
