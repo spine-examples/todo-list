@@ -58,7 +58,6 @@ message DraftTasksView {
     TaskListView draft_tasks = 1;
 }
 
-
 // A projection state of the created tasks marked with a certain label.
 //
 // This view includes all tasks per label that are neither in a draft state nor deleted.
@@ -91,7 +90,6 @@ message TaskListView {
     //
     repeated TaskView items = 1;
 }
-
 
 // Generic definition of a task view model.
 //
