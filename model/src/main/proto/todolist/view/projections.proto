@@ -31,6 +31,7 @@ import "spine/annotations.proto";
 import "spine/validate.proto";
 
 import "todolist/identifiers.proto";
+import "todolist/attributes.proto";
 
 // A projection state of created tasks.
 //
@@ -102,18 +103,19 @@ message TaskView {
     // Task description.
     string description = 2;
 
-    TaskLabelId label_id = 3;
+    // Task priority.
+    TaskPriority priority = 3;
 
-    // A color of the label in hexadecimal format.
-    //
-    // E.g. GREEN ~ "#00ff00".
-    string label_color = 4;
+    TaskLabelId label_id = 4;
+
+    // A color of the label.
+    LabelColor label_color = 5;
 
     // The due date for the task.
-    google.protobuf.Timestamp due_date = 5;
+    google.protobuf.Timestamp due_date = 6;
 
     // Reserved for future extension.
-    reserved 6 to 20;
+    reserved 7 to 20;
 
     // Whether the task is completed.
     bool completed = 21;
