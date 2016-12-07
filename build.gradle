@@ -86,6 +86,7 @@ buildScan {
 allprojects {
     apply plugin: 'java' /* The `java` plugin is required at this level for Gradle Protobuf plugin.
                             See https://github.com/google/protobuf-gradle-plugin#adding-the-plugin-to-your-project */
+    apply plugin: 'jacoco'
     apply plugin: 'idea'
 
     group = 'org.spine3.examples.todolist'       // Generated output GroupId
