@@ -35,36 +35,69 @@ import org.spine3.examples.todolist.UpdateTaskPriority;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Provides methods for instantiation task commands for test needs.
+ */
 public class TestTaskCommandFactory {
 
     private static final String ID = "1";
     private static final String DESCRIPTION = "Create command description.";
     private static final long DUE_DATE = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
 
+    /**
+     * Prevent instantiation.
+     */
     private TestTaskCommandFactory() {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Provides {@link CreateBasicTask} instance.
+     *
+     * @return {@link CreateBasicTask} instance.
+     */
     public static CreateBasicTask createTaskInstance() {
         return CreateBasicTask.newBuilder()
                               .setDescription(DESCRIPTION)
                               .build();
     }
 
+    /**
+     * Provides {@link UpdateTaskDescription} instance.
+     *
+     * @return {@link UpdateTaskDescription} instance.
+     */
     public static UpdateTaskDescription updateTaskDescriptionInstance() {
         return updateTaskDescriptionInstance(DESCRIPTION);
     }
 
+    /**
+     * Provides {@link UpdateTaskDescription} instance.
+     *
+     * @param desciption String value into updated description field.
+     * @return {@link UpdateTaskDescription} instance.
+     */
     public static UpdateTaskDescription updateTaskDescriptionInstance(String desciption) {
         return UpdateTaskDescription.newBuilder()
                                     .setUpdatedDescription(desciption)
                                     .build();
     }
 
+    /**
+     * Provides {@link UpdateTaskDescription} instance.
+     *
+     * @return {@link UpdateTaskDueDate} instance.
+     */
     public static UpdateTaskDueDate updateTaskDueDateInstance() {
         return updateTaskDueDateInstance(DUE_DATE);
     }
 
+    /**
+     * Provides {@link UpdateTaskDueDate} instance with specified update due date field.
+     *
+     * @param updatedDueDate value into updated due datefield, present in seconds.
+     * @return {@link UpdateTaskDueDate} instance.
+     */
     public static UpdateTaskDueDate updateTaskDueDateInstance(long updatedDueDate) {
         return UpdateTaskDueDate.newBuilder()
                                 .setUpdatedDueDate(Timestamp.newBuilder()
@@ -72,26 +105,52 @@ public class TestTaskCommandFactory {
                                 .build();
     }
 
+    /**
+     * Provides {@link UpdateTaskPriority} instance.
+     *
+     * @return {@link UpdateTaskPriority} instance.
+     */
     public static UpdateTaskPriority updateTaskPriorityInstance() {
         return updateTaskPriorityInstance(TaskPriority.HIGH);
     }
 
+    /**
+     * Provides {@link UpdateTaskPriority} instance with specified priority.
+     *
+     * @param priority {@link TaskPriority} enum value.
+     * @return {@link UpdateTaskPriority} instance.
+     */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskPriority priority) {
         return UpdateTaskPriority.newBuilder()
                                  .setUpdatedPriority(priority)
                                  .build();
     }
 
+    /**
+     * Provides {@link CompleteTask} instance
+     *
+     * @return {@link CompleteTask} instance
+     */
     public static CompleteTask completeTaskInstance() {
         return CompleteTask.newBuilder()
                            .build();
     }
 
+    /**
+     * Provides {@link ReopenTask} instance
+     *
+     * @return {@link ReopenTask} instance
+     */
     public static ReopenTask reopenTaskInstance() {
         return ReopenTask.newBuilder()
                          .build();
     }
 
+    /**
+     * Provides {@link DeleteTask} instance
+     *
+     * @return {@link DeleteTask} instance
+     */
     public static DeleteTask deleteTaskInstance() {
         return DeleteTask.newBuilder()
                          .setId(TaskId.newBuilder()
@@ -99,16 +158,31 @@ public class TestTaskCommandFactory {
                          .build();
     }
 
+    /**
+     * Provides {@link RestoreDeletedTask} instance
+     *
+     * @return {@link RestoreDeletedTask} instance
+     */
     public static RestoreDeletedTask restoreDeletedTaskInstance() {
         return RestoreDeletedTask.newBuilder()
                                  .build();
     }
 
+    /**
+     * Provides {@link FinalizeDraft} instance
+     *
+     * @return {@link FinalizeDraft instance}
+     */
     public static FinalizeDraft finalizeDraftInstance() {
         return FinalizeDraft.newBuilder()
                             .build();
     }
 
+    /**
+     * Provides {@link CreateDraft} instancer
+     *
+     * @return {@link CreateDraft instance}
+     */
     public static CreateDraft createDraftInstance() {
         return CreateDraft.newBuilder()
                           .build();
