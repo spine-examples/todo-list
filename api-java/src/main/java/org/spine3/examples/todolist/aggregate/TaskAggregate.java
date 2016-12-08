@@ -48,6 +48,8 @@ import org.spine3.server.aggregate.Aggregate;
 import org.spine3.server.aggregate.Apply;
 import org.spine3.server.command.Assign;
 
+import java.util.concurrent.TimeUnit;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
@@ -159,6 +161,8 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     @Assign
     public TaskDraftCreated handle(CreateDraft cmd) {
         final TaskDraftCreated result = TaskDraftCreated.newBuilder()
+                                                        .setDraftCreationTime(Timestamp.newBuilder()
+                                                                                       .setSeconds(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())))
                                                         .build();
         return result;
     }
@@ -167,7 +171,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     private void eventOnCreateTask(TaskCreated event) {
         getBuilder().setId(event.getId())
                     .setCreated(Timestamp.newBuilder()
-                                         .setSeconds(System.currentTimeMillis()))
+                                         .setSeconds(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())))
                     .setDescription(event.getDetails()
                                          .getDescription())
                     .setPriority(TaskPriority.NORMAL);
@@ -222,15 +226,14 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                     .setCompleted(event.getCompleted());
     }
 
+    //TODO[illia.shepilov]: should to be updated after defining draft creation
     @Apply
     private void eventOnCreateTaskDraft(TaskDraftCreated event) {
         getBuilder().setId(event.getId())
                     .setCreated(event.getDraftCreationTime())
                     .setDescription(event.getDetails()
                                          .getDescription())
-                    .setDraft(true)
-                    .setDeleted(false)
-                    .setCompleted(false);
+                    .setDraft(true);
     }
 
     @Apply

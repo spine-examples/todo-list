@@ -33,11 +33,13 @@ import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
 
+import java.util.concurrent.TimeUnit;
+
 public class TestTaskCommandFactory {
 
     private static final String ID = "1";
     private static final String DESCRIPTION = "Create command description.";
-    private static final long DUE_DATE = System.currentTimeMillis();
+    private static final long DUE_DATE = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
 
     private TestTaskCommandFactory() {
         throw new UnsupportedOperationException();
