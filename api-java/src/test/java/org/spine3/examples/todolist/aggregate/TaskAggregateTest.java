@@ -19,13 +19,13 @@
 //
 package org.spine3.examples.todolist.aggregate;
 
+import com.google.common.base.Throwables;
 import org.junit.Before;
 import org.junit.Test;
 import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.CompleteTask;
 import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.DeleteTask;
-import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
 import org.spine3.examples.todolist.TaskCompleted;
@@ -34,8 +34,8 @@ import org.spine3.examples.todolist.TaskDeleted;
 import org.spine3.examples.todolist.TaskDescriptionUpdated;
 import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskPriorityUpdated;
-import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
@@ -43,13 +43,15 @@ import org.spine3.examples.todolist.UpdateTaskPriority;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.deleteTaslInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.restoreDeletedTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
@@ -81,7 +83,7 @@ public class TaskAggregateTest {
         updateTaskDueDate = updateTaskDueDateInstance();
         updateTaskPriority = updateTaskPriorityInstance();
         reopenTask = reopenTaskInstance();
-        deleteTask = deleteTaslInstance();
+        deleteTask = deleteTaskInstance();
         restoreDeletedTask = restoreDeletedTaskInstance();
         completeTask = completeTaskInstance();
     }
@@ -121,10 +123,17 @@ public class TaskAggregateTest {
                                                               .getClass());
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void handle_update_task_description_when_description_contains_one_symbol() {
-        updateTaskDescriptionCmd = updateTaskDescriptionInstance(".");
-        aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
+        try {
+            updateTaskDescriptionCmd = updateTaskDescriptionInstance(".");
+            aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
+        } catch (Throwable e) {
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            final Throwable cause = Throwables.getRootCause(e);
+            assertTrue(cause instanceof IllegalArgumentException);
+            assertEquals("Description should contains at least 3 alphanumeric symbols.", cause.getMessage());
+        }
     }
 
     @Test
@@ -149,14 +158,16 @@ public class TaskAggregateTest {
                                                            .getClass());
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void handle_reopen_task_command_when_task_not_completed() {
-        final int expectedListSize = 1;
-        List<? extends com.google.protobuf.Message> messageList = aggregate.dispatchForTest(reopenTask, COMMAND_CONTEXT);
-
-        assertEquals(expectedListSize, messageList.size());
-        assertEquals(TaskReopened.class, messageList.get(0)
-                                                    .getClass());
+        try {
+            aggregate.dispatchForTest(reopenTask, COMMAND_CONTEXT);
+        } catch (Throwable e) {
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            final Throwable cause = Throwables.getRootCause(e);
+            assertTrue(cause instanceof IllegalArgumentException);
+            assertEquals("Command cannot be applied on not completed task.", cause.getMessage());
+        }
     }
 
     @Test
@@ -170,15 +181,16 @@ public class TaskAggregateTest {
                                                    .getClass());
     }
 
-    @Test(expected = RuntimeException.class)
-    public void handle_restore_deleted_task_command() {
-        final int expectedListSize = 1;
-
-        List<? extends com.google.protobuf.Message> messageList = aggregate.dispatchForTest(restoreDeletedTask, COMMAND_CONTEXT);
-
-        assertEquals(expectedListSize, messageList.size());
-        assertEquals(DeletedTaskRestored.class, messageList.get(0)
-                                                           .getClass());
+    @Test
+    public void handle_restore_deleted_task_command_when_task_is_not_deleted() {
+        try {
+            aggregate.dispatchForTest(restoreDeletedTask, COMMAND_CONTEXT);
+        } catch (Throwable e) {
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            final Throwable cause = Throwables.getRootCause(e);
+            assertTrue(cause instanceof IllegalArgumentException);
+            assertEquals("Command cannot be applied on not deleted task.", cause.getMessage());
+        }
     }
 
     @Test
@@ -190,6 +202,56 @@ public class TaskAggregateTest {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(TaskCompleted.class, messageList.get(0)
                                                      .getClass());
+    }
+
+    @Test
+    public void return_current_state_after_dispatch_when_description_is_updated() {
+        final String newDescription = "new description.";
+        updateTaskDescriptionCmd = updateTaskDescriptionInstance(newDescription);
+        aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
+        assertEquals(newDescription, aggregate.getState()
+                                              .getDescription());
+    }
+
+    @Test
+    public void return_current_state_when_updated_task_due_date() {
+        final long updatedDueDate = System.currentTimeMillis();
+        updateTaskDueDate = updateTaskDueDateInstance(updatedDueDate);
+        aggregate.dispatchForTest(updateTaskDueDate, COMMAND_CONTEXT);
+        assertEquals(updatedDueDate, aggregate.getState()
+                                              .getDueDate()
+                                              .getSeconds());
+    }
+
+    @Test
+    public void return_current_state_when_updated_priority() {
+        final TaskPriority updatedPriority = TaskPriority.HIGH;
+        updateTaskPriority = updateTaskPriorityInstance(updatedPriority);
+        aggregate.dispatchForTest(updateTaskPriority, COMMAND_CONTEXT);
+        assertEquals(updatedPriority, aggregate.getState()
+                                               .getPriority());
+    }
+
+    @Test
+    public void return_current_state_when_task_is_completed() {
+        aggregate.dispatchForTest(completeTask, COMMAND_CONTEXT);
+        assertTrue(aggregate.getState()
+                            .getCompleted());
+    }
+
+    @Test
+    public void return_current_state_when_task_is_deleted() {
+        aggregate.dispatchForTest(deleteTask, COMMAND_CONTEXT);
+        assertTrue(aggregate.getState()
+                            .getDeleted());
+    }
+
+    @Test
+    public void handle_restore_deleted_task_command() {
+        aggregate.dispatchForTest(deleteTask, COMMAND_CONTEXT);
+        aggregate.dispatchForTest(restoreDeletedTask, COMMAND_CONTEXT);
+        assertFalse(aggregate.getState()
+                             .getDeleted());
     }
 
 }

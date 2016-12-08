@@ -162,7 +162,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Apply
-    public void event(TaskCreated event) {
+    private void event(TaskCreated event) {
         getBuilder().setId(event.getId())
                     .setCreated(Timestamp.newBuilder()
                                          .setSeconds(System.currentTimeMillis()))
@@ -170,45 +170,48 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Apply
-    public void event(TaskDescriptionUpdated event) {
+    private void event(TaskDescriptionUpdated event) {
         getBuilder().setId(event.getId())
                     .setDescription(event.getNewDescription());
     }
 
     @Apply
-    public void event(TaskDueDateUpdated event) {
+    private void event(TaskDueDateUpdated event) {
         getBuilder().setId(event.getId())
                     .setDueDate(event.getNewDueDate());
     }
 
     @Apply
-    public void event(TaskPriorityUpdated event) {
+    private void event(TaskPriorityUpdated event) {
         getBuilder().setId(event.getId())
                     .setPriority(event.getNewPriority());
     }
 
     @Apply
-    public void event(TaskReopened event) {
+    private void event(TaskReopened event) {
         getBuilder().setId(event.getId());
     }
 
     @Apply
-    public void event(TaskDeleted event) {
-        getBuilder().setId(event.getId());
+    private void event(TaskDeleted event) {
+        getBuilder().setId(event.getId())
+                    .setDeleted(true);
     }
 
     @Apply
-    public void event(DeletedTaskRestored event) {
-        getBuilder().setId(event.getId());
+    private void event(DeletedTaskRestored event) {
+        getBuilder().setId(event.getId())
+                    .setDeleted(false);
     }
 
     @Apply
-    public void event(TaskCompleted event) {
-        getBuilder().setId(event.getId());
+    private void event(TaskCompleted event) {
+        getBuilder().setId(event.getId())
+                    .setCompleted(true);
     }
 
     @Apply
-    public void event(TaskDetails event) {
+    private void event(TaskDetails event) {
         getBuilder().setPriority(event.getPriority())
                     .setDescription(event.getDescription())
                     .setCompleted(event.getCompleted());
@@ -216,8 +219,14 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     //TODO: Need to refactor command validation
 
+    private void validateCommand(CreateBasicTask cmd) {
+        String description = cmd.getDescription();
+        if (description != null && description.length() < 3) {
+            throw new IllegalArgumentException("Description should contains at least 3 alphanumeric symbols");
+        }
+    }
+
     private void validateCommand(UpdateTaskDescription cmd) {
-        Task taskState = getState();
         String description = cmd.getUpdatedDescription();
 
         checkNotNull(description, "Description cannot be null.");

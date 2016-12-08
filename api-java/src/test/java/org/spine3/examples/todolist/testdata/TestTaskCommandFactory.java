@@ -19,18 +19,23 @@
 //
 package org.spine3.examples.todolist.testdata;
 
+import com.google.protobuf.Timestamp;
 import org.spine3.examples.todolist.CompleteTask;
 import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.DeleteTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
+import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
 
 public class TestTaskCommandFactory {
 
+    public static final String ID = "1";
     private static final String DESCRIPTION = "Create command description.";
+    private static final long DUE_DATE = System.currentTimeMillis();
 
     private TestTaskCommandFactory() {
         throw new UnsupportedOperationException();
@@ -46,19 +51,30 @@ public class TestTaskCommandFactory {
         return updateTaskDescriptionInstance(DESCRIPTION);
     }
 
-    public static UpdateTaskDescription updateTaskDescriptionInstance(String desciprion) {
+    public static UpdateTaskDescription updateTaskDescriptionInstance(String desciption) {
         return UpdateTaskDescription.newBuilder()
-                                    .setUpdatedDescription(desciprion)
+                                    .setUpdatedDescription(desciption)
                                     .build();
     }
 
     public static UpdateTaskDueDate updateTaskDueDateInstance() {
+        return updateTaskDueDateInstance(DUE_DATE);
+    }
+
+    public static UpdateTaskDueDate updateTaskDueDateInstance(long updatedDueDate) {
         return UpdateTaskDueDate.newBuilder()
+                                .setUpdatedDueDate(Timestamp.newBuilder()
+                                                            .setSeconds(updatedDueDate))
                                 .build();
     }
 
     public static UpdateTaskPriority updateTaskPriorityInstance() {
+        return updateTaskPriorityInstance(TaskPriority.HIGH);
+    }
+
+    public static UpdateTaskPriority updateTaskPriorityInstance(TaskPriority priority) {
         return UpdateTaskPriority.newBuilder()
+                                 .setUpdatedPriority(priority)
                                  .build();
     }
 
@@ -72,8 +88,10 @@ public class TestTaskCommandFactory {
                          .build();
     }
 
-    public static DeleteTask deleteTaslInstance() {
+    public static DeleteTask deleteTaskInstance() {
         return DeleteTask.newBuilder()
+                         .setId(TaskId.newBuilder()
+                                      .setValue(ID))
                          .build();
     }
 
