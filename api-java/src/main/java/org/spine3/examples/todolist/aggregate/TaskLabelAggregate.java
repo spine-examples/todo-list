@@ -19,7 +19,6 @@
 //
 package org.spine3.examples.todolist.aggregate;
 
-import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.AssignLabelToTask;
 import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelAssignedToTask;
@@ -49,7 +48,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     }
 
     @Assign
-    public LabelAssignedToTask handle(AssignLabelToTask cmd, CommandContext ctx) {
+    public LabelAssignedToTask handle(AssignLabelToTask cmd) {
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
                                                               .setId(cmd.getId())
                                                               .setLabelId(cmd.getLabelId())
@@ -58,7 +57,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     }
 
     @Assign
-    public LabelRemovedFromTask handle(RemoveLabelFromTask cmd, CommandContext ctx) {
+    public LabelRemovedFromTask handle(RemoveLabelFromTask cmd) {
         final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
                                                                 .setId(cmd.getId())
                                                                 .setLabelId(cmd.getLabelId())
@@ -67,43 +66,56 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     }
 
     @Assign
-    public LabelCreated handle(CreateBasicLabel cmd, CommandContext ctx) {
+    public LabelCreated handle(CreateBasicLabel cmd) {
         final LabelCreated result = LabelCreated.newBuilder()
+                                                .setDetails(LabelDetails.newBuilder()
+                                                                        .setTitle(cmd.getLabelTitle()))
                                                 .build();
         return result;
     }
 
     @Assign
-    public LabelDetailsUpdated handle(UpdateLabelDetails cmd, CommandContext ctx) {
+    public LabelDetailsUpdated handle(UpdateLabelDetails cmd) {
         final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
                                                               .setId(cmd.getId())
+                                                              .setPreviousDetails(LabelDetails.newBuilder()
+                                                                                              .setColor(getState().getColor())
+                                                                                              .setTitle(getState().getTitle()))
+                                                              .setNewDetails(LabelDetails.newBuilder()
+                                                                                         .setTitle(cmd.getNewTitle())
+                                                                                         .setColor(cmd.getColor()))
                                                               .build();
         return result;
     }
 
     @Apply
-    public void event(LabelAssignedToTask event) {
+    private void eventOnAssignedLabelToTask(LabelAssignedToTask event) {
         getBuilder().setId(event.getLabelId());
     }
 
     @Apply
-    public void event(LabelRemovedFromTask event) {
+    private void eventOnRemoveLabelFromTask(LabelRemovedFromTask event) {
         getBuilder().setId(event.getLabelId());
     }
 
     @Apply
-    public void event(LabelCreated event) {
+    private void eventOnCreateLabel(LabelCreated event) {
         getBuilder().setId(event.getId())
+                    .setTitle(event.getDetails()
+                                   .getTitle())
                     .setColor(LabelColor.GRAY);
     }
 
     @Apply
-    public void event(LabelDetailsUpdated event) {
-        getBuilder().setId(event.getId());
+    private void eventOnUpdateLabelDetails(LabelDetailsUpdated event) {
+        LabelDetails labelDetails = event.getNewDetails();
+        getBuilder().setId(event.getId())
+                    .setTitle(labelDetails.getTitle())
+                    .setColor(labelDetails.getColor());
     }
 
     @Apply
-    public void event(LabelDetails event) {
+    private void eventOnLabelDetails(LabelDetails event) {
         getBuilder().setTitle(event.getTitle())
                     .setColor(event.getColor());
     }

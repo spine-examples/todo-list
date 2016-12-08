@@ -1,12 +1,14 @@
 language: java
 
+jdk:
+  - oraclejdk8
+
 before_install:
   - chmod +x gradlew
 
-after_success:
-  # See: https://github.com/codecov/example-java/blob/master/.travis.yml
-  - bash <(curl -s https://codecov.io/bash)
-  - chmod +x ./scripts/publish-artifacts.sh
-  - ./scripts/publish-artifacts.sh
+script:
+  - ./gradlew build --stacktrace
+  - ./gradlew codeCoverageReport
 
-script: ./gradlew check --stacktrace
+after_success:
+  - bash <(curl -s https://codecov.io/bash)

@@ -338,7 +338,7 @@ public class TaskAggregateTest {
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         Timestamp firstAggregateCreationState = aggregate.getState()
                                                          .getCreated();
-        Thread.sleep(100);
+        Thread.sleep(1000);
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         Timestamp secondAggregateCreationState = aggregate.getState()
                                                           .getCreated();
