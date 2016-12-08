@@ -168,6 +168,8 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         getBuilder().setId(event.getId())
                     .setCreated(Timestamp.newBuilder()
                                          .setSeconds(System.currentTimeMillis()))
+                    .setDescription(event.getDetails()
+                                         .getDescription())
                     .setPriority(TaskPriority.NORMAL);
     }
 
