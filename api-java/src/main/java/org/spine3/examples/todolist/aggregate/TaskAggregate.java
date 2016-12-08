@@ -62,9 +62,11 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         super(id);
     }
 
-    //TODO: Need clarification TaskID, TaskDetails
+    //TODO[illia.shepilov]: Need clarification
+    //Is enough information passing to event?
     @Assign
     public TaskCreated handle(CreateBasicTask cmd) {
+        validateCommand(cmd);
         final TaskCreated result = TaskCreated.newBuilder()
                                               .setDetails(TaskDetails.newBuilder()
                                                                      .setDescription(cmd.getDescription()))
@@ -153,7 +155,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return result;
     }
 
-    //TODO: should to be updated after defining draft creation
+    //TODO[illia.shepilov]: should to be updated after defining draft creation
     @Assign
     public TaskDraftCreated handle(CreateDraft cmd) {
         final TaskDraftCreated result = TaskDraftCreated.newBuilder()
@@ -162,7 +164,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Apply
-    private void event(TaskCreated event) {
+    private void eventOnCreateTask(TaskCreated event) {
         getBuilder().setId(event.getId())
                     .setCreated(Timestamp.newBuilder()
                                          .setSeconds(System.currentTimeMillis()))
@@ -170,54 +172,97 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Apply
-    private void event(TaskDescriptionUpdated event) {
+    private void eventOnUpdateTaskDescription(TaskDescriptionUpdated event) {
         getBuilder().setId(event.getId())
                     .setDescription(event.getNewDescription());
     }
 
     @Apply
-    private void event(TaskDueDateUpdated event) {
+    private void eventOnUpdateTaskDueDate(TaskDueDateUpdated event) {
         getBuilder().setId(event.getId())
                     .setDueDate(event.getNewDueDate());
     }
 
     @Apply
-    private void event(TaskPriorityUpdated event) {
+    private void eventOnUpdateTaskPriority(TaskPriorityUpdated event) {
         getBuilder().setId(event.getId())
                     .setPriority(event.getNewPriority());
     }
 
     @Apply
-    private void event(TaskReopened event) {
-        getBuilder().setId(event.getId());
+    private void eventOnReopenTask(TaskReopened event) {
+        getBuilder().setId(event.getId())
+                    .setCompleted(false);
     }
 
     @Apply
-    private void event(TaskDeleted event) {
+    private void eventOnDeleteTask(TaskDeleted event) {
         getBuilder().setId(event.getId())
                     .setDeleted(true);
     }
 
     @Apply
-    private void event(DeletedTaskRestored event) {
+    private void eventOnRestoreDeletedTask(DeletedTaskRestored event) {
         getBuilder().setId(event.getId())
                     .setDeleted(false);
     }
 
     @Apply
-    private void event(TaskCompleted event) {
+    private void eventOnCompleteTask(TaskCompleted event) {
         getBuilder().setId(event.getId())
                     .setCompleted(true);
     }
 
     @Apply
-    private void event(TaskDetails event) {
+    private void eventOnTaskDetails(TaskDetails event) {
         getBuilder().setPriority(event.getPriority())
                     .setDescription(event.getDescription())
                     .setCompleted(event.getCompleted());
     }
 
-    //TODO: Need to refactor command validation
+    @Apply
+    private void eventOnCreateTaskDraft(TaskDraftCreated event) {
+        getBuilder().setId(event.getId())
+                    .setCreated(event.getDraftCreationTime())
+                    .setDescription(event.getDetails()
+                                         .getDescription())
+                    .setDraft(true)
+                    .setDeleted(false)
+                    .setCompleted(false);
+    }
+
+    @Apply
+    private void eventOnFinalizeTaskDraft(TaskDraftFinalized event) {
+        getBuilder().setId(event.getId())
+                    .setDraft(false);
+    }
+
+    //TODO[illia.shepilov]: Need clarification
+    // is it good idea to pass command object to the method
+    // when it is not needed?
+    // It is doing for using one namespace ("validateCommand")
+
+    private void validateCommandOnCompletion() {
+        if (getState().getCompleted()) {
+            throw new IllegalArgumentException("Command cannot be applied on completed task.");
+        }
+    }
+
+    private void validateCommandOnDeletion() {
+        if (getState().getDeleted()) {
+            throw new IllegalArgumentException("Command cannot be applied on deleted task.");
+        }
+    }
+
+    private void validateCommand(UpdateTaskDueDate cmd) {
+        validateCommandOnDeletion();
+        validateCommandOnCompletion();
+    }
+
+    private void validateCommand(UpdateTaskPriority cmd) {
+        validateCommandOnDeletion();
+        validateCommandOnCompletion();
+    }
 
     private void validateCommand(CreateBasicTask cmd) {
         String description = cmd.getDescription();
@@ -235,19 +280,8 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
             throw new IllegalArgumentException("Description should contains at least 3 alphanumeric symbols.");
         }
 
-        validateCommandOnDeletionAndCompletion();
-    }
-
-    private void validateCommandOnCompletion() {
-        if (getState().getCompleted()) {
-            throw new IllegalArgumentException("Command cannot be applied on completed task.");
-        }
-    }
-
-    private void validateCommandOnDeletion() {
-        if (getState().getDeleted()) {
-            throw new IllegalArgumentException("Command cannot be applied on deleted task.");
-        }
+        validateCommandOnDeletion();
+        validateCommandOnCompletion();
     }
 
     private void validateCommand(RestoreDeletedTask cmd) {
@@ -258,21 +292,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     private void validateCommand(DeleteTask cmd) {
         validateCommandOnDeletion();
-    }
-
-    private void validateCommandOnDeletionAndCompletion() {
-        validateCommandOnDeletion();
-        validateCommandOnCompletion();
-    }
-
-    private void validateCommand(UpdateTaskDueDate cmd) {
-        validateCommandOnDeletion();
-        validateCommandOnCompletion();
-    }
-
-    private void validateCommand(UpdateTaskPriority cmd) {
-        validateCommandOnDeletion();
-        validateCommandOnCompletion();
     }
 
     private void validateCommand(CompleteTask cmd) {
@@ -289,10 +308,13 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         }
     }
 
-    //TODO: Need clarification
     private void validateCommand(FinalizeDraft cmd) {
-        if (!getState().getDraft()) {
-            throw new IllegalArgumentException("Command cannot be applied to deleted draft.");
+        Task state = getState();
+        if (state.getDeleted()) {
+            throw new IllegalArgumentException("Command cannot be applied to the deleted draft.");
+        }
+        if (!state.getDraft()) {
+            throw new IllegalArgumentException("Command applicable to the draft tasks only.");
         }
     }
 

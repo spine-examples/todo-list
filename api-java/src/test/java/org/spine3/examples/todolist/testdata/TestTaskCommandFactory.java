@@ -22,7 +22,9 @@ package org.spine3.examples.todolist.testdata;
 import com.google.protobuf.Timestamp;
 import org.spine3.examples.todolist.CompleteTask;
 import org.spine3.examples.todolist.CreateBasicTask;
+import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.DeleteTask;
+import org.spine3.examples.todolist.FinalizeDraft;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
 import org.spine3.examples.todolist.TaskId;
@@ -33,7 +35,7 @@ import org.spine3.examples.todolist.UpdateTaskPriority;
 
 public class TestTaskCommandFactory {
 
-    public static final String ID = "1";
+    private static final String ID = "1";
     private static final String DESCRIPTION = "Create command description.";
     private static final long DUE_DATE = System.currentTimeMillis();
 
@@ -98,6 +100,16 @@ public class TestTaskCommandFactory {
     public static RestoreDeletedTask restoreDeletedTaskInstance() {
         return RestoreDeletedTask.newBuilder()
                                  .build();
+    }
+
+    public static FinalizeDraft finalizeDraftInstance() {
+        return FinalizeDraft.newBuilder()
+                            .build();
+    }
+
+    public static CreateDraft createDraftInstance() {
+        return CreateDraft.newBuilder()
+                          .build();
     }
 
 }
