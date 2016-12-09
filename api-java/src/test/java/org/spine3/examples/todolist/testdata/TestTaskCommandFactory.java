@@ -20,11 +20,13 @@
 package org.spine3.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
+import org.spine3.examples.todolist.AssignLabelToTask;
 import org.spine3.examples.todolist.CompleteTask;
 import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.DeleteTask;
 import org.spine3.examples.todolist.FinalizeDraft;
+import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
 import org.spine3.examples.todolist.TaskId;
@@ -132,8 +134,7 @@ public class TestTaskCommandFactory {
      * @return {@link CompleteTask} instance.
      */
     public static CompleteTask completeTaskInstance() {
-        return CompleteTask.newBuilder()
-                           .build();
+        return CompleteTask.getDefaultInstance();
     }
 
     /**
@@ -142,8 +143,7 @@ public class TestTaskCommandFactory {
      * @return {@link ReopenTask} instance.
      */
     public static ReopenTask reopenTaskInstance() {
-        return ReopenTask.newBuilder()
-                         .build();
+        return ReopenTask.getDefaultInstance();
     }
 
     /**
@@ -164,8 +164,7 @@ public class TestTaskCommandFactory {
      * @return {@link RestoreDeletedTask} instance.
      */
     public static RestoreDeletedTask restoreDeletedTaskInstance() {
-        return RestoreDeletedTask.newBuilder()
-                                 .build();
+        return RestoreDeletedTask.getDefaultInstance();
     }
 
     /**
@@ -174,8 +173,7 @@ public class TestTaskCommandFactory {
      * @return {@link FinalizeDraft} instance.
      */
     public static FinalizeDraft finalizeDraftInstance() {
-        return FinalizeDraft.newBuilder()
-                            .build();
+        return FinalizeDraft.getDefaultInstance();
     }
 
     /**
@@ -184,8 +182,15 @@ public class TestTaskCommandFactory {
      * @return {@link CreateDraft} instance.
      */
     public static CreateDraft createDraftInstance() {
-        return CreateDraft.newBuilder()
-                          .build();
+        return CreateDraft.getDefaultInstance();
+    }
+
+    public static AssignLabelToTask assignLabelToTaskInstance() {
+        return AssignLabelToTask.getDefaultInstance();
+    }
+
+    public static RemoveLabelFromTask removeLabelFromTaskInstance() {
+        return RemoveLabelFromTask.getDefaultInstance();
     }
 
 }

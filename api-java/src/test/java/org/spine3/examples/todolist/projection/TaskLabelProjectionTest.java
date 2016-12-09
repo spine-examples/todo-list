@@ -66,14 +66,12 @@ public class TaskLabelProjectionTest {
 
     @Test
     public void return_event_classes_which_it_handles() {
-        final int expectedSize = 5;
+        final int expectedSize = 3;
 
         final ImmutableSet<Class<? extends Message>> classes = Projection.getEventClasses(TaskLabelProjection.class);
 
         assertEquals(expectedSize, classes.size());
         assertTrue(classes.contains(LabelCreated.class));
-        assertTrue(classes.contains(LabelAssignedToTask.class));
-        assertTrue(classes.contains(LabelRemovedFromTask.class));
         assertTrue(classes.contains(LabelDetailsUpdated.class));
         assertTrue(classes.contains(LabelDetails.class));
     }

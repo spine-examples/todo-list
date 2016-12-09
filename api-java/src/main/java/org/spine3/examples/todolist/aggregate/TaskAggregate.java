@@ -73,8 +73,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         super(id);
     }
 
-    //TODO[illia.shepilov]: Need clarification
-    //Is enough information passed to event?
     @Assign
     public TaskCreated handle(CreateBasicTask cmd) {
         validateCommand(cmd);
@@ -253,16 +251,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                     .setCompleted(event.getCompleted());
     }
 
-    //TODO[illia.shepilov]: should to be updated after defining draft creation
-    @Apply
-    private void eventOnCreateTaskDraft(TaskDraftCreated event) {
-        getBuilder().setId(event.getId())
-                    .setCreated(event.getDraftCreationTime())
-                    .setDescription(event.getDetails()
-                                         .getDescription())
-                    .setDraft(true);
-    }
-
     @Apply
     private void eventOnFinalizeTaskDraft(TaskDraftFinalized event) {
         getBuilder().setId(event.getId())
@@ -278,11 +266,21 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Apply
-    private void eventOnRemoveLabelFromTask(RemoveLabelFromTask event) {
+    private void eventOnRemoveLabelFromTask(LabelRemovedFromTask event) {
         final int labelListSize = getBuilder().getLabelIdsList()
                                               .size();
         getBuilder().setId(event.getId())
                     .setLabelIds(labelListSize, event.getLabelId());
+    }
+
+    //TODO[illia.shepilov]: should to be updated after defining draft creation
+    @Apply
+    private void eventOnCreateTaskDraft(TaskDraftCreated event) {
+        getBuilder().setId(event.getId())
+                    .setCreated(event.getDraftCreationTime())
+                    .setDescription(event.getDetails()
+                                         .getDescription())
+                    .setDraft(true);
     }
 
     //TODO[illia.shepilov]: Need clarification

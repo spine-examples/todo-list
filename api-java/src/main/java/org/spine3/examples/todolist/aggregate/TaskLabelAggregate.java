@@ -19,15 +19,11 @@
 //
 package org.spine3.examples.todolist.aggregate;
 
-import org.spine3.examples.todolist.AssignLabelToTask;
 import org.spine3.examples.todolist.CreateBasicLabel;
-import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelCreated;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
-import org.spine3.examples.todolist.LabelRemovedFromTask;
-import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.UpdateLabelDetails;
@@ -92,7 +88,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
 
     @Apply
     private void eventOnUpdateLabelDetails(LabelDetailsUpdated event) {
-        LabelDetails labelDetails = event.getNewDetails();
+        final LabelDetails labelDetails = event.getNewDetails();
         getBuilder().setId(event.getId())
                     .setTitle(labelDetails.getTitle())
                     .setColor(labelDetails.getColor());

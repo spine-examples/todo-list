@@ -58,65 +58,65 @@ public class TaskProjection extends Projection<TaskId, Task> {
 
     @Subscribe
     public void on(TaskCreated event) {
-        Task state = getState().newBuilderForType()
-                               .setDescription(event.getDetails()
-                                                    .getDescription())
-                               .build();
+        final Task state = getState().newBuilderForType()
+                                     .setDescription(event.getDetails()
+                                                          .getDescription())
+                                     .build();
         incrementState(state);
     }
 
     @Subscribe
     public void on(TaskDraftCreated event) {
-        TaskDetails taskDetails = event.getDetails();
-        Task state = getState().newBuilderForType()
-                               .setDescription(taskDetails.getDescription())
-                               .setCompleted(taskDetails.getCompleted())
-                               .setPriority(taskDetails.getPriority())
-                               .build();
+        final TaskDetails taskDetails = event.getDetails();
+        final Task state = getState().newBuilderForType()
+                                     .setDescription(taskDetails.getDescription())
+                                     .setCompleted(taskDetails.getCompleted())
+                                     .setPriority(taskDetails.getPriority())
+                                     .build();
         incrementState(state);
     }
 
     @Subscribe
     public void on(TaskDescriptionUpdated event) {
-        Task state = getState().newBuilderForType()
-                               .setId(event.getId())
-                               .setDescription(event.getNewDescription())
-                               .build();
+        final Task state = getState().newBuilderForType()
+                                     .setId(event.getId())
+                                     .setDescription(event.getNewDescription())
+                                     .build();
         incrementState(state);
     }
 
     @Subscribe
     public void on(TaskPriorityUpdated event) {
-        Task state = getState().newBuilderForType()
-                               .setId(event.getId())
-                               .setPriority(event.getNewPriority())
-                               .build();
+        final Task state = getState().newBuilderForType()
+                                     .setId(event.getId())
+                                     .setPriority(event.getNewPriority())
+                                     .build();
         incrementState(state);
     }
 
     @Subscribe
     public void on(TaskDueDateUpdated event) {
-        Task state = getState().newBuilderForType()
-                               .setId(event.getId())
-                               .setDueDate(event.getNewDueDate())
-                               .build();
+        final Task state = getState().newBuilderForType()
+                                     .setId(event.getId())
+                                     .setDueDate(event.getNewDueDate())
+                                     .build();
         incrementState(state);
     }
 
     @Subscribe
     public void on(TaskDraftFinalized event) {
-        Task state = getState().newBuilderForType()
-                               .setId(event.getId())
-                               .build();
+        final Task state = getState().newBuilderForType()
+                                     .setId(event.getId())
+                                     .build();
         incrementState(state);
     }
 
     @Subscribe
     public void on(TaskCompleted event) {
-        Task state = getState().newBuilderForType()
-                               .setId(event.getId())
-                               .setCompleted(true)
-                               .build();
+        final Task state = getState().newBuilderForType()
+                                     .setId(event.getId())
+                                     .setCompleted(true)
+                                     .build();
         incrementState(state);
     }
 
@@ -176,10 +176,10 @@ public class TaskProjection extends Projection<TaskId, Task> {
         final int nextLabelIndex = currentState.getLabelIdsList()
                                                .size();
 
-        Task updatedState = getState().newBuilderForType()
-                                      .setId(event.getId())
-                                      .setLabelIds(nextLabelIndex, event.getLabelId())
-                                      .build();
+        final Task updatedState = getState().newBuilderForType()
+                                            .setId(event.getId())
+                                            .setLabelIds(nextLabelIndex, event.getLabelId())
+                                            .build();
         incrementState(updatedState);
     }
 

@@ -19,10 +19,8 @@
 //
 package org.spine3.examples.todolist.testdata;
 
-import org.spine3.examples.todolist.AssignLabelToTask;
 import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.UpdateLabelDetails;
 
 /**
@@ -68,24 +66,6 @@ public class TestTaskLabelCommandFactory {
                                  .setColor(color)
                                  .setNewTitle(title)
                                  .build();
-    }
-
-    /**
-     * Provides {@link AssignLabelToTask} instance.
-     *
-     * @return {@link AssignLabelToTask} instance.
-     */
-    public static AssignLabelToTask assignLabelToTaskInstance() {
-        return AssignLabelToTask.getDefaultInstance();
-    }
-
-    /**
-     * Provides {@link RemoveLabelFromTask} instance.
-     *
-     * @return {@link RemoveLabelFromTask} instance.
-     */
-    public static RemoveLabelFromTask removeLabelFromTaskInstance() {
-        return RemoveLabelFromTask.getDefaultInstance();
     }
 
 }
