@@ -27,7 +27,8 @@ buildscript {
         appEngineGradlePlugin = 'com.google.cloud.tools:appengine-gradle-plugin:+'
         spinePluginVersion = '1.4.11'
         guavaVersion = '20.0'
-        jUnitPlatformVersion = '1.0.0-M2'
+        jUnitPlatformVersion = '1.0.0-M3'
+        jUnitVersion = '5.0.0-M3'
     }
 
     repositories {
@@ -122,7 +123,6 @@ ext {
     slf4jVersion = '1.7.21'
     servletApiVersion = '3.1.0'
     gcloudJavaVersion = '0.2.8'
-    jUnitVersion = '5.0.0-M2'
     spineProtobufPluginId = 'org.spine3.tools.protobuf-plugin'
 
     // Take latest snapshot of Spine from the repo.
@@ -228,20 +228,10 @@ subprojects {
 
         logManager 'java.util.logging.LogManager'
 
-        //reportsDir "build/test-results/junit-platform" // this is the default
-
-        // enableStandardTestTask true
-        engines {
-            include 'junit-jupiter'
-            // exclude 'junit-vintage'
+        selectors{
+            directory '${sourceRootDir}/test/java'
+            aPackage 'org.spine3.examples.todolist'
         }
-
-        tags {
-            // include 'fast', 'smoke'
-            // exclude 'slow', 'ci'
-        }
-
-        includeClassNamePattern '.*Tests'
     }
 
     idea {
