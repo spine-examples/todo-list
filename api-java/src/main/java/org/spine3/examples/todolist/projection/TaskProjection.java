@@ -19,7 +19,6 @@
 //
 package org.spine3.examples.todolist.projection;
 
-import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.Task;
 import org.spine3.examples.todolist.TaskCompleted;
@@ -36,6 +35,13 @@ import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.server.event.Subscribe;
 import org.spine3.server.projection.Projection;
 
+/**
+ * Holds a structural representation of data extracted from a stream of events related to task.
+ * Contains the data about the task.
+ *
+ * @author Illia Shepilov
+ * @see Projection
+ */
 public class TaskProjection extends Projection<TaskId, Task> {
 
     /**
@@ -58,53 +64,95 @@ public class TaskProjection extends Projection<TaskId, Task> {
     }
 
     @Subscribe
-    public void on(TaskDraftCreated event, EventContext ctx) {
-
+    public void on(TaskDraftCreated event) {
+        TaskDetails taskDetails = event.getDetails();
+        Task state = getState().newBuilderForType()
+                               .setDescription(taskDetails.getDescription())
+                               .setCompleted(taskDetails.getCompleted())
+                               .setPriority(taskDetails.getPriority())
+                               .build();
+        incrementState(state);
     }
 
     @Subscribe
-    public void on(TaskDescriptionUpdated event, EventContext ctx) {
-
+    public void on(TaskDescriptionUpdated event) {
+        Task state = getState().newBuilderForType()
+                               .setId(event.getId())
+                               .setDescription(event.getNewDescription())
+                               .build();
+        incrementState(state);
     }
 
     @Subscribe
-    public void on(TaskPriorityUpdated event, EventContext ctx) {
-
+    public void on(TaskPriorityUpdated event) {
+        Task state = getState().newBuilderForType()
+                               .setId(event.getId())
+                               .setPriority(event.getNewPriority())
+                               .build();
+        incrementState(state);
     }
 
     @Subscribe
-    public void on(TaskDueDateUpdated event, EventContext ctx) {
-
+    public void on(TaskDueDateUpdated event) {
+        Task state = getState().newBuilderForType()
+                               .setId(event.getId())
+                               .setDueDate(event.getNewDueDate())
+                               .build();
+        incrementState(state);
     }
 
     @Subscribe
-    public void on(TaskDraftFinalized event, EventContext ctx) {
-
+    public void on(TaskDraftFinalized event) {
+        Task state = getState().newBuilderForType()
+                               .setId(event.getId())
+                               .build();
+        incrementState(state);
     }
 
     @Subscribe
-    public void on(TaskCompleted event, EventContext ctx) {
-
+    public void on(TaskCompleted event) {
+        Task state = getState().newBuilderForType()
+                               .setId(event.getId())
+                               .setCompleted(true)
+                               .build();
+        incrementState(state);
     }
 
     @Subscribe
-    public void on(TaskReopened event, EventContext ctx) {
-
+    public void on(TaskReopened event) {
+        Task state = getState().newBuilderForType()
+                               .setId(event.getId())
+                               .setCompleted(false)
+                               .build();
+        incrementState(state);
     }
 
     @Subscribe
-    public void on(TaskDeleted event, EventContext ctx) {
-
+    public void on(TaskDeleted event) {
+        Task state = getState().newBuilderForType()
+                               .setId(event.getId())
+                               .setDeleted(true)
+                               .build();
+        incrementState(state);
     }
 
     @Subscribe
-    public void on(DeletedTaskRestored event, EventContext ctx) {
-
+    public void on(DeletedTaskRestored event) {
+        Task state = getState().newBuilderForType()
+                               .setId(event.getId())
+                               .setDeleted(false)
+                               .build();
+        incrementState(state);
     }
 
     @Subscribe
-    public void on(TaskDetails event, EventContext ctx) {
-
+    public void on(TaskDetails event) {
+        Task state = getState().newBuilderForType()
+                               .setCompleted(event.getCompleted())
+                               .setDescription(event.getDescription())
+                               .setPriority(event.getPriority())
+                               .build();
+        incrementState(state);
     }
 
 }

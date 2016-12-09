@@ -30,7 +30,11 @@ import org.spine3.server.event.Subscribe;
 import org.spine3.server.projection.Projection;
 
 /**
- * TaskLabel projection.
+ * Holds a structural representation of data extracted from a stream of events related to task label.
+ * Contains the data about the label.
+ *
+ * @author Illia Shepilov
+ * @see Projection
  */
 public class TaskLabelProjection extends Projection<TaskLabelId, TaskLabel> {
 
