@@ -49,22 +49,6 @@ public class TaskLabelProjection extends Projection<TaskLabelId, TaskLabel> {
     }
 
     @Subscribe
-    public void on(LabelAssignedToTask event) {
-        TaskLabel state = getState().newBuilderForType()
-                                    .setId(event.getLabelId())
-                                    .build();
-        incrementState(state);
-    }
-
-    @Subscribe
-    public void on(LabelRemovedFromTask event) {
-        TaskLabel state = getState().newBuilderForType()
-                                    .setId(event.getLabelId())
-                                    .build();
-        incrementState(state);
-    }
-
-    @Subscribe
     public void on(LabelCreated event) {
         LabelDetails labelDetails = event.getDetails();
         TaskLabel state = getState().newBuilderForType()

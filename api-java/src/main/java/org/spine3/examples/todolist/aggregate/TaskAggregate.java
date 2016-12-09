@@ -20,12 +20,16 @@
 package org.spine3.examples.todolist.aggregate;
 
 import com.google.protobuf.Timestamp;
+import org.spine3.examples.todolist.AssignLabelToTask;
 import org.spine3.examples.todolist.CompleteTask;
 import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.DeleteTask;
 import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.FinalizeDraft;
+import org.spine3.examples.todolist.LabelAssignedToTask;
+import org.spine3.examples.todolist.LabelRemovedFromTask;
+import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
 import org.spine3.examples.todolist.Task;
@@ -162,6 +166,26 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return result;
     }
 
+    @Assign
+    public LabelRemovedFromTask handle(RemoveLabelFromTask cmd) {
+        validateCommand(cmd);
+        final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
+                                                                .setId(cmd.getId())
+                                                                .setLabelId(cmd.getLabelId())
+                                                                .build();
+        return result;
+    }
+
+    @Assign
+    public LabelAssignedToTask handle(AssignLabelToTask cmd) {
+        validateCommand(cmd);
+        final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
+                                                              .setId(cmd.getId())
+                                                              .setLabelId(cmd.getLabelId())
+                                                              .build();
+        return result;
+    }
+
     //TODO[illia.shepilov]: should to be updated after defining draft creation
     @Assign
     public TaskDraftCreated handle(CreateDraft cmd) {
@@ -245,6 +269,22 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                     .setDraft(false);
     }
 
+    @Apply
+    private void eventOnAssignLabelToTask(LabelAssignedToTask event) {
+        final int labelListSize = getBuilder().getLabelIdsList()
+                                              .size();
+        getBuilder().setId(event.getId())
+                    .setLabelIds(labelListSize, event.getLabelId());
+    }
+
+    @Apply
+    private void eventOnRemoveLabelFromTask(RemoveLabelFromTask event) {
+        final int labelListSize = getBuilder().getLabelIdsList()
+                                              .size();
+        getBuilder().setId(event.getId())
+                    .setLabelIds(labelListSize, event.getLabelId());
+    }
+
     //TODO[illia.shepilov]: Need clarification
     // is it good idea to pass command object to the method
     // when it is not needed?
@@ -260,6 +300,16 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         if (getState().getDeleted()) {
             throw new IllegalArgumentException("Command cannot be applied on deleted task.");
         }
+    }
+
+    private void validateCommand(AssignLabelToTask cmd) {
+        validateCommandOnDeletion();
+        validateCommandOnCompletion();
+    }
+
+    private void validateCommand(RemoveLabelFromTask cmd) {
+        validateCommandOnDeletion();
+        validateCommandOnCompletion();
     }
 
     private void validateCommand(UpdateTaskDueDate cmd) {

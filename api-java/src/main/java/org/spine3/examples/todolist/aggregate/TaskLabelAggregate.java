@@ -54,24 +54,6 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     }
 
     @Assign
-    public LabelAssignedToTask handle(AssignLabelToTask cmd) {
-        final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
-                                                              .setId(cmd.getId())
-                                                              .setLabelId(cmd.getLabelId())
-                                                              .build();
-        return result;
-    }
-
-    @Assign
-    public LabelRemovedFromTask handle(RemoveLabelFromTask cmd) {
-        final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
-                                                                .setId(cmd.getId())
-                                                                .setLabelId(cmd.getLabelId())
-                                                                .build();
-        return result;
-    }
-
-    @Assign
     public LabelCreated handle(CreateBasicLabel cmd) {
         final LabelCreated result = LabelCreated.newBuilder()
                                                 .setDetails(LabelDetails.newBuilder()
@@ -98,16 +80,6 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
                                                               .setNewDetails(newLabelDetails)
                                                               .build();
         return result;
-    }
-
-    @Apply
-    private void eventOnAssignedLabelToTask(LabelAssignedToTask event) {
-        getBuilder().setId(event.getLabelId());
-    }
-
-    @Apply
-    private void eventOnRemoveLabelFromTask(LabelRemovedFromTask event) {
-        getBuilder().setId(event.getLabelId());
     }
 
     @Apply

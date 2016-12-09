@@ -20,6 +20,8 @@
 package org.spine3.examples.todolist.projection;
 
 import org.spine3.examples.todolist.DeletedTaskRestored;
+import org.spine3.examples.todolist.LabelAssignedToTask;
+import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.Task;
 import org.spine3.examples.todolist.TaskCompleted;
 import org.spine3.examples.todolist.TaskCreated;
@@ -120,39 +122,65 @@ public class TaskProjection extends Projection<TaskId, Task> {
 
     @Subscribe
     public void on(TaskReopened event) {
-        Task state = getState().newBuilderForType()
-                               .setId(event.getId())
-                               .setCompleted(false)
-                               .build();
+        final Task state = getState().newBuilderForType()
+                                     .setId(event.getId())
+                                     .setCompleted(false)
+                                     .build();
         incrementState(state);
     }
 
     @Subscribe
     public void on(TaskDeleted event) {
-        Task state = getState().newBuilderForType()
-                               .setId(event.getId())
-                               .setDeleted(true)
-                               .build();
+        final Task state = getState().newBuilderForType()
+                                     .setId(event.getId())
+                                     .setDeleted(true)
+                                     .build();
         incrementState(state);
     }
 
     @Subscribe
     public void on(DeletedTaskRestored event) {
-        Task state = getState().newBuilderForType()
-                               .setId(event.getId())
-                               .setDeleted(false)
-                               .build();
+        final Task state = getState().newBuilderForType()
+                                     .setId(event.getId())
+                                     .setDeleted(false)
+                                     .build();
         incrementState(state);
     }
 
     @Subscribe
     public void on(TaskDetails event) {
-        Task state = getState().newBuilderForType()
-                               .setCompleted(event.getCompleted())
-                               .setDescription(event.getDescription())
-                               .setPriority(event.getPriority())
-                               .build();
+        final Task state = getState().newBuilderForType()
+                                     .setCompleted(event.getCompleted())
+                                     .setDescription(event.getDescription())
+                                     .setPriority(event.getPriority())
+                                     .build();
         incrementState(state);
+    }
+
+    @Subscribe
+    public void on(LabelAssignedToTask event) {
+        final Task currentState = getState();
+        final int nextLabelIndex = currentState.getLabelIdsList()
+                                               .size();
+
+        final Task updatedState = getState().newBuilderForType()
+                                            .setId(event.getId())
+                                            .setLabelIds(nextLabelIndex, event.getLabelId())
+                                            .build();
+        incrementState(updatedState);
+    }
+
+    @Subscribe
+    public void on(LabelRemovedFromTask event) {
+        final Task currentState = getState();
+        final int nextLabelIndex = currentState.getLabelIdsList()
+                                               .size();
+
+        Task updatedState = getState().newBuilderForType()
+                                      .setId(event.getId())
+                                      .setLabelIds(nextLabelIndex, event.getLabelId())
+                                      .build();
+        incrementState(updatedState);
     }
 
 }
