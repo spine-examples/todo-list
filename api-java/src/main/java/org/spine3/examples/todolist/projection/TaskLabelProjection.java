@@ -19,7 +19,6 @@
 //
 package org.spine3.examples.todolist.projection;
 
-import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelCreated;
 import org.spine3.examples.todolist.LabelDetails;
@@ -30,7 +29,10 @@ import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.server.event.Subscribe;
 import org.spine3.server.projection.Projection;
 
-public class TaskLabelProjection extends Projection<TaskLabelId, TaskLabel>{
+/**
+ * TaskLabel projection.
+ */
+public class TaskLabelProjection extends Projection<TaskLabelId, TaskLabel> {
 
     /**
      * Creates a new instance.
@@ -43,28 +45,50 @@ public class TaskLabelProjection extends Projection<TaskLabelId, TaskLabel>{
     }
 
     @Subscribe
-    public void on(LabelAssignedToTask event, EventContext ctx){
-
+    public void on(LabelAssignedToTask event) {
+        TaskLabel state = getState().newBuilderForType()
+                                    .setId(event.getLabelId())
+                                    .build();
+        incrementState(state);
     }
 
     @Subscribe
-    public void on(LabelRemovedFromTask event, EventContext ctx){
-
+    public void on(LabelRemovedFromTask event) {
+        TaskLabel state = getState().newBuilderForType()
+                                    .setId(event.getLabelId())
+                                    .build();
+        incrementState(state);
     }
 
     @Subscribe
-    public void on(LabelCreated event, EventContext ctx){
-
+    public void on(LabelCreated event) {
+        LabelDetails labelDetails = event.getDetails();
+        TaskLabel state = getState().newBuilderForType()
+                                    .setId(event.getId())
+                                    .setTitle(labelDetails.getTitle())
+                                    .setColor(labelDetails.getColor())
+                                    .build();
+        incrementState(state);
     }
 
     @Subscribe
-    public void on(LabelDetailsUpdated event, EventContext ctx){
-
+    public void on(LabelDetailsUpdated event) {
+        LabelDetails labelDetails = event.getNewDetails();
+        TaskLabel state = getState().newBuilderForType()
+                                    .setId(event.getId())
+                                    .setTitle(labelDetails.getTitle())
+                                    .setColor(labelDetails.getColor())
+                                    .build();
+        incrementState(state);
     }
 
     @Subscribe
-    public void on(LabelDetails event){
-
+    public void on(LabelDetails event) {
+        TaskLabel state = getState().newBuilderForType()
+                                    .setColor(event.getColor())
+                                    .setTitle(event.getTitle())
+                                    .build();
+        incrementState(state);
     }
 
 }

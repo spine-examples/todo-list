@@ -49,8 +49,12 @@ public class TaskProjection extends Projection<TaskId, Task> {
     }
 
     @Subscribe
-    public void on(TaskCreated event, EventContext ctx) {
-
+    public void on(TaskCreated event) {
+        Task state = getState().newBuilderForType()
+                               .setDescription(event.getDetails()
+                                                    .getDescription())
+                               .build();
+        incrementState(state);
     }
 
     @Subscribe
@@ -94,12 +98,12 @@ public class TaskProjection extends Projection<TaskId, Task> {
     }
 
     @Subscribe
-    public void on(DeletedTaskRestored event, EventContext ctx){
+    public void on(DeletedTaskRestored event, EventContext ctx) {
 
     }
 
     @Subscribe
-    public void on(TaskDetails event, EventContext ctx){
+    public void on(TaskDetails event, EventContext ctx) {
 
     }
 

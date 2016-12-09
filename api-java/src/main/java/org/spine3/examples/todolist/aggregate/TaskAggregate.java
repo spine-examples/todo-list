@@ -225,9 +225,11 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
      */
     @Assign
     public TaskDraftCreated handle(CreateDraft cmd) {
+        Timestamp draftCreationTime = Timestamp.newBuilder()
+                                               .setSeconds(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()))
+                                               .build();
         final TaskDraftCreated result = TaskDraftCreated.newBuilder()
-                                                        .setDraftCreationTime(Timestamp.newBuilder()
-                                                                                       .setSeconds(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())))
+                                                        .setDraftCreationTime(draftCreationTime)
                                                         .build();
         return result;
     }
