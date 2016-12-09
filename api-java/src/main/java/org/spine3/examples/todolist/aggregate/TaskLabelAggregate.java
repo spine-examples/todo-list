@@ -35,18 +35,27 @@ import org.spine3.server.aggregate.Aggregate;
 import org.spine3.server.aggregate.Apply;
 import org.spine3.server.command.Assign;
 
+/**
+ * TaskLabel aggregate.
+ */
 public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLabel.Builder> {
 
     /**
      * Creates a new aggregate instance.
      *
-     * @param id the ID for the new aggregate
-     * @throws IllegalArgumentException if the ID is not of one of the supported types
+     * @param id the ID for the new aggregate.
+     * @throws IllegalArgumentException if the ID is not of one of the supported types.
      */
     public TaskLabelAggregate(TaskLabelId id) {
         super(id);
     }
 
+    /**
+     * Process {@link AssignLabelToTask} command.
+     *
+     * @param cmd {@link AssignLabelToTask} object.
+     * @return {@link LabelAssignedToTask}, built event instance.
+     */
     @Assign
     public LabelAssignedToTask handle(AssignLabelToTask cmd) {
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
@@ -56,6 +65,12 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
         return result;
     }
 
+    /**
+     * Process {@link RemoveLabelFromTask} command.
+     *
+     * @param cmd {@link RemoveLabelFromTask} object.
+     * @return {@link LabelRemovedFromTask}, built event instance.
+     */
     @Assign
     public LabelRemovedFromTask handle(RemoveLabelFromTask cmd) {
         final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
@@ -65,6 +80,12 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
         return result;
     }
 
+    /**
+     * Process {@link CreateBasicLabel} command.
+     *
+     * @param cmd {@link CreateBasicLabel} object.
+     * @return {@link LabelCreated}, built event instance.
+     */
     @Assign
     public LabelCreated handle(CreateBasicLabel cmd) {
         final LabelCreated result = LabelCreated.newBuilder()
@@ -74,6 +95,12 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
         return result;
     }
 
+    /**
+     * Process {@link UpdateLabelDetails} command.
+     *
+     * @param cmd {@link UpdateLabelDetails} object.
+     * @return {@link LabelDetailsUpdated}, built event instance.
+     */
     @Assign
     public LabelDetailsUpdated handle(UpdateLabelDetails cmd) {
         final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
