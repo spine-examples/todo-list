@@ -44,16 +44,18 @@ import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
+import org.spine3.protobuf.Timestamps;
 import org.spine3.server.aggregate.Aggregate;
 import org.spine3.server.aggregate.Apply;
 import org.spine3.server.command.Assign;
 
-import java.util.concurrent.TimeUnit;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Task aggregate.
+ * The task aggregate which manages the state of the task.
+ *
+ * @author Illia Shepilov
+ * @see Aggregate
  */
 public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
@@ -69,13 +71,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     //TODO[illia.shepilov]: Need clarification
     //Is enough information passed to event?
-
-    /**
-     * Process {@link CreateBasicTask} command.
-     *
-     * @param cmd {@link CreateBasicTask} object.
-     * @return {@link TaskCreated}, built event instance.
-     */
     @Assign
     public TaskCreated handle(CreateBasicTask cmd) {
         validateCommand(cmd);
@@ -86,12 +81,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return result;
     }
 
-    /**
-     * Process {@link UpdateTaskDescription} command.
-     *
-     * @param cmd {@link UpdateTaskDescription} object.
-     * @return {@link TaskDescriptionUpdated}, built event instance.
-     */
     @Assign
     public TaskDescriptionUpdated handle(UpdateTaskDescription cmd) {
         validateCommand(cmd);
@@ -104,12 +93,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return result;
     }
 
-    /**
-     * Process {@link UpdateTaskDueDate} command.
-     *
-     * @param cmd {@link TaskDueDateUpdated} object.
-     * @return {@link TaskDueDateUpdated}, built event instance.
-     */
     @Assign
     public TaskDueDateUpdated handle(UpdateTaskDueDate cmd) {
         validateCommand(cmd);
@@ -122,12 +105,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return result;
     }
 
-    /**
-     * Process {@link UpdateTaskPriority} command.
-     *
-     * @param cmd {@link TaskPriorityUpdated} object.
-     * @return {@link TaskPriorityUpdated}, built event instance.
-     */
     @Assign
     public TaskPriorityUpdated handle(UpdateTaskPriority cmd) {
         validateCommand(cmd);
@@ -140,12 +117,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return result;
     }
 
-    /**
-     * Process {@link ReopenTask} command.
-     *
-     * @param cmd {@link ReopenTask} object.
-     * @return {@link TaskReopened}, built event instance.
-     */
     @Assign
     public TaskReopened handle(ReopenTask cmd) {
         validateCommand(cmd);
@@ -155,12 +126,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return result;
     }
 
-    /**
-     * Process {@link DeleteTask} command.
-     *
-     * @param cmd {@link DeleteTask} object.
-     * @return {@link TaskDeleted}, built event instance.
-     */
     @Assign
     public TaskDeleted handle(DeleteTask cmd) {
         validateCommand(cmd);
@@ -170,12 +135,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return result;
     }
 
-    /**
-     * Process {@link RestoreDeletedTask} command.
-     *
-     * @param cmd {@link RestoreDeletedTask} object.
-     * @return {@link DeletedTaskRestored}, built event instance.
-     */
     @Assign
     public DeletedTaskRestored handle(RestoreDeletedTask cmd) {
         validateCommand(cmd);
@@ -185,12 +144,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return result;
     }
 
-    /**
-     * Process {@link CompleteTask} command.
-     *
-     * @param cmd {@link CompleteTask} object.
-     * @return {@link TaskCompleted}, built event instance.
-     */
     @Assign
     public TaskCompleted handle(CompleteTask cmd) {
         validateCommand(cmd);
@@ -200,12 +153,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return result;
     }
 
-    /**
-     * Process {@link FinalizeDraft} command.
-     *
-     * @param cmd {@link FinalizeDraft} object.
-     * @return {@link TaskDraftFinalized}, built event instance.
-     */
     @Assign
     public TaskDraftFinalized handle(FinalizeDraft cmd) {
         validateCommand(cmd);
@@ -216,20 +163,10 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     //TODO[illia.shepilov]: should to be updated after defining draft creation
-
-    /**
-     * Process {@link CreateDraft} command.
-     *
-     * @param cmd {@link CreateDraft} object.
-     * @return {@link TaskDraftCreated}, built event instance.
-     */
     @Assign
     public TaskDraftCreated handle(CreateDraft cmd) {
-        Timestamp draftCreationTime = Timestamp.newBuilder()
-                                               .setSeconds(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis()))
-                                               .build();
         final TaskDraftCreated result = TaskDraftCreated.newBuilder()
-                                                        .setDraftCreationTime(draftCreationTime)
+                                                        .setDraftCreationTime(Timestamps.getCurrentTime())
                                                         .build();
         return result;
     }
@@ -237,8 +174,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     @Apply
     private void eventOnCreateTask(TaskCreated event) {
         getBuilder().setId(event.getId())
-                    .setCreated(Timestamp.newBuilder()
-                                         .setSeconds(TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())))
+                    .setCreated(Timestamps.getCurrentTime())
                     .setDescription(event.getDetails()
                                          .getDescription())
                     .setPriority(TaskPriority.NORMAL);

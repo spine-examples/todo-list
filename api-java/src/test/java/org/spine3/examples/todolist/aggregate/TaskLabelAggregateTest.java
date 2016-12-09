@@ -44,6 +44,9 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.removeLabelFromTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.updateLabelDetailsInstance;
 
+/**
+ * @author Illia Shepilov
+ */
 public class TaskLabelAggregateTest {
 
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();

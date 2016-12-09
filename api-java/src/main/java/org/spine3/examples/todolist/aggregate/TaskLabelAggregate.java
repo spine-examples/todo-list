@@ -36,7 +36,10 @@ import org.spine3.server.aggregate.Apply;
 import org.spine3.server.command.Assign;
 
 /**
- * TaskLabel aggregate.
+ * The label aggregate which manages the state of the task label.
+ *
+ * @author Illia Shepilov
+ * @see Aggregate
  */
 public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLabel.Builder> {
 
@@ -50,12 +53,6 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
         super(id);
     }
 
-    /**
-     * Process {@link AssignLabelToTask} command.
-     *
-     * @param cmd {@link AssignLabelToTask} object.
-     * @return {@link LabelAssignedToTask}, built event instance.
-     */
     @Assign
     public LabelAssignedToTask handle(AssignLabelToTask cmd) {
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
@@ -65,12 +62,6 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
         return result;
     }
 
-    /**
-     * Process {@link RemoveLabelFromTask} command.
-     *
-     * @param cmd {@link RemoveLabelFromTask} object.
-     * @return {@link LabelRemovedFromTask}, built event instance.
-     */
     @Assign
     public LabelRemovedFromTask handle(RemoveLabelFromTask cmd) {
         final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
@@ -80,12 +71,6 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
         return result;
     }
 
-    /**
-     * Process {@link CreateBasicLabel} command.
-     *
-     * @param cmd {@link CreateBasicLabel} object.
-     * @return {@link LabelCreated}, built event instance.
-     */
     @Assign
     public LabelCreated handle(CreateBasicLabel cmd) {
         final LabelCreated result = LabelCreated.newBuilder()
@@ -95,22 +80,22 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
         return result;
     }
 
-    /**
-     * Process {@link UpdateLabelDetails} command.
-     *
-     * @param cmd {@link UpdateLabelDetails} object.
-     * @return {@link LabelDetailsUpdated}, built event instance.
-     */
     @Assign
     public LabelDetailsUpdated handle(UpdateLabelDetails cmd) {
+        final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
+                                                              .setColor(getState().getColor())
+                                                              .setTitle(getState().getTitle())
+                                                              .build();
+
+        final LabelDetails newLabelDetails = LabelDetails.newBuilder()
+                                                         .setTitle(cmd.getNewTitle())
+                                                         .setColor(cmd.getColor())
+                                                         .build();
+
         final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
                                                               .setId(cmd.getId())
-                                                              .setPreviousDetails(LabelDetails.newBuilder()
-                                                                                              .setColor(getState().getColor())
-                                                                                              .setTitle(getState().getTitle()))
-                                                              .setNewDetails(LabelDetails.newBuilder()
-                                                                                         .setTitle(cmd.getNewTitle())
-                                                                                         .setColor(cmd.getColor()))
+                                                              .setPreviousDetails(previousLabelDetails)
+                                                              .setNewDetails(newLabelDetails)
                                                               .build();
         return result;
     }

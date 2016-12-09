@@ -48,11 +48,11 @@ import org.spine3.protobuf.Timestamps;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
@@ -66,6 +66,9 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updat
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;
 
+/**
+ * @author Illia Shepilov
+ */
 public class TaskAggregateTest {
 
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
@@ -114,7 +117,7 @@ public class TaskAggregateTest {
             final TaskAggregate aggregate = new TaskAggregate(ID);
             assertEquals(ID, aggregate.getId());
         } catch (Throwable e) {
-            fail();
+            fail("Error accepting message ID due to " + e.getMessage());
         }
     }
 
@@ -302,12 +305,11 @@ public class TaskAggregateTest {
 
     @Test
     public void return_current_state_when_updated_task_due_date() {
-        final long updatedDueDate = System.currentTimeMillis();
+        final Timestamp updatedDueDate = Timestamps.getCurrentTime();
         updateTaskDueDateCmd = updateTaskDueDateInstance(updatedDueDate);
         aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
         assertEquals(updatedDueDate, aggregate.getState()
-                                              .getDueDate()
-                                              .getSeconds());
+                                              .getDueDate());
     }
 
     @Test

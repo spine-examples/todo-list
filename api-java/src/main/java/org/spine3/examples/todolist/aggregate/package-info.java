@@ -18,6 +18,9 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 
+/**
+ * This package provides implementation for aggregate classes.
+ */
 @ParametersAreNonnullByDefault
 package org.spine3.examples.todolist.aggregate;
 

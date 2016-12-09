@@ -32,17 +32,18 @@ import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
-
-import java.util.concurrent.TimeUnit;
+import org.spine3.protobuf.Timestamps;
 
 /**
  * Provides methods for instantiation task commands for test needs.
+ *
+ * @author Illia Shepilov
  */
 public class TestTaskCommandFactory {
 
     private static final String ID = "1";
     private static final String DESCRIPTION = "Create command description.";
-    private static final long DUE_DATE = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+    private static final Timestamp DUE_DATE = Timestamps.getCurrentTime();
 
     /**
      * Prevent instantiation.
@@ -98,10 +99,9 @@ public class TestTaskCommandFactory {
      * @param updatedDueDate value into updated due datefield, present in seconds.
      * @return {@link UpdateTaskDueDate} instance.
      */
-    public static UpdateTaskDueDate updateTaskDueDateInstance(long updatedDueDate) {
+    public static UpdateTaskDueDate updateTaskDueDateInstance(Timestamp updatedDueDate) {
         return UpdateTaskDueDate.newBuilder()
-                                .setUpdatedDueDate(Timestamp.newBuilder()
-                                                            .setSeconds(updatedDueDate))
+                                .setUpdatedDueDate(updatedDueDate)
                                 .build();
     }
 

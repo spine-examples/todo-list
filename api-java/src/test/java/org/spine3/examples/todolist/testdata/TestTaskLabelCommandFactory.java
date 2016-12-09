@@ -27,6 +27,8 @@ import org.spine3.examples.todolist.UpdateLabelDetails;
 
 /**
  * Provides methods for instantiation task label commands for test needs.
+ *
+ * @author Illia Shepilov
  */
 public class TestTaskLabelCommandFactory {
 
@@ -42,8 +44,7 @@ public class TestTaskLabelCommandFactory {
      * @return {@link CreateBasicLabel} instance.
      */
     public static CreateBasicLabel createLabelInstance() {
-        return CreateBasicLabel.newBuilder()
-                               .build();
+        return CreateBasicLabel.getDefaultInstance();
     }
 
     /**
@@ -75,8 +76,7 @@ public class TestTaskLabelCommandFactory {
      * @return {@link AssignLabelToTask} instance.
      */
     public static AssignLabelToTask assignLabelToTaskInstance() {
-        return AssignLabelToTask.newBuilder()
-                                .build();
+        return AssignLabelToTask.getDefaultInstance();
     }
 
     /**
@@ -85,8 +85,7 @@ public class TestTaskLabelCommandFactory {
      * @return {@link RemoveLabelFromTask} instance.
      */
     public static RemoveLabelFromTask removeLabelFromTaskInstance() {
-        return RemoveLabelFromTask.newBuilder()
-                                  .build();
+        return RemoveLabelFromTask.getDefaultInstance();
     }
 
 }

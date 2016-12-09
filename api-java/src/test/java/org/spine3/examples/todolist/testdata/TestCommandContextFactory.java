@@ -33,6 +33,8 @@ import static org.spine3.time.ZoneOffsets.UTC;
 
 /**
  * Provides command context instances for test needs.
+ *
+ * @author Illia Shepilov
  */
 public class TestCommandContextFactory {
 
