@@ -127,9 +127,9 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link CompleteTask} instance
+     * Provides {@link CompleteTask} instance.
      *
-     * @return {@link CompleteTask} instance
+     * @return {@link CompleteTask} instance.
      */
     public static CompleteTask completeTaskInstance() {
         return CompleteTask.newBuilder()
@@ -137,9 +137,9 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link ReopenTask} instance
+     * Provides {@link ReopenTask} instance.
      *
-     * @return {@link ReopenTask} instance
+     * @return {@link ReopenTask} instance.
      */
     public static ReopenTask reopenTaskInstance() {
         return ReopenTask.newBuilder()
@@ -147,9 +147,9 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link DeleteTask} instance
+     * Provides {@link DeleteTask} instance.
      *
-     * @return {@link DeleteTask} instance
+     * @return {@link DeleteTask} instance.
      */
     public static DeleteTask deleteTaskInstance() {
         return DeleteTask.newBuilder()
@@ -159,9 +159,9 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link RestoreDeletedTask} instance
+     * Provides {@link RestoreDeletedTask} instance.
      *
-     * @return {@link RestoreDeletedTask} instance
+     * @return {@link RestoreDeletedTask} instance.
      */
     public static RestoreDeletedTask restoreDeletedTaskInstance() {
         return RestoreDeletedTask.newBuilder()
@@ -169,9 +169,9 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link FinalizeDraft} instance
+     * Provides {@link FinalizeDraft} instance.
      *
-     * @return {@link FinalizeDraft instance}
+     * @return {@link FinalizeDraft} instance.
      */
     public static FinalizeDraft finalizeDraftInstance() {
         return FinalizeDraft.newBuilder()
@@ -179,9 +179,9 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link CreateDraft} instancer
+     * Provides {@link CreateDraft} instance.
      *
-     * @return {@link CreateDraft instance}
+     * @return {@link CreateDraft} instance.
      */
     public static CreateDraft createDraftInstance() {
         return CreateDraft.newBuilder()

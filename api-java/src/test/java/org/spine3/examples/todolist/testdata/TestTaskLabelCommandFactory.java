@@ -25,6 +25,9 @@ import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.UpdateLabelDetails;
 
+/**
+ * Provides methods for instantiation task label commands for test needs.
+ */
 public class TestTaskLabelCommandFactory {
 
     private static final String TITLE = "label title";
@@ -33,15 +36,32 @@ public class TestTaskLabelCommandFactory {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Provides {@link CreateBasicLabel} instance.
+     *
+     * @return {@link CreateBasicLabel} instance.
+     */
     public static CreateBasicLabel createLabelInstance() {
         return CreateBasicLabel.newBuilder()
                                .build();
     }
 
+    /**
+     * Provides {@link UpdateLabelDetails} instance.
+     *
+     * @return {@link UpdateLabelDetails} instance.
+     */
     public static UpdateLabelDetails updateLabelDetailsInstance() {
         return updateLabelDetailsInstance(LabelColor.GRAY, TITLE);
     }
 
+    /**
+     * Provides {@link UpdateLabelDetails} instance.
+     *
+     * @param color {@link LabelColor} enum value.
+     * @param title String value
+     * @return {@link UpdateLabelDetails} instance.
+     */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelColor color, String title) {
         return UpdateLabelDetails.newBuilder()
                                  .setColor(color)
@@ -49,11 +69,21 @@ public class TestTaskLabelCommandFactory {
                                  .build();
     }
 
+    /**
+     * Provides {@link AssignLabelToTask} instance.
+     *
+     * @return {@link AssignLabelToTask} instance.
+     */
     public static AssignLabelToTask assignLabelToTaskInstance() {
         return AssignLabelToTask.newBuilder()
                                 .build();
     }
 
+    /**
+     * Provides {@link RemoveLabelFromTask} instance.
+     *
+     * @return {@link RemoveLabelFromTask} instance.
+     */
     public static RemoveLabelFromTask removeLabelFromTaskInstance() {
         return RemoveLabelFromTask.newBuilder()
                                   .build();

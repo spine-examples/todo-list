@@ -19,8 +19,8 @@
 //
 package org.spine3.examples.todolist.aggregate;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.AssignLabelToTask;
 import org.spine3.examples.todolist.CreateBasicLabel;
@@ -56,7 +56,7 @@ public class TaskLabelAggregateTest {
                                                      .setValue(newUuid())
                                                      .build();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         aggregate = new TaskLabelAggregate(ID);
         createLabelCmd = createLabelInstance();

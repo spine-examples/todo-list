@@ -32,7 +32,7 @@ import static org.spine3.test.Tests.newUserId;
 import static org.spine3.time.ZoneOffsets.UTC;
 
 /**
- *
+ * Provides command context instances for test needs.
  */
 public class TestCommandContextFactory {
 
@@ -42,6 +42,8 @@ public class TestCommandContextFactory {
 
     /**
      * Creates a new {@link CommandContext} instance.
+     *
+     * @return {@link CommandContext} instance.
      */
     public static CommandContext createCommandContext() {
         final UserId userId = newUserId(newUuid());
@@ -52,6 +54,8 @@ public class TestCommandContextFactory {
 
     /**
      * Creates a new {@link CommandContext} instance.
+     *
+     * @return {@link CommandContext} instance.
      */
     public static CommandContext createCommandContext(UserId userId, CommandId commandId, Timestamp when) {
         final CommandContext.Builder builder = CommandContext.newBuilder()

@@ -21,8 +21,8 @@ package org.spine3.examples.todolist.aggregate;
 
 import com.google.common.base.Throwables;
 import com.google.protobuf.Timestamp;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.CompleteTask;
 import org.spine3.examples.todolist.CreateBasicTask;
@@ -93,7 +93,7 @@ public class TaskAggregateTest {
                                            .setValue(newUuid())
                                            .build();
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         aggregate = new TaskAggregate(ID);
         createTaskCmd = createTaskInstance();
@@ -373,7 +373,7 @@ public class TaskAggregateTest {
     }
 
     @Test
-    public void handle_restore_task_command_when_task_is_completed(){
+    public void handle_restore_task_command_when_task_is_completed() {
         try {
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
@@ -476,8 +476,8 @@ public class TaskAggregateTest {
     }
 
     @Test
-    public void handle_complete_task_command_when_task_is_deleted(){
-        try{
+    public void handle_complete_task_command_when_task_is_deleted() {
+        try {
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -489,8 +489,8 @@ public class TaskAggregateTest {
     }
 
     @Test
-    public void handle_complete_task_command_when_task_in_draft_state(){
-        try{
+    public void handle_complete_task_command_when_task_in_draft_state() {
+        try {
             aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -502,8 +502,8 @@ public class TaskAggregateTest {
     }
 
     @Test
-    public void handle_reopen_task_command_when_task_deleted(){
-        try{
+    public void handle_reopen_task_command_when_task_deleted() {
+        try {
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -515,8 +515,8 @@ public class TaskAggregateTest {
     }
 
     @Test
-    public void handle_reopen_task_command_when_task_in_draft_state(){
-        try{
+    public void handle_reopen_task_command_when_task_in_draft_state() {
+        try {
             aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -528,8 +528,8 @@ public class TaskAggregateTest {
     }
 
     @Test
-    public void handle_delete_task_command_when_task_is_already_deleted(){
-        try{
+    public void handle_delete_task_command_when_task_is_already_deleted() {
+        try {
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -539,6 +539,5 @@ public class TaskAggregateTest {
             assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
         }
     }
-
 
 }
