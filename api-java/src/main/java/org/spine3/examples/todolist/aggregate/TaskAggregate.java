@@ -321,14 +321,14 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     private void validateCommand(CreateBasicTask cmd) {
-        String description = cmd.getDescription();
+        final String description = cmd.getDescription();
         if (description != null && description.length() < 3) {
             throw new IllegalArgumentException("Description should contains at least 3 alphanumeric symbols");
         }
     }
 
     private void validateCommand(UpdateTaskDescription cmd) {
-        String description = cmd.getUpdatedDescription();
+        final String description = cmd.getUpdatedDescription();
 
         checkNotNull(description, "Description cannot be null.");
 
@@ -365,7 +365,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     private void validateCommand(FinalizeDraft cmd) {
-        Task state = getState();
+        final Task state = getState();
         if (state.getDeleted()) {
             throw new IllegalArgumentException("Command cannot be applied to the deleted draft.");
         }
