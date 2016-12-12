@@ -19,6 +19,7 @@
 //
 package org.spine3.examples.todolist.aggregate;
 
+import com.google.protobuf.Message;
 import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelCreated;
@@ -30,6 +31,9 @@ import org.spine3.examples.todolist.UpdateLabelDetails;
 import org.spine3.server.aggregate.Aggregate;
 import org.spine3.server.aggregate.Apply;
 import org.spine3.server.command.Assign;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The label aggregate which manages the state of the task label.
@@ -50,16 +54,16 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     }
 
     @Assign
-    public LabelCreated handle(CreateBasicLabel cmd) {
+    public List<? extends Message> handle(CreateBasicLabel cmd) {
         final LabelCreated result = LabelCreated.newBuilder()
                                                 .setDetails(LabelDetails.newBuilder()
                                                                         .setTitle(cmd.getLabelTitle()))
                                                 .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     @Assign
-    public LabelDetailsUpdated handle(UpdateLabelDetails cmd) {
+    public List<? extends Message> handle(UpdateLabelDetails cmd) {
         final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
                                                               .setColor(getState().getColor())
                                                               .setTitle(getState().getTitle())
@@ -75,7 +79,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
                                                               .setPreviousDetails(previousLabelDetails)
                                                               .setNewDetails(newLabelDetails)
                                                               .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     @Apply

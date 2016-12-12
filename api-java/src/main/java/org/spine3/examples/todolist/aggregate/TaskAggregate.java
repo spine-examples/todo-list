@@ -19,6 +19,7 @@
 //
 package org.spine3.examples.todolist.aggregate;
 
+import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
 import org.spine3.examples.todolist.AssignLabelToTask;
 import org.spine3.examples.todolist.CompleteTask;
@@ -53,6 +54,9 @@ import org.spine3.server.aggregate.Aggregate;
 import org.spine3.server.aggregate.Apply;
 import org.spine3.server.command.Assign;
 
+import java.util.Collections;
+import java.util.List;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -74,17 +78,17 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public TaskCreated handle(CreateBasicTask cmd) {
+    public List<? extends Message> handle(CreateBasicTask cmd) {
         validateCommand(cmd);
         final TaskCreated result = TaskCreated.newBuilder()
                                               .setDetails(TaskDetails.newBuilder()
                                                                      .setDescription(cmd.getDescription()))
                                               .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     @Assign
-    public TaskDescriptionUpdated handle(UpdateTaskDescription cmd) {
+    public List<? extends Message> handle(UpdateTaskDescription cmd) {
         validateCommand(cmd);
         final String previousDescription = getState().getDescription();
         final TaskDescriptionUpdated result = TaskDescriptionUpdated.newBuilder()
@@ -92,11 +96,11 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                                                                     .setPreviousDescription(previousDescription)
                                                                     .setNewDescription(cmd.getUpdatedDescription())
                                                                     .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     @Assign
-    public TaskDueDateUpdated handle(UpdateTaskDueDate cmd) {
+    public List<? extends Message> handle(UpdateTaskDueDate cmd) {
         validateCommand(cmd);
         final Timestamp previousDueDate = getState().getDueDate();
         final TaskDueDateUpdated result = TaskDueDateUpdated.newBuilder()
@@ -104,11 +108,11 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                                                             .setPreviousDueDate(previousDueDate)
                                                             .setNewDueDate(cmd.getUpdatedDueDate())
                                                             .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     @Assign
-    public TaskPriorityUpdated handle(UpdateTaskPriority cmd) {
+    public List<? extends Message> handle(UpdateTaskPriority cmd) {
         validateCommand(cmd);
         final TaskPriority previousPriority = getState().getPriority();
         final TaskPriorityUpdated result = TaskPriorityUpdated.newBuilder()
@@ -116,81 +120,81 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                                                               .setPreviousPriority(previousPriority)
                                                               .setNewPriority(cmd.getUpdatedPriority())
                                                               .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     @Assign
-    public TaskReopened handle(ReopenTask cmd) {
+    public List<? extends Message> handle(ReopenTask cmd) {
         validateCommand(cmd);
         final TaskReopened result = TaskReopened.newBuilder()
                                                 .setId(cmd.getId())
                                                 .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     @Assign
-    public TaskDeleted handle(DeleteTask cmd) {
+    public List<? extends Message> handle(DeleteTask cmd) {
         validateCommand(cmd);
         final TaskDeleted result = TaskDeleted.newBuilder()
                                               .setId(cmd.getId())
                                               .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     @Assign
-    public DeletedTaskRestored handle(RestoreDeletedTask cmd) {
+    public List<? extends Message> handle(RestoreDeletedTask cmd) {
         validateCommand(cmd);
         final DeletedTaskRestored result = DeletedTaskRestored.newBuilder()
                                                               .setId(cmd.getId())
                                                               .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     @Assign
-    public TaskCompleted handle(CompleteTask cmd) {
+    public List<? extends Message> handle(CompleteTask cmd) {
         validateCommand(cmd);
         final TaskCompleted result = TaskCompleted.newBuilder()
                                                   .setId(cmd.getId())
                                                   .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     @Assign
-    public TaskDraftFinalized handle(FinalizeDraft cmd) {
+    public List<? extends Message> handle(FinalizeDraft cmd) {
         validateCommand(cmd);
         final TaskDraftFinalized result = TaskDraftFinalized.newBuilder()
                                                             .setId(cmd.getId())
                                                             .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     @Assign
-    public LabelRemovedFromTask handle(RemoveLabelFromTask cmd) {
+    public List<? extends Message> handle(RemoveLabelFromTask cmd) {
         validateCommand(cmd);
         final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
                                                                 .setId(cmd.getId())
                                                                 .setLabelId(cmd.getLabelId())
                                                                 .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     @Assign
-    public LabelAssignedToTask handle(AssignLabelToTask cmd) {
+    public List<? extends Message> handle(AssignLabelToTask cmd) {
         validateCommand(cmd);
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
                                                               .setId(cmd.getId())
                                                               .setLabelId(cmd.getLabelId())
                                                               .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     //TODO[illia.shepilov]: should to be updated after defining draft creation
     @Assign
-    public TaskDraftCreated handle(CreateDraft cmd) {
+    public List<? extends Message> handle(CreateDraft cmd) {
         final TaskDraftCreated result = TaskDraftCreated.newBuilder()
                                                         .setDraftCreationTime(Timestamps.getCurrentTime())
                                                         .build();
-        return result;
+        return Collections.singletonList(result);
     }
 
     @Apply
@@ -284,36 +288,36 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     // when it is not needed?
     // It is doing for using one namespace ("validateCommand")
 
-    private void validateCommandOnCompletion() {
+    private void isCommandCompletedCheck() {
         if (getState().getCompleted()) {
             throw new IllegalArgumentException("Command cannot be applied on completed task.");
         }
     }
 
-    private void validateCommandOnDeletion() {
+    private void isCommandDeletedCheck() {
         if (getState().getDeleted()) {
             throw new IllegalArgumentException("Command cannot be applied on deleted task.");
         }
     }
 
     private void validateCommand(AssignLabelToTask cmd) {
-        validateCommandOnDeletion();
-        validateCommandOnCompletion();
+        isCommandDeletedCheck();
+        isCommandCompletedCheck();
     }
 
     private void validateCommand(RemoveLabelFromTask cmd) {
-        validateCommandOnDeletion();
-        validateCommandOnCompletion();
+        isCommandDeletedCheck();
+        isCommandCompletedCheck();
     }
 
     private void validateCommand(UpdateTaskDueDate cmd) {
-        validateCommandOnDeletion();
-        validateCommandOnCompletion();
+        isCommandDeletedCheck();
+        isCommandCompletedCheck();
     }
 
     private void validateCommand(UpdateTaskPriority cmd) {
-        validateCommandOnDeletion();
-        validateCommandOnCompletion();
+        isCommandDeletedCheck();
+        isCommandCompletedCheck();
     }
 
     private void validateCommand(CreateBasicTask cmd) {
@@ -332,8 +336,8 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
             throw new IllegalArgumentException("Description should contains at least 3 alphanumeric symbols.");
         }
 
-        validateCommandOnDeletion();
-        validateCommandOnCompletion();
+        isCommandDeletedCheck();
+        isCommandCompletedCheck();
     }
 
     private void validateCommand(RestoreDeletedTask cmd) {
@@ -343,11 +347,11 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     private void validateCommand(DeleteTask cmd) {
-        validateCommandOnDeletion();
+        isCommandDeletedCheck();
     }
 
     private void validateCommand(CompleteTask cmd) {
-        validateCommandOnDeletion();
+        isCommandDeletedCheck();
 
         if (getState().getDraft()) {
             throw new IllegalArgumentException("Command cannot be applied on task in draft state.");
