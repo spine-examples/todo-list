@@ -162,11 +162,16 @@ public class TaskProjection extends Projection<TaskId, Task> {
 
     @Subscribe
     public void on(LabelRemovedFromTask event) {
-        final Task updatedState = getState().newBuilderForType()
-                                            .setId(event.getId())
-                                            .addLabelIds(event.getLabelId())
-                                            .build();
-        incrementState(updatedState);
+        final int indexToDelete = getState().getLabelIdsList()
+                                            .indexOf(event.getLabelId());
+        final Task.Builder taskBuilder = getState().newBuilderForType()
+                                                   .setId(event.getId());
+
+        if (indexToDelete != -1) {
+            taskBuilder.removeLabelIds(indexToDelete);
+        }
+
+        incrementState(taskBuilder.build());
     }
 
     @Subscribe

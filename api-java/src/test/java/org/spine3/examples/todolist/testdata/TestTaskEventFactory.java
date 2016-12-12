@@ -3,6 +3,7 @@ package org.spine3.examples.todolist.testdata;
 import com.google.protobuf.Timestamp;
 import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.LabelAssignedToTask;
+import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.TaskCompleted;
 import org.spine3.examples.todolist.TaskCreated;
 import org.spine3.examples.todolist.TaskDeleted;
@@ -117,6 +118,12 @@ public class TestTaskEventFactory {
         return LabelAssignedToTask.newBuilder()
                                   .setLabelId(labelId)
                                   .build();
+    }
+
+    public static LabelRemovedFromTask labelRemovedFromTaskInstance() {
+        return LabelRemovedFromTask.newBuilder()
+                                   .setLabelId(LABEL_ID)
+                                   .build();
     }
 
 }

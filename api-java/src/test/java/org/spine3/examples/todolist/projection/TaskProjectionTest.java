@@ -24,6 +24,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.LabelAssignedToTask;
+import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.Task;
 import org.spine3.examples.todolist.TaskCompleted;
 import org.spine3.examples.todolist.TaskCreated;
@@ -54,6 +55,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.TASK_DU
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.TASK_PRIORITY;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.deletedTaskRestoredInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.labelAssignedToTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.labelRemovedFromTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskCompletedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskCreatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskDeletedInstance;
@@ -81,6 +83,7 @@ class TaskProjectionTest {
     private TaskDeleted taskDeletedEvent;
     private DeletedTaskRestored deletedTaskRestoredEvent;
     private LabelAssignedToTask labelAssignedToTaskEvent;
+    private LabelRemovedFromTask labelRemovedFromTaskEvent;
     private static final TaskId ID = TaskId.newBuilder()
                                            .setValue(newUuid())
                                            .build();
@@ -99,6 +102,7 @@ class TaskProjectionTest {
         taskDeletedEvent = taskDeletedInstance();
         deletedTaskRestoredEvent = deletedTaskRestoredInstance();
         labelAssignedToTaskEvent = labelAssignedToTaskInstance();
+        labelRemovedFromTaskEvent = labelRemovedFromTaskInstance();
     }
 
     @Test
@@ -207,13 +211,22 @@ class TaskProjectionTest {
 
     @Test
     public void return_state_when_label_assigned_to_task_event() {
-        int expectedListSize = 1;
+        final int expectedListSize = 1;
         projection.on(labelAssignedToTaskEvent);
         Task state = projection.getState();
         List<TaskLabelId> labelsList = state.getLabelIdsList();
 
         assertEquals(expectedListSize, labelsList.size());
         assertEquals(LABEL_ID, labelsList.get(0));
+    }
+
+    @Test
+    public void return_state_when_label_assigned_to_task_and_removed_from_task_events() {
+        projection.on(labelRemovedFromTaskEvent);
+        Task state = projection.getState();
+
+        assertEquals(0, state.getLabelIdsList()
+                             .size());
     }
 
 }

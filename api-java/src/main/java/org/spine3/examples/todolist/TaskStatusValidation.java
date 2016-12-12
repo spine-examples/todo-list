@@ -30,9 +30,9 @@ public class TaskStatusValidation {
      * Verifies allowed or not transition from current state to new state of task.
      *
      * @param currentStatus current task status
-     * @param newStatus new task status
+     * @param newStatus     new task status
      */
-    public static void isValidateCommandTransition(TaskStatus currentStatus, TaskStatus newStatus) {
+    public static void validateCommandTransition(TaskStatus currentStatus, TaskStatus newStatus) {
         final boolean isValid = TaskStatusTransition.isValid(currentStatus, newStatus);
 
         if (!isValid) {
@@ -50,7 +50,7 @@ public class TaskStatusValidation {
      * @throws IllegalStateException if status, passed to the method,
      *                               {@code TaskStatus.COMPLETED} or {@code TaskStatus.DELETED}.
      */
-    public static void isCommandCompletedOrDeletedCheck(TaskStatus currentStatus) {
+    public static void checkCompletedOrDeletedCommand(TaskStatus currentStatus) {
         isCommandDeletedCheck(currentStatus);
         isCommandCompletedCheck(currentStatus);
     }

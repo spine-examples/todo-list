@@ -59,8 +59,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.spine3.examples.todolist.TaskStatusValidation.isCommandCompletedOrDeletedCheck;
-import static org.spine3.examples.todolist.TaskStatusValidation.isValidateCommandTransition;
+import static org.spine3.examples.todolist.TaskStatusValidation.checkCompletedOrDeletedCommand;
+import static org.spine3.examples.todolist.TaskStatusValidation.validateCommandTransition;
 
 /**
  * The task aggregate which manages the state of the task.
@@ -104,7 +104,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(UpdateTaskDueDate cmd) {
-        isCommandCompletedOrDeletedCheck(getState().getTaskStatus());
+        checkCompletedOrDeletedCommand(getState().getTaskStatus());
         final Timestamp previousDueDate = getState().getDueDate();
         final TaskDueDateUpdated result = TaskDueDateUpdated.newBuilder()
                                                             .setId(cmd.getId())
@@ -116,7 +116,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(UpdateTaskPriority cmd) {
-        isCommandCompletedOrDeletedCheck(getState().getTaskStatus());
+        checkCompletedOrDeletedCommand(getState().getTaskStatus());
         final TaskPriority previousPriority = getState().getPriority();
         final TaskPriorityUpdated result = TaskPriorityUpdated.newBuilder()
                                                               .setId(cmd.getId())
@@ -128,7 +128,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(ReopenTask cmd) {
-        isValidateCommandTransition(getState().getTaskStatus(), TaskStatus.OPEN);
+        validateCommandTransition(getState().getTaskStatus(), TaskStatus.OPEN);
         final TaskReopened result = TaskReopened.newBuilder()
                                                 .setId(cmd.getId())
                                                 .build();
@@ -137,7 +137,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(DeleteTask cmd) {
-        isValidateCommandTransition(getState().getTaskStatus(), TaskStatus.DELETED);
+        validateCommandTransition(getState().getTaskStatus(), TaskStatus.DELETED);
         final TaskDeleted result = TaskDeleted.newBuilder()
                                               .setId(cmd.getId())
                                               .build();
@@ -146,7 +146,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(RestoreDeletedTask cmd) {
-        isValidateCommandTransition(getState().getTaskStatus(), TaskStatus.OPEN);
+        validateCommandTransition(getState().getTaskStatus(), TaskStatus.OPEN);
         final DeletedTaskRestored result = DeletedTaskRestored.newBuilder()
                                                               .setId(cmd.getId())
                                                               .build();
@@ -155,7 +155,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(CompleteTask cmd) {
-        isValidateCommandTransition(getState().getTaskStatus(), TaskStatus.COMPLETED);
+        validateCommandTransition(getState().getTaskStatus(), TaskStatus.COMPLETED);
         final TaskCompleted result = TaskCompleted.newBuilder()
                                                   .setId(cmd.getId())
                                                   .build();
@@ -164,7 +164,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(FinalizeDraft cmd) {
-        isValidateCommandTransition(getState().getTaskStatus(), TaskStatus.FINALIZED);
+        validateCommandTransition(getState().getTaskStatus(), TaskStatus.FINALIZED);
         final TaskDraftFinalized result = TaskDraftFinalized.newBuilder()
                                                             .setId(cmd.getId())
                                                             .build();
@@ -173,7 +173,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(RemoveLabelFromTask cmd) {
-        isCommandCompletedOrDeletedCheck(getState().getTaskStatus());
+        checkCompletedOrDeletedCommand(getState().getTaskStatus());
         final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
                                                                 .setId(cmd.getId())
                                                                 .setLabelId(cmd.getLabelId())
@@ -183,7 +183,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(AssignLabelToTask cmd) {
-        isCommandCompletedOrDeletedCheck(getState().getTaskStatus());
+        checkCompletedOrDeletedCommand(getState().getTaskStatus());
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
                                                               .setId(cmd.getId())
                                                               .setLabelId(cmd.getLabelId())
@@ -273,8 +273,14 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Apply
     private void eventOnRemoveLabelFromTask(LabelRemovedFromTask event) {
-        getBuilder().setId(event.getId())
-                    .addLabelIds(event.getLabelId());
+        int indexToDelete = getState().getLabelIdsList()
+                                      .indexOf(event.getLabelId());
+        getBuilder().setId(event.getId());
+
+        if (indexToDelete != -1) {
+            getBuilder().removeLabelIds(indexToDelete);
+        }
+
     }
 
     //TODO[illia.shepilov]: should to be updated after defining draft creation
@@ -302,7 +308,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
             throw new IllegalStateException("Description should contains at least 3 alphanumeric symbols.");
         }
 
-        isCommandCompletedOrDeletedCheck(getState().getTaskStatus());
+        checkCompletedOrDeletedCommand(getState().getTaskStatus());
     }
 
 }
