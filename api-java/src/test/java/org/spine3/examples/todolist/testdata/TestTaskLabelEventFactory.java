@@ -24,6 +24,7 @@ import org.spine3.examples.todolist.LabelCreated;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
+import org.spine3.examples.todolist.TaskDescriptionUpdated;
 
 /**
  * Provides methods for instantiation task label events for test needs.
@@ -68,5 +69,6 @@ public class TestTaskLabelEventFactory {
     public static LabelRemovedFromTask labelRemovedFromTaskInstance() {
         return LabelRemovedFromTask.getDefaultInstance();
     }
+
 
 }

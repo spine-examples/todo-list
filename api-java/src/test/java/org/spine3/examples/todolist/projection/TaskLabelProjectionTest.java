@@ -23,7 +23,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelCreated;
 import org.spine3.examples.todolist.LabelDetails;
@@ -50,8 +49,6 @@ public class TaskLabelProjectionTest {
     private LabelCreated labelCreatedEvent;
     private LabelRemovedFromTask labelRemovedFromTaskEvent;
     private LabelDetailsUpdated labelDetailsUpdatedEvent;
-    private LabelAssignedToTask labelAssignedToTaskEvent;
-    private LabelDetails labelDetailsEvent;
     private static final TaskLabelId ID = TaskLabelId.newBuilder()
                                                      .setValue(newUuid())
                                                      .build();

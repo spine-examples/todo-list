@@ -58,9 +58,11 @@ public class TaskProjection extends Projection<TaskId, Task> {
 
     @Subscribe
     public void on(TaskCreated event) {
+        final TaskDetails taskDetails = event.getDetails();
         final Task state = getState().newBuilderForType()
-                                     .setDescription(event.getDetails()
-                                                          .getDescription())
+                                     .setDescription(taskDetails.getDescription())
+                                     .setPriority(taskDetails.getPriority())
+                                     .setCompleted(taskDetails.getCompleted())
                                      .build();
         incrementState(state);
     }
@@ -72,6 +74,7 @@ public class TaskProjection extends Projection<TaskId, Task> {
                                      .setDescription(taskDetails.getDescription())
                                      .setCompleted(taskDetails.getCompleted())
                                      .setPriority(taskDetails.getPriority())
+                                     .setDraft(true)
                                      .build();
         incrementState(state);
     }
@@ -107,6 +110,7 @@ public class TaskProjection extends Projection<TaskId, Task> {
     public void on(TaskDraftFinalized event) {
         final Task state = getState().newBuilderForType()
                                      .setId(event.getId())
+                                     .setDraft(false)
                                      .build();
         incrementState(state);
     }
@@ -148,6 +152,24 @@ public class TaskProjection extends Projection<TaskId, Task> {
     }
 
     @Subscribe
+    public void on(LabelAssignedToTask event) {
+        final Task updatedState = getState().newBuilderForType()
+                                            .setId(event.getId())
+                                            .addLabelIds(event.getLabelId())
+                                            .build();
+        incrementState(updatedState);
+    }
+
+    @Subscribe
+    public void on(LabelRemovedFromTask event) {
+        final Task updatedState = getState().newBuilderForType()
+                                            .setId(event.getId())
+                                            .addLabelIds(event.getLabelId())
+                                            .build();
+        incrementState(updatedState);
+    }
+
+    @Subscribe
     public void on(TaskDetails event) {
         final Task state = getState().newBuilderForType()
                                      .setCompleted(event.getCompleted())
@@ -155,32 +177,6 @@ public class TaskProjection extends Projection<TaskId, Task> {
                                      .setPriority(event.getPriority())
                                      .build();
         incrementState(state);
-    }
-
-    @Subscribe
-    public void on(LabelAssignedToTask event) {
-        final Task currentState = getState();
-        final int nextLabelIndex = currentState.getLabelIdsList()
-                                               .size();
-
-        final Task updatedState = getState().newBuilderForType()
-                                            .setId(event.getId())
-                                            .setLabelIds(nextLabelIndex, event.getLabelId())
-                                            .build();
-        incrementState(updatedState);
-    }
-
-    @Subscribe
-    public void on(LabelRemovedFromTask event) {
-        final Task currentState = getState();
-        final int nextLabelIndex = currentState.getLabelIdsList()
-                                               .size();
-
-        final Task updatedState = getState().newBuilderForType()
-                                            .setId(event.getId())
-                                            .setLabelIds(nextLabelIndex, event.getLabelId())
-                                            .build();
-        incrementState(updatedState);
     }
 
 }

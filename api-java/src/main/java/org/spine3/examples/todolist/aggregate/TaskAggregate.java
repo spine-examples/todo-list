@@ -259,18 +259,14 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Apply
     private void eventOnAssignLabelToTask(LabelAssignedToTask event) {
-        final int labelListSize = getBuilder().getLabelIdsList()
-                                              .size();
         getBuilder().setId(event.getId())
-                    .addLabelIds(labelListSize, event.getLabelId());
+                    .addLabelIds(event.getLabelId());
     }
 
     @Apply
     private void eventOnRemoveLabelFromTask(LabelRemovedFromTask event) {
-        final int labelListSize = getBuilder().getLabelIdsList()
-                                              .size();
         getBuilder().setId(event.getId())
-                    .addLabelIds(labelListSize, event.getLabelId());
+                    .addLabelIds(event.getLabelId());
     }
 
     //TODO[illia.shepilov]: should to be updated after defining draft creation
