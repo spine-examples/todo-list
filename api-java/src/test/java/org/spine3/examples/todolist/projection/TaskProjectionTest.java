@@ -39,13 +39,15 @@ import org.spine3.examples.todolist.TaskPriorityUpdated;
 import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.protobuf.Timestamps;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Identifiers.newUuid;
+import static org.spine3.examples.todolist.TaskStatus.COMPLETED;
+import static org.spine3.examples.todolist.TaskStatus.DELETED;
+import static org.spine3.examples.todolist.TaskStatus.DRAFT;
+import static org.spine3.examples.todolist.TaskStatus.FINALIZED;
+import static org.spine3.examples.todolist.TaskStatus.OPEN;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.LABEL_ID;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.TASK_DUE_DATE;
@@ -115,7 +117,7 @@ class TaskProjectionTest {
 
         assertEquals(DESCRIPTION, state.getDescription());
         assertEquals(TASK_PRIORITY, state.getPriority());
-        assertTrue(state.getDraft());
+        assertEquals(DRAFT, state.getTaskStatus());
     }
 
     @Test
@@ -168,7 +170,7 @@ class TaskProjectionTest {
         projection.on(taskDraftFinalizedEvent);
         final Task state = projection.getState();
 
-        assertFalse(state.getDraft());
+        assertEquals(FINALIZED, state.getTaskStatus());
     }
 
     @Test
@@ -176,7 +178,7 @@ class TaskProjectionTest {
         projection.on(taskCompletedEvent);
         final Task state = projection.getState();
 
-        assertTrue(state.getCompleted());
+        assertEquals(COMPLETED, state.getTaskStatus());
     }
 
     @Test
@@ -184,7 +186,7 @@ class TaskProjectionTest {
         projection.on(taskReopenedEvent);
         final Task state = projection.getState();
 
-        assertFalse(state.getCompleted());
+        assertEquals(OPEN, state.getTaskStatus());
     }
 
     @Test
@@ -192,7 +194,7 @@ class TaskProjectionTest {
         projection.on(taskDeletedEvent);
         final Task state = projection.getState();
 
-        assertTrue(state.getDeleted());
+        assertEquals(DELETED, state.getTaskStatus());
     }
 
     @Test
@@ -200,7 +202,7 @@ class TaskProjectionTest {
         projection.on(deletedTaskRestoredEvent);
         final Task state = projection.getState();
 
-        assertFalse(state.getDeleted());
+        assertEquals(OPEN, state.getTaskStatus());
     }
 
     @Test

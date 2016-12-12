@@ -46,6 +46,7 @@ import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskPriorityUpdated;
 import org.spine3.examples.todolist.TaskReopened;
+import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
@@ -58,6 +59,8 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.spine3.examples.todolist.TaskStatusValidation.isCommandCompletedOrDeletedCheck;
+import static org.spine3.examples.todolist.TaskStatusValidation.isValidateCommandTransition;
 
 /**
  * The task aggregate which manages the state of the task.
@@ -101,7 +104,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(UpdateTaskDueDate cmd) {
-        validateCommand(cmd);
+        isCommandCompletedOrDeletedCheck(getState().getTaskStatus());
         final Timestamp previousDueDate = getState().getDueDate();
         final TaskDueDateUpdated result = TaskDueDateUpdated.newBuilder()
                                                             .setId(cmd.getId())
@@ -113,7 +116,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(UpdateTaskPriority cmd) {
-        validateCommand(cmd);
+        isCommandCompletedOrDeletedCheck(getState().getTaskStatus());
         final TaskPriority previousPriority = getState().getPriority();
         final TaskPriorityUpdated result = TaskPriorityUpdated.newBuilder()
                                                               .setId(cmd.getId())
@@ -125,7 +128,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(ReopenTask cmd) {
-        validateCommand(cmd);
+        isValidateCommandTransition(getState().getTaskStatus(), TaskStatus.OPEN);
         final TaskReopened result = TaskReopened.newBuilder()
                                                 .setId(cmd.getId())
                                                 .build();
@@ -134,7 +137,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(DeleteTask cmd) {
-        validateCommand(cmd);
+        isValidateCommandTransition(getState().getTaskStatus(), TaskStatus.DELETED);
         final TaskDeleted result = TaskDeleted.newBuilder()
                                               .setId(cmd.getId())
                                               .build();
@@ -143,7 +146,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(RestoreDeletedTask cmd) {
-        validateCommand(cmd);
+        isValidateCommandTransition(getState().getTaskStatus(), TaskStatus.OPEN);
         final DeletedTaskRestored result = DeletedTaskRestored.newBuilder()
                                                               .setId(cmd.getId())
                                                               .build();
@@ -152,7 +155,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(CompleteTask cmd) {
-        validateCommand(cmd);
+        isValidateCommandTransition(getState().getTaskStatus(), TaskStatus.COMPLETED);
         final TaskCompleted result = TaskCompleted.newBuilder()
                                                   .setId(cmd.getId())
                                                   .build();
@@ -161,7 +164,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(FinalizeDraft cmd) {
-        validateCommand(cmd);
+        isValidateCommandTransition(getState().getTaskStatus(), TaskStatus.FINALIZED);
         final TaskDraftFinalized result = TaskDraftFinalized.newBuilder()
                                                             .setId(cmd.getId())
                                                             .build();
@@ -170,7 +173,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(RemoveLabelFromTask cmd) {
-        validateCommand(cmd);
+        isCommandCompletedOrDeletedCheck(getState().getTaskStatus());
         final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
                                                                 .setId(cmd.getId())
                                                                 .setLabelId(cmd.getLabelId())
@@ -180,7 +183,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(AssignLabelToTask cmd) {
-        validateCommand(cmd);
+        isCommandCompletedOrDeletedCheck(getState().getTaskStatus());
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
                                                               .setId(cmd.getId())
                                                               .setLabelId(cmd.getLabelId())
@@ -199,11 +202,12 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Apply
     private void eventOnCreateTask(TaskCreated event) {
+        final TaskDetails taskDetails = event.getDetails();
         getBuilder().setId(event.getId())
                     .setCreated(Timestamps.getCurrentTime())
-                    .setDescription(event.getDetails()
-                                         .getDescription())
-                    .setPriority(TaskPriority.NORMAL);
+                    .setDescription(taskDetails.getDescription())
+                    .setPriority(taskDetails.getPriority())
+                    .setTaskStatus(TaskStatus.FINALIZED);
     }
 
     @Apply
@@ -227,38 +231,38 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     @Apply
     private void eventOnReopenTask(TaskReopened event) {
         getBuilder().setId(event.getId())
-                    .setCompleted(false);
+                    .setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
     private void eventOnDeleteTask(TaskDeleted event) {
         getBuilder().setId(event.getId())
-                    .setDeleted(true);
+                    .setTaskStatus(TaskStatus.DELETED);
     }
 
     @Apply
     private void eventOnRestoreDeletedTask(DeletedTaskRestored event) {
         getBuilder().setId(event.getId())
-                    .setDeleted(false);
+                    .setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
     private void eventOnCompleteTask(TaskCompleted event) {
         getBuilder().setId(event.getId())
-                    .setCompleted(true);
+                    .setTaskStatus(TaskStatus.COMPLETED);
     }
 
     @Apply
     private void eventOnTaskDetails(TaskDetails event) {
         getBuilder().setPriority(event.getPriority())
                     .setDescription(event.getDescription())
-                    .setCompleted(event.getCompleted());
+                    .setTaskStatus(event.getTaskStatus());
     }
 
     @Apply
     private void eventOnFinalizeTaskDraft(TaskDraftFinalized event) {
         getBuilder().setId(event.getId())
-                    .setDraft(false);
+                    .setTaskStatus(TaskStatus.FINALIZED);
     }
 
     @Apply
@@ -280,98 +284,25 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                     .setCreated(event.getDraftCreationTime())
                     .setDescription(event.getDetails()
                                          .getDescription())
-                    .setDraft(true);
-    }
-
-    //TODO[illia.shepilov]: Need clarification
-    // is it good idea to pass command object to the method
-    // when it is not needed?
-    // It is doing for using one namespace ("validateCommand")
-
-    private void isCommandCompletedCheck() {
-        if (getState().getCompleted()) {
-            throw new IllegalArgumentException("Command cannot be applied on completed task.");
-        }
-    }
-
-    private void isCommandDeletedCheck() {
-        if (getState().getDeleted()) {
-            throw new IllegalArgumentException("Command cannot be applied on deleted task.");
-        }
-    }
-
-    private void validateCommand(AssignLabelToTask cmd) {
-        isCommandDeletedCheck();
-        isCommandCompletedCheck();
-    }
-
-    private void validateCommand(RemoveLabelFromTask cmd) {
-        isCommandDeletedCheck();
-        isCommandCompletedCheck();
-    }
-
-    private void validateCommand(UpdateTaskDueDate cmd) {
-        isCommandDeletedCheck();
-        isCommandCompletedCheck();
-    }
-
-    private void validateCommand(UpdateTaskPriority cmd) {
-        isCommandDeletedCheck();
-        isCommandCompletedCheck();
+                    .setTaskStatus(TaskStatus.DRAFT);
     }
 
     private void validateCommand(CreateBasicTask cmd) {
         final String description = cmd.getDescription();
         if (description != null && description.length() < 3) {
-            throw new IllegalArgumentException("Description should contains at least 3 alphanumeric symbols");
+            throw new IllegalStateException("Description should contains at least 3 alphanumeric symbols");
         }
     }
 
     private void validateCommand(UpdateTaskDescription cmd) {
         final String description = cmd.getUpdatedDescription();
-
         checkNotNull(description, "Description cannot be null.");
 
         if (description.length() < 3) {
-            throw new IllegalArgumentException("Description should contains at least 3 alphanumeric symbols.");
+            throw new IllegalStateException("Description should contains at least 3 alphanumeric symbols.");
         }
 
-        isCommandDeletedCheck();
-        isCommandCompletedCheck();
-    }
-
-    private void validateCommand(RestoreDeletedTask cmd) {
-        if (!getState().getDeleted()) {
-            throw new IllegalArgumentException("Command cannot be applied on not deleted task.");
-        }
-    }
-
-    private void validateCommand(DeleteTask cmd) {
-        isCommandDeletedCheck();
-    }
-
-    private void validateCommand(CompleteTask cmd) {
-        isCommandDeletedCheck();
-
-        if (getState().getDraft()) {
-            throw new IllegalArgumentException("Command cannot be applied on task in draft state.");
-        }
-    }
-
-    private void validateCommand(ReopenTask cmd) {
-        if (!getState().getCompleted()) {
-            throw new IllegalArgumentException("Command cannot be applied on not completed task.");
-        }
-    }
-
-    private void validateCommand(FinalizeDraft cmd) {
-        final Task state = getState();
-        if (state.getDeleted()) {
-            throw new IllegalArgumentException("Command cannot be applied to the deleted draft.");
-        }
-        if (!state.getDraft()) {
-            throw new IllegalArgumentException("Command applicable to the draft tasks only.");
-        }
+        isCommandCompletedOrDeletedCheck(getState().getTaskStatus());
     }
 
 }

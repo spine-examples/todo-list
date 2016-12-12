@@ -34,6 +34,7 @@ import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskPriorityUpdated;
 import org.spine3.examples.todolist.TaskReopened;
+import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.server.event.Subscribe;
 import org.spine3.server.projection.Projection;
 
@@ -62,7 +63,7 @@ public class TaskProjection extends Projection<TaskId, Task> {
         final Task state = getState().newBuilderForType()
                                      .setDescription(taskDetails.getDescription())
                                      .setPriority(taskDetails.getPriority())
-                                     .setCompleted(taskDetails.getCompleted())
+                                     .setTaskStatus(TaskStatus.FINALIZED)
                                      .build();
         incrementState(state);
     }
@@ -72,9 +73,8 @@ public class TaskProjection extends Projection<TaskId, Task> {
         final TaskDetails taskDetails = event.getDetails();
         final Task state = getState().newBuilderForType()
                                      .setDescription(taskDetails.getDescription())
-                                     .setCompleted(taskDetails.getCompleted())
                                      .setPriority(taskDetails.getPriority())
-                                     .setDraft(true)
+                                     .setTaskStatus(TaskStatus.DRAFT)
                                      .build();
         incrementState(state);
     }
@@ -110,7 +110,7 @@ public class TaskProjection extends Projection<TaskId, Task> {
     public void on(TaskDraftFinalized event) {
         final Task state = getState().newBuilderForType()
                                      .setId(event.getId())
-                                     .setDraft(false)
+                                     .setTaskStatus(TaskStatus.FINALIZED)
                                      .build();
         incrementState(state);
     }
@@ -119,7 +119,7 @@ public class TaskProjection extends Projection<TaskId, Task> {
     public void on(TaskCompleted event) {
         final Task state = getState().newBuilderForType()
                                      .setId(event.getId())
-                                     .setCompleted(true)
+                                     .setTaskStatus(TaskStatus.COMPLETED)
                                      .build();
         incrementState(state);
     }
@@ -128,7 +128,7 @@ public class TaskProjection extends Projection<TaskId, Task> {
     public void on(TaskReopened event) {
         final Task state = getState().newBuilderForType()
                                      .setId(event.getId())
-                                     .setCompleted(false)
+                                     .setTaskStatus(TaskStatus.OPEN)
                                      .build();
         incrementState(state);
     }
@@ -137,7 +137,7 @@ public class TaskProjection extends Projection<TaskId, Task> {
     public void on(TaskDeleted event) {
         final Task state = getState().newBuilderForType()
                                      .setId(event.getId())
-                                     .setDeleted(true)
+                                     .setTaskStatus(TaskStatus.DELETED)
                                      .build();
         incrementState(state);
     }
@@ -146,7 +146,7 @@ public class TaskProjection extends Projection<TaskId, Task> {
     public void on(DeletedTaskRestored event) {
         final Task state = getState().newBuilderForType()
                                      .setId(event.getId())
-                                     .setDeleted(false)
+                                     .setTaskStatus(TaskStatus.OPEN)
                                      .build();
         incrementState(state);
     }
@@ -172,9 +172,9 @@ public class TaskProjection extends Projection<TaskId, Task> {
     @Subscribe
     public void on(TaskDetails event) {
         final Task state = getState().newBuilderForType()
-                                     .setCompleted(event.getCompleted())
                                      .setDescription(event.getDescription())
                                      .setPriority(event.getPriority())
+                                     .setTaskStatus(event.getTaskStatus())
                                      .build();
         incrementState(state);
     }

@@ -56,3 +56,21 @@ enum TaskPriority {
 
     LOW = 3;
 }
+
+// Variety of possible statuses for `Task`
+//
+enum TaskStatus {
+
+    // Used as an undefined value marker
+    TS_UNDEFINED = 0;
+
+    DRAFT = 1;
+
+    FINALIZED = 2;
+
+    OPEN = 3;
+
+    COMPLETED = 4;
+
+    DELETED = 5;
+}

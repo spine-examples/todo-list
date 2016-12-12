@@ -45,6 +45,7 @@ import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskPriorityUpdated;
+import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
@@ -53,11 +54,17 @@ import org.spine3.protobuf.Timestamps;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.spine3.base.Identifiers.newUuid;
+import static org.spine3.examples.todolist.TaskStatus.COMPLETED;
+import static org.spine3.examples.todolist.TaskStatus.DELETED;
+import static org.spine3.examples.todolist.TaskStatus.DRAFT;
+import static org.spine3.examples.todolist.TaskStatus.FINALIZED;
+import static org.spine3.examples.todolist.TaskStatus.OPEN;
+import static org.spine3.examples.todolist.TaskStatus.TS_UNDEFINED;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
@@ -81,11 +88,7 @@ public class TaskAggregateTest {
     private static final String COMPLETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied on completed task.";
     private static final String DELETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied on deleted task.";
     private static final String UNCOMPLETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied on not completed task.";
-    private static final String UNDELETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied on not deleted task.";
     private static final String INAPPROPRIATE_TASK_DESCRIPTION = "Description should contains at least 3 alphanumeric symbols.";
-    private static final String DELETED_DRAFT_EXCEPTION_MESSAGE = "Command cannot be applied to the deleted draft.";
-    private static final String TASK_IS_NOT_DRAFT_EXCEPTION_MESSAGE = "Command applicable to the draft tasks only.";
-    private static final String TASK_IN_DRAFT_STATE_EXCEPTION_MESSAGE = "Command cannot be applied on task in draft state.";
     private TaskAggregate aggregate;
     private CreateBasicTask createTaskCmd;
     private UpdateTaskDescription updateTaskDescriptionCmd;
@@ -190,7 +193,7 @@ public class TaskAggregateTest {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
+            assertTrue(cause instanceof IllegalStateException);
             assertEquals(INAPPROPRIATE_TASK_DESCRIPTION, cause.getMessage());
         }
     }
@@ -198,12 +201,13 @@ public class TaskAggregateTest {
     @Test
     public void handle_update_task_description_when_task_is_deleted() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
+            assertTrue(cause instanceof IllegalStateException);
             assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
         }
     }
@@ -211,12 +215,13 @@ public class TaskAggregateTest {
     @Test
     public void handle_update_task_description_when_task_is_completed() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
+            assertTrue(cause instanceof IllegalStateException);
             assertEquals(COMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
         }
     }
@@ -224,12 +229,13 @@ public class TaskAggregateTest {
     @Test
     public void handle_update_task_due_date_when_task_is_completed() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
+            assertTrue(cause instanceof IllegalStateException);
             assertEquals(COMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
         }
     }
@@ -237,12 +243,13 @@ public class TaskAggregateTest {
     @Test
     public void handle_update_task_due_date_when_task_is_deleted() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
+            assertTrue(cause instanceof IllegalStateException);
             assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
         }
     }
@@ -250,12 +257,13 @@ public class TaskAggregateTest {
     @Test
     public void handle_update_task_priority_when_task_is_deleted() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
+            assertTrue(cause instanceof IllegalStateException);
             assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
         }
     }
@@ -263,12 +271,13 @@ public class TaskAggregateTest {
     @Test
     public void handle_update_task_priority_when_task_is_completed() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
+            assertTrue(cause instanceof IllegalStateException);
             assertEquals(COMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
         }
     }
@@ -305,14 +314,15 @@ public class TaskAggregateTest {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
-            assertEquals(UNCOMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof IllegalStateException);
+            assertEquals(constructExceptionMessage(FINALIZED, OPEN), cause.getMessage());
         }
     }
 
     @Test
     public void handle_delete_task_command() {
         final int expectedListSize = 1;
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
         final List<? extends com.google.protobuf.Message> messageList =
                 aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
@@ -325,6 +335,7 @@ public class TaskAggregateTest {
     @Test
     public void handle_complete_task_command() {
         final int expectedListSize = 1;
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
         final List<? extends com.google.protobuf.Message> messageList =
                 aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
@@ -363,16 +374,20 @@ public class TaskAggregateTest {
 
     @Test
     public void return_current_state_when_task_is_completed() {
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
-        assertTrue(aggregate.getState()
-                            .getCompleted());
+
+        assertEquals(TaskStatus.COMPLETED, aggregate.getState()
+                                                    .getTaskStatus());
     }
 
     @Test
     public void return_current_state_when_task_is_deleted() {
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
-        assertTrue(aggregate.getState()
-                            .getDeleted());
+
+        assertEquals(DELETED, aggregate.getState()
+                                       .getTaskStatus());
     }
 
     @Test
@@ -389,53 +404,63 @@ public class TaskAggregateTest {
 
     @Test
     public void handle_create_and_delete_task_command() {
-        assertFalse(aggregate.getState()
-                             .getDeleted());
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+        assertNotEquals(DELETED, aggregate.getState()
+                                          .getTaskStatus());
+
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
-        assertTrue(aggregate.getState()
-                            .getDeleted());
+        assertEquals(DELETED, aggregate.getState()
+                                       .getTaskStatus());
     }
 
     @Test
     public void handle_restore_deleted_task_command() {
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
-        assertFalse(aggregate.getState()
-                             .getDeleted());
+
+        assertEquals(OPEN, aggregate.getState()
+                                    .getTaskStatus());
     }
 
     @Test
     public void handle_delete_and_restore_task_command() {
+        aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
-        assertTrue(aggregate.getState()
-                            .getDeleted());
+
+        assertEquals(DELETED, aggregate.getState()
+                                       .getTaskStatus());
+
         aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
-        assertFalse(aggregate.getState()
-                             .getDeleted());
+
+        assertEquals(OPEN, aggregate.getState()
+                                    .getTaskStatus());
     }
 
     @Test
     public void handle_restore_task_command_when_task_is_completed() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
-            assertEquals(UNDELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof IllegalStateException);
+            assertEquals(constructExceptionMessage(COMPLETED, DRAFT), cause.getMessage());
         }
     }
 
     @Test
     public void handle_restore_deleted_task_command_when_task_is_created() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
-            assertEquals(UNDELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof IllegalStateException);
+            assertEquals(constructExceptionMessage(FINALIZED, OPEN), cause.getMessage());
         }
     }
 
@@ -447,29 +472,36 @@ public class TaskAggregateTest {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
-            assertEquals(UNDELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof IllegalStateException);
+            assertEquals(constructExceptionMessage(DRAFT, OPEN), cause.getMessage());
         }
     }
 
     @Test
     public void handle_complete_and_reopen_task_command() {
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
-        assertTrue(aggregate.getState()
-                            .getCompleted());
+
+        assertEquals(COMPLETED, aggregate.getState()
+                                         .getTaskStatus());
+
         aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
-        assertFalse(aggregate.getState()
-                             .getCompleted());
+
+        assertEquals(OPEN, aggregate.getState()
+                                    .getTaskStatus());
     }
 
     @Test
     public void handle_create_and_finalize_draft_command() {
         aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
-        assertTrue(aggregate.getState()
-                            .getDraft());
+
+        assertEquals(DRAFT, aggregate.getState()
+                                     .getTaskStatus());
+
         aggregate.dispatchForTest(finalizeDraftCmd, COMMAND_CONTEXT);
-        assertFalse(aggregate.getState()
-                             .getDraft());
+
+        assertEquals(FINALIZED, aggregate.getState()
+                                         .getTaskStatus());
     }
 
     @Test
@@ -479,7 +511,7 @@ public class TaskAggregateTest {
         final List<? extends com.google.protobuf.Message> messageList =
                 aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
 
-        assertEquals(1, messageList.size());
+        assertEquals(expectedListSize, messageList.size());
         assertEquals(TaskDraftCreated.class, messageList.get(0)
                                                         .getClass());
     }
@@ -487,13 +519,14 @@ public class TaskAggregateTest {
     @Test
     public void handle_finalized_draft_command_when_task_is_deleted() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(finalizeDraftCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
-            assertEquals(DELETED_DRAFT_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof IllegalStateException);
+            assertEquals(constructExceptionMessage(DELETED, FINALIZED), cause.getMessage());
         }
     }
 
@@ -504,30 +537,30 @@ public class TaskAggregateTest {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
-            assertEquals(TASK_IS_NOT_DRAFT_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof IllegalStateException);
+            assertEquals(constructExceptionMessage(TS_UNDEFINED, FINALIZED), cause.getMessage());
         }
     }
 
     @Test
     public void return_current_sate_when_task_draft_is_created() {
-        Task state = aggregate.getState();
         aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
-        assertFalse(state.getDraft());
-        assertFalse(state.getCompleted());
-        assertFalse(state.getDeleted());
+        Task state = aggregate.getState();
+
+        assertEquals(DRAFT, state.getTaskStatus());
     }
 
     @Test
     public void handle_complete_task_command_when_task_is_deleted() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
-            assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof IllegalStateException);
+            assertEquals(constructExceptionMessage(DELETED, COMPLETED), cause.getMessage());
         }
     }
 
@@ -539,20 +572,21 @@ public class TaskAggregateTest {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
-            assertEquals(TASK_IN_DRAFT_STATE_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof IllegalStateException);
+            assertEquals(constructExceptionMessage(DRAFT, COMPLETED), cause.getMessage());
         }
     }
 
     @Test
     public void handle_reopen_task_command_when_task_deleted() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
+            assertTrue(cause instanceof IllegalStateException);
             assertEquals(UNCOMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
         }
     }
@@ -565,33 +599,35 @@ public class TaskAggregateTest {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
-            assertEquals(UNCOMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof IllegalStateException);
+            assertEquals(constructExceptionMessage(DRAFT, OPEN), cause.getMessage());
         }
     }
 
     @Test
     public void handle_delete_task_command_when_task_is_already_deleted() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
-            assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof IllegalStateException);
+            assertEquals(constructExceptionMessage(DELETED, DELETED), cause.getMessage());
         }
     }
 
     @Test
     public void handle_assign_label_to_task_command_when_task_is_deleted() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
+            assertTrue(cause instanceof IllegalStateException);
             assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
         }
     }
@@ -599,12 +635,13 @@ public class TaskAggregateTest {
     @Test
     public void handle_assign_label_to_task_command_when_task_is_completed() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
+            assertTrue(cause instanceof IllegalStateException);
             assertEquals(COMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
         }
     }
@@ -612,12 +649,13 @@ public class TaskAggregateTest {
     @Test
     public void handle_remove_label_from_task_when_task_is_completed() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(removeLabelFromTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
+            assertTrue(cause instanceof IllegalStateException);
             assertEquals(COMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
         }
     }
@@ -625,14 +663,20 @@ public class TaskAggregateTest {
     @Test
     public void handle_remove_label_from_task_when_task_is_deleted() {
         try {
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(removeLabelFromTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalArgumentException);
+            assertTrue(cause instanceof IllegalStateException);
             assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
         }
+    }
+
+    private static String constructExceptionMessage(TaskStatus fromState, TaskStatus toState) {
+        return String.format("Illegal new state. Can not make transition from: %s to: %s state",
+                             fromState, toState);
     }
 
 }

@@ -68,24 +68,10 @@ message Task {
     // Reserved fields for future extension.
     reserved 7 to 20;
 
-    // TODO[alex.tymchenko]: Think of introducing a finite state machine for state transition instead,
-    // TODO[alex.tymchenko]: but avoid overengineering in such a simple sample application.
-
-    // Whether a task is completed or not.
+    // Task status.
     //
-    // An incomplete task can be marked completed. A completed task can be set incompleted again.
-    bool completed = 21;
-
-    // `True`, if this task is still in creation. Once the task is created, it cannot be put back into draft.
-    // `False`, if the task is already finalized.
-    //
-    // NOTE: draft tasks cannot be completed.
-    bool draft = 22;
-
-    // Marks a task as 'deleted'.
-    //
-    // NOTE: deleted tasks cannot be completed.
-    bool deleted = 23;
+    // Optional. Defaults to the `TaskStatus.TS_UNDEFINED`.
+    TaskStatus task_status = 21;
 }
 
 // Text label set to one or more tasks.
