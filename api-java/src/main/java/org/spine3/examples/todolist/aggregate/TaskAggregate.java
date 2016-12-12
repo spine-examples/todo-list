@@ -262,7 +262,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final int labelListSize = getBuilder().getLabelIdsList()
                                               .size();
         getBuilder().setId(event.getId())
-                    .setLabelIds(labelListSize, event.getLabelId());
+                    .addLabelIds(labelListSize, event.getLabelId());
     }
 
     @Apply
@@ -270,7 +270,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final int labelListSize = getBuilder().getLabelIdsList()
                                               .size();
         getBuilder().setId(event.getId())
-                    .setLabelIds(labelListSize, event.getLabelId());
+                    .addLabelIds(labelListSize, event.getLabelId());
     }
 
     //TODO[illia.shepilov]: should to be updated after defining draft creation

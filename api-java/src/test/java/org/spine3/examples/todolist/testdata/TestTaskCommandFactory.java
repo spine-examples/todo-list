@@ -30,6 +30,7 @@ import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
@@ -186,11 +187,17 @@ public class TestTaskCommandFactory {
     }
 
     public static AssignLabelToTask assignLabelToTaskInstance() {
-        return AssignLabelToTask.getDefaultInstance();
+        return AssignLabelToTask.newBuilder()
+                                .setLabelId(TaskLabelId.newBuilder()
+                                                       .setValue(ID))
+                                .build();
     }
 
     public static RemoveLabelFromTask removeLabelFromTaskInstance() {
-        return RemoveLabelFromTask.getDefaultInstance();
+        return RemoveLabelFromTask.newBuilder()
+                                  .setLabelId(TaskLabelId.newBuilder()
+                                                         .setValue(ID))
+                                  .build();
     }
 
 }

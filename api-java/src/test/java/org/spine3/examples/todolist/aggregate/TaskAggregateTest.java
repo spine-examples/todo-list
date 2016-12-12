@@ -30,6 +30,8 @@ import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.DeleteTask;
 import org.spine3.examples.todolist.FinalizeDraft;
+import org.spine3.examples.todolist.LabelAssignedToTask;
+import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
@@ -154,6 +156,30 @@ public class TaskAggregateTest {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(TaskDescriptionUpdated.class, messageList.get(0)
                                                               .getClass());
+    }
+
+    @Test
+    public void handle_remove_label_from_task_command() {
+        final int expectedListSize = 1;
+
+        final List<? extends com.google.protobuf.Message> messageList =
+                aggregate.dispatchForTest(removeLabelFromTaskCmd, COMMAND_CONTEXT);
+
+        assertEquals(expectedListSize, messageList.size());
+        assertEquals(LabelRemovedFromTask.class, messageList.get(0)
+                                                            .getClass());
+    }
+
+    @Test
+    public void handle_assign_label_to_task_command() {
+        final int expectedListSize = 1;
+
+        final List<? extends com.google.protobuf.Message> messageList =
+                aggregate.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
+
+        assertEquals(expectedListSize, messageList.size());
+        assertEquals(LabelAssignedToTask.class, messageList.get(0)
+                                                           .getClass());
     }
 
     @Test
@@ -561,7 +587,7 @@ public class TaskAggregateTest {
     public void handle_assign_label_to_task_command_when_task_is_deleted() {
         try {
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
-            aggregate.dispatchForTest(removeLabelFromTaskCmd, COMMAND_CONTEXT);
+            aggregate.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
@@ -574,12 +600,38 @@ public class TaskAggregateTest {
     public void handle_assign_label_to_task_command_when_task_is_completed() {
         try {
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+            aggregate.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
+        } catch (Throwable e) {
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            final Throwable cause = Throwables.getRootCause(e);
+            assertTrue(cause instanceof IllegalArgumentException);
+            assertEquals(COMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+        }
+    }
+
+    @Test
+    public void handle_remove_label_from_task_when_task_is_completed() {
+        try {
+            aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(removeLabelFromTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof IllegalArgumentException);
             assertEquals(COMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+        }
+    }
+
+    @Test
+    public void handle_remove_label_from_task_when_task_is_deleted() {
+        try {
+            aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+            aggregate.dispatchForTest(removeLabelFromTaskCmd, COMMAND_CONTEXT);
+        } catch (Throwable e) {
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            final Throwable cause = Throwables.getRootCause(e);
+            assertTrue(cause instanceof IllegalArgumentException);
+            assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
         }
     }
 
