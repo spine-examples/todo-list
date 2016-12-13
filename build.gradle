@@ -178,7 +178,10 @@ subprojects {
         compile group: 'org.spine3', name: 'users', version: spineVersion
         compile group: 'org.spine3', name: 'values', version: spineVersion
 
-        testCompile group: 'org.spine3', name: 'testutil', version: spineVersion
+        testCompile ("org.spine3:testutil:${spineVersion}") {
+            // We are using JUnit 5.x instead of 4.x dependency of Spine testing framework.
+            exclude group: 'junit'
+        }
         testCompile "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
         testRuntime "org.junit.jupiter:junit-jupiter-engine:${jUnitVersion}"
     }
