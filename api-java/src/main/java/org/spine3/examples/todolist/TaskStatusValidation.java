@@ -44,7 +44,7 @@ public class TaskStatusValidation {
 
     /**
      * Verifies status of current task.
-     * If it COMPLETED or DELETED, throws {@link IllegalStateException}.
+     * If it is COMPLETED or DELETED, throws {@link IllegalStateException}.
      *
      * @param currentStatus task's current state {@link TaskStatus}
      * @throws IllegalStateException if status, passed to the method,

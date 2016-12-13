@@ -40,6 +40,7 @@ import org.spine3.examples.todolist.TaskPriorityUpdated;
 import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.protobuf.Timestamps;
 
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -127,16 +128,16 @@ class TaskProjectionTest {
     @Test
     public void return_state_when_handle_task_description_updated_event() {
         projection.on(taskDescriptionUpdatedEvent);
-        Task state = projection.getState();
 
-        assertEquals(DESCRIPTION, state.getDescription());
+        assertEquals(DESCRIPTION, projection.getState()
+                                            .getDescription());
 
         final String updatedDescription = "Updated task description.";
         taskDescriptionUpdatedEvent = taskDescriptionUpdatedInstance(updatedDescription);
         projection.on(taskDescriptionUpdatedEvent);
-        state = projection.getState();
 
-        assertEquals(updatedDescription, state.getDescription());
+        assertEquals(updatedDescription, projection.getState()
+                                                   .getDescription());
     }
 
     @Test
@@ -157,16 +158,16 @@ class TaskProjectionTest {
     @Test
     public void return_state_when_handle_task_due_date_updated_event() {
         projection.on(taskDueDateUpdatedEvent);
-        Task state = projection.getState();
 
-        assertEquals(TASK_DUE_DATE, state.getDueDate());
+        assertEquals(TASK_DUE_DATE, projection.getState()
+                                              .getDueDate());
 
         final Timestamp newDueDate = Timestamps.getCurrentTime();
         taskDueDateUpdatedEvent = taskDueDateUpdatedInstance(newDueDate);
         projection.on(taskDueDateUpdatedEvent);
-        state = projection.getState();
 
-        assertEquals(newDueDate, state.getDueDate());
+        assertEquals(newDueDate, projection.getState()
+                                           .getDueDate());
     }
 
     @Test
@@ -211,22 +212,48 @@ class TaskProjectionTest {
 
     @Test
     public void return_state_when_label_assigned_to_task_event() {
-        final int expectedListSize = 1;
+        int expectedListSize = 1;
         projection.on(labelAssignedToTaskEvent);
-        Task state = projection.getState();
-        List<TaskLabelId> labelsList = state.getLabelIdsList();
+        List<TaskLabelId> labelsList = projection.getState()
+                                                 .getLabelIdsList();
 
         assertEquals(expectedListSize, labelsList.size());
         assertEquals(LABEL_ID, labelsList.get(0));
+
+        final TaskLabelId newLabelId = TaskLabelId.newBuilder()
+                                                  .setValue(newUuid())
+                                                  .build();
+        labelAssignedToTaskEvent = labelAssignedToTaskInstance(newLabelId);
+
+        projection.on(labelAssignedToTaskEvent);
+
+        labelsList = projection.getState()
+                               .getLabelIdsList();
+        expectedListSize = 2;
+
+        assertEquals(expectedListSize, labelsList.size());
+        assertEquals(Arrays.asList(LABEL_ID, newLabelId), labelsList);
     }
 
     @Test
     public void return_state_when_label_assigned_to_task_and_removed_from_task_events() {
-        projection.on(labelRemovedFromTaskEvent);
-        Task state = projection.getState();
+        int expectedListSize = 1;
 
-        assertEquals(0, state.getLabelIdsList()
-                             .size());
+        projection.on(labelAssignedToTaskEvent);
+        projection.on(labelAssignedToTaskEvent);
+
+        projection.on(labelRemovedFromTaskEvent);
+
+        assertEquals(expectedListSize, projection.getState()
+                                                 .getLabelIdsList()
+                                                 .size());
+
+        expectedListSize = 0;
+        projection.on(labelRemovedFromTaskEvent);
+
+        assertEquals(expectedListSize, projection.getState()
+                                                 .getLabelIdsList()
+                                                 .size());
     }
 
 }

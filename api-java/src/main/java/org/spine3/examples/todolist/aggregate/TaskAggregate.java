@@ -43,6 +43,7 @@ import org.spine3.examples.todolist.TaskDraftCreated;
 import org.spine3.examples.todolist.TaskDraftFinalized;
 import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskPriorityUpdated;
 import org.spine3.examples.todolist.TaskReopened;
@@ -57,6 +58,7 @@ import org.spine3.server.command.Assign;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.spine3.examples.todolist.TaskStatusValidation.checkCompletedOrDeletedCommand;
@@ -267,19 +269,25 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Apply
     private void eventOnAssignLabelToTask(LabelAssignedToTask event) {
+        List<TaskLabelId> list = getState().getLabelIdsList()
+                                           .stream()
+                                           .collect(Collectors.toList());
+        list.add(event.getLabelId());
         getBuilder().setId(event.getId())
-                    .addLabelIds(event.getLabelId());
+                    .clearLabelIds()
+                    .addAllLabelIds(list);
     }
 
     @Apply
     private void eventOnRemoveLabelFromTask(LabelRemovedFromTask event) {
-        int indexToDelete = getState().getLabelIdsList()
-                                      .indexOf(event.getLabelId());
-        getBuilder().setId(event.getId());
+        List<TaskLabelId> list = getState().getLabelIdsList()
+                                           .stream()
+                                           .collect(Collectors.toList());
+        list.remove(event.getLabelId());
 
-        if (indexToDelete != -1) {
-            getBuilder().removeLabelIds(indexToDelete);
-        }
+        getBuilder().setId(event.getId())
+                    .clearLabelIds()
+                    .addAllLabelIds(list);
 
     }
 

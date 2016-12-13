@@ -32,11 +32,15 @@ import org.spine3.examples.todolist.TaskDraftCreated;
 import org.spine3.examples.todolist.TaskDraftFinalized;
 import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriorityUpdated;
 import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.server.event.Subscribe;
 import org.spine3.server.projection.Projection;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Holds a structural representation of data extracted from a stream of events related to task.
@@ -153,25 +157,31 @@ public class TaskProjection extends Projection<TaskId, Task> {
 
     @Subscribe
     public void on(LabelAssignedToTask event) {
+        final List<TaskLabelId> list = getState().getLabelIdsList()
+                                                 .stream()
+                                                 .collect(Collectors.toList());
+        list.add(event.getLabelId());
         final Task updatedState = getState().newBuilderForType()
                                             .setId(event.getId())
-                                            .addLabelIds(event.getLabelId())
+                                            .clearLabelIds()
+                                            .addAllLabelIds(list)
                                             .build();
         incrementState(updatedState);
     }
 
     @Subscribe
     public void on(LabelRemovedFromTask event) {
-        final int indexToDelete = getState().getLabelIdsList()
-                                            .indexOf(event.getLabelId());
-        final Task.Builder taskBuilder = getState().newBuilderForType()
-                                                   .setId(event.getId());
+        final List<TaskLabelId> list = getState().getLabelIdsList()
+                                                 .stream()
+                                                 .collect(Collectors.toList());
+        list.remove(event.getLabelId());
+        final Task state = getState().newBuilderForType()
+                                     .clearLabelIds()
+                                     .addAllLabelIds(list)
+                                     .setId(event.getId())
+                                     .build();
 
-        if (indexToDelete != -1) {
-            taskBuilder.removeLabelIds(indexToDelete);
-        }
-
-        incrementState(taskBuilder.build());
+        incrementState(state);
     }
 
     @Subscribe
