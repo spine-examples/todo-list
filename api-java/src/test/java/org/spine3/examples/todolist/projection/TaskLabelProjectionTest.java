@@ -27,7 +27,6 @@ import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelCreated;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
-import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.server.projection.Projection;
@@ -37,7 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelEventFactory.labelCreatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelEventFactory.labelDetailsUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelEventFactory.labelRemovedFromTaskInstance;
 
 /**
  * @author Illia Shepilov
@@ -47,7 +45,6 @@ public class TaskLabelProjectionTest {
     private static final String DEFAULT_LABEL_TITLE = "label title.";
     private TaskLabelProjection projection;
     private LabelCreated labelCreatedEvent;
-    private LabelRemovedFromTask labelRemovedFromTaskEvent;
     private LabelDetailsUpdated labelDetailsUpdatedEvent;
     private static final TaskLabelId ID = TaskLabelId.newBuilder()
                                                      .setValue(newUuid())
@@ -58,7 +55,6 @@ public class TaskLabelProjectionTest {
         projection = new TaskLabelProjection(ID);
         labelCreatedEvent = labelCreatedInstance();
         labelDetailsUpdatedEvent = labelDetailsUpdatedInstance();
-        labelRemovedFromTaskEvent = labelRemovedFromTaskInstance();
     }
 
     @Test

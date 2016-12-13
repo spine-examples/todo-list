@@ -52,13 +52,13 @@ public class TestTaskCommandFactory {
      * Prevent instantiation.
      */
     private TestTaskCommandFactory() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Can not be instantiated");
     }
 
     /**
      * Provides {@link CreateBasicTask} instance.
      *
-     * @return {@link CreateBasicTask} instance.
+     * @return {@link CreateBasicTask} instance
      */
     public static CreateBasicTask createTaskInstance() {
         return CreateBasicTask.newBuilder()
@@ -69,28 +69,28 @@ public class TestTaskCommandFactory {
     /**
      * Provides {@link UpdateTaskDescription} instance.
      *
-     * @return {@link UpdateTaskDescription} instance.
+     * @return {@link UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance() {
         return updateTaskDescriptionInstance(DESCRIPTION);
     }
 
     /**
-     * Provides {@link UpdateTaskDescription} instance.
+     * Provides {@link UpdateTaskDescription} instance by specified description.
      *
-     * @param desciption String value into updated description field.
-     * @return {@link UpdateTaskDescription} instance.
+     * @param description String value into updated description field
+     * @return {@link UpdateTaskDescription} instance
      */
-    public static UpdateTaskDescription updateTaskDescriptionInstance(String desciption) {
+    public static UpdateTaskDescription updateTaskDescriptionInstance(String description) {
         return UpdateTaskDescription.newBuilder()
-                                    .setUpdatedDescription(desciption)
+                                    .setUpdatedDescription(description)
                                     .build();
     }
 
     /**
-     * Provides {@link UpdateTaskDescription} instance.
+     * Provides {@link UpdateTaskDescription} instance by specified due date {@code DUE_DATE}.
      *
-     * @return {@link UpdateTaskDueDate} instance.
+     * @return {@link UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance() {
         return updateTaskDueDateInstance(DUE_DATE);
@@ -99,8 +99,8 @@ public class TestTaskCommandFactory {
     /**
      * Provides {@link UpdateTaskDueDate} instance with specified update due date field.
      *
-     * @param updatedDueDate value into updated due datefield, present in seconds.
-     * @return {@link UpdateTaskDueDate} instance.
+     * @param updatedDueDate value into updated due datefield, present in seconds
+     * @return {@link UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance(Timestamp updatedDueDate) {
         return UpdateTaskDueDate.newBuilder()
@@ -109,19 +109,19 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link UpdateTaskPriority} instance.
+     * Provides {@link UpdateTaskPriority} instance by specified priority {@code TaskPriority.HIGH}.
      *
-     * @return {@link UpdateTaskPriority} instance.
+     * @return {@link UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance() {
         return updateTaskPriorityInstance(TaskPriority.HIGH);
     }
 
     /**
-     * Provides {@link UpdateTaskPriority} instance with specified priority.
+     * Provides {@link UpdateTaskPriority} instance by specified priority.
      *
-     * @param priority {@link TaskPriority} enum value.
-     * @return {@link UpdateTaskPriority} instance.
+     * @param priority {@link TaskPriority} enum value
+     * @return {@link UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskPriority priority) {
         return UpdateTaskPriority.newBuilder()
@@ -130,27 +130,28 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link CompleteTask} instance.
+     * Provides default {@link CompleteTask} command instance.
      *
-     * @return {@link CompleteTask} instance.
+     * @return {@link CompleteTask} instance
      */
     public static CompleteTask completeTaskInstance() {
         return CompleteTask.getDefaultInstance();
     }
 
     /**
-     * Provides {@link ReopenTask} instance.
+     * Provides default {@link ReopenTask} command instance.
      *
-     * @return {@link ReopenTask} instance.
+     * @return {@link ReopenTask} instance
      */
     public static ReopenTask reopenTaskInstance() {
         return ReopenTask.getDefaultInstance();
     }
 
     /**
-     * Provides {@link DeleteTask} instance.
+     * Provides {@link DeleteTask} command instance by specified {@link TaskLabelId}.
+     * TaskLabelId constructed with {@code ID}.
      *
-     * @return {@link DeleteTask} instance.
+     * @return {@link DeleteTask} instance
      */
     public static DeleteTask deleteTaskInstance() {
         return DeleteTask.newBuilder()
@@ -160,32 +161,38 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link RestoreDeletedTask} instance.
+     * Provides default {@link RestoreDeletedTask} command instance.
      *
-     * @return {@link RestoreDeletedTask} instance.
+     * @return {@link RestoreDeletedTask} instance
      */
     public static RestoreDeletedTask restoreDeletedTaskInstance() {
         return RestoreDeletedTask.getDefaultInstance();
     }
 
     /**
-     * Provides {@link FinalizeDraft} instance.
+     * Provides default {@link FinalizeDraft} command instance.
      *
-     * @return {@link FinalizeDraft} instance.
+     * @return {@link FinalizeDraft} instance
      */
     public static FinalizeDraft finalizeDraftInstance() {
         return FinalizeDraft.getDefaultInstance();
     }
 
     /**
-     * Provides {@link CreateDraft} instance.
+     * Provides default {@link CreateDraft} command instance.
      *
-     * @return {@link CreateDraft} instance.
+     * @return {@link CreateDraft} instance
      */
     public static CreateDraft createDraftInstance() {
         return CreateDraft.getDefaultInstance();
     }
 
+    /**
+     * Provides {@link AssignLabelToTask} command instance by specified {@link TaskLabelId}
+     * TaskLabelId constructed with {@code ID}.
+     *
+     * @return {@link AssignLabelToTask} instance
+     */
     public static AssignLabelToTask assignLabelToTaskInstance() {
         return AssignLabelToTask.newBuilder()
                                 .setLabelId(TaskLabelId.newBuilder()
@@ -193,6 +200,12 @@ public class TestTaskCommandFactory {
                                 .build();
     }
 
+    /**
+     * Provides {@link RemoveLabelFromTask} command instance by specified {@link TaskLabelId}.
+     * TaskLabelId constructed with {@code ID}.
+     *
+     * @return {@link RemoveLabelFromTask} instance
+     */
     public static RemoveLabelFromTask removeLabelFromTaskInstance() {
         return RemoveLabelFromTask.newBuilder()
                                   .setLabelId(TaskLabelId.newBuilder()

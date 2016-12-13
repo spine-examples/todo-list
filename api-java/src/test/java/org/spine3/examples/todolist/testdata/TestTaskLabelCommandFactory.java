@@ -32,21 +32,25 @@ public class TestTaskLabelCommandFactory {
 
     private static final String TITLE = "label title";
 
+    /**
+     * Prevent instantiation.
+     */
     private TestTaskLabelCommandFactory() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Can not be instantiated");
     }
 
     /**
-     * Provides {@link CreateBasicLabel} instance.
+     * Provides default {@link CreateBasicLabel} event instance.
      *
-     * @return {@link CreateBasicLabel} instance.
+     * @return {@link CreateBasicLabel} instance
      */
     public static CreateBasicLabel createLabelInstance() {
         return CreateBasicLabel.getDefaultInstance();
     }
 
     /**
-     * Provides {@link UpdateLabelDetails} instance.
+     * Provides {@link UpdateLabelDetails} event by specified label's color {@code LabelColor.GRAY}
+     * and title {@code TITLE}.
      *
      * @return {@link UpdateLabelDetails} instance.
      */
@@ -55,7 +59,7 @@ public class TestTaskLabelCommandFactory {
     }
 
     /**
-     * Provides {@link UpdateLabelDetails} instance.
+     * Provides {@link UpdateLabelDetails} event by specified label's color and title.
      *
      * @param color {@link LabelColor} enum value.
      * @param title String value

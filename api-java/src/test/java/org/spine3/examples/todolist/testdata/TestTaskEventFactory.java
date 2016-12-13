@@ -27,18 +27,51 @@ import static org.spine3.base.Identifiers.newUuid;
  */
 public class TestTaskEventFactory {
 
+    /**
+     * Task's description. Using into {@link org.spine3.examples.todolist.projection.TaskProjectionTest}.
+     */
     public static final String DESCRIPTION = "task description";
+    /**
+     * Task's priority. Using into {@link org.spine3.examples.todolist.projection.TaskProjectionTest}.
+     */
     public static final TaskPriority TASK_PRIORITY = TaskPriority.NORMAL;
+    /**
+     * Task's due date. Using into {@link org.spine3.examples.todolist.projection.TaskProjectionTest}.
+     */
     public static final Timestamp TASK_DUE_DATE = Timestamps.getCurrentTime();
+    /**
+     * {@link TaskLabelId}, using into {@link org.spine3.examples.todolist.projection.TaskProjectionTest}.
+     */
     public static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
                                                           .setValue(newUuid())
                                                           .build();
+
     private static final Timestamp CREATION_TIME = Timestamps.getCurrentTime();
 
+    /**
+     * Prevent instantiation.
+     */
+    private TestTaskEventFactory() {
+        throw new UnsupportedOperationException("Can not be instantiated");
+    }
+
+    /**
+     * Provides {@link TaskCreated} event instance by specified description {@code DESCRIPTION}
+     * and task's priority {@code TASK_PRIORITY}.
+     *
+     * @return {@link TaskCreated} instance
+     */
     public static TaskCreated taskCreatedInstance() {
         return taskCreatedInstance(DESCRIPTION, TASK_PRIORITY);
     }
 
+    /**
+     * Provides {@link TaskCreated} event by specified description and task's priority.
+     *
+     * @param description specified task's description
+     * @param priority    specified task's priority
+     * @return {@link TaskCreated} instance
+     */
     public static TaskCreated taskCreatedInstance(String description, TaskPriority priority) {
         return TaskCreated.newBuilder()
                           .setDetails(TaskDetails.newBuilder()
@@ -47,11 +80,28 @@ public class TestTaskEventFactory {
                           .build();
     }
 
+    /**
+     * Provides {@link TaskCreated} event by specified description {@see DESCRIPTION}
+     * and task's priority {@code TASK_PRIORITY}.
+     *
+     * @return {@link TaskCreated} instance
+     */
     public static TaskDraftCreated taskDraftCreatedInstance() {
         return taskDraftCreatedInstance(DESCRIPTION, TASK_PRIORITY, CREATION_TIME);
     }
 
-    public static TaskDraftCreated taskDraftCreatedInstance(String description, TaskPriority priority, Timestamp creationTime) {
+    /**
+     * Provides {@link TaskDraftCreated} event by specified task's description,
+     * task's priority and draft's creation time.
+     *
+     * @param description  task's description
+     * @param priority     task's priority
+     * @param creationTime time of draft creation
+     * @return {@link TaskDraftCreated} instance
+     */
+    public static TaskDraftCreated taskDraftCreatedInstance(String description,
+                                                            TaskPriority priority,
+                                                            Timestamp creationTime) {
         return TaskDraftCreated.newBuilder()
                                .setDetails(TaskDetails.newBuilder()
                                                       .setPriority(priority)
@@ -60,66 +110,140 @@ public class TestTaskEventFactory {
                                .build();
     }
 
+    /**
+     * Provides {@link TaskDescriptionUpdated} event by specified task's description {@code DESCRIPTION}.
+     *
+     * @return {@link TaskDescriptionUpdated} instance
+     */
     public static TaskDescriptionUpdated taskDescriptionUpdatedInstance() {
         return taskDescriptionUpdatedInstance(DESCRIPTION);
     }
 
+    /**
+     * Provides {@link TaskDescriptionUpdated} event by specified task's description.
+     *
+     * @param description task's description
+     * @return {@link TaskDescriptionUpdated} instance
+     */
     public static TaskDescriptionUpdated taskDescriptionUpdatedInstance(String description) {
         return TaskDescriptionUpdated.newBuilder()
                                      .setNewDescription(description)
                                      .build();
     }
 
+    /**
+     * Provides {@link TaskPriorityUpdated} event by specified task's priority {@code TASK_PRIORITY}.
+     *
+     * @return {@link TaskPriorityUpdated} instance
+     */
     public static TaskPriorityUpdated taskPriorityUpdatedInstance() {
         return taskPriorityUpdatedInstance(TASK_PRIORITY);
     }
 
+    /**
+     * Provides {@link TaskPriorityUpdated} event by specified tasl's priority.
+     *
+     * @param priority task's priority
+     * @return {@link TaskPriorityUpdated} instance
+     */
     public static TaskPriorityUpdated taskPriorityUpdatedInstance(TaskPriority priority) {
         return TaskPriorityUpdated.newBuilder()
                                   .setNewPriority(priority)
                                   .build();
     }
 
+    /**
+     * Provides {@link TaskDueDateUpdated} event by specified task's due date value {@code TASK_DUE_DATE}.
+     *
+     * @return {@link TaskDueDateUpdated} instance
+     */
     public static TaskDueDateUpdated taskDueDateUpdatedInstance() {
         return taskDueDateUpdatedInstance(TASK_DUE_DATE);
     }
 
+    /**
+     * Provides {@link TaskDueDateUpdated} event by specified task's due date.
+     *
+     * @param dueDate the due date value for the task
+     * @return {@link TaskDueDateUpdated} instance
+     */
     public static TaskDueDateUpdated taskDueDateUpdatedInstance(Timestamp dueDate) {
         return TaskDueDateUpdated.newBuilder()
                                  .setNewDueDate(dueDate)
                                  .build();
     }
 
+    /**
+     * Provides default {@link TaskDraftFinalized} event instance.
+     *
+     * @return {@link TaskDraftFinalized} instance
+     */
     public static TaskDraftFinalized taskDraftFinalizedInstance() {
         return TaskDraftFinalized.getDefaultInstance();
     }
 
+    /**
+     * Provides default {@link TaskCompleted} event instance.
+     *
+     * @return {@link TaskCompleted} instance
+     */
     public static TaskCompleted taskCompletedInstance() {
         return TaskCompleted.getDefaultInstance();
     }
 
+    /**
+     * Provides default {@link TaskReopened} event instance.
+     *
+     * @return {@link TaskCompleted} instance
+     */
     public static TaskReopened taskReopenedInstance() {
         return TaskReopened.getDefaultInstance();
     }
 
+    /**
+     * Provides default {@link TaskDeleted} event instance.
+     *
+     * @return {@link TaskDeleted} instance
+     */
     public static TaskDeleted taskDeletedInstance() {
         return TaskDeleted.getDefaultInstance();
     }
 
+    /**
+     * Provides default {@link DeletedTaskRestored} event instance.
+     *
+     * @return {@link DeletedTaskRestored} instance
+     */
     public static DeletedTaskRestored deletedTaskRestoredInstance() {
         return DeletedTaskRestored.getDefaultInstance();
     }
 
+    /**
+     * Provides {@link LabelAssignedToTask} event by task's label id {@code LABEL_ID}.
+     *
+     * @return {@link LabelAssignedToTask} instance
+     */
     public static LabelAssignedToTask labelAssignedToTaskInstance() {
         return labelAssignedToTaskInstance(LABEL_ID);
     }
 
+    /**
+     * Provides {@link LabelAssignedToTask} event by specified task's label id.
+     *
+     * @param labelId label's id
+     * @return {@link LabelAssignedToTask} instance
+     */
     public static LabelAssignedToTask labelAssignedToTaskInstance(TaskLabelId labelId) {
         return LabelAssignedToTask.newBuilder()
                                   .setLabelId(labelId)
                                   .build();
     }
 
+    /**
+     * Provides {@link LabelRemovedFromTask} event by task's label id {@code LABEL_ID}.
+     *
+     * @return {@link LabelRemovedFromTask} instance
+     */
     public static LabelRemovedFromTask labelRemovedFromTaskInstance() {
         return LabelRemovedFromTask.newBuilder()
                                    .setLabelId(LABEL_ID)

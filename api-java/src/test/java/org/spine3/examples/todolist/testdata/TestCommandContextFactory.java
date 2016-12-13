@@ -38,12 +38,15 @@ import static org.spine3.time.ZoneOffsets.UTC;
  */
 public class TestCommandContextFactory {
 
+    /**
+     * Prevent instantiation.
+     */
     private TestCommandContextFactory() {
-        throw new UnsupportedOperationException("Could not be instantiated");
+        throw new UnsupportedOperationException("Can not be instantiated");
     }
 
     /**
-     * Creates a new {@link CommandContext} instance.
+     * Creates a new command context {@link CommandContext} instance.
      *
      * @return {@link CommandContext} instance.
      */
@@ -55,9 +58,12 @@ public class TestCommandContextFactory {
     }
 
     /**
-     * Creates a new {@link CommandContext} instance.
+     * Creates a new command context {@link CommandContext} by specified passed parameters.
      *
-     * @return {@link CommandContext} instance.
+     * @param userId    the actor's id
+     * @param commandId the command's id
+     * @param when      indicates when was created context
+     * @return constructed instance of {@link CommandContext}
      */
     public static CommandContext createCommandContext(UserId userId, CommandId commandId, Timestamp when) {
         final CommandContext.Builder builder = CommandContext.newBuilder()
