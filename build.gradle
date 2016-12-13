@@ -256,6 +256,22 @@ subprojects {
             module.dependencies*.exported = true
         }
     }
+
+    project.afterEvaluate {
+        def junitPlatformTestTask = project.tasks.getByName('junitPlatformTest')
+
+        // configure jacoco to analyze the junitPlatformTest task
+        jacoco {
+            // this tool version is compatible with
+            toolVersion = "0.7.6.201602180812"
+            applyTo junitPlatformTestTask
+        }
+
+        codeCoverageReport.dependsOn {
+            subprojects*.test
+        }
+    }
+
 }
 
 idea.project.ipr {
