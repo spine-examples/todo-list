@@ -257,6 +257,8 @@ subprojects {
         }
     }
 
+    // Worked around
+    // @see https://discuss.gradle.org/t/jacocotestreport-task-fails-if-jacoco-plugin-is-applied-in-afterevaluate/835
     project.afterEvaluate {
         def junitPlatformTestTask = project.tasks.getByName('junitPlatformTest')
 
