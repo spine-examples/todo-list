@@ -26,8 +26,6 @@ package org.spine3.examples.todolist;
  */
 public enum TaskStatusTransition {
 
-    CREATE_TASK(TaskStatus.TS_UNDEFINED, TaskStatus.FINALIZED),
-
     /**
      * Finalize task's DRAFT.
      */
