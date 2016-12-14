@@ -29,11 +29,15 @@ import "spine/event_annotations.proto";
 
 import "todolist/attributes.proto";
 
+// Represents a lable enrichment.
+//
 message LabelEnrichment {
 
     option (enrichment_for) = "org.spine3.examples.todolist.LabelAssignedToTask,org.spine3.examples.todolist.LabelRemovedFromTask,org.spine3.examples.todolist.DeletedTaskRestored,org.spine3.examples.todolist.TaskDeleted";
 
+    // label's title
     string label_title = 1 [(by) = "label_id"];
 
+    // label's color
     string label_color = 2 [(by) = "label_id"];
 }
