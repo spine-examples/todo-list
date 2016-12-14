@@ -1,8 +1,12 @@
 package org.spine3.examples.todolist.projection;
 
+import com.google.protobuf.Any;
+import com.google.protobuf.InvalidProtocolBufferException;
+import org.spine3.base.EventContext;
+import org.spine3.examples.todolist.CorruptedProtocolBufferException;
 import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.LabelAssignedToTask;
-import org.spine3.examples.todolist.LabelColor;
+import org.spine3.examples.todolist.LabelEnrichment;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.TaskDeleted;
 import org.spine3.examples.todolist.TaskLabelId;
@@ -12,9 +16,6 @@ import org.spine3.examples.todolist.view.TaskView;
 import org.spine3.server.event.Subscribe;
 import org.spine3.server.projection.Projection;
 
-import java.awt.*;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,39 +44,43 @@ public class LabelledTaskViewProjection extends Projection<TaskLabelId, Labelled
     }
 
     @Subscribe
-    public void on(LabelAssignedToTask event) {
+    public void on(LabelAssignedToTask event, EventContext context) {
         final TaskView taskView = TaskView.newBuilder()
                                           .setId(event.getId())
                                           .setLabelId(event.getLabelId())
                                           .build();
-        final LabelledTasksView state = addLabel(taskView);
+        final LabelledTasksView state = addLabel(taskView, context);
         incrementState(state);
     }
 
     @Subscribe
-    public void on(DeletedTaskRestored event) {
+    public void on(DeletedTaskRestored event, EventContext context) {
         final TaskView taskView = TaskView.newBuilder()
                                           .setId(event.getId())
                                           .build();
-        final LabelledTasksView state = addLabel(taskView);
+        final LabelledTasksView state = addLabel(taskView, context);
         incrementState(state);
     }
 
     @Subscribe
-    public void on(LabelRemovedFromTask event) {
+    public void on(LabelRemovedFromTask event, EventContext context) {
+        final LabelEnrichment enrichment = getLabelEnrichment(context);
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
         final TaskListView taskListView = removeViewByLabelId(views, event.getLabelId());
         final LabelledTasksView state = getState().newBuilderForType()
+                                                  .setLabelTitle(enrichment.getLabelTitle())
+                                                  .setLabelColor(enrichment.getLabelColor())
                                                   .setLabelledTasks(taskListView)
                                                   .build();
         incrementState(state);
     }
 
     @Subscribe
-    public void on(TaskDeleted event) {
+    public void on(TaskDeleted event, EventContext context) {
+        final LabelEnrichment enrichment = getLabelEnrichment(context);
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList()
                                                .stream()
@@ -83,11 +88,24 @@ public class LabelledTaskViewProjection extends Projection<TaskLabelId, Labelled
         final TaskListView taskListView = removeViewByTaskId(views, event.getId());
         final LabelledTasksView state = getState().newBuilderForType()
                                                   .setLabelledTasks(taskListView)
+                                                  .setLabelTitle(enrichment.getLabelTitle())
                                                   .build();
         incrementState(state);
     }
 
-    private LabelledTasksView addLabel(TaskView taskView) {
+    private LabelEnrichment getLabelEnrichment(EventContext context) {
+        try {
+            final Any any = context.getEnrichments()
+                                   .getMapMap()
+                                   .get("labelTitleEnricher");
+            return LabelEnrichment.parseFrom(any.getTypeUrlBytes());
+        } catch (InvalidProtocolBufferException e) {
+            throw new CorruptedProtocolBufferException("Unsuccessful protobuf parsing", e);
+        }
+    }
+
+    private LabelledTasksView addLabel(TaskView taskView, EventContext context) {
+        final LabelEnrichment enrichment = getLabelEnrichment(context);
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList()
                                                .stream()
@@ -98,29 +116,8 @@ public class LabelledTaskViewProjection extends Projection<TaskLabelId, Labelled
                                                       .build();
         return getState().newBuilderForType()
                          .setLabelledTasks(taskListView)
+                         .setLabelColor(enrichment.getLabelColor())
+                         .setLabelTitle(enrichment.getLabelTitle())
                          .build();
-    }
-
-    private LabelColor transformToLabelColorFromHex(String hexColor) {
-        final Color color = Color.decode(hexColor);
-        final int blue = color.getBlue();
-        final int green = color.getGreen();
-        final int red = color.getRed();
-
-        if (red == green && green == blue) {
-            return LabelColor.GRAY;
-        }
-
-        int maxValue = Collections.max(Arrays.asList(red, blue, green));
-
-        if (maxValue == blue) {
-            return LabelColor.BLUE;
-        }
-
-        if (maxValue == green) {
-            return LabelColor.GREEN;
-        }
-
-        return LabelColor.RED;
     }
 }

@@ -2,6 +2,7 @@ package org.spine3.examples.todolist.projection;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.spine3.base.Identifiers.newUuid;
+import static org.spine3.examples.todolist.testdata.TestEventContextFactory.eventContextInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.deletedTaskRestoredInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelAssignedToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelRemovedFromTaskInstance;
@@ -28,6 +30,7 @@ class LabelledTaskViewProjectionTest {
     private LabelRemovedFromTask labelRemovedFromTaskEvent;
     private LabelAssignedToTask labelAssignedToTaskEvent;
     private TaskDeleted taskDeletedEvent;
+    private EventContext eventContext;
     private TaskLabelId ID = TaskLabelId.newBuilder()
                                         .setValue(newUuid())
                                         .build();
@@ -39,13 +42,14 @@ class LabelledTaskViewProjectionTest {
         labelAssignedToTaskEvent = labelAssignedToTaskInstance();
         labelRemovedFromTaskEvent = labelRemovedFromTaskInstance();
         taskDeletedEvent = taskDeletedInstance();
+        eventContext = eventContextInstance();
     }
 
     @Test
     public void return_state_when_handle_label_removed_from_task_event() {
         int expectedListSize = 0;
-        projection.on(labelAssignedToTaskEvent);
-        projection.on(labelRemovedFromTaskEvent);
+        projection.on(labelAssignedToTaskEvent, eventContext);
+        projection.on(labelRemovedFromTaskEvent, eventContext);
 
         final List<TaskView> views = projection.getState()
                                                .getLabelledTasks()
@@ -56,9 +60,9 @@ class LabelledTaskViewProjectionTest {
     @Test
     public void return_state_when_handle_deleted_task_restored_event() {
         int expectedListSize = 1;
-        projection.on(labelAssignedToTaskEvent);
-        projection.on(taskDeletedEvent);
-        projection.on(deletedTaskRestoredEvent);
+        projection.on(labelAssignedToTaskEvent, eventContext);
+        projection.on(taskDeletedEvent, eventContext);
+        projection.on(deletedTaskRestoredEvent, eventContext);
 
         final List<TaskView> views = projection.getState()
                                                .getLabelledTasks()
@@ -69,7 +73,7 @@ class LabelledTaskViewProjectionTest {
     @Test
     public void return_state_when_handle_label_assigned_to_task_event() {
         int expectedListSize = 1;
-        projection.on(labelAssignedToTaskEvent);
+        projection.on(labelAssignedToTaskEvent, eventContext);
 
         final List<TaskView> views = projection.getState()
                                                .getLabelledTasks()
@@ -80,8 +84,8 @@ class LabelledTaskViewProjectionTest {
     @Test
     public void return_state_when_handle_task_deleted_event() {
         int expectedListSize = 0;
-        projection.on(labelAssignedToTaskEvent);
-        projection.on(taskDeletedEvent);
+        projection.on(labelAssignedToTaskEvent, eventContext);
+        projection.on(taskDeletedEvent, eventContext);
 
         final List<TaskView> views = projection.getState()
                                                .getLabelledTasks()

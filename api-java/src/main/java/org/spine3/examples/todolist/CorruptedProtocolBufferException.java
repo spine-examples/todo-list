@@ -17,23 +17,20 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-syntax = "proto3";
+package org.spine3.examples.todolist;
 
-option (type_url_prefix) = "type.spine.examples.todolist";
-option java_package = "org.spine3.examples.todolist";
-option java_outer_classname = "EnrichmentProto";
-option java_multiple_files = true;
+/**
+ * Class presents {@link RuntimeException} wrapper for {@link com.google.protobuf.InvalidProtocolBufferException}
+ *
+ * @author Illia Shepilov
+ */
+public class CorruptedProtocolBufferException extends RuntimeException {
 
-import "spine/annotations.proto";
-import "spine/event_annotations.proto";
+    public CorruptedProtocolBufferException(String message) {
+        super(message);
+    }
 
-import "todolist/attributes.proto";
-
-message LabelEnrichment {
-
-    option (enrichment_for) = "org.spine3.examples.todolist.LabelAssignedToTask,org.spine3.examples.todolist.LabelRemovedFromTask,org.spine3.examples.todolist.DeletedTaskRestored,org.spine3.examples.todolist.TaskDeleted";
-
-    string label_title = 1 [(by) = "label_id"];
-
-    string label_color = 2 [(by) = "label_id"];
+    public CorruptedProtocolBufferException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }
