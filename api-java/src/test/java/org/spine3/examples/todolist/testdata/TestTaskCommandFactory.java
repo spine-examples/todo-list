@@ -52,7 +52,7 @@ public class TestTaskCommandFactory {
      * Prevent instantiation.
      */
     private TestTaskCommandFactory() {
-        throw new UnsupportedOperationException("Can not be instantiated");
+        throw new UnsupportedOperationException("Cannot be instantiated");
     }
 
     /**
@@ -212,5 +212,4 @@ public class TestTaskCommandFactory {
                                                          .setValue(ID))
                                   .build();
     }
-
 }

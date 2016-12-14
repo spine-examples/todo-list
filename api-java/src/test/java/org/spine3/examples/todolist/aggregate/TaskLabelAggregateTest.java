@@ -106,5 +106,4 @@ public class TaskLabelAggregateTest {
         assertEquals(updatedLabelColor, state.getColor());
         assertEquals(updatedTitle, state.getTitle());
     }
-
 }

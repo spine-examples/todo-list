@@ -21,6 +21,10 @@ package org.spine3.examples.todolist.testdata;
 
 import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelColor;
+import org.spine3.examples.todolist.LabelCreated;
+import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelDetailsUpdated;
+import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.UpdateLabelDetails;
 
 /**
@@ -36,7 +40,7 @@ public class TestTaskLabelCommandFactory {
      * Prevent instantiation.
      */
     private TestTaskLabelCommandFactory() {
-        throw new UnsupportedOperationException("Can not be instantiated");
+        throw new UnsupportedOperationException("Cannot be instantiated");
     }
 
     /**
@@ -72,4 +76,62 @@ public class TestTaskLabelCommandFactory {
                                  .build();
     }
 
+    /**
+     * Provides {@link LabelCreated} event by specified label's color {@code LabelColor.GRAY}
+     * and label's title {@code TITLE}.
+     *
+     * @return {@link LabelCreated} instance
+     */
+    public static LabelCreated labelCreatedInstance() {
+        return labelCreatedInstance(LabelColor.GRAY, TITLE);
+    }
+
+    /**
+     * Provides {@link LabelCreated} event by specified label's color and title.
+     *
+     * @param color label's color
+     * @param title label's title
+     * @return {@link LabelCreated} instance
+     */
+    public static LabelCreated labelCreatedInstance(LabelColor color, String title) {
+        return LabelCreated.newBuilder()
+                           .setDetails(LabelDetails.newBuilder()
+                                                   .setColor(color)
+                                                   .setTitle(title))
+                           .build();
+    }
+
+    /**
+     * Provides {@link LabelDetailsUpdated} event by specified label's color {@code LabelColor.GRAY}
+     * and label's title {@code TITLE}.
+     *
+     * @return {@link LabelDetailsUpdated} instance.
+     */
+    public static LabelDetailsUpdated labelDetailsUpdatedInstance() {
+        return labelDetailsUpdatedInstance(LabelColor.GRAY, TITLE);
+    }
+
+    /**
+     * Provides {@link LabelDetailsUpdated} event by specified label's color and title.
+     *
+     * @param color label's color
+     * @param title label's title
+     * @return {@link LabelDetailsUpdated} instance
+     */
+    public static LabelDetailsUpdated labelDetailsUpdatedInstance(LabelColor color, String title) {
+        return LabelDetailsUpdated.newBuilder()
+                                  .setNewDetails(LabelDetails.newBuilder()
+                                                             .setColor(color)
+                                                             .setTitle(title))
+                                  .build();
+    }
+
+    /**
+     * Provides default {@link LabelRemovedFromTask} event instance.
+     *
+     * @return {@link LabelRemovedFromTask} instance
+     */
+    public static LabelRemovedFromTask labelRemovedFromTaskInstance() {
+        return LabelRemovedFromTask.getDefaultInstance();
+    }
 }

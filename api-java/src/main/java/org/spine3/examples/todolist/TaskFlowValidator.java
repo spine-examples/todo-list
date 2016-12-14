@@ -24,7 +24,7 @@ package org.spine3.examples.todolist;
  *
  * @author Illia Shepilov
  */
-public class TaskStatusValidation {
+public class TaskFlowValidator {
 
     /**
      * Verifies allowed or not transition from current state to new state of task.
@@ -32,11 +32,11 @@ public class TaskStatusValidation {
      * @param currentStatus current task status
      * @param newStatus     new task status
      */
-    public static void validateCommandTransition(TaskStatus currentStatus, TaskStatus newStatus) {
+    public static void validateTransition(TaskStatus currentStatus, TaskStatus newStatus) {
         final boolean isValid = TaskStatusTransition.isValid(currentStatus, newStatus);
 
         if (!isValid) {
-            String message = String.format("Illegal new state. Can not make transition from: %s to: %s state",
+            String message = String.format("Cannot make transition from: %s to: %s state",
                                            currentStatus, newStatus);
             throw new IllegalStateException(message);
         }
@@ -44,27 +44,27 @@ public class TaskStatusValidation {
 
     /**
      * Verifies status of current task.
-     * If it is COMPLETED or DELETED, throws {@link IllegalStateException}.
+     *
+     * <p>If it is COMPLETED or DELETED, throws {@link IllegalStateException}.
      *
      * @param currentStatus task's current state {@link TaskStatus}
      * @throws IllegalStateException if status, passed to the method,
      *                               {@code TaskStatus.COMPLETED} or {@code TaskStatus.DELETED}.
      */
-    public static void checkCompletedOrDeletedCommand(TaskStatus currentStatus) {
-        isCommandDeletedCheck(currentStatus);
-        isCommandCompletedCheck(currentStatus);
+    public static void ensureCompletedOrDeleted(TaskStatus currentStatus) {
+        ensureDeleted(currentStatus);
+        ensureCompleted(currentStatus);
     }
 
-    private static void isCommandCompletedCheck(TaskStatus currentStatus) {
+    private static void ensureCompleted(TaskStatus currentStatus) {
         if (currentStatus == TaskStatus.COMPLETED) {
             throw new IllegalStateException("Command cannot be applied on completed task.");
         }
     }
 
-    private static void isCommandDeletedCheck(TaskStatus currentStatus) {
+    private static void ensureDeleted(TaskStatus currentStatus) {
         if (currentStatus == TaskStatus.DELETED) {
             throw new IllegalStateException("Command cannot be applied on deleted task.");
         }
     }
-
 }

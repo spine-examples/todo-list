@@ -42,7 +42,7 @@ public class TestCommandContextFactory {
      * Prevent instantiation.
      */
     private TestCommandContextFactory() {
-        throw new UnsupportedOperationException("Can not be instantiated");
+        throw new UnsupportedOperationException("Cannot be instantiated");
     }
 
     /**
@@ -75,5 +75,4 @@ public class TestCommandContextFactory {
                                                                                   .setValue(newUuid()));
         return builder.build();
     }
-
 }

@@ -43,7 +43,7 @@ buildscript {
 
     dependencies {
         classpath group: 'com.google.guava', name: 'guava', version: guavaVersion
-        classpath (group: 'com.google.protobuf', name:'protobuf-gradle-plugin', version: protobufGradlePluginVersion) {
+        classpath(group: 'com.google.protobuf', name: 'protobuf-gradle-plugin', version: protobufGradlePluginVersion) {
             // exclude an old Guava version
             exclude group: 'com.google.guava'
         }
@@ -165,7 +165,7 @@ subprojects {
         compile group: 'com.google.guava', name: 'guava', version: guavaVersion
         compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
 
-        compile ("com.google.protobuf:protobuf-java:${protobufVersion}") {
+        compile("com.google.protobuf:protobuf-java:${protobufVersion}") {
             // Do not use Guava v18, we use newer version.
             exclude group: 'com.google.guava'
             // Use Gson v2.7 instead of v2.3. See: https://github.com/google/gson/blob/master/CHANGELOG.md
@@ -178,7 +178,7 @@ subprojects {
         compile group: 'org.spine3', name: 'users', version: spineVersion
         compile group: 'org.spine3', name: 'values', version: spineVersion
 
-        testCompile ("org.spine3:testutil:${spineVersion}") {
+        testCompile("org.spine3:testutil:${spineVersion}") {
             // We are using JUnit 5.x instead of 4.x dependency of Spine testing framework.
             exclude group: 'junit'
         }
@@ -231,7 +231,7 @@ subprojects {
 
         logManager 'java.util.logging.LogManager'
 
-        selectors{
+        selectors {
             directory '${sourceRootDir}/test/java'
             aPackage 'org.spine3.examples.todolist'
         }
@@ -257,8 +257,10 @@ subprojects {
         }
     }
 
-    // Worked around
-    // @see https://discuss.gradle.org/t/jacocotestreport-task-fails-if-jacoco-plugin-is-applied-in-afterevaluate/835
+    // This is a workaround to make JUnit 5 work with Jacoco library.
+    // There is an open issue here: 
+    // <link>https://discuss.gradle.org/t/jacocotestreport-task-fails-if-jacoco-plugin-is-applied-in-afterevaluate/835</link>
+    // todo:13-12-16:illia.shepilov: revisit the workaround once the issue is resolved.
     project.afterEvaluate {
         def junitPlatformTestTask = project.tasks.getByName('junitPlatformTest')
 

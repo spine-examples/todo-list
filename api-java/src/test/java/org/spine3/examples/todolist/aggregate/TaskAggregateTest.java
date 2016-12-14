@@ -87,7 +87,7 @@ public class TaskAggregateTest {
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
     private static final String COMPLETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied on completed task.";
     private static final String DELETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied on deleted task.";
-    private static final String INAPPROPRIATE_TASK_DESCRIPTION = "Description should contains at least 3 alphanumeric symbols.";
+    private static final String INAPPROPRIATE_TASK_DESCRIPTION = "Description should contain at least 3 alphanumeric symbols.";
     private TaskAggregate aggregate;
     private CreateBasicTask createTaskCmd;
     private UpdateTaskDescription updateTaskDescriptionCmd;
@@ -683,8 +683,7 @@ public class TaskAggregateTest {
     }
 
     private static String constructExceptionMessage(TaskStatus fromState, TaskStatus toState) {
-        return String.format("Illegal new state. Can not make transition from: %s to: %s state",
+        return String.format("Cannot make transition from: %s to: %s state",
                              fromState, toState);
     }
-
 }

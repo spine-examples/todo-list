@@ -61,16 +61,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.spine3.examples.todolist.TaskStatusValidation.checkCompletedOrDeletedCommand;
-import static org.spine3.examples.todolist.TaskStatusValidation.validateCommandTransition;
+import static org.spine3.examples.todolist.TaskFlowValidator.ensureCompletedOrDeleted;
+import static org.spine3.examples.todolist.TaskFlowValidator.validateTransition;
 
 /**
- * The task aggregate which manages the state of the task.
+ * The aggregate managing the state of a {@link Task}.
  *
  * @author Illia Shepilov
- * @see Aggregate
  */
 public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
+
+    private static final int MIN_DESCRIPTION_LENGTH = 3;
 
     /**
      * Creates a new aggregate instance.
@@ -106,7 +107,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(UpdateTaskDueDate cmd) {
-        checkCompletedOrDeletedCommand(getState().getTaskStatus());
+        ensureCompletedOrDeleted(getState().getTaskStatus());
         final Timestamp previousDueDate = getState().getDueDate();
         final TaskDueDateUpdated result = TaskDueDateUpdated.newBuilder()
                                                             .setId(cmd.getId())
@@ -118,7 +119,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(UpdateTaskPriority cmd) {
-        checkCompletedOrDeletedCommand(getState().getTaskStatus());
+        ensureCompletedOrDeleted(getState().getTaskStatus());
         final TaskPriority previousPriority = getState().getPriority();
         final TaskPriorityUpdated result = TaskPriorityUpdated.newBuilder()
                                                               .setId(cmd.getId())
@@ -130,7 +131,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(ReopenTask cmd) {
-        validateCommandTransition(getState().getTaskStatus(), TaskStatus.OPEN);
+        validateTransition(getState().getTaskStatus(), TaskStatus.OPEN);
         final TaskReopened result = TaskReopened.newBuilder()
                                                 .setId(cmd.getId())
                                                 .build();
@@ -139,7 +140,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(DeleteTask cmd) {
-        validateCommandTransition(getState().getTaskStatus(), TaskStatus.DELETED);
+        validateTransition(getState().getTaskStatus(), TaskStatus.DELETED);
         final TaskDeleted result = TaskDeleted.newBuilder()
                                               .setId(cmd.getId())
                                               .build();
@@ -148,7 +149,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(RestoreDeletedTask cmd) {
-        validateCommandTransition(getState().getTaskStatus(), TaskStatus.OPEN);
+        validateTransition(getState().getTaskStatus(), TaskStatus.OPEN);
         final DeletedTaskRestored result = DeletedTaskRestored.newBuilder()
                                                               .setId(cmd.getId())
                                                               .build();
@@ -157,7 +158,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(CompleteTask cmd) {
-        validateCommandTransition(getState().getTaskStatus(), TaskStatus.COMPLETED);
+        validateTransition(getState().getTaskStatus(), TaskStatus.COMPLETED);
         final TaskCompleted result = TaskCompleted.newBuilder()
                                                   .setId(cmd.getId())
                                                   .build();
@@ -166,7 +167,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(FinalizeDraft cmd) {
-        validateCommandTransition(getState().getTaskStatus(), TaskStatus.FINALIZED);
+        validateTransition(getState().getTaskStatus(), TaskStatus.FINALIZED);
         final TaskDraftFinalized result = TaskDraftFinalized.newBuilder()
                                                             .setId(cmd.getId())
                                                             .build();
@@ -175,7 +176,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(RemoveLabelFromTask cmd) {
-        checkCompletedOrDeletedCommand(getState().getTaskStatus());
+        ensureCompletedOrDeleted(getState().getTaskStatus());
         final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
                                                                 .setId(cmd.getId())
                                                                 .setLabelId(cmd.getLabelId())
@@ -185,7 +186,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(AssignLabelToTask cmd) {
-        checkCompletedOrDeletedCommand(getState().getTaskStatus());
+        ensureCompletedOrDeleted(getState().getTaskStatus());
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
                                                               .setId(cmd.getId())
                                                               .setLabelId(cmd.getLabelId())
@@ -193,7 +194,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return Collections.singletonList(result);
     }
 
-    //TODO[illia.shepilov]: should to be updated after defining draft creation
+    //TODO[illia.shepilov]: should be updated after defining draft creation.
     @Assign
     public List<? extends Message> handle(CreateDraft cmd) {
         final TaskDraftCreated result = TaskDraftCreated.newBuilder()
@@ -202,8 +203,12 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return Collections.singletonList(result);
     }
 
+    /*
+     * Event appliers
+     *****************/
+
     @Apply
-    private void eventOnCreateTask(TaskCreated event) {
+    private void taskCreated(TaskCreated event) {
         final TaskDetails taskDetails = event.getDetails();
         getBuilder().setId(event.getId())
                     .setCreated(Timestamps.getCurrentTime())
@@ -213,62 +218,55 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Apply
-    private void eventOnUpdateTaskDescription(TaskDescriptionUpdated event) {
+    private void taskDescriptionUpdated(TaskDescriptionUpdated event) {
         getBuilder().setId(event.getId())
                     .setDescription(event.getNewDescription());
     }
 
     @Apply
-    private void eventOnUpdateTaskDueDate(TaskDueDateUpdated event) {
+    private void taskDueDateUpdated(TaskDueDateUpdated event) {
         getBuilder().setId(event.getId())
                     .setDueDate(event.getNewDueDate());
     }
 
     @Apply
-    private void eventOnUpdateTaskPriority(TaskPriorityUpdated event) {
+    private void taskPriorityUpdated(TaskPriorityUpdated event) {
         getBuilder().setId(event.getId())
                     .setPriority(event.getNewPriority());
     }
 
     @Apply
-    private void eventOnReopenTask(TaskReopened event) {
+    private void taskReopened(TaskReopened event) {
         getBuilder().setId(event.getId())
                     .setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    private void eventOnDeleteTask(TaskDeleted event) {
+    private void taskDeleted(TaskDeleted event) {
         getBuilder().setId(event.getId())
                     .setTaskStatus(TaskStatus.DELETED);
     }
 
     @Apply
-    private void eventOnRestoreDeletedTask(DeletedTaskRestored event) {
+    private void deletedTaskRestored(DeletedTaskRestored event) {
         getBuilder().setId(event.getId())
                     .setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    private void eventOnCompleteTask(TaskCompleted event) {
+    private void taskCompleted(TaskCompleted event) {
         getBuilder().setId(event.getId())
                     .setTaskStatus(TaskStatus.COMPLETED);
     }
 
     @Apply
-    private void eventOnTaskDetails(TaskDetails event) {
-        getBuilder().setPriority(event.getPriority())
-                    .setDescription(event.getDescription())
-                    .setTaskStatus(event.getTaskStatus());
-    }
-
-    @Apply
-    private void eventOnFinalizeTaskDraft(TaskDraftFinalized event) {
+    private void taskDraftFinalized(TaskDraftFinalized event) {
         getBuilder().setId(event.getId())
                     .setTaskStatus(TaskStatus.FINALIZED);
     }
 
     @Apply
-    private void eventOnAssignLabelToTask(LabelAssignedToTask event) {
+    private void labelAssignedToTask(LabelAssignedToTask event) {
         List<TaskLabelId> list = getState().getLabelIdsList()
                                            .stream()
                                            .collect(Collectors.toList());
@@ -279,7 +277,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Apply
-    private void eventOnRemoveLabelFromTask(LabelRemovedFromTask event) {
+    private void labelRemovedFromTask(LabelRemovedFromTask event) {
         List<TaskLabelId> list = getState().getLabelIdsList()
                                            .stream()
                                            .collect(Collectors.toList());
@@ -291,9 +289,9 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     }
 
-    //TODO[illia.shepilov]: should to be updated after defining draft creation
+    //TODO[illia.shepilov]: should be updated after defining draft creation.
     @Apply
-    private void eventOnCreateTaskDraft(TaskDraftCreated event) {
+    private void draftCreated(TaskDraftCreated event) {
         getBuilder().setId(event.getId())
                     .setCreated(event.getDraftCreationTime())
                     .setDescription(event.getDetails()
@@ -303,8 +301,8 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     private void validateCommand(CreateBasicTask cmd) {
         final String description = cmd.getDescription();
-        if (description != null && description.length() < 3) {
-            throw new IllegalStateException("Description should contains at least 3 alphanumeric symbols");
+        if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
+            throw new IllegalStateException("Description should contain at least 3 alphanumeric symbols.");
         }
     }
 
@@ -312,11 +310,10 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final String description = cmd.getUpdatedDescription();
         checkNotNull(description, "Description cannot be null.");
 
-        if (description.length() < 3) {
-            throw new IllegalStateException("Description should contains at least 3 alphanumeric symbols.");
+        if (description.length() < MIN_DESCRIPTION_LENGTH) {
+            throw new IllegalStateException("Description should contain at least 3 alphanumeric symbols.");
         }
 
-        checkCompletedOrDeletedCommand(getState().getTaskStatus());
+        ensureCompletedOrDeleted(getState().getTaskStatus());
     }
-
 }

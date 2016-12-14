@@ -1,4 +1,4 @@
-///
+//
 // Copyright 2016, TeamDev Ltd. All rights reserved.
 //
 // Redistribution and use in source and/or binary forms, with or without
@@ -19,9 +19,10 @@
 //
 
 /**
- * This package provides implementation for projection classes.
+ * This package provides implementation for projections, aggregates
+ * and implementation for classes which provides helpful methods to process them.
  */
 @ParametersAreNonnullByDefault
-package org.spine3.examples.todolist.projection;
+package org.spine3.examples.todolist;
 
 import javax.annotation.ParametersAreNonnullByDefault;

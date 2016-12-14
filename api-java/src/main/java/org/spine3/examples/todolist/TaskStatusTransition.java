@@ -94,5 +94,4 @@ public enum TaskStatusTransition {
         }
         return false;
     }
-
 }

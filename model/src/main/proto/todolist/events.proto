@@ -273,8 +273,8 @@ message TaskDetails {
     // A priority of the task.
     TaskPriority priority = 2 [(required) = true];
 
-    // A status of the task.
-    TaskStatus task_status = 3 [(required) = true];
+    // Whether this task is completed.
+    bool completed = 3 [(required) = true];
 
 }
 

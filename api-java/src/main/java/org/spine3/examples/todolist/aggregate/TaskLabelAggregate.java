@@ -36,10 +36,9 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * The label aggregate which manages the state of the task label.
+ * The aggregate managing the state of a {@link TaskLabel}.
  *
  * @author Illia Shepilov
- * @see Aggregate
  */
 public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLabel.Builder> {
 
@@ -68,12 +67,10 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
                                                               .setColor(getState().getColor())
                                                               .setTitle(getState().getTitle())
                                                               .build();
-
         final LabelDetails newLabelDetails = LabelDetails.newBuilder()
                                                          .setTitle(cmd.getNewTitle())
                                                          .setColor(cmd.getColor())
                                                          .build();
-
         final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
                                                               .setId(cmd.getId())
                                                               .setPreviousDetails(previousLabelDetails)
@@ -83,7 +80,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     }
 
     @Apply
-    private void eventOnCreateLabel(LabelCreated event) {
+    private void labelCreated(LabelCreated event) {
         getBuilder().setId(event.getId())
                     .setTitle(event.getDetails()
                                    .getTitle())
@@ -91,17 +88,10 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     }
 
     @Apply
-    private void eventOnUpdateLabelDetails(LabelDetailsUpdated event) {
+    private void labelDetailsUpdated(LabelDetailsUpdated event) {
         final LabelDetails labelDetails = event.getNewDetails();
         getBuilder().setId(event.getId())
                     .setTitle(labelDetails.getTitle())
                     .setColor(labelDetails.getColor());
     }
-
-    @Apply
-    private void eventOnLabelDetails(LabelDetails event) {
-        getBuilder().setTitle(event.getTitle())
-                    .setColor(event.getColor());
-    }
-
 }

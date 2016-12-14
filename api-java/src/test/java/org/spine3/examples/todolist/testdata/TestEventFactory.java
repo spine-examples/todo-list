@@ -12,6 +12,7 @@ import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskDraftCreated;
 import org.spine3.examples.todolist.TaskDraftFinalized;
 import org.spine3.examples.todolist.TaskDueDateUpdated;
+import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskPriorityUpdated;
@@ -21,26 +22,26 @@ import org.spine3.protobuf.Timestamps;
 import static org.spine3.base.Identifiers.newUuid;
 
 /**
- * Provides methods for instantiation task events for test needs.
+ * Provides methods for instantiation events for test needs.
  *
  * @author Illia Shepilov
  */
-public class TestTaskEventFactory {
+public class TestEventFactory {
 
     /**
-     * Task's description. Using into {@link org.spine3.examples.todolist.projection.TaskProjectionTest}.
+     * Task's description. Using into {@link org.spine3.examples.todolist.projection.MyListViewProjectionTest}.
      */
     public static final String DESCRIPTION = "task description";
     /**
-     * Task's priority. Using into {@link org.spine3.examples.todolist.projection.TaskProjectionTest}.
+     * Task's priority. Using into {@link org.spine3.examples.todolist.projection.MyListViewProjectionTest}.
      */
     public static final TaskPriority TASK_PRIORITY = TaskPriority.NORMAL;
     /**
-     * Task's due date. Using into {@link org.spine3.examples.todolist.projection.TaskProjectionTest}.
+     * Task's due date. Using into {@link org.spine3.examples.todolist.projection.MyListViewProjectionTest}.
      */
     public static final Timestamp TASK_DUE_DATE = Timestamps.getCurrentTime();
     /**
-     * {@link TaskLabelId}, using into {@link org.spine3.examples.todolist.projection.TaskProjectionTest}.
+     * {@link TaskLabelId}, using into {@link org.spine3.examples.todolist.projection.MyListViewProjectionTest}.
      */
     public static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
                                                           .setValue(newUuid())
@@ -51,8 +52,8 @@ public class TestTaskEventFactory {
     /**
      * Prevent instantiation.
      */
-    private TestTaskEventFactory() {
-        throw new UnsupportedOperationException("Can not be instantiated");
+    private TestEventFactory() {
+        throw new UnsupportedOperationException("Cannot be instantiated");
     }
 
     /**
@@ -77,6 +78,18 @@ public class TestTaskEventFactory {
                           .setDetails(TaskDetails.newBuilder()
                                                  .setDescription(description)
                                                  .setPriority(priority))
+                          .build();
+    }
+
+    /**
+     * Provides {@link TaskCreated} event by specified task's id.
+     *
+     * @param id task's id
+     * @return {@link TaskCreated} instance
+     */
+    public static TaskCreated taskCreatedInstance(TaskId id) {
+        return TaskCreated.newBuilder()
+                          .setId(id)
                           .build();
     }
 
@@ -249,5 +262,4 @@ public class TestTaskEventFactory {
                                    .setLabelId(LABEL_ID)
                                    .build();
     }
-
 }
