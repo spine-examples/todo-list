@@ -47,7 +47,7 @@ class LabelledTaskViewProjectionTest {
 
     @Test
     public void return_state_when_handle_label_removed_from_task_event() {
-        int expectedListSize = 0;
+        final int expectedListSize = 0;
         projection.on(labelAssignedToTaskEvent, eventContext);
         projection.on(labelRemovedFromTaskEvent, eventContext);
 
@@ -59,7 +59,7 @@ class LabelledTaskViewProjectionTest {
 
     @Test
     public void return_state_when_handle_deleted_task_restored_event() {
-        int expectedListSize = 1;
+        final int expectedListSize = 1;
         projection.on(labelAssignedToTaskEvent, eventContext);
         projection.on(taskDeletedEvent, eventContext);
         projection.on(deletedTaskRestoredEvent, eventContext);
@@ -72,7 +72,7 @@ class LabelledTaskViewProjectionTest {
 
     @Test
     public void return_state_when_handle_label_assigned_to_task_event() {
-        int expectedListSize = 1;
+        final int expectedListSize = 1;
         projection.on(labelAssignedToTaskEvent, eventContext);
 
         final List<TaskView> views = projection.getState()
@@ -83,7 +83,7 @@ class LabelledTaskViewProjectionTest {
 
     @Test
     public void return_state_when_handle_task_deleted_event() {
-        int expectedListSize = 0;
+        final int expectedListSize = 0;
         projection.on(labelAssignedToTaskEvent, eventContext);
         projection.on(taskDeletedEvent, eventContext);
 

@@ -39,7 +39,7 @@ class DraftTaskViewProjectionTest {
 
     @Test
     public void return_state_when_handle_task_draft_finalized_event() {
-        int expectedListSize = 0;
+        final int expectedListSize = 0;
         projection.on(taskDraftCreatedEvent);
         projection.on(taskDraftFinalizedEvent);
 
@@ -51,7 +51,7 @@ class DraftTaskViewProjectionTest {
 
     @Test
     public void return_state_when_handle_task_deleted_event() {
-        int expectedListSize = 0;
+        final int expectedListSize = 0;
         projection.on(taskDraftCreatedEvent);
         projection.on(taskDeletedEvent);
 
@@ -63,7 +63,7 @@ class DraftTaskViewProjectionTest {
 
     @Test
     public void return_state_when_handle_task_draft_created() {
-        int expectedListSize = 1;
+        final int expectedListSize = 1;
         projection.on(taskDraftCreatedEvent);
 
         final List<TaskView> views = projection.getState()

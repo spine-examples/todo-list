@@ -5,8 +5,8 @@ import org.spine3.base.Enrichments;
 import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.LabelEnrichment;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Provides event context instances for test needs.
@@ -38,10 +38,7 @@ public class TestEventContextFactory {
 
     private static Enrichments enrichmentsInstance(LabelEnrichment enrichment) {
         final Enrichments.Builder builder = Enrichments.newBuilder();
-        final Map<String, Any> map = builder.getMapMap()
-                                            .entrySet()
-                                            .stream()
-                                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        final Map<String, Any> map = new HashMap<>();
         map.put(ENRICHER, Any.newBuilder()
                              .setTypeUrlBytes(enrichment.toByteString())
                              .build());

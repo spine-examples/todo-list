@@ -35,7 +35,7 @@ class MyListViewProjectionTest {
 
     @Test
     public void return_state_when_handle_task_created_event() {
-        int expectedSize = 1;
+        final int expectedSize = 1;
         projection.on(taskCreatedEvent);
 
         final List<TaskView> views = projection.getState()
