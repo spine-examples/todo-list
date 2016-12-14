@@ -21,9 +21,9 @@ import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDeleted
 /**
  * @author Illia Shepilov
  */
-class LabeledTaskViewProjectionTest {
+class LabelledTaskViewProjectionTest {
 
-    private LabeledTaskViewProjection projection;
+    private LabelledTaskViewProjection projection;
     private DeletedTaskRestored deletedTaskRestoredEvent;
     private LabelRemovedFromTask labelRemovedFromTaskEvent;
     private LabelAssignedToTask labelAssignedToTaskEvent;
@@ -34,7 +34,7 @@ class LabeledTaskViewProjectionTest {
 
     @BeforeEach
     public void setUp() {
-        projection = new LabeledTaskViewProjection(ID);
+        projection = new LabelledTaskViewProjection(ID);
         deletedTaskRestoredEvent = deletedTaskRestoredInstance();
         labelAssignedToTaskEvent = labelAssignedToTaskInstance();
         labelRemovedFromTaskEvent = labelRemovedFromTaskInstance();

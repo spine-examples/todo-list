@@ -30,7 +30,7 @@ import static org.spine3.examples.todolist.projection.ProjectionHelper.removeVie
  *
  * @author Illia Shepilov
  */
-public class LabeledTaskViewProjection extends Projection<TaskLabelId, LabelledTasksView> {
+public class LabelledTaskViewProjection extends Projection<TaskLabelId, LabelledTasksView> {
 
     /**
      * Creates a new instance.
@@ -38,7 +38,7 @@ public class LabeledTaskViewProjection extends Projection<TaskLabelId, LabelledT
      * @param id the ID for the new instance
      * @throws IllegalArgumentException if the ID is not of one of the supported types
      */
-    public LabeledTaskViewProjection(TaskLabelId id) {
+    public LabelledTaskViewProjection(TaskLabelId id) {
         super(id);
     }
 
