@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.TaskDeleted;
 import org.spine3.examples.todolist.TaskDraftCreated;
 import org.spine3.examples.todolist.TaskDraftFinalized;
-import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.view.TaskView;
 
 import java.util.List;
@@ -25,9 +25,9 @@ class DraftTaskViewProjectionTest {
     private TaskDraftFinalized taskDraftFinalizedEvent;
     private TaskDraftCreated taskDraftCreatedEvent;
     private TaskDeleted taskDeletedEvent;
-    private TaskId ID = TaskId.newBuilder()
-                              .setValue(newUuid())
-                              .build();
+    private TaskListId ID = TaskListId.newBuilder()
+                                      .setValue(newUuid())
+                                      .build();
 
     @BeforeEach
     public void setUp() {

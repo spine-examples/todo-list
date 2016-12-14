@@ -4,7 +4,7 @@ import org.spine3.examples.todolist.TaskDeleted;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskDraftCreated;
 import org.spine3.examples.todolist.TaskDraftFinalized;
-import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.view.DraftTasksView;
 import org.spine3.examples.todolist.view.TaskListView;
 import org.spine3.examples.todolist.view.TaskView;
@@ -25,14 +25,14 @@ import static org.spine3.examples.todolist.projection.ProjectionHelper.removeVie
  *
  * @author Illia Shepilov
  */
-public class DraftTaskViewProjection extends Projection<TaskId, DraftTasksView> {
+public class DraftTaskViewProjection extends Projection<TaskListId, DraftTasksView> {
     /**
      * Creates a new instance.
      *
      * @param id the ID for the new instance
      * @throws IllegalArgumentException if the ID is not of one of the supported types
      */
-    public DraftTaskViewProjection(TaskId id) {
+    public DraftTaskViewProjection(TaskListId id) {
         super(id);
     }
 

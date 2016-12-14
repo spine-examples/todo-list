@@ -4,7 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.TaskCreated;
 import org.spine3.examples.todolist.TaskDeleted;
-import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.view.TaskView;
 
 import java.util.List;
@@ -22,9 +22,9 @@ class MyListViewProjectionTest {
     private MyListViewProjection projection;
     private TaskCreated taskCreatedEvent;
     private TaskDeleted taskDeletedEvent;
-    private TaskId ID = TaskId.newBuilder()
-                              .setValue(newUuid())
-                              .build();
+    private TaskListId ID = TaskListId.newBuilder()
+                                      .setValue(newUuid())
+                                      .build();
 
     @BeforeEach
     void setUp() {

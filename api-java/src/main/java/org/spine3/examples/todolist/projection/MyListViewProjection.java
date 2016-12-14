@@ -3,7 +3,7 @@ package org.spine3.examples.todolist.projection;
 import org.spine3.examples.todolist.TaskCreated;
 import org.spine3.examples.todolist.TaskDeleted;
 import org.spine3.examples.todolist.TaskDetails;
-import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.view.MyListView;
 import org.spine3.examples.todolist.view.TaskListView;
 import org.spine3.examples.todolist.view.TaskView;
@@ -24,7 +24,7 @@ import static org.spine3.examples.todolist.projection.ProjectionHelper.removeVie
  *
  * @author Illia Shepilov
  */
-public class MyListViewProjection extends Projection<TaskId, MyListView> {
+public class MyListViewProjection extends Projection<TaskListId, MyListView> {
 
     /**
      * Creates a new instance.
@@ -32,7 +32,7 @@ public class MyListViewProjection extends Projection<TaskId, MyListView> {
      * @param id the ID for the new instance
      * @throws IllegalArgumentException if the ID is not of one of the supported types
      */
-    public MyListViewProjection(TaskId id) {
+    public MyListViewProjection(TaskListId id) {
         super(id);
     }
 

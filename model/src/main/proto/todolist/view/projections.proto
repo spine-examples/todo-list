@@ -45,7 +45,9 @@ import "todolist/attributes.proto";
 //
 message MyListView {
 
-    TaskListView my_list = 1;
+    TaskListId list_id = 1;
+
+    TaskListView my_list = 2;
 }
 
 // A projection state of tasks in a "draft" state.
@@ -58,7 +60,9 @@ message MyListView {
 //
 message DraftTasksView {
 
-    TaskListView draft_tasks = 1;
+    TaskListId list_id = 1;
+
+    TaskListView draft_tasks = 2;
 }
 
 // A projection state of the created tasks marked with a certain label.
