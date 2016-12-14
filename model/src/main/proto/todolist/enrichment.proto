@@ -28,7 +28,7 @@ import "spine/event_annotations.proto";
 
 message LabelTitleEnrichment {
 
-    option (enrichment_for) = "org.spine3.examples.todolist.LabelledTaskView";
+    option (enrichment_for) = "org.spine3.examples.todolist.LabelAssignedToTask";
 
-    string project_name = 1 [(by) = "label_title"];
+    string project_name = 1 [(by) = "label_id"];
 }
