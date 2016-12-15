@@ -1,3 +1,23 @@
+/*
+ * Copyright 2016, TeamDev Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.spine3.examples.todolist.projection;
 
 import org.spine3.examples.todolist.TaskDeleted;
@@ -18,21 +38,19 @@ import static org.spine3.examples.todolist.projection.ProjectionHelper.removeVie
 
 /**
  * A projection state of tasks in a "draft" state.
- * <p>
- * <p> Contains the data about the task draft task view.
- * <p>
+ *
  * <p> This view includes all non-deleted tasks, which creation is in progress.
  *
  * @author Illia Shepilov
  */
-public class DraftTaskViewProjection extends Projection<TaskListId, DraftTasksView> {
+public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksView> {
     /**
      * Creates a new instance.
      *
      * @param id the ID for the new instance
      * @throws IllegalArgumentException if the ID is not of one of the supported types
      */
-    public DraftTaskViewProjection(TaskListId id) {
+    public DraftTasksViewProjection(TaskListId id) {
         super(id);
     }
 

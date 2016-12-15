@@ -1,3 +1,23 @@
+/*
+ * Copyright 2016, TeamDev Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.spine3.examples.todolist.projection;
 
 import com.google.protobuf.Any;
@@ -6,7 +26,7 @@ import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.CorruptedProtocolBufferException;
 import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.LabelAssignedToTask;
-import org.spine3.examples.todolist.LabelEnrichment;
+import org.spine3.examples.todolist.LabelDetailsEnrichment;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.TaskDeleted;
 import org.spine3.examples.todolist.TaskLabelId;
@@ -24,7 +44,7 @@ import static org.spine3.examples.todolist.projection.ProjectionHelper.removeVie
 
 /**
  * A projection state of the created tasks marked with a certain label.
- * <p>
+ *
  * <p> Contains the data about the task view.
  * <p>
  * <p> This view includes all tasks per label that are neither in a draft state nor deleted.
@@ -64,7 +84,7 @@ public class LabelledTaskViewProjection extends Projection<TaskLabelId, Labelled
 
     @Subscribe
     public void on(LabelRemovedFromTask event, EventContext context) {
-        final LabelEnrichment enrichment = getLabelEnrichment(context);
+        final LabelDetailsEnrichment enrichment = getLabelEnrichment(context);
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList()
                                                .stream()
@@ -80,7 +100,7 @@ public class LabelledTaskViewProjection extends Projection<TaskLabelId, Labelled
 
     @Subscribe
     public void on(TaskDeleted event, EventContext context) {
-        final LabelEnrichment enrichment = getLabelEnrichment(context);
+        final LabelDetailsEnrichment enrichment = getLabelEnrichment(context);
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList()
                                                .stream()
@@ -93,19 +113,20 @@ public class LabelledTaskViewProjection extends Projection<TaskLabelId, Labelled
         incrementState(state);
     }
 
-    private LabelEnrichment getLabelEnrichment(EventContext context) {
+    private LabelDetailsEnrichment getLabelEnrichment(EventContext context) {
         try {
             final Any any = context.getEnrichments()
                                    .getMapMap()
-                                   .get("labelTitleEnricher");
-            return LabelEnrichment.parseFrom(any.getTypeUrlBytes());
+                                   .get("labelDetailsEnrichment");
+            final LabelDetailsEnrichment result = LabelDetailsEnrichment.parseFrom(any.getTypeUrlBytes());
+            return result;
         } catch (InvalidProtocolBufferException e) {
             throw new CorruptedProtocolBufferException("Unsuccessful protobuf parsing", e);
         }
     }
 
     private LabelledTasksView addLabel(TaskView taskView, EventContext context) {
-        final LabelEnrichment enrichment = getLabelEnrichment(context);
+        final LabelDetailsEnrichment enrichment = getLabelEnrichment(context);
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList()
                                                .stream()
@@ -114,10 +135,11 @@ public class LabelledTaskViewProjection extends Projection<TaskLabelId, Labelled
         final TaskListView taskListView = TaskListView.newBuilder()
                                                       .addAllItems(views)
                                                       .build();
-        return getState().newBuilderForType()
-                         .setLabelledTasks(taskListView)
-                         .setLabelColor(enrichment.getLabelColor())
-                         .setLabelTitle(enrichment.getLabelTitle())
-                         .build();
+        final LabelledTasksView result = getState().newBuilderForType()
+                                                   .setLabelledTasks(taskListView)
+                                                   .setLabelColor(enrichment.getLabelColor())
+                                                   .setLabelTitle(enrichment.getLabelTitle())
+                                                   .build();
+        return result;
     }
 }
