@@ -1,5 +1,6 @@
 package org.spine3.examples.todolist.client;
 
+import com.google.protobuf.Descriptors;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
@@ -15,19 +16,13 @@ import org.spine3.client.Target;
 import org.spine3.client.Topic;
 import org.spine3.client.grpc.CommandServiceGrpc;
 import org.spine3.client.grpc.SubscriptionServiceGrpc;
-import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.Task;
 import org.spine3.protobuf.Messages;
 import org.spine3.protobuf.TypeUrl;
 import org.spine3.time.ZoneOffsets;
 import org.spine3.users.UserId;
 
-import java.util.List;
-
-import static com.google.common.collect.Lists.newArrayList;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.spine3.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static org.spine3.protobuf.Messages.toText;
 
 /**
  * Sample gRPC client implementation.
@@ -36,16 +31,15 @@ import static org.spine3.protobuf.Messages.toText;
  */
 public class Client {
 
+    private static final int TIMEOUT = 10;
     private final CommandFactory commandFactory;
     private final ManagedChannel channel;
     private final CommandServiceGrpc.CommandServiceBlockingStub blockingClient;
     private final SubscriptionServiceGrpc.SubscriptionServiceStub nonBlockingClient;
-    private final Topic taskTopic;
-
-    private final StreamObserver<Subscription> taskUpdateObserver = new StreamObserver<Subscription>() {
+    private final StreamObserver<Subscription> streamObserver = new StreamObserver<Subscription>() {
         @Override
         public void onNext(Subscription value) {
-            log().debug("Task updated. Value is {}", value);
+            log().debug("Updated. Value is {}", value);
             nonBlockingClient.activate(value, observer);
         }
 
@@ -59,7 +53,6 @@ public class Client {
             log().info("Subscription stream completed.");
         }
     };
-
     private final StreamObserver<SubscriptionUpdate> observer = new StreamObserver<SubscriptionUpdate>() {
         @Override
         public void onNext(SubscriptionUpdate update) {
@@ -82,63 +75,40 @@ public class Client {
      * Construct the client connecting to server at {@code host:port}.
      */
     public Client(String host, int port) {
-        final TypeUrl taskTypeUrl = TypeUrl.of(Task.getDescriptor());
-        final Target.Builder target = Target.newBuilder()
-                                            .setType(taskTypeUrl.getTypeName());
-        taskTopic = Topic.newBuilder()
-                         .setTarget(target)
-                         .build();
-        commandFactory = CommandFactory.newBuilder()
-                                       .setActor(UserId.newBuilder()
-                                                       .setValue(Identifiers.newUuid())
-                                                       .build())
-                                       .setZoneOffset(ZoneOffsets.UTC)
-                                       .build();
-        channel = ManagedChannelBuilder
+        this.commandFactory = initCommandFactory();
+        this.channel = initChannel(host, port);
+        this.blockingClient = CommandServiceGrpc.newBlockingStub(channel);
+        this.nonBlockingClient = SubscriptionServiceGrpc.newStub(channel);
+    }
+
+    private CommandFactory initCommandFactory() {
+        return CommandFactory.newBuilder()
+                             .setActor(UserId.newBuilder()
+                                             .setValue(Identifiers.newUuid())
+                                             .build())
+                             .setZoneOffset(ZoneOffsets.UTC)
+                             .build();
+    }
+
+    private ManagedChannel initChannel(String host, int port) {
+        return ManagedChannelBuilder
                 .forAddress(host, port)
                 .usePlaintext(true)
                 .build();
-        blockingClient = CommandServiceGrpc.newBlockingStub(channel);
-        nonBlockingClient = SubscriptionServiceGrpc.newStub(channel);
     }
 
-    private void subscribe() {
-        nonBlockingClient.subscribe(taskTopic, taskUpdateObserver);
+    public Response execute(Command command) {
+        return post(command);
     }
 
-    /**
-     * Sends requests to the server.
-     */
-    public static void main(String[] args) throws InterruptedException {
-        final Client client = new Client("localhost", DEFAULT_CLIENT_SERVICE_PORT);
-        client.subscribe();
-
-        final List<Command> requests = client.generateRequests();
-
-        for (Command request : requests) {
-            log().info("Sending a request: " + request.getMessage()
-                                                      .getTypeUrl() + "...");
-            final Response result = client.post(request);
-            log().info("Result: " + toText(result));
-        }
-
-        client.shutdown();
-    }
-
-    /**
-     * Creates several test requests.
-     */
-    private List<Command> generateRequests() {
-        final List<Command> commands = newArrayList();
-        commands.add(createTask());
-        return commands;
-    }
-
-    private Command createTask() {
-        final CreateBasicTask message = CreateBasicTask.newBuilder()
-                                                       .setDescription("task description")
-                                                       .build();
-        return commandFactory.create(message);
+    public void addSubscriber(Descriptors.Descriptor descriptor) {
+        final TypeUrl taskTypeUrl = TypeUrl.of(Task.getDescriptor());
+        final Target.Builder target = Target.newBuilder()
+                                            .setType(taskTypeUrl.getTypeName());
+        final Topic topic = Topic.newBuilder()
+                                 .setTarget(target)
+                                 .build();
+        nonBlockingClient.subscribe(topic, streamObserver);
     }
 
     /**
@@ -146,9 +116,9 @@ public class Client {
      *
      * @throws InterruptedException if waiting is interrupted.
      */
-    private void shutdown() throws InterruptedException {
+    public void shutdown() throws InterruptedException {
         channel.shutdown()
-               .awaitTermination(10, SECONDS);
+               .awaitTermination(TIMEOUT, SECONDS);
     }
 
     /**
@@ -160,6 +130,7 @@ public class Client {
             result = blockingClient.post(request);
         } catch (RuntimeException e) {
             log().warn("failed", e);
+            throw e;
         }
         return result;
     }
@@ -173,5 +144,4 @@ public class Client {
     private static Logger log() {
         return LogSingleton.INSTANCE.value;
     }
-
 }
