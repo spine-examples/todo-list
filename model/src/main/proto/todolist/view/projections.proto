@@ -19,6 +19,8 @@
 //
 syntax = "proto3";
 
+package spine.examples.todolist;
+
 option (type_url_prefix) = "type.spine.examples.todolist";
 option java_package = "org.spine3.examples.todolist.view";
 option java_outer_classname = "ProjectionsProto";

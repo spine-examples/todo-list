@@ -25,7 +25,7 @@ buildscript {
         spineRepository = 'http://maven.teamdev.com/repository/spine'
         spineSnapshotsRepository = 'http://maven.teamdev.com/repository/spine-snapshots'
         appEngineGradlePlugin = 'com.google.cloud.tools:appengine-gradle-plugin:+'
-        spinePluginVersion = '1.4.11'
+        spinePluginVersion = '0.6.6-SNAPSHOT'
         guavaVersion = '20.0'
         jUnitPlatformVersion = '1.0.0-M3'
         jUnitVersion = '5.0.0-M3'
@@ -151,6 +151,8 @@ subprojects {
         gRpcPlugin = "${rootDir}/scripts/grpc.gradle"
     }
 
+    apply plugin: 'java' /* The `java` plugin is required at this level for Gradle Protobuf plugin.
+                            See https://github.com/google/protobuf-gradle-plugin#adding-the-plugin-to-your-project */
     apply plugin: 'com.google.protobuf'
     apply plugin: 'org.junit.platform.gradle.plugin'
 

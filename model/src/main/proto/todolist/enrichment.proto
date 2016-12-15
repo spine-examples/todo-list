@@ -19,6 +19,8 @@
 //
 syntax = "proto3";
 
+package spine.examples.todolist;
+
 option (type_url_prefix) = "type.spine.examples.todolist";
 option java_package = "org.spine3.examples.todolist";
 option java_outer_classname = "EnrichmentProto";
@@ -27,17 +29,18 @@ option java_multiple_files = true;
 import "spine/annotations.proto";
 import "spine/event_annotations.proto";
 
-import "todolist/attributes.proto";
-
-// Represents a lable enrichment.
+// Represents a label enrichment.
 //
 message LabelEnrichment {
 
-    option (enrichment_for) = "org.spine3.examples.todolist.LabelAssignedToTask,org.spine3.examples.todolist.LabelRemovedFromTask,org.spine3.examples.todolist.DeletedTaskRestored,org.spine3.examples.todolist.TaskDeleted";
+    option (enrichment_for) = "org.spine3.examples.todolist.LabelAssignedToTask,"
+                              "org.spine3.examples.todolist.LabelRemovedFromTask,"
+                              "org.spine3.examples.todolist.DeletedTaskRestored,"
+                              "org.spine3.examples.todolist.TaskDeleted";
 
-    // label's title
+    // label title
     string label_title = 1 [(by) = "label_id"];
 
-    // label's color
+    // label color
     string label_color = 2 [(by) = "label_id"];
 }
