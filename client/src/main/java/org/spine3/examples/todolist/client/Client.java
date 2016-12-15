@@ -80,8 +80,8 @@ public class Client {
      * <p>
      * <p>Sends request to the server and obtains response from server.
      *
-     * @param command
-     * @return
+     * @param command {@link Command} instance
+     * @return {@link Response} from server
      */
     public Response execute(Command command) {
         return post(command);
@@ -101,11 +101,10 @@ public class Client {
     /**
      * Subscribe topic to the client.
      * <p>
-     * <p>Takes {@link com.google.protobuf.Descriptors.Descriptor}.
-     * <p>
-     * <p> Subscribe {@link Topic} based on the descriptor to the {@code nonBlockingClient}
+     * <p> Takes {@link com.google.protobuf.Descriptors.Descriptor},
+     * <p> subscribe {@link Topic} based on the descriptor to the {@code nonBlockingClient}.
      *
-     * @param descriptor
+     * @param descriptor {@link com.google.protobuf.Descriptors.Descriptor} instance
      */
     public void addSubscriber(Descriptors.Descriptor descriptor) {
         final TypeUrl taskTypeUrl = TypeUrl.of(Task.getDescriptor());

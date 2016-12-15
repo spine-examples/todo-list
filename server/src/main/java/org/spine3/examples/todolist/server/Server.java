@@ -48,24 +48,43 @@ public class Server {
                                           .build();
     }
 
+    /**
+     * Starts the service.
+     *
+     * @throws IOException if unable to bind
+     */
+    public void execute() throws IOException {
+        start();
+        log().info("Server started, listening to commands on the port " + DEFAULT_CLIENT_SERVICE_PORT);
+        awaitTermination();
+    }
+
+    /**
+     * Starts the service.
+     *
+     * @throws IOException if unable to bind
+     */
     public void start() throws IOException {
         grpcContainer.start();
         grpcContainer.addShutdownHook();
     }
 
+    /**
+     * Waits for the service to become terminated.
+     */
     public void awaitTermination() {
         grpcContainer.awaitTermination();
     }
 
+    /**
+     * Initiates an orderly shutdown of {@link GrpcContainer} and closes {@link BoundedContext}.
+     * <p> Closes the {@code BoundedContext} performing all necessary clean-ups.
+     *
+     * @throws Exception caused by closing one of the {@link BoundedContext} components
+     */
     public void shutdown() throws Exception {
         grpcContainer.shutdown();
         boundedContext.close();
-    }
-
-    public void execute() throws IOException {
-        start();
-        log().info("Server started, listening to commands on the port " + DEFAULT_CLIENT_SERVICE_PORT);
-        awaitTermination();
     }
 
     public static void main(String[] args) throws IOException {
