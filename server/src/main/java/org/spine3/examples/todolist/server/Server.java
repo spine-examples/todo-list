@@ -8,6 +8,7 @@ import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.CommandService;
 import org.spine3.server.SubscriptionService;
+import org.spine3.server.event.EventSubscriber;
 import org.spine3.server.event.enrich.EventEnricher;
 import org.spine3.server.storage.StorageFactory;
 import org.spine3.server.storage.memory.InMemoryStorageFactory;
@@ -50,11 +51,16 @@ public class Server {
                                             .setStorageFactory(storageFactory)
                                             .build();
 
+        final TaskRepository taskRepository = new TaskRepository(boundedContext);
+        boundedContext.register(taskRepository);
+
+        final EventSubscriber subscriber = new Subscriber();
+        boundedContext.getEventBus()
+                      .subscribe(subscriber);
         // Create a command service with this bounded context.
         final CommandService commandService = CommandService.newBuilder()
                                                             .addBoundedContext(boundedContext)
                                                             .build();
-
         final SubscriptionService subscriptionService = SubscriptionService.newBuilder()
                                                                            .addBoundedContext(boundedContext)
                                                                            .build();

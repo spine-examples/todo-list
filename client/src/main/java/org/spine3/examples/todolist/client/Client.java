@@ -42,10 +42,10 @@ public class Client {
     private final SubscriptionServiceGrpc.SubscriptionServiceStub nonBlockingClient;
     private final Topic taskTopic;
 
-    private final StreamObserver<Subscription> orderUpdateObserver = new StreamObserver<Subscription>() {
+    private final StreamObserver<Subscription> taskUpdateObserver = new StreamObserver<Subscription>() {
         @Override
         public void onNext(Subscription value) {
-            log().debug("Order updated. Value is {}", value);
+            log().debug("Task updated. Value is {}", value);
             nonBlockingClient.activate(value, observer);
         }
 
@@ -83,31 +83,27 @@ public class Client {
      */
     public Client(String host, int port) {
         final TypeUrl taskTypeUrl = TypeUrl.of(Task.getDescriptor());
-
         final Target.Builder target = Target.newBuilder()
                                             .setType(taskTypeUrl.getTypeName());
         taskTopic = Topic.newBuilder()
                          .setTarget(target)
                          .build();
-
         commandFactory = CommandFactory.newBuilder()
                                        .setActor(UserId.newBuilder()
                                                        .setValue(Identifiers.newUuid())
                                                        .build())
                                        .setZoneOffset(ZoneOffsets.UTC)
                                        .build();
-
         channel = ManagedChannelBuilder
                 .forAddress(host, port)
                 .usePlaintext(true)
                 .build();
-
         blockingClient = CommandServiceGrpc.newBlockingStub(channel);
         nonBlockingClient = SubscriptionServiceGrpc.newStub(channel);
     }
 
     private void subscribe() {
-        nonBlockingClient.subscribe(taskTopic, orderUpdateObserver);
+        nonBlockingClient.subscribe(taskTopic, taskUpdateObserver);
     }
 
     /**
