@@ -8,14 +8,14 @@ import org.spine3.server.aggregate.AggregateRepository;
 /**
  * @author Illia Shepilov
  */
-public class TaskRepository extends AggregateRepository<TaskId, TaskAggregate> {
+public class TaskAggregateRepository extends AggregateRepository<TaskId, TaskAggregate> {
 
     /**
      * Creates a new repository instance.
      *
      * @param boundedContext the bounded context to which this repository belongs
      */
-    public TaskRepository(BoundedContext boundedContext) {
+    public TaskAggregateRepository(BoundedContext boundedContext) {
         super(boundedContext);
     }
 }
