@@ -7,9 +7,7 @@ import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spine3.base.Command;
-import org.spine3.base.Identifiers;
 import org.spine3.base.Response;
-import org.spine3.client.CommandFactory;
 import org.spine3.client.Subscription;
 import org.spine3.client.SubscriptionUpdate;
 import org.spine3.client.Target;
@@ -19,8 +17,6 @@ import org.spine3.client.grpc.SubscriptionServiceGrpc;
 import org.spine3.examples.todolist.Task;
 import org.spine3.protobuf.Messages;
 import org.spine3.protobuf.TypeUrl;
-import org.spine3.time.ZoneOffsets;
-import org.spine3.users.UserId;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -32,7 +28,6 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class Client {
 
     private static final int TIMEOUT = 10;
-    private final CommandFactory commandFactory;
     private final ManagedChannel channel;
     private final CommandServiceGrpc.CommandServiceBlockingStub blockingClient;
     private final SubscriptionServiceGrpc.SubscriptionServiceStub nonBlockingClient;
@@ -75,32 +70,43 @@ public class Client {
      * Construct the client connecting to server at {@code host:port}.
      */
     public Client(String host, int port) {
-        this.commandFactory = initCommandFactory();
         this.channel = initChannel(host, port);
         this.blockingClient = CommandServiceGrpc.newBlockingStub(channel);
         this.nonBlockingClient = SubscriptionServiceGrpc.newStub(channel);
     }
 
-    private CommandFactory initCommandFactory() {
-        return CommandFactory.newBuilder()
-                             .setActor(UserId.newBuilder()
-                                             .setValue(Identifiers.newUuid())
-                                             .build())
-                             .setZoneOffset(ZoneOffsets.UTC)
-                             .build();
-    }
-
-    private ManagedChannel initChannel(String host, int port) {
-        return ManagedChannelBuilder
-                .forAddress(host, port)
-                .usePlaintext(true)
-                .build();
-    }
-
+    /**
+     * Executes command.
+     * <p>
+     * <p>Sends request to the server and obtains response from server.
+     *
+     * @param command
+     * @return
+     */
     public Response execute(Command command) {
         return post(command);
     }
 
+    private Response post(Command request) {
+        Response result = null;
+        try {
+            result = blockingClient.post(request);
+        } catch (RuntimeException e) {
+            log().warn("failed", e);
+            throw e;
+        }
+        return result;
+    }
+
+    /**
+     * Subscribe topic to the client.
+     * <p>
+     * <p>Takes {@link com.google.protobuf.Descriptors.Descriptor}.
+     * <p>
+     * <p> Subscribe {@link Topic} based on the descriptor to the {@code nonBlockingClient}
+     *
+     * @param descriptor
+     */
     public void addSubscriber(Descriptors.Descriptor descriptor) {
         final TypeUrl taskTypeUrl = TypeUrl.of(Task.getDescriptor());
         final Target.Builder target = Target.newBuilder()
@@ -121,18 +127,11 @@ public class Client {
                .awaitTermination(TIMEOUT, SECONDS);
     }
 
-    /**
-     * Sends a request to the server.
-     */
-    private Response post(Command request) {
-        Response result = null;
-        try {
-            result = blockingClient.post(request);
-        } catch (RuntimeException e) {
-            log().warn("failed", e);
-            throw e;
-        }
-        return result;
+    private ManagedChannel initChannel(String host, int port) {
+        return ManagedChannelBuilder
+                .forAddress(host, port)
+                .usePlaintext(true)
+                .build();
     }
 
     private enum LogSingleton {
