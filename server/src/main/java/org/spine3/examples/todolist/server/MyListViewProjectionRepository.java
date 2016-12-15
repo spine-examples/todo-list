@@ -14,5 +14,4 @@ public class MyListViewProjectionRepository extends ProjectionRepository<TaskLis
     protected MyListViewProjectionRepository(BoundedContext boundedContext) {
         super(boundedContext);
     }
-
 }
