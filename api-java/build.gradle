@@ -21,5 +21,3 @@
 dependencies {
     compile project(path: ':model')
 }
-
-apply plugin: spineProtobufPluginId
