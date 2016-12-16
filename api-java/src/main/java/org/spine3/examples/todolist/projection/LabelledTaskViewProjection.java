@@ -25,6 +25,8 @@ import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.EnrichmentNotFoundException;
 import org.spine3.examples.todolist.LabelAssignedToTask;
+import org.spine3.examples.todolist.LabelColor;
+import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsEnrichment;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.TaskDeleted;
@@ -52,6 +54,11 @@ import static org.spine3.examples.todolist.projection.ProjectionHelper.removeVie
  * @author Illia Shepilov
  */
 public class LabelledTaskViewProjection extends Projection<TaskLabelId, LabelledTasksView> {
+
+    private static final String RED_COLOR_HEX = "#ff0000";
+    private static final String BLUE_COLOR_HEX = "#0000ff";
+    private static final String GREEN_COLOR_HEX = "#008000";
+    private static final String GRAY_COLOR_HEX = "#808080";
 
     /**
      * Creates a new instance.
@@ -90,9 +97,11 @@ public class LabelledTaskViewProjection extends Projection<TaskLabelId, Labelled
                                                .stream()
                                                .collect(Collectors.toList());
         final TaskListView taskListView = removeViewByLabelId(views, event.getLabelId());
+        final LabelDetails labelDetails = enrichment.getLabelDetails();
+        final String hexColor = convertFromLabelColorToHex(labelDetails.getColor());
         final LabelledTasksView state = getState().newBuilderForType()
-                                                  .setLabelTitle(enrichment.getLabelTitle())
-                                                  .setLabelColor(enrichment.getLabelColor())
+                                                  .setLabelTitle(labelDetails.getTitle())
+                                                  .setLabelColor(hexColor)
                                                   .setLabelledTasks(taskListView)
                                                   .build();
         incrementState(state);
@@ -106,9 +115,12 @@ public class LabelledTaskViewProjection extends Projection<TaskLabelId, Labelled
                                                .stream()
                                                .collect(Collectors.toList());
         final TaskListView taskListView = removeViewByTaskId(views, event.getId());
+        final LabelDetails labelDetails = enrichment.getLabelDetails();
+        final String hexColor = convertFromLabelColorToHex(labelDetails.getColor());
         final LabelledTasksView state = getState().newBuilderForType()
                                                   .setLabelledTasks(taskListView)
-                                                  .setLabelTitle(enrichment.getLabelTitle())
+                                                  .setLabelTitle(labelDetails.getTitle())
+                                                  .setLabelColor(hexColor)
                                                   .build();
         incrementState(state);
     }
@@ -132,11 +144,29 @@ public class LabelledTaskViewProjection extends Projection<TaskLabelId, Labelled
         final TaskListView taskListView = TaskListView.newBuilder()
                                                       .addAllItems(views)
                                                       .build();
+        final LabelDetails labelDetails = enrichment.getLabelDetails();
+        final String hexColor = convertFromLabelColorToHex(labelDetails.getColor());
         final LabelledTasksView result = getState().newBuilderForType()
                                                    .setLabelledTasks(taskListView)
-                                                   .setLabelColor(enrichment.getLabelColor())
-                                                   .setLabelTitle(enrichment.getLabelTitle())
+                                                   .setLabelColor(hexColor)
+                                                   .setLabelTitle(labelDetails.getTitle())
                                                    .build();
         return result;
+    }
+
+    private String convertFromLabelColorToHex(LabelColor color) {
+        if (color == LabelColor.RED) {
+            return RED_COLOR_HEX;
+        }
+
+        if (color == LabelColor.BLUE) {
+            return BLUE_COLOR_HEX;
+        }
+
+        if (color == LabelColor.GREEN) {
+            return GREEN_COLOR_HEX;
+        }
+
+        return GRAY_COLOR_HEX;
     }
 }

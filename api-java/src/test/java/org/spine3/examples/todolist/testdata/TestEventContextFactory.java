@@ -24,6 +24,8 @@ import com.google.common.collect.Maps;
 import com.google.protobuf.Any;
 import org.spine3.base.Enrichments;
 import org.spine3.base.EventContext;
+import org.spine3.examples.todolist.LabelColor;
+import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsEnrichment;
 import org.spine3.protobuf.AnyPacker;
 
@@ -37,7 +39,7 @@ import java.util.Map;
 public class TestEventContextFactory {
 
     private static final String TITLE = "label title";
-    private static final String COLOR = "#ff0000";
+    private static final LabelColor COLOR = LabelColor.GREEN;
     private static final String ENRICHMENT = "spine.examples.todolist.LabelDetailsEnrichment";
 
     /**
@@ -50,9 +52,11 @@ public class TestEventContextFactory {
      * @return {@link EventContext} instance
      */
     public static EventContext eventContextInstance() {
+        final LabelDetails.Builder labelDetails = LabelDetails.newBuilder()
+                                                              .setTitle(TITLE)
+                                                              .setColor(COLOR);
         final LabelDetailsEnrichment enrichment = LabelDetailsEnrichment.newBuilder()
-                                                                        .setLabelTitle(TITLE)
-                                                                        .setLabelColor(COLOR)
+                                                                        .setLabelDetails(labelDetails)
                                                                         .build();
         final Enrichments enrichments = enrichmentsInstance(enrichment);
         final EventContext result = EventContext.newBuilder()

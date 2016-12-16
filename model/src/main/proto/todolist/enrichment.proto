@@ -29,6 +29,7 @@ option java_multiple_files = true;
 
 import "spine/annotations.proto";
 import "spine/event_annotations.proto";
+import "todolist/events.proto";
 
 // Represents a label enrichment.
 //
@@ -39,9 +40,6 @@ message LabelDetailsEnrichment {
                               "org.spine3.examples.todolist.DeletedTaskRestored,"
                               "org.spine3.examples.todolist.TaskDeleted";
 
-    // label title
-    string label_title = 1 [(by) = "label_id"];
-
-    // label color
-    string label_color = 2 [(by) = "label_id"];
+    // label details
+    LabelDetails label_details = 1 [(by) = "label_id"];
 }
