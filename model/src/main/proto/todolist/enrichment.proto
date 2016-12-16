@@ -45,28 +45,3 @@ message LabelDetailsEnrichment {
     // label color
     string label_color = 2 [(by) = "label_id"];
 }
-
-// Represents a label enrichment.
-//
-message LabelColorEnrichment {
-
-    option (enrichment_for) = "org.spine3.examples.todolist.LabelAssignedToTask,"
-                              "org.spine3.examples.todolist.LabelRemovedFromTask,"
-                              "org.spine3.examples.todolist.DeletedTaskRestored,"
-                              "org.spine3.examples.todolist.TaskDeleted";
-    // label color
-    string label_color = 2 [(by) = "label_id"];
-}
-
-// Represents a label title enrichment.
-//
-message LabelTitleEnrichment {
-
-    option (enrichment_for) = "org.spine3.examples.todolist.LabelAssignedToTask,"
-                              "org.spine3.examples.todolist.LabelRemovedFromTask,"
-                              "org.spine3.examples.todolist.DeletedTaskRestored,"
-                              "org.spine3.examples.todolist.TaskDeleted";
-
-    // label title
-    string label_title = 1 [(by) = "label_id"];
-}
