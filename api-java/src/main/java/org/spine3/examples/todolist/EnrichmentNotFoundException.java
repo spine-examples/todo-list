@@ -21,17 +21,13 @@
 package org.spine3.examples.todolist;
 
 /**
- * An exception thrown when protocol message being corrupted.
+ * An exception thrown when enrichment does not exists into {@link org.spine3.base.EventContext}.
  *
  * @author Illia Shepilov
  */
-public class CorruptedProtocolBufferException extends RuntimeException {
+public class EnrichmentNotFoundException extends RuntimeException {
 
-    public CorruptedProtocolBufferException(String message) {
+    public EnrichmentNotFoundException(String message) {
         super(message);
-    }
-
-    public CorruptedProtocolBufferException(String message, Throwable cause) {
-        super(message, cause);
     }
 }

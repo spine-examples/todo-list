@@ -20,12 +20,13 @@
 
 package org.spine3.examples.todolist.testdata;
 
+import com.google.common.collect.Maps;
 import com.google.protobuf.Any;
 import org.spine3.base.Enrichments;
 import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.LabelDetailsEnrichment;
+import org.spine3.protobuf.AnyPacker;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -35,8 +36,9 @@ import java.util.Map;
  */
 public class TestEventContextFactory {
 
-    private static final String ENRICHER = "labelDetails";
-    private static final String TITLE = "label's title";
+    private static final String TITLE = "label title";
+    private static final String COLOR = "#ff0000";
+    private static final String ENRICHMENT = "spine.examples.todolist.LabelDetailsEnrichment";
 
     /**
      * Provides a new event context {@link EventContext} instance.
@@ -50,20 +52,21 @@ public class TestEventContextFactory {
     public static EventContext eventContextInstance() {
         final LabelDetailsEnrichment enrichment = LabelDetailsEnrichment.newBuilder()
                                                                         .setLabelTitle(TITLE)
+                                                                        .setLabelColor(COLOR)
                                                                         .build();
         final Enrichments enrichments = enrichmentsInstance(enrichment);
-        return EventContext.newBuilder()
-                           .setEnrichments(enrichments)
-                           .build();
+        final EventContext result = EventContext.newBuilder()
+                                                .setEnrichments(enrichments)
+                                                .build();
+        return result;
     }
 
     private static Enrichments enrichmentsInstance(LabelDetailsEnrichment enrichment) {
-        final Enrichments.Builder builder = Enrichments.newBuilder();
-        final Map<String, Any> map = new HashMap<>();
-        map.put(ENRICHER, Any.newBuilder()
-                             .setTypeUrlBytes(enrichment.toByteString())
-                             .build());
-        return builder.putAllMap(map)
-                      .build();
+        final Map<String, Any> enrichmentsMap = Maps.newHashMap();
+        enrichmentsMap.put(ENRICHMENT, AnyPacker.pack(enrichment));
+        final Enrichments result = Enrichments.newBuilder()
+                                              .putAllMap(enrichmentsMap)
+                                              .build();
+        return result;
     }
 }

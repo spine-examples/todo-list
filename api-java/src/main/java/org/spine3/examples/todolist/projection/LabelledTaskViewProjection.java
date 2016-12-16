@@ -20,11 +20,10 @@
 
 package org.spine3.examples.todolist.projection;
 
-import com.google.protobuf.Any;
-import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.common.base.Optional;
 import org.spine3.base.EventContext;
-import org.spine3.examples.todolist.CorruptedProtocolBufferException;
 import org.spine3.examples.todolist.DeletedTaskRestored;
+import org.spine3.examples.todolist.EnrichmentNotFoundException;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelDetailsEnrichment;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
@@ -39,6 +38,7 @@ import org.spine3.server.projection.Projection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.spine3.base.Events.getEnrichment;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByLabelId;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
 
@@ -114,15 +114,12 @@ public class LabelledTaskViewProjection extends Projection<TaskLabelId, Labelled
     }
 
     private LabelDetailsEnrichment getLabelEnrichment(EventContext context) {
-        try {
-            final Any any = context.getEnrichments()
-                                   .getMapMap()
-                                   .get("labelDetailsEnrichment");
-            final LabelDetailsEnrichment result = LabelDetailsEnrichment.parseFrom(any.getTypeUrlBytes());
+        final Optional<LabelDetailsEnrichment> enrichmentOptional = getEnrichment(LabelDetailsEnrichment.class, context);
+        if (enrichmentOptional.isPresent()) {
+            LabelDetailsEnrichment result = enrichmentOptional.get();
             return result;
-        } catch (InvalidProtocolBufferException e) {
-            throw new CorruptedProtocolBufferException("Unsuccessful protobuf parsing", e);
         }
+        throw new EnrichmentNotFoundException("LabelDetailsEnrichment not found");
     }
 
     private LabelledTasksView addLabel(TaskView taskView, EventContext context) {
