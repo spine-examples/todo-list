@@ -31,15 +31,24 @@ import "spine/annotations.proto";
 import "spine/event_annotations.proto";
 import "todolist/events.proto";
 
-// Represents a label enrichment.
+// Represents a label enrichment by label id.
 //
-message LabelDetailsEnrichment {
+message LabelDetailsByLabelIdEnrichment {
 
-    option (enrichment_for) = "org.spine3.examples.todolist.LabelAssignedToTask,"
-                              "org.spine3.examples.todolist.LabelRemovedFromTask,"
-                              "org.spine3.examples.todolist.DeletedTaskRestored,"
-                              "org.spine3.examples.todolist.TaskDeleted";
+    option (enrichment_for) = "spine.examples.todolist.LabelAssignedToTask,"
+                              "spine.examples.todolist.LabelRemovedFromTask";
 
     // label details
     LabelDetails label_details = 1 [(by) = "label_id"];
+}
+
+// Represents a label enrichment by task id.
+//
+message LabelDetailsByTaskIdEnrichment {
+
+    option (enrichment_for) = "spine.examples.todolist.DeletedTaskRestored,"
+                              "spine.examples.todolist.TaskDeleted";
+
+    // label details
+    LabelDetails label_details = 1 [(by) = "id"];
 }

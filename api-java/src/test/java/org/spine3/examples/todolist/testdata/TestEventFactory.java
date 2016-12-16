@@ -51,9 +51,9 @@ public class TestEventFactory {
     private static final String DESCRIPTION = "task description";
     private static final TaskPriority TASK_PRIORITY = TaskPriority.NORMAL;
     private static final Timestamp TASK_DUE_DATE = Timestamps.getCurrentTime();
-    private static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
-                                                           .setValue(newUuid())
-                                                           .build();
+    public static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
+                                                          .setValue(newUuid())
+                                                          .build();
 
     private static final Timestamp CREATION_TIME = Timestamps.getCurrentTime();
 
@@ -127,9 +127,9 @@ public class TestEventFactory {
                                                        .setPriority(priority)
                                                        .setDescription(description);
         final TaskDraftCreated result = TaskDraftCreated.newBuilder()
-                                                                  .setDetails(details)
-                                                                  .setDraftCreationTime(creationTime)
-                                                                  .build();
+                                                        .setDetails(details)
+                                                        .setDraftCreationTime(creationTime)
+                                                        .build();
         return result;
     }
 

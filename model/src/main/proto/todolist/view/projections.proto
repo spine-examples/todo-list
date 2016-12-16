@@ -127,4 +127,3 @@ message TaskView {
     // Whether the task is completed.
     bool completed = 21;
 }
-
