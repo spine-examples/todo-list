@@ -104,9 +104,9 @@ public class Server {
         taskAggregateRepository.initStorage(storageFactory);
         boundedContext.register(taskAggregateRepository);
 
-        final MyListViewProjectionRepository myListViewProjectionRepository = new MyListViewProjectionRepository(boundedContext);
-        myListViewProjectionRepository.initStorage(storageFactory);
-        boundedContext.register(myListViewProjectionRepository);
+        final MyListViewProjectionRepository projectionRepository = new MyListViewProjectionRepository(boundedContext);
+        projectionRepository.initStorage(storageFactory);
+        boundedContext.register(projectionRepository);
     }
 
     private SubscriptionService initSubscriptionService() {
@@ -128,8 +128,8 @@ public class Server {
      *
      * @throws IOException if unable to bind
      */
-    public void execute() throws IOException {
-        start();
+    public void start() throws IOException {
+        startServer();
         log().info("Server started, listening to commands on the port " + DEFAULT_CLIENT_SERVICE_PORT);
         awaitTermination();
     }
@@ -139,7 +139,7 @@ public class Server {
      *
      * @throws IOException if unable to bind
      */
-    public void start() throws IOException {
+    private void startServer() throws IOException {
         grpcContainer.start();
         grpcContainer.addShutdownHook();
     }
@@ -165,6 +165,6 @@ public class Server {
 
     public static void main(String[] args) throws IOException {
         final Server server = new Server(InMemoryStorageFactory.getInstance());
-        server.execute();
+        server.start();
     }
 }

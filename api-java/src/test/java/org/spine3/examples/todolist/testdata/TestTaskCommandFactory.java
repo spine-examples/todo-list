@@ -37,6 +37,8 @@ import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
 import org.spine3.protobuf.Timestamps;
 
+import static org.spine3.base.Identifiers.newUuid;
+
 /**
  * Provides methods for instantiation task commands for test needs.
  *
@@ -44,7 +46,12 @@ import org.spine3.protobuf.Timestamps;
  */
 public class TestTaskCommandFactory {
 
-    private static final String ID = "1";
+    private static final TaskId TASK_ID = TaskId.newBuilder()
+                                                .setValue(newUuid())
+                                                .build();
+    private static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
+                                                           .setValue(newUuid())
+                                                           .build();
     private static final String DESCRIPTION = "Create command description.";
     private static final Timestamp DUE_DATE = Timestamps.getCurrentTime();
 
@@ -83,6 +90,7 @@ public class TestTaskCommandFactory {
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(String description) {
         return UpdateTaskDescription.newBuilder()
+                                    .setId(TASK_ID)
                                     .setUpdatedDescription(description)
                                     .build();
     }
@@ -104,6 +112,7 @@ public class TestTaskCommandFactory {
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance(Timestamp updatedDueDate) {
         return UpdateTaskDueDate.newBuilder()
+                                .setId(TASK_ID)
                                 .setUpdatedDueDate(updatedDueDate)
                                 .build();
     }
@@ -125,6 +134,7 @@ public class TestTaskCommandFactory {
      */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskPriority priority) {
         return UpdateTaskPriority.newBuilder()
+                                 .setId(TASK_ID)
                                  .setUpdatedPriority(priority)
                                  .build();
     }
@@ -135,7 +145,10 @@ public class TestTaskCommandFactory {
      * @return {@link CompleteTask} instance
      */
     public static CompleteTask completeTaskInstance() {
-        return CompleteTask.getDefaultInstance();
+        final CompleteTask result = CompleteTask.newBuilder()
+                                                .setId(TASK_ID)
+                                                .build();
+        return result;
     }
 
     /**
@@ -144,7 +157,10 @@ public class TestTaskCommandFactory {
      * @return {@link ReopenTask} instance
      */
     public static ReopenTask reopenTaskInstance() {
-        return ReopenTask.getDefaultInstance();
+        final ReopenTask result = ReopenTask.newBuilder()
+                                            .setId(TASK_ID)
+                                            .build();
+        return result;
     }
 
     /**
@@ -155,8 +171,7 @@ public class TestTaskCommandFactory {
      */
     public static DeleteTask deleteTaskInstance() {
         return DeleteTask.newBuilder()
-                         .setId(TaskId.newBuilder()
-                                      .setValue(ID))
+                         .setId(TASK_ID)
                          .build();
     }
 
@@ -166,7 +181,10 @@ public class TestTaskCommandFactory {
      * @return {@link RestoreDeletedTask} instance
      */
     public static RestoreDeletedTask restoreDeletedTaskInstance() {
-        return RestoreDeletedTask.getDefaultInstance();
+        final RestoreDeletedTask result = RestoreDeletedTask.newBuilder()
+                                                            .setId(TASK_ID)
+                                                            .build();
+        return result;
     }
 
     /**
@@ -175,7 +193,10 @@ public class TestTaskCommandFactory {
      * @return {@link FinalizeDraft} instance
      */
     public static FinalizeDraft finalizeDraftInstance() {
-        return FinalizeDraft.getDefaultInstance();
+        final FinalizeDraft result = FinalizeDraft.newBuilder()
+                                                  .setId(TASK_ID)
+                                                  .build();
+        return result;
     }
 
     /**
@@ -195,8 +216,8 @@ public class TestTaskCommandFactory {
      */
     public static AssignLabelToTask assignLabelToTaskInstance() {
         return AssignLabelToTask.newBuilder()
-                                .setLabelId(TaskLabelId.newBuilder()
-                                                       .setValue(ID))
+                                .setId(TASK_ID)
+                                .setLabelId(LABEL_ID)
                                 .build();
     }
 
@@ -208,8 +229,8 @@ public class TestTaskCommandFactory {
      */
     public static RemoveLabelFromTask removeLabelFromTaskInstance() {
         return RemoveLabelFromTask.newBuilder()
-                                  .setLabelId(TaskLabelId.newBuilder()
-                                                         .setValue(ID))
+                                  .setId(TASK_ID)
+                                  .setLabelId(LABEL_ID)
                                   .build();
     }
 }

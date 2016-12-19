@@ -237,6 +237,10 @@ subprojects {
             directory '${sourceRootDir}/test/java'
             aPackage 'org.spine3.examples.todolist'
         }
+
+        filters {
+            includeClassNamePatterns '.*Should'
+        }
     }
 
     idea {
