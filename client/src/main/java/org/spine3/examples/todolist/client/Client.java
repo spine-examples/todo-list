@@ -1,3 +1,23 @@
+/*
+ * Copyright 2016, TeamDev Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.spine3.examples.todolist.client;
 
 import com.google.protobuf.Descriptors;
@@ -14,7 +34,6 @@ import org.spine3.client.Target;
 import org.spine3.client.Topic;
 import org.spine3.client.grpc.CommandServiceGrpc;
 import org.spine3.client.grpc.SubscriptionServiceGrpc;
-import org.spine3.examples.todolist.Task;
 import org.spine3.protobuf.Messages;
 import org.spine3.protobuf.TypeUrl;
 
@@ -77,14 +96,15 @@ public class Client {
 
     /**
      * Executes command.
-     * <p>
+     *
      * <p>Sends request to the server and obtains response from server.
      *
      * @param command {@link Command} instance
      * @return {@link Response} from server
      */
     public Response execute(Command command) {
-        return post(command);
+        final Response result = post(command);
+        return result;
     }
 
     private Response post(Command request) {
@@ -100,14 +120,14 @@ public class Client {
 
     /**
      * Subscribe topic to the client.
-     * <p>
+     *
      * <p> Takes {@link com.google.protobuf.Descriptors.Descriptor},
      * <p> subscribe {@link Topic} based on the descriptor to the {@code nonBlockingClient}.
      *
      * @param descriptor {@link com.google.protobuf.Descriptors.Descriptor} instance
      */
-    public void addSubscriber(Descriptors.Descriptor descriptor) {
-        final TypeUrl taskTypeUrl = TypeUrl.of(Task.getDescriptor());
+    public void subscribe(Descriptors.Descriptor descriptor) {
+        final TypeUrl taskTypeUrl = TypeUrl.of(descriptor);
         final Target.Builder target = Target.newBuilder()
                                             .setType(taskTypeUrl.getTypeName());
         final Topic topic = Topic.newBuilder()
