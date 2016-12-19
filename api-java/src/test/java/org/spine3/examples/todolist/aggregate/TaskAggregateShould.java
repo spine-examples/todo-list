@@ -88,7 +88,8 @@ public class TaskAggregateShould {
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
     private static final String COMPLETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied on completed task.";
     private static final String DELETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied on deleted task.";
-    private static final String INAPPROPRIATE_TASK_DESCRIPTION = "Description should contain at least 3 alphanumeric symbols.";
+    private static final String INAPPROPRIATE_TASK_DESCRIPTION = "Description should contain " +
+            "at least 3 alphanumeric symbols.";
     private TaskAggregate aggregate;
     private CreateBasicTask createTaskCmd;
     private UpdateTaskDescription updateTaskDescriptionCmd;

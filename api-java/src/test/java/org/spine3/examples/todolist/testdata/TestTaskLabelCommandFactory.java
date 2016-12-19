@@ -71,10 +71,11 @@ public class TestTaskLabelCommandFactory {
      * @return {@link UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelColor color, String title) {
-        return UpdateLabelDetails.newBuilder()
-                                 .setColor(color)
-                                 .setNewTitle(title)
-                                 .build();
+        final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
+                                                            .setColor(color)
+                                                            .setNewTitle(title)
+                                                            .build();
+        return result;
     }
 
     /**
@@ -95,11 +96,13 @@ public class TestTaskLabelCommandFactory {
      * @return {@link LabelCreated} instance
      */
     public static LabelCreated labelCreatedInstance(LabelColor color, String title) {
-        return LabelCreated.newBuilder()
-                           .setDetails(LabelDetails.newBuilder()
-                                                   .setColor(color)
-                                                   .setTitle(title))
-                           .build();
+        final LabelDetails.Builder labelDetailsBuilder = LabelDetails.newBuilder()
+                                                                     .setColor(color)
+                                                                     .setTitle(title);
+        final LabelCreated result = LabelCreated.newBuilder()
+                                                .setDetails(labelDetailsBuilder)
+                                                .build();
+        return result;
     }
 
     /**
@@ -120,11 +123,13 @@ public class TestTaskLabelCommandFactory {
      * @return {@link LabelDetailsUpdated} instance
      */
     public static LabelDetailsUpdated labelDetailsUpdatedInstance(LabelColor color, String title) {
-        return LabelDetailsUpdated.newBuilder()
-                                  .setNewDetails(LabelDetails.newBuilder()
-                                                             .setColor(color)
-                                                             .setTitle(title))
-                                  .build();
+        final LabelDetails.Builder labelDetailsBuilder = LabelDetails.newBuilder()
+                                                                 .setColor(color)
+                                                                 .setTitle(title);
+        final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
+                                                              .setNewDetails(labelDetailsBuilder)
+                                                              .build();
+        return result;
     }
 
     /**

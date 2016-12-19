@@ -85,9 +85,10 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(String description) {
-        return UpdateTaskDescription.newBuilder()
-                                    .setUpdatedDescription(description)
-                                    .build();
+        final UpdateTaskDescription result = UpdateTaskDescription.newBuilder()
+                                                                 .setUpdatedDescription(description)
+                                                                 .build();
+        return result;
     }
 
     /**
@@ -106,9 +107,10 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance(Timestamp updatedDueDate) {
-        return UpdateTaskDueDate.newBuilder()
-                                .setUpdatedDueDate(updatedDueDate)
-                                .build();
+        final UpdateTaskDueDate result = UpdateTaskDueDate.newBuilder()
+                                                         .setUpdatedDueDate(updatedDueDate)
+                                                         .build();
+        return result;
     }
 
     /**
@@ -127,9 +129,10 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskPriority priority) {
-        return UpdateTaskPriority.newBuilder()
-                                 .setUpdatedPriority(priority)
-                                 .build();
+        final UpdateTaskPriority result = UpdateTaskPriority.newBuilder()
+                                                           .setUpdatedPriority(priority)
+                                                           .build();
+        return result;
     }
 
     /**
@@ -157,10 +160,11 @@ public class TestTaskCommandFactory {
      * @return {@link DeleteTask} instance
      */
     public static DeleteTask deleteTaskInstance() {
-        return DeleteTask.newBuilder()
-                         .setId(TaskId.newBuilder()
-                                      .setValue(ID))
-                         .build();
+        final DeleteTask result = DeleteTask.newBuilder()
+                                           .setId(TaskId.newBuilder()
+                                                        .setValue(ID))
+                                           .build();
+        return result;
     }
 
     /**
@@ -197,10 +201,11 @@ public class TestTaskCommandFactory {
      * @return {@link AssignLabelToTask} instance
      */
     public static AssignLabelToTask assignLabelToTaskInstance() {
-        return AssignLabelToTask.newBuilder()
-                                .setLabelId(TaskLabelId.newBuilder()
-                                                       .setValue(ID))
-                                .build();
+        final AssignLabelToTask result = AssignLabelToTask.newBuilder()
+                                                         .setLabelId(TaskLabelId.newBuilder()
+                                                                                .setValue(ID))
+                                                         .build();
+        return result;
     }
 
     /**
@@ -210,9 +215,10 @@ public class TestTaskCommandFactory {
      * @return {@link RemoveLabelFromTask} instance
      */
     public static RemoveLabelFromTask removeLabelFromTaskInstance() {
-        return RemoveLabelFromTask.newBuilder()
-                                  .setLabelId(TaskLabelId.newBuilder()
-                                                         .setValue(ID))
-                                  .build();
+        final RemoveLabelFromTask result = RemoveLabelFromTask.newBuilder()
+                                                             .setLabelId(TaskLabelId.newBuilder()
+                                                                                    .setValue(ID))
+                                                             .build();
+        return result;
     }
 }

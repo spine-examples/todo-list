@@ -62,7 +62,7 @@ public class TaskFlowValidator {
     /**
      * Verifies status of current task.
      *
-     * <p>If it is COMPLETED or DELETED, throws {@link IllegalStateException}.
+     * <p>If it is COMPLETED or DELETED {@link TaskStatus} state, throws {@link IllegalStateException}.
      *
      * @param currentStatus task's current state {@link TaskStatus}
      * @throws IllegalStateException if status, passed to the method,

@@ -82,11 +82,12 @@ public class TestEventFactory {
      * @return {@link TaskCreated} instance
      */
     public static TaskCreated taskCreatedInstance(String description, TaskPriority priority) {
-        return TaskCreated.newBuilder()
-                          .setDetails(TaskDetails.newBuilder()
-                                                 .setDescription(description)
-                                                 .setPriority(priority))
-                          .build();
+        final TaskCreated result = TaskCreated.newBuilder()
+                                             .setDetails(TaskDetails.newBuilder()
+                                                                    .setDescription(description)
+                                                                    .setPriority(priority))
+                                             .build();
+        return result;
     }
 
     /**
@@ -96,9 +97,10 @@ public class TestEventFactory {
      * @return {@link TaskCreated} instance
      */
     public static TaskCreated taskCreatedInstance(TaskId id) {
-        return TaskCreated.newBuilder()
-                          .setId(id)
-                          .build();
+        final TaskCreated result = TaskCreated.newBuilder()
+                                             .setId(id)
+                                             .build();
+        return result;
     }
 
     /**
@@ -149,9 +151,10 @@ public class TestEventFactory {
      * @return {@link TaskDescriptionUpdated} instance
      */
     public static TaskDescriptionUpdated taskDescriptionUpdatedInstance(String description) {
-        return TaskDescriptionUpdated.newBuilder()
-                                     .setNewDescription(description)
-                                     .build();
+        final TaskDescriptionUpdated result = TaskDescriptionUpdated.newBuilder()
+                                                                   .setNewDescription(description)
+                                                                   .build();
+        return result;
     }
 
     /**
@@ -170,9 +173,10 @@ public class TestEventFactory {
      * @return {@link TaskPriorityUpdated} instance
      */
     public static TaskPriorityUpdated taskPriorityUpdatedInstance(TaskPriority priority) {
-        return TaskPriorityUpdated.newBuilder()
-                                  .setNewPriority(priority)
-                                  .build();
+        final TaskPriorityUpdated result = TaskPriorityUpdated.newBuilder()
+                                                             .setNewPriority(priority)
+                                                             .build();
+        return result;
     }
 
     /**
@@ -191,9 +195,10 @@ public class TestEventFactory {
      * @return {@link TaskDueDateUpdated} instance
      */
     public static TaskDueDateUpdated taskDueDateUpdatedInstance(Timestamp dueDate) {
-        return TaskDueDateUpdated.newBuilder()
-                                 .setNewDueDate(dueDate)
-                                 .build();
+        final TaskDueDateUpdated result = TaskDueDateUpdated.newBuilder()
+                                                           .setNewDueDate(dueDate)
+                                                           .build();
+        return result;
     }
 
     /**
@@ -257,9 +262,10 @@ public class TestEventFactory {
      * @return {@link LabelAssignedToTask} instance
      */
     public static LabelAssignedToTask labelAssignedToTaskInstance(TaskLabelId labelId) {
-        return LabelAssignedToTask.newBuilder()
-                                  .setLabelId(labelId)
-                                  .build();
+        final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
+                                                             .setLabelId(labelId)
+                                                             .build();
+        return result;
     }
 
     /**
@@ -268,8 +274,9 @@ public class TestEventFactory {
      * @return {@link LabelRemovedFromTask} instance
      */
     public static LabelRemovedFromTask labelRemovedFromTaskInstance() {
-        return LabelRemovedFromTask.newBuilder()
-                                   .setLabelId(LABEL_ID)
-                                   .build();
+        final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
+                                                               .setLabelId(LABEL_ID)
+                                                               .build();
+        return result;
     }
 }

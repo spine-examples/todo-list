@@ -28,7 +28,7 @@ package org.spine3.examples.todolist;
 public enum TaskStatusTransition {
 
     /**
-     * task draft.
+     * Task draft.
      */
     FINALIZE_DRAFT(TaskStatus.DRAFT, TaskStatus.FINALIZED),
     /**
@@ -67,7 +67,7 @@ public enum TaskStatusTransition {
     private final TaskStatus newStatus;
 
     /**
-     * Check if the current status and new suggested status are associated
+     * Checks if the current status and new suggested status are associated
      * with one of the described above transitions.
      *
      * @param currentStatus current status of the task
