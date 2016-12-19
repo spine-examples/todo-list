@@ -169,7 +169,6 @@ public class LabelledTasksViewProjectionShould {
 
         protected LabelledTasksViewProjectionRepository(BoundedContext boundedContext) {
             super(boundedContext);
-
         }
     }
 }
