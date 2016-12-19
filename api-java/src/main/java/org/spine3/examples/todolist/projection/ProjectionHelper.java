@@ -28,11 +28,18 @@ import org.spine3.examples.todolist.view.TaskView;
 import java.util.List;
 
 /**
- * Class provides helpful methods for processing projections.
+ * Class provides methods to manipulate and handle views.
  *
  * @author Illia Shepilov
  */
-class ProjectionHelper {
+/* package */ class ProjectionHelper {
+
+    /**
+     * Prevent instantiation.
+     */
+    private ProjectionHelper() {
+        throw new UnsupportedOperationException("Cannot be instantiated.");
+    }
 
     /**
      * Removes {@link TaskView} from list of task view by specified task's id.
@@ -49,9 +56,10 @@ class ProjectionHelper {
                                        .findFirst()
                                        .orElse(null);
         views.remove(taskView);
-        return TaskListView.newBuilder()
-                           .addAllItems(views)
-                           .build();
+        final TaskListView result = TaskListView.newBuilder()
+                                               .addAllItems(views)
+                                               .build();
+        return result;
     }
 
     /**

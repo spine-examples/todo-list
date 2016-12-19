@@ -39,7 +39,6 @@ import static org.spine3.examples.todolist.projection.ProjectionHelper.removeVie
  * A projection state of created tasks.
  *
  * <p> Contains the data about the task list view.
- * <p>
  * <p> This view includes all tasks that are not in a draft state and not deleted.
  *
  * @author Illia Shepilov

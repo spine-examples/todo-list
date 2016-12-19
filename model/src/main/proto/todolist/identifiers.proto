@@ -50,7 +50,7 @@ message TaskLabelId {
     string value = 1;
 }
 
-//An ID of a task's list.
+//An ID of a task list.
 //
 message TaskListId {
 

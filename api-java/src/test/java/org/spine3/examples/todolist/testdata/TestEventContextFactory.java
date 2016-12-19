@@ -57,10 +57,16 @@ public class TestEventContextFactory {
     private static final Any AGGREGATE_ID = AnyPacker.pack(newStringValue(newUuid()));
 
     /**
-     * Provides a new event context {@link EventContext} instance.
+     * Prevent instantiation.
+     */
+    private TestEventContextFactory(){
+        throw new UnsupportedOperationException("Cannot be instantiated.");
+    }
+
+    /**
+     * Provides a new {@link EventContext} instance.
      *
      * <p> Created event context contains Enrichments.
-     * <p>
      * <p> Enrichments contains label details by task id and by label id enrichments.
      *
      * @return {@link EventContext} instance

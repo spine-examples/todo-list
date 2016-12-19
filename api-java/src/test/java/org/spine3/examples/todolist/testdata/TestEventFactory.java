@@ -42,7 +42,7 @@ import org.spine3.protobuf.Timestamps;
 import static org.spine3.base.Identifiers.newUuid;
 
 /**
- * Provides methods for instantiation events for test needs.
+ * A factory of events for the test needs.
  *
  * @author Illia Shepilov
  */
@@ -61,12 +61,12 @@ public class TestEventFactory {
      * Prevent instantiation.
      */
     private TestEventFactory() {
-        throw new UnsupportedOperationException("Cannot be instantiated");
+        throw new UnsupportedOperationException("Cannot be instantiated.");
     }
 
     /**
-     * Provides {@link TaskCreated} event instance by specified description {@code DESCRIPTION}
-     * and task's priority {@code TASK_PRIORITY}.
+     * Provides {@link TaskCreated} event instance by the description specified {@code DESCRIPTION}
+     * and task priority {@code TASK_PRIORITY}.
      *
      * @return {@link TaskCreated} instance
      */

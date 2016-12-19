@@ -41,7 +41,7 @@ import org.spine3.protobuf.Timestamps;
 import static org.spine3.base.Identifiers.newUuid;
 
 /**
- * Provides methods for instantiation task commands for test needs.
+ * A factory of the task commands for the test needs.
  *
  * @author Illia Shepilov
  */
@@ -55,7 +55,7 @@ public class TestTaskCommandFactory {
      * Prevent instantiation.
      */
     private TestTaskCommandFactory() {
-        throw new UnsupportedOperationException("Cannot be instantiated");
+        throw new UnsupportedOperationException("Cannot be instantiated.");
     }
 
     /**

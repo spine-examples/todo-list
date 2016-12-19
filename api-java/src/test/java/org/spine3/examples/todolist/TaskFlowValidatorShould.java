@@ -20,14 +20,18 @@
 
 package org.spine3.examples.todolist;
 
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.spine3.test.Tests.hasPrivateUtilityConstructor;
+
 /**
- * An exception thrown when enrichment cannot be found in {@link org.spine3.base.EventContext}.
- *
  * @author Illia Shepilov
  */
-public class EnrichmentNotFoundException extends RuntimeException {
+class TaskFlowValidatorShould {
 
-    public EnrichmentNotFoundException(String message) {
-        super(message);
+    @Test
+    public void have_private_constructor() {
+        assertTrue(hasPrivateUtilityConstructor(TaskFlowValidator.class));
     }
 }

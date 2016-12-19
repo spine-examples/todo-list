@@ -64,6 +64,7 @@ import java.util.stream.Collectors;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static org.spine3.examples.todolist.TaskFlowValidator.ensureNeitherCompletedNorDeleted;
 import static org.spine3.examples.todolist.TaskFlowValidator.validateAssignLabelToTaskCommand;
+import static org.spine3.examples.todolist.TaskFlowValidator.validateCreateDraftCommand;
 import static org.spine3.examples.todolist.TaskFlowValidator.validateRemoveLabelFromTaskCommand;
 import static org.spine3.examples.todolist.TaskFlowValidator.validateTransition;
 import static org.spine3.examples.todolist.TaskFlowValidator.validateUpdateTaskDueDateCommand;
@@ -77,6 +78,9 @@ import static org.spine3.examples.todolist.TaskFlowValidator.validateUpdateTaskP
 public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;
+    private static final String SHORT_DESCRIPTION_EXCEPTION_MESSAGE =
+            "Description should contain at least 3 alphanumeric symbols.";
+    private static final String NULL_DESCRIPTION_EXCEPTION_MESSAGE = "Description cannot be null.";
 
     /**
      * Creates a new aggregate instance.
@@ -199,10 +203,11 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return Collections.singletonList(result);
     }
 
-    //TODO[illia.shepilov]: should be updated after defining draft creation.
     @Assign
     public List<? extends Message> handle(CreateDraft cmd) {
+        validateCreateDraftCommand(getState().getTaskStatus());
         final TaskDraftCreated result = TaskDraftCreated.newBuilder()
+                                                        .setId(cmd.getId())
                                                         .setDraftCreationTime(Timestamps.getCurrentTime())
                                                         .build();
         return Collections.singletonList(result);
@@ -294,7 +299,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     }
 
-    //TODO[illia.shepilov]: should be updated after defining draft creation.
     @Apply
     private void draftCreated(TaskDraftCreated event) {
         getBuilder().setId(event.getId())
@@ -307,16 +311,16 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     private void validateCommand(CreateBasicTask cmd) {
         final String description = cmd.getDescription();
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
-            throw new IllegalStateException("Description should contain at least 3 alphanumeric symbols.");
+            throw new IllegalStateException(SHORT_DESCRIPTION_EXCEPTION_MESSAGE);
         }
     }
 
     private void validateCommand(UpdateTaskDescription cmd) {
         final String description = cmd.getUpdatedDescription();
-        checkNotNull(description, "Description cannot be null.");
+        checkNotNull(description, NULL_DESCRIPTION_EXCEPTION_MESSAGE);
 
         if (description.length() < MIN_DESCRIPTION_LENGTH) {
-            throw new IllegalStateException("Description should contain at least 3 alphanumeric symbols.");
+            throw new IllegalStateException(SHORT_DESCRIPTION_EXCEPTION_MESSAGE);
         }
 
         ensureNeitherCompletedNorDeleted(getState().getTaskStatus());

@@ -43,11 +43,11 @@ public class TestCommandContextFactory {
      * Prevent instantiation.
      */
     private TestCommandContextFactory() {
-        throw new UnsupportedOperationException("Cannot be instantiated");
+        throw new UnsupportedOperationException("Cannot be instantiated.");
     }
 
     /**
-     * Creates a new command context {@link CommandContext} instance.
+     * Creates a new {@link CommandContext} instance.
      *
      * @return {@link CommandContext} instance.
      */
@@ -59,7 +59,7 @@ public class TestCommandContextFactory {
     }
 
     /**
-     * Creates a new command context {@link CommandContext} by specified passed parameters.
+     * Creates a new {@link CommandContext} instance according to the parameters specified.
      *
      * @param userId    the actor's id
      * @param commandId the command's id

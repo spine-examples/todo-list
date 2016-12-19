@@ -27,6 +27,16 @@ package org.spine3.examples.todolist;
  */
 public class TaskFlowValidator {
 
+    private static final String TASK_COMPLETED_EXCEPTION_MESSAGE = "Command cannot be applied on completed task.";
+    private static final String TASK_DELETED_EXCEPTION_MESSAGE = "Command cannot be applied on deleted task.";
+
+    /**
+     * Prevent instantiation.
+     */
+    private TaskFlowValidator(){
+        throw new UnsupportedOperationException("Cannot be instantiated.");
+    }
+
     /**
      * Check whether the transition from the current task status to the new status is allowed.
      *
@@ -59,6 +69,10 @@ public class TaskFlowValidator {
         ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
+    public static void validateCreateDraftCommand(TaskStatus currentStatus) {
+        ensureNeitherCompletedNorDeleted(currentStatus);
+    }
+
     /**
      * Verifies status of current task.
      *
@@ -75,13 +89,13 @@ public class TaskFlowValidator {
 
     private static void ensureNotCompleted(TaskStatus currentStatus) {
         if (currentStatus == TaskStatus.COMPLETED) {
-            throw new IllegalStateException("Command cannot be applied on completed task.");
+            throw new IllegalStateException(TASK_COMPLETED_EXCEPTION_MESSAGE);
         }
     }
 
     private static void ensureNotDeleted(TaskStatus currentStatus) {
         if (currentStatus == TaskStatus.DELETED) {
-            throw new IllegalStateException("Command cannot be applied on deleted task.");
+            throw new IllegalStateException(TASK_DELETED_EXCEPTION_MESSAGE);
         }
     }
 }

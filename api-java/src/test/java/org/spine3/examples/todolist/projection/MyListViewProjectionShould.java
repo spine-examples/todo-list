@@ -54,7 +54,7 @@ class MyListViewProjectionShould {
     }
 
     @Test
-    public void return_state_when_handle_task_created_event() {
+    public void return_current_state_when_handle_task_created_event() {
         final int expectedSize = 1;
         projection.on(taskCreatedEvent);
 
@@ -65,7 +65,7 @@ class MyListViewProjectionShould {
     }
 
     @Test
-    public void return_state_when_handle_task_created_and_deleted_event() {
+    public void return_current_state_when_handle_task_created_and_deleted_event() {
         int expectedListSize = 1;
         projection.on(taskCreatedEvent);
         projection.on(taskCreatedEvent);

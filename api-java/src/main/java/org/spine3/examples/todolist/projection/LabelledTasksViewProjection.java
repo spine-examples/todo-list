@@ -21,7 +21,9 @@
 package org.spine3.examples.todolist.projection;
 
 import com.google.common.base.Optional;
+import com.google.protobuf.Message;
 import org.spine3.base.EventContext;
+import org.spine3.base.Events;
 import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.EnrichmentNotFoundException;
 import org.spine3.examples.todolist.LabelAssignedToTask;
@@ -41,7 +43,6 @@ import org.spine3.server.projection.Projection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.spine3.base.Events.getEnrichment;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByLabelId;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
 
@@ -49,17 +50,11 @@ import static org.spine3.examples.todolist.projection.ProjectionHelper.removeVie
  * A projection state of the created tasks marked with a certain label.
  *
  * <p> Contains the data about the task view.
- * <p>
  * <p> This view includes all tasks per label that are neither in a draft state nor deleted.
  *
  * @author Illia Shepilov
  */
 public class LabelledTasksViewProjection extends Projection<TaskLabelId, LabelledTasksView> {
-
-    private static final String RED_COLOR_HEX = "#ff0000";
-    private static final String BLUE_COLOR_HEX = "#0000ff";
-    private static final String GREEN_COLOR_HEX = "#008000";
-    private static final String GRAY_COLOR_HEX = "#808080";
 
     /**
      * Creates a new instance.
@@ -73,7 +68,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
 
     @Subscribe
     public void on(LabelAssignedToTask event, EventContext context) {
-        final LabelDetailsByLabelIdEnrichment enrichment = getLabelEnrichmentByLabelId(context);
+        final LabelDetailsByLabelIdEnrichment enrichment = getEnrichment(LabelDetailsByLabelIdEnrichment.class, context);
         final LabelDetails labelDetails = enrichment.getLabelDetails();
         final TaskView taskView = TaskView.newBuilder()
                                           .setId(event.getId())
@@ -85,7 +80,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
 
     @Subscribe
     public void on(DeletedTaskRestored event, EventContext context) {
-        final LabelDetailsByTaskIdEnrichment enrichment = getLabelEnrichmentByTaskId(context);
+        final LabelDetailsByTaskIdEnrichment enrichment = getEnrichment(LabelDetailsByTaskIdEnrichment.class, context);
         final LabelDetails labelDetails = enrichment.getLabelDetails();
         final TaskView taskView = TaskView.newBuilder()
                                           .setId(event.getId())
@@ -96,14 +91,18 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
 
     @Subscribe
     public void on(LabelRemovedFromTask event, EventContext context) {
-        final LabelDetailsByLabelIdEnrichment enrichment = getLabelEnrichmentByLabelId(context);
+
+        final LabelDetailsByLabelIdEnrichment labelEnrichment = getEnrichment(
+                LabelDetailsByLabelIdEnrichment.class,
+                context);
+        final LabelDetailsByLabelIdEnrichment enrichment = getEnrichment(LabelDetailsByLabelIdEnrichment.class, context);
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
         final TaskListView taskListView = removeViewByLabelId(views, event.getLabelId());
         final LabelDetails labelDetails = enrichment.getLabelDetails();
-        final String hexColor = convertFromLabelColorToHex(labelDetails.getColor());
+        final String hexColor = LabelColorView.valueOf(labelDetails.getColor());
         final LabelledTasksView state = getState().newBuilderForType()
                                                   .setLabelTitle(labelDetails.getTitle())
                                                   .setLabelColor(hexColor)
@@ -114,14 +113,14 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
 
     @Subscribe
     public void on(TaskDeleted event, EventContext context) {
-        final LabelDetailsByTaskIdEnrichment enrichment = getLabelEnrichmentByTaskId(context);
+        final LabelDetailsByTaskIdEnrichment enrichment = getEnrichment(LabelDetailsByTaskIdEnrichment.class, context);
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
         final TaskListView taskListView = removeViewByTaskId(views, event.getId());
         final LabelDetails labelDetails = enrichment.getLabelDetails();
-        final String hexColor = convertFromLabelColorToHex(labelDetails.getColor());
+        final String hexColor = LabelColorView.valueOf(labelDetails.getColor());
         final LabelledTasksView state = getState().newBuilderForType()
                                                   .setLabelledTasks(taskListView)
                                                   .setLabelTitle(labelDetails.getTitle())
@@ -130,24 +129,14 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
         incrementState(state);
     }
 
-    private LabelDetailsByLabelIdEnrichment getLabelEnrichmentByLabelId(EventContext context) {
-        final Optional<LabelDetailsByLabelIdEnrichment> enrichmentOptional =
-                getEnrichment(LabelDetailsByLabelIdEnrichment.class, context);
+    @SuppressWarnings("Guava")
+    private <T extends Message, E extends Class<T>> T getEnrichment(E enrichmentClass, EventContext context) {
+        final Optional<T> enrichmentOptional = Events.getEnrichment(enrichmentClass, context);
         if (enrichmentOptional.isPresent()) {
-            LabelDetailsByLabelIdEnrichment result = enrichmentOptional.get();
+            T result = enrichmentOptional.get();
             return result;
         }
-        throw new EnrichmentNotFoundException("LabelDetailsEnrichmentByLabelId not found");
-    }
-
-    private LabelDetailsByTaskIdEnrichment getLabelEnrichmentByTaskId(EventContext context) {
-        final Optional<LabelDetailsByTaskIdEnrichment> enrichmentOptional =
-                getEnrichment(LabelDetailsByTaskIdEnrichment.class, context);
-        if (enrichmentOptional.isPresent()) {
-            LabelDetailsByTaskIdEnrichment result = enrichmentOptional.get();
-            return result;
-        }
-        throw new EnrichmentNotFoundException("LabelDetailsEnrichmentByTaskId not found");
+        throw new EnrichmentNotFoundException(enrichmentClass + " not found");
     }
 
     private LabelledTasksView addLabel(TaskView taskView, LabelDetails labelDetails) {
@@ -159,7 +148,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
         final TaskListView taskListView = TaskListView.newBuilder()
                                                       .addAllItems(views)
                                                       .build();
-        final String hexColor = convertFromLabelColorToHex(labelDetails.getColor());
+        final String hexColor = LabelColorView.valueOf(labelDetails.getColor());
         final LabelledTasksView result = getState().newBuilderForType()
                                                    .setLabelledTasks(taskListView)
                                                    .setLabelColor(hexColor)
@@ -168,19 +157,29 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
         return result;
     }
 
-    private String convertFromLabelColorToHex(LabelColor color) {
-        if (color == LabelColor.RED) {
-            return RED_COLOR_HEX;
+    private enum LabelColorView {
+        RED_COLOR(LabelColor.RED, "#ff0000"),
+        BLUE_COLOR(LabelColor.BLUE, "#0000ff"),
+        GREEN_COLOR(LabelColor.GREEN, "#008000"),
+        GRAY_COLOR(LabelColor.GRAY, "#808080");
+
+        private static final String WRONG_LABEL_COLOR_EXCEPTION_MESSAGE = "No enum constant by specified label color: ";
+
+        private final LabelColor labelColor;
+        private final String hexColor;
+
+        LabelColorView(LabelColor labelColor, String hexColor) {
+            this.labelColor = labelColor;
+            this.hexColor = hexColor;
         }
 
-        if (color == LabelColor.BLUE) {
-            return BLUE_COLOR_HEX;
+        private static String valueOf(LabelColor labelColor) {
+            for (LabelColorView colorView : values()) {
+                if (colorView.labelColor == labelColor) {
+                    return colorView.hexColor;
+                }
+            }
+            throw new IllegalArgumentException(WRONG_LABEL_COLOR_EXCEPTION_MESSAGE + labelColor);
         }
-
-        if (color == LabelColor.GREEN) {
-            return GREEN_COLOR_HEX;
-        }
-
-        return GRAY_COLOR_HEX;
     }
 }

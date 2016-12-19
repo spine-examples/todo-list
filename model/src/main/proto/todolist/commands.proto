@@ -147,9 +147,18 @@ message RemoveLabelFromTask {
     TaskLabelId label_id = 2;
 }
 
-// TODO[alex.tymchenko]: define the draft creation.
+// Create a draft.
+//
+//Cannot be applied to the deleted tasks.
+// Cannot be applied to the completed tasks.
+//
 message CreateDraft {
 
+    // An identifier of the target task.
+    TaskId id = 1;
+
+    // Reserved for future extension.
+    reserved 2 to 10;
 }
 
 // Finalize a task, moving it from the draft state into the actual state.

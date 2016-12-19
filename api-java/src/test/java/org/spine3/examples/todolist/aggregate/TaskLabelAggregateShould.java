@@ -44,10 +44,10 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
  */
 public class TaskLabelAggregateShould {
 
-    private static final CommandContext COMMAND_CONTEXT = createCommandContext();
     private TaskLabelAggregate aggregate;
     private CreateBasicLabel createLabelCmd;
     private UpdateLabelDetails updateLabelDetailsCmd;
+    private static final CommandContext COMMAND_CONTEXT = createCommandContext();
     private static final TaskLabelId ID = TaskLabelId.newBuilder()
                                                      .setValue(newUuid())
                                                      .build();
@@ -60,7 +60,7 @@ public class TaskLabelAggregateShould {
     }
 
     @Test
-    public void handle_create_task_label_command() {
+    public void successfully_handle_create_task_label_command() {
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -72,7 +72,7 @@ public class TaskLabelAggregateShould {
     }
 
     @Test
-    public void handle_update_label_details_command() {
+    public void successfully_handle_update_label_details_command() {
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =

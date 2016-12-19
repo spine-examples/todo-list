@@ -31,7 +31,7 @@ import "spine/annotations.proto";
 import "spine/event_annotations.proto";
 import "todolist/events.proto";
 
-// Represents a label enrichment by label id.
+// LabelDetails enrichment for LabelAssignedToTask and LabelRemovedFromTask events.
 //
 message LabelDetailsByLabelIdEnrichment {
 
@@ -42,7 +42,7 @@ message LabelDetailsByLabelIdEnrichment {
     LabelDetails label_details = 1 [(by) = "label_id"];
 }
 
-// Represents a label enrichment by task id.
+// LabelDetails enrichment for DeletedTaskRestored and TaskDeleted events.
 //
 message LabelDetailsByTaskIdEnrichment {
 

@@ -45,9 +45,9 @@ class DraftTaskViewProjectionShould {
     private TaskDraftFinalized taskDraftFinalizedEvent;
     private TaskDraftCreated taskDraftCreatedEvent;
     private TaskDeleted taskDeletedEvent;
-    private TaskListId ID = TaskListId.newBuilder()
-                                      .setValue(newUuid())
-                                      .build();
+    private final TaskListId ID = TaskListId.newBuilder()
+                                            .setValue(newUuid())
+                                            .build();
 
     @BeforeEach
     public void setUp() {

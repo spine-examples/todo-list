@@ -40,7 +40,7 @@ public class TestEventEnricherFactory {
      * Prevent instantiation.
      */
     private TestEventEnricherFactory() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Cannot be instantiated.");
     }
 
     private static final LabelDetails LABEL_DETAILS = LabelDetails.newBuilder()
@@ -69,7 +69,6 @@ public class TestEventEnricherFactory {
      * Provides a new {@link EventEnricher} instance by specified functions.
      *
      * <p> Contains enrichment field, which using {@code LABEL_ID_TO_LABEL_DETAILS} function.
-     * <p>
      * <p> Contains enrichment field, which using {@code TASK_ID_TO_LABEL_DETAILS} function.
      *
      * @return {@link EventEnricher}

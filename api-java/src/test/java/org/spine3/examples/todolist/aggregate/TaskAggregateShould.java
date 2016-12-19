@@ -90,6 +90,9 @@ public class TaskAggregateShould {
     private static final String DELETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied on deleted task.";
     private static final String INAPPROPRIATE_TASK_DESCRIPTION = "Description should contain " +
             "at least 3 alphanumeric symbols.";
+    private static final TaskId ID = TaskId.newBuilder()
+                                           .setValue(newUuid())
+                                           .build();
     private TaskAggregate aggregate;
     private CreateBasicTask createTaskCmd;
     private UpdateTaskDescription updateTaskDescriptionCmd;
@@ -102,11 +105,8 @@ public class TaskAggregateShould {
     private FinalizeDraft finalizeDraftCmd;
     private CreateDraft createDraftCmd;
     private AssignLabelToTask assignLabelToTaskCmd;
-    private RemoveLabelFromTask removeLabelFromTaskCmd;
 
-    private static final TaskId ID = TaskId.newBuilder()
-                                           .setValue(newUuid())
-                                           .build();
+    private RemoveLabelFromTask removeLabelFromTaskCmd;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -136,7 +136,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_update_task_description_command() {
+    public void successfully_handle_update_task_description_command() {
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -148,7 +148,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_create_task_command() {
+    public void successfully_handle_create_task_command() {
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -163,7 +163,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_remove_label_from_task_command() {
+    public void successfully_handle_remove_label_from_task_command() {
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -175,7 +175,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_assign_label_to_task_command() {
+    public void successfully_handle_assign_label_to_task_command() {
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -187,7 +187,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_update_task_description_when_description_contains_one_symbol() {
+    public void catch_exception_when_handle_update_task_description_when_description_contains_one_symbol() {
         try {
             updateTaskDescriptionCmd = updateTaskDescriptionInstance(".");
             aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
@@ -200,7 +200,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_update_task_description_when_task_is_deleted() {
+    public void catch_exception_when_handle_update_task_description_when_task_is_deleted() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
@@ -214,7 +214,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_update_task_description_when_task_is_completed() {
+    public void catch_exception_handle_update_task_description_when_task_is_completed() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
@@ -228,7 +228,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_update_task_due_date_when_task_is_completed() {
+    public void catch_exception_when_handle_update_task_due_date_when_task_is_completed() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
@@ -242,7 +242,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_update_task_due_date_when_task_is_deleted() {
+    public void catch_exception_when_handle_update_task_due_date_when_task_is_deleted() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
@@ -256,7 +256,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_update_task_priority_when_task_is_deleted() {
+    public void catch_exception_handle_update_task_priority_when_task_is_deleted() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
@@ -270,7 +270,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_update_task_priority_when_task_is_completed() {
+    public void catch_exception_handle_update_task_priority_when_task_is_completed() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
@@ -284,7 +284,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_update_task_due_date_command() {
+    public void successfully_handle_update_task_due_date_command() {
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -296,7 +296,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_update_task_priority_command() {
+    public void successfully_handle_update_task_priority_command() {
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -308,7 +308,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_complete_task_command() {
+    public void successfully_handle_complete_task_command() {
         final int expectedListSize = 1;
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
@@ -378,7 +378,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_create_and_delete_task_command() {
+    public void successfully_handle_create_and_delete_task_command() {
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         assertNotEquals(DELETED, aggregate.getState()
                                           .getTaskStatus());
@@ -389,7 +389,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_restore_deleted_task_command() {
+    public void successfully_handle_restore_deleted_task_command() {
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
@@ -399,7 +399,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_restore_task_command_when_task_is_completed() {
+    public void catch_exception_when_handle_restore_task_command_when_task_is_completed() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
@@ -413,7 +413,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_restore_deleted_task_command_when_task_is_created() {
+    public void catch_exception_when_handle_restore_deleted_task_command_when_task_is_created() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
@@ -426,7 +426,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_restore_deleted_task_command_when_task_in_draft_state() {
+    public void catch_exception_when_handle_restore_deleted_task_command_when_task_in_draft_state() {
         try {
             aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
@@ -439,7 +439,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_create_and_finalize_draft_command() {
+    public void successfully_handle_create_and_finalize_draft_command() {
         aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
 
         assertEquals(DRAFT, aggregate.getState()
@@ -452,7 +452,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_create_draft_task_command() {
+    public void successfully_handle_create_draft_task_command() {
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -464,7 +464,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_finalized_draft_command_when_task_is_deleted() {
+    public void catch_exception_when_handle_finalized_draft_command_when_task_is_deleted() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
@@ -478,7 +478,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_finalized_draft_command_when_task_not_in_the_draft_state() {
+    public void catch_exception_when_handle_finalized_draft_command_when_task_not_in_the_draft_state() {
         try {
             aggregate.dispatchForTest(finalizeDraftCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -490,7 +490,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void return_current_sate_when_task_draft_is_created() {
+    public void successfully_return_current_sate_when_task_draft_is_created() {
         aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
         Task state = aggregate.getState();
 
@@ -498,7 +498,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_complete_task_command_when_task_is_deleted() {
+    public void catch_exception_when_handle_complete_task_command_when_task_is_deleted() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
@@ -512,7 +512,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_complete_task_command_when_task_in_draft_state() {
+    public void catch_exception_when_handle_complete_task_command_when_task_in_draft_state() {
         try {
             aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
@@ -525,7 +525,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_reopen_task_command_when_task_created() {
+    public void catch_exception_when_handle_reopen_task_command_when_task_created() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
@@ -538,7 +538,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_complete_and_reopen_task_command() {
+    public void successfully_handle_complete_and_reopen_task_command() {
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
 
@@ -552,7 +552,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_reopen_task_command_when_task_is_created() {
+    public void catch_exception_when_handle_reopen_task_command_when_task_is_created() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
@@ -565,7 +565,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_reopen_task_command_when_task_is_deleted() {
+    public void successfully_handle_reopen_task_command_when_task_is_deleted() {
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
@@ -575,7 +575,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_reopen_task_command_when_task_in_draft_state() {
+    public void catch_exception_when_handle_reopen_task_command_when_task_in_draft_state() {
         try {
             aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
@@ -588,7 +588,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_assign_label_to_task_command_when_task_is_deleted() {
+    public void catch_exception_when_handle_assign_label_to_task_command_when_task_is_deleted() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
@@ -602,7 +602,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_assign_label_to_task_command_when_task_is_completed() {
+    public void catch_exception_when_handle_assign_label_to_task_command_when_task_is_completed() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
@@ -616,7 +616,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_remove_label_from_task_when_task_is_completed() {
+    public void catch_exception_when_handle_remove_label_from_task_when_task_is_completed() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
@@ -630,7 +630,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_remove_label_from_task_when_task_is_deleted() {
+    public void catch_exception_when_handle_remove_label_from_task_when_task_is_deleted() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
@@ -644,7 +644,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_delete_task_command_when_task_is_already_deleted() {
+    public void catch_exception_when_handle_delete_task_command_when_task_is_already_deleted() {
         try {
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
@@ -658,7 +658,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_delete_and_restore_task_command() {
+    public void successfully_handle_delete_and_restore_task_command() {
         aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
 
@@ -672,7 +672,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void handle_delete_task_command() {
+    public void successfully_handle_delete_task_command() {
         final int expectedListSize = 1;
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 

@@ -269,7 +269,7 @@ subprojects {
 
         // configure jacoco to analyze the junitPlatformTest task
         jacoco {
-            // this tool version is compatible with
+            // this tool version is known to be compatible with JUnit 5.
             toolVersion = "0.7.6.201602180812"
             applyTo junitPlatformTestTask
         }

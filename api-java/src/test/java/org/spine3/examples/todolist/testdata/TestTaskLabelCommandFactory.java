@@ -29,7 +29,7 @@ import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.UpdateLabelDetails;
 
 /**
- * Provides methods for instantiation task label commands for test needs.
+ * A factory of the task label commands for the test needs.
  *
  * @author Illia Shepilov
  */
@@ -41,7 +41,7 @@ public class TestTaskLabelCommandFactory {
      * Prevent instantiation.
      */
     private TestTaskLabelCommandFactory() {
-        throw new UnsupportedOperationException("Cannot be instantiated");
+        throw new UnsupportedOperationException("Cannot be instantiated.");
     }
 
     /**
@@ -124,8 +124,8 @@ public class TestTaskLabelCommandFactory {
      */
     public static LabelDetailsUpdated labelDetailsUpdatedInstance(LabelColor color, String title) {
         final LabelDetails.Builder labelDetailsBuilder = LabelDetails.newBuilder()
-                                                                 .setColor(color)
-                                                                 .setTitle(title);
+                                                                     .setColor(color)
+                                                                     .setTitle(title);
         final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
                                                               .setNewDetails(labelDetailsBuilder)
                                                               .build();

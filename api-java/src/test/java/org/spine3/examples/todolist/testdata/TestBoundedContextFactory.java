@@ -35,12 +35,12 @@ public class TestBoundedContextFactory {
      * Prevent instantiation.
      */
     private TestBoundedContextFactory() {
-        throw new UnsupportedOperationException();
+        throw new UnsupportedOperationException("Cannot be instantiated.");
     }
 
     /**
      * Provides a new {@link BoundedContext} instance
-     * by specified {@link EventEnricher} and {@link InMemoryStorageFactory}.
+     * built with the specified {@link EventEnricher} and {@link InMemoryStorageFactory}.
      *
      * @param eventEnricher {@link EventEnricher} instance
      * @return {@link BoundedContext} instance
