@@ -20,7 +20,6 @@
 
 package org.spine3.examples.todolist.testdata;
 
-import com.google.common.base.Function;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.TaskId;
@@ -28,6 +27,7 @@ import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.server.event.enrich.EventEnricher;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 
 /**
  * Provides event enricher for test needs.
@@ -40,7 +40,7 @@ public class TestEventEnricherFactory {
      * Prevent instantiation.
      */
     private TestEventEnricherFactory() {
-        throw new UnsupportedOperationException("Cannot be instantiated.");
+        throw new UnsupportedOperationException();
     }
 
     private static final LabelDetails LABEL_DETAILS = LabelDetails.newBuilder()
@@ -48,8 +48,6 @@ public class TestEventEnricherFactory {
                                                                   .setColor(LabelColor.BLUE)
                                                                   .build();
 
-    @SuppressWarnings("Guava")
-    //As long as Spine API is based on Java 7, {@link Events#getEnrichment} uses Guava {@link Optional}.
     private static final Function<TaskLabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS =
             new Function<TaskLabelId, LabelDetails>() {
                 @Nullable
@@ -58,8 +56,7 @@ public class TestEventEnricherFactory {
                     return LABEL_DETAILS;
                 }
             };
-    @SuppressWarnings("Guava")
-    //As long as Spine API is based on Java 7, {@link Events#getEnrichment} uses Guava {@link Optional}.
+
     private static final Function<TaskId, LabelDetails> TASK_ID_TO_LABEL_DETAILS =
             new Function<TaskId, LabelDetails>() {
                 @Nullable
@@ -70,7 +67,8 @@ public class TestEventEnricherFactory {
             };
 
     /**
-     * Provides a new {@link EventEnricher} instance by specified functions.
+     * Create an {@link EventEnricher} instance, adding some pre-configured test enrichment messages
+     * to the domain events.
      *
      * <p> Contains enrichment field, which using {@code LABEL_ID_TO_LABEL_DETAILS} function.
      * <p> Contains enrichment field, which using {@code TASK_ID_TO_LABEL_DETAILS} function.
@@ -81,10 +79,10 @@ public class TestEventEnricherFactory {
         final EventEnricher result = EventEnricher.newBuilder()
                                                   .addFieldEnrichment(TaskLabelId.class,
                                                                       LabelDetails.class,
-                                                                      LABEL_ID_TO_LABEL_DETAILS)
+                                                                      LABEL_ID_TO_LABEL_DETAILS::apply)
                                                   .addFieldEnrichment(TaskId.class,
                                                                       LabelDetails.class,
-                                                                      TASK_ID_TO_LABEL_DETAILS)
+                                                                      TASK_ID_TO_LABEL_DETAILS::apply)
                                                   .build();
         return result;
     }

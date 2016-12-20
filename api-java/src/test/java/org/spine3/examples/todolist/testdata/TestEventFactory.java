@@ -61,12 +61,11 @@ public class TestEventFactory {
      * Prevent instantiation.
      */
     private TestEventFactory() {
-        throw new UnsupportedOperationException("Cannot be instantiated.");
+        throw new UnsupportedOperationException();
     }
 
     /**
-     * Provides {@link TaskCreated} event instance by the description specified {@code DESCRIPTION}
-     * and task priority {@code TASK_PRIORITY}.
+     * Provides a pre-configured {@link TaskCreated} event instance.
      *
      * @return {@link TaskCreated} instance
      */
@@ -75,50 +74,50 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides {@link TaskCreated} event by specified description and task's priority.
+     * Provides {@link TaskCreated} event by specified description and task priority.
      *
-     * @param description specified task's description
-     * @param priority    specified task's priority
+     * @param description specified task description
+     * @param priority    specified task priority
      * @return {@link TaskCreated} instance
      */
     public static TaskCreated taskCreatedInstance(String description, TaskPriority priority) {
+        final TaskDetails.Builder details = TaskDetails.newBuilder()
+                                                       .setDescription(description)
+                                                       .setPriority(priority);
         final TaskCreated result = TaskCreated.newBuilder()
-                                             .setDetails(TaskDetails.newBuilder()
-                                                                    .setDescription(description)
-                                                                    .setPriority(priority))
-                                             .build();
+                                              .setDetails(details)
+                                              .build();
         return result;
     }
 
     /**
-     * Provides {@link TaskCreated} event by specified task's id.
+     * Provides {@link TaskCreated} event by specified task ID.
      *
-     * @param id task's id
+     * @param id task id
      * @return {@link TaskCreated} instance
      */
     public static TaskCreated taskCreatedInstance(TaskId id) {
         final TaskCreated result = TaskCreated.newBuilder()
-                                             .setId(id)
-                                             .build();
+                                              .setId(id)
+                                              .build();
         return result;
     }
 
     /**
-     * Provides {@link TaskCreated} event by specified description {@see DESCRIPTION}
-     * and task's priority {@code TASK_PRIORITY}.
+     * Provides a pre-configured {@link TaskDraftCreated} event instance.
      *
-     * @return {@link TaskCreated} instance
+     * @return {@link TaskDraftCreated} instance
      */
     public static TaskDraftCreated taskDraftCreatedInstance() {
         return taskDraftCreatedInstance(DESCRIPTION, TASK_PRIORITY, CREATION_TIME);
     }
 
     /**
-     * Provides {@link TaskDraftCreated} event by specified task's description,
-     * task's priority and draft's creation time.
+     * Provides {@link TaskDraftCreated} event by specified task description,
+     * task priority and draft creation time.
      *
-     * @param description  task's description
-     * @param priority     task's priority
+     * @param description  task description
+     * @param priority     task priority
      * @param creationTime time of draft creation
      * @return {@link TaskDraftCreated} instance
      */
@@ -136,7 +135,7 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides {@link TaskDescriptionUpdated} event by specified task's description {@code DESCRIPTION}.
+     * Provides a pre-configured {@link TaskDescriptionUpdated} event instance.
      *
      * @return {@link TaskDescriptionUpdated} instance
      */
@@ -145,20 +144,20 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides {@link TaskDescriptionUpdated} event by specified task's description.
+     * Provides {@link TaskDescriptionUpdated} event by specified task description.
      *
-     * @param description task's description
+     * @param description task description
      * @return {@link TaskDescriptionUpdated} instance
      */
     public static TaskDescriptionUpdated taskDescriptionUpdatedInstance(String description) {
         final TaskDescriptionUpdated result = TaskDescriptionUpdated.newBuilder()
-                                                                   .setNewDescription(description)
-                                                                   .build();
+                                                                    .setNewDescription(description)
+                                                                    .build();
         return result;
     }
 
     /**
-     * Provides {@link TaskPriorityUpdated} event by specified task's priority {@code TASK_PRIORITY}.
+     * Provides a pre-configured {@link TaskPriorityUpdated} event instance.
      *
      * @return {@link TaskPriorityUpdated} instance
      */
@@ -167,20 +166,20 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides {@link TaskPriorityUpdated} event by specified tasl's priority.
+     * Provides {@link TaskPriorityUpdated} event by specified task priority.
      *
-     * @param priority task's priority
+     * @param priority task priority
      * @return {@link TaskPriorityUpdated} instance
      */
     public static TaskPriorityUpdated taskPriorityUpdatedInstance(TaskPriority priority) {
         final TaskPriorityUpdated result = TaskPriorityUpdated.newBuilder()
-                                                             .setNewPriority(priority)
-                                                             .build();
+                                                              .setNewPriority(priority)
+                                                              .build();
         return result;
     }
 
     /**
-     * Provides {@link TaskDueDateUpdated} event by specified task's due date value {@code TASK_DUE_DATE}.
+     * Provides a pre-configured {@link TaskDueDateUpdated} event instance.
      *
      * @return {@link TaskDueDateUpdated} instance
      */
@@ -189,15 +188,15 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides {@link TaskDueDateUpdated} event by specified task's due date.
+     * Provides {@link TaskDueDateUpdated} event by specified task due date.
      *
      * @param dueDate the due date value for the task
      * @return {@link TaskDueDateUpdated} instance
      */
     public static TaskDueDateUpdated taskDueDateUpdatedInstance(Timestamp dueDate) {
         final TaskDueDateUpdated result = TaskDueDateUpdated.newBuilder()
-                                                           .setNewDueDate(dueDate)
-                                                           .build();
+                                                            .setNewDueDate(dueDate)
+                                                            .build();
         return result;
     }
 
@@ -247,7 +246,7 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides {@link LabelAssignedToTask} event by task's label id {@code LABEL_ID}.
+     * Provides a pre-configured {@link LabelAssignedToTask} event instance.
      *
      * @return {@link LabelAssignedToTask} instance
      */
@@ -256,27 +255,27 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides {@link LabelAssignedToTask} event by specified task's label id.
+     * Provides {@link LabelAssignedToTask} event by specified task label ID.
      *
-     * @param labelId label's id
+     * @param labelId label id
      * @return {@link LabelAssignedToTask} instance
      */
     public static LabelAssignedToTask labelAssignedToTaskInstance(TaskLabelId labelId) {
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
-                                                             .setLabelId(labelId)
-                                                             .build();
+                                                              .setLabelId(labelId)
+                                                              .build();
         return result;
     }
 
     /**
-     * Provides {@link LabelRemovedFromTask} event by task's label id {@code LABEL_ID}.
+     * Provides a pre-configured {@link LabelRemovedFromTask} event instance.
      *
      * @return {@link LabelRemovedFromTask} instance
      */
     public static LabelRemovedFromTask labelRemovedFromTaskInstance() {
         final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
-                                                               .setLabelId(LABEL_ID)
-                                                               .build();
+                                                                .setLabelId(LABEL_ID)
+                                                                .build();
         return result;
     }
 }

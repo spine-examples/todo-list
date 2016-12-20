@@ -59,15 +59,15 @@ public class TestEventContextFactory {
     /**
      * Prevent instantiation.
      */
-    private TestEventContextFactory(){
-        throw new UnsupportedOperationException("Cannot be instantiated.");
+    private TestEventContextFactory() {
+        throw new UnsupportedOperationException();
     }
 
     /**
      * Provides a new {@link EventContext} instance.
      *
      * <p> Created event context contains Enrichments.
-     * <p> Enrichments contains label details by task id and by label id enrichments.
+     * <p> Enrichments contains label details by task id and by label ID enrichments.
      *
      * @return {@link EventContext} instance
      */

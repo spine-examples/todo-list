@@ -159,7 +159,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     }
 
     /**
-     * Tight {@link LabelColor} with hexadecimal representation of color.
+     * Supplies {@link LabelColor} with hexadecimal representation of color.
      */
     private enum LabelColorView {
         RED_COLOR(LabelColor.RED, "#ff0000"),

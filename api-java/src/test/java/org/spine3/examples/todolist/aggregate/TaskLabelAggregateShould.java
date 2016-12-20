@@ -60,7 +60,7 @@ public class TaskLabelAggregateShould {
     }
 
     @Test
-    public void successfully_handle_create_task_label_command() {
+    public void emit_label_created_event_upon_create_task_label_command() {
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -72,7 +72,7 @@ public class TaskLabelAggregateShould {
     }
 
     @Test
-    public void successfully_handle_update_label_details_command() {
+    public void emit_label_details_updated_event_upon_update_label_details_command() {
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -84,11 +84,11 @@ public class TaskLabelAggregateShould {
     }
 
     @Test
-    public void change_current_state_color_when_label_is_created() {
+    public void emit_label_created_event_upon_create_label_command() {
         aggregate.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
 
-        assertEquals(LabelColor.GRAY, aggregate.getState()
-                                               .getColor());
+        final TaskLabel state = aggregate.getState();
+        assertEquals(LabelColor.GRAY, state.getColor());
     }
 
     @Test

@@ -41,7 +41,7 @@ public class TestTaskLabelCommandFactory {
      * Prevent instantiation.
      */
     private TestTaskLabelCommandFactory() {
-        throw new UnsupportedOperationException("Cannot be instantiated.");
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -54,8 +54,7 @@ public class TestTaskLabelCommandFactory {
     }
 
     /**
-     * Provides {@link UpdateLabelDetails} event by specified label's color {@code LabelColor.GRAY}
-     * and title {@code TITLE}.
+     * Provides a pre-configured {@link UpdateLabelDetails} command instance.
      *
      * @return {@link UpdateLabelDetails} instance.
      */
@@ -79,8 +78,7 @@ public class TestTaskLabelCommandFactory {
     }
 
     /**
-     * Provides {@link LabelCreated} event by specified label's color {@code LabelColor.GRAY}
-     * and label's title {@code TITLE}.
+     * Provides a pre-configured {@link LabelCreated} command instance.
      *
      * @return {@link LabelCreated} instance
      */
@@ -106,8 +104,7 @@ public class TestTaskLabelCommandFactory {
     }
 
     /**
-     * Provides {@link LabelDetailsUpdated} event by specified label's color {@code LabelColor.GRAY}
-     * and label's title {@code TITLE}.
+     * Provides a pre-configured {@link LabelDetailsUpdated} command instance.
      *
      * @return {@link LabelDetailsUpdated} instance.
      */

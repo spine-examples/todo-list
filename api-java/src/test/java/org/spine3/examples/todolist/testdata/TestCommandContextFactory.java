@@ -43,7 +43,7 @@ public class TestCommandContextFactory {
      * Prevent instantiation.
      */
     private TestCommandContextFactory() {
-        throw new UnsupportedOperationException("Cannot be instantiated.");
+        throw new UnsupportedOperationException();
     }
 
     /**
