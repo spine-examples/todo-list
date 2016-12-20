@@ -86,8 +86,8 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updat
 public class TaskAggregateShould {
 
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
-    private static final String COMPLETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied on completed task.";
-    private static final String DELETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied on deleted task.";
+    private static final String COMPLETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied to the completed task.";
+    private static final String DELETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied to the deleted task.";
     private static final String INAPPROPRIATE_TASK_DESCRIPTION = "Description should contain " +
             "at least 3 alphanumeric symbols.";
     private static final TaskId ID = TaskId.newBuilder()
