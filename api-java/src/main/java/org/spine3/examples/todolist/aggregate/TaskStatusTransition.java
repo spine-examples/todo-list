@@ -18,14 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist;
+package org.spine3.examples.todolist.aggregate;
+
+import org.spine3.examples.todolist.TaskStatus;
 
 /**
  * This class defines possible transitions of {@link TaskStatus}.
  *
  * @author Illia Shepilov
  */
-public enum TaskStatusTransition {
+/* package */ enum TaskStatusTransition {
 
     /**
      * Task draft.
@@ -88,7 +90,8 @@ public enum TaskStatusTransition {
      * @param newStatus     suggested new status of the task
      * @return {@code true} if passed statuses satisfy one of the transitions, {@code false} otherwise
      */
-    public static boolean isValid(TaskStatus currentStatus, TaskStatus newStatus) {
+    /* package */
+    static boolean isValid(TaskStatus currentStatus, TaskStatus newStatus) {
         for (TaskStatusTransition transition : TaskStatusTransition.values()) {
             if (transition.matches(currentStatus, newStatus)) {
                 return true;

@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist;
+package org.spine3.examples.todolist.aggregate;
 
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ import static org.spine3.test.Tests.hasPrivateUtilityConstructor;
 /**
  * @author Illia Shepilov
  */
-class TaskFlowValidatorShould {
+public class TaskFlowValidatorShould {
 
     @Test
     public void have_private_constructor() {

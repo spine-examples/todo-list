@@ -39,7 +39,7 @@ import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDraftFi
 /**
  * @author Illia Shepilov
  */
-class DraftTaskViewProjectionShould {
+public class DraftTasksViewProjectionShould {
 
     private DraftTasksViewProjection projection;
     private TaskDraftFinalized taskDraftFinalizedEvent;
@@ -58,7 +58,7 @@ class DraftTaskViewProjectionShould {
     }
 
     @Test
-    public void return_state_when_handle_task_draft_finalized_event() {
+    public void remove_task_view_from_state_when_it_is_finalized() {
         final int expectedListSize = 0;
         projection.on(taskDraftCreatedEvent);
         projection.on(taskDraftFinalizedEvent);
@@ -70,7 +70,7 @@ class DraftTaskViewProjectionShould {
     }
 
     @Test
-    public void return_state_when_handle_task_deleted_event() {
+    public void remove_task_view_from_state_when_it_is_deleted() {
         final int expectedListSize = 0;
         projection.on(taskDraftCreatedEvent);
         projection.on(taskDeletedEvent);
@@ -82,7 +82,7 @@ class DraftTaskViewProjectionShould {
     }
 
     @Test
-    public void return_state_when_handle_task_draft_created() {
+    public void add_task_view_to_state_when_it_is_created() {
         final int expectedListSize = 1;
         projection.on(taskDraftCreatedEvent);
 

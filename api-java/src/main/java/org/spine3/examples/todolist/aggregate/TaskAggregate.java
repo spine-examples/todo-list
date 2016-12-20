@@ -62,13 +62,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.spine3.examples.todolist.TaskFlowValidator.ensureNeitherCompletedNorDeleted;
-import static org.spine3.examples.todolist.TaskFlowValidator.validateAssignLabelToTaskCommand;
-import static org.spine3.examples.todolist.TaskFlowValidator.validateCreateDraftCommand;
-import static org.spine3.examples.todolist.TaskFlowValidator.validateRemoveLabelFromTaskCommand;
-import static org.spine3.examples.todolist.TaskFlowValidator.validateTransition;
-import static org.spine3.examples.todolist.TaskFlowValidator.validateUpdateTaskDueDateCommand;
-import static org.spine3.examples.todolist.TaskFlowValidator.validateUpdateTaskPriorityCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.ensureNeitherCompletedNorDeleted;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateAssignLabelToTaskCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateCreateDraftCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateRemoveLabelFromTaskCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateTransition;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateUpdateTaskDueDateCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateUpdateTaskPriorityCommand;
 
 /**
  * The aggregate managing the state of a {@link Task}.
@@ -308,7 +308,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                     .setTaskStatus(TaskStatus.DRAFT);
     }
 
-    private void validateCommand(CreateBasicTask cmd) {
+    private static void validateCommand(CreateBasicTask cmd) {
         final String description = cmd.getDescription();
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
             throw new IllegalStateException(SHORT_DESCRIPTION_EXCEPTION_MESSAGE);

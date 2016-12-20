@@ -37,14 +37,14 @@ import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDeleted
 /**
  * @author Illia Shepilov
  */
-class MyListViewProjectionShould {
+public class MyListViewProjectionShould {
 
     private MyListViewProjection projection;
     private TaskCreated taskCreatedEvent;
     private TaskDeleted taskDeletedEvent;
-    private TaskListId ID = TaskListId.newBuilder()
-                                      .setValue(newUuid())
-                                      .build();
+    private static final TaskListId ID = TaskListId.newBuilder()
+                                                   .setValue(newUuid())
+                                                   .build();
 
     @BeforeEach
     void setUp() {
@@ -54,7 +54,7 @@ class MyListViewProjectionShould {
     }
 
     @Test
-    public void return_current_state_when_handle_task_created_event() {
+    public void add_task_view_to_state_when_task_is_created() {
         final int expectedSize = 1;
         projection.on(taskCreatedEvent);
 
@@ -65,7 +65,7 @@ class MyListViewProjectionShould {
     }
 
     @Test
-    public void return_current_state_when_handle_task_created_and_deleted_event() {
+    public void remove_task_view_from_state_when_task_is_deleted() {
         int expectedListSize = 1;
         projection.on(taskCreatedEvent);
         projection.on(taskCreatedEvent);

@@ -321,7 +321,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void return_current_state_after_dispatch_when_description_is_updated() {
+    public void update_current_state_task_description_after_dispatch_command() {
         final String newDescription = "new description.";
         updateTaskDescriptionCmd = updateTaskDescriptionInstance(newDescription);
         aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
@@ -330,7 +330,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void return_current_state_when_updated_task_due_date() {
+    public void update_current_state_task_due_date_after_dispatch_command() {
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
         updateTaskDueDateCmd = updateTaskDueDateInstance(updatedDueDate);
         aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
@@ -339,7 +339,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void return_current_state_when_updated_priority() {
+    public void update_current_state_task_priority_after_dispatch_command() {
         final TaskPriority updatedPriority = TaskPriority.HIGH;
         updateTaskPriorityCmd = updateTaskPriorityInstance(updatedPriority);
         aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
@@ -348,7 +348,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void return_current_state_when_task_is_completed() {
+    public void change_task_status_state_when_task_is_completed() {
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
 
@@ -357,7 +357,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void return_current_state_when_task_is_deleted() {
+    public void change_task_status_state_when_task_is_deleted() {
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
 
@@ -368,13 +368,13 @@ public class TaskAggregateShould {
     @Test
     public void record_modification_timestamp() throws InterruptedException {
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-        Timestamp firstAggregateCreationState = aggregate.getState()
-                                                         .getCreated();
+        Timestamp firstStateCreationTime = aggregate.getState()
+                                        .getCreated();
         Thread.sleep(1000);
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-        Timestamp secondAggregateCreationState = aggregate.getState()
-                                                          .getCreated();
-        assertTrue(Timestamps.isLaterThan(secondAggregateCreationState, firstAggregateCreationState));
+        Timestamp secondStateCreationTime = aggregate.getState()
+                                         .getCreated();
+        assertTrue(Timestamps.isLaterThan(secondStateCreationTime, firstStateCreationTime));
     }
 
     @Test

@@ -18,22 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist;
+package org.spine3.examples.todolist.aggregate;
+
+import org.spine3.examples.todolist.TaskStatus;
 
 /**
  * Validates task commands and state transitions.
  *
  * @author Illia Shepilov
  */
-public class TaskFlowValidator {
+/* package */ class TaskFlowValidator {
 
-    private static final String TASK_COMPLETED_EXCEPTION_MESSAGE = "Command cannot be applied on completed task.";
-    private static final String TASK_DELETED_EXCEPTION_MESSAGE = "Command cannot be applied on deleted task.";
+    private static final String TASK_COMPLETED_EXCEPTION_MESSAGE = "Command cannot be applied to the completed task.";
+    private static final String TASK_DELETED_EXCEPTION_MESSAGE = "Command cannot be applied to the deleted task.";
 
     /**
      * Prevent instantiation.
      */
-    private TaskFlowValidator(){
+    private TaskFlowValidator() {
         throw new UnsupportedOperationException("Cannot be instantiated.");
     }
 
@@ -43,7 +45,8 @@ public class TaskFlowValidator {
      * @param currentStatus current task status
      * @param newStatus     new task status
      */
-    public static void validateTransition(TaskStatus currentStatus, TaskStatus newStatus) {
+    /* package */
+    static void validateTransition(TaskStatus currentStatus, TaskStatus newStatus) {
         final boolean isValid = TaskStatusTransition.isValid(currentStatus, newStatus);
 
         if (!isValid) {
@@ -53,23 +56,28 @@ public class TaskFlowValidator {
         }
     }
 
-    public static void validateUpdateTaskPriorityCommand(TaskStatus currentStatus) {
+    /* package */
+    static void validateUpdateTaskPriorityCommand(TaskStatus currentStatus) {
         ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
-    public static void validateUpdateTaskDueDateCommand(TaskStatus currentStatus) {
+    /* package */
+    static void validateUpdateTaskDueDateCommand(TaskStatus currentStatus) {
         ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
-    public static void validateRemoveLabelFromTaskCommand(TaskStatus currentStatus) {
+    /* package */
+    static void validateRemoveLabelFromTaskCommand(TaskStatus currentStatus) {
         ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
-    public static void validateAssignLabelToTaskCommand(TaskStatus currentStatus) {
+    /* package */
+    static void validateAssignLabelToTaskCommand(TaskStatus currentStatus) {
         ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
-    public static void validateCreateDraftCommand(TaskStatus currentStatus) {
+    /* package */
+    static void validateCreateDraftCommand(TaskStatus currentStatus) {
         ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
@@ -82,7 +90,8 @@ public class TaskFlowValidator {
      * @throws IllegalStateException if status, passed to the method,
      *                               {@code TaskStatus.COMPLETED} or {@code TaskStatus.DELETED}.
      */
-    public static void ensureNeitherCompletedNorDeleted(TaskStatus currentStatus) {
+    /* package */
+    static void ensureNeitherCompletedNorDeleted(TaskStatus currentStatus) {
         ensureNotDeleted(currentStatus);
         ensureNotCompleted(currentStatus);
     }

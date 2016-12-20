@@ -80,7 +80,7 @@ public class LabelledTasksViewProjectionShould {
     }
 
     @Test
-    public void return_current_state_when_label_assigned_to_task_event_handled() {
+    public void add_task_view_to_state_when_label_assigned_to_task() {
         int expectedListSize = 1;
         repository.dispatch(labelAssignedToTaskEvent);
         int actualListSize = repository.load(ID)
@@ -98,7 +98,7 @@ public class LabelledTasksViewProjectionShould {
     }
 
     @Test
-    public void return_current_state_when_label_removed_from_task_event_handled() {
+    public void remove_task_view_from_state_when_label_removed_from_task() {
         int expectedListSize = 1;
         repository.dispatch(labelAssignedToTaskEvent);
         repository.dispatch(labelAssignedToTaskEvent);
@@ -118,7 +118,7 @@ public class LabelledTasksViewProjectionShould {
     }
 
     @Test
-    public void return_current_state_when_deleted_task_restored_event_handled() {
+    public void remove_task_view_from_state_when_deleted_task_is_restored() {
         int expectedListSize = 1;
         repository.dispatch(labelAssignedToTaskEvent);
         repository.dispatch(labelAssignedToTaskEvent);
@@ -140,7 +140,7 @@ public class LabelledTasksViewProjectionShould {
     }
 
     @Test
-    public void return_current_state_when_task_deleted_event_handled() {
+    public void remove_task_view_from_state_when_task_is_deleted() {
         int expectedListSize = 1;
         repository.dispatch(labelAssignedToTaskEvent);
         repository.dispatch(labelAssignedToTaskEvent);

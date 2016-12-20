@@ -48,6 +48,8 @@ public class TestEventEnricherFactory {
                                                                   .setColor(LabelColor.BLUE)
                                                                   .build();
 
+    @SuppressWarnings("Guava")
+    //As long as Spine API is based on Java 7, {@link Events#getEnrichment} uses Guava {@link Optional}.
     private static final Function<TaskLabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS =
             new Function<TaskLabelId, LabelDetails>() {
                 @Nullable
@@ -56,6 +58,8 @@ public class TestEventEnricherFactory {
                     return LABEL_DETAILS;
                 }
             };
+    @SuppressWarnings("Guava")
+    //As long as Spine API is based on Java 7, {@link Events#getEnrichment} uses Guava {@link Optional}.
     private static final Function<TaskId, LabelDetails> TASK_ID_TO_LABEL_DETAILS =
             new Function<TaskId, LabelDetails>() {
                 @Nullable

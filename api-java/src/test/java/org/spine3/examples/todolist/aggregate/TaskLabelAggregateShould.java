@@ -84,7 +84,7 @@ public class TaskLabelAggregateShould {
     }
 
     @Test
-    public void return_current_state_when_label_is_created() {
+    public void change_current_state_color_when_label_is_created() {
         aggregate.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
 
         assertEquals(LabelColor.GRAY, aggregate.getState()
@@ -92,7 +92,7 @@ public class TaskLabelAggregateShould {
     }
 
     @Test
-    public void return_current_state_when_label_details_updated_two_times() {
+    public void change_current_state_when_label_details_updated_two_times() {
         aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
         TaskLabel state = aggregate.getState();
 

@@ -39,7 +39,7 @@ import static org.spine3.test.Tests.hasPrivateUtilityConstructor;
 /**
  * @author Illia Shepilov
  */
-class ProjectionHelperShould {
+public class ProjectionHelperShould {
 
     private static final TaskId TASK_ID = TaskId.newBuilder()
                                                 .setValue(newUuid())
@@ -62,7 +62,7 @@ class ProjectionHelperShould {
     }
 
     @Test
-    public void remove_task_view_by_label_id() {
+    public void remove_task_view_from_state_by_label_id() {
         int expectedListSize = 1;
         TaskListView view = ProjectionHelper.removeViewByLabelId(viewList, LABEL_ID);
 
@@ -71,7 +71,7 @@ class ProjectionHelperShould {
     }
 
     @Test
-    public void remove_task_view_by_task_id() {
+    public void remove_task_view_from_state_by_task_id() {
         int expectedListSize = 1;
         TaskListView view = ProjectionHelper.removeViewByTaskId(viewList, TASK_ID);
 

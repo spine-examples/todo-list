@@ -130,7 +130,8 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     }
 
     @SuppressWarnings("Guava")
-    private <T extends Message, E extends Class<T>> T getEnrichment(E enrichmentClass, EventContext context) {
+    //As long as Spine API is based on Java 7, {@link Events#getEnrichment} uses Guava {@link Optional}.
+    private static <T extends Message, E extends Class<T>> T getEnrichment(E enrichmentClass, EventContext context) {
         final Optional<T> enrichmentOptional = Events.getEnrichment(enrichmentClass, context);
         if (enrichmentOptional.isPresent()) {
             T result = enrichmentOptional.get();
@@ -157,6 +158,9 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
         return result;
     }
 
+    /**
+     * Tight {@link LabelColor} with hexadecimal representation of color.
+     */
     private enum LabelColorView {
         RED_COLOR(LabelColor.RED, "#ff0000"),
         BLUE_COLOR(LabelColor.BLUE, "#0000ff"),

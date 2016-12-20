@@ -46,10 +46,10 @@ public class TestBoundedContextFactory {
      * @return {@link BoundedContext} instance
      */
     public static BoundedContext boundedContextInstance(EventEnricher eventEnricher,
-                                                        InMemoryStorageFactory inMemoryStorageFactory) {
+                                                        InMemoryStorageFactory storageFactory) {
         final BoundedContext result = BoundedContext.newBuilder()
                                                     .setEventEnricher(eventEnricher)
-                                                    .setStorageFactory(inMemoryStorageFactory)
+                                                    .setStorageFactory(storageFactory)
                                                     .build();
         return result;
     }
