@@ -18,8 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.server;
+package org.spine3.examples.todolist.repository;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.TaskListId;
@@ -33,12 +34,17 @@ import org.spine3.server.projection.ProjectionRepository;
  */
 public class MyListViewProjectionRepository extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {
 
-    protected MyListViewProjectionRepository(BoundedContext boundedContext) {
+    public MyListViewProjectionRepository(BoundedContext boundedContext) {
         super(boundedContext);
     }
 
     @Override
     protected TaskListId getEntityId(Message event, EventContext context) {
-        return null;
+        final ByteString produceValue = context.getProducerId()
+                                               .getValue();
+        final TaskListId result = TaskListId.newBuilder()
+                                            .setValueBytes(produceValue)
+                                            .build();
+        return result;
     }
 }
