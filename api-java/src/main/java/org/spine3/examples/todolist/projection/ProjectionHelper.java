@@ -20,11 +20,21 @@
 
 package org.spine3.examples.todolist.projection;
 
+import org.spine3.examples.todolist.LabelAssignedToTask;
+import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelDetailsUpdated;
+import org.spine3.examples.todolist.LabelRemovedFromTask;
+import org.spine3.examples.todolist.TaskCompleted;
+import org.spine3.examples.todolist.TaskDescriptionUpdated;
+import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.TaskPriorityUpdated;
+import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.view.TaskListView;
 import org.spine3.examples.todolist.view.TaskView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -42,7 +52,7 @@ import java.util.List;
     }
 
     /**
-     * Removes {@link TaskView} from list of task view by specified task's id.
+     * Removes {@link TaskView} from list of task view by specified task id.
      *
      * @param views list of the {@link TaskView}
      * @param id    task's id
@@ -57,16 +67,16 @@ import java.util.List;
                                        .orElse(null);
         views.remove(taskView);
         final TaskListView result = TaskListView.newBuilder()
-                                               .addAllItems(views)
-                                               .build();
+                                                .addAllItems(views)
+                                                .build();
         return result;
     }
 
     /**
-     * Removes {@link TaskView} from list of task view by specified task's label id.
+     * Removes {@link TaskView} from list of task view by specified task label id.
      *
      * @param views list of the {@link TaskView}
-     * @param id    task's label id
+     * @param id    task label id
      * @return {@link TaskListView} without deleted task view
      */
     /*package*/
@@ -84,5 +94,177 @@ import java.util.List;
                                                 .addAllItems(views)
                                                 .build();
         return result;
+    }
+
+    /* package */
+    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelDetailsUpdated event) {
+        final List<TaskView> updatedList = new ArrayList<>();
+        for (TaskView view : views) {
+            TaskView addedView = view;
+            final boolean willUpdate = view.getLabelId()
+                                           .equals(event.getId());
+            if (willUpdate) {
+                final LabelDetails labelDetails = event.getNewDetails();
+                addedView = TaskView.newBuilder()
+                                    .setLabelColor(labelDetails.getColor())
+                                    .setDueDate(view.getDueDate())
+                                    .setPriority(view.getPriority())
+                                    .setDescription(view.getDescription())
+                                    .setLabelId(view.getLabelId())
+                                    .build();
+            }
+            updatedList.add(addedView);
+        }
+        return updatedList;
+    }
+
+    /* package */
+    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelRemovedFromTask event) {
+        final List<TaskView> updatedList = new ArrayList<>();
+        for (TaskView view : views) {
+            final boolean willAdd = !view.getId()
+                                         .equals(event.getId());
+            if (willAdd) {
+                updatedList.add(view);
+            }
+        }
+        return updatedList;
+    }
+
+    /* package */
+    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelAssignedToTask event) {
+        final List<TaskView> updatedList = new ArrayList<>();
+        for (TaskView view : views) {
+            TaskView addedView = view;
+            final boolean willUpdate = view.getId()
+                                           .equals(event.getId());
+            if (willUpdate) {
+                addedView = TaskView.newBuilder()
+                                    .setId(event.getId())
+                                    .setLabelId(event.getLabelId())
+                                    .setDueDate(view.getDueDate())
+                                    .setPriority(view.getPriority())
+                                    .setDescription(view.getDescription())
+                                    .setLabelColor(view.getLabelColor())
+                                    .build();
+            }
+            updatedList.add(addedView);
+        }
+        return updatedList;
+    }
+
+    /* package */
+    static List<TaskView> constructTaskViewList(List<TaskView> views, TaskReopened event) {
+        final List<TaskView> updatedList = new ArrayList<>();
+        for (TaskView view : views) {
+            TaskView addedView = view;
+            final boolean willUpdate = view.getId()
+                                           .equals(event.getId());
+            if (willUpdate) {
+                addedView = TaskView.newBuilder()
+                                    .setId(event.getId())
+                                    .setDueDate(view.getDueDate())
+                                    .setPriority(view.getPriority())
+                                    .setDescription(view.getDescription())
+                                    .setLabelId(view.getLabelId())
+                                    .setLabelColor(view.getLabelColor())
+                                    .setCompleted(false)
+                                    .build();
+            }
+            updatedList.add(addedView);
+        }
+        return updatedList;
+    }
+
+    /* package */
+    static List<TaskView> constructTaskViewList(List<TaskView> views, TaskCompleted event) {
+        final List<TaskView> updatedList = new ArrayList<>();
+        for (TaskView view : views) {
+            TaskView addedView = view;
+            final boolean willUpdate = view.getId()
+                                           .equals(event.getId());
+            if (willUpdate) {
+                addedView = TaskView.newBuilder()
+                                    .setId(event.getId())
+                                    .setDueDate(view.getDueDate())
+                                    .setPriority(view.getPriority())
+                                    .setDescription(view.getDescription())
+                                    .setLabelId(view.getLabelId())
+                                    .setLabelColor(view.getLabelColor())
+                                    .setCompleted(true)
+                                    .build();
+            }
+            updatedList.add(addedView);
+        }
+        return updatedList;
+    }
+
+    /* package */
+    static List<TaskView> constructTaskViewList(List<TaskView> views, TaskDueDateUpdated event) {
+        final List<TaskView> updatedList = new ArrayList<>();
+        for (TaskView view : views) {
+            TaskView addedView = view;
+            final boolean willUpdate = view.getId()
+                                           .equals(event.getId());
+            if (willUpdate) {
+                addedView = TaskView.newBuilder()
+                                    .setId(event.getId())
+                                    .setDueDate(event.getNewDueDate())
+                                    .setPriority(view.getPriority())
+                                    .setDescription(view.getDescription())
+                                    .setLabelId(view.getLabelId())
+                                    .setLabelColor(view.getLabelColor())
+                                    .setCompleted(view.getCompleted())
+                                    .build();
+            }
+            updatedList.add(addedView);
+        }
+        return updatedList;
+    }
+
+    /* package */
+    static List<TaskView> constructTaskViewList(List<TaskView> views, TaskPriorityUpdated event) {
+        final List<TaskView> updatedList = new ArrayList<>();
+        for (TaskView view : views) {
+            TaskView addedView = view;
+            final boolean willUpdate = view.getId()
+                                           .equals(event.getId());
+            if (willUpdate) {
+                addedView = TaskView.newBuilder()
+                                    .setId(event.getId())
+                                    .setPriority(event.getNewPriority())
+                                    .setDescription(view.getDescription())
+                                    .setLabelId(view.getLabelId())
+                                    .setLabelColor(view.getLabelColor())
+                                    .setDueDate(view.getDueDate())
+                                    .setCompleted(view.getCompleted())
+                                    .build();
+            }
+            updatedList.add(addedView);
+        }
+        return updatedList;
+    }
+
+    /* package */
+    static List<TaskView> constructTaskViewList(List<TaskView> views, TaskDescriptionUpdated event) {
+        final List<TaskView> updatedList = new ArrayList<>();
+        for (TaskView view : views) {
+            TaskView addedView = view;
+            final boolean willUpdate = view.getId()
+                                           .equals(event.getId());
+            if (willUpdate) {
+                addedView = TaskView.newBuilder()
+                                    .setId(event.getId())
+                                    .setDescription(event.getNewDescription())
+                                    .setLabelId(view.getLabelId())
+                                    .setLabelColor(view.getLabelColor())
+                                    .setDueDate(view.getDueDate())
+                                    .setPriority(view.getPriority())
+                                    .setCompleted(view.getCompleted())
+                                    .build();
+            }
+            updatedList.add(addedView);
+        }
+        return updatedList;
     }
 }

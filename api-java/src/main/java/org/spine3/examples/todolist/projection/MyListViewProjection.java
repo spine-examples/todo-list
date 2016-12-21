@@ -21,10 +21,8 @@
 package org.spine3.examples.todolist.projection;
 
 import org.spine3.examples.todolist.LabelAssignedToTask;
-import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
-import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.TaskCompleted;
 import org.spine3.examples.todolist.TaskCreated;
 import org.spine3.examples.todolist.TaskDeleted;
@@ -40,10 +38,10 @@ import org.spine3.examples.todolist.view.TaskView;
 import org.spine3.server.event.Subscribe;
 import org.spine3.server.projection.Projection;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.spine3.examples.todolist.projection.ProjectionHelper.constructTaskViewList;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
 
 /**
@@ -101,25 +99,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(TaskDescriptionUpdated event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = new ArrayList<>();
-        for (TaskView view : views) {
-            TaskView addedView = view;
-            final boolean willUpdate = view.getId()
-                                           .equals(event.getId());
-            if (willUpdate) {
-                addedView = TaskView.newBuilder()
-                                    .setId(event.getId())
-                                    .setDescription(event.getNewDescription())
-                                    .setLabelId(view.getLabelId())
-                                    .setLabelColor(view.getLabelColor())
-                                    .setDueDate(view.getDueDate())
-                                    .setPriority(view.getPriority())
-                                    .setCompleted(view.getCompleted())
-                                    .build();
-            }
-            updatedList.add(addedView);
-        }
-
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -128,25 +108,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(TaskPriorityUpdated event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = new ArrayList<>();
-        for (TaskView view : views) {
-            TaskView addedView = view;
-            final boolean willUpdate = view.getId()
-                                           .equals(event.getId());
-            if (willUpdate) {
-                addedView = TaskView.newBuilder()
-                                    .setId(event.getId())
-                                    .setPriority(event.getNewPriority())
-                                    .setDescription(view.getDescription())
-                                    .setLabelId(view.getLabelId())
-                                    .setLabelColor(view.getLabelColor())
-                                    .setDueDate(view.getDueDate())
-                                    .setCompleted(view.getCompleted())
-                                    .build();
-            }
-            updatedList.add(addedView);
-        }
-
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -155,25 +117,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(TaskDueDateUpdated event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = new ArrayList<>();
-        for (TaskView view : views) {
-            TaskView addedView = view;
-            final boolean willUpdate = view.getId()
-                                           .equals(event.getId());
-            if (willUpdate) {
-                addedView = TaskView.newBuilder()
-                                    .setId(event.getId())
-                                    .setDueDate(event.getNewDueDate())
-                                    .setPriority(view.getPriority())
-                                    .setDescription(view.getDescription())
-                                    .setLabelId(view.getLabelId())
-                                    .setLabelColor(view.getLabelColor())
-                                    .setCompleted(view.getCompleted())
-                                    .build();
-            }
-            updatedList.add(addedView);
-        }
-
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -182,25 +126,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(TaskCompleted event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = new ArrayList<>();
-        for (TaskView view : views) {
-            TaskView addedView = view;
-            final boolean willUpdate = view.getId()
-                                           .equals(event.getId());
-            if (willUpdate) {
-                addedView = TaskView.newBuilder()
-                                    .setId(event.getId())
-                                    .setDueDate(view.getDueDate())
-                                    .setPriority(view.getPriority())
-                                    .setDescription(view.getDescription())
-                                    .setLabelId(view.getLabelId())
-                                    .setLabelColor(view.getLabelColor())
-                                    .setCompleted(true)
-                                    .build();
-            }
-            updatedList.add(addedView);
-        }
-
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -209,25 +135,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(TaskReopened event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = new ArrayList<>();
-        for (TaskView view : views) {
-            TaskView addedView = view;
-            final boolean willUpdate = view.getId()
-                                           .equals(event.getId());
-            if (willUpdate) {
-                addedView = TaskView.newBuilder()
-                                    .setId(event.getId())
-                                    .setDueDate(view.getDueDate())
-                                    .setPriority(view.getPriority())
-                                    .setDescription(view.getDescription())
-                                    .setLabelId(view.getLabelId())
-                                    .setLabelColor(view.getLabelColor())
-                                    .setCompleted(false)
-                                    .build();
-            }
-            updatedList.add(addedView);
-        }
-
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -236,24 +144,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(LabelAssignedToTask event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = new ArrayList<>();
-        for (TaskView view : views) {
-            TaskView addedView = view;
-            final boolean willUpdate = view.getId()
-                                           .equals(event.getId());
-            if (willUpdate) {
-                addedView = TaskView.newBuilder()
-                                    .setId(event.getId())
-                                    .setLabelId(event.getLabelId())
-                                    .setDueDate(view.getDueDate())
-                                    .setPriority(view.getPriority())
-                                    .setDescription(view.getDescription())
-                                    .setLabelColor(view.getLabelColor())
-                                    .build();
-            }
-            updatedList.add(addedView);
-        }
-
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -262,15 +153,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(LabelRemovedFromTask event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = new ArrayList<>();
-        for (TaskView view : views) {
-            final boolean willAdd = !view.getId()
-                                         .equals(event.getId());
-            if (willAdd) {
-                updatedList.add(view);
-            }
-        }
-
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -279,24 +162,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(LabelDetailsUpdated event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = new ArrayList<>();
-        for (TaskView view : views) {
-            TaskView addedView = view;
-            final boolean willUpdate = view.getLabelId()
-                                           .equals(event.getId());
-            if (willUpdate) {
-                final LabelDetails labelDetails = event.getNewDetails();
-                addedView = TaskView.newBuilder()
-                                    .setLabelColor(labelDetails.getColor())
-                                    .setDueDate(view.getDueDate())
-                                    .setPriority(view.getPriority())
-                                    .setDescription(view.getDescription())
-                                    .setLabelId(view.getLabelId())
-                                    .build();
-            }
-            updatedList.add(addedView);
-        }
-
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
