@@ -48,7 +48,7 @@ import java.util.List;
      * Prevent instantiation.
      */
     private ProjectionHelper() {
-        throw new UnsupportedOperationException("Cannot be instantiated.");
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -96,6 +96,13 @@ import java.util.List;
         return result;
     }
 
+    /**
+     * Updates {@link TaskView} label details by specified {@link TaskLabelId}.
+     *
+     * @param views list of {@link TaskView}
+     * @param event {@link LabelDetailsUpdated} instance
+     * @return list of {@link TaskView} with updated {@link LabelDetails}
+     */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, LabelDetailsUpdated event) {
         final List<TaskView> updatedList = new ArrayList<>();
@@ -118,19 +125,40 @@ import java.util.List;
         return updatedList;
     }
 
+    /**
+     * Removes label from each {@link TaskView}, which contains into list.
+     *
+     * @param views list of {@link TaskView}
+     * @param event {@link LabelRemovedFromTask} instance
+     * @return list of {@link TaskView} which does not contains specified label
+     */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, LabelRemovedFromTask event) {
         final List<TaskView> updatedList = new ArrayList<>();
         for (TaskView view : views) {
-            final boolean willAdd = !view.getId()
-                                         .equals(event.getId());
-            if (willAdd) {
-                updatedList.add(view);
+            TaskView addedView = view;
+            final boolean isRemoved = view.getId()
+                                          .equals(event.getId());
+            if (isRemoved) {
+                addedView = TaskView.newBuilder()
+                                    .setDueDate(view.getDueDate())
+                                    .setPriority(view.getPriority())
+                                    .setDescription(view.getDescription())
+                                    .setLabelId(TaskLabelId.getDefaultInstance())
+                                    .build();
             }
+            updatedList.add(addedView);
         }
         return updatedList;
     }
 
+    /**
+     * Add label to {@link TaskView}, which contains into list.
+     *
+     * @param views list of {@link TaskView}
+     * @param event {@link LabelAssignedToTask} instance
+     * @return list of {@link TaskView} which contains specified label
+     */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, LabelAssignedToTask event) {
         final List<TaskView> updatedList = new ArrayList<>();
@@ -153,6 +181,13 @@ import java.util.List;
         return updatedList;
     }
 
+    /**
+     * Mark each {@link TaskView} into list as uncompleted, if {@link TaskId} of task view equals task id of event.
+     *
+     * @param views list of {@link TaskView}
+     * @param event {@link TaskReopened} instance
+     * @return list of {@link TaskView}
+     */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskReopened event) {
         final List<TaskView> updatedList = new ArrayList<>();
@@ -176,6 +211,13 @@ import java.util.List;
         return updatedList;
     }
 
+    /**
+     * Mark each {@link TaskView} into list as completed, if {@link TaskId} of task view equals task id of event.
+     *
+     * @param views list of {@link TaskView}
+     * @param event {@link TaskCompleted} instance
+     * @return list of {@link TaskView}
+     */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskCompleted event) {
         final List<TaskView> updatedList = new ArrayList<>();
@@ -199,6 +241,13 @@ import java.util.List;
         return updatedList;
     }
 
+    /**
+     * Updates task due date into  {@link TaskView}.
+     *
+     * @param views list of {@link TaskView}
+     * @param event {@link TaskDueDateUpdated} instance
+     * @return list of {@link TaskView} with updated task due date
+     */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskDueDateUpdated event) {
         final List<TaskView> updatedList = new ArrayList<>();
@@ -222,6 +271,13 @@ import java.util.List;
         return updatedList;
     }
 
+    /**
+     * Updates task priority into  {@link TaskView}.
+     *
+     * @param views list of {@link TaskView}
+     * @param event {@link TaskPriorityUpdated} instance
+     * @return list of {@link TaskView} with updated task priority
+     */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskPriorityUpdated event) {
         final List<TaskView> updatedList = new ArrayList<>();
@@ -245,6 +301,13 @@ import java.util.List;
         return updatedList;
     }
 
+    /**
+     * Updates task description into  {@link TaskView}.
+     *
+     * @param views list of {@link TaskView}
+     * @param event {@link TaskDescriptionUpdated} instance
+     * @return list of {@link TaskView} with updated task description
+     */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskDescriptionUpdated event) {
         final List<TaskView> updatedList = new ArrayList<>();
