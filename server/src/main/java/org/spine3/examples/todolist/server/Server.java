@@ -21,10 +21,13 @@
 package org.spine3.examples.todolist.server;
 
 import com.google.common.base.Function;
+import org.spine3.examples.todolist.repository.MyListViewProjectionRepository;
+import org.spine3.examples.todolist.repository.TaskAggregateRepository;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.CommandService;
+import org.spine3.server.QueryService;
 import org.spine3.server.SubscriptionService;
 import org.spine3.server.event.enrich.EventEnricher;
 import org.spine3.server.storage.StorageFactory;
@@ -66,14 +69,25 @@ public class Server {
         this.boundedContext = initBoundedContext(storageFactory, eventEnricher);
         initRepositories(storageFactory);
         final CommandService commandService = initCommandService();
+        final QueryService queryService = initQueryService();
         final SubscriptionService subscriptionService = initSubscriptionService();
-        this.grpcContainer = initGrpcContainer(commandService, subscriptionService);
+        this.grpcContainer = initGrpcContainer(commandService, subscriptionService, queryService);
     }
 
-    private GrpcContainer initGrpcContainer(CommandService commandService, SubscriptionService subscriptionService) {
+    private QueryService initQueryService() {
+        final QueryService result = QueryService.newBuilder()
+                                                .addBoundedContext(boundedContext)
+                                                .build();
+        return result;
+    }
+
+    private GrpcContainer initGrpcContainer(CommandService commandService,
+                                            SubscriptionService subscriptionService,
+                                            QueryService queryService) {
         final GrpcContainer result = GrpcContainer.newBuilder()
                                                   .addService(commandService)
                                                   .addService(subscriptionService)
+                                                  .addService(queryService)
                                                   .setPort(DEFAULT_CLIENT_SERVICE_PORT)
                                                   .build();
         return result;
@@ -107,6 +121,7 @@ public class Server {
         final MyListViewProjectionRepository projectionRepository = new MyListViewProjectionRepository(boundedContext);
         projectionRepository.initStorage(storageFactory);
         boundedContext.register(projectionRepository);
+        projectionRepository.setOnline();
     }
 
     private SubscriptionService initSubscriptionService() {
