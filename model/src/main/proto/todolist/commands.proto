@@ -49,11 +49,13 @@ import "todolist/attributes.proto";
 //
 message CreateBasicTask {
 
+    // An identifier of the target task.
+    TaskId id = 1;
     // A description for the task created.
-    string description = 1 [(required) = true];
+    string description = 2 [(required) = true];
 
     // Reserved for future extension.
-    reserved 2 to 10;
+    reserved 3 to 10;
 }
 
 // Update a description of an existing task.
@@ -146,9 +148,10 @@ message RemoveLabelFromTask {
     TaskLabelId label_id = 2;
 }
 
-// TODO[alex.tymchenko]: define the draft creation.
 message CreateDraft {
 
+    // An identifier of the target task.
+    TaskId id = 1;
 }
 
 // Finalize a task, moving it from the draft state into the actual state.
@@ -228,11 +231,14 @@ message RestoreDeletedTask {
 //
 message CreateBasicLabel {
 
+    // An identifier of the target label.
+    TaskLabelId label_id = 1;
+
     // A title for the label.
-    string label_title = 1 [(required) = true];
+    string label_title = 2 [(required) = true];
 
     // Reserved for future extension.
-    reserved 2 to 10;
+    reserved 3 to 10;
 }
 
 // Update the details of a label.
