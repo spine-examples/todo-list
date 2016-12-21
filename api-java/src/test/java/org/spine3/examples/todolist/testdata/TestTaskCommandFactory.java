@@ -50,11 +50,11 @@ public class TestTaskCommandFactory {
     public static final TaskId TASK_ID = TaskId.newBuilder()
                                                 .setValue(newUuid())
                                                 .build();
-    private static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
+    public static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
                                                            .setValue(newUuid())
                                                            .build();
     public static final String DESCRIPTION = "Create command description.";
-    private static final Timestamp DUE_DATE = Timestamps.getCurrentTime();
+    public static final Timestamp DUE_DATE = Timestamps.getCurrentTime();
 
     /**
      * Prevent instantiation.

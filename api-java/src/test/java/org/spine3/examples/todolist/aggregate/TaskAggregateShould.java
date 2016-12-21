@@ -67,7 +67,6 @@ import static org.spine3.examples.todolist.TaskStatus.FINALIZED;
 import static org.spine3.examples.todolist.TaskStatus.OPEN;
 import static org.spine3.examples.todolist.TaskStatus.TS_UNDEFINED;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DUE_DATE;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.LABEL_ID;
@@ -95,9 +94,6 @@ public class TaskAggregateShould {
     private static final String DELETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied to the deleted task.";
     private static final String INAPPROPRIATE_TASK_DESCRIPTION = "Description should contain " +
             "at least 3 alphanumeric symbols.";
-    private static final TaskId ID = TaskId.newBuilder()
-                                           .setValue(newUuid())
-                                           .build();
     private TaskAggregate aggregate;
     private CreateBasicTask createTaskCmd;
     private UpdateTaskDescription updateTaskDescriptionCmd;
