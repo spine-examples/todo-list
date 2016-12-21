@@ -157,33 +157,4 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
                                                    .build();
         return result;
     }
-
-    /**
-     * Supplies {@link LabelColor} with hexadecimal representation of color.
-     */
-    private enum LabelColorView {
-        RED_COLOR(LabelColor.RED, "#ff0000"),
-        BLUE_COLOR(LabelColor.BLUE, "#0000ff"),
-        GREEN_COLOR(LabelColor.GREEN, "#008000"),
-        GRAY_COLOR(LabelColor.GRAY, "#808080");
-
-        private static final String WRONG_LABEL_COLOR_EXCEPTION_MESSAGE = "No enum constant by specified label color: ";
-
-        private final LabelColor labelColor;
-        private final String hexColor;
-
-        LabelColorView(LabelColor labelColor, String hexColor) {
-            this.labelColor = labelColor;
-            this.hexColor = hexColor;
-        }
-
-        private static String valueOf(LabelColor labelColor) {
-            for (LabelColorView colorView : values()) {
-                if (colorView.labelColor == labelColor) {
-                    return colorView.hexColor;
-                }
-            }
-            throw new IllegalArgumentException(WRONG_LABEL_COLOR_EXCEPTION_MESSAGE + labelColor);
-        }
-    }
 }
