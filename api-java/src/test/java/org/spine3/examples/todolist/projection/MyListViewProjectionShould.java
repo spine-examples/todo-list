@@ -31,6 +31,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.spine3.base.Identifiers.newUuid;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.DESCRIPTION;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.TASK_PRIORITY;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.taskCreatedInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDeletedInstance;
 
@@ -61,7 +63,13 @@ public class MyListViewProjectionShould {
         final List<TaskView> views = projection.getState()
                                                .getMyList()
                                                .getItemsList();
+
         assertEquals(expectedSize, views.size());
+
+        final TaskView view = views.get(0);
+
+        assertEquals(TASK_PRIORITY, view.getPriority());
+        assertEquals(DESCRIPTION, view.getDescription());
     }
 
     @Test
@@ -75,6 +83,8 @@ public class MyListViewProjectionShould {
                                          .getMyList()
                                          .getItemsList();
         assertEquals(expectedListSize, views.size());
+
+        TaskView view = views.get(0);
 
         projection.on(taskDeletedEvent);
         expectedListSize = 0;

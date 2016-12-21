@@ -67,11 +67,7 @@ public class TestEventEnricherFactory {
             };
 
     /**
-     * Create an {@link EventEnricher} instance, adding some pre-configured test enrichment messages
-     * to the domain events.
-     *
-     * <p> Contains enrichment field, which using {@code LABEL_ID_TO_LABEL_DETAILS} function.
-     * <p> Contains enrichment field, which using {@code TASK_ID_TO_LABEL_DETAILS} function.
+     * Provides a pre-configured {@link EventEnricher} event instance.
      *
      * @return {@link EventEnricher}
      */

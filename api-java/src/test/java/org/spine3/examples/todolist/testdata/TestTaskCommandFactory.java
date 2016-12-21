@@ -47,9 +47,14 @@ import static org.spine3.base.Identifiers.newUuid;
  */
 public class TestTaskCommandFactory {
 
-    private static final String ID = newUuid();
-    private static final String DESCRIPTION = "Create command description.";
-    private static final Timestamp DUE_DATE = Timestamps.getCurrentTime();
+    public static final TaskId TASK_ID = TaskId.newBuilder()
+                                               .setValue(newUuid())
+                                               .build();
+    public static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
+                                                          .setValue(newUuid())
+                                                          .build();
+    public static final String DESCRIPTION = "Create command description.";
+    public static final Timestamp DUE_DATE = Timestamps.getCurrentTime();
 
     /**
      * Prevent instantiation.
@@ -86,6 +91,7 @@ public class TestTaskCommandFactory {
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(String description) {
         final UpdateTaskDescription result = UpdateTaskDescription.newBuilder()
+                                                                  .setId(TASK_ID)
                                                                   .setUpdatedDescription(description)
                                                                   .build();
         return result;
@@ -108,6 +114,7 @@ public class TestTaskCommandFactory {
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance(Timestamp updatedDueDate) {
         final UpdateTaskDueDate result = UpdateTaskDueDate.newBuilder()
+                                                          .setId(TASK_ID)
                                                           .setUpdatedDueDate(updatedDueDate)
                                                           .build();
         return result;
@@ -130,18 +137,22 @@ public class TestTaskCommandFactory {
      */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskPriority priority) {
         final UpdateTaskPriority result = UpdateTaskPriority.newBuilder()
+                                                            .setId(TASK_ID)
                                                             .setUpdatedPriority(priority)
                                                             .build();
         return result;
     }
 
     /**
-     * Provides default {@link CompleteTask} command instance.
+     * Provides a pre-configured {@link CompleteTask} command instance.
      *
      * @return {@link CompleteTask} instance
      */
     public static CompleteTask completeTaskInstance() {
-        return CompleteTask.getDefaultInstance();
+        final CompleteTask result = CompleteTask.newBuilder()
+                                                .setId(TASK_ID)
+                                                .build();
+        return result;
     }
 
     /**
@@ -160,8 +171,7 @@ public class TestTaskCommandFactory {
      */
     public static DeleteTask deleteTaskInstance() {
         final DeleteTask result = DeleteTask.newBuilder()
-                                            .setId(TaskId.newBuilder()
-                                                         .setValue(ID))
+                                            .setId(TASK_ID)
                                             .build();
         return result;
     }
@@ -185,12 +195,15 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides default {@link CreateDraft} command instance.
+     * Provides a pre-configured {@link CreateDraft} command instance.
      *
      * @return {@link CreateDraft} instance
      */
     public static CreateDraft createDraftInstance() {
-        return CreateDraft.getDefaultInstance();
+        final CreateDraft result = CreateDraft.newBuilder()
+                                             .setId(TASK_ID)
+                                             .build();
+        return result;
     }
 
     /**
@@ -200,8 +213,7 @@ public class TestTaskCommandFactory {
      */
     public static AssignLabelToTask assignLabelToTaskInstance() {
         final AssignLabelToTask result = AssignLabelToTask.newBuilder()
-                                                          .setLabelId(TaskLabelId.newBuilder()
-                                                                                 .setValue(ID))
+                                                          .setLabelId(LABEL_ID)
                                                           .build();
         return result;
     }
@@ -213,8 +225,7 @@ public class TestTaskCommandFactory {
      */
     public static RemoveLabelFromTask removeLabelFromTaskInstance() {
         final RemoveLabelFromTask result = RemoveLabelFromTask.newBuilder()
-                                                              .setLabelId(TaskLabelId.newBuilder()
-                                                                                     .setValue(ID))
+                                                              .setLabelId(LABEL_ID)
                                                               .build();
         return result;
     }

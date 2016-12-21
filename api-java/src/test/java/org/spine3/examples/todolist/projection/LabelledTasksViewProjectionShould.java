@@ -32,16 +32,22 @@ import org.spine3.examples.todolist.TaskDeleted;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.testdata.TestEventFactory;
 import org.spine3.examples.todolist.view.LabelledTasksView;
+import org.spine3.examples.todolist.view.TaskListView;
+import org.spine3.examples.todolist.view.TaskView;
 import org.spine3.server.BoundedContext;
+import org.spine3.server.event.EventBus;
 import org.spine3.server.event.enrich.EventEnricher;
 import org.spine3.server.projection.ProjectionRepository;
 import org.spine3.server.storage.memory.InMemoryStorageFactory;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Events.createEvent;
 import static org.spine3.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
 import static org.spine3.examples.todolist.testdata.TestEventContextFactory.eventContextInstance;
 import static org.spine3.examples.todolist.testdata.TestEventEnricherFactory.eventEnricherInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.LABEL_ID;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.TASK_ID;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.deletedTaskRestoredInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelAssignedToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelRemovedFromTaskInstance;
@@ -56,8 +62,11 @@ public class LabelledTasksViewProjectionShould {
     private Event labelRemovedFromTaskEvent;
     private Event deletedTaskRestoredEvent;
     private Event deletedTaskEvent;
+    private EventBus eventBus;
     private ProjectionRepository<TaskLabelId, LabelledTasksViewProjection, LabelledTasksView> repository;
     private static final TaskLabelId ID = TestEventFactory.LABEL_ID;
+    private static final String EXPECTED_COLOR = "#0000ff";
+    private static final String EXPECTED_TITLE = "title";
 
     @BeforeEach
     public void setUp() {
@@ -68,6 +77,7 @@ public class LabelledTasksViewProjectionShould {
         repository.initStorage(storageFactory);
         repository.setOnline();
         boundedContext.register(repository);
+        eventBus = boundedContext.getEventBus();
         final EventContext eventContext = eventContextInstance();
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
         final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
@@ -82,82 +92,155 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void add_task_view_to_state_when_label_assigned_to_task() {
         int expectedListSize = 1;
-        repository.dispatch(labelAssignedToTaskEvent);
-        int actualListSize = repository.load(ID)
-                                       .getState()
-                                       .getLabelledTasks()
-                                       .getItemsCount();
+        eventBus.post(labelAssignedToTaskEvent);
+        LabelledTasksView labelledTaskView = repository.load(ID)
+                                                       .getState();
+        TaskListView listView = labelledTaskView.getLabelledTasks();
+
+        checkOkLabelledTaskView(labelledTaskView);
+
+        int actualListSize = listView.getItemsCount();
         assertEquals(expectedListSize, actualListSize);
-        repository.dispatch(labelAssignedToTaskEvent);
+
+        TaskView view = listView.getItems(0);
+
+        checkOkTaskView(view);
+
+        eventBus.post(labelAssignedToTaskEvent);
         expectedListSize = 2;
-        actualListSize = repository.load(ID)
-                                   .getState()
-                                   .getLabelledTasks()
-                                   .getItemsCount();
+        labelledTaskView = repository.load(ID)
+                                     .getState();
+        listView = labelledTaskView.getLabelledTasks();
+        actualListSize = listView.getItemsCount();
+
         assertEquals(expectedListSize, actualListSize);
+
+        view = listView.getItems(0);
+
+        checkOkTaskView(view);
+        checkOkLabelledTaskView(labelledTaskView);
+
+        view = listView.getItems(1);
+
+        checkOkTaskView(view);
+        checkOkLabelledTaskView(labelledTaskView);
     }
 
     @Test
     public void remove_task_view_from_state_when_label_removed_from_task() {
         int expectedListSize = 1;
-        repository.dispatch(labelAssignedToTaskEvent);
-        repository.dispatch(labelAssignedToTaskEvent);
-        repository.dispatch(labelRemovedFromTaskEvent);
-        int actualListSize = repository.load(ID)
-                                       .getState()
-                                       .getLabelledTasks()
-                                       .getItemsCount();
+        eventBus.post(labelAssignedToTaskEvent);
+        eventBus.post(labelAssignedToTaskEvent);
+        eventBus.post(labelRemovedFromTaskEvent);
+        final LabelledTasksView labelledTasksView = repository.load(ID)
+                                                              .getState();
+        checkOkLabelledTaskView(labelledTasksView);
+
+        TaskListView labelledTasks = labelledTasksView.getLabelledTasks();
+        int actualListSize = labelledTasks.getItemsCount();
+
         assertEquals(expectedListSize, actualListSize);
-        repository.dispatch(labelRemovedFromTaskEvent);
+
+        final TaskView taskView = labelledTasks.getItems(0);
+
+        assertEquals(LABEL_ID, taskView.getLabelId());
+        assertEquals(TASK_ID, taskView.getId());
+
+        eventBus.post(labelRemovedFromTaskEvent);
         expectedListSize = 0;
-        actualListSize = repository.load(ID)
-                                   .getState()
-                                   .getLabelledTasks()
-                                   .getItemsCount();
+        labelledTasks = repository.load(ID)
+                                  .getState()
+                                  .getLabelledTasks();
+        actualListSize = labelledTasks.getItemsCount();
+
         assertEquals(expectedListSize, actualListSize);
+        assertTrue(labelledTasks.getItemsList()
+                                .isEmpty());
     }
 
     @Test
     public void remove_task_view_from_state_when_deleted_task_is_restored() {
         int expectedListSize = 1;
-        repository.dispatch(labelAssignedToTaskEvent);
-        repository.dispatch(labelAssignedToTaskEvent);
-        repository.dispatch(labelRemovedFromTaskEvent);
-        repository.dispatch(labelRemovedFromTaskEvent);
-        repository.dispatch(deletedTaskRestoredEvent);
-        int actualListSize = repository.load(ID)
-                                       .getState()
-                                       .getLabelledTasks()
-                                       .getItemsCount();
+        eventBus.post(labelAssignedToTaskEvent);
+        eventBus.post(labelAssignedToTaskEvent);
+        eventBus.post(labelRemovedFromTaskEvent);
+        eventBus.post(labelRemovedFromTaskEvent);
+        eventBus.post(deletedTaskRestoredEvent);
+        LabelledTasksView labelledTasksView = repository.load(ID)
+                                                        .getState();
+        checkOkLabelledTaskView(labelledTasksView);
+
+        TaskListView listView = labelledTasksView.getLabelledTasks();
+        int actualListSize = listView.getItemsCount();
+
         assertEquals(expectedListSize, actualListSize);
-        repository.dispatch(deletedTaskRestoredEvent);
+
+        eventBus.post(deletedTaskRestoredEvent);
+        final TaskView taskView = listView.getItems(0);
+
+        assertEquals(TASK_ID, taskView.getId());
+
         expectedListSize = 2;
-        actualListSize = repository.load(ID)
-                                   .getState()
-                                   .getLabelledTasks()
-                                   .getItemsCount();
+        labelledTasksView = repository.load(ID)
+                                      .getState();
+
+        checkOkLabelledTaskView(labelledTasksView);
+
+        listView = repository.load(ID)
+                             .getState()
+                             .getLabelledTasks();
+        actualListSize = listView.getItemsCount();
+
         assertEquals(expectedListSize, actualListSize);
+        assertEquals(TASK_ID, listView.getItems(0)
+                                      .getId());
+        assertEquals(TASK_ID, listView.getItems(1)
+                                      .getId());
+
     }
 
     @Test
     public void remove_task_view_from_state_when_task_is_deleted() {
         int expectedListSize = 1;
-        repository.dispatch(labelAssignedToTaskEvent);
-        repository.dispatch(labelAssignedToTaskEvent);
-        repository.dispatch(deletedTaskEvent);
-        int actualListSize = repository.load(ID)
-                                       .getState()
-                                       .getLabelledTasks()
-                                       .getItemsCount();
+        eventBus.post(labelAssignedToTaskEvent);
+        eventBus.post(labelAssignedToTaskEvent);
+        eventBus.post(deletedTaskEvent);
+        final LabelledTasksView labelledTasksView = repository.load(ID)
+                                                              .getState();
+        checkOkLabelledTaskView(labelledTasksView);
+
+        TaskListView listView = labelledTasksView.getLabelledTasks();
+        final TaskView taskView = listView.getItems(0);
+        int actualListSize = listView.getItemsCount();
+
         assertEquals(expectedListSize, actualListSize);
-        repository.dispatch(deletedTaskEvent);
+        checkOkTaskView(taskView);
+
+        eventBus.post(deletedTaskEvent);
         expectedListSize = 0;
-        actualListSize = repository.load(ID)
-                                   .getState()
-                                   .getLabelledTasks()
-                                   .getItemsCount();
+        listView = repository.load(ID)
+                             .getState()
+                             .getLabelledTasks();
+        actualListSize = listView.getItemsCount();
+
         assertEquals(expectedListSize, actualListSize);
+        assertTrue(listView.getItemsList()
+                           .isEmpty());
     }
+
+    private static void checkOkTaskView(TaskView taskView) {
+        assertEquals(TASK_ID, taskView.getId());
+        assertEquals(LABEL_ID, taskView.getLabelId());
+    }
+
+    private static void checkOkLabelledTaskView(LabelledTasksView labelledTaskView) {
+        assertEquals(EXPECTED_COLOR, labelledTaskView.getLabelColor());
+        assertEquals(EXPECTED_TITLE, labelledTaskView.getLabelTitle());
+    }
+
+    /*
+     * Stub projection repository
+     *************************************************/
 
     private static class LabelledTasksViewProjectionRepository
             extends ProjectionRepository<TaskLabelId, LabelledTasksViewProjection, LabelledTasksView> {

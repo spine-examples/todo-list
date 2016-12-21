@@ -26,7 +26,10 @@ import org.spine3.examples.todolist.LabelCreated;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
+import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.UpdateLabelDetails;
+
+import static org.spine3.base.Identifiers.newUuid;
 
 /**
  * A factory of the task label commands for the test needs.
@@ -35,7 +38,11 @@ import org.spine3.examples.todolist.UpdateLabelDetails;
  */
 public class TestTaskLabelCommandFactory {
 
-    private static final String TITLE = "label title";
+    public static final String LABEL_TITLE = "label title";
+    public static final String UPDATED_LABEL_TITLE = "updated label title";
+    public static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
+                                                          .setValue(newUuid())
+                                                          .build();
 
     /**
      * Prevent instantiation.
@@ -50,7 +57,10 @@ public class TestTaskLabelCommandFactory {
      * @return {@link CreateBasicLabel} instance
      */
     public static CreateBasicLabel createLabelInstance() {
-        return CreateBasicLabel.getDefaultInstance();
+        final CreateBasicLabel result = CreateBasicLabel.newBuilder()
+                                                        .setLabelTitle(LABEL_TITLE)
+                                                        .build();
+        return result;
     }
 
     /**
@@ -59,7 +69,7 @@ public class TestTaskLabelCommandFactory {
      * @return {@link UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance() {
-        return updateLabelDetailsInstance(LabelColor.GRAY, TITLE);
+        return updateLabelDetailsInstance(LabelColor.GREEN, UPDATED_LABEL_TITLE);
     }
 
     /**
@@ -71,6 +81,7 @@ public class TestTaskLabelCommandFactory {
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelColor color, String title) {
         final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
+                                                            .setId(LABEL_ID)
                                                             .setColor(color)
                                                             .setNewTitle(title)
                                                             .build();
@@ -83,7 +94,7 @@ public class TestTaskLabelCommandFactory {
      * @return {@link LabelCreated} instance
      */
     public static LabelCreated labelCreatedInstance() {
-        return labelCreatedInstance(LabelColor.GRAY, TITLE);
+        return labelCreatedInstance(LabelColor.GRAY, LABEL_TITLE);
     }
 
     /**
@@ -109,7 +120,7 @@ public class TestTaskLabelCommandFactory {
      * @return {@link LabelDetailsUpdated} instance.
      */
     public static LabelDetailsUpdated labelDetailsUpdatedInstance() {
-        return labelDetailsUpdatedInstance(LabelColor.GRAY, TITLE);
+        return labelDetailsUpdatedInstance(LabelColor.GRAY, LABEL_TITLE);
     }
 
     /**

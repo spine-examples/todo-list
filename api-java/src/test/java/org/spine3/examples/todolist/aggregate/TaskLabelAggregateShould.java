@@ -26,6 +26,7 @@ import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelCreated;
+import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.TaskLabelId;
@@ -36,6 +37,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.LABEL_ID;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.LABEL_TITLE;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.UPDATED_LABEL_TITLE;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.createLabelInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.updateLabelDetailsInstance;
 
@@ -69,6 +73,11 @@ public class TaskLabelAggregateShould {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(LabelCreated.class, messageList.get(0)
                                                     .getClass());
+
+        final LabelCreated labelCreated = (LabelCreated) messageList.get(0);
+
+        assertEquals(LABEL_TITLE, labelCreated.getDetails()
+                                              .getTitle());
     }
 
     @Test
@@ -81,6 +90,12 @@ public class TaskLabelAggregateShould {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(LabelDetailsUpdated.class, messageList.get(0)
                                                            .getClass());
+        final LabelDetailsUpdated labelDetailsUpdated = (LabelDetailsUpdated) messageList.get(0);
+        final LabelDetails details = labelDetailsUpdated.getNewDetails();
+
+        assertEquals(LABEL_ID, labelDetailsUpdated.getId());
+        assertEquals(LabelColor.GREEN, details.getColor());
+        assertEquals(UPDATED_LABEL_TITLE, details.getTitle());
     }
 
     @Test
@@ -88,7 +103,9 @@ public class TaskLabelAggregateShould {
         aggregate.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
 
         final TaskLabel state = aggregate.getState();
+
         assertEquals(LabelColor.GRAY, state.getColor());
+        assertEquals(LABEL_TITLE, state.getTitle());
     }
 
     @Test
@@ -96,10 +113,10 @@ public class TaskLabelAggregateShould {
         aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
         TaskLabel state = aggregate.getState();
 
-        assertEquals(LabelColor.GRAY, state.getColor());
-        assertEquals("label title", state.getTitle());
+        assertEquals(LabelColor.GREEN, state.getColor());
+        assertEquals(UPDATED_LABEL_TITLE, state.getTitle());
 
-        LabelColor updatedLabelColor = LabelColor.GREEN;
+        LabelColor updatedLabelColor = LabelColor.BLUE;
         final String updatedTitle = "updated title";
 
         updateLabelDetailsCmd = updateLabelDetailsInstance(updatedLabelColor, updatedTitle);

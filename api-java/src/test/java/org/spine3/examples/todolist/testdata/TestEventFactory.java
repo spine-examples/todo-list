@@ -48,12 +48,15 @@ import static org.spine3.base.Identifiers.newUuid;
  */
 public class TestEventFactory {
 
-    private static final String DESCRIPTION = "task description";
-    private static final TaskPriority TASK_PRIORITY = TaskPriority.NORMAL;
+    public static final String DESCRIPTION = "task description";
+    public static final TaskPriority TASK_PRIORITY = TaskPriority.NORMAL;
     private static final Timestamp TASK_DUE_DATE = Timestamps.getCurrentTime();
     public static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
                                                           .setValue(newUuid())
                                                           .build();
+    public static final TaskId TASK_ID = TaskId.newBuilder()
+                                               .setValue(newUuid())
+                                               .build();
 
     private static final Timestamp CREATION_TIME = Timestamps.getCurrentTime();
 
@@ -85,6 +88,7 @@ public class TestEventFactory {
                                                        .setDescription(description)
                                                        .setPriority(priority);
         final TaskCreated result = TaskCreated.newBuilder()
+                                              .setId(TASK_ID)
                                               .setDetails(details)
                                               .build();
         return result;
@@ -128,6 +132,7 @@ public class TestEventFactory {
                                                        .setPriority(priority)
                                                        .setDescription(description);
         final TaskDraftCreated result = TaskDraftCreated.newBuilder()
+                                                        .setId(TASK_ID)
                                                         .setDetails(details)
                                                         .setDraftCreationTime(creationTime)
                                                         .build();
@@ -206,7 +211,10 @@ public class TestEventFactory {
      * @return {@link TaskDraftFinalized} instance
      */
     public static TaskDraftFinalized taskDraftFinalizedInstance() {
-        return TaskDraftFinalized.getDefaultInstance();
+        final TaskDraftFinalized result = TaskDraftFinalized.newBuilder()
+                                                           .setId(TASK_ID)
+                                                           .build();
+        return result;
     }
 
     /**
@@ -233,7 +241,10 @@ public class TestEventFactory {
      * @return {@link TaskDeleted} instance
      */
     public static TaskDeleted taskDeletedInstance() {
-        return TaskDeleted.getDefaultInstance();
+        final TaskDeleted result = TaskDeleted.newBuilder()
+                                             .setId(TASK_ID)
+                                             .build();
+        return result;
     }
 
     /**
@@ -242,7 +253,10 @@ public class TestEventFactory {
      * @return {@link DeletedTaskRestored} instance
      */
     public static DeletedTaskRestored deletedTaskRestoredInstance() {
-        return DeletedTaskRestored.getDefaultInstance();
+        final DeletedTaskRestored result = DeletedTaskRestored.newBuilder()
+                                                             .setId(TASK_ID)
+                                                             .build();
+        return result;
     }
 
     /**
@@ -262,6 +276,7 @@ public class TestEventFactory {
      */
     public static LabelAssignedToTask labelAssignedToTaskInstance(TaskLabelId labelId) {
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
+                                                              .setId(TASK_ID)
                                                               .setLabelId(labelId)
                                                               .build();
         return result;
@@ -274,6 +289,7 @@ public class TestEventFactory {
      */
     public static LabelRemovedFromTask labelRemovedFromTaskInstance() {
         final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
+                                                                .setId(TASK_ID)
                                                                 .setLabelId(LABEL_ID)
                                                                 .build();
         return result;

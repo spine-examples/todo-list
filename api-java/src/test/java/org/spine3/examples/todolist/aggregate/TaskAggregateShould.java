@@ -67,6 +67,10 @@ import static org.spine3.examples.todolist.TaskStatus.FINALIZED;
 import static org.spine3.examples.todolist.TaskStatus.OPEN;
 import static org.spine3.examples.todolist.TaskStatus.TS_UNDEFINED;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DUE_DATE;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.LABEL_ID;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
@@ -145,6 +149,11 @@ public class TaskAggregateShould {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(TaskDescriptionUpdated.class, messageList.get(0)
                                                               .getClass());
+
+        final TaskDescriptionUpdated taskDescriptionUpdated = (TaskDescriptionUpdated) messageList.get(0);
+
+        assertEquals(TASK_ID, taskDescriptionUpdated.getId());
+        assertEquals(DESCRIPTION, taskDescriptionUpdated.getNewDescription());
     }
 
     @Test
@@ -160,6 +169,11 @@ public class TaskAggregateShould {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(TaskCreated.class, messageList.get(0)
                                                    .getClass());
+
+        final TaskCreated taskCreated = (TaskCreated) messageList.get(0);
+
+        assertEquals(DESCRIPTION, taskCreated.getDetails()
+                                             .getDescription());
     }
 
     @Test
@@ -172,6 +186,10 @@ public class TaskAggregateShould {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(LabelRemovedFromTask.class, messageList.get(0)
                                                             .getClass());
+
+        final LabelRemovedFromTask labelRemovedFromTask = (LabelRemovedFromTask) messageList.get(0);
+
+        assertEquals(LABEL_ID, labelRemovedFromTask.getLabelId());
     }
 
     @Test
@@ -184,6 +202,10 @@ public class TaskAggregateShould {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(LabelAssignedToTask.class, messageList.get(0)
                                                            .getClass());
+
+        final LabelAssignedToTask labelAssignedToTask = (LabelAssignedToTask) messageList.get(0);
+
+        assertEquals(LABEL_ID, labelAssignedToTask.getLabelId());
     }
 
     @Test
@@ -293,6 +315,11 @@ public class TaskAggregateShould {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(TaskDueDateUpdated.class, messageList.get(0)
                                                           .getClass());
+
+        final TaskDueDateUpdated taskDueDateUpdated = (TaskDueDateUpdated) messageList.get(0);
+
+        assertEquals(TASK_ID, taskDueDateUpdated.getId());
+        assertEquals(DUE_DATE, taskDueDateUpdated.getNewDueDate());
     }
 
     @Test
@@ -305,6 +332,11 @@ public class TaskAggregateShould {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(TaskPriorityUpdated.class, messageList.get(0)
                                                            .getClass());
+
+        final TaskPriorityUpdated taskPriorityUpdated = (TaskPriorityUpdated) messageList.get(0);
+
+        assertEquals(TaskPriority.HIGH, taskPriorityUpdated.getNewPriority());
+        assertEquals(TASK_ID, taskPriorityUpdated.getId());
     }
 
     @Test
@@ -318,6 +350,10 @@ public class TaskAggregateShould {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(TaskCompleted.class, messageList.get(0)
                                                      .getClass());
+
+        final TaskCompleted taskCompleted = (TaskCompleted) messageList.get(0);
+
+        assertEquals(TASK_ID, taskCompleted.getId());
     }
 
     @Test
@@ -461,6 +497,10 @@ public class TaskAggregateShould {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(TaskDraftCreated.class, messageList.get(0)
                                                         .getClass());
+
+        final TaskDraftCreated taskDraftCreated = (TaskDraftCreated) messageList.get(0);
+
+        assertEquals(TASK_ID, taskDraftCreated.getId());
     }
 
     @Test
@@ -682,6 +722,10 @@ public class TaskAggregateShould {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(TaskDeleted.class, messageList.get(0)
                                                    .getClass());
+
+        final TaskDeleted taskDeleted = (TaskDeleted) messageList.get(0);
+
+        assertEquals(TASK_ID, taskDeleted.getId());
     }
 
     private static String constructExceptionMessage(TaskStatus fromState, TaskStatus toState) {
