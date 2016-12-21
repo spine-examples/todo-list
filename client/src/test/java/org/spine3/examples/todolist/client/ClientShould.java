@@ -23,32 +23,37 @@ package org.spine3.examples.todolist.client;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.spine3.base.Command;
 import org.spine3.base.Response;
 import org.spine3.client.CommandFactory;
 import org.spine3.examples.todolist.AssignLabelToTask;
 import org.spine3.examples.todolist.CompleteTask;
+import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.DeleteTask;
 import org.spine3.examples.todolist.FinalizeDraft;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
-import org.spine3.examples.todolist.Task;
+import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
+import org.spine3.examples.todolist.client.builder.CommandsBuilder;
 import org.spine3.examples.todolist.server.Server;
+import org.spine3.examples.todolist.view.MyListView;
+import org.spine3.examples.todolist.view.TaskView;
 import org.spine3.server.storage.memory.InMemoryStorageFactory;
 import org.spine3.time.ZoneOffsets;
 import org.spine3.util.Exceptions;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
@@ -67,155 +72,74 @@ import static org.spine3.test.Tests.newUserId;
 class ClientShould {
 
     private static final String HOST = "localhost";
-    private static Client client;
+    private static TodoClient client;
     private static Server server;
-    private Command updateTaskDescriptionCmd;
-    private Command updateTaskPriorityCmd;
-    private Command updateTaskDueDateCmd;
-    private Command assignLabelToTaskCmd;
-    private Command removeLabelFromTaskCmd;
-    private Command completeTaskCmd;
-    private Command deleteTaskCmd;
-    private Command restoreDeletedTaskCmd;
-    private Command reopenTaskCmd;
-    private Command finalizeDraftCmd;
+    private DeleteTask deleteTask;
+    private CreateBasicTask createTask;
+    private UpdateTaskDescription updateTaskDescription;
+    private CommandFactory commandFactory;
 
     @BeforeAll
     public static void initAll() throws InterruptedException {
         final InMemoryStorageFactory storageFactory = InMemoryStorageFactory.getInstance();
         server = new Server(storageFactory);
         startServer();
-        client = new Client(HOST, DEFAULT_CLIENT_SERVICE_PORT);
-        client.subscribe(Task.getDescriptor());
+        client = new BasicTodoClient(HOST, DEFAULT_CLIENT_SERVICE_PORT);
     }
 
     @BeforeEach
     public void setUp() throws InterruptedException {
-        final CommandFactory commandFactory = commandFactoryInstance();
-        final UpdateTaskDescription updateTaskDescription = updateTaskDescriptionInstance();
+        commandFactory = commandFactoryInstance();
         final UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance();
         final UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance();
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance();
         final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance();
         final CompleteTask completeTask = completeTaskInstance();
-        final DeleteTask deleteTask = deleteTaskInstance();
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance();
         final ReopenTask reopenTask = reopenTaskInstance();
         final FinalizeDraft finalizeDraft = finalizeDraftInstance();
-        updateTaskDescriptionCmd = commandFactory.create(updateTaskDescription);
-        updateTaskPriorityCmd = commandFactory.create(updateTaskPriority);
-        updateTaskDueDateCmd = commandFactory.create(updateTaskDueDate);
-        assignLabelToTaskCmd = commandFactory.create(assignLabelToTask);
-        removeLabelFromTaskCmd = commandFactory.create(removeLabelFromTask);
-        completeTaskCmd = commandFactory.create(completeTask);
-        deleteTaskCmd = commandFactory.create(deleteTask);
-        restoreDeletedTaskCmd = commandFactory.create(restoreDeletedTask);
-        reopenTaskCmd = commandFactory.create(reopenTask);
-        finalizeDraftCmd = commandFactory.create(finalizeDraft);
+        deleteTask = deleteTaskInstance();
+        createTask = CommandsBuilder.task()
+                                    .createTask()
+                                    .setDescription(DESCRIPTION)
+                                    .build();
+        updateTaskDescription = updateTaskDescriptionInstance();
     }
 
     @Test
-    public void successfully_send_update_task_description_command() {
-        Response response = client.execute(updateTaskDescriptionCmd);
-        assertEquals(Response.StatusCase.OK, response.getStatusCase());
-        assertEquals(0, response.getError()
-                                .getAttributesCount());
-        assertEquals(0, response.getFailure()
-                                .getAttributesCount());
+    public void create_and_obtain_two_tasks() {
+        final int expectedMessagesCount = 2;
+        client.create(createTask);
+        client.create(createTask);
+
+        final List<TaskView> taskViews = client.getListView()
+                                               .getMyList()
+                                               .getItemsList();
+
+        assertEquals(expectedMessagesCount, taskViews.size());
+        assertEquals(DESCRIPTION, taskViews.get(0).getDescription());
+        assertEquals(DESCRIPTION, taskViews.get(1).getDescription());
     }
 
     @Test
-    public void successfully_send_update_task_priority_command() {
-        Response response = client.execute(updateTaskPriorityCmd);
-        assertEquals(Response.StatusCase.OK, response.getStatusCase());
-        assertEquals(0, response.getError()
-                                .getAttributesCount());
-        assertEquals(0, response.getFailure()
-                                .getAttributesCount());
-    }
+    public void create_and_update_task() {
+        final int expectedListSize = 1;
+        final String newDescription = "New task description.";
+        client.create(createTask);
+        updateTaskDescription = updateTaskDescriptionInstance(createTask.getId(), newDescription);
+        client.update(updateTaskDescription);
 
-    @Test
-    public void successfully_send_update_task_due_date_command() {
-        Response response = client.execute(updateTaskDueDateCmd);
-        assertEquals(Response.StatusCase.OK, response.getStatusCase());
-        assertEquals(0, response.getError()
-                                .getAttributesCount());
-        assertEquals(0, response.getFailure()
-                                .getAttributesCount());
-    }
+        final MyListView view = client.getListView();
+        assertEquals(expectedListSize, view.getMyList()
+                                           .getItemsCount());
+        assertEquals(newDescription, view.getMyList()
+                                         .getItems(0)
+                                         .getDescription());
 
-    @Test
-    public void successfully_send_assign_label_to_task_command() {
-        Response response = client.execute(assignLabelToTaskCmd);
-        assertEquals(Response.StatusCase.OK, response.getStatusCase());
-        assertEquals(0, response.getError()
-                                .getAttributesCount());
-        assertEquals(0, response.getFailure()
-                                .getAttributesCount());
-    }
-
-    @Test
-    public void successfully_send_remove_label_from_task_command() {
-        Response response = client.execute(removeLabelFromTaskCmd);
-        assertEquals(Response.StatusCase.OK, response.getStatusCase());
-        assertEquals(0, response.getError()
-                                .getAttributesCount());
-        assertEquals(0, response.getFailure()
-                                .getAttributesCount());
-    }
-
-    @Test
-    public void successfully_send_complete_task_command() {
-        Response response = client.execute(completeTaskCmd);
-        assertEquals(Response.StatusCase.OK, response.getStatusCase());
-        assertEquals(0, response.getError()
-                                .getAttributesCount());
-        assertEquals(0, response.getFailure()
-                                .getAttributesCount());
-    }
-
-    @Test
-    public void successfully_send_delete_task_command() {
-        Response response = client.execute(deleteTaskCmd);
-        assertEquals(Response.StatusCase.OK, response.getStatusCase());
-        assertEquals(0, response.getError()
-                                .getAttributesCount());
-        assertEquals(0, response.getFailure()
-                                .getAttributesCount());
-    }
-
-    @Test
-    public void successfully_send_restore_deleted_task_command() {
-        Response response = client.execute(restoreDeletedTaskCmd);
-        assertEquals(Response.StatusCase.OK, response.getStatusCase());
-        assertEquals(0, response.getError()
-                                .getAttributesCount());
-        assertEquals(0, response.getFailure()
-                                .getAttributesCount());
-    }
-
-    @Test
-    public void successfully_send_reopen_task_command() {
-        Response response = client.execute(reopenTaskCmd);
-        assertEquals(Response.StatusCase.OK, response.getStatusCase());
-        assertEquals(0, response.getError()
-                                .getAttributesCount());
-        assertEquals(0, response.getFailure()
-                                .getAttributesCount());
-    }
-
-    @Test
-    public void successfully_send_finalize_draft_command() {
-        Response response = client.execute(finalizeDraftCmd);
-        assertEquals(Response.StatusCase.OK, response.getStatusCase());
-        assertEquals(0, response.getError()
-                                .getAttributesCount());
-        assertEquals(0, response.getFailure()
-                                .getAttributesCount());
     }
 
     private static void startServer() throws InterruptedException {
-        final CountDownLatch serverStartLatch = new CountDownLatch(3);
+        final CountDownLatch serverStartLatch = new CountDownLatch(1);
         final Thread serverThread = new Thread(() -> {
             try {
                 server.start();
@@ -230,10 +154,24 @@ class ClientShould {
         serverStartLatch.await(100, TimeUnit.MILLISECONDS);
     }
 
-    private CommandFactory commandFactoryInstance() {
-        return CommandFactory.newBuilder()
-                             .setActor(newUserId(newUuid()))
-                             .setZoneOffset(ZoneOffsets.UTC)
-                             .build();
+    private static void chekOkResponse(Response response) {
+        assertEquals(Response.StatusCase.OK, response.getStatusCase());
+        assertEquals(0, response.getError()
+                                .getAttributesCount());
+        assertEquals(0, response.getFailure()
+                                .getAttributesCount());
+    }
+
+    private static void checkOkTaskView(TaskId id, TaskView view) {
+        assertEquals(id, view.getId());
+        assertEquals(DESCRIPTION, view.getDescription());
+    }
+
+    private static CommandFactory commandFactoryInstance() {
+        final CommandFactory result = CommandFactory.newBuilder()
+                                                    .setActor(newUserId(newUuid()))
+                                                    .setZoneOffset(ZoneOffsets.UTC)
+                                                    .build();
+        return result;
     }
 }

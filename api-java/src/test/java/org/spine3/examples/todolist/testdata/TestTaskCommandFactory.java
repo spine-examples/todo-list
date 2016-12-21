@@ -46,13 +46,13 @@ import static org.spine3.base.Identifiers.newUuid;
  */
 public class TestTaskCommandFactory {
 
-    private static final TaskId TASK_ID = TaskId.newBuilder()
+    public static final TaskId TASK_ID = TaskId.newBuilder()
                                                 .setValue(newUuid())
                                                 .build();
     private static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
                                                            .setValue(newUuid())
                                                            .build();
-    private static final String DESCRIPTION = "Create command description.";
+    public static final String DESCRIPTION = "Create command description.";
     private static final Timestamp DUE_DATE = Timestamps.getCurrentTime();
 
     /**
@@ -68,9 +68,26 @@ public class TestTaskCommandFactory {
      * @return {@link CreateBasicTask} instance
      */
     public static CreateBasicTask createTaskInstance() {
-        return CreateBasicTask.newBuilder()
-                              .setDescription(DESCRIPTION)
-                              .build();
+        final CreateBasicTask result = createTaskInstance(TASK_ID, DESCRIPTION);
+        return result;
+    }
+
+    public static CreateBasicTask createTaskInstance(TaskId id, String description) {
+        final CreateBasicTask result = CreateBasicTask.newBuilder()
+                                                      .setId(id)
+                                                      .setDescription(description)
+                                                      .build();
+        return result;
+    }
+
+    public static CreateBasicTask createUniqueTask() {
+        final TaskId.Builder id = TaskId.newBuilder()
+                                        .setValue(newUuid());
+        final CreateBasicTask result = CreateBasicTask.newBuilder()
+                                                      .setId(id)
+                                                      .setDescription(DESCRIPTION)
+                                                      .build();
+        return result;
     }
 
     /**
@@ -79,7 +96,7 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance() {
-        return updateTaskDescriptionInstance(DESCRIPTION);
+        return updateTaskDescriptionInstance(TASK_ID, DESCRIPTION);
     }
 
     /**
@@ -88,9 +105,9 @@ public class TestTaskCommandFactory {
      * @param description String value into updated description field
      * @return {@link UpdateTaskDescription} instance
      */
-    public static UpdateTaskDescription updateTaskDescriptionInstance(String description) {
+    public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id, String description) {
         return UpdateTaskDescription.newBuilder()
-                                    .setId(TASK_ID)
+                                    .setId(id)
                                     .setUpdatedDescription(description)
                                     .build();
     }
@@ -170,9 +187,20 @@ public class TestTaskCommandFactory {
      * @return {@link DeleteTask} instance
      */
     public static DeleteTask deleteTaskInstance() {
-        return DeleteTask.newBuilder()
-                         .setId(TASK_ID)
-                         .build();
+        return deleteTaskInstance(TASK_ID);
+    }
+
+    /**
+     * Provides {@link DeleteTask} command instance by specified {@link TaskLabelId}.
+     * TaskLabelId constructed with {@code ID}.
+     *
+     * @return {@link DeleteTask} instance
+     */
+    public static DeleteTask deleteTaskInstance(TaskId id) {
+        final DeleteTask result = DeleteTask.newBuilder()
+                                            .setId(id)
+                                            .build();
+        return result;
     }
 
     /**

@@ -66,6 +66,7 @@ import static org.spine3.examples.todolist.TaskStatus.FINALIZED;
 import static org.spine3.examples.todolist.TaskStatus.OPEN;
 import static org.spine3.examples.todolist.TaskStatus.TS_UNDEFINED;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
@@ -187,7 +188,7 @@ public class TaskAggregateTest {
     @Test
     public void handle_update_task_description_when_description_contains_one_symbol() {
         try {
-            updateTaskDescriptionCmd = updateTaskDescriptionInstance(".");
+            updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, "description");
             aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
@@ -321,7 +322,7 @@ public class TaskAggregateTest {
     @Test
     public void return_current_state_after_dispatch_when_description_is_updated() {
         final String newDescription = "new description.";
-        updateTaskDescriptionCmd = updateTaskDescriptionInstance(newDescription);
+        updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, newDescription);
         aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
         assertEquals(newDescription, aggregate.getState()
                                               .getDescription());
