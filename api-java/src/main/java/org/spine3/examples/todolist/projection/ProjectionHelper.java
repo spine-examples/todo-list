@@ -109,7 +109,7 @@ import java.util.List;
         for (TaskView view : views) {
             TaskView addedView = view;
             final boolean willUpdate = view.getLabelId()
-                                           .equals(event.getId());
+                                           .equals(event.getLabelId());
             if (willUpdate) {
                 final LabelDetails labelDetails = event.getNewDetails();
                 addedView = TaskView.newBuilder()

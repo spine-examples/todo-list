@@ -35,7 +35,8 @@ import "todolist/events.proto";
 //
 message LabelDetailsByLabelIdEnrichment {
 
-    option (enrichment_for) = "spine.examples.todolist.LabelAssignedToTask,"
+    option (enrichment_for) = "spine.examples.todolist.LabelDetailsUpdated,"
+                              "spine.examples.todolist.LabelAssignedToTask,"
                               "spine.examples.todolist.LabelRemovedFromTask";
 
     // label details
@@ -47,6 +48,11 @@ message LabelDetailsByLabelIdEnrichment {
 message LabelDetailsByTaskIdEnrichment {
 
     option (enrichment_for) = "spine.examples.todolist.DeletedTaskRestored,"
+                              "spine.examples.todolist.TaskDescriptionUpdated,"
+                              "spine.examples.todolist.TaskDueDateUpdated,"
+                              "spine.examples.todolist.TaskPriorityUpdated,"
+                              "spine.examples.todolist.TaskCompleted,"
+                              "spine.examples.todolist.TaskReopened,"
                               "spine.examples.todolist.TaskDeleted";
 
     // label details

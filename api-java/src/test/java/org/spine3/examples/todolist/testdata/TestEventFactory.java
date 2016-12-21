@@ -56,7 +56,8 @@ public class TestEventFactory {
     public static final String UPDATED_DESCRIPTION = "Description updated.";
     public static final String DESCRIPTION = "task description";
     public static final TaskPriority TASK_PRIORITY = TaskPriority.NORMAL;
-    private static final Timestamp TASK_DUE_DATE = Timestamps.getCurrentTime();
+    public static final TaskPriority UPDATED_TASK_PRIORITY = TaskPriority.NORMAL;
+    public static final Timestamp UPDATED_TASK_DUE_DATE = Timestamps.getCurrentTime();
     public static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
                                                           .setValue(newUuid())
                                                           .build();
@@ -174,7 +175,7 @@ public class TestEventFactory {
      * @return {@link TaskPriorityUpdated} instance
      */
     public static TaskPriorityUpdated taskPriorityUpdatedInstance() {
-        return taskPriorityUpdatedInstance(TASK_ID, TASK_PRIORITY);
+        return taskPriorityUpdatedInstance(TASK_ID, UPDATED_TASK_PRIORITY);
     }
 
     /**
@@ -197,7 +198,7 @@ public class TestEventFactory {
      * @return {@link TaskDueDateUpdated} instance
      */
     public static TaskDueDateUpdated taskDueDateUpdatedInstance() {
-        return taskDueDateUpdatedInstance(TASK_ID, TASK_DUE_DATE);
+        return taskDueDateUpdatedInstance(TASK_ID, UPDATED_TASK_DUE_DATE);
     }
 
     /**
@@ -375,7 +376,7 @@ public class TestEventFactory {
                                                                      .setColor(color)
                                                                      .setTitle(title);
         final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
-                                                              .setId(LABEL_ID)
+                                                              .setLabelId(LABEL_ID)
                                                               .setNewDetails(labelDetailsBuilder)
                                                               .build();
         return result;
