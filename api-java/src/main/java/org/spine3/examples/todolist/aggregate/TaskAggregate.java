@@ -1,22 +1,23 @@
-//
-// Copyright 2016, TeamDev Ltd. All rights reserved.
-//
-// Redistribution and use in source and/or binary forms, with or without
-// modification, must retain the above copyright notice and the following
-// disclaimer.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
+/*
+ * Copyright 2016, TeamDev Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.spine3.examples.todolist.aggregate;
 
 import com.google.protobuf.Message;
@@ -61,8 +62,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.spine3.examples.todolist.TaskFlowValidator.ensureCompletedOrDeleted;
-import static org.spine3.examples.todolist.TaskFlowValidator.validateTransition;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.ensureNeitherCompletedNorDeleted;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateAssignLabelToTaskCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateCreateDraftCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateRemoveLabelFromTaskCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateTransition;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateUpdateTaskDueDateCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateUpdateTaskPriorityCommand;
 
 /**
  * The aggregate managing the state of a {@link Task}.
@@ -72,6 +78,9 @@ import static org.spine3.examples.todolist.TaskFlowValidator.validateTransition;
 public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;
+    private static final String SHORT_DESCRIPTION_EXCEPTION_MESSAGE =
+            "Description should contain at least 3 alphanumeric symbols.";
+    private static final String NULL_DESCRIPTION_EXCEPTION_MESSAGE = "Description cannot be null.";
 
     /**
      * Creates a new aggregate instance.
@@ -107,7 +116,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(UpdateTaskDueDate cmd) {
-        ensureCompletedOrDeleted(getState().getTaskStatus());
+        validateUpdateTaskDueDateCommand(getState().getTaskStatus());
         final Timestamp previousDueDate = getState().getDueDate();
         final TaskDueDateUpdated result = TaskDueDateUpdated.newBuilder()
                                                             .setId(cmd.getId())
@@ -119,7 +128,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(UpdateTaskPriority cmd) {
-        ensureCompletedOrDeleted(getState().getTaskStatus());
+        validateUpdateTaskPriorityCommand(getState().getTaskStatus());
         final TaskPriority previousPriority = getState().getPriority();
         final TaskPriorityUpdated result = TaskPriorityUpdated.newBuilder()
                                                               .setId(cmd.getId())
@@ -176,7 +185,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(RemoveLabelFromTask cmd) {
-        ensureCompletedOrDeleted(getState().getTaskStatus());
+        validateRemoveLabelFromTaskCommand(getState().getTaskStatus());
         final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
                                                                 .setId(cmd.getId())
                                                                 .setLabelId(cmd.getLabelId())
@@ -186,7 +195,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Assign
     public List<? extends Message> handle(AssignLabelToTask cmd) {
-        ensureCompletedOrDeleted(getState().getTaskStatus());
+        validateAssignLabelToTaskCommand(getState().getTaskStatus());
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
                                                               .setId(cmd.getId())
                                                               .setLabelId(cmd.getLabelId())
@@ -194,10 +203,11 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return Collections.singletonList(result);
     }
 
-    //TODO[illia.shepilov]: should be updated after defining draft creation.
     @Assign
     public List<? extends Message> handle(CreateDraft cmd) {
+        validateCreateDraftCommand(getState().getTaskStatus());
         final TaskDraftCreated result = TaskDraftCreated.newBuilder()
+                                                        .setId(cmd.getId())
                                                         .setDraftCreationTime(Timestamps.getCurrentTime())
                                                         .build();
         return Collections.singletonList(result);
@@ -289,7 +299,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     }
 
-    //TODO[illia.shepilov]: should be updated after defining draft creation.
     @Apply
     private void draftCreated(TaskDraftCreated event) {
         getBuilder().setId(event.getId())
@@ -299,21 +308,21 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                     .setTaskStatus(TaskStatus.DRAFT);
     }
 
-    private void validateCommand(CreateBasicTask cmd) {
+    private static void validateCommand(CreateBasicTask cmd) {
         final String description = cmd.getDescription();
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
-            throw new IllegalStateException("Description should contain at least 3 alphanumeric symbols.");
+            throw new IllegalStateException(SHORT_DESCRIPTION_EXCEPTION_MESSAGE);
         }
     }
 
     private void validateCommand(UpdateTaskDescription cmd) {
         final String description = cmd.getUpdatedDescription();
-        checkNotNull(description, "Description cannot be null.");
+        checkNotNull(description, NULL_DESCRIPTION_EXCEPTION_MESSAGE);
 
         if (description.length() < MIN_DESCRIPTION_LENGTH) {
-            throw new IllegalStateException("Description should contain at least 3 alphanumeric symbols.");
+            throw new IllegalStateException(SHORT_DESCRIPTION_EXCEPTION_MESSAGE);
         }
 
-        ensureCompletedOrDeleted(getState().getTaskStatus());
+        ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
     }
 }

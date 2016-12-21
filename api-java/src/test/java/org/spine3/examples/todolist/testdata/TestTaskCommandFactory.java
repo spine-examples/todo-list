@@ -1,22 +1,23 @@
-//
-// Copyright 2016, TeamDev Ltd. All rights reserved.
-//
-// Redistribution and use in source and/or binary forms, with or without
-// modification, must retain the above copyright notice and the following
-// disclaimer.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
+/*
+ * Copyright 2016, TeamDev Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.spine3.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
@@ -40,7 +41,7 @@ import org.spine3.protobuf.Timestamps;
 import static org.spine3.base.Identifiers.newUuid;
 
 /**
- * Provides methods for instantiation task commands for test needs.
+ * A factory of the task commands for the test needs.
  *
  * @author Illia Shepilov
  */
@@ -59,7 +60,7 @@ public class TestTaskCommandFactory {
      * Prevent instantiation.
      */
     private TestTaskCommandFactory() {
-        throw new UnsupportedOperationException("Cannot be instantiated");
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -100,20 +101,21 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link UpdateTaskDescription} instance by specified description.
+     * Provides {@link UpdateTaskDescription} instance by description and task id specified.
      *
      * @param description String value into updated description field
      * @return {@link UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id, String description) {
-        return UpdateTaskDescription.newBuilder()
-                                    .setId(id)
-                                    .setUpdatedDescription(description)
-                                    .build();
+        UpdateTaskDescription result = UpdateTaskDescription.newBuilder()
+                             .setId(id)
+                             .setUpdatedDescription(description)
+                             .build();
+        return result;
     }
 
     /**
-     * Provides {@link UpdateTaskDescription} instance by specified due date {@code DUE_DATE}.
+     * Provides a pre-configured {@link UpdateTaskDueDate} command instance.
      *
      * @return {@link UpdateTaskDueDate} instance
      */
@@ -124,18 +126,19 @@ public class TestTaskCommandFactory {
     /**
      * Provides {@link UpdateTaskDueDate} instance with specified update due date field.
      *
-     * @param updatedDueDate value into updated due datefield, present in seconds
+     * @param updatedDueDate value into updated due date field, present in seconds
      * @return {@link UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance(Timestamp updatedDueDate) {
-        return UpdateTaskDueDate.newBuilder()
-                                .setId(TASK_ID)
-                                .setUpdatedDueDate(updatedDueDate)
-                                .build();
+        final UpdateTaskDueDate result = UpdateTaskDueDate.newBuilder()
+                                                          .setId(TASK_ID)
+                                                          .setUpdatedDueDate(updatedDueDate)
+                                                          .build();
+        return result;
     }
 
     /**
-     * Provides {@link UpdateTaskPriority} instance by specified priority {@code TaskPriority.HIGH}.
+     * Provides a pre-configured {@link UpdateTaskPriority} command instance.
      *
      * @return {@link UpdateTaskPriority} instance
      */
@@ -150,14 +153,15 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskPriority priority) {
-        return UpdateTaskPriority.newBuilder()
-                                 .setId(TASK_ID)
-                                 .setUpdatedPriority(priority)
-                                 .build();
+        final UpdateTaskPriority result = UpdateTaskPriority.newBuilder()
+                                                            .setId(TASK_ID)
+                                                            .setUpdatedPriority(priority)
+                                                            .build();
+        return result;
     }
 
     /**
-     * Provides default {@link CompleteTask} command instance.
+     * Provides a pre-configured {@link CompleteTask} command instance.
      *
      * @return {@link CompleteTask} instance
      */
@@ -181,8 +185,7 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link DeleteTask} command instance by specified {@link TaskLabelId}.
-     * TaskLabelId constructed with {@code ID}.
+     * Provides a pre-configured {@link DeleteTask} command instance.
      *
      * @return {@link DeleteTask} instance
      */
@@ -191,8 +194,7 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link DeleteTask} command instance by specified {@link TaskLabelId}.
-     * TaskLabelId constructed with {@code ID}.
+     * Provides a pre-configured {@link DeleteTask} command instance.
      *
      * @return {@link DeleteTask} instance
      */
@@ -228,37 +230,40 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides default {@link CreateDraft} command instance.
+     * Provides a pre-configured {@link CreateDraft} command instance.
      *
      * @return {@link CreateDraft} instance
      */
     public static CreateDraft createDraftInstance() {
-        return CreateDraft.getDefaultInstance();
+        final CreateDraft result = CreateDraft.newBuilder()
+                                             .setId(TASK_ID)
+                                             .build();
+        return result;
     }
 
     /**
-     * Provides {@link AssignLabelToTask} command instance by specified {@link TaskLabelId}
-     * TaskLabelId constructed with {@code ID}.
+     * Provides a pre-configured {@link AssignLabelToTask} command instance.
      *
      * @return {@link AssignLabelToTask} instance
      */
     public static AssignLabelToTask assignLabelToTaskInstance() {
-        return AssignLabelToTask.newBuilder()
-                                .setId(TASK_ID)
-                                .setLabelId(LABEL_ID)
-                                .build();
+        final AssignLabelToTask result = AssignLabelToTask.newBuilder()
+                                                          .setId(TASK_ID)
+                                                          .setLabelId(LABEL_ID)
+                                                          .build();
+        return result;
     }
 
     /**
-     * Provides {@link RemoveLabelFromTask} command instance by specified {@link TaskLabelId}.
-     * TaskLabelId constructed with {@code ID}.
+     * Provides a pre-configured {@link RemoveLabelFromTask} command instance.
      *
      * @return {@link RemoveLabelFromTask} instance
      */
     public static RemoveLabelFromTask removeLabelFromTaskInstance() {
-        return RemoveLabelFromTask.newBuilder()
-                                  .setId(TASK_ID)
-                                  .setLabelId(LABEL_ID)
-                                  .build();
+        final RemoveLabelFromTask result = RemoveLabelFromTask.newBuilder()
+                                                              .setId(TASK_ID)
+                                                              .setLabelId(LABEL_ID)
+                                                              .build();
+        return result;
     }
 }

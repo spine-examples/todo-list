@@ -1,22 +1,23 @@
-//
-// Copyright 2016, TeamDev Ltd. All rights reserved.
-//
-// Redistribution and use in source and/or binary forms, with or without
-// modification, must retain the above copyright notice and the following
-// disclaimer.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
+/*
+ * Copyright 2016, TeamDev Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.spine3.examples.todolist.testdata;
 
 import org.spine3.examples.todolist.CreateBasicLabel;
@@ -25,22 +26,29 @@ import org.spine3.examples.todolist.LabelCreated;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
+import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.UpdateLabelDetails;
 
+import static org.spine3.base.Identifiers.newUuid;
+
 /**
- * Provides methods for instantiation task label commands for test needs.
+ * A factory of the task label commands for the test needs.
  *
  * @author Illia Shepilov
  */
 public class TestTaskLabelCommandFactory {
 
-    private static final String TITLE = "label title";
+    public static final String LABEL_TITLE = "label title";
+    public static final String UPDATED_LABEL_TITLE = "updated label title";
+    public static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
+                                                          .setValue(newUuid())
+                                                          .build();
 
     /**
      * Prevent instantiation.
      */
     private TestTaskLabelCommandFactory() {
-        throw new UnsupportedOperationException("Cannot be instantiated");
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -49,17 +57,19 @@ public class TestTaskLabelCommandFactory {
      * @return {@link CreateBasicLabel} instance
      */
     public static CreateBasicLabel createLabelInstance() {
-        return CreateBasicLabel.getDefaultInstance();
+        final CreateBasicLabel result = CreateBasicLabel.newBuilder()
+                                                        .setLabelTitle(LABEL_TITLE)
+                                                        .build();
+        return result;
     }
 
     /**
-     * Provides {@link UpdateLabelDetails} event by specified label's color {@code LabelColor.GRAY}
-     * and title {@code TITLE}.
+     * Provides a pre-configured {@link UpdateLabelDetails} command instance.
      *
      * @return {@link UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance() {
-        return updateLabelDetailsInstance(LabelColor.GRAY, TITLE);
+        return updateLabelDetailsInstance(LabelColor.GREEN, UPDATED_LABEL_TITLE);
     }
 
     /**
@@ -70,20 +80,21 @@ public class TestTaskLabelCommandFactory {
      * @return {@link UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelColor color, String title) {
-        return UpdateLabelDetails.newBuilder()
-                                 .setColor(color)
-                                 .setNewTitle(title)
-                                 .build();
+        final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
+                                                            .setId(LABEL_ID)
+                                                            .setColor(color)
+                                                            .setNewTitle(title)
+                                                            .build();
+        return result;
     }
 
     /**
-     * Provides {@link LabelCreated} event by specified label's color {@code LabelColor.GRAY}
-     * and label's title {@code TITLE}.
+     * Provides a pre-configured {@link LabelCreated} command instance.
      *
      * @return {@link LabelCreated} instance
      */
     public static LabelCreated labelCreatedInstance() {
-        return labelCreatedInstance(LabelColor.GRAY, TITLE);
+        return labelCreatedInstance(LabelColor.GRAY, LABEL_TITLE);
     }
 
     /**
@@ -94,21 +105,22 @@ public class TestTaskLabelCommandFactory {
      * @return {@link LabelCreated} instance
      */
     public static LabelCreated labelCreatedInstance(LabelColor color, String title) {
-        return LabelCreated.newBuilder()
-                           .setDetails(LabelDetails.newBuilder()
-                                                   .setColor(color)
-                                                   .setTitle(title))
-                           .build();
+        final LabelDetails.Builder labelDetailsBuilder = LabelDetails.newBuilder()
+                                                                     .setColor(color)
+                                                                     .setTitle(title);
+        final LabelCreated result = LabelCreated.newBuilder()
+                                                .setDetails(labelDetailsBuilder)
+                                                .build();
+        return result;
     }
 
     /**
-     * Provides {@link LabelDetailsUpdated} event by specified label's color {@code LabelColor.GRAY}
-     * and label's title {@code TITLE}.
+     * Provides a pre-configured {@link LabelDetailsUpdated} command instance.
      *
      * @return {@link LabelDetailsUpdated} instance.
      */
     public static LabelDetailsUpdated labelDetailsUpdatedInstance() {
-        return labelDetailsUpdatedInstance(LabelColor.GRAY, TITLE);
+        return labelDetailsUpdatedInstance(LabelColor.GRAY, LABEL_TITLE);
     }
 
     /**
@@ -119,11 +131,13 @@ public class TestTaskLabelCommandFactory {
      * @return {@link LabelDetailsUpdated} instance
      */
     public static LabelDetailsUpdated labelDetailsUpdatedInstance(LabelColor color, String title) {
-        return LabelDetailsUpdated.newBuilder()
-                                  .setNewDetails(LabelDetails.newBuilder()
-                                                             .setColor(color)
-                                                             .setTitle(title))
-                                  .build();
+        final LabelDetails.Builder labelDetailsBuilder = LabelDetails.newBuilder()
+                                                                     .setColor(color)
+                                                                     .setTitle(title);
+        final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
+                                                              .setNewDetails(labelDetailsBuilder)
+                                                              .build();
+        return result;
     }
 
     /**

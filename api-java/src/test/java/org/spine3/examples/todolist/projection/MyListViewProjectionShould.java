@@ -1,3 +1,23 @@
+/*
+ * Copyright 2016, TeamDev Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 package org.spine3.examples.todolist.projection;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -11,20 +31,22 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.spine3.base.Identifiers.newUuid;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.DESCRIPTION;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.TASK_PRIORITY;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.taskCreatedInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDeletedInstance;
 
 /**
  * @author Illia Shepilov
  */
-class MyListViewProjectionTest {
+public class MyListViewProjectionShould {
 
     private MyListViewProjection projection;
     private TaskCreated taskCreatedEvent;
     private TaskDeleted taskDeletedEvent;
-    private TaskListId ID = TaskListId.newBuilder()
-                                      .setValue(newUuid())
-                                      .build();
+    private static final TaskListId ID = TaskListId.newBuilder()
+                                                   .setValue(newUuid())
+                                                   .build();
 
     @BeforeEach
     void setUp() {
@@ -34,18 +56,24 @@ class MyListViewProjectionTest {
     }
 
     @Test
-    public void return_state_when_handle_task_created_event() {
-        int expectedSize = 1;
+    public void add_task_view_to_state_when_task_is_created() {
+        final int expectedSize = 1;
         projection.on(taskCreatedEvent);
 
         final List<TaskView> views = projection.getState()
                                                .getMyList()
                                                .getItemsList();
+
         assertEquals(expectedSize, views.size());
+
+        final TaskView view = views.get(0);
+
+        assertEquals(TASK_PRIORITY, view.getPriority());
+        assertEquals(DESCRIPTION, view.getDescription());
     }
 
     @Test
-    public void return_state_when_handle_task_created_and_deleted_event() {
+    public void remove_task_view_from_state_when_task_is_deleted() {
         int expectedListSize = 1;
         projection.on(taskCreatedEvent);
         projection.on(taskCreatedEvent);
@@ -55,6 +83,8 @@ class MyListViewProjectionTest {
                                          .getMyList()
                                          .getItemsList();
         assertEquals(expectedListSize, views.size());
+
+        TaskView view = views.get(0);
 
         projection.on(taskDeletedEvent);
         expectedListSize = 0;

@@ -18,10 +18,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package provides implementation for aggregate classes.
- */
-@ParametersAreNonnullByDefault
 package org.spine3.examples.todolist.aggregate;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.spine3.test.Tests.hasPrivateUtilityConstructor;
+
+/**
+ * @author Illia Shepilov
+ */
+public class TaskFlowValidatorShould {
+
+    @Test
+    public void have_private_constructor() {
+        assertTrue(hasPrivateUtilityConstructor(TaskFlowValidator.class));
+    }
+}
