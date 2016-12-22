@@ -52,6 +52,7 @@ message CreateBasicTask {
 
     // An identifier of the target task.
     TaskId id = 1;
+
     // A description for the task created.
     string description = 2 [(required) = true];
 
@@ -242,6 +243,7 @@ message CreateBasicLabel {
 
     // An identifier of the target label.
     TaskLabelId label_id = 1;
+
     // A title for the label.
     string label_title = 2 [(required) = true];
 
