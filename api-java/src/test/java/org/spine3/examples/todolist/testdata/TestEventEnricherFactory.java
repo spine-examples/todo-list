@@ -42,11 +42,7 @@ public class TestEventEnricherFactory {
                                                                   .setColor(LabelColor.BLUE)
                                                                   .build();
 
-    /**
-     * Prevent instantiation.
-     */
-    private TestEventEnricherFactory() {
-        throw new UnsupportedOperationException();
+    private TestEventEnricherFactory(){
     }
 
     private static final Function<TaskLabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS =

@@ -34,8 +34,13 @@ import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.view.TaskListView;
 import org.spine3.examples.todolist.view.TaskView;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
+
+import static org.spine3.examples.todolist.view.TaskView.newBuilder;
 
 /**
  * Class provides methods to manipulate and handle views.
@@ -44,18 +49,14 @@ import java.util.List;
  */
 /* package */ class ProjectionHelper {
 
-    /**
-     * Prevent instantiation.
-     */
     private ProjectionHelper() {
-        throw new UnsupportedOperationException();
     }
 
     /**
      * Removes {@link TaskView} from list of task view by specified task id.
      *
      * @param views list of the {@link TaskView}
-     * @param id    task's id
+     * @param id    task id
      * @return {@link TaskListView} without deleted task view
      */
     /* package */
@@ -87,7 +88,7 @@ import java.util.List;
         return result;
     }
 
-    private static TaskListView getTaskListView(List<TaskView> views, TaskView taskView) {
+    private static TaskListView getTaskListView(List<TaskView> views, @Nullable TaskView taskView) {
         if (taskView != null) {
             views.remove(taskView);
         }
@@ -114,13 +115,13 @@ import java.util.List;
                                            .equals(event.getLabelId());
             if (willUpdate) {
                 final LabelDetails labelDetails = event.getNewDetails();
-                addedView = TaskView.newBuilder()
-                                    .setLabelColor(labelDetails.getColor())
-                                    .setDueDate(view.getDueDate())
-                                    .setPriority(view.getPriority())
-                                    .setDescription(view.getDescription())
-                                    .setLabelId(view.getLabelId())
-                                    .build();
+                addedView = newBuilder()
+                        .setLabelColor(labelDetails.getColor())
+                        .setDueDate(view.getDueDate())
+                        .setPriority(view.getPriority())
+                        .setDescription(view.getDescription())
+                        .setLabelId(view.getLabelId())
+                        .build();
             }
             updatedList.add(addedView);
         }
@@ -136,23 +137,11 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, LabelRemovedFromTask event) {
-        final int listSize = views.size();
-        final List<TaskView> updatedList = new ArrayList<>(listSize);
-        for (TaskView view : views) {
-            TaskView addedView = view;
-            final boolean isRemoved = view.getId()
-                                          .equals(event.getId());
-            if (isRemoved) {
-                addedView = TaskView.newBuilder()
-                                    .setDueDate(view.getDueDate())
-                                    .setPriority(view.getPriority())
-                                    .setDescription(view.getDescription())
-                                    .setLabelId(TaskLabelId.getDefaultInstance())
-                                    .build();
-            }
-            updatedList.add(addedView);
-        }
-        return updatedList;
+        final TaskId targetTaskId = event.getId();
+
+        final TaskTransformation updateFn = builder -> builder.setLabelId(TaskLabelId.getDefaultInstance());
+        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
+        return result;
     }
 
     /**
@@ -164,25 +153,11 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, LabelAssignedToTask event) {
-        final int listSize = views.size();
-        final List<TaskView> updatedList = new ArrayList<>(listSize);
-        for (TaskView view : views) {
-            TaskView addedView = view;
-            final boolean willUpdate = view.getId()
-                                           .equals(event.getId());
-            if (willUpdate) {
-                addedView = TaskView.newBuilder()
-                                    .setId(event.getId())
-                                    .setLabelId(event.getLabelId())
-                                    .setDueDate(view.getDueDate())
-                                    .setPriority(view.getPriority())
-                                    .setDescription(view.getDescription())
-                                    .setLabelColor(view.getLabelColor())
-                                    .build();
-            }
-            updatedList.add(addedView);
-        }
-        return updatedList;
+        final TaskId targetTaskId = event.getId();
+
+        final TaskTransformation updateFn = builder -> builder.setLabelId(event.getLabelId());
+        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
+        return result;
     }
 
     /**
@@ -194,26 +169,11 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskReopened event) {
-        final int listSize = views.size();
-        final List<TaskView> updatedList = new ArrayList<>(listSize);
-        for (TaskView view : views) {
-            TaskView addedView = view;
-            final boolean willUpdate = view.getId()
-                                           .equals(event.getId());
-            if (willUpdate) {
-                addedView = TaskView.newBuilder()
-                                    .setId(event.getId())
-                                    .setDueDate(view.getDueDate())
-                                    .setPriority(view.getPriority())
-                                    .setDescription(view.getDescription())
-                                    .setLabelId(view.getLabelId())
-                                    .setLabelColor(view.getLabelColor())
-                                    .setCompleted(false)
-                                    .build();
-            }
-            updatedList.add(addedView);
-        }
-        return updatedList;
+        final TaskId targetTaskId = event.getId();
+
+        final TaskTransformation updateFn = builder -> builder.setCompleted(false);
+        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
+        return result;
     }
 
     /**
@@ -225,30 +185,15 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskCompleted event) {
-        final int listSize = views.size();
-        final List<TaskView> updatedList = new ArrayList<>(listSize);
-        for (TaskView view : views) {
-            TaskView addedView = view;
-            final boolean willUpdate = view.getId()
-                                           .equals(event.getId());
-            if (willUpdate) {
-                addedView = TaskView.newBuilder()
-                                    .setId(event.getId())
-                                    .setDueDate(view.getDueDate())
-                                    .setPriority(view.getPriority())
-                                    .setDescription(view.getDescription())
-                                    .setLabelId(view.getLabelId())
-                                    .setLabelColor(view.getLabelColor())
-                                    .setCompleted(true)
-                                    .build();
-            }
-            updatedList.add(addedView);
-        }
-        return updatedList;
+        final TaskId targetTaskId = event.getId();
+
+        final TaskTransformation updateFn = builder -> builder.setCompleted(true);
+        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
+        return result;
     }
 
     /**
-     * Updates task due date into  {@link TaskView}.
+     * Updates task due date of the  {@link TaskView}.
      *
      * @param views list of {@link TaskView}
      * @param event {@link TaskDueDateUpdated} instance
@@ -256,30 +201,15 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskDueDateUpdated event) {
-        final int listSize = views.size();
-        final List<TaskView> updatedList = new ArrayList<>(listSize);
-        for (TaskView view : views) {
-            TaskView addedView = view;
-            final boolean willUpdate = view.getId()
-                                           .equals(event.getId());
-            if (willUpdate) {
-                addedView = TaskView.newBuilder()
-                                    .setId(event.getId())
-                                    .setDueDate(event.getNewDueDate())
-                                    .setPriority(view.getPriority())
-                                    .setDescription(view.getDescription())
-                                    .setLabelId(view.getLabelId())
-                                    .setLabelColor(view.getLabelColor())
-                                    .setCompleted(view.getCompleted())
-                                    .build();
-            }
-            updatedList.add(addedView);
-        }
-        return updatedList;
+        final TaskId targetTaskId = event.getId();
+
+        final TaskTransformation updateFn = builder -> builder.setDueDate(event.getNewDueDate());
+        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
+        return result;
     }
 
     /**
-     * Updates task priority into  {@link TaskView}.
+     * Updates task priority of the  {@link TaskView}.
      *
      * @param views list of {@link TaskView}
      * @param event {@link TaskPriorityUpdated} instance
@@ -287,30 +217,15 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskPriorityUpdated event) {
-        final int listSize = views.size();
-        final List<TaskView> updatedList = new ArrayList<>(listSize);
-        for (TaskView view : views) {
-            TaskView addedView = view;
-            final boolean willUpdate = view.getId()
-                                           .equals(event.getId());
-            if (willUpdate) {
-                addedView = TaskView.newBuilder()
-                                    .setId(event.getId())
-                                    .setPriority(event.getNewPriority())
-                                    .setDescription(view.getDescription())
-                                    .setLabelId(view.getLabelId())
-                                    .setLabelColor(view.getLabelColor())
-                                    .setDueDate(view.getDueDate())
-                                    .setCompleted(view.getCompleted())
-                                    .build();
-            }
-            updatedList.add(addedView);
-        }
-        return updatedList;
+        final TaskId targetTaskId = event.getId();
+
+        final TaskTransformation updateFn = builder -> builder.setPriority(event.getNewPriority());
+        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
+        return result;
     }
 
     /**
-     * Updates task description into  {@link TaskView}.
+     * Updates task description of the {@link TaskView}.
      *
      * @param views list of {@link TaskView}
      * @param event {@link TaskDescriptionUpdated} instance
@@ -318,25 +233,39 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskDescriptionUpdated event) {
+        final TaskId targetTaskId = event.getId();
+
+        final TaskTransformation updateFn = builder -> builder.setDescription(event.getNewDescription());
+        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
+        return result;
+    }
+
+    @SuppressWarnings("MethodWithMultipleLoops")    // It's fine, as there aren't a lot of transformations per task.
+    private static List<TaskView> transformWithUpdate(List<TaskView> views,
+                                                      TaskId targetTaskId,
+                                                      TaskTransformation transformation) {
         final int listSize = views.size();
         final List<TaskView> updatedList = new ArrayList<>(listSize);
         for (TaskView view : views) {
             TaskView addedView = view;
             final boolean willUpdate = view.getId()
-                                           .equals(event.getId());
+                                           .equals(targetTaskId);
             if (willUpdate) {
-                addedView = TaskView.newBuilder()
-                                    .setId(event.getId())
-                                    .setDescription(event.getNewDescription())
-                                    .setLabelId(view.getLabelId())
-                                    .setLabelColor(view.getLabelColor())
-                                    .setDueDate(view.getDueDate())
-                                    .setPriority(view.getPriority())
-                                    .setCompleted(view.getCompleted())
-                                    .build();
+                TaskView.Builder resultBuilder = newBuilder();
+
+                resultBuilder = resultBuilder.mergeFrom(view);
+                resultBuilder = transformation.apply(resultBuilder);
+
+                addedView = resultBuilder.build();
             }
             updatedList.add(addedView);
         }
         return updatedList;
+    }
+
+    /**
+     * Interface for flexible usage {@link Function} in case of task transformation.
+     */
+    private interface TaskTransformation extends Function<TaskView.Builder, TaskView.Builder> {
     }
 }

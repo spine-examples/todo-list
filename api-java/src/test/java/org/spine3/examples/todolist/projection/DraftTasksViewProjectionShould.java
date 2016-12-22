@@ -45,9 +45,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.LABEL_ID;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.TASK_ID;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.TASK_PRIORITY;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.UPDATED_DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelAssignedToTaskInstance;
@@ -70,73 +72,15 @@ public class DraftTasksViewProjectionShould {
                                                              .setValue(newUuid())
                                                              .build();
     private DraftTasksViewProjection projection;
-    private TaskDraftFinalized taskDraftFinalizedEvent;
-    private TaskDraftCreated taskDraftCreatedEvent;
-    private TaskDeleted taskDeletedEvent;
-    private TaskDueDateUpdated taskDueDateUpdatedEvent;
-    private TaskDescriptionUpdated taskDescriptionUpdatedEvent;
-    private TaskPriorityUpdated taskPriorityUpdatedEvent;
-    private LabelAssignedToTask labelAssignedToTaskEvent;
-    private LabelRemovedFromTask labelRemovedFromTaskEvent;
-    private LabelDetailsUpdated labelDetailsUpdatedEvent;
 
     @BeforeEach
     public void setUp() {
         projection = new DraftTasksViewProjection(TASK_LIST_ID);
-        taskDraftFinalizedEvent = taskDraftFinalizedInstance();
-        taskDeletedEvent = taskDeletedInstance();
-        taskDraftCreatedEvent = taskDraftCreatedInstance();
-        taskDescriptionUpdatedEvent = taskDescriptionUpdatedInstance();
-        taskDueDateUpdatedEvent = taskDueDateUpdatedInstance();
-        taskPriorityUpdatedEvent = taskPriorityUpdatedInstance();
-        labelAssignedToTaskEvent = labelAssignedToTaskInstance();
-        labelRemovedFromTaskEvent = labelRemovedFromTaskInstance();
-        labelDetailsUpdatedEvent = labelDetailsUpdatedInstance();
     }
 
     @Test
-    public void remove_task_view_from_state_when_it_is_finalized() {
-        int expectedListSize = 1;
-        projection.on(taskDraftCreatedEvent);
-        final TaskListView listView = projection.getState()
-                                                .getDraftTasks();
-        assertEquals(expectedListSize, listView.getItemsCount());
-
-        final TaskView taskView = listView.getItems(0);
-
-        matchExpectedValues(taskView);
-
-        projection.on(taskDraftFinalizedEvent);
-
-        expectedListSize = 0;
-        final List<TaskView> views = projection.getState()
-                                               .getDraftTasks()
-                                               .getItemsList();
-        assertEquals(expectedListSize, views.size());
-    }
-
-    @Test
-    public void remove_task_view_from_state_when_it_is_deleted() {
-        int expectedListSize = 1;
-        projection.on(taskDraftCreatedEvent);
-        final TaskListView listView = projection.getState()
-                                                .getDraftTasks();
-        assertEquals(expectedListSize, listView.getItemsCount());
-
-        final TaskView taskView = listView.getItems(0);
-        matchExpectedValues(taskView);
-
-        projection.on(taskDeletedEvent);
-
-        expectedListSize = 0;
-        final List<TaskView> views = projection.getState()
-                                               .getDraftTasks()
-                                               .getItemsList();
-        assertEquals(expectedListSize, views.size());
-    }
-
-    @Test
-    public void add_task_view_to_state_when_it_is_created() {
+    public void add_task_view_to_state_when_task_draft_is_created() {
+        final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
         final int expectedListSize = 1;
         projection.on(taskDraftCreatedEvent);
 
@@ -146,16 +90,46 @@ public class DraftTasksViewProjectionShould {
 
         final TaskView taskView = listView.getItems(0);
 
-        matchExpectedValues(taskView);
+        assertEquals(TASK_ID, taskView.getId());
+        assertEquals(DESCRIPTION, taskView.getDescription());
+        assertEquals(TASK_PRIORITY, taskView.getPriority());
+    }
+
+    @Test
+    public void remove_task_view_from_state_when_it_is_finalized() {
+        final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
+        final TaskDraftFinalized taskDraftFinalizedEvent = taskDraftFinalizedInstance();
+        projection.on(taskDraftCreatedEvent);
+        projection.on(taskDraftFinalizedEvent);
+
+        final List<TaskView> views = projection.getState()
+                                               .getDraftTasks()
+                                               .getItemsList();
+        assertTrue(views.isEmpty());
+    }
+
+    @Test
+    public void remove_task_view_from_state_when_it_is_deleted() {
+        final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
+        final TaskDeleted taskDeletedEvent = taskDeletedInstance();
+        projection.on(taskDraftCreatedEvent);
+        projection.on(taskDeletedEvent);
+
+        final List<TaskView> views = projection.getState()
+                                               .getDraftTasks()
+                                               .getItemsList();
+        assertTrue(views.isEmpty());
     }
 
     @Test
     public void update_task_description_when_handled_event_task_description_updated() {
+        final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
         projection.on(taskDraftCreatedEvent);
         final String updatedDescription = UPDATED_DESCRIPTION;
         final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
-        taskDescriptionUpdatedEvent = taskDescriptionUpdatedInstance(expectedTaskId, updatedDescription);
-        projection.on(taskDescriptionUpdatedEvent);
+        final TaskDescriptionUpdated descriptionUpdatedEvent =
+                taskDescriptionUpdatedInstance(expectedTaskId, updatedDescription);
+        projection.on(descriptionUpdatedEvent);
         final int expectedViewSize = 1;
         final TaskListView taskListView = projection.getState()
                                                     .getDraftTasks();
@@ -170,10 +144,12 @@ public class DraftTasksViewProjectionShould {
 
     @Test
     public void not_update_task_description_when_handled_event_task_description_updated_with_wrong_task_id() {
+        final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
         projection.on(taskDraftCreatedEvent);
         final String updatedDescription = UPDATED_DESCRIPTION;
-        taskDescriptionUpdatedEvent = taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), updatedDescription);
-        projection.on(taskDescriptionUpdatedEvent);
+        final TaskDescriptionUpdated descriptionUpdatedEvent =
+                taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), updatedDescription);
+        projection.on(descriptionUpdatedEvent);
         final int expectedViewListSize = 1;
         final TaskListView taskListView = projection.getState()
                                                     .getDraftTasks();
@@ -181,15 +157,17 @@ public class DraftTasksViewProjectionShould {
 
         final TaskView view = taskListView.getItemsList()
                                           .get(0);
+        assertEquals(TASK_ID, view.getId());
         assertNotEquals(updatedDescription, view.getDescription());
     }
 
     @Test
     public void update_task_due_date_when_handled_event_task_due_date_updated() {
+        final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
         projection.on(taskDraftCreatedEvent);
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
         final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
-        taskDueDateUpdatedEvent = taskDueDateUpdatedInstance(expectedTaskId, updatedDueDate);
+        final TaskDueDateUpdated taskDueDateUpdatedEvent = taskDueDateUpdatedInstance(expectedTaskId, updatedDueDate);
         projection.on(taskDueDateUpdatedEvent);
         final int expectedViewListSize = 1;
         final TaskListView taskListView = projection.getState()
@@ -204,9 +182,11 @@ public class DraftTasksViewProjectionShould {
 
     @Test
     public void not_update_task_due_date_when_handled_event_task_due_date_updated_with_wrong_task_id() {
+        final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
         projection.on(taskDraftCreatedEvent);
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
-        taskDueDateUpdatedEvent = taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), updatedDueDate);
+        final TaskDueDateUpdated taskDueDateUpdatedEvent =
+                taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), updatedDueDate);
         projection.on(taskDueDateUpdatedEvent);
         final int expectedViewListSize = 1;
         final TaskListView taskListView = projection.getState()
@@ -215,15 +195,18 @@ public class DraftTasksViewProjectionShould {
 
         final TaskView taskView = taskListView.getItemsList()
                                               .get(0);
+        assertEquals(TASK_ID, taskView.getId());
         assertNotEquals(updatedDueDate, taskView.getDueDate());
     }
 
     @Test
     public void update_task_priority_when_handled_event_task_priority_updated() {
+        final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
         projection.on(taskDraftCreatedEvent);
         final TaskPriority updatedTaskPriority = TaskPriority.LOW;
         final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
-        taskPriorityUpdatedEvent = taskPriorityUpdatedInstance(expectedTaskId, updatedTaskPriority);
+        final TaskPriorityUpdated taskPriorityUpdatedEvent =
+                taskPriorityUpdatedInstance(expectedTaskId, updatedTaskPriority);
         projection.on(taskPriorityUpdatedEvent);
         final int expectedViewListSize = 1;
         final TaskListView taskListView = projection.getState()
@@ -238,9 +221,11 @@ public class DraftTasksViewProjectionShould {
 
     @Test
     public void not_update_task_priority_when_handled_event_task_priority_updated_with_wrong_task_id() {
+        final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
         projection.on(taskDraftCreatedEvent);
         final TaskPriority updatedTaskPriority = TaskPriority.LOW;
-        taskPriorityUpdatedEvent = taskPriorityUpdatedInstance(TaskId.getDefaultInstance(), updatedTaskPriority);
+        final TaskPriorityUpdated taskPriorityUpdatedEvent =
+                taskPriorityUpdatedInstance(TaskId.getDefaultInstance(), updatedTaskPriority);
         projection.on(taskPriorityUpdatedEvent);
         final int expectedViewListSize = 1;
         final TaskListView taskListView = projection.getState()
@@ -249,17 +234,20 @@ public class DraftTasksViewProjectionShould {
 
         final TaskView taskView = taskListView.getItemsList()
                                               .get(0);
+        assertEquals(TASK_ID, taskView.getId());
         assertNotEquals(updatedTaskPriority, taskView.getPriority());
     }
 
     @Test
     public void update_label_details_when_handled_event_label_details_updated() {
+        final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
         projection.on(taskDraftCreatedEvent);
         final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
-        labelAssignedToTaskEvent = labelAssignedToTaskInstance(expectedTaskId, LABEL_ID);
+        final LabelAssignedToTask labelAssignedToTaskEvent = labelAssignedToTaskInstance(expectedTaskId, LABEL_ID);
         projection.on(labelAssignedToTaskEvent);
         final LabelColor updatedColor = LabelColor.BLUE;
-        labelDetailsUpdatedEvent = labelDetailsUpdatedInstance(updatedColor, UPDATED_LABEL_TITLE);
+        final LabelDetailsUpdated labelDetailsUpdatedEvent =
+                labelDetailsUpdatedInstance(updatedColor, UPDATED_LABEL_TITLE);
         projection.on(labelDetailsUpdatedEvent);
         final int expectedViewListSize = 1;
         final TaskListView taskListView = projection.getState()
@@ -274,12 +262,15 @@ public class DraftTasksViewProjectionShould {
 
     @Test
     public void not_update_label_details_when_handled_event_label_details_updated_with_wrong_label_id() {
+        final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
         projection.on(taskDraftCreatedEvent);
         final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
-        labelAssignedToTaskEvent = labelAssignedToTaskInstance(expectedTaskId, TaskLabelId.getDefaultInstance());
+        final LabelAssignedToTask labelAssignedToTaskEvent =
+                labelAssignedToTaskInstance(expectedTaskId, TaskLabelId.getDefaultInstance());
         projection.on(labelAssignedToTaskEvent);
         final LabelColor updatedColor = LabelColor.BLUE;
-        labelDetailsUpdatedEvent = labelDetailsUpdatedInstance(updatedColor, UPDATED_LABEL_TITLE);
+        final LabelDetailsUpdated labelDetailsUpdatedEvent =
+                labelDetailsUpdatedInstance(updatedColor, UPDATED_LABEL_TITLE);
         projection.on(labelDetailsUpdatedEvent);
         final int expectedViewListSize = 1;
         final TaskListView taskListView = projection.getState()
@@ -288,11 +279,15 @@ public class DraftTasksViewProjectionShould {
 
         final TaskView taskView = taskListView.getItemsList()
                                               .get(0);
+        assertEquals(TASK_ID, taskView.getId());
         assertNotEquals(updatedColor, taskView.getLabelColor());
     }
 
     @Test
     public void remove_label_from_task_view_when_handled_event_label_removed_from_task() {
+        final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
+        final LabelAssignedToTask labelAssignedToTaskEvent = labelAssignedToTaskInstance();
+        final LabelRemovedFromTask labelRemovedFromTaskEvent = labelRemovedFromTaskInstance();
         projection.on(taskDraftCreatedEvent);
         projection.on(labelAssignedToTaskEvent);
         projection.on(labelRemovedFromTaskEvent);
@@ -304,11 +299,7 @@ public class DraftTasksViewProjectionShould {
 
         final TaskView taskView = taskListView.getItemsList()
                                               .get(0);
+        assertEquals(TASK_ID, taskView.getId());
         assertNotEquals(LABEL_ID, taskView.getLabelId());
-    }
-
-    private static void matchExpectedValues(TaskView view) {
-        assertEquals(DESCRIPTION, view.getDescription());
-        assertEquals(TASK_PRIORITY, view.getPriority());
     }
 }

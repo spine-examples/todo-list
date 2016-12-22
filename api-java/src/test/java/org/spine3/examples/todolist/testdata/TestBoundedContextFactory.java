@@ -31,11 +31,7 @@ import org.spine3.server.storage.memory.InMemoryStorageFactory;
  */
 public class TestBoundedContextFactory {
 
-    /**
-     * Prevent instantiation.
-     */
     private TestBoundedContextFactory() {
-        throw new UnsupportedOperationException("Cannot be instantiated.");
     }
 
     /**

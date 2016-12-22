@@ -56,11 +56,7 @@ public class TestTaskCommandFactory {
     public static final String DESCRIPTION = "Create command description.";
     public static final Timestamp DUE_DATE = Timestamps.getCurrentTime();
 
-    /**
-     * Prevent instantiation.
-     */
     private TestTaskCommandFactory() {
-        throw new UnsupportedOperationException();
     }
 
     /**
@@ -201,8 +197,8 @@ public class TestTaskCommandFactory {
      */
     public static CreateDraft createDraftInstance() {
         final CreateDraft result = CreateDraft.newBuilder()
-                                             .setId(TASK_ID)
-                                             .build();
+                                              .setId(TASK_ID)
+                                              .build();
         return result;
     }
 

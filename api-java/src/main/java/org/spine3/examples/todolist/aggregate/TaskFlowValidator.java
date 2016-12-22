@@ -86,7 +86,7 @@ import org.spine3.examples.todolist.TaskStatus;
      *
      * <p>If it is COMPLETED or DELETED {@link TaskStatus} state, throws {@link IllegalStateException}.
      *
-     * @param currentStatus task's current state {@link TaskStatus}
+     * @param currentStatus task current state {@link TaskStatus}
      * @throws IllegalStateException if status, passed to the method,
      *                               {@code TaskStatus.COMPLETED} or {@code TaskStatus.DELETED}.
      */

@@ -22,9 +22,6 @@ package org.spine3.examples.todolist.testdata;
 
 import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelCreated;
-import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.UpdateLabelDetails;
@@ -44,11 +41,7 @@ public class TestTaskLabelCommandFactory {
                                                           .setValue(newUuid())
                                                           .build();
 
-    /**
-     * Prevent instantiation.
-     */
     private TestTaskLabelCommandFactory() {
-        throw new UnsupportedOperationException();
     }
 
     /**
@@ -74,7 +67,7 @@ public class TestTaskLabelCommandFactory {
     }
 
     /**
-     * Provides {@link UpdateLabelDetails} event by specified label's color and title.
+     * Provides {@link UpdateLabelDetails} event by specified label color and title.
      *
      * @param color {@link LabelColor} enum value.
      * @param title String value

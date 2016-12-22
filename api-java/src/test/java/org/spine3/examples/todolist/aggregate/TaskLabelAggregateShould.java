@@ -53,20 +53,16 @@ public class TaskLabelAggregateShould {
                                                      .setValue(newUuid())
                                                      .build();
     private TaskLabelAggregate aggregate;
-    private CreateBasicLabel createLabelCmd;
-    private UpdateLabelDetails updateLabelDetailsCmd;
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         aggregate = new TaskLabelAggregate(ID);
-        createLabelCmd = createLabelInstance();
-        updateLabelDetailsCmd = updateLabelDetailsInstance();
     }
 
     @Test
     public void emit_label_created_event_upon_create_task_label_command() {
+        final CreateBasicLabel createLabelCmd = createLabelInstance();
         final int expectedListSize = 1;
-
         final List<? extends com.google.protobuf.Message> messageList =
                 aggregate.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
 
@@ -85,8 +81,8 @@ public class TaskLabelAggregateShould {
 
     @Test
     public void emit_label_details_updated_event_upon_update_label_details_command() {
+        final UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance();
         final int expectedListSize = 1;
-
         final List<? extends com.google.protobuf.Message> messageList =
                 aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
 
@@ -103,6 +99,7 @@ public class TaskLabelAggregateShould {
 
     @Test
     public void emit_label_created_event_upon_create_label_command() {
+        final CreateBasicLabel createLabelCmd = createLabelInstance();
         aggregate.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
 
         final TaskLabel state = aggregate.getState();
@@ -114,6 +111,7 @@ public class TaskLabelAggregateShould {
 
     @Test
     public void change_current_state_when_label_details_updated_two_times() {
+        UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance();
         aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
         TaskLabel state = aggregate.getState();
 
