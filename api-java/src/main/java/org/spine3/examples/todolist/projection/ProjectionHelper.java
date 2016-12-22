@@ -145,7 +145,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Add label to {@link TaskView}, which contains into list.
+     * Add label to the {@link TaskView}, which contains into list.
      *
      * @param views list of {@link TaskView}
      * @param event {@link LabelAssignedToTask} instance
@@ -193,7 +193,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Updates task due date of the  {@link TaskView}.
+     * Updates task due date of the {@link TaskView}.
      *
      * @param views list of {@link TaskView}
      * @param event {@link TaskDueDateUpdated} instance
@@ -209,7 +209,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Updates task priority of the  {@link TaskView}.
+     * Updates task priority of the {@link TaskView}.
      *
      * @param views list of {@link TaskView}
      * @param event {@link TaskPriorityUpdated} instance
