@@ -68,6 +68,9 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
  */
 public class MyListViewProjectionShould {
 
+    private static final TaskListId ID = TaskListId.newBuilder()
+                                                   .setValue(newUuid())
+                                                   .build();
     private MyListViewProjection projection;
     private TaskCreated taskCreatedEvent;
     private TaskDeleted taskDeletedEvent;
@@ -78,9 +81,6 @@ public class MyListViewProjectionShould {
     private LabelAssignedToTask labelAssignedToTaskEvent;
     private TaskCompleted taskCompletedEvent;
     private TaskReopened taskReopenedEvent;
-    private static final TaskListId ID = TaskListId.newBuilder()
-                                                   .setValue(newUuid())
-                                                   .build();
 
     @BeforeEach
     void setUp() {
@@ -137,7 +137,7 @@ public class MyListViewProjectionShould {
     }
 
     @Test
-    public void update_task_description_when_handled_task_description_updated_event() {
+    public void update_task_description_when_handled_event_task_description_updated() {
         projection.on(taskCreatedEvent);
         final String updatedDescription = UPDATED_DESCRIPTION;
         final TaskId expectedTaskId = taskCreatedEvent.getId();
@@ -156,7 +156,7 @@ public class MyListViewProjectionShould {
     }
 
     @Test
-    public void not_update_task_description_when_handled_task_description_updated_event_with_wrong_task_id() {
+    public void not_update_task_description_when_handled_event_task_description_updated_with_wrong_task_id() {
         projection.on(taskCreatedEvent);
         final String updatedDescription = UPDATED_DESCRIPTION;
         taskDescriptionUpdatedEvent = taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), updatedDescription);
@@ -172,7 +172,7 @@ public class MyListViewProjectionShould {
     }
 
     @Test
-    public void update_task_due_date_when_handled_task_due_date_updated_event() {
+    public void update_task_due_date_when_handled_event_task_due_date_updated() {
         projection.on(taskCreatedEvent);
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
         final TaskId expectedTaskId = taskCreatedEvent.getId();
@@ -190,7 +190,7 @@ public class MyListViewProjectionShould {
     }
 
     @Test
-    public void not_update_task_due_date_when_handled_task_due_date_updated_event_with_wrong_task_id() {
+    public void not_update_task_due_date_when_handled_event_task_due_date_updated_with_wrong_task_id() {
         projection.on(taskCreatedEvent);
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
         taskDueDateUpdatedEvent = taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), updatedDueDate);
@@ -206,7 +206,7 @@ public class MyListViewProjectionShould {
     }
 
     @Test
-    public void update_task_priority_when_handled_task_priority_updated_event() {
+    public void update_task_priority_when_handled_event_task_priority_updated() {
         projection.on(taskCreatedEvent);
         final TaskPriority updatedTaskPriority = TaskPriority.LOW;
         final TaskId expectedTaskId = taskCreatedEvent.getId();
@@ -224,7 +224,7 @@ public class MyListViewProjectionShould {
     }
 
     @Test
-    public void not_update_task_priority_when_handled_task_priority_updated_event_with_wrong_task_id() {
+    public void not_update_task_priority_when_handled_event_task_priority_updated_with_wrong_task_id() {
         projection.on(taskCreatedEvent);
         final TaskPriority updatedTaskPriority = TaskPriority.LOW;
         taskPriorityUpdatedEvent = taskPriorityUpdatedInstance(TaskId.getDefaultInstance(), updatedTaskPriority);
@@ -240,7 +240,7 @@ public class MyListViewProjectionShould {
     }
 
     @Test
-    public void update_label_details_when_handled_label_details_updated_event() {
+    public void update_label_details_when_handled_event_label_details_updated() {
         projection.on(taskCreatedEvent);
         final TaskId expectedTaskId = taskCreatedEvent.getId();
         labelAssignedToTaskEvent = labelAssignedToTaskInstance(expectedTaskId, LABEL_ID);
@@ -260,7 +260,7 @@ public class MyListViewProjectionShould {
     }
 
     @Test
-    public void not_update_label_details_when_handled_label_details_updated_event_with_wrong_label_id() {
+    public void not_update_label_details_when_handled_event_label_details_updated_with_wrong_label_id() {
         projection.on(taskCreatedEvent);
         final TaskId expectedTaskId = taskCreatedEvent.getId();
         labelAssignedToTaskEvent = labelAssignedToTaskInstance(expectedTaskId, TaskLabelId.getDefaultInstance());
@@ -279,7 +279,7 @@ public class MyListViewProjectionShould {
     }
 
     @Test
-    public void update_completed_when_handled_task_completed_event() {
+    public void update_completed_when_handled_event_task_completed() {
         projection.on(taskCreatedEvent);
         projection.on(taskCompletedEvent);
         final int expectedViewListSize = 1;
@@ -293,7 +293,7 @@ public class MyListViewProjectionShould {
     }
 
     @Test
-    public void not_update_completed_when_handled_task_completed_event_with_wrong_task_id() {
+    public void not_update_completed_when_handled_event_task_completed_with_wrong_task_id() {
         projection.on(taskCreatedEvent);
         taskCompletedEvent = taskCompletedInstance(TaskId.getDefaultInstance());
         projection.on(taskCompletedEvent);
@@ -308,7 +308,7 @@ public class MyListViewProjectionShould {
     }
 
     @Test
-    public void update_completed_when_handled_task_reopened_event() {
+    public void update_completed_when_handled_event_task_reopened() {
         projection.on(taskCreatedEvent);
         projection.on(taskCompletedEvent);
         projection.on(taskReopenedEvent);
@@ -323,7 +323,7 @@ public class MyListViewProjectionShould {
     }
 
     @Test
-    public void not_update_completed_when_handled_task_reopened_event_with_wrong_task_id() {
+    public void not_update_completed_when_handled_event_task_reopened_with_wrong_task_id() {
         projection.on(taskCreatedEvent);
         projection.on(taskCompletedEvent);
         taskReopenedEvent = taskReopenedInstance(TaskId.getDefaultInstance());

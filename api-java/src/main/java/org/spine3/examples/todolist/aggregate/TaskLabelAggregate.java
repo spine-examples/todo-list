@@ -55,9 +55,12 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
 
     @Assign
     public List<? extends Message> handle(CreateBasicLabel cmd) {
+        final LabelDetails.Builder labelDetails = LabelDetails.newBuilder()
+                                                              .setColor(LabelColor.GRAY)
+                                                              .setTitle(cmd.getLabelTitle());
         final LabelCreated result = LabelCreated.newBuilder()
-                                                .setDetails(LabelDetails.newBuilder()
-                                                                        .setTitle(cmd.getLabelTitle()))
+                                                .setId(cmd.getLabelId())
+                                                .setDetails(labelDetails)
                                                 .build();
         return Collections.singletonList(result);
     }

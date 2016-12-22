@@ -64,7 +64,6 @@ public class TestEventFactory {
     public static final TaskId TASK_ID = TaskId.newBuilder()
                                                .setValue(newUuid())
                                                .build();
-
     private static final Timestamp CREATION_TIME = Timestamps.getCurrentTime();
 
     /**

@@ -45,9 +45,9 @@ import static org.spine3.examples.todolist.projection.ProjectionHelper.construct
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
 
 /**
- * A projection state of created tasks.
+ * A projection state of the finalized tasks.
  *
- * <p> Contains the data about the task list view.
+ * <p> Contains the task list view items.
  * <p> This view includes all tasks that are not in a draft state and not deleted.
  *
  * @author Illia Shepilov

@@ -58,6 +58,7 @@ public class TestTaskLabelCommandFactory {
      */
     public static CreateBasicLabel createLabelInstance() {
         final CreateBasicLabel result = CreateBasicLabel.newBuilder()
+                                                        .setLabelId(LABEL_ID)
                                                         .setLabelTitle(LABEL_TITLE)
                                                         .build();
         return result;

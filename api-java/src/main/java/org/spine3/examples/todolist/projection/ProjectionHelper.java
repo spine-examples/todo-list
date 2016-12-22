@@ -65,10 +65,7 @@ import java.util.List;
                                                      .equals(id))
                                        .findFirst()
                                        .orElse(null);
-        views.remove(taskView);
-        final TaskListView result = TaskListView.newBuilder()
-                                                .addAllItems(views)
-                                                .build();
+        final TaskListView result = getTaskListView(views, taskView);
         return result;
     }
 
@@ -86,10 +83,14 @@ import java.util.List;
                                                      .equals(id))
                                        .findFirst()
                                        .orElse(null);
+        final TaskListView result = getTaskListView(views, taskView);
+        return result;
+    }
+
+    private static TaskListView getTaskListView(List<TaskView> views, TaskView taskView) {
         if (taskView != null) {
             views.remove(taskView);
         }
-
         final TaskListView result = TaskListView.newBuilder()
                                                 .addAllItems(views)
                                                 .build();
@@ -105,7 +106,8 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, LabelDetailsUpdated event) {
-        final List<TaskView> updatedList = new ArrayList<>();
+        final int listSize = views.size();
+        final List<TaskView> updatedList = new ArrayList<>(listSize);
         for (TaskView view : views) {
             TaskView addedView = view;
             final boolean willUpdate = view.getLabelId()
@@ -134,7 +136,8 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, LabelRemovedFromTask event) {
-        final List<TaskView> updatedList = new ArrayList<>();
+        final int listSize = views.size();
+        final List<TaskView> updatedList = new ArrayList<>(listSize);
         for (TaskView view : views) {
             TaskView addedView = view;
             final boolean isRemoved = view.getId()
@@ -161,7 +164,8 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, LabelAssignedToTask event) {
-        final List<TaskView> updatedList = new ArrayList<>();
+        final int listSize = views.size();
+        final List<TaskView> updatedList = new ArrayList<>(listSize);
         for (TaskView view : views) {
             TaskView addedView = view;
             final boolean willUpdate = view.getId()
@@ -190,7 +194,8 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskReopened event) {
-        final List<TaskView> updatedList = new ArrayList<>();
+        final int listSize = views.size();
+        final List<TaskView> updatedList = new ArrayList<>(listSize);
         for (TaskView view : views) {
             TaskView addedView = view;
             final boolean willUpdate = view.getId()
@@ -220,7 +225,8 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskCompleted event) {
-        final List<TaskView> updatedList = new ArrayList<>();
+        final int listSize = views.size();
+        final List<TaskView> updatedList = new ArrayList<>(listSize);
         for (TaskView view : views) {
             TaskView addedView = view;
             final boolean willUpdate = view.getId()
@@ -250,7 +256,8 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskDueDateUpdated event) {
-        final List<TaskView> updatedList = new ArrayList<>();
+        final int listSize = views.size();
+        final List<TaskView> updatedList = new ArrayList<>(listSize);
         for (TaskView view : views) {
             TaskView addedView = view;
             final boolean willUpdate = view.getId()
@@ -280,7 +287,8 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskPriorityUpdated event) {
-        final List<TaskView> updatedList = new ArrayList<>();
+        final int listSize = views.size();
+        final List<TaskView> updatedList = new ArrayList<>(listSize);
         for (TaskView view : views) {
             TaskView addedView = view;
             final boolean willUpdate = view.getId()
@@ -310,7 +318,8 @@ import java.util.List;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskDescriptionUpdated event) {
-        final List<TaskView> updatedList = new ArrayList<>();
+        final int listSize = views.size();
+        final List<TaskView> updatedList = new ArrayList<>(listSize);
         for (TaskView view : views) {
             TaskView addedView = view;
             final boolean willUpdate = view.getId()

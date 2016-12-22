@@ -36,17 +36,18 @@ import java.util.function.Function;
  */
 public class TestEventEnricherFactory {
 
+    public static final String LABEL_TITLE = "title";
+    private static final LabelDetails LABEL_DETAILS = LabelDetails.newBuilder()
+                                                                  .setTitle(LABEL_TITLE)
+                                                                  .setColor(LabelColor.BLUE)
+                                                                  .build();
+
     /**
      * Prevent instantiation.
      */
     private TestEventEnricherFactory() {
         throw new UnsupportedOperationException();
     }
-
-    private static final LabelDetails LABEL_DETAILS = LabelDetails.newBuilder()
-                                                                  .setTitle("title")
-                                                                  .setColor(LabelColor.BLUE)
-                                                                  .build();
 
     private static final Function<TaskLabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS =
             new Function<TaskLabelId, LabelDetails>() {

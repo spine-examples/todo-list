@@ -44,23 +44,21 @@ import org.spine3.protobuf.Timestamps;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Identifiers.newUuid;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.LABEL_ID;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.TASK_PRIORITY;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.UPDATED_DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelAssignedToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelDetailsUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelRemovedFromTaskInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskCompletedInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDeletedInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDescriptionUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDraftCreatedInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDraftFinalizedInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDueDateUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.taskPriorityUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskReopenedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.UPDATED_LABEL_TITLE;
 
 /**
@@ -68,6 +66,9 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
  */
 public class DraftTasksViewProjectionShould {
 
+    private static final TaskListId TASK_LIST_ID = TaskListId.newBuilder()
+                                                             .setValue(newUuid())
+                                                             .build();
     private DraftTasksViewProjection projection;
     private TaskDraftFinalized taskDraftFinalizedEvent;
     private TaskDraftCreated taskDraftCreatedEvent;
@@ -78,13 +79,10 @@ public class DraftTasksViewProjectionShould {
     private LabelAssignedToTask labelAssignedToTaskEvent;
     private LabelRemovedFromTask labelRemovedFromTaskEvent;
     private LabelDetailsUpdated labelDetailsUpdatedEvent;
-    private final TaskListId ID = TaskListId.newBuilder()
-                                            .setValue(newUuid())
-                                            .build();
 
     @BeforeEach
     public void setUp() {
-        projection = new DraftTasksViewProjection(ID);
+        projection = new DraftTasksViewProjection(TASK_LIST_ID);
         taskDraftFinalizedEvent = taskDraftFinalizedInstance();
         taskDeletedEvent = taskDeletedInstance();
         taskDraftCreatedEvent = taskDraftCreatedInstance();
@@ -98,10 +96,19 @@ public class DraftTasksViewProjectionShould {
 
     @Test
     public void remove_task_view_from_state_when_it_is_finalized() {
-        final int expectedListSize = 0;
+        int expectedListSize = 1;
         projection.on(taskDraftCreatedEvent);
+        final TaskListView listView = projection.getState()
+                                                .getDraftTasks();
+        assertEquals(expectedListSize, listView.getItemsCount());
+
+        final TaskView taskView = listView.getItems(0);
+
+        matchExpectedValues(taskView);
+
         projection.on(taskDraftFinalizedEvent);
 
+        expectedListSize = 0;
         final List<TaskView> views = projection.getState()
                                                .getDraftTasks()
                                                .getItemsList();
@@ -110,10 +117,18 @@ public class DraftTasksViewProjectionShould {
 
     @Test
     public void remove_task_view_from_state_when_it_is_deleted() {
-        final int expectedListSize = 0;
+        int expectedListSize = 1;
         projection.on(taskDraftCreatedEvent);
+        final TaskListView listView = projection.getState()
+                                                .getDraftTasks();
+        assertEquals(expectedListSize, listView.getItemsCount());
+
+        final TaskView taskView = listView.getItems(0);
+        matchExpectedValues(taskView);
+
         projection.on(taskDeletedEvent);
 
+        expectedListSize = 0;
         final List<TaskView> views = projection.getState()
                                                .getDraftTasks()
                                                .getItemsList();
@@ -125,14 +140,17 @@ public class DraftTasksViewProjectionShould {
         final int expectedListSize = 1;
         projection.on(taskDraftCreatedEvent);
 
-        final List<TaskView> views = projection.getState()
-                                               .getDraftTasks()
-                                               .getItemsList();
-        assertEquals(expectedListSize, views.size());
+        final TaskListView listView = projection.getState()
+                                                .getDraftTasks();
+        assertEquals(expectedListSize, listView.getItemsCount());
+
+        final TaskView taskView = listView.getItems(0);
+
+        matchExpectedValues(taskView);
     }
 
     @Test
-    public void update_task_description_when_handled_task_description_updated_event() {
+    public void update_task_description_when_handled_event_task_description_updated() {
         projection.on(taskDraftCreatedEvent);
         final String updatedDescription = UPDATED_DESCRIPTION;
         final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
@@ -151,7 +169,7 @@ public class DraftTasksViewProjectionShould {
     }
 
     @Test
-    public void not_update_task_description_when_handled_task_description_updated_event_with_wrong_task_id() {
+    public void not_update_task_description_when_handled_event_task_description_updated_with_wrong_task_id() {
         projection.on(taskDraftCreatedEvent);
         final String updatedDescription = UPDATED_DESCRIPTION;
         taskDescriptionUpdatedEvent = taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), updatedDescription);
@@ -167,7 +185,7 @@ public class DraftTasksViewProjectionShould {
     }
 
     @Test
-    public void update_task_due_date_when_handled_task_due_date_updated_event() {
+    public void update_task_due_date_when_handled_event_task_due_date_updated() {
         projection.on(taskDraftCreatedEvent);
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
         final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
@@ -185,7 +203,7 @@ public class DraftTasksViewProjectionShould {
     }
 
     @Test
-    public void not_update_task_due_date_when_handled_task_due_date_updated_event_with_wrong_task_id() {
+    public void not_update_task_due_date_when_handled_event_task_due_date_updated_with_wrong_task_id() {
         projection.on(taskDraftCreatedEvent);
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
         taskDueDateUpdatedEvent = taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), updatedDueDate);
@@ -201,7 +219,7 @@ public class DraftTasksViewProjectionShould {
     }
 
     @Test
-    public void update_task_priority_when_handled_task_priority_updated_event() {
+    public void update_task_priority_when_handled_event_task_priority_updated() {
         projection.on(taskDraftCreatedEvent);
         final TaskPriority updatedTaskPriority = TaskPriority.LOW;
         final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
@@ -219,7 +237,7 @@ public class DraftTasksViewProjectionShould {
     }
 
     @Test
-    public void not_update_task_priority_when_handled_task_priority_updated_event_with_wrong_task_id() {
+    public void not_update_task_priority_when_handled_event_task_priority_updated_with_wrong_task_id() {
         projection.on(taskDraftCreatedEvent);
         final TaskPriority updatedTaskPriority = TaskPriority.LOW;
         taskPriorityUpdatedEvent = taskPriorityUpdatedInstance(TaskId.getDefaultInstance(), updatedTaskPriority);
@@ -235,7 +253,7 @@ public class DraftTasksViewProjectionShould {
     }
 
     @Test
-    public void update_label_details_when_handled_label_details_updated_event() {
+    public void update_label_details_when_handled_event_label_details_updated() {
         projection.on(taskDraftCreatedEvent);
         final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
         labelAssignedToTaskEvent = labelAssignedToTaskInstance(expectedTaskId, LABEL_ID);
@@ -255,7 +273,7 @@ public class DraftTasksViewProjectionShould {
     }
 
     @Test
-    public void not_update_label_details_when_handled_label_details_updated_event_with_wrong_label_id() {
+    public void not_update_label_details_when_handled_event_label_details_updated_with_wrong_label_id() {
         projection.on(taskDraftCreatedEvent);
         final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
         labelAssignedToTaskEvent = labelAssignedToTaskInstance(expectedTaskId, TaskLabelId.getDefaultInstance());
@@ -274,7 +292,7 @@ public class DraftTasksViewProjectionShould {
     }
 
     @Test
-    public void remove_label_from_task_view_when_handled_label_removed_from_task_event(){
+    public void remove_label_from_task_view_when_handled_event_label_removed_from_task() {
         projection.on(taskDraftCreatedEvent);
         projection.on(labelAssignedToTaskEvent);
         projection.on(labelRemovedFromTaskEvent);
@@ -287,5 +305,10 @@ public class DraftTasksViewProjectionShould {
         final TaskView taskView = taskListView.getItemsList()
                                               .get(0);
         assertNotEquals(LABEL_ID, taskView.getLabelId());
+    }
+
+    private static void matchExpectedValues(TaskView view) {
+        assertEquals(DESCRIPTION, view.getDescription());
+        assertEquals(TASK_PRIORITY, view.getPriority());
     }
 }

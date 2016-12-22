@@ -30,31 +30,36 @@ import org.spine3.examples.todolist.TaskStatus;
 /* package */ enum TaskStatusTransition {
 
     /**
-     * Task draft.
+     * Finalize a task draft.
      */
     FINALIZE_DRAFT(TaskStatus.DRAFT, TaskStatus.FINALIZED),
+
     /**
      * Complete a task.
      */
     COMPLETE_TASK(TaskStatus.FINALIZED, TaskStatus.COMPLETED),
+
     /**
      * Reopen a completed task.
      */
     REOPEN_TASK(TaskStatus.COMPLETED, TaskStatus.OPEN),
+
     /**
      * Delete a task.
      */
     DELETE_FINALIZED_TASK(TaskStatus.FINALIZED, TaskStatus.DELETED),
+
     /**
      * Delete a draft.
      */
     DELETE_DRAFT_TASK(TaskStatus.DRAFT, TaskStatus.DELETED),
+
     /**
      * Restore a deleted task.
      */
     RESTORE_DELETED_TASK(TaskStatus.DELETED, TaskStatus.OPEN);
 
-    /* package */TaskStatusTransition(TaskStatus currentStatus, TaskStatus newStatus) {
+    /* package */ TaskStatusTransition(TaskStatus currentStatus, TaskStatus newStatus) {
         this.currentStatus = currentStatus;
         this.newStatus = newStatus;
     }
@@ -63,6 +68,7 @@ import org.spine3.examples.todolist.TaskStatus;
      * Current status of the task.
      */
     private final TaskStatus currentStatus;
+
     /**
      * New status of the task gets after transition.
      */
