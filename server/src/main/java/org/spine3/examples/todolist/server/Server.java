@@ -20,11 +20,18 @@
 
 package org.spine3.examples.todolist.server;
 
-import com.google.common.base.Function;
+import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.Task;
+import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.TaskLabel;
+import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.aggregate.TaskAggregate;
+import org.spine3.examples.todolist.aggregate.TaskLabelAggregate;
+import org.spine3.examples.todolist.repository.DraftTasksViewRepository;
+import org.spine3.examples.todolist.repository.LabelledTasksViewRepository;
 import org.spine3.examples.todolist.repository.MyListViewProjectionRepository;
 import org.spine3.examples.todolist.repository.TaskAggregateRepository;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.repository.TaskLabelAggregateRepository;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.CommandService;
 import org.spine3.server.QueryService;
@@ -36,6 +43,7 @@ import org.spine3.server.transport.GrpcContainer;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.function.Function;
 
 import static org.spine3.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static org.spine3.server.event.EventStore.log;
@@ -49,29 +57,80 @@ public class Server {
 
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
-    private final Function<TaskLabelId, String> TASK_LABEL_ID_TO_STRING = new Function<TaskLabelId, String>() {
-        @Nullable
-        @Override
-        public String apply(@Nullable TaskLabelId input) {
-            return input != null ? input.getValue() : "";
-        }
-    };
-    private final Function<TaskId, String> TASK_ID_TO_STRING = new Function<TaskId, String>() {
-        @Nullable
-        @Override
-        public String apply(@Nullable TaskId input) {
-            return input != null ? input.getValue() : "";
-        }
-    };
+    private Function<TaskLabelId, LabelDetails> taskLabelIdToLabelDetails;
+    private Function<TaskId, LabelDetails> taskIdToLabelDetails;
+    private TaskAggregateRepository taskAggregateRepository;
+    private TaskLabelAggregateRepository taskLabelAggregateRepository;
+    private MyListViewProjectionRepository projectionRepository;
+    private LabelledTasksViewRepository labelledViewRepository;
+    private DraftTasksViewRepository draftTasksViewRepository;
 
     public Server(StorageFactory storageFactory) {
+        initRepositories(storageFactory);
+        initiEnricherFunctions();
         final EventEnricher eventEnricher = initEventEnricher();
         this.boundedContext = initBoundedContext(storageFactory, eventEnricher);
-        initRepositories(storageFactory);
+        registerRepositories();
         final CommandService commandService = initCommandService();
         final QueryService queryService = initQueryService();
         final SubscriptionService subscriptionService = initSubscriptionService();
         this.grpcContainer = initGrpcContainer(commandService, subscriptionService, queryService);
+    }
+
+    private void initiEnricherFunctions() {
+        initLabelIdToDetailsFunction();
+        initTaskIdToDetailsFunction();
+    }
+
+    //TODO 2016-12-22:illia.shepilov check implementation.
+    private void initTaskIdToDetailsFunction() {
+        taskIdToLabelDetails =
+                new Function<TaskId, LabelDetails>() {
+                    @Nullable
+                    @Override
+                    public LabelDetails apply(@Nullable TaskId input) {
+                        final LabelDetails defaultInstance = LabelDetails.getDefaultInstance();
+                        if (input == null) {
+                            return defaultInstance;
+                        }
+                        final TaskAggregate taskAggregate = taskAggregateRepository.load(input);
+                        final Task state = taskAggregate.getState();
+                        final boolean isEmpty = state.getLabelIdsList()
+                                                     .isEmpty();
+                        if (isEmpty) {
+                            return defaultInstance;
+                        }
+                        final TaskLabelId labelId = state.getLabelIdsList()
+                                                         .get(0);
+                        final TaskLabelAggregate labelAggregate = taskLabelAggregateRepository.load(labelId);
+                        final TaskLabel labelState = labelAggregate.getState();
+                        final LabelDetails details = LabelDetails.newBuilder()
+                                                                 .setColor(labelState.getColor())
+                                                                 .setTitle(labelState.getTitle())
+                                                                 .build();
+                        return details;
+                    }
+                };
+    }
+
+    private void initLabelIdToDetailsFunction() {
+        taskLabelIdToLabelDetails =
+                new Function<TaskLabelId, LabelDetails>() {
+                    @Nullable
+                    @Override
+                    public LabelDetails apply(@Nullable TaskLabelId input) {
+                        if (input == null) {
+                            return LabelDetails.getDefaultInstance();
+                        }
+                        final TaskLabelAggregate aggregate = taskLabelAggregateRepository.load(input);
+                        final TaskLabel state = aggregate.getState();
+                        final LabelDetails details = LabelDetails.newBuilder()
+                                                                 .setColor(state.getColor())
+                                                                 .setTitle(state.getTitle())
+                                                                 .build();
+                        return details;
+                    }
+                };
     }
 
     private QueryService initQueryService() {
@@ -81,9 +140,9 @@ public class Server {
         return result;
     }
 
-    private GrpcContainer initGrpcContainer(CommandService commandService,
-                                            SubscriptionService subscriptionService,
-                                            QueryService queryService) {
+    private static GrpcContainer initGrpcContainer(CommandService commandService,
+                                                   SubscriptionService subscriptionService,
+                                                   QueryService queryService) {
         final GrpcContainer result = GrpcContainer.newBuilder()
                                                   .addService(commandService)
                                                   .addService(subscriptionService)
@@ -96,16 +155,16 @@ public class Server {
     private EventEnricher initEventEnricher() {
         final EventEnricher result = EventEnricher.newBuilder()
                                                   .addFieldEnrichment(TaskLabelId.class,
-                                                                      String.class,
-                                                                      TASK_LABEL_ID_TO_STRING)
+                                                                      LabelDetails.class,
+                                                                      taskLabelIdToLabelDetails::apply)
                                                   .addFieldEnrichment(TaskId.class,
-                                                                      String.class,
-                                                                      TASK_ID_TO_STRING)
+                                                                      LabelDetails.class,
+                                                                      taskIdToLabelDetails::apply)
                                                   .build();
         return result;
     }
 
-    private BoundedContext initBoundedContext(StorageFactory storageFactory, EventEnricher eventEnricher) {
+    private static BoundedContext initBoundedContext(StorageFactory storageFactory, EventEnricher eventEnricher) {
         final BoundedContext result = BoundedContext.newBuilder()
                                                     .setStorageFactory(storageFactory)
                                                     .setEventEnricher(eventEnricher)
@@ -114,14 +173,31 @@ public class Server {
     }
 
     private void initRepositories(StorageFactory storageFactory) {
-        final TaskAggregateRepository taskAggregateRepository = new TaskAggregateRepository(boundedContext);
+        taskAggregateRepository = new TaskAggregateRepository(boundedContext);
         taskAggregateRepository.initStorage(storageFactory);
-        boundedContext.register(taskAggregateRepository);
 
-        final MyListViewProjectionRepository projectionRepository = new MyListViewProjectionRepository(boundedContext);
+        taskLabelAggregateRepository = new TaskLabelAggregateRepository(boundedContext);
+        taskLabelAggregateRepository.initStorage(storageFactory);
+
+        projectionRepository = new MyListViewProjectionRepository(boundedContext);
         projectionRepository.initStorage(storageFactory);
-        boundedContext.register(projectionRepository);
         projectionRepository.setOnline();
+
+        labelledViewRepository = new LabelledTasksViewRepository(boundedContext);
+        labelledViewRepository.initStorage(storageFactory);
+        labelledViewRepository.setOnline();
+
+        draftTasksViewRepository = new DraftTasksViewRepository(boundedContext);
+        draftTasksViewRepository.initStorage(storageFactory);
+        draftTasksViewRepository.setOnline();
+    }
+
+    private void registerRepositories() {
+        boundedContext.register(taskAggregateRepository);
+        boundedContext.register(taskLabelAggregateRepository);
+        boundedContext.register(projectionRepository);
+        boundedContext.register(labelledViewRepository);
+        boundedContext.register(draftTasksViewRepository);
     }
 
     private SubscriptionService initSubscriptionService() {
