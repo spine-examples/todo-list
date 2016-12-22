@@ -27,13 +27,18 @@ import org.spine3.base.Events;
 import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.EnrichmentNotFoundException;
 import org.spine3.examples.todolist.LabelAssignedToTask;
-import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsByLabelIdEnrichment;
 import org.spine3.examples.todolist.LabelDetailsByTaskIdEnrichment;
+import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
+import org.spine3.examples.todolist.TaskCompleted;
 import org.spine3.examples.todolist.TaskDeleted;
+import org.spine3.examples.todolist.TaskDescriptionUpdated;
+import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.TaskPriorityUpdated;
+import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.view.LabelledTasksView;
 import org.spine3.examples.todolist.view.TaskListView;
 import org.spine3.examples.todolist.view.TaskView;
@@ -43,6 +48,7 @@ import org.spine3.server.projection.Projection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.spine3.examples.todolist.projection.ProjectionHelper.constructTaskViewList;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByLabelId;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
 
@@ -91,11 +97,8 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
 
     @Subscribe
     public void on(LabelRemovedFromTask event, EventContext context) {
-
-        final LabelDetailsByLabelIdEnrichment labelEnrichment = getEnrichment(
-                LabelDetailsByLabelIdEnrichment.class,
-                context);
-        final LabelDetailsByLabelIdEnrichment enrichment = getEnrichment(LabelDetailsByLabelIdEnrichment.class, context);
+        final LabelDetailsByLabelIdEnrichment enrichment = getEnrichment(LabelDetailsByLabelIdEnrichment.class,
+                                                                         context);
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList()
                                                .stream()
@@ -129,6 +132,105 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
         incrementState(state);
     }
 
+    @Subscribe
+    public void on(TaskDescriptionUpdated event, EventContext context) {
+        final LabelDetailsByTaskIdEnrichment enrichment = getEnrichment(LabelDetailsByTaskIdEnrichment.class, context);
+        final List<TaskView> views = getState().getLabelledTasks()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final LabelDetails labelDetails = enrichment.getLabelDetails();
+        final LabelledTasksView state =
+                constructLabelledViewBuilder(updatedList).setLabelTitle(labelDetails.getTitle())
+                                                         .setLabelColor(LabelColorView.valueOf(
+                                                                 labelDetails.getColor()))
+                                                         .build();
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(TaskPriorityUpdated event, EventContext context) {
+        final LabelDetailsByTaskIdEnrichment enrichment = getEnrichment(LabelDetailsByTaskIdEnrichment.class, context);
+        final LabelDetails labelDetails = enrichment.getLabelDetails();
+        final List<TaskView> views = getState().getLabelledTasks()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final LabelledTasksView state =
+                constructLabelledViewBuilder(updatedList).setLabelTitle(labelDetails.getTitle())
+                                                         .setLabelColor(LabelColorView.valueOf(
+                                                                 labelDetails.getColor()))
+                                                         .build();
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(TaskDueDateUpdated event, EventContext context) {
+        final LabelDetailsByTaskIdEnrichment enrichment = getEnrichment(LabelDetailsByTaskIdEnrichment.class, context);
+        final LabelDetails labelDetails = enrichment.getLabelDetails();
+        final List<TaskView> views = getState().getLabelledTasks()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final LabelledTasksView state =
+                constructLabelledViewBuilder(updatedList).setLabelTitle(labelDetails.getTitle())
+                                                         .setLabelColor(LabelColorView.valueOf(
+                                                                 labelDetails.getColor()))
+                                                         .build();
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(TaskCompleted event, EventContext context) {
+        final LabelDetailsByTaskIdEnrichment enrichment = getEnrichment(LabelDetailsByTaskIdEnrichment.class, context);
+        final LabelDetails labelDetails = enrichment.getLabelDetails();
+        final List<TaskView> views = getState().getLabelledTasks()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final LabelledTasksView state =
+                constructLabelledViewBuilder(updatedList).setLabelTitle(labelDetails.getTitle())
+                                                         .setLabelColor(LabelColorView.valueOf(
+                                                                 labelDetails.getColor()))
+                                                         .build();
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(TaskReopened event, EventContext context) {
+        final LabelDetailsByTaskIdEnrichment enrichment = getEnrichment(LabelDetailsByTaskIdEnrichment.class, context);
+        final LabelDetails labelDetails = enrichment.getLabelDetails();
+        final List<TaskView> views = getState().getLabelledTasks()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final LabelledTasksView state =
+                constructLabelledViewBuilder(updatedList).setLabelTitle(labelDetails.getTitle())
+                                                         .setLabelColor(LabelColorView.valueOf(
+                                                                 labelDetails.getColor()))
+                                                         .build();
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(LabelDetailsUpdated event, EventContext context) {
+        final LabelDetailsByLabelIdEnrichment enrichment = getEnrichment(LabelDetailsByLabelIdEnrichment.class, context);
+        final LabelDetails labelDetails = enrichment.getLabelDetails();
+        final List<TaskView> views = getState().getLabelledTasks()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final LabelledTasksView state =
+                constructLabelledViewBuilder(updatedList).setLabelTitle(labelDetails.getTitle())
+                                                         .setLabelColor(LabelColorView.valueOf(
+                                                                 labelDetails.getColor()))
+                                                         .build();
+        incrementState(state);
+    }
+
+    private LabelledTasksView.Builder constructLabelledViewBuilder(List<TaskView> updatedList) {
+        final TaskListView listView = TaskListView.newBuilder()
+                                                  .addAllItems(updatedList)
+                                                  .build();
+        final LabelledTasksView.Builder result = getState().newBuilderForType()
+                                                           .setLabelledTasks(listView);
+        return result;
+    }
+
     @SuppressWarnings("Guava")
     //As long as Spine API is based on Java 7, {@link Events#getEnrichment} uses Guava {@link Optional}.
     private static <T extends Message, E extends Class<T>> T getEnrichment(E enrichmentClass, EventContext context) {
@@ -156,34 +258,5 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
                                                    .setLabelTitle(labelDetails.getTitle())
                                                    .build();
         return result;
-    }
-
-    /**
-     * Supplies {@link LabelColor} with hexadecimal representation of color.
-     */
-    private enum LabelColorView {
-        RED_COLOR(LabelColor.RED, "#ff0000"),
-        BLUE_COLOR(LabelColor.BLUE, "#0000ff"),
-        GREEN_COLOR(LabelColor.GREEN, "#008000"),
-        GRAY_COLOR(LabelColor.GRAY, "#808080");
-
-        private static final String WRONG_LABEL_COLOR_EXCEPTION_MESSAGE = "No enum constant by specified label color: ";
-
-        private final LabelColor labelColor;
-        private final String hexColor;
-
-        LabelColorView(LabelColor labelColor, String hexColor) {
-            this.labelColor = labelColor;
-            this.hexColor = hexColor;
-        }
-
-        private static String valueOf(LabelColor labelColor) {
-            for (LabelColorView colorView : values()) {
-                if (colorView.labelColor == labelColor) {
-                    return colorView.hexColor;
-                }
-            }
-            throw new IllegalArgumentException(WRONG_LABEL_COLOR_EXCEPTION_MESSAGE + labelColor);
-        }
     }
 }

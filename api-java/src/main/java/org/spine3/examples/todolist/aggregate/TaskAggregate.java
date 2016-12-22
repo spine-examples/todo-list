@@ -95,9 +95,11 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     @Assign
     public List<? extends Message> handle(CreateBasicTask cmd) {
         validateCommand(cmd);
+        final TaskDetails.Builder taskDetails = TaskDetails.newBuilder()
+                                                           .setDescription(cmd.getDescription());
         final TaskCreated result = TaskCreated.newBuilder()
-                                              .setDetails(TaskDetails.newBuilder()
-                                                                     .setDescription(cmd.getDescription()))
+                                              .setId(cmd.getId())
+                                              .setDetails(taskDetails)
                                               .build();
         return Collections.singletonList(result);
     }

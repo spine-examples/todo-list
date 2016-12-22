@@ -20,11 +20,17 @@
 
 package org.spine3.examples.todolist.projection;
 
+import org.spine3.examples.todolist.LabelAssignedToTask;
+import org.spine3.examples.todolist.LabelDetailsUpdated;
+import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.TaskDeleted;
+import org.spine3.examples.todolist.TaskDescriptionUpdated;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskDraftCreated;
 import org.spine3.examples.todolist.TaskDraftFinalized;
+import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskListId;
+import org.spine3.examples.todolist.TaskPriorityUpdated;
 import org.spine3.examples.todolist.view.DraftTasksView;
 import org.spine3.examples.todolist.view.TaskListView;
 import org.spine3.examples.todolist.view.TaskView;
@@ -34,6 +40,7 @@ import org.spine3.server.projection.Projection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.spine3.examples.todolist.projection.ProjectionHelper.constructTaskViewList;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
 
 /**
@@ -101,5 +108,69 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
                                                .setDraftTasks(taskListView)
                                                .build();
         incrementState(state);
+    }
+
+    @Subscribe
+    public void on(TaskDescriptionUpdated event) {
+        final List<TaskView> views = getState().getDraftTasks()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final DraftTasksView state = constructDraftTasksViewState(updatedList);
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(TaskPriorityUpdated event) {
+        final List<TaskView> views = getState().getDraftTasks()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final DraftTasksView state = constructDraftTasksViewState(updatedList);
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(TaskDueDateUpdated event) {
+        final List<TaskView> views = getState().getDraftTasks()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final DraftTasksView state = constructDraftTasksViewState(updatedList);
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(LabelAssignedToTask event) {
+        final List<TaskView> views = getState().getDraftTasks()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final DraftTasksView state = constructDraftTasksViewState(updatedList);
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(LabelRemovedFromTask event) {
+        final List<TaskView> views = getState().getDraftTasks()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final DraftTasksView state = constructDraftTasksViewState(updatedList);
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(LabelDetailsUpdated event) {
+        final List<TaskView> views = getState().getDraftTasks()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final DraftTasksView state = constructDraftTasksViewState(updatedList);
+        incrementState(state);
+    }
+
+    private DraftTasksView constructDraftTasksViewState(List<TaskView> updatedList) {
+        final TaskListView listView = TaskListView.newBuilder()
+                                                  .addAllItems(updatedList)
+                                                  .build();
+        final DraftTasksView result = getState().newBuilderForType()
+                                                .setDraftTasks(listView)
+                                                .build();
+        return result;
     }
 }

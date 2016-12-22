@@ -20,10 +20,18 @@
 
 package org.spine3.examples.todolist.projection;
 
+import org.spine3.examples.todolist.LabelAssignedToTask;
+import org.spine3.examples.todolist.LabelDetailsUpdated;
+import org.spine3.examples.todolist.LabelRemovedFromTask;
+import org.spine3.examples.todolist.TaskCompleted;
 import org.spine3.examples.todolist.TaskCreated;
 import org.spine3.examples.todolist.TaskDeleted;
+import org.spine3.examples.todolist.TaskDescriptionUpdated;
 import org.spine3.examples.todolist.TaskDetails;
+import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskListId;
+import org.spine3.examples.todolist.TaskPriorityUpdated;
+import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.view.MyListView;
 import org.spine3.examples.todolist.view.TaskListView;
 import org.spine3.examples.todolist.view.TaskView;
@@ -33,12 +41,13 @@ import org.spine3.server.projection.Projection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.spine3.examples.todolist.projection.ProjectionHelper.constructTaskViewList;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
 
 /**
- * A projection state of created tasks.
+ * A projection state of the finalized tasks.
  *
- * <p> Contains the data about the task list view.
+ * <p> Contains the task list view items.
  * <p> This view includes all tasks that are not in a draft state and not deleted.
  *
  * @author Illia Shepilov
@@ -69,12 +78,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
                                                .stream()
                                                .collect(Collectors.toList());
         views.add(taskView);
-        final TaskListView taskListView = TaskListView.newBuilder()
-                                                      .addAllItems(views)
-                                                      .build();
-        final MyListView state = getState().newBuilderForType()
-                                           .setMyList(taskListView)
-                                           .build();
+        final MyListView state = constructMyListViewState(views);
         incrementState(state);
     }
 
@@ -89,5 +93,87 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
                                            .setMyList(taskListView)
                                            .build();
         incrementState(state);
+    }
+
+    @Subscribe
+    public void on(TaskDescriptionUpdated event) {
+        final List<TaskView> views = getState().getMyList()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final MyListView state = constructMyListViewState(updatedList);
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(TaskPriorityUpdated event) {
+        final List<TaskView> views = getState().getMyList()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final MyListView state = constructMyListViewState(updatedList);
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(TaskDueDateUpdated event) {
+        final List<TaskView> views = getState().getMyList()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final MyListView state = constructMyListViewState(updatedList);
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(TaskCompleted event) {
+        final List<TaskView> views = getState().getMyList()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final MyListView state = constructMyListViewState(updatedList);
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(TaskReopened event) {
+        final List<TaskView> views = getState().getMyList()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final MyListView state = constructMyListViewState(updatedList);
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(LabelAssignedToTask event) {
+        final List<TaskView> views = getState().getMyList()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final MyListView state = constructMyListViewState(updatedList);
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(LabelRemovedFromTask event) {
+        final List<TaskView> views = getState().getMyList()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final MyListView state = constructMyListViewState(updatedList);
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(LabelDetailsUpdated event) {
+        final List<TaskView> views = getState().getMyList()
+                                               .getItemsList();
+        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final MyListView state = constructMyListViewState(updatedList);
+        incrementState(state);
+    }
+
+    private MyListView constructMyListViewState(List<TaskView> updatedList) {
+        final TaskListView listView = TaskListView.newBuilder()
+                                                  .addAllItems(updatedList)
+                                                  .build();
+        final MyListView result = getState().newBuilderForType()
+                                            .setMyList(listView)
+                                            .build();
+        return result;
     }
 }

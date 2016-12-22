@@ -55,9 +55,12 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
 
     @Assign
     public List<? extends Message> handle(CreateBasicLabel cmd) {
+        final LabelDetails.Builder labelDetails = LabelDetails.newBuilder()
+                                                              .setColor(LabelColor.GRAY)
+                                                              .setTitle(cmd.getLabelTitle());
         final LabelCreated result = LabelCreated.newBuilder()
-                                                .setDetails(LabelDetails.newBuilder()
-                                                                        .setTitle(cmd.getLabelTitle()))
+                                                .setId(cmd.getLabelId())
+                                                .setDetails(labelDetails)
                                                 .build();
         return Collections.singletonList(result);
     }
@@ -73,7 +76,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
                                                          .setColor(cmd.getColor())
                                                          .build();
         final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
-                                                              .setId(cmd.getId())
+                                                              .setLabelId(cmd.getId())
                                                               .setPreviousDetails(previousLabelDetails)
                                                               .setNewDetails(newLabelDetails)
                                                               .build();
@@ -91,7 +94,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     @Apply
     private void labelDetailsUpdated(LabelDetailsUpdated event) {
         final LabelDetails labelDetails = event.getNewDetails();
-        getBuilder().setId(event.getId())
+        getBuilder().setId(event.getLabelId())
                     .setTitle(labelDetails.getTitle())
                     .setColor(labelDetails.getColor());
     }

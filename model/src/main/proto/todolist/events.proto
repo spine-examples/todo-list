@@ -252,7 +252,7 @@ message LabelCreated {
 message LabelDetailsUpdated {
 
     // An identifier of the updated label.
-    TaskLabelId id = 1;
+    TaskLabelId label_id = 1;
 
     // The label details before the update.
     LabelDetails previous_details = 2 [(required) = true];

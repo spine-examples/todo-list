@@ -48,13 +48,13 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
  */
 public class TaskLabelAggregateShould {
 
-    private TaskLabelAggregate aggregate;
-    private CreateBasicLabel createLabelCmd;
-    private UpdateLabelDetails updateLabelDetailsCmd;
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
     private static final TaskLabelId ID = TaskLabelId.newBuilder()
                                                      .setValue(newUuid())
                                                      .build();
+    private TaskLabelAggregate aggregate;
+    private CreateBasicLabel createLabelCmd;
+    private UpdateLabelDetails updateLabelDetailsCmd;
 
     @BeforeEach
     public void setUp() throws Exception {
@@ -76,8 +76,11 @@ public class TaskLabelAggregateShould {
 
         final LabelCreated labelCreated = (LabelCreated) messageList.get(0);
 
+        assertEquals(LABEL_ID, labelCreated.getId());
         assertEquals(LABEL_TITLE, labelCreated.getDetails()
                                               .getTitle());
+        assertEquals(LabelColor.GRAY, labelCreated.getDetails()
+                                                  .getColor());
     }
 
     @Test
@@ -93,7 +96,7 @@ public class TaskLabelAggregateShould {
         final LabelDetailsUpdated labelDetailsUpdated = (LabelDetailsUpdated) messageList.get(0);
         final LabelDetails details = labelDetailsUpdated.getNewDetails();
 
-        assertEquals(LABEL_ID, labelDetailsUpdated.getId());
+        assertEquals(LABEL_ID, labelDetailsUpdated.getLabelId());
         assertEquals(LabelColor.GREEN, details.getColor());
         assertEquals(UPDATED_LABEL_TITLE, details.getTitle());
     }
@@ -104,6 +107,7 @@ public class TaskLabelAggregateShould {
 
         final TaskLabel state = aggregate.getState();
 
+        assertEquals(LABEL_ID, state.getId());
         assertEquals(LabelColor.GRAY, state.getColor());
         assertEquals(LABEL_TITLE, state.getTitle());
     }
@@ -113,16 +117,18 @@ public class TaskLabelAggregateShould {
         aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
         TaskLabel state = aggregate.getState();
 
+        assertEquals(LABEL_ID, state.getId());
         assertEquals(LabelColor.GREEN, state.getColor());
         assertEquals(UPDATED_LABEL_TITLE, state.getTitle());
 
-        LabelColor updatedLabelColor = LabelColor.BLUE;
+        final LabelColor updatedLabelColor = LabelColor.BLUE;
         final String updatedTitle = "updated title";
 
         updateLabelDetailsCmd = updateLabelDetailsInstance(updatedLabelColor, updatedTitle);
         aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
         state = aggregate.getState();
 
+        assertEquals(LABEL_ID, state.getId());
         assertEquals(updatedLabelColor, state.getColor());
         assertEquals(updatedTitle, state.getTitle());
     }
