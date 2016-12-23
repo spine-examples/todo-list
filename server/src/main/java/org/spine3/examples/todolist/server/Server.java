@@ -66,10 +66,10 @@ public class Server {
     private DraftTasksViewRepository draftTasksViewRepository;
 
     public Server(StorageFactory storageFactory) {
-        initRepositories(storageFactory);
         initiEnricherFunctions();
         final EventEnricher eventEnricher = initEventEnricher();
         this.boundedContext = initBoundedContext(storageFactory, eventEnricher);
+        initRepositories(storageFactory);
         registerRepositories();
         final CommandService commandService = initCommandService();
         final QueryService queryService = initQueryService();

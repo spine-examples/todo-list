@@ -22,9 +22,6 @@ package org.spine3.examples.todolist.testdata;
 
 import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelCreated;
-import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.UpdateLabelDetails;
@@ -44,11 +41,7 @@ public class TestTaskLabelCommandFactory {
                                                           .setValue(newUuid())
                                                           .build();
 
-    /**
-     * Prevent instantiation.
-     */
     private TestTaskLabelCommandFactory() {
-        throw new UnsupportedOperationException();
     }
 
     /**
@@ -70,7 +63,7 @@ public class TestTaskLabelCommandFactory {
      * @return {@link UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance() {
-        return updateLabelDetailsInstance(LabelColor.GREEN, UPDATED_LABEL_TITLE);
+        return updateLabelDetailsInstance(LABEL_ID, LabelColor.GREEN, UPDATED_LABEL_TITLE);
     }
 
     /**
@@ -80,9 +73,9 @@ public class TestTaskLabelCommandFactory {
      * @param title String value
      * @return {@link UpdateLabelDetails} instance.
      */
-    public static UpdateLabelDetails updateLabelDetailsInstance(LabelColor color, String title) {
+    public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId id, LabelColor color, String title) {
         final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
-                                                            .setId(LABEL_ID)
+                                                            .setId(id)
                                                             .setColor(color)
                                                             .setNewTitle(title)
                                                             .build();

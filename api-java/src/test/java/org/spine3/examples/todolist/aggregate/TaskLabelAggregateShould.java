@@ -124,7 +124,7 @@ public class TaskLabelAggregateShould {
         final LabelColor updatedLabelColor = LabelColor.BLUE;
         final String updatedTitle = "updated title";
 
-        updateLabelDetailsCmd = updateLabelDetailsInstance(updatedLabelColor, updatedTitle);
+        updateLabelDetailsCmd = updateLabelDetailsInstance(LABEL_ID, updatedLabelColor, updatedTitle);
         aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
         state = aggregate.getState();
 

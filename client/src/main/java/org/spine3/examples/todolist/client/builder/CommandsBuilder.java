@@ -26,7 +26,6 @@ package org.spine3.examples.todolist.client.builder;
 public final class CommandsBuilder {
 
     private CommandsBuilder() {
-        throw new UnsupportedOperationException();
     }
 
     public static TaskBuilder task() {

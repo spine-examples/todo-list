@@ -369,7 +369,7 @@ public class TaskAggregateShould {
     @Test
     public void update_current_state_task_due_date_after_dispatch_command() {
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
-        updateTaskDueDateCmd = updateTaskDueDateInstance(updatedDueDate);
+        updateTaskDueDateCmd = updateTaskDueDateInstance(TASK_ID, updatedDueDate);
         aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
         assertEquals(updatedDueDate, aggregate.getState()
                                               .getDueDate());
@@ -378,7 +378,7 @@ public class TaskAggregateShould {
     @Test
     public void update_current_state_task_priority_after_dispatch_command() {
         final TaskPriority updatedPriority = TaskPriority.HIGH;
-        updateTaskPriorityCmd = updateTaskPriorityInstance(updatedPriority);
+        updateTaskPriorityCmd = updateTaskPriorityInstance(TASK_ID, updatedPriority);
         aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
         assertEquals(updatedPriority, aggregate.getState()
                                                .getPriority());

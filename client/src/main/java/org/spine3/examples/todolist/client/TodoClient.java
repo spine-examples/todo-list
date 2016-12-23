@@ -71,11 +71,11 @@ public interface TodoClient {
 
     void finalize(FinalizeDraft cmd);
 
-    MyListView getListView();
+    MyListView getMyListView();
 
-    LabelledTasksView getLabelledTasks();
+    LabelledTasksView getLabelledTasksView();
 
-    DraftTasksView getDraftTasks();
+    DraftTasksView getDraftTasksView();
 
     /**
      * Shutdown the connection channel.

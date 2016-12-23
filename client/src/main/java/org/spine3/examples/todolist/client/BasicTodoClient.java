@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.client;
 
+import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -27,7 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spine3.base.Command;
 import org.spine3.base.Queries;
-import org.spine3.base.Response;
 import org.spine3.client.CommandFactory;
 import org.spine3.client.Query;
 import org.spine3.client.QueryResponse;
@@ -47,7 +47,6 @@ import org.spine3.examples.todolist.UpdateLabelDetails;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
-import org.spine3.examples.todolist.client.builder.CommandsBuilder;
 import org.spine3.examples.todolist.view.DraftTasksView;
 import org.spine3.examples.todolist.view.LabelledTasksView;
 import org.spine3.examples.todolist.view.MyListView;
@@ -55,6 +54,9 @@ import org.spine3.time.ZoneOffsets;
 import org.spine3.users.UserId;
 import org.spine3.util.Exceptions;
 
+import java.util.List;
+
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.spine3.base.Identifiers.newUuid;
 
@@ -79,11 +81,6 @@ public class BasicTodoClient implements TodoClient {
         this.channel = initChannel(host, port);
         this.commandService = CommandServiceGrpc.newBlockingStub(channel);
         this.queryService = QueryServiceGrpc.newBlockingStub(channel);
-    }
-
-    private Response post(Command request) {
-        Response result = commandService.post(request);
-        return result;
     }
 
     @Override
@@ -170,14 +167,16 @@ public class BasicTodoClient implements TodoClient {
         commandService.post(executableCmd);
     }
 
+    //TODO:delete log messages
     @Override
-    public MyListView getListView() {
+    public MyListView getMyListView() {
         try {
             final Query query = Queries.readAll(MyListView.class);
             final QueryResponse response = queryService.read(query);
-            log().info(response.toString());
             MyListView result = response.getMessages(0)
                                         .unpack(MyListView.class);
+            log().info("LOG RESPONSE: " + response.toString());
+            log().info("LOG RESULT: " + result);
             return result;
         } catch (InvalidProtocolBufferException e) {
             throw Exceptions.wrapped(e);
@@ -185,12 +184,14 @@ public class BasicTodoClient implements TodoClient {
     }
 
     @Override
-    public LabelledTasksView getLabelledTasks() {
+    public LabelledTasksView getLabelledTasksView() {
         try {
             final Query query = Queries.readAll(LabelledTasksView.class);
             final QueryResponse response = queryService.read(query);
             final LabelledTasksView result = response.getMessages(0)
                                                      .unpack(LabelledTasksView.class);
+            //log().info("LOG RESPONSE: " + response.toString());
+            //log().info("LOG RESULT: " + result);
             return result;
         } catch (InvalidProtocolBufferException e) {
             throw Exceptions.wrapped(e);
@@ -198,7 +199,7 @@ public class BasicTodoClient implements TodoClient {
     }
 
     @Override
-    public DraftTasksView getDraftTasks() {
+    public DraftTasksView getDraftTasksView() {
         try {
             final Query query = Queries.readAll(DraftTasksView.class);
             final QueryResponse response = queryService.read(query);
