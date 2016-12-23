@@ -32,11 +32,7 @@ import org.spine3.examples.todolist.TaskStatus;
     private static final String TASK_COMPLETED_EXCEPTION_MESSAGE = "Command cannot be applied to the completed task.";
     private static final String TASK_DELETED_EXCEPTION_MESSAGE = "Command cannot be applied to the deleted task.";
 
-    /**
-     * Prevent instantiation.
-     */
     private TaskFlowValidator() {
-        throw new UnsupportedOperationException("Cannot be instantiated.");
     }
 
     /**
