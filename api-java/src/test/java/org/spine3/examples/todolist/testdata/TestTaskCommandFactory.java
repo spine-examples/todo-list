@@ -65,9 +65,11 @@ public class TestTaskCommandFactory {
      * @return {@link CreateBasicTask} instance
      */
     public static CreateBasicTask createTaskInstance() {
-        return CreateBasicTask.newBuilder()
-                              .setDescription(DESCRIPTION)
-                              .build();
+        final CreateBasicTask result = CreateBasicTask.newBuilder()
+                                                     .setId(TASK_ID)
+                                                     .setDescription(DESCRIPTION)
+                                                     .build();
+        return result;
     }
 
     /**
@@ -152,12 +154,15 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides default {@link ReopenTask} command instance.
+     * Provides a pre-configured {@link ReopenTask} command instance.
      *
      * @return {@link ReopenTask} instance
      */
     public static ReopenTask reopenTaskInstance() {
-        return ReopenTask.getDefaultInstance();
+        final ReopenTask result = ReopenTask.newBuilder()
+                                           .setId(TASK_ID)
+                                           .build();
+        return result;
     }
 
     /**
@@ -173,21 +178,27 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides default {@link RestoreDeletedTask} command instance.
+     * Provides pre-configured {@link RestoreDeletedTask} command instance.
      *
      * @return {@link RestoreDeletedTask} instance
      */
     public static RestoreDeletedTask restoreDeletedTaskInstance() {
-        return RestoreDeletedTask.getDefaultInstance();
+        final RestoreDeletedTask result = RestoreDeletedTask.newBuilder()
+                                                           .setId(TASK_ID)
+                                                           .build();
+        return result;
     }
 
     /**
-     * Provides default {@link FinalizeDraft} command instance.
+     * Provides pre-configured {@link FinalizeDraft} command instance.
      *
      * @return {@link FinalizeDraft} instance
      */
     public static FinalizeDraft finalizeDraftInstance() {
-        return FinalizeDraft.getDefaultInstance();
+        final FinalizeDraft result = FinalizeDraft.newBuilder()
+                                                 .setId(TASK_ID)
+                                                 .build();
+        return result;
     }
 
     /**
@@ -209,6 +220,7 @@ public class TestTaskCommandFactory {
      */
     public static AssignLabelToTask assignLabelToTaskInstance() {
         final AssignLabelToTask result = AssignLabelToTask.newBuilder()
+                                                          .setId(TASK_ID)
                                                           .setLabelId(LABEL_ID)
                                                           .build();
         return result;
@@ -221,6 +233,7 @@ public class TestTaskCommandFactory {
      */
     public static RemoveLabelFromTask removeLabelFromTaskInstance() {
         final RemoveLabelFromTask result = RemoveLabelFromTask.newBuilder()
+                                                              .setId(TASK_ID)
                                                               .setLabelId(LABEL_ID)
                                                               .build();
         return result;

@@ -150,6 +150,7 @@ public class TaskAggregateShould {
 
         final TaskCreated taskCreated = (TaskCreated) messageList.get(0);
 
+        assertEquals(TASK_ID, taskCreated.getId());
         assertEquals(DESCRIPTION, taskCreated.getDetails()
                                              .getDescription());
     }
@@ -168,6 +169,7 @@ public class TaskAggregateShould {
 
         final LabelRemovedFromTask labelRemovedFromTask = (LabelRemovedFromTask) messageList.get(0);
 
+        assertEquals(TASK_ID, labelRemovedFromTask.getId());
         assertEquals(LABEL_ID, labelRemovedFromTask.getLabelId());
     }
 
@@ -185,6 +187,7 @@ public class TaskAggregateShould {
 
         final LabelAssignedToTask labelAssignedToTask = (LabelAssignedToTask) messageList.get(0);
 
+        assertEquals(TASK_ID, labelAssignedToTask.getId());
         assertEquals(LABEL_ID, labelAssignedToTask.getLabelId());
     }
 
@@ -335,8 +338,8 @@ public class TaskAggregateShould {
 
         final TaskPriorityUpdated taskPriorityUpdated = (TaskPriorityUpdated) messageList.get(0);
 
-        assertEquals(TaskPriority.HIGH, taskPriorityUpdated.getNewPriority());
         assertEquals(TASK_ID, taskPriorityUpdated.getId());
+        assertEquals(TaskPriority.HIGH, taskPriorityUpdated.getNewPriority());
     }
 
     @Test
@@ -362,27 +365,36 @@ public class TaskAggregateShould {
     public void update_current_state_task_description_after_dispatch_command() {
         final String newDescription = "new description.";
         final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(newDescription);
+
         aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
-        assertEquals(newDescription, aggregate.getState()
-                                              .getDescription());
+        final Task state = aggregate.getState();
+
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(newDescription, state.getDescription());
     }
 
     @Test
     public void update_current_state_task_due_date_after_dispatch_command() {
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(updatedDueDate);
+
         aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
-        assertEquals(updatedDueDate, aggregate.getState()
-                                              .getDueDate());
+        final Task state = aggregate.getState();
+
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(updatedDueDate, state.getDueDate());
     }
 
     @Test
     public void update_current_state_task_priority_after_dispatch_command() {
         final TaskPriority updatedPriority = TaskPriority.HIGH;
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(updatedPriority);
+
         aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
-        assertEquals(updatedPriority, aggregate.getState()
-                                               .getPriority());
+        final Task state = aggregate.getState();
+
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(updatedPriority, state.getPriority());
     }
 
     @Test
@@ -390,10 +402,12 @@ public class TaskAggregateShould {
         final CreateBasicTask createTaskCmd = createTaskInstance();
         final CompleteTask completeTaskCmd = completeTaskInstance();
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-        aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
 
-        assertEquals(TaskStatus.COMPLETED, aggregate.getState()
-                                                    .getTaskStatus());
+        aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+        final Task state = aggregate.getState();
+
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(TaskStatus.COMPLETED, state.getTaskStatus());
     }
 
     @Test
@@ -401,22 +415,29 @@ public class TaskAggregateShould {
         final CreateBasicTask createTaskCmd = createTaskInstance();
         final DeleteTask deleteTaskCmd = deleteTaskInstance();
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-        aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
 
-        assertEquals(DELETED, aggregate.getState()
-                                       .getTaskStatus());
+        aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+        final Task state = aggregate.getState();
+
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(DELETED, state.getTaskStatus());
     }
 
     @Test
     public void record_modification_timestamp() throws InterruptedException {
-        final CreateBasicTask createTaskCmd = createTaskInstance();
+        CreateBasicTask createTaskCmd = createTaskInstance();
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-        final Timestamp firstStateCreationTime = aggregate.getState()
-                                                          .getCreated();
+        Task state = aggregate.getState();
+        final Timestamp firstStateCreationTime = state.getCreated();
+
+        assertEquals(TASK_ID, state.getId());
+
         Thread.sleep(1000);
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-        final Timestamp secondStateCreationTime = aggregate.getState()
-                                                           .getCreated();
+        state = aggregate.getState();
+        final Timestamp secondStateCreationTime = state.getCreated();
+
+        assertEquals(TASK_ID, state.getId());
         assertTrue(Timestamps.isLaterThan(secondStateCreationTime, firstStateCreationTime));
     }
 
@@ -441,9 +462,10 @@ public class TaskAggregateShould {
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
+        final Task state = aggregate.getState();
 
-        assertEquals(OPEN, aggregate.getState()
-                                    .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(OPEN, state.getTaskStatus());
     }
 
     @Test
@@ -498,14 +520,16 @@ public class TaskAggregateShould {
         final CreateDraft createDraftCmd = createDraftInstance();
         final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance();
         aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
+        Task state = aggregate.getState();
 
-        assertEquals(DRAFT, aggregate.getState()
-                                     .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(DRAFT, state.getTaskStatus());
 
         aggregate.dispatchForTest(finalizeDraftCmd, COMMAND_CONTEXT);
+        state = aggregate.getState();
 
-        assertEquals(FINALIZED, aggregate.getState()
-                                         .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(FINALIZED, state.getTaskStatus());
     }
 
     @Test
@@ -561,6 +585,7 @@ public class TaskAggregateShould {
         aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
+        assertEquals(TASK_ID, state.getId());
         assertEquals(DRAFT, state.getTaskStatus());
     }
 
@@ -618,14 +643,16 @@ public class TaskAggregateShould {
         final ReopenTask reopenTaskCmd = reopenTaskInstance();
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+        Task state = aggregate.getState();
 
-        assertEquals(COMPLETED, aggregate.getState()
-                                         .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(COMPLETED, state.getTaskStatus());
 
         aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
+        state = aggregate.getState();
 
-        assertEquals(OPEN, aggregate.getState()
-                                    .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(OPEN, state.getTaskStatus());
     }
 
     @Test
@@ -651,9 +678,10 @@ public class TaskAggregateShould {
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
+        final Task state = aggregate.getState();
 
-        assertEquals(OPEN, aggregate.getState()
-                                    .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(OPEN, state.getTaskStatus());
     }
 
     @Test
@@ -757,19 +785,21 @@ public class TaskAggregateShould {
 
     @Test
     public void emit_task_deleted_and_deleted_task_restored_event_upon_delete_and_restore_task_command() {
-        final DeleteTask deleteTaskCmd = deleteTaskInstance();
         final CreateDraft createDraftCmd = createDraftInstance();
+        final DeleteTask deleteTaskCmd = deleteTaskInstance();
         final RestoreDeletedTask restoreDeletedTaskCmd = restoreDeletedTaskInstance();
         aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+        Task state = aggregate.getState();
 
-        assertEquals(DELETED, aggregate.getState()
-                                       .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(DELETED, state.getTaskStatus());
 
         aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
+        state = aggregate.getState();
 
-        assertEquals(OPEN, aggregate.getState()
-                                    .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(OPEN, state.getTaskStatus());
     }
 
     @Test
@@ -785,7 +815,6 @@ public class TaskAggregateShould {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(TaskDeleted.class, messageList.get(0)
                                                    .getClass());
-
         final TaskDeleted taskDeleted = (TaskDeleted) messageList.get(0);
 
         assertEquals(TASK_ID, taskDeleted.getId());
