@@ -56,11 +56,7 @@ public class TestEventContextFactory {
     private static final String ENRICHMENT_BY_TASK_ID = "spine.examples.todolist.LabelDetailsByTaskIdEnrichment";
     private static final Any AGGREGATE_ID = AnyPacker.pack(newStringValue(newUuid()));
 
-    /**
-     * Prevent instantiation.
-     */
     private TestEventContextFactory() {
-        throw new UnsupportedOperationException();
     }
 
     /**

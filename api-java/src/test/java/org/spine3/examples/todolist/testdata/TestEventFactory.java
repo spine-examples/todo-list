@@ -66,11 +66,7 @@ public class TestEventFactory {
                                                .build();
     private static final Timestamp CREATION_TIME = Timestamps.getCurrentTime();
 
-    /**
-     * Prevent instantiation.
-     */
     private TestEventFactory() {
-        throw new UnsupportedOperationException();
     }
 
     /**
@@ -338,10 +334,10 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides {@link LabelCreated} event by specified label's color and title.
+     * Provides {@link LabelCreated} event by specified label color and title.
      *
-     * @param color label's color
-     * @param title label's title
+     * @param color label color
+     * @param title label title
      * @return {@link LabelCreated} instance
      */
     public static LabelCreated labelCreatedInstance(LabelColor color, String title) {
@@ -364,10 +360,10 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides {@link LabelDetailsUpdated} event by specified label's color and title.
+     * Provides {@link LabelDetailsUpdated} event by specified label color and title.
      *
-     * @param color label's color
-     * @param title label's title
+     * @param color label color
+     * @param title label title
      * @return {@link LabelDetailsUpdated} instance
      */
     public static LabelDetailsUpdated labelDetailsUpdatedInstance(LabelColor color, String title) {

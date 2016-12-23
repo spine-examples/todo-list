@@ -32,11 +32,7 @@ import org.spine3.examples.todolist.TaskStatus;
     private static final String TASK_COMPLETED_EXCEPTION_MESSAGE = "Command cannot be applied to the completed task.";
     private static final String TASK_DELETED_EXCEPTION_MESSAGE = "Command cannot be applied to the deleted task.";
 
-    /**
-     * Prevent instantiation.
-     */
     private TaskFlowValidator() {
-        throw new UnsupportedOperationException("Cannot be instantiated.");
     }
 
     /**
@@ -86,7 +82,7 @@ import org.spine3.examples.todolist.TaskStatus;
      *
      * <p>If it is COMPLETED or DELETED {@link TaskStatus} state, throws {@link IllegalStateException}.
      *
-     * @param currentStatus task's current state {@link TaskStatus}
+     * @param currentStatus task current state {@link TaskStatus}
      * @throws IllegalStateException if status, passed to the method,
      *                               {@code TaskStatus.COMPLETED} or {@code TaskStatus.DELETED}.
      */

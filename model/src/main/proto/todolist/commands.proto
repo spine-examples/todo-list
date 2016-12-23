@@ -52,6 +52,7 @@ message CreateBasicTask {
 
     // An identifier of the target task.
     TaskId id = 1;
+
     // A description for the task created.
     string description = 2 [(required) = true];
 

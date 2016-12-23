@@ -56,11 +56,7 @@ public class TestTaskCommandFactory {
     public static final String DESCRIPTION = "Create command description.";
     public static final Timestamp DUE_DATE = Timestamps.getCurrentTime();
 
-    /**
-     * Prevent instantiation.
-     */
     private TestTaskCommandFactory() {
-        throw new UnsupportedOperationException();
     }
 
     /**
@@ -88,6 +84,11 @@ public class TestTaskCommandFactory {
                                                       .setId(id)
                                                       .setDescription(DESCRIPTION)
                                                       .build();
+        return result;
+        final CreateBasicTask result = CreateBasicTask.newBuilder()
+                                                     .setId(TASK_ID)
+                                                     .setDescription(DESCRIPTION)
+                                                     .build();
         return result;
     }
 
@@ -182,11 +183,14 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides default {@link ReopenTask} command instance.
+     * Provides a pre-configured {@link ReopenTask} command instance.
      *
      * @return {@link ReopenTask} instance
      */
     public static ReopenTask reopenTaskInstance() {
+        final ReopenTask result = ReopenTask.newBuilder()
+                                           .setId(TASK_ID)
+                                           .build();
         return reopenTaskInstance(TASK_ID);
     }
 
@@ -224,11 +228,14 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides default {@link RestoreDeletedTask} command instance.
+     * Provides pre-configured {@link RestoreDeletedTask} command instance.
      *
      * @return {@link RestoreDeletedTask} instance
      */
     public static RestoreDeletedTask restoreDeletedTaskInstance() {
+        final RestoreDeletedTask result = RestoreDeletedTask.newBuilder()
+                                                           .setId(TASK_ID)
+                                                           .build();
         return restoreDeletedTaskInstance(TASK_ID);
     }
 
@@ -245,11 +252,14 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides default {@link FinalizeDraft} command instance.
+     * Provides pre-configured {@link FinalizeDraft} command instance.
      *
      * @return {@link FinalizeDraft} instance
      */
     public static FinalizeDraft finalizeDraftInstance() {
+        final FinalizeDraft result = FinalizeDraft.newBuilder()
+                                                 .setId(TASK_ID)
+                                                 .build();
         return finalizeDraftInstance(TASK_ID);
     }
 

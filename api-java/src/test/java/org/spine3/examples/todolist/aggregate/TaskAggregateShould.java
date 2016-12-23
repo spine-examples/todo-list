@@ -95,39 +95,14 @@ public class TaskAggregateShould {
     private static final String INAPPROPRIATE_TASK_DESCRIPTION = "Description should contain " +
             "at least 3 alphanumeric symbols.";
     private TaskAggregate aggregate;
-    private CreateBasicTask createTaskCmd;
-    private UpdateTaskDescription updateTaskDescriptionCmd;
-    private UpdateTaskDueDate updateTaskDueDateCmd;
-    private UpdateTaskPriority updateTaskPriorityCmd;
-    private ReopenTask reopenTaskCmd;
-    private DeleteTask deleteTaskCmd;
-    private RestoreDeletedTask restoreDeletedTaskCmd;
-    private CompleteTask completeTaskCmd;
-    private FinalizeDraft finalizeDraftCmd;
-    private CreateDraft createDraftCmd;
-    private AssignLabelToTask assignLabelToTaskCmd;
-
-    private RemoveLabelFromTask removeLabelFromTaskCmd;
 
     private static final TaskId ID = TaskId.newBuilder()
                                            .setValue(newUuid())
                                            .build();
 
     @BeforeEach
-    public void setUp() throws Exception {
+    public void setUp() {
         aggregate = new TaskAggregate(ID);
-        createTaskCmd = createTaskInstance();
-        updateTaskDescriptionCmd = updateTaskDescriptionInstance();
-        updateTaskDueDateCmd = updateTaskDueDateInstance();
-        updateTaskPriorityCmd = updateTaskPriorityInstance();
-        reopenTaskCmd = reopenTaskInstance();
-        deleteTaskCmd = deleteTaskInstance();
-        restoreDeletedTaskCmd = restoreDeletedTaskInstance();
-        completeTaskCmd = completeTaskInstance();
-        finalizeDraftCmd = finalizeDraftInstance();
-        createDraftCmd = createDraftInstance();
-        assignLabelToTaskCmd = assignLabelToTaskInstance();
-        removeLabelFromTaskCmd = removeLabelFromTaskInstance();
     }
 
     @Test
@@ -142,6 +117,7 @@ public class TaskAggregateShould {
 
     @Test
     public void emit_task_description_updated_event_upon_update_task_description_command() {
+        final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance();
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -159,6 +135,7 @@ public class TaskAggregateShould {
 
     @Test
     public void emit_task_created_event_upon_create_task_command() {
+        final CreateBasicTask createTaskCmd = createTaskInstance();
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -173,12 +150,14 @@ public class TaskAggregateShould {
 
         final TaskCreated taskCreated = (TaskCreated) messageList.get(0);
 
+        assertEquals(TASK_ID, taskCreated.getId());
         assertEquals(DESCRIPTION, taskCreated.getDetails()
                                              .getDescription());
     }
 
     @Test
     public void emit_label_removed_from_task_event_upon_remove_label_from_task_command() {
+        final RemoveLabelFromTask removeLabelFromTaskCmd = removeLabelFromTaskInstance();
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -190,11 +169,13 @@ public class TaskAggregateShould {
 
         final LabelRemovedFromTask labelRemovedFromTask = (LabelRemovedFromTask) messageList.get(0);
 
+        assertEquals(TASK_ID, labelRemovedFromTask.getId());
         assertEquals(LABEL_ID, labelRemovedFromTask.getLabelId());
     }
 
     @Test
     public void emit_label_assigned_to_task_event_upon_assign_label_to_task_command() {
+        final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance();
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -206,12 +187,14 @@ public class TaskAggregateShould {
 
         final LabelAssignedToTask labelAssignedToTask = (LabelAssignedToTask) messageList.get(0);
 
+        assertEquals(TASK_ID, labelAssignedToTask.getId());
         assertEquals(LABEL_ID, labelAssignedToTask.getLabelId());
     }
 
     @Test
     public void catch_exception_when_handle_update_task_description_when_description_contains_one_symbol() {
         try {
+            UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(".");
             updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, "description");
             aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -225,6 +208,9 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_update_task_description_when_task_is_deleted() {
         try {
+            final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance();
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
+            final CreateBasicTask createTaskCmd = createTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
@@ -239,6 +225,9 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_handle_update_task_description_when_task_is_completed() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final CompleteTask completeTaskCmd = completeTaskInstance();
+            final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
@@ -253,6 +242,9 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_update_task_due_date_when_task_is_completed() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final CompleteTask completeTaskCmd = completeTaskInstance();
+            final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
@@ -267,6 +259,9 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_update_task_due_date_when_task_is_deleted() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
+            final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
@@ -281,6 +276,9 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_handle_update_task_priority_when_task_is_deleted() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
+            final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
@@ -295,6 +293,9 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_handle_update_task_priority_when_task_is_completed() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final CompleteTask completeTaskCmd = completeTaskInstance();
+            final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
@@ -308,6 +309,7 @@ public class TaskAggregateShould {
 
     @Test
     public void emit_task_due_date_updated_event_upon_update_task_due_date_command() {
+        final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance();
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -325,6 +327,7 @@ public class TaskAggregateShould {
 
     @Test
     public void emit_task_priority_updated_event_upon_update_task_priority_command() {
+        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance();
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -336,12 +339,14 @@ public class TaskAggregateShould {
 
         final TaskPriorityUpdated taskPriorityUpdated = (TaskPriorityUpdated) messageList.get(0);
 
-        assertEquals(TaskPriority.HIGH, taskPriorityUpdated.getNewPriority());
         assertEquals(TASK_ID, taskPriorityUpdated.getId());
+        assertEquals(TaskPriority.HIGH, taskPriorityUpdated.getNewPriority());
     }
 
     @Test
     public void emit_task_completed_event_upon_complete_task_command() {
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final CompleteTask completeTaskCmd = completeTaskInstance();
         final int expectedListSize = 1;
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
@@ -360,62 +365,90 @@ public class TaskAggregateShould {
     @Test
     public void update_current_state_task_description_after_dispatch_command() {
         final String newDescription = "new description.";
+        final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(newDescription);
+
         updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, newDescription);
         aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
-        assertEquals(newDescription, aggregate.getState()
-                                              .getDescription());
+        final Task state = aggregate.getState();
+
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(newDescription, state.getDescription());
     }
 
     @Test
     public void update_current_state_task_due_date_after_dispatch_command() {
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
+        final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(updatedDueDate);
+
         updateTaskDueDateCmd = updateTaskDueDateInstance(TASK_ID, updatedDueDate);
         aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
-        assertEquals(updatedDueDate, aggregate.getState()
-                                              .getDueDate());
+        final Task state = aggregate.getState();
+
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(updatedDueDate, state.getDueDate());
     }
 
     @Test
     public void update_current_state_task_priority_after_dispatch_command() {
         final TaskPriority updatedPriority = TaskPriority.HIGH;
+        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(updatedPriority);
+
         updateTaskPriorityCmd = updateTaskPriorityInstance(TASK_ID, updatedPriority);
         aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
-        assertEquals(updatedPriority, aggregate.getState()
-                                               .getPriority());
+        final Task state = aggregate.getState();
+
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(updatedPriority, state.getPriority());
     }
 
     @Test
     public void change_task_status_state_when_task_is_completed() {
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final CompleteTask completeTaskCmd = completeTaskInstance();
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-        aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
 
-        assertEquals(TaskStatus.COMPLETED, aggregate.getState()
-                                                    .getTaskStatus());
+        aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+        final Task state = aggregate.getState();
+
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(TaskStatus.COMPLETED, state.getTaskStatus());
     }
 
     @Test
     public void change_task_status_state_when_task_is_deleted() {
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final DeleteTask deleteTaskCmd = deleteTaskInstance();
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-        aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
 
-        assertEquals(DELETED, aggregate.getState()
-                                       .getTaskStatus());
+        aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+        final Task state = aggregate.getState();
+
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(DELETED, state.getTaskStatus());
     }
 
     @Test
     public void record_modification_timestamp() throws InterruptedException {
+        CreateBasicTask createTaskCmd = createTaskInstance();
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-        final Timestamp firstStateCreationTime = aggregate.getState()
-                                                          .getCreated();
+        Task state = aggregate.getState();
+        final Timestamp firstStateCreationTime = state.getCreated();
+
+        assertEquals(TASK_ID, state.getId());
+
         Thread.sleep(1000);
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-        final Timestamp secondStateCreationTime = aggregate.getState()
-                                                           .getCreated();
+        state = aggregate.getState();
+        final Timestamp secondStateCreationTime = state.getCreated();
+
+        assertEquals(TASK_ID, state.getId());
         assertTrue(Timestamps.isLaterThan(secondStateCreationTime, firstStateCreationTime));
     }
 
     @Test
     public void emit_task_created_and_task_deleted_events_upon_create_basic_task_and_delete_task_commands() {
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final DeleteTask deleteTaskCmd = deleteTaskInstance();
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         assertNotEquals(DELETED, aggregate.getState()
                                           .getTaskStatus());
@@ -427,17 +460,24 @@ public class TaskAggregateShould {
 
     @Test
     public void emit_deleted_task_restored_event_upon_restore_deleted_task_command() {
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final DeleteTask deleteTaskCmd = deleteTaskInstance();
+        final RestoreDeletedTask restoreDeletedTaskCmd = restoreDeletedTaskInstance();
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
+        final Task state = aggregate.getState();
 
-        assertEquals(OPEN, aggregate.getState()
-                                    .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(OPEN, state.getTaskStatus());
     }
 
     @Test
     public void catch_exception_when_handle_restore_task_command_when_task_is_completed() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final CompleteTask completeTaskCmd = completeTaskInstance();
+            final RestoreDeletedTask restoreDeletedTaskCmd = restoreDeletedTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
@@ -452,6 +492,8 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_restore_deleted_task_command_when_task_is_created() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final RestoreDeletedTask restoreDeletedTaskCmd = restoreDeletedTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -465,6 +507,8 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_restore_deleted_task_command_when_task_in_draft_state() {
         try {
+            final CreateDraft createDraftCmd = createDraftInstance();
+            final RestoreDeletedTask restoreDeletedTaskCmd = restoreDeletedTaskInstance();
             aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -477,19 +521,24 @@ public class TaskAggregateShould {
 
     @Test
     public void emit_task_draft_finalized_event_upon_finalize_draft_command() {
+        final CreateDraft createDraftCmd = createDraftInstance();
+        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance();
         aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
+        Task state = aggregate.getState();
 
-        assertEquals(DRAFT, aggregate.getState()
-                                     .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(DRAFT, state.getTaskStatus());
 
         aggregate.dispatchForTest(finalizeDraftCmd, COMMAND_CONTEXT);
+        state = aggregate.getState();
 
-        assertEquals(FINALIZED, aggregate.getState()
-                                         .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(FINALIZED, state.getTaskStatus());
     }
 
     @Test
     public void emit_task_draft_created_event_upon_create_draft_task_command() {
+        final CreateDraft createDraftCmd = createDraftInstance();
         final int expectedListSize = 1;
 
         final List<? extends com.google.protobuf.Message> messageList =
@@ -507,6 +556,9 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_finalized_draft_command_when_task_is_deleted() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
+            final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(finalizeDraftCmd, COMMAND_CONTEXT);
@@ -521,6 +573,7 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_finalized_draft_command_when_task_not_in_the_draft_state() {
         try {
+            final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance();
             aggregate.dispatchForTest(finalizeDraftCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
@@ -532,15 +585,20 @@ public class TaskAggregateShould {
 
     @Test
     public void emit_task_draft_created_event_upon_create_task_draft_command() {
+        final CreateDraft createDraftCmd = createDraftInstance();
         aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
+        assertEquals(TASK_ID, state.getId());
         assertEquals(DRAFT, state.getTaskStatus());
     }
 
     @Test
     public void catch_exception_when_handle_complete_task_command_when_task_is_deleted() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
+            final CompleteTask completeTaskCmd = completeTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
@@ -555,6 +613,8 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_complete_task_command_when_task_in_draft_state() {
         try {
+            final CreateDraft createDraftCmd = createDraftInstance();
+            final CompleteTask completeTaskCmd = completeTaskInstance();
             aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -568,6 +628,8 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_reopen_task_command_when_task_created() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final ReopenTask reopenTaskCmd = reopenTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -580,21 +642,28 @@ public class TaskAggregateShould {
 
     @Test
     public void emit_task_completed_and_task_reopened_events_upon_complete_and_reopen_task_command() {
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final CompleteTask completeTaskCmd = completeTaskInstance();
+        final ReopenTask reopenTaskCmd = reopenTaskInstance();
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+        Task state = aggregate.getState();
 
-        assertEquals(COMPLETED, aggregate.getState()
-                                         .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(COMPLETED, state.getTaskStatus());
 
         aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
+        state = aggregate.getState();
 
-        assertEquals(OPEN, aggregate.getState()
-                                    .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(OPEN, state.getTaskStatus());
     }
 
     @Test
     public void catch_exception_when_handle_reopen_task_command_when_task_is_created() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final ReopenTask reopenTaskCmd = reopenTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -607,17 +676,23 @@ public class TaskAggregateShould {
 
     @Test
     public void successfully_handle_reopen_task_command_when_task_is_deleted() {
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final DeleteTask deleteTaskCmd = deleteTaskInstance();
+        final ReopenTask reopenTaskCmd = reopenTaskInstance();
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
+        final Task state = aggregate.getState();
 
-        assertEquals(OPEN, aggregate.getState()
-                                    .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(OPEN, state.getTaskStatus());
     }
 
     @Test
     public void catch_exception_when_handle_reopen_task_command_when_task_in_draft_state() {
         try {
+            final CreateDraft createDraftCmd = createDraftInstance();
+            final ReopenTask reopenTaskCmd = reopenTaskInstance();
             aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -631,6 +706,9 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_assign_label_to_task_command_when_task_is_deleted() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
+            final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
@@ -645,6 +723,9 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_assign_label_to_task_command_when_task_is_completed() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final CompleteTask completeTaskCmd = completeTaskInstance();
+            final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
@@ -659,6 +740,9 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_remove_label_from_task_when_task_is_completed() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final CompleteTask completeTaskCmd = completeTaskInstance();
+            final RemoveLabelFromTask removeLabelFromTaskCmd = removeLabelFromTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(removeLabelFromTaskCmd, COMMAND_CONTEXT);
@@ -673,6 +757,9 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_remove_label_from_task_when_task_is_deleted() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
+            final RemoveLabelFromTask removeLabelFromTaskCmd = removeLabelFromTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(removeLabelFromTaskCmd, COMMAND_CONTEXT);
@@ -687,6 +774,8 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_delete_task_command_when_task_is_already_deleted() {
         try {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
@@ -700,20 +789,27 @@ public class TaskAggregateShould {
 
     @Test
     public void emit_task_deleted_and_deleted_task_restored_event_upon_delete_and_restore_task_command() {
+        final CreateDraft createDraftCmd = createDraftInstance();
+        final DeleteTask deleteTaskCmd = deleteTaskInstance();
+        final RestoreDeletedTask restoreDeletedTaskCmd = restoreDeletedTaskInstance();
         aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+        Task state = aggregate.getState();
 
-        assertEquals(DELETED, aggregate.getState()
-                                       .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(DELETED, state.getTaskStatus());
 
         aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
+        state = aggregate.getState();
 
-        assertEquals(OPEN, aggregate.getState()
-                                    .getTaskStatus());
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(OPEN, state.getTaskStatus());
     }
 
     @Test
     public void emit_task_deleted_event_upon_delete_task_command() {
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final DeleteTask deleteTaskCmd = deleteTaskInstance();
         final int expectedListSize = 1;
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
@@ -723,7 +819,6 @@ public class TaskAggregateShould {
         assertEquals(expectedListSize, messageList.size());
         assertEquals(TaskDeleted.class, messageList.get(0)
                                                    .getClass());
-
         final TaskDeleted taskDeleted = (TaskDeleted) messageList.get(0);
 
         assertEquals(TASK_ID, taskDeleted.getId());
