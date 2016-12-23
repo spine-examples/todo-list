@@ -194,7 +194,7 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_update_task_description_when_description_contains_one_symbol() {
         try {
-            UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(".");
+            UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, ".");
             updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, "description");
             aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
@@ -365,9 +365,7 @@ public class TaskAggregateShould {
     @Test
     public void update_current_state_task_description_after_dispatch_command() {
         final String newDescription = "new description.";
-        final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(newDescription);
-
-        updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, newDescription);
+        final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, newDescription);
         aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
@@ -378,9 +376,8 @@ public class TaskAggregateShould {
     @Test
     public void update_current_state_task_due_date_after_dispatch_command() {
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
-        final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(updatedDueDate);
+        final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(TASK_ID, updatedDueDate);
 
-        updateTaskDueDateCmd = updateTaskDueDateInstance(TASK_ID, updatedDueDate);
         aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
@@ -391,9 +388,8 @@ public class TaskAggregateShould {
     @Test
     public void update_current_state_task_priority_after_dispatch_command() {
         final TaskPriority updatedPriority = TaskPriority.HIGH;
-        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(updatedPriority);
+        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(TASK_ID, updatedPriority);
 
-        updateTaskPriorityCmd = updateTaskPriorityInstance(TASK_ID, updatedPriority);
         aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 

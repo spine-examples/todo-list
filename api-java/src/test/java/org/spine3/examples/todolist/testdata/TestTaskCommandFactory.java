@@ -85,11 +85,6 @@ public class TestTaskCommandFactory {
                                                       .setDescription(DESCRIPTION)
                                                       .build();
         return result;
-        final CreateBasicTask result = CreateBasicTask.newBuilder()
-                                                     .setId(TASK_ID)
-                                                     .setDescription(DESCRIPTION)
-                                                     .build();
-        return result;
     }
 
     /**
