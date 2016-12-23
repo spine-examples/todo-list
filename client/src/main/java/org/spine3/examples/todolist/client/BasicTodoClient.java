@@ -167,7 +167,6 @@ public class BasicTodoClient implements TodoClient {
         commandService.post(executableCmd);
     }
 
-    //TODO:delete log messages
     @Override
     public MyListView getMyListView() {
         try {
@@ -175,8 +174,6 @@ public class BasicTodoClient implements TodoClient {
             final QueryResponse response = queryService.read(query);
             MyListView result = response.getMessages(0)
                                         .unpack(MyListView.class);
-            log().info("LOG RESPONSE: " + response.toString());
-            log().info("LOG RESULT: " + result);
             return result;
         } catch (InvalidProtocolBufferException e) {
             throw Exceptions.wrapped(e);
@@ -190,8 +187,6 @@ public class BasicTodoClient implements TodoClient {
             final QueryResponse response = queryService.read(query);
             final LabelledTasksView result = response.getMessages(0)
                                                      .unpack(LabelledTasksView.class);
-            //log().info("LOG RESPONSE: " + response.toString());
-            //log().info("LOG RESULT: " + result);
             return result;
         } catch (InvalidProtocolBufferException e) {
             throw Exceptions.wrapped(e);
