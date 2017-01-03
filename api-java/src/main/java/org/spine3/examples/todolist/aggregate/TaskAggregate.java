@@ -31,6 +31,13 @@ import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.FinalizeDraft;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
+import org.spine3.examples.todolist.LabelledTaskCompleted;
+import org.spine3.examples.todolist.LabelledTaskDeleted;
+import org.spine3.examples.todolist.LabelledTaskDescriptionUpdated;
+import org.spine3.examples.todolist.LabelledTaskDueDateUpdated;
+import org.spine3.examples.todolist.LabelledTaskPriorityUpdated;
+import org.spine3.examples.todolist.LabelledTaskReopened;
+import org.spine3.examples.todolist.LabelledTaskRestored;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
@@ -57,11 +64,13 @@ import org.spine3.server.aggregate.Aggregate;
 import org.spine3.server.aggregate.Apply;
 import org.spine3.server.command.Assign;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newArrayList;
 import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.ensureNeitherCompletedNorDeleted;
 import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateAssignLabelToTaskCommand;
 import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateCreateDraftCommand;
@@ -107,73 +116,155 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     @Assign
     public List<? extends Message> handle(UpdateTaskDescription cmd) {
         validateCommand(cmd);
-        final String previousDescription = getState().getDescription();
-        final TaskDescriptionUpdated result = TaskDescriptionUpdated.newBuilder()
-                                                                    .setId(cmd.getId())
-                                                                    .setPreviousDescription(previousDescription)
-                                                                    .setNewDescription(cmd.getUpdatedDescription())
-                                                                    .build();
-        return Collections.singletonList(result);
+        final Task state = getState();
+        final String previousDescription = state.getDescription();
+        final TaskDescriptionUpdated taskUpdated = TaskDescriptionUpdated.newBuilder()
+                                                                         .setId(cmd.getId())
+                                                                         .setPreviousDescription(previousDescription)
+                                                                         .setNewDescription(cmd.getUpdatedDescription())
+                                                                         .build();
+        List<Message> result = newArrayList();
+        result.add(taskUpdated);
+        for (TaskLabelId labelId : state.getLabelIdsList()) {
+            final LabelledTaskDescriptionUpdated labelledTaskUpdated =
+                    LabelledTaskDescriptionUpdated.newBuilder()
+                                                  .setTaskId(cmd.getId())
+                                                  .setLabelId(labelId)
+                                                  .setPreviousDescription(previousDescription)
+                                                  .setNewDescription(cmd.getUpdatedDescription())
+                                                  .build();
+            result.add(labelledTaskUpdated);
+        }
+        return result;
     }
 
     @Assign
     public List<? extends Message> handle(UpdateTaskDueDate cmd) {
+        final Task state = getState();
         validateUpdateTaskDueDateCommand(getState().getTaskStatus());
         final Timestamp previousDueDate = getState().getDueDate();
-        final TaskDueDateUpdated result = TaskDueDateUpdated.newBuilder()
-                                                            .setId(cmd.getId())
-                                                            .setPreviousDueDate(previousDueDate)
-                                                            .setNewDueDate(cmd.getUpdatedDueDate())
-                                                            .build();
-        return Collections.singletonList(result);
+        final TaskDueDateUpdated taskUpdated = TaskDueDateUpdated.newBuilder()
+                                                                 .setId(cmd.getId())
+                                                                 .setPreviousDueDate(previousDueDate)
+                                                                 .setNewDueDate(cmd.getUpdatedDueDate())
+                                                                 .build();
+        List<Message> result = newArrayList();
+        result.add(taskUpdated);
+
+        for (TaskLabelId labelId : getState().getLabelIdsList()) {
+            final LabelledTaskDueDateUpdated labelledTaskUpdated =
+                    LabelledTaskDueDateUpdated.newBuilder()
+                                              .setTaskId(cmd.getId())
+                                              .setLabelId(labelId)
+                                              .setPreviousDueDate(state.getDueDate())
+                                              .setNewDueDate(cmd.getUpdatedDueDate())
+                                              .build();
+            result.add(labelledTaskUpdated);
+        }
+        return result;
     }
 
     @Assign
     public List<? extends Message> handle(UpdateTaskPriority cmd) {
-        validateUpdateTaskPriorityCommand(getState().getTaskStatus());
-        final TaskPriority previousPriority = getState().getPriority();
-        final TaskPriorityUpdated result = TaskPriorityUpdated.newBuilder()
-                                                              .setId(cmd.getId())
-                                                              .setPreviousPriority(previousPriority)
-                                                              .setNewPriority(cmd.getUpdatedPriority())
-                                                              .build();
-        return Collections.singletonList(result);
+        final Task state = getState();
+        validateUpdateTaskPriorityCommand(state.getTaskStatus());
+        final TaskPriority previousPriority = state.getPriority();
+        final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
+                                                                           .setId(cmd.getId())
+                                                                           .setPreviousPriority(previousPriority)
+                                                                           .setNewPriority(cmd.getUpdatedPriority())
+                                                                           .build();
+        List<Message> result = newArrayList();
+        result.add(taskPriorityUpdated);
+
+        for (TaskLabelId labelId : state.getLabelIdsList()) {
+            final LabelledTaskPriorityUpdated labelledTaskUpdated =
+                    LabelledTaskPriorityUpdated.newBuilder()
+                                               .setTaskId(cmd.getId())
+                                               .setLabelId(labelId)
+                                               .setPreviousPriority(previousPriority)
+                                               .setNewPriority(cmd.getUpdatedPriority())
+                                               .build();
+            result.add(labelledTaskUpdated);
+        }
+        return result;
     }
 
     @Assign
     public List<? extends Message> handle(ReopenTask cmd) {
-        validateTransition(getState().getTaskStatus(), TaskStatus.OPEN);
-        final TaskReopened result = TaskReopened.newBuilder()
-                                                .setId(cmd.getId())
-                                                .build();
-        return Collections.singletonList(result);
+        final Task state = getState();
+        validateTransition(state.getTaskStatus(), TaskStatus.OPEN);
+        final TaskReopened taskReopened = TaskReopened.newBuilder()
+                                                      .setId(cmd.getId())
+                                                      .build();
+        List<Message> result = newArrayList();
+        result.add(taskReopened);
+
+        for (TaskLabelId labelId : state.getLabelIdsList()) {
+            final LabelledTaskReopened labelledTaskReopened = LabelledTaskReopened.newBuilder()
+                                                                                  .setTaskId(cmd.getId())
+                                                                                  .setLabelId(labelId)
+                                                                                  .build();
+            result.add(labelledTaskReopened);
+        }
+        return result;
     }
 
     @Assign
     public List<? extends Message> handle(DeleteTask cmd) {
-        validateTransition(getState().getTaskStatus(), TaskStatus.DELETED);
-        final TaskDeleted result = TaskDeleted.newBuilder()
-                                              .setId(cmd.getId())
-                                              .build();
-        return Collections.singletonList(result);
+        final Task state = getState();
+        validateTransition(state.getTaskStatus(), TaskStatus.DELETED);
+        final TaskDeleted taskDeleted = TaskDeleted.newBuilder()
+                                                   .setId(cmd.getId())
+                                                   .build();
+        List<Message> result = newArrayList();
+        result.add(taskDeleted);
+        for (TaskLabelId labelId : state.getLabelIdsList()) {
+            final LabelledTaskDeleted labelledTaskDeleted = LabelledTaskDeleted.newBuilder()
+                                                                               .setTaskId(cmd.getId())
+                                                                               .setLabelId(labelId)
+                                                                               .build();
+            result.add(labelledTaskDeleted);
+        }
+        return result;
     }
 
     @Assign
     public List<? extends Message> handle(RestoreDeletedTask cmd) {
-        validateTransition(getState().getTaskStatus(), TaskStatus.OPEN);
-        final DeletedTaskRestored result = DeletedTaskRestored.newBuilder()
-                                                              .setId(cmd.getId())
-                                                              .build();
-        return Collections.singletonList(result);
+        final Task state = getState();
+        validateTransition(state.getTaskStatus(), TaskStatus.OPEN);
+        final DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored.newBuilder()
+                                                                           .setId(cmd.getId())
+                                                                           .build();
+        final List<Message> result = new ArrayList<>();
+        result.add(deletedTaskRestored);
+        for (TaskLabelId labelId : state.getLabelIdsList()) {
+            final LabelledTaskRestored labelledTaskRestored = LabelledTaskRestored.newBuilder()
+                                                                                  .setTaskId(cmd.getId())
+                                                                                  .setLabelId(labelId)
+                                                                                  .build();
+            result.add(labelledTaskRestored);
+        }
+        return result;
     }
 
     @Assign
     public List<? extends Message> handle(CompleteTask cmd) {
-        validateTransition(getState().getTaskStatus(), TaskStatus.COMPLETED);
-        final TaskCompleted result = TaskCompleted.newBuilder()
-                                                  .setId(cmd.getId())
-                                                  .build();
-        return Collections.singletonList(result);
+        final Task state = getState();
+        validateTransition(state.getTaskStatus(), TaskStatus.COMPLETED);
+        final TaskCompleted taskCompleted = TaskCompleted.newBuilder()
+                                                         .setId(cmd.getId())
+                                                         .build();
+        final List<Message> result = new ArrayList<>();
+        result.add(taskCompleted);
+        for (TaskLabelId labelId : state.getLabelIdsList()) {
+            final LabelledTaskCompleted labelledTaskCompleted = LabelledTaskCompleted.newBuilder()
+                                                                                     .setTaskId(cmd.getId())
+                                                                                     .setLabelId(labelId)
+                                                                                     .build();
+            result.add(labelledTaskCompleted);
+        }
+        return result;
     }
 
     @Assign
@@ -236,8 +327,20 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Apply
+    private void labelledTaskDescriptionUpdated(LabelledTaskDescriptionUpdated event) {
+        getBuilder().setId(event.getTaskId())
+                    .setDescription(event.getNewDescription());
+    }
+
+    @Apply
     private void taskDueDateUpdated(TaskDueDateUpdated event) {
         getBuilder().setId(event.getId())
+                    .setDueDate(event.getNewDueDate());
+    }
+
+    @Apply
+    private void labelledTaskDueDateUpdated(LabelledTaskDueDateUpdated event) {
+        getBuilder().setId(event.getTaskId())
                     .setDueDate(event.getNewDueDate());
     }
 
@@ -248,8 +351,20 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Apply
+    private void labelledTaskPriorityUpdated(LabelledTaskPriorityUpdated event) {
+        getBuilder().setId(event.getTaskId())
+                    .setPriority(event.getNewPriority());
+    }
+
+    @Apply
     private void taskReopened(TaskReopened event) {
         getBuilder().setId(event.getId())
+                    .setTaskStatus(TaskStatus.OPEN);
+    }
+
+    @Apply
+    private void labelledTaskReopened(LabelledTaskReopened event) {
+        getBuilder().setId(event.getTaskId())
                     .setTaskStatus(TaskStatus.OPEN);
     }
 
@@ -260,14 +375,32 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Apply
+    private void labelledTaskDeleted(LabelledTaskDeleted event) {
+        getBuilder().setId(event.getTaskId())
+                    .setTaskStatus(TaskStatus.DELETED);
+    }
+
+    @Apply
     private void deletedTaskRestored(DeletedTaskRestored event) {
         getBuilder().setId(event.getId())
                     .setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
+    private void labelledTaskRestored(LabelledTaskRestored event) {
+        getBuilder().setId(event.getTaskId())
+                    .setTaskStatus(TaskStatus.OPEN);
+    }
+
+    @Apply
     private void taskCompleted(TaskCompleted event) {
         getBuilder().setId(event.getId())
+                    .setTaskStatus(TaskStatus.COMPLETED);
+    }
+
+    @Apply
+    private void labelledTaskCompleted(LabelledTaskCompleted event) {
+        getBuilder().setId(event.getTaskId())
                     .setTaskStatus(TaskStatus.COMPLETED);
     }
 

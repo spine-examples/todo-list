@@ -31,8 +31,7 @@ import org.spine3.base.EventId;
 import org.spine3.base.Events;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelDetailsByLabelIdEnrichment;
-import org.spine3.examples.todolist.LabelDetailsByTaskIdEnrichment;
+import org.spine3.examples.todolist.LabelDetailsEnrichment;
 import org.spine3.protobuf.AnyPacker;
 import org.spine3.users.UserId;
 
@@ -53,7 +52,6 @@ public class TestEventContextFactory {
     private static final String TITLE = "label title";
     private static final LabelColor COLOR = LabelColor.GREEN;
     private static final String ENRICHMENT_BY_LABEL_ID = "spine.examples.todolist.LabelDetailsByLabelIdEnrichment";
-    private static final String ENRICHMENT_BY_TASK_ID = "spine.examples.todolist.LabelDetailsByTaskIdEnrichment";
     private static final Any AGGREGATE_ID = AnyPacker.pack(newStringValue(newUuid()));
 
     private TestEventContextFactory() {
@@ -87,17 +85,11 @@ public class TestEventContextFactory {
         final LabelDetails.Builder labelDetails = LabelDetails.newBuilder()
                                                               .setTitle(TITLE)
                                                               .setColor(COLOR);
-        final LabelDetailsByLabelIdEnrichment enrichmentByLabelId =
-                LabelDetailsByLabelIdEnrichment.newBuilder()
-                                               .setLabelDetails(labelDetails)
-                                               .build();
-        final LabelDetailsByTaskIdEnrichment enrichmentByTaskId =
-                LabelDetailsByTaskIdEnrichment.newBuilder()
-                                              .setLabelDetails(labelDetails)
-                                              .build();
+        final LabelDetailsEnrichment labelDetailsEnrichment = LabelDetailsEnrichment.newBuilder()
+                                                                                    .setLabelDetails(labelDetails)
+                                                                                    .build();
         final Map<String, Any> enrichmentsMap = Maps.newHashMap();
-        enrichmentsMap.put(ENRICHMENT_BY_LABEL_ID, AnyPacker.pack(enrichmentByLabelId));
-        enrichmentsMap.put(ENRICHMENT_BY_TASK_ID, AnyPacker.pack(enrichmentByTaskId));
+        enrichmentsMap.put(ENRICHMENT_BY_LABEL_ID, AnyPacker.pack(labelDetailsEnrichment));
         final Enrichments result = Enrichments.newBuilder()
                                               .putAllMap(enrichmentsMap)
                                               .build();

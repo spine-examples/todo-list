@@ -113,6 +113,7 @@ message TaskView {
     // Task priority.
     TaskPriority priority = 3;
 
+    // Task label identifier.
     TaskLabelId label_id = 4;
 
     // A color of the label.

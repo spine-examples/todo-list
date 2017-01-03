@@ -24,6 +24,11 @@ import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
+import org.spine3.examples.todolist.LabelledTaskCompleted;
+import org.spine3.examples.todolist.LabelledTaskDescriptionUpdated;
+import org.spine3.examples.todolist.LabelledTaskDueDateUpdated;
+import org.spine3.examples.todolist.LabelledTaskPriorityUpdated;
+import org.spine3.examples.todolist.LabelledTaskReopened;
 import org.spine3.examples.todolist.TaskCompleted;
 import org.spine3.examples.todolist.TaskDescriptionUpdated;
 import org.spine3.examples.todolist.TaskDueDateUpdated;
@@ -234,6 +239,86 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, TaskDescriptionUpdated event) {
         final TaskId targetTaskId = event.getId();
+
+        final TaskTransformation updateFn = builder -> builder.setDescription(event.getNewDescription());
+        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
+        return result;
+    }
+
+    /**
+     * Mark each {@link TaskView} into list as uncompleted, if {@link TaskId} of task view equals task id of event.
+     *
+     * @param views list of {@link TaskView}
+     * @param event {@link TaskReopened} instance
+     * @return list of {@link TaskView}
+     */
+    /* package */
+    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelledTaskReopened event) {
+        final TaskId targetTaskId = event.getTaskId();
+
+        final TaskTransformation updateFn = builder -> builder.setCompleted(false);
+        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
+        return result;
+    }
+
+    /**
+     * Mark each {@link TaskView} into list as completed, if {@link TaskId} of task view equals task id of event.
+     *
+     * @param views list of {@link TaskView}
+     * @param event {@link TaskCompleted} instance
+     * @return list of {@link TaskView}
+     */
+    /* package */
+    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelledTaskCompleted event) {
+        final TaskId targetTaskId = event.getTaskId();
+
+        final TaskTransformation updateFn = builder -> builder.setCompleted(true);
+        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
+        return result;
+    }
+
+    /**
+     * Updates task due date of the {@link TaskView}.
+     *
+     * @param views list of {@link TaskView}
+     * @param event {@link TaskDueDateUpdated} instance
+     * @return list of {@link TaskView} with updated task due date
+     */
+    /* package */
+    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelledTaskDueDateUpdated event) {
+        final TaskId targetTaskId = event.getTaskId();
+
+        final TaskTransformation updateFn = builder -> builder.setDueDate(event.getNewDueDate());
+        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
+        return result;
+    }
+
+    /**
+     * Updates task priority of the {@link TaskView}.
+     *
+     * @param views list of {@link TaskView}
+     * @param event {@link TaskPriorityUpdated} instance
+     * @return list of {@link TaskView} with updated task priority
+     */
+    /* package */
+    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelledTaskPriorityUpdated event) {
+        final TaskId targetTaskId = event.getTaskId();
+
+        final TaskTransformation updateFn = builder -> builder.setPriority(event.getNewPriority());
+        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
+        return result;
+    }
+
+    /**
+     * Updates task description of the {@link TaskView}.
+     *
+     * @param views list of {@link TaskView}
+     * @param event {@link TaskDescriptionUpdated} instance
+     * @return list of {@link TaskView} with updated task description
+     */
+    /* package */
+    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelledTaskDescriptionUpdated event) {
+        final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> builder.setDescription(event.getNewDescription());
         final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);

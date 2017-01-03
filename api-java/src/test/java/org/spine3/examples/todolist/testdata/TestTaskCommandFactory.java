@@ -66,9 +66,9 @@ public class TestTaskCommandFactory {
      */
     public static CreateBasicTask createTaskInstance() {
         final CreateBasicTask result = CreateBasicTask.newBuilder()
-                                                     .setId(TASK_ID)
-                                                     .setDescription(DESCRIPTION)
-                                                     .build();
+                                                      .setId(TASK_ID)
+                                                      .setDescription(DESCRIPTION)
+                                                      .build();
         return result;
     }
 
@@ -160,8 +160,8 @@ public class TestTaskCommandFactory {
      */
     public static ReopenTask reopenTaskInstance() {
         final ReopenTask result = ReopenTask.newBuilder()
-                                           .setId(TASK_ID)
-                                           .build();
+                                            .setId(TASK_ID)
+                                            .build();
         return result;
     }
 
@@ -184,8 +184,8 @@ public class TestTaskCommandFactory {
      */
     public static RestoreDeletedTask restoreDeletedTaskInstance() {
         final RestoreDeletedTask result = RestoreDeletedTask.newBuilder()
-                                                           .setId(TASK_ID)
-                                                           .build();
+                                                            .setId(TASK_ID)
+                                                            .build();
         return result;
     }
 
@@ -196,8 +196,8 @@ public class TestTaskCommandFactory {
      */
     public static FinalizeDraft finalizeDraftInstance() {
         final FinalizeDraft result = FinalizeDraft.newBuilder()
-                                                 .setId(TASK_ID)
-                                                 .build();
+                                                  .setId(TASK_ID)
+                                                  .build();
         return result;
     }
 
@@ -219,9 +219,18 @@ public class TestTaskCommandFactory {
      * @return {@link AssignLabelToTask} instance
      */
     public static AssignLabelToTask assignLabelToTaskInstance() {
+        return assignLabelToTaskInstance(TASK_ID, LABEL_ID);
+    }
+
+    /**
+     * Provides a pre-configured {@link AssignLabelToTask} command instance.
+     *
+     * @return {@link AssignLabelToTask} instance
+     */
+    public static AssignLabelToTask assignLabelToTaskInstance(TaskId taskId, TaskLabelId labelId) {
         final AssignLabelToTask result = AssignLabelToTask.newBuilder()
-                                                          .setId(TASK_ID)
-                                                          .setLabelId(LABEL_ID)
+                                                          .setId(taskId)
+                                                          .setLabelId(labelId)
                                                           .build();
         return result;
     }
