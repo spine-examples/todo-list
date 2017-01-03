@@ -22,7 +22,6 @@ package org.spine3.examples.todolist.testdata;
 
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.server.event.enrich.EventEnricher;
 
@@ -42,7 +41,7 @@ public class TestEventEnricherFactory {
                                                                   .setColor(LabelColor.BLUE)
                                                                   .build();
 
-    private TestEventEnricherFactory(){
+    private TestEventEnricherFactory() {
     }
 
     private static final Function<TaskLabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS =
@@ -50,15 +49,6 @@ public class TestEventEnricherFactory {
                 @Nullable
                 @Override
                 public LabelDetails apply(@Nullable TaskLabelId input) {
-                    return LABEL_DETAILS;
-                }
-            };
-
-    private static final Function<TaskId, LabelDetails> TASK_ID_TO_LABEL_DETAILS =
-            new Function<TaskId, LabelDetails>() {
-                @Nullable
-                @Override
-                public LabelDetails apply(@Nullable TaskId input) {
                     return LABEL_DETAILS;
                 }
             };
@@ -73,9 +63,6 @@ public class TestEventEnricherFactory {
                                                   .addFieldEnrichment(TaskLabelId.class,
                                                                       LabelDetails.class,
                                                                       LABEL_ID_TO_LABEL_DETAILS::apply)
-                                                  .addFieldEnrichment(TaskId.class,
-                                                                      LabelDetails.class,
-                                                                      TASK_ID_TO_LABEL_DETAILS::apply)
                                                   .build();
         return result;
     }

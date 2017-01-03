@@ -31,30 +31,14 @@ import "spine/annotations.proto";
 import "spine/event_annotations.proto";
 import "todolist/events.proto";
 
-// LabelDetails enrichment for LabelAssignedToTask and LabelRemovedFromTask events.
+// Label details enrichment.
 //
-message LabelDetailsByLabelIdEnrichment {
+message LabelDetailsEnrichment{
 
     option (enrichment_for) = "spine.examples.todolist.LabelDetailsUpdated,"
-                              "spine.examples.todolist.LabelAssignedToTask,"
-                              "spine.examples.todolist.LabelRemovedFromTask";
+                              "spine.examples.todolist.LabelledTaskRestored,"
+                              "spine.examples.todolist.LabelAssignedToTask";
 
     // label details
     LabelDetails label_details = 1 [(by) = "label_id"];
-}
-
-// LabelDetails enrichment for DeletedTaskRestored and TaskDeleted events.
-//
-message LabelDetailsByTaskIdEnrichment {
-
-    option (enrichment_for) = "spine.examples.todolist.DeletedTaskRestored,"
-                              "spine.examples.todolist.TaskDescriptionUpdated,"
-                              "spine.examples.todolist.TaskDueDateUpdated,"
-                              "spine.examples.todolist.TaskPriorityUpdated,"
-                              "spine.examples.todolist.TaskCompleted,"
-                              "spine.examples.todolist.TaskReopened,"
-                              "spine.examples.todolist.TaskDeleted";
-
-    // label details
-    LabelDetails label_details = 1 [(by) = "id"];
 }

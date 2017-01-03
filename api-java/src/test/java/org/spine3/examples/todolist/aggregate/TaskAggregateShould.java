@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.aggregate;
 
 import com.google.common.base.Throwables;
+import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,13 @@ import org.spine3.examples.todolist.DeleteTask;
 import org.spine3.examples.todolist.FinalizeDraft;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
+import org.spine3.examples.todolist.LabelledTaskCompleted;
+import org.spine3.examples.todolist.LabelledTaskDeleted;
+import org.spine3.examples.todolist.LabelledTaskDescriptionUpdated;
+import org.spine3.examples.todolist.LabelledTaskDueDateUpdated;
+import org.spine3.examples.todolist.LabelledTaskPriorityUpdated;
+import org.spine3.examples.todolist.LabelledTaskReopened;
+import org.spine3.examples.todolist.LabelledTaskRestored;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
@@ -671,7 +679,7 @@ public class TaskAggregateShould {
     }
 
     @Test
-    public void successfully_handle_reopen_task_command_when_task_is_deleted() {
+    public void emit_task_reopened_event_when_handle_reopen_task_command_when_task_is_deleted() {
         final CreateBasicTask createTaskCmd = createTaskInstance();
         final DeleteTask deleteTaskCmd = deleteTaskInstance();
         final ReopenTask reopenTaskCmd = reopenTaskInstance();
@@ -818,6 +826,136 @@ public class TaskAggregateShould {
         final TaskDeleted taskDeleted = (TaskDeleted) messageList.get(0);
 
         assertEquals(TASK_ID, taskDeleted.getId());
+    }
+
+    @Test
+    public void emit_labelled_task_restored_event_upon_restore_task_command_when_task_has_label() {
+        final int expectedListSize = 2;
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance();
+        final DeleteTask deleteTaskCmd = deleteTaskInstance();
+        final RestoreDeletedTask restoreDeletedTaskCmd = restoreDeletedTaskInstance();
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+        aggregate.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
+        aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+
+        final List<? extends com.google.protobuf.Message> messageList =
+                aggregate.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
+
+        assertEquals(expectedListSize, messageList.size());
+
+        final LabelledTaskRestored labelledTaskRestored = (LabelledTaskRestored) messageList.get(1);
+        assertEquals(TASK_ID, labelledTaskRestored.getTaskId());
+        assertEquals(LABEL_ID, labelledTaskRestored.getLabelId());
+    }
+
+    @Test
+    public void emit_labelled_task_updated_description_event_upon_update_task_description_command_when_task_has_label() {
+        final int expectedListSize = 2;
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance();
+        final UpdateTaskDescription updateTaskDescription = updateTaskDescriptionInstance();
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+        aggregate.dispatchForTest(assignLabelToTask, COMMAND_CONTEXT);
+
+        final List<? extends Message> messageList = aggregate.dispatchForTest(updateTaskDescription, COMMAND_CONTEXT);
+        assertEquals(expectedListSize, messageList.size());
+
+        final LabelledTaskDescriptionUpdated taskDescriptionUpdated = (LabelledTaskDescriptionUpdated) messageList.get(1);
+        assertEquals(TASK_ID, taskDescriptionUpdated.getTaskId());
+        assertEquals(LABEL_ID, taskDescriptionUpdated.getLabelId());
+        assertEquals(DESCRIPTION, taskDescriptionUpdated.getNewDescription());
+    }
+
+    @Test
+    public void emit_labelled_task_updated_due_date_event_upon_update_task_due_date_command_when_task_has_label() {
+        final int expectedListSize = 2;
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance();
+        final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance();
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+        aggregate.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
+
+        final List<? extends Message> messageList = aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
+        assertEquals(expectedListSize, messageList.size());
+
+        final LabelledTaskDueDateUpdated taskDueDateUpdated = (LabelledTaskDueDateUpdated) messageList.get(1);
+        assertEquals(TASK_ID, taskDueDateUpdated.getTaskId());
+        assertEquals(LABEL_ID, taskDueDateUpdated.getLabelId());
+        assertEquals(DUE_DATE, taskDueDateUpdated.getNewDueDate());
+    }
+
+    @Test
+    public void emit_labelled_task_updated_priority_event_upon_update_task_priority_command_when_task_has_label() {
+        final int expectedListSize = 2;
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance();
+        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance();
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+        aggregate.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
+
+        final List<? extends Message> messageList = aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
+        assertEquals(expectedListSize, messageList.size());
+
+        final LabelledTaskPriorityUpdated taskPriorityUpdated = (LabelledTaskPriorityUpdated) messageList.get(1);
+        assertEquals(TASK_ID, taskPriorityUpdated.getTaskId());
+        assertEquals(LABEL_ID, taskPriorityUpdated.getLabelId());
+        assertEquals(TaskPriority.HIGH, taskPriorityUpdated.getNewPriority());
+    }
+
+    @Test
+    public void emit_labelled_task_completed_event_upon_complete_task_command_when_task_has_label() {
+        final int expectedListSize = 2;
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance();
+        final CompleteTask completeTaskInstance = completeTaskInstance();
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+        aggregate.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
+
+        final List<? extends Message> messageList = aggregate.dispatchForTest(completeTaskInstance, COMMAND_CONTEXT);
+        assertEquals(expectedListSize, messageList.size());
+
+        final LabelledTaskCompleted taskCompleted = (LabelledTaskCompleted) messageList.get(1);
+        assertEquals(TASK_ID, taskCompleted.getTaskId());
+        assertEquals(LABEL_ID, taskCompleted.getLabelId());
+    }
+
+    @Test
+    public void emit_labelled_task_reopened_event_upon_reopen_task_command_when_task_has_label() {
+        final int expectedListSize = 2;
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance();
+        final CompleteTask completeTaskCmd = completeTaskInstance();
+        final ReopenTask reopenTaskCmd = reopenTaskInstance();
+
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+        aggregate.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
+        aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+
+        final List<? extends Message> messageList = aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
+        assertEquals(expectedListSize, messageList.size());
+
+        final LabelledTaskReopened taskReopened = (LabelledTaskReopened) messageList.get(1);
+        assertEquals(TASK_ID, taskReopened.getTaskId());
+        assertEquals(LABEL_ID, taskReopened.getLabelId());
+    }
+
+    @Test
+    public void emit_labelled_task_deleted_event_upon_delete_task_command_when_task_has_label() {
+        final int expectedListSize = 2;
+        final CreateBasicTask createTaskCmd = createTaskInstance();
+        final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance();
+        final DeleteTask deleteTaskCmd = deleteTaskInstance();
+
+        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+        aggregate.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
+        final List<? extends Message> messageList = aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+
+        assertEquals(expectedListSize, messageList.size());
+
+        final LabelledTaskDeleted taskReopened = (LabelledTaskDeleted) messageList.get(1);
+        assertEquals(TASK_ID, taskReopened.getTaskId());
+        assertEquals(LABEL_ID, taskReopened.getLabelId());
     }
 
     private static String constructExceptionMessage(TaskStatus fromState, TaskStatus toState) {

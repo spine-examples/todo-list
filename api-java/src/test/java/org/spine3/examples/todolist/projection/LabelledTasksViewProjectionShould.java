@@ -25,18 +25,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.Event;
 import org.spine3.base.EventContext;
-import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
-import org.spine3.examples.todolist.TaskCompleted;
-import org.spine3.examples.todolist.TaskDeleted;
-import org.spine3.examples.todolist.TaskDescriptionUpdated;
-import org.spine3.examples.todolist.TaskDueDateUpdated;
+import org.spine3.examples.todolist.LabelledTaskCompleted;
+import org.spine3.examples.todolist.LabelledTaskDeleted;
+import org.spine3.examples.todolist.LabelledTaskDescriptionUpdated;
+import org.spine3.examples.todolist.LabelledTaskDueDateUpdated;
+import org.spine3.examples.todolist.LabelledTaskPriorityUpdated;
+import org.spine3.examples.todolist.LabelledTaskReopened;
+import org.spine3.examples.todolist.LabelledTaskRestored;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
-import org.spine3.examples.todolist.TaskPriorityUpdated;
-import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.view.LabelledTasksView;
 import org.spine3.examples.todolist.view.TaskListView;
 import org.spine3.examples.todolist.view.TaskView;
@@ -60,15 +60,16 @@ import static org.spine3.examples.todolist.testdata.TestEventFactory.TASK_ID;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.UPDATED_DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.UPDATED_TASK_DUE_DATE;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.UPDATED_TASK_PRIORITY;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.deletedTaskRestoredInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelAssignedToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelRemovedFromTaskInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskCompletedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDeletedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDescriptionUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDueDateUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskPriorityUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskReopenedInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskCompletedInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskDeletedInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskDescriptionUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskDueDateUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskPriorityUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskReopenedInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskRestoredInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTskPriorityUpdatedInstance;
 
 /**
  * @author Illia Shepilov
@@ -138,32 +139,20 @@ public class LabelledTasksViewProjectionShould {
         final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask, eventContext);
-        int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
         eventBus.post(labelAssignedToTaskEvent);
-        eventBus.post(labelRemovedFromTaskEvent);
-        final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
-                                                              .getState();
-        matchesExpectedValues(labelledTasksView);
-
-        TaskListView labelledTasks = labelledTasksView.getLabelledTasks();
-        int actualListSize = labelledTasks.getItemsCount();
-
-        assertEquals(expectedListSize, actualListSize);
-
-        final TaskView taskView = labelledTasks.getItems(0);
-
-        assertEquals(LABEL_ID, taskView.getLabelId());
-        assertEquals(TASK_ID, taskView.getId());
+        LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                        .getState();
+        assertEquals(LABEL_ID, labelledTasksView.getLabelId());
 
         eventBus.post(labelRemovedFromTaskEvent);
-        expectedListSize = 0;
-        labelledTasks = repository.load(LABEL_ID)
-                                  .getState()
-                                  .getLabelledTasks();
-        actualListSize = labelledTasks.getItemsCount();
 
-        assertEquals(expectedListSize, actualListSize);
+        labelledTasksView = repository.load(LABEL_ID)
+                                      .getState();
+        doesNotMatchValues(labelledTasksView);
+
+        final TaskListView labelledTasks = labelledTasksView.getLabelledTasks();
+
         assertTrue(labelledTasks.getItemsList()
                                 .isEmpty());
     }
@@ -172,14 +161,13 @@ public class LabelledTasksViewProjectionShould {
     public void remove_task_view_from_state_when_deleted_task_is_restored() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
         final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
-        final DeletedTaskRestored deletedTaskRestored = deletedTaskRestoredInstance();
+        final LabelledTaskRestored deletedTaskRestored = labelledTaskRestoredInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask, eventContext);
         final Event deletedTaskRestoredEvent = createEvent(deletedTaskRestored, eventContext);
         int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
         eventBus.post(labelAssignedToTaskEvent);
-        eventBus.post(labelRemovedFromTaskEvent);
         eventBus.post(labelRemovedFromTaskEvent);
         eventBus.post(deletedTaskRestoredEvent);
         LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
@@ -218,7 +206,7 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void remove_task_view_from_state_when_task_is_deleted() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final TaskDeleted taskDeleted = taskDeletedInstance();
+        final LabelledTaskDeleted taskDeleted = labelledTaskDeletedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final Event deletedTaskEvent = createEvent(taskDeleted, eventContext);
         int expectedListSize = 1;
@@ -253,7 +241,7 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_description_when_handled_event_task_description_updated() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final TaskDescriptionUpdated taskDescriptionUpdated = taskDescriptionUpdatedInstance();
+        final LabelledTaskDescriptionUpdated taskDescriptionUpdated = labelledTaskDescriptionUpdatedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated, eventContext);
         final int expectedListSize = 1;
@@ -279,8 +267,8 @@ public class LabelledTasksViewProjectionShould {
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
-        final TaskDescriptionUpdated taskDescriptionUpdated =
-                taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), UPDATED_DESCRIPTION);
+        final LabelledTaskDescriptionUpdated taskDescriptionUpdated =
+                labelledTaskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), LABEL_ID, UPDATED_DESCRIPTION);
         final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated, eventContext);
         eventBus.post(descriptionUpdatedEvent);
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
@@ -299,7 +287,7 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_priority_when_handled_event_task_priority_updated() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final TaskPriorityUpdated taskPriorityUpdated = taskPriorityUpdatedInstance();
+        final LabelledTaskPriorityUpdated taskPriorityUpdated = labelledTskPriorityUpdatedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated, eventContext);
         final int expectedListSize = 1;
@@ -324,8 +312,8 @@ public class LabelledTasksViewProjectionShould {
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
-        final TaskPriorityUpdated taskPriorityUpdated = taskPriorityUpdatedInstance(TaskId.getDefaultInstance(),
-                                                                                    UPDATED_TASK_PRIORITY);
+        final LabelledTaskPriorityUpdated taskPriorityUpdated =
+                labelledTaskPriorityUpdatedInstance(TaskId.getDefaultInstance(), LABEL_ID, UPDATED_TASK_PRIORITY);
         final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated, eventContext);
         eventBus.post(taskPriorityUpdatedEvent);
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
@@ -344,7 +332,7 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_due_date_when_handled_event_task_due_date_updated() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final TaskDueDateUpdated taskDueDateUpdated = taskDueDateUpdatedInstance();
+        final LabelledTaskDueDateUpdated taskDueDateUpdated = labelledTaskDueDateUpdatedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated, eventContext);
         final int expectedListSize = 1;
@@ -366,8 +354,8 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_due_date_when_handled_event_task_due_date_updated_with_wrong_task_id() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final TaskDueDateUpdated taskDueDateUpdated =
-                taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), UPDATED_TASK_DUE_DATE);
+        final LabelledTaskDueDateUpdated taskDueDateUpdated =
+                labelledTaskDueDateUpdatedInstance(TaskId.getDefaultInstance(), LABEL_ID, UPDATED_TASK_DUE_DATE);
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated, eventContext);
         final int expectedListSize = 1;
@@ -389,7 +377,7 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_completed_state_when_handled_event_task_completed() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final TaskCompleted taskCompleted = taskCompletedInstance();
+        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
         final int expectedListSize = 1;
@@ -411,7 +399,7 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_completed_state_when_handled_event_task_completed_with_wrong_task_id() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final TaskCompleted taskCompleted = taskCompletedInstance();
+        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
         final int expectedListSize = 1;
@@ -433,8 +421,8 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_completed_state_when_handled_event_task_reopened() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final TaskCompleted taskCompleted = taskCompletedInstance();
-        final TaskReopened taskReopened = taskReopenedInstance();
+        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
+        final LabelledTaskReopened taskReopened = labelledTaskReopenedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
         final Event taskReopenedEvent = createEvent(taskReopened, eventContext);
@@ -458,10 +446,10 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_completed_state_when_handled_event_task_reopened_with_wrong_task_id() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final TaskCompleted taskCompleted = taskCompletedInstance();
+        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
-        final TaskReopened taskReopened = taskReopenedInstance(TaskId.getDefaultInstance());
+        final LabelledTaskReopened taskReopened = labelledTaskReopenedInstance(TaskId.getDefaultInstance(), LABEL_ID);
         final Event taskReopenedEvent = createEvent(taskReopened, eventContext);
         final int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
@@ -488,6 +476,11 @@ public class LabelledTasksViewProjectionShould {
     private static void matchesExpectedValues(LabelledTasksView labelledTaskView) {
         assertEquals(LabelColorView.valueOf(LabelColor.BLUE), labelledTaskView.getLabelColor());
         assertEquals(LABEL_TITLE, labelledTaskView.getLabelTitle());
+    }
+
+    private static void doesNotMatchValues(LabelledTasksView labelledTaskView) {
+        assertNotEquals(LabelColorView.valueOf(LabelColor.BLUE), labelledTaskView.getLabelColor());
+        assertNotEquals(LABEL_TITLE, labelledTaskView.getLabelTitle());
     }
 
     /*
