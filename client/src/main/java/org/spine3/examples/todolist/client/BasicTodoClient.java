@@ -181,12 +181,18 @@ public class BasicTodoClient implements TodoClient {
     }
 
     @Override
-    public LabelledTasksView getLabelledTasksView() {
+    public List<LabelledTasksView> getLabelledTasksView() {
         try {
             final Query query = Queries.readAll(LabelledTasksView.class);
             final QueryResponse response = queryService.read(query);
-            final LabelledTasksView result = response.getMessages(0)
-                                                     .unpack(LabelledTasksView.class);
+            final List<Any> messageList= response.getMessagesList();
+            final List<LabelledTasksView> result = newArrayList();
+
+            for (Any any: messageList){
+               final LabelledTasksView labelledView =  any.unpack(LabelledTasksView.class);
+               result.add(labelledView);
+            }
+            
             return result;
         } catch (InvalidProtocolBufferException e) {
             throw Exceptions.wrapped(e);

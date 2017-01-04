@@ -58,7 +58,6 @@ public class Server {
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
     private Function<TaskLabelId, LabelDetails> taskLabelIdToLabelDetails;
-    private Function<TaskId, LabelDetails> taskIdToLabelDetails;
     private TaskAggregateRepository taskAggregateRepository;
     private TaskLabelAggregateRepository taskLabelAggregateRepository;
     private MyListViewProjectionRepository projectionRepository;
@@ -79,38 +78,6 @@ public class Server {
 
     private void initiEnricherFunctions() {
         initLabelIdToDetailsFunction();
-        initTaskIdToDetailsFunction();
-    }
-
-    //TODO 2016-12-22:illia.shepilov check implementation.
-    private void initTaskIdToDetailsFunction() {
-        taskIdToLabelDetails =
-                new Function<TaskId, LabelDetails>() {
-                    @Nullable
-                    @Override
-                    public LabelDetails apply(@Nullable TaskId input) {
-                        final LabelDetails defaultInstance = LabelDetails.getDefaultInstance();
-                        if (input == null) {
-                            return defaultInstance;
-                        }
-                        final TaskAggregate taskAggregate = taskAggregateRepository.load(input);
-                        final Task state = taskAggregate.getState();
-                        final boolean isEmpty = state.getLabelIdsList()
-                                                     .isEmpty();
-                        if (isEmpty) {
-                            return defaultInstance;
-                        }
-                        final TaskLabelId labelId = state.getLabelIdsList()
-                                                         .get(0);
-                        final TaskLabelAggregate labelAggregate = taskLabelAggregateRepository.load(labelId);
-                        final TaskLabel labelState = labelAggregate.getState();
-                        final LabelDetails details = LabelDetails.newBuilder()
-                                                                 .setColor(labelState.getColor())
-                                                                 .setTitle(labelState.getTitle())
-                                                                 .build();
-                        return details;
-                    }
-                };
     }
 
     private void initLabelIdToDetailsFunction() {
@@ -157,9 +124,6 @@ public class Server {
                                                   .addFieldEnrichment(TaskLabelId.class,
                                                                       LabelDetails.class,
                                                                       taskLabelIdToLabelDetails::apply)
-                                                  .addFieldEnrichment(TaskId.class,
-                                                                      LabelDetails.class,
-                                                                      taskIdToLabelDetails::apply)
                                                   .build();
         return result;
     }

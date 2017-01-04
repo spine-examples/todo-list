@@ -20,7 +20,6 @@
 
 package org.spine3.examples.todolist.repository;
 
-import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.TaskLabelId;
@@ -28,6 +27,8 @@ import org.spine3.examples.todolist.projection.LabelledTasksViewProjection;
 import org.spine3.examples.todolist.view.LabelledTasksView;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.projection.ProjectionRepository;
+
+import static org.spine3.base.Identifiers.newUuid;
 
 /**
  * @author Illia Shepilov
@@ -38,13 +39,20 @@ public class LabelledTasksViewRepository
         super(boundedContext);
     }
 
+    private static final TaskLabelId ID = TaskLabelId.newBuilder()
+                                                     .setValue(newUuid())
+                                                     .build();
+
     @Override
     protected TaskLabelId getEntityId(Message event, EventContext context) {
-        final ByteString produceValue = context.getProducerId()
-                                               .getValue();
-        final TaskLabelId result = TaskLabelId.newBuilder()
-                                              .setValueBytes(produceValue)
-                                              .build();
-        return result;
+
+        //for (Object fieldValue : event.getAllFields()
+        //                              .values()) {
+            //if (fieldValue instanceof TaskLabelId) {
+                //return (TaskLabelId) fieldValue;
+            //}
+        //}
+        //return super.getEntityId(event, context);
+        return ID;
     }
 }

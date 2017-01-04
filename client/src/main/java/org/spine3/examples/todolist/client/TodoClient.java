@@ -38,6 +38,8 @@ import org.spine3.examples.todolist.view.DraftTasksView;
 import org.spine3.examples.todolist.view.LabelledTasksView;
 import org.spine3.examples.todolist.view.MyListView;
 
+import java.util.List;
+
 /**
  * @author Illia Shepilov
  */
@@ -73,7 +75,7 @@ public interface TodoClient {
 
     MyListView getMyListView();
 
-    LabelledTasksView getLabelledTasksView();
+    List<LabelledTasksView> getLabelledTasksView();
 
     DraftTasksView getDraftTasksView();
 

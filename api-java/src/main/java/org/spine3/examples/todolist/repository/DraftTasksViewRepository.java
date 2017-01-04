@@ -40,11 +40,6 @@ public class DraftTasksViewRepository
 
     @Override
     protected TaskListId getEntityId(Message event, EventContext context) {
-        final ByteString produceValue = context.getProducerId()
-                                               .getValue();
-        final TaskListId result = TaskListId.newBuilder()
-                                            .setValueBytes(produceValue)
-                                            .build();
-        return result;
+        return DraftTasksViewProjection.ID;
     }
 }

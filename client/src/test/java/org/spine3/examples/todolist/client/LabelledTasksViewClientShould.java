@@ -58,6 +58,7 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
 
     @Test
     public void obtain_labelled_tasks_view_when_handled_command_deleted_task_restored() {
+        final int expectedListSize = 1;
         final CreateBasicTask createTask = createBasicTaskInstance();
         final CreateBasicLabel createLabel = createBasicLabelInstance();
         final TaskLabelId labelId = createLabel.getLabelId();
@@ -71,10 +72,11 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         client.delete(deleteTask);
         client.restore(restoreDeletedTask);
 
-        final List<TaskView> taskViews = client.getLabelledTasksView()
-                                               .getLabelledTasks()
-                                               .getItemsList();
-        final int expectedListSize = 1;
+        final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+        assertEquals(expectedListSize, tasksViewList.size());
+        final List<TaskView> taskViews = tasksViewList.get(0)
+                                                      .getLabelledTasks()
+                                                      .getItemsList();
 
         assertEquals(expectedListSize, taskViews.size());
 
@@ -86,6 +88,7 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
 
     @Test
     public void obtain_empty_labelled_tasks_view_when_handled_command_deleted_task_restored_with_wrong_task_id() {
+        final int expectedListSize = 1;
         final CreateBasicTask createTask = createBasicTaskInstance();
         final CreateBasicLabel createLabel = createBasicLabelInstance();
         final TaskLabelId labelId = createLabel.getLabelId();
@@ -99,14 +102,17 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         client.delete(deleteTask);
         client.restore(restoreDeletedTask);
 
-        final List<TaskView> taskViews = client.getLabelledTasksView()
-                                               .getLabelledTasks()
-                                               .getItemsList();
+        final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+        assertEquals(expectedListSize, tasksViewList.size());
+        final List<TaskView> taskViews = tasksViewList.get(0)
+                                                      .getLabelledTasks()
+                                                      .getItemsList();
         assertTrue(taskViews.isEmpty());
     }
 
     @Test
     public void obtain_tasks_with_assigned_labels_from_labelled_tasks_view() {
+        final int expectedListSize = 1;
         final CreateBasicTask createTask = createBasicTaskInstance();
         final CreateBasicLabel createLabel = createBasicLabelInstance();
         final TaskId taskId = createTask.getId();
@@ -115,10 +121,11 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         client.create(createTask);
         client.create(createLabel);
         client.assignLabel(assignLabelToTask);
-        final int expectedListSize = 1;
-        final List<TaskView> taskViews = client.getLabelledTasksView()
-                                               .getLabelledTasks()
-                                               .getItemsList();
+        final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+        assertEquals(expectedListSize, tasksViewList.size());
+        final List<TaskView> taskViews = tasksViewList.get(0)
+                                                      .getLabelledTasks()
+                                                      .getItemsList();
         assertEquals(expectedListSize, taskViews.size());
 
         final TaskView view = taskViews.get(0);
@@ -129,6 +136,7 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
 
     @Test
     public void obtain_empty_labelled_tasks_view_when_handled_command_assign_label_to_task_with_wrong_task_id() {
+        final int expectedListSize = 1;
         final CreateBasicTask createTask = createBasicTaskInstance();
         final CreateBasicLabel createLabel = createBasicLabelInstance();
         final TaskLabelId labelId = createLabel.getLabelId();
@@ -137,10 +145,11 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         client.create(createTask);
         client.create(createLabel);
         client.assignLabel(assignLabelToTask);
-        final int expectedListSize = 1;
-        final List<TaskView> taskViews = client.getLabelledTasksView()
-                                               .getLabelledTasks()
-                                               .getItemsList();
+        final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+        assertEquals(expectedListSize, tasksViewList.size());
+        final List<TaskView> taskViews = tasksViewList.get(0)
+                                                      .getLabelledTasks()
+                                                      .getItemsList();
         assertEquals(expectedListSize, taskViews.size());
 
         final TaskView taskView = taskViews.get(0);
@@ -163,12 +172,14 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         client.create(createLabel);
         client.assignLabel(assignLabelToTask);
         client.update(updateTaskDescription);
-        final LabelledTasksView view = client.getLabelledTasksView();
+        final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
 
-        assertEquals(expectedListSize, view.getLabelledTasks()
-                                           .getItemsCount());
-        final TaskView taskView = view.getLabelledTasks()
-                                      .getItems(0);
+        assertEquals(expectedListSize, tasksViewList.get(0)
+                                                    .getLabelledTasks()
+                                                    .getItemsCount());
+        final TaskView taskView = tasksViewList.get(0)
+                                               .getLabelledTasks()
+                                               .getItems(0);
 
         assertEquals(labelId, taskView.getLabelId());
         assertEquals(taskId, taskView.getId());
@@ -177,6 +188,7 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
 
     @Test
     public void obtain_updated_task_priority_from_labelled_tasks_view_when_handled_command_update_task_priority() {
+        final int expectedListSize = 1;
         final CreateBasicTask createTask = createBasicTaskInstance();
         final CreateBasicLabel createLabel = createBasicLabelInstance();
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance();
@@ -187,10 +199,11 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         client.create(createLabel);
         client.assignLabel(assignLabelToTask);
         client.update(updateTaskPriority);
-        final List<TaskView> taskViews = client.getLabelledTasksView()
-                                               .getLabelledTasks()
-                                               .getItemsList();
-        final int expectedListSize = 1;
+        final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+        assertEquals(expectedListSize, tasksViewList.size());
+        final List<TaskView> taskViews = tasksViewList.get(0)
+                                                      .getLabelledTasks()
+                                                      .getItemsList();
 
         assertEquals(expectedListSize, taskViews.size());
 
@@ -203,6 +216,7 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
 
     @Test
     public void obtain_updated_task_due_date_from_labelled_tasks_view_when_handled_command_update_task_due_date() {
+        final int expectedListSize = 1;
         final CreateBasicTask createTask = createBasicTaskInstance();
         final CreateBasicLabel createLabel = createBasicLabelInstance();
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance();
@@ -214,10 +228,11 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         client.assignLabel(assignLabelToTask);
         client.update(updateTaskDueDate);
 
-        final List<TaskView> taskViews = client.getLabelledTasksView()
-                                               .getLabelledTasks()
-                                               .getItemsList();
-        final int expectedListSize = 1;
+        final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+        assertEquals(expectedListSize, tasksViewList.size());
+        final List<TaskView> taskViews = tasksViewList.get(0)
+                                                      .getLabelledTasks()
+                                                      .getItemsList();
 
         assertEquals(expectedListSize, taskViews.size());
 
@@ -230,6 +245,7 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
 
     @Test
     public void obtain_empty_labelled_tasks_view_when_handled_command_remove_label_from_task() {
+        final int expectedListSize = 1;
         final CreateBasicTask createTask = createBasicTaskInstance();
         final CreateBasicLabel createLabel = createBasicLabelInstance();
         final TaskId taskId = createTask.getId();
@@ -241,9 +257,11 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         client.assignLabel(assignLabelToTask);
         client.removeLabel(removeLabelFromTask);
 
-        final List<TaskView> taskViews = client.getLabelledTasksView()
-                                               .getLabelledTasks()
-                                               .getItemsList();
+        final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+        assertEquals(expectedListSize, tasksViewList.size());
+        final List<TaskView> taskViews = tasksViewList.get(0)
+                                                      .getLabelledTasks()
+                                                      .getItemsList();
         assertTrue(taskViews.isEmpty());
     }
 
@@ -260,6 +278,7 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         client.assignLabel(assignLabelToTask);
         client.delete(deleteTask);
         final List<TaskView> taskViews = client.getLabelledTasksView()
+                                               .get(0)
                                                .getLabelledTasks()
                                                .getItemsList();
         assertTrue(taskViews.isEmpty());

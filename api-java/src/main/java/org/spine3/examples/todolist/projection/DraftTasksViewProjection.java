@@ -40,6 +40,7 @@ import org.spine3.server.projection.Projection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.constructTaskViewList;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
 
@@ -51,6 +52,11 @@ import static org.spine3.examples.todolist.projection.ProjectionHelper.removeVie
  * @author Illia Shepilov
  */
 public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksView> {
+
+    public static final TaskListId ID = TaskListId.newBuilder()
+                                                  .setValue(newUuid())
+                                                  .build();
+
     /**
      * Creates a new instance.
      *

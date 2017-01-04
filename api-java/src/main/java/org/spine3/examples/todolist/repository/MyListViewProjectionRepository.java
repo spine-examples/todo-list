@@ -20,7 +20,6 @@
 
 package org.spine3.examples.todolist.repository;
 
-import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.TaskListId;
@@ -40,11 +39,6 @@ public class MyListViewProjectionRepository extends ProjectionRepository<TaskLis
 
     @Override
     protected TaskListId getEntityId(Message event, EventContext context) {
-        final ByteString produceValue = context.getProducerId()
-                                               .getValue();
-        final TaskListId result = TaskListId.newBuilder()
-                                            .setValueBytes(produceValue)
-                                            .build();
-        return result;
+        return MyListViewProjection.ID;
     }
 }

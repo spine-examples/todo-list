@@ -55,6 +55,10 @@ import static org.spine3.examples.todolist.projection.ProjectionHelper.removeVie
  */
 public class MyListViewProjection extends Projection<TaskListId, MyListView> {
 
+    public static final TaskListId ID = TaskListId.newBuilder()
+                                                  .setValue(newUuid())
+                                                  .build();
+
     /**
      * Creates a new instance.
      *
