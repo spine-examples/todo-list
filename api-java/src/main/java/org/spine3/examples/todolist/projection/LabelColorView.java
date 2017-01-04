@@ -41,8 +41,7 @@ import org.spine3.examples.todolist.LabelColor;
         this.hexColor = hexColor;
     }
 
-    /* package */
-    static String valueOf(LabelColor labelColor) {
+    /* package */ static String valueOf(LabelColor labelColor) {
         for (LabelColorView colorView : values()) {
             if (colorView.labelColor == labelColor) {
                 return colorView.hexColor;

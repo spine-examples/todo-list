@@ -96,8 +96,7 @@ import org.spine3.examples.todolist.TaskStatus;
      * @param newStatus     suggested new status of the task
      * @return {@code true} if passed statuses satisfy one of the transitions, {@code false} otherwise
      */
-    /* package */
-    static boolean isValid(TaskStatus currentStatus, TaskStatus newStatus) {
+    /* package */ static boolean isValid(TaskStatus currentStatus, TaskStatus newStatus) {
         for (TaskStatusTransition transition : TaskStatusTransition.values()) {
             if (transition.matches(currentStatus, newStatus)) {
                 return true;

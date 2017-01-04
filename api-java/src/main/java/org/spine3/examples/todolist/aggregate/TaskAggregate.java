@@ -64,13 +64,12 @@ import org.spine3.server.aggregate.Aggregate;
 import org.spine3.server.aggregate.Apply;
 import org.spine3.server.command.Assign;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.Lists.newArrayList;
+import static com.google.common.collect.Lists.newLinkedList;
 import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.ensureNeitherCompletedNorDeleted;
 import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateAssignLabelToTaskCommand;
 import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateCreateDraftCommand;
@@ -123,7 +122,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                                                                          .setPreviousDescription(previousDescription)
                                                                          .setNewDescription(cmd.getUpdatedDescription())
                                                                          .build();
-        List<Message> result = newArrayList();
+        final List<Message> result = newLinkedList();
         result.add(taskUpdated);
         for (TaskLabelId labelId : state.getLabelIdsList()) {
             final LabelledTaskDescriptionUpdated labelledTaskUpdated =
@@ -148,7 +147,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                                                                  .setPreviousDueDate(previousDueDate)
                                                                  .setNewDueDate(cmd.getUpdatedDueDate())
                                                                  .build();
-        List<Message> result = newArrayList();
+        final List<Message> result = newLinkedList();
         result.add(taskUpdated);
 
         for (TaskLabelId labelId : getState().getLabelIdsList()) {
@@ -174,7 +173,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                                                                            .setPreviousPriority(previousPriority)
                                                                            .setNewPriority(cmd.getUpdatedPriority())
                                                                            .build();
-        List<Message> result = newArrayList();
+        final List<Message> result = newLinkedList();
         result.add(taskPriorityUpdated);
 
         for (TaskLabelId labelId : state.getLabelIdsList()) {
@@ -197,7 +196,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final TaskReopened taskReopened = TaskReopened.newBuilder()
                                                       .setId(cmd.getId())
                                                       .build();
-        List<Message> result = newArrayList();
+        final List<Message> result = newLinkedList();
         result.add(taskReopened);
 
         for (TaskLabelId labelId : state.getLabelIdsList()) {
@@ -217,7 +216,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final TaskDeleted taskDeleted = TaskDeleted.newBuilder()
                                                    .setId(cmd.getId())
                                                    .build();
-        List<Message> result = newArrayList();
+        final List<Message> result = newLinkedList();
         result.add(taskDeleted);
         for (TaskLabelId labelId : state.getLabelIdsList()) {
             final LabelledTaskDeleted labelledTaskDeleted = LabelledTaskDeleted.newBuilder()
@@ -236,7 +235,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored.newBuilder()
                                                                            .setId(cmd.getId())
                                                                            .build();
-        final List<Message> result = new ArrayList<>();
+        final List<Message> result = newLinkedList();
         result.add(deletedTaskRestored);
         for (TaskLabelId labelId : state.getLabelIdsList()) {
             final LabelledTaskRestored labelledTaskRestored = LabelledTaskRestored.newBuilder()
@@ -255,7 +254,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final TaskCompleted taskCompleted = TaskCompleted.newBuilder()
                                                          .setId(cmd.getId())
                                                          .build();
-        final List<Message> result = new ArrayList<>();
+        final List<Message> result = newLinkedList();
         result.add(taskCompleted);
         for (TaskLabelId labelId : state.getLabelIdsList()) {
             final LabelledTaskCompleted labelledTaskCompleted = LabelledTaskCompleted.newBuilder()
@@ -322,92 +321,77 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Apply
     private void taskDescriptionUpdated(TaskDescriptionUpdated event) {
-        getBuilder().setId(event.getId())
-                    .setDescription(event.getNewDescription());
+        getBuilder().setDescription(event.getNewDescription());
     }
 
     @Apply
     private void labelledTaskDescriptionUpdated(LabelledTaskDescriptionUpdated event) {
-        getBuilder().setId(event.getTaskId())
-                    .setDescription(event.getNewDescription());
+        getBuilder().setDescription(event.getNewDescription());
     }
 
     @Apply
     private void taskDueDateUpdated(TaskDueDateUpdated event) {
-        getBuilder().setId(event.getId())
-                    .setDueDate(event.getNewDueDate());
+        getBuilder().setDueDate(event.getNewDueDate());
     }
 
     @Apply
     private void labelledTaskDueDateUpdated(LabelledTaskDueDateUpdated event) {
-        getBuilder().setId(event.getTaskId())
-                    .setDueDate(event.getNewDueDate());
+        getBuilder().setDueDate(event.getNewDueDate());
     }
 
     @Apply
     private void taskPriorityUpdated(TaskPriorityUpdated event) {
-        getBuilder().setId(event.getId())
-                    .setPriority(event.getNewPriority());
+        getBuilder().setPriority(event.getNewPriority());
     }
 
     @Apply
     private void labelledTaskPriorityUpdated(LabelledTaskPriorityUpdated event) {
-        getBuilder().setId(event.getTaskId())
-                    .setPriority(event.getNewPriority());
+        getBuilder().setPriority(event.getNewPriority());
     }
 
     @Apply
     private void taskReopened(TaskReopened event) {
-        getBuilder().setId(event.getId())
-                    .setTaskStatus(TaskStatus.OPEN);
+        getBuilder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
     private void labelledTaskReopened(LabelledTaskReopened event) {
-        getBuilder().setId(event.getTaskId())
-                    .setTaskStatus(TaskStatus.OPEN);
+        getBuilder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
     private void taskDeleted(TaskDeleted event) {
-        getBuilder().setId(event.getId())
-                    .setTaskStatus(TaskStatus.DELETED);
+        getBuilder().setTaskStatus(TaskStatus.DELETED);
     }
 
     @Apply
     private void labelledTaskDeleted(LabelledTaskDeleted event) {
-        getBuilder().setId(event.getTaskId())
-                    .setTaskStatus(TaskStatus.DELETED);
+        getBuilder().setTaskStatus(TaskStatus.DELETED);
     }
 
     @Apply
     private void deletedTaskRestored(DeletedTaskRestored event) {
-        getBuilder().setId(event.getId())
-                    .setTaskStatus(TaskStatus.OPEN);
+        getBuilder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
     private void labelledTaskRestored(LabelledTaskRestored event) {
-        getBuilder().setId(event.getTaskId())
-                    .setTaskStatus(TaskStatus.OPEN);
+        getBuilder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
     private void taskCompleted(TaskCompleted event) {
-        getBuilder().setId(event.getId())
-                    .setTaskStatus(TaskStatus.COMPLETED);
+        getBuilder().setTaskStatus(TaskStatus.COMPLETED);
     }
 
     @Apply
     private void labelledTaskCompleted(LabelledTaskCompleted event) {
-        getBuilder().setId(event.getTaskId())
-                    .setTaskStatus(TaskStatus.COMPLETED);
+        getBuilder().setTaskStatus(TaskStatus.COMPLETED);
     }
 
     @Apply
     private void taskDraftFinalized(TaskDraftFinalized event) {
-        getBuilder().setId(event.getId())
-                    .setTaskStatus(TaskStatus.FINALIZED);
+        getBuilder().setTaskStatus(TaskStatus.FINALIZED);
     }
 
     @Apply
@@ -416,8 +400,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                                            .stream()
                                            .collect(Collectors.toList());
         list.add(event.getLabelId());
-        getBuilder().setId(event.getId())
-                    .clearLabelIds()
+        getBuilder().clearLabelIds()
                     .addAllLabelIds(list);
     }
 
@@ -428,8 +411,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                                            .collect(Collectors.toList());
         list.remove(event.getLabelId());
 
-        getBuilder().setId(event.getId())
-                    .clearLabelIds()
+        getBuilder().clearLabelIds()
                     .addAllLabelIds(list);
 
     }

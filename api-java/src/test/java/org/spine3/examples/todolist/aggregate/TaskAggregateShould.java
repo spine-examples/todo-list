@@ -372,8 +372,10 @@ public class TaskAggregateShould {
     @Test
     public void update_current_state_task_description_after_dispatch_command() {
         final String newDescription = "new description.";
+        final CreateBasicTask createBasicTask = createTaskInstance();
         final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(newDescription);
 
+        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
         aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
@@ -384,8 +386,10 @@ public class TaskAggregateShould {
     @Test
     public void update_current_state_task_due_date_after_dispatch_command() {
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
+        final CreateBasicTask createBasicTask = createTaskInstance();
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(updatedDueDate);
 
+        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
         aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
@@ -396,8 +400,10 @@ public class TaskAggregateShould {
     @Test
     public void update_current_state_task_priority_after_dispatch_command() {
         final TaskPriority updatedPriority = TaskPriority.HIGH;
+        final CreateBasicTask createBasicTask = createTaskInstance();
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(updatedPriority);
 
+        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
         aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 

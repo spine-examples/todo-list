@@ -261,7 +261,7 @@ message LabelDetailsUpdated {
 
 message LabelledTaskRestored {
 
-    // An label idenifier.
+    // A label idenifier.
     TaskLabelId label_id = 1;
 
     // An task idenifier.
@@ -270,7 +270,7 @@ message LabelledTaskRestored {
 
 message LabelledTaskDescriptionUpdated {
 
-    // An label idenifier.
+    // A label idenifier.
     TaskLabelId label_id = 1;
 
     // An identifier of the updated task.
@@ -290,7 +290,7 @@ message LabelledTaskDescriptionUpdated {
 
 message LabelledTaskDueDateUpdated {
 
-    // An label idenifier.
+    // A label idenifier.
     TaskLabelId label_id = 1;
 
     // An identifier of the updated task.
@@ -308,7 +308,7 @@ message LabelledTaskDueDateUpdated {
 
 message LabelledTaskPriorityUpdated {
 
-    // An label idenifier.
+    // A label idenifier.
     TaskLabelId label_id = 1;
 
     TaskId task_id = 2;
@@ -327,7 +327,7 @@ message LabelledTaskPriorityUpdated {
 
 message LabelledTaskCompleted {
 
-    // An label idenifier.
+    // A label idenifier.
     TaskLabelId label_id = 1;
 
     // An identifier og the completed task.
@@ -336,7 +336,7 @@ message LabelledTaskCompleted {
 
 message LabelledTaskDeleted {
 
-    // An label idenifier.
+    // A label idenifier.
     TaskLabelId label_id = 1;
 
     // An identifier of the deleted task.
@@ -345,7 +345,7 @@ message LabelledTaskDeleted {
 
 message LabelledTaskReopened {
 
-    // An label idenifier.
+    // A label idenifier.
     TaskLabelId label_id = 1;
 
     // An identifier of the reopened task.

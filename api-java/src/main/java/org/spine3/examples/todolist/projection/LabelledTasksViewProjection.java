@@ -47,8 +47,8 @@ import org.spine3.server.projection.Projection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.spine3.examples.todolist.projection.ProjectionHelper.constructTaskViewList;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
+import static org.spine3.examples.todolist.projection.ProjectionHelper.updateTaskViewList;
 
 /**
  * A projection state of the created tasks marked with a certain label.
@@ -124,8 +124,8 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     public void on(LabelledTaskDescriptionUpdated event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
-        final LabelledTasksView state = constructLabelledViewState(updatedList);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final LabelledTasksView state = toViewState(updatedList);
         incrementState(state);
     }
 
@@ -133,8 +133,8 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     public void on(LabelledTaskPriorityUpdated event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
-        final LabelledTasksView state = constructLabelledViewState(updatedList);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final LabelledTasksView state = toViewState(updatedList);
         incrementState(state);
     }
 
@@ -142,8 +142,8 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     public void on(LabelledTaskDueDateUpdated event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
-        final LabelledTasksView state = constructLabelledViewState(updatedList);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final LabelledTasksView state = toViewState(updatedList);
         incrementState(state);
     }
 
@@ -151,8 +151,8 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     public void on(LabelledTaskCompleted event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
-        final LabelledTasksView state = constructLabelledViewState(updatedList);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final LabelledTasksView state = toViewState(updatedList);
         incrementState(state);
     }
 
@@ -160,8 +160,8 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     public void on(LabelledTaskReopened event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
-        final LabelledTasksView state = constructLabelledViewState(updatedList);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final LabelledTasksView state = toViewState(updatedList);
         incrementState(state);
     }
 
@@ -169,12 +169,12 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     public void on(LabelDetailsUpdated event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
-        final LabelledTasksView state = constructLabelledViewState(updatedList);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final LabelledTasksView state = toViewState(updatedList);
         incrementState(state);
     }
 
-    private LabelledTasksView constructLabelledViewState(List<TaskView> updatedList) {
+    private LabelledTasksView toViewState(List<TaskView> updatedList) {
         final LabelledTasksView state = getState();
         final TaskListView listView = TaskListView.newBuilder()
                                                   .addAllItems(updatedList)

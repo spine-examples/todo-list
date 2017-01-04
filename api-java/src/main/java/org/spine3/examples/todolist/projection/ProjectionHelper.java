@@ -41,7 +41,6 @@ import org.spine3.examples.todolist.view.TaskView;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -64,8 +63,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param id    task id
      * @return {@link TaskListView} without deleted task view
      */
-    /* package */
-    static TaskListView removeViewByTaskId(List<TaskView> views, TaskId id) {
+    /* package */ static TaskListView removeViewByTaskId(List<TaskView> views, TaskId id) {
         final TaskView taskView = views.stream()
                                        .filter(t -> t.getId()
                                                      .equals(id))
@@ -82,8 +80,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param id    task label id
      * @return {@link TaskListView} without deleted task view
      */
-    /*package*/
-    static TaskListView removeViewByLabelId(List<TaskView> views, TaskLabelId id) {
+    /* package */ static TaskListView removeViewByLabelId(List<TaskView> views, TaskLabelId id) {
         final TaskView taskView = views.stream()
                                        .filter(t -> t.getLabelId()
                                                      .equals(id))
@@ -110,8 +107,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param event {@link LabelDetailsUpdated} instance
      * @return list of {@link TaskView} with updated {@link LabelDetails}
      */
-    /* package */
-    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelDetailsUpdated event) {
+    /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelDetailsUpdated event) {
         final int listSize = views.size();
         final List<TaskView> updatedList = new ArrayList<>(listSize);
         for (TaskView view : views) {
@@ -140,8 +136,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param event {@link LabelRemovedFromTask} instance
      * @return list of {@link TaskView} which does not contains specified label
      */
-    /* package */
-    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelRemovedFromTask event) {
+    /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelRemovedFromTask event) {
         final TaskId targetTaskId = event.getId();
 
         final TaskTransformation updateFn = builder -> builder.setLabelId(TaskLabelId.getDefaultInstance());
@@ -156,8 +151,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param event {@link LabelAssignedToTask} instance
      * @return list of {@link TaskView} which contains specified label
      */
-    /* package */
-    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelAssignedToTask event) {
+    /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelAssignedToTask event) {
         final TaskId targetTaskId = event.getId();
 
         final TaskTransformation updateFn = builder -> builder.setLabelId(event.getLabelId());
@@ -172,8 +166,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param event {@link TaskReopened} instance
      * @return list of {@link TaskView}
      */
-    /* package */
-    static List<TaskView> constructTaskViewList(List<TaskView> views, TaskReopened event) {
+    /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, TaskReopened event) {
         final TaskId targetTaskId = event.getId();
 
         final TaskTransformation updateFn = builder -> builder.setCompleted(false);
@@ -188,8 +181,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param event {@link TaskCompleted} instance
      * @return list of {@link TaskView}
      */
-    /* package */
-    static List<TaskView> constructTaskViewList(List<TaskView> views, TaskCompleted event) {
+    /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, TaskCompleted event) {
         final TaskId targetTaskId = event.getId();
 
         final TaskTransformation updateFn = builder -> builder.setCompleted(true);
@@ -204,8 +196,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param event {@link TaskDueDateUpdated} instance
      * @return list of {@link TaskView} with updated task due date
      */
-    /* package */
-    static List<TaskView> constructTaskViewList(List<TaskView> views, TaskDueDateUpdated event) {
+    /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, TaskDueDateUpdated event) {
         final TaskId targetTaskId = event.getId();
 
         final TaskTransformation updateFn = builder -> builder.setDueDate(event.getNewDueDate());
@@ -220,8 +211,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param event {@link TaskPriorityUpdated} instance
      * @return list of {@link TaskView} with updated task priority
      */
-    /* package */
-    static List<TaskView> constructTaskViewList(List<TaskView> views, TaskPriorityUpdated event) {
+    /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, TaskPriorityUpdated event) {
         final TaskId targetTaskId = event.getId();
 
         final TaskTransformation updateFn = builder -> builder.setPriority(event.getNewPriority());
@@ -236,8 +226,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param event {@link TaskDescriptionUpdated} instance
      * @return list of {@link TaskView} with updated task description
      */
-    /* package */
-    static List<TaskView> constructTaskViewList(List<TaskView> views, TaskDescriptionUpdated event) {
+    /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, TaskDescriptionUpdated event) {
         final TaskId targetTaskId = event.getId();
 
         final TaskTransformation updateFn = builder -> builder.setDescription(event.getNewDescription());
@@ -252,8 +241,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param event {@link TaskReopened} instance
      * @return list of {@link TaskView}
      */
-    /* package */
-    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelledTaskReopened event) {
+    /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelledTaskReopened event) {
         final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> builder.setCompleted(false);
@@ -268,8 +256,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param event {@link TaskCompleted} instance
      * @return list of {@link TaskView}
      */
-    /* package */
-    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelledTaskCompleted event) {
+    /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelledTaskCompleted event) {
         final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> builder.setCompleted(true);
@@ -284,8 +271,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param event {@link TaskDueDateUpdated} instance
      * @return list of {@link TaskView} with updated task due date
      */
-    /* package */
-    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelledTaskDueDateUpdated event) {
+    /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelledTaskDueDateUpdated event) {
         final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> builder.setDueDate(event.getNewDueDate());
@@ -300,8 +286,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param event {@link TaskPriorityUpdated} instance
      * @return list of {@link TaskView} with updated task priority
      */
-    /* package */
-    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelledTaskPriorityUpdated event) {
+    /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelledTaskPriorityUpdated event) {
         final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> builder.setPriority(event.getNewPriority());
@@ -316,8 +301,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      * @param event {@link TaskDescriptionUpdated} instance
      * @return list of {@link TaskView} with updated task description
      */
-    /* package */
-    static List<TaskView> constructTaskViewList(List<TaskView> views, LabelledTaskDescriptionUpdated event) {
+    /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelledTaskDescriptionUpdated event) {
         final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> builder.setDescription(event.getNewDescription());

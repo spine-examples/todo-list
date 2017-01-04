@@ -94,8 +94,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     @Apply
     private void labelDetailsUpdated(LabelDetailsUpdated event) {
         final LabelDetails labelDetails = event.getNewDetails();
-        getBuilder().setId(event.getLabelId())
-                    .setTitle(labelDetails.getTitle())
+        getBuilder().setTitle(labelDetails.getTitle())
                     .setColor(labelDetails.getColor());
     }
 }
