@@ -39,20 +39,15 @@ public class LabelledTasksViewRepository
         super(boundedContext);
     }
 
-    private static final TaskLabelId ID = TaskLabelId.newBuilder()
-                                                     .setValue(newUuid())
-                                                     .build();
-
     @Override
     protected TaskLabelId getEntityId(Message event, EventContext context) {
 
-        //for (Object fieldValue : event.getAllFields()
-        //                              .values()) {
-            //if (fieldValue instanceof TaskLabelId) {
-                //return (TaskLabelId) fieldValue;
-            //}
-        //}
-        //return super.getEntityId(event, context);
-        return ID;
+        for (Object fieldValue : event.getAllFields()
+                                      .values()) {
+            if (fieldValue instanceof TaskLabelId) {
+                return (TaskLabelId) fieldValue;
+            }
+        }
+        return super.getEntityId(event, context);
     }
 }

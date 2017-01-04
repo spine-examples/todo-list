@@ -35,6 +35,7 @@ import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
 import org.spine3.examples.todolist.view.LabelledTasksView;
+import org.spine3.examples.todolist.view.TaskListView;
 import org.spine3.examples.todolist.view.TaskView;
 import org.spine3.protobuf.Timestamps;
 
@@ -88,25 +89,31 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
 
     @Test
     public void obtain_empty_labelled_tasks_view_when_handled_command_deleted_task_restored_with_wrong_task_id() {
-        final int expectedListSize = 1;
         final CreateBasicTask createTask = createBasicTaskInstance();
+        client.create(createTask);
+        
         final CreateBasicLabel createLabel = createBasicLabelInstance();
+        client.create(createLabel);
+
         final TaskLabelId labelId = createLabel.getLabelId();
         final TaskId taskId = createTask.getId();
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(getWrongTaskId());
-        client.create(createTask);
-        client.create(createLabel);
         client.assignLabel(assignLabelToTask);
+
+        final DeleteTask deleteTask = deleteTaskInstance(taskId);
         client.delete(deleteTask);
+
+        final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(getWrongTaskId());
         client.restore(restoreDeletedTask);
 
+        final int expectedListSize = 1;
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
         assertEquals(expectedListSize, tasksViewList.size());
-        final List<TaskView> taskViews = tasksViewList.get(0)
-                                                      .getLabelledTasks()
-                                                      .getItemsList();
+
+        final TaskListView taskListView = tasksViewList.get(0)
+                                                       .getLabelledTasks();
+        final List<TaskView> taskViews = taskListView.getItemsList();
+
         assertTrue(taskViews.isEmpty());
     }
 

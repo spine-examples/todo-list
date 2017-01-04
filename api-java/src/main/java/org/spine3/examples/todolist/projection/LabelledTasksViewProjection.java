@@ -26,6 +26,7 @@ import org.spine3.base.EventContext;
 import org.spine3.base.Events;
 import org.spine3.examples.todolist.EnrichmentNotFoundException;
 import org.spine3.examples.todolist.LabelAssignedToTask;
+import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsEnrichment;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
@@ -207,11 +208,15 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
         final TaskListView taskListView = TaskListView.newBuilder()
                                                       .addAllItems(views)
                                                       .build();
-        final String hexColor = LabelColorView.valueOf(labelDetails.getColor());
         final LabelledTasksView.Builder result = getState().newBuilderForType()
                                                            .setLabelledTasks(taskListView)
-                                                           .setLabelColor(hexColor)
                                                            .setLabelTitle(labelDetails.getTitle());
+
+        if (labelDetails.getColor() != LabelColor.LC_UNDEFINED) {
+            final String hexColor = LabelColorView.valueOf(labelDetails.getColor());
+            result.setLabelColor(hexColor);
+        }
+
         return result;
     }
 }
