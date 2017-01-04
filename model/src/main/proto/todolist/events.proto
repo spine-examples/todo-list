@@ -264,7 +264,7 @@ message LabelledTaskRestored {
     // A label idenifier.
     TaskLabelId label_id = 1;
 
-    // An task idenifier.
+    // A task idenifier.
     TaskId task_id = 2;
 }
 
