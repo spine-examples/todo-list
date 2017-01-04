@@ -57,10 +57,10 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Removes {@link TaskView} from list of task view by specified task id.
+     * Removes the matching {@link TaskView} from the list of views by the task ID.
      *
-     * @param views list of the {@link TaskView}
-     * @param id    task id
+     * @param views the list of the {@link TaskView}
+     * @param id    the task ID of the task view
      * @return {@link TaskListView} without deleted task view
      */
     /* package */ static TaskListView removeViewByTaskId(List<TaskView> views, TaskId id) {
@@ -69,15 +69,15 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
                                                      .equals(id))
                                        .findFirst()
                                        .orElse(null);
-        final TaskListView result = getTaskListView(views, taskView);
+        final TaskListView result = removeTaskView(views, taskView);
         return result;
     }
 
     /**
-     * Removes {@link TaskView} from list of task view by specified task label id.
+     * Removes the matching {@link TaskView} from the given list of views by the label ID.
      *
-     * @param views list of the {@link TaskView}
-     * @param id    task label id
+     * @param views the list of the {@link TaskView}
+     * @param id    the label ID of the task view
      * @return {@link TaskListView} without deleted task view
      */
     /* package */ static TaskListView removeViewByLabelId(List<TaskView> views, TaskLabelId id) {
@@ -86,11 +86,11 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
                                                      .equals(id))
                                        .findFirst()
                                        .orElse(null);
-        final TaskListView result = getTaskListView(views, taskView);
+        final TaskListView result = removeTaskView(views, taskView);
         return result;
     }
 
-    private static TaskListView getTaskListView(List<TaskView> views, @Nullable TaskView taskView) {
+    private static TaskListView removeTaskView(List<TaskView> views, @Nullable TaskView taskView) {
         if (taskView != null) {
             views.remove(taskView);
         }
@@ -101,11 +101,11 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Updates {@link TaskView} label details by specified {@link TaskLabelId}.
+     * Updates the label details of the matching {@link TaskView} according to the event data.
      *
-     * @param views list of {@link TaskView}
+     * @param views the list of the {@link TaskView}
      * @param event {@link LabelDetailsUpdated} instance
-     * @return list of {@link TaskView} with updated {@link LabelDetails}
+     * @return the list of the {@link TaskView} with updated {@link LabelDetails}
      */
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelDetailsUpdated event) {
         final int listSize = views.size();
@@ -130,11 +130,11 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Removes label from each {@link TaskView}, which contains into list.
+     * Removes the matching label from the matching {@link TaskView} according to the event data.
      *
-     * @param views list of {@link TaskView}
+     * @param views the list of the {@link TaskView}
      * @param event {@link LabelRemovedFromTask} instance
-     * @return list of {@link TaskView} which does not contains specified label
+     * @return the list of the {@link TaskView} which does not contains specified label
      */
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelRemovedFromTask event) {
         final TaskId targetTaskId = event.getId();
@@ -145,11 +145,11 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Add label to the {@link TaskView}, which contains into list.
+     * Adds the label to the matching {@link TaskView} according to the event data.
      *
-     * @param views list of {@link TaskView}
+     * @param views the list of the {@link TaskView}
      * @param event {@link LabelAssignedToTask} instance
-     * @return list of {@link TaskView} which contains specified label
+     * @return the list of the {@link TaskView} which contains specified label
      */
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelAssignedToTask event) {
         final TaskId targetTaskId = event.getId();
@@ -160,11 +160,11 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Mark each {@link TaskView} into list as uncompleted, if {@link TaskId} of task view equals task id of event.
+     * Marks the matching {@link TaskView} as uncompleted according to the event data.
      *
-     * @param views list of {@link TaskView}
+     * @param views the list of the {@link TaskView}
      * @param event {@link TaskReopened} instance
-     * @return list of {@link TaskView}
+     * @return the list of the {@link TaskView}
      */
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, TaskReopened event) {
         final TaskId targetTaskId = event.getId();
@@ -175,11 +175,11 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Mark each {@link TaskView} into list as completed, if {@link TaskId} of task view equals task id of event.
+     * Marks the matching {@link TaskView} as completed according to the event data.
      *
-     * @param views list of {@link TaskView}
+     * @param views the list of the {@link TaskView}
      * @param event {@link TaskCompleted} instance
-     * @return list of {@link TaskView}
+     * @return the list of the {@link TaskView}
      */
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, TaskCompleted event) {
         final TaskId targetTaskId = event.getId();
@@ -192,9 +192,9 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     /**
      * Updates task due date of the {@link TaskView}.
      *
-     * @param views list of {@link TaskView}
+     * @param views the list of the {@link TaskView}
      * @param event {@link TaskDueDateUpdated} instance
-     * @return list of {@link TaskView} with updated task due date
+     * @return the list of the {@link TaskView} with updated task due date
      */
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, TaskDueDateUpdated event) {
         final TaskId targetTaskId = event.getId();
@@ -205,11 +205,11 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Updates task priority of the {@link TaskView}.
+     * Updates the task priority of the matching {@link TaskView} according to the event data.
      *
-     * @param views list of {@link TaskView}
+     * @param views the list of the {@link TaskView}
      * @param event {@link TaskPriorityUpdated} instance
-     * @return list of {@link TaskView} with updated task priority
+     * @return the list of the {@link TaskView} with updated task priority
      */
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, TaskPriorityUpdated event) {
         final TaskId targetTaskId = event.getId();
@@ -220,11 +220,11 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Updates task description of the {@link TaskView}.
+     * Updates the task description of the matching {@link TaskView} according to the event data.
      *
-     * @param views list of {@link TaskView}
+     * @param views the list of the {@link TaskView}
      * @param event {@link TaskDescriptionUpdated} instance
-     * @return list of {@link TaskView} with updated task description
+     * @return the list of the {@link TaskView} with updated task description
      */
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, TaskDescriptionUpdated event) {
         final TaskId targetTaskId = event.getId();
@@ -235,11 +235,11 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Mark each {@link TaskView} into list as uncompleted, if {@link TaskId} of task view equals task id of event.
+     * Marks the matching {@link TaskView} as uncompleted according to the event data.
      *
-     * @param views list of {@link TaskView}
+     * @param views the list of the {@link TaskView}
      * @param event {@link TaskReopened} instance
-     * @return list of {@link TaskView}
+     * @return the list of the {@link TaskView}
      */
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelledTaskReopened event) {
         final TaskId targetTaskId = event.getTaskId();
@@ -250,11 +250,11 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Mark each {@link TaskView} into list as completed, if {@link TaskId} of task view equals task id of event.
+     * Marks the matching {@link TaskView} as completed according to the event data.
      *
-     * @param views list of {@link TaskView}
+     * @param views the list of the {@link TaskView}
      * @param event {@link TaskCompleted} instance
-     * @return list of {@link TaskView}
+     * @return the list of the {@link TaskView}
      */
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelledTaskCompleted event) {
         final TaskId targetTaskId = event.getTaskId();
@@ -265,11 +265,11 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Updates task due date of the {@link TaskView}.
+     * Updates the task due date of the matching {@link TaskView} according to the event data.
      *
-     * @param views list of {@link TaskView}
+     * @param views the list of the {@link TaskView}
      * @param event {@link TaskDueDateUpdated} instance
-     * @return list of {@link TaskView} with updated task due date
+     * @return the list of the {@link TaskView} with updated task due date
      */
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelledTaskDueDateUpdated event) {
         final TaskId targetTaskId = event.getTaskId();
@@ -280,11 +280,11 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Updates task priority of the {@link TaskView}.
+     * Updates the task priority of the matching {@link TaskView} according to the event data.
      *
-     * @param views list of {@link TaskView}
+     * @param views the list of the {@link TaskView}
      * @param event {@link TaskPriorityUpdated} instance
-     * @return list of {@link TaskView} with updated task priority
+     * @return the list of the {@link TaskView} with updated task priority
      */
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelledTaskPriorityUpdated event) {
         final TaskId targetTaskId = event.getTaskId();
@@ -295,11 +295,11 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Updates task description of the {@link TaskView}.
+     * Updates the task description of the matching {@link TaskView} according to the event data.
      *
-     * @param views list of {@link TaskView}
+     * @param views the list of the {@link TaskView}
      * @param event {@link TaskDescriptionUpdated} instance
-     * @return list of {@link TaskView} with updated task description
+     * @return the list of the {@link TaskView} with updated task description
      */
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, LabelledTaskDescriptionUpdated event) {
         final TaskId targetTaskId = event.getTaskId();
@@ -333,7 +333,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Interface for flexible usage {@link Function} in case of task transformation.
+     * A common interface for the {@link TaskView} transformations.
      */
     private interface TaskTransformation extends Function<TaskView.Builder, TaskView.Builder> {
     }

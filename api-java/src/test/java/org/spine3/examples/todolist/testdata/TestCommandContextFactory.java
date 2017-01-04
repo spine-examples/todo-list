@@ -57,8 +57,8 @@ public class TestCommandContextFactory {
     /**
      * Creates a new {@link CommandContext} instance according to the parameters specified.
      *
-     * @param userId    the actor id
-     * @param commandId the command id
+     * @param userId    the actor ID of the command context
+     * @param commandId the command ID of the command context
      * @param when      indicates when was created context
      * @return constructed instance of {@link CommandContext}
      */

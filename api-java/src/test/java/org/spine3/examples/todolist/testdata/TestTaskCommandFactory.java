@@ -84,7 +84,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides {@link UpdateTaskDescription} instance by specified description.
      *
-     * @param description String value into updated description field
+     * @param description the description of the updated task
      * @return {@link UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(String description) {
@@ -107,7 +107,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides {@link UpdateTaskDueDate} instance with specified update due date field.
      *
-     * @param updatedDueDate value into updated due date field, present in seconds
+     * @param updatedDueDate the due date of the updated task
      * @return {@link UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance(Timestamp updatedDueDate) {
@@ -130,7 +130,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides {@link UpdateTaskPriority} instance by specified priority.
      *
-     * @param priority {@link TaskPriority} enum value
+     * @param priority the priority of the updated task
      * @return {@link UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskPriority priority) {

@@ -106,7 +106,7 @@ public class TestEventFactory {
     /**
      * Provides {@link TaskCreated} event by specified task ID.
      *
-     * @param id task id
+     * @param id the ID of the created task
      * @return {@link TaskCreated} instance
      */
     public static TaskCreated taskCreatedInstance(TaskId id) {
@@ -129,9 +129,9 @@ public class TestEventFactory {
      * Provides {@link TaskDraftCreated} event by specified task description,
      * task priority and draft creation time.
      *
-     * @param description  task description
-     * @param priority     task priority
-     * @param creationTime time of draft creation
+     * @param description  the description of the created draft
+     * @param priority     the priority of the created draft
+     * @param creationTime the time creation of the created draft
      * @return {@link TaskDraftCreated} instance
      */
     public static TaskDraftCreated taskDraftCreatedInstance(String description,
@@ -160,7 +160,7 @@ public class TestEventFactory {
     /**
      * Provides a pre-configured {@link LabelledTaskDescriptionUpdated} event instance.
      *
-     * @param description task description
+     * @param description the description of the labelled task
      * @return {@link LabelledTaskDescriptionUpdated} instance
      */
     public static LabelledTaskDescriptionUpdated labelledTaskDescriptionUpdatedInstance(TaskId taskId,
@@ -186,7 +186,7 @@ public class TestEventFactory {
     /**
      * Provides {@link TaskDescriptionUpdated} event by task description and task id specified.
      *
-     * @param description task description
+     * @param description the description of the updated task
      * @return {@link TaskDescriptionUpdated} instance
      */
     public static TaskDescriptionUpdated taskDescriptionUpdatedInstance(TaskId id, String description) {
@@ -209,7 +209,7 @@ public class TestEventFactory {
     /**
      * Provides {@link LabelledTaskPriorityUpdated} event by specified task priority.
      *
-     * @param priority task priority
+     * @param priority the priority of the updated task
      * @return {@link LabelledTaskPriorityUpdated} instance
      */
     public static LabelledTaskPriorityUpdated labelledTaskPriorityUpdatedInstance(TaskId taskId,
@@ -235,7 +235,7 @@ public class TestEventFactory {
     /**
      * Provides {@link TaskPriorityUpdated} event by specified task priority.
      *
-     * @param priority task priority
+     * @param priority the priority of the updated task
      * @return {@link TaskPriorityUpdated} instance
      */
     public static TaskPriorityUpdated taskPriorityUpdatedInstance(TaskId id, TaskPriority priority) {
@@ -258,7 +258,7 @@ public class TestEventFactory {
     /**
      * Provides {@link LabelledTaskDueDateUpdated} event by task due date and task id specified.
      *
-     * @param dueDate the due date value for the task
+     * @param dueDate the due date of the updated task
      * @return {@link LabelledTaskDueDateUpdated} instance
      */
     public static LabelledTaskDueDateUpdated labelledTaskDueDateUpdatedInstance(TaskId taskId,
@@ -284,7 +284,7 @@ public class TestEventFactory {
     /**
      * Provides {@link TaskDueDateUpdated} event by task due date and task id specified.
      *
-     * @param dueDate the due date value for the task
+     * @param dueDate the due date of the updated task
      * @return {@link TaskDueDateUpdated} instance
      */
     public static TaskDueDateUpdated taskDueDateUpdatedInstance(TaskId id, Timestamp dueDate) {
@@ -455,7 +455,7 @@ public class TestEventFactory {
     /**
      * Provides {@link LabelAssignedToTask} event by specified task label ID.
      *
-     * @param labelId label id
+     * @param labelId the ID of the assigned label
      * @return {@link LabelAssignedToTask} instance
      */
     public static LabelAssignedToTask labelAssignedToTaskInstance(TaskId taskId, TaskLabelId labelId) {
@@ -491,8 +491,8 @@ public class TestEventFactory {
     /**
      * Provides {@link LabelCreated} event by specified label color and title.
      *
-     * @param color label color
-     * @param title label title
+     * @param color the color of the created label
+     * @param title the title of the created label
      * @return {@link LabelCreated} instance
      */
     public static LabelCreated labelCreatedInstance(LabelColor color, String title) {
@@ -517,8 +517,8 @@ public class TestEventFactory {
     /**
      * Provides {@link LabelDetailsUpdated} event by specified label color and title.
      *
-     * @param color label color
-     * @param title label title
+     * @param color the color of the updated label details
+     * @param title the title of the updated label details
      * @return {@link LabelDetailsUpdated} instance
      */
     public static LabelDetailsUpdated labelDetailsUpdatedInstance(LabelColor color, String title) {

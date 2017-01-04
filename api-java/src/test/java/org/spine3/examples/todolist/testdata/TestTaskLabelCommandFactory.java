@@ -69,8 +69,8 @@ public class TestTaskLabelCommandFactory {
     /**
      * Provides {@link UpdateLabelDetails} event by specified label color and title.
      *
-     * @param color {@link LabelColor} enum value.
-     * @param title String value
+     * @param color the color of the updated label details
+     * @param title the title of the updated label details
      * @return {@link UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelColor color, String title) {
