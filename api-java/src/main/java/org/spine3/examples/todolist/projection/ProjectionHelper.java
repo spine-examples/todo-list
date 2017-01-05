@@ -116,13 +116,12 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
                                            .equals(event.getLabelId());
             if (willUpdate) {
                 final LabelDetails labelDetails = event.getNewDetails();
-                addedView = newBuilder()
-                        .setLabelColor(labelDetails.getColor())
-                        .setDueDate(view.getDueDate())
-                        .setPriority(view.getPriority())
-                        .setDescription(view.getDescription())
-                        .setLabelId(view.getLabelId())
-                        .build();
+                addedView = newBuilder().setLabelColor(labelDetails.getColor())
+                                        .setDueDate(view.getDueDate())
+                                        .setPriority(view.getPriority())
+                                        .setDescription(view.getDescription())
+                                        .setLabelId(view.getLabelId())
+                                        .build();
             }
             updatedList.add(addedView);
         }
