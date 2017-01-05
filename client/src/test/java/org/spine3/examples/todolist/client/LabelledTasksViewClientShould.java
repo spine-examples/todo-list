@@ -138,18 +138,21 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         final TaskView view = taskViews.get(0);
 
         assertEquals(taskId, view.getId());
-        assertEquals(labelId, view.getId());
+        assertEquals(labelId, view.getLabelId());
     }
 
     @Test
-    public void obtain_empty_labelled_tasks_view_when_handled_command_assign_label_to_task_with_wrong_task_id() {
+    public void obtain_labelled_tasks_view_when_handled_command_assign_label_to_task_with_different_task_ids() {
         final int expectedListSize = 1;
-        final CreateBasicTask createTask = createBasicTaskInstance();
+        final CreateBasicTask firstTask = createBasicTaskInstance();
+        client.create(firstTask);
+        final CreateBasicTask secondTask = createBasicTaskInstance();
+        client.create(secondTask);
         final CreateBasicLabel createLabel = createBasicLabelInstance();
         final TaskLabelId labelId = createLabel.getLabelId();
-        final TaskId taskId = createTask.getId();
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(getWrongTaskId(), labelId);
-        client.create(createTask);
+        final TaskId firstTaskId = firstTask.getId();
+        final TaskId secondTaskId = secondTask.getId();
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(secondTaskId, labelId);
         client.create(createLabel);
         client.assignLabel(assignLabelToTask);
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
@@ -161,8 +164,9 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
 
         final TaskView taskView = taskViews.get(0);
 
-        assertEquals(taskId, taskView.getId());
-        assertNotEquals(labelId, taskView.getLabelId());
+        assertNotEquals(firstTaskId, taskView.getId());
+        assertEquals(secondTaskId, taskView.getId());
+        assertEquals(labelId, taskView.getLabelId());
     }
 
     @Test
@@ -198,7 +202,8 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         final int expectedListSize = 1;
         final CreateBasicTask createTask = createBasicTaskInstance();
         final CreateBasicLabel createLabel = createBasicLabelInstance();
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance();
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(createTask.getId(),
+                                                                              createLabel.getLabelId());
         final TaskPriority newPriority = TaskPriority.HIGH;
         final TaskId taskId = createTask.getId();
         final UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(taskId, newPriority);
@@ -226,9 +231,10 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         final int expectedListSize = 1;
         final CreateBasicTask createTask = createBasicTaskInstance();
         final CreateBasicLabel createLabel = createBasicLabelInstance();
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance();
         final Timestamp newDueDate = Timestamps.getCurrentTime();
         final TaskId taskId = createTask.getId();
+        final TaskLabelId labelId = createLabel.getLabelId();
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         final UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(taskId, newDueDate);
         client.create(createTask);
         client.create(createLabel);
@@ -245,7 +251,7 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
 
         final TaskView view = taskViews.get(0);
 
-        assertEquals(createLabel.getLabelId(), view.getLabelId());
+        assertEquals(labelId, view.getLabelId());
         assertEquals(taskId, view.getId());
         assertEquals(newDueDate, view.getDueDate());
     }
