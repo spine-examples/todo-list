@@ -130,7 +130,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Removes the matching label from the matching {@link TaskView} according to the event data.
+     * Removes the label from the matching {@link TaskView} according to the event data.
      *
      * @param views the list of the {@link TaskView}
      * @param event {@link LabelRemovedFromTask} instance
@@ -190,7 +190,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     }
 
     /**
-     * Updates task due date of the {@link TaskView}.
+     * Updates task due date of the matching {@link TaskView} according to the event data.
      *
      * @param views the list of the {@link TaskView}
      * @param event {@link TaskDueDateUpdated} instance
