@@ -83,6 +83,7 @@ import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateU
  *
  * @author Illia Shepilov
  */
+@SuppressWarnings({"UnusedMethod", "UnsusedMethodParameter"}) //used by spine framework
 public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;
