@@ -42,7 +42,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.examples.todolist.projection.ProjectionHelper.constructTaskViewList;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.updateTaskViewList;
 
