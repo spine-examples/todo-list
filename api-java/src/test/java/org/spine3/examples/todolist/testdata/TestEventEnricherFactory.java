@@ -22,7 +22,10 @@ package org.spine3.examples.todolist.testdata;
 
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.TaskDetails;
+import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.server.event.enrich.EventEnricher;
 
 import javax.annotation.Nullable;
@@ -40,6 +43,10 @@ public class TestEventEnricherFactory {
                                                                   .setTitle(LABEL_TITLE)
                                                                   .setColor(LabelColor.BLUE)
                                                                   .build();
+    private static final TaskDetails TASK_DETAILS = TaskDetails.newBuilder()
+                                                               .setDescription(LABEL_TITLE)
+                                                               .setPriority(TaskPriority.LOW)
+                                                               .build();
 
     private TestEventEnricherFactory() {
     }
@@ -53,6 +60,15 @@ public class TestEventEnricherFactory {
                 }
             };
 
+    private static final Function<TaskId, TaskDetails> TASK_ID_TO_TASK_DETAILS =
+            new Function<TaskId, TaskDetails>() {
+                @Nullable
+                @Override
+                public TaskDetails apply(@Nullable TaskId input) {
+                    return TASK_DETAILS;
+                }
+            };
+
     /**
      * Provides a pre-configured {@link EventEnricher} event instance.
      *
@@ -63,6 +79,9 @@ public class TestEventEnricherFactory {
                                                   .addFieldEnrichment(TaskLabelId.class,
                                                                       LabelDetails.class,
                                                                       LABEL_ID_TO_LABEL_DETAILS::apply)
+                                                  .addFieldEnrichment(TaskId.class,
+                                                                      TaskDetails.class,
+                                                                      TASK_ID_TO_TASK_DETAILS::apply)
                                                   .build();
         return result;
     }

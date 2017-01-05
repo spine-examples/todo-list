@@ -198,7 +198,7 @@ message TaskDeleted {
 message LabelAssignedToTask {
 
     // An identifier of the target task.
-    TaskId id = 1;
+    TaskId task_id = 1;
 
     // An identifier of the label to assign to the target task.
     TaskLabelId label_id = 2 [(required) = true];

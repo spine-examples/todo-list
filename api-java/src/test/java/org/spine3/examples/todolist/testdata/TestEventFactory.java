@@ -460,7 +460,7 @@ public class TestEventFactory {
      */
     public static LabelAssignedToTask labelAssignedToTaskInstance(TaskId taskId, TaskLabelId labelId) {
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
-                                                              .setId(taskId)
+                                                              .setTaskId(taskId)
                                                               .setLabelId(labelId)
                                                               .build();
         return result;

@@ -195,7 +195,7 @@ public class TaskAggregateShould {
 
         final LabelAssignedToTask labelAssignedToTask = (LabelAssignedToTask) messageList.get(0);
 
-        assertEquals(TASK_ID, labelAssignedToTask.getId());
+        assertEquals(TASK_ID, labelAssignedToTask.getTaskId());
         assertEquals(LABEL_ID, labelAssignedToTask.getLabelId());
     }
 

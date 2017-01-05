@@ -290,7 +290,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     public List<? extends Message> handle(AssignLabelToTask cmd) {
         validateAssignLabelToTaskCommand(getState().getTaskStatus());
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
-                                                              .setId(cmd.getId())
+                                                              .setTaskId(cmd.getId())
                                                               .setLabelId(cmd.getLabelId())
                                                               .build();
         return Collections.singletonList(result);
@@ -416,7 +416,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                                            .stream()
                                            .collect(Collectors.toList());
         list.add(event.getLabelId());
-        getBuilder().setId(event.getId())
+        getBuilder().setId(event.getTaskId())
                     .clearLabelIds()
                     .addAllLabelIds(list);
     }

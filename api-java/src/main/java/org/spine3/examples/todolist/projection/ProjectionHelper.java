@@ -158,7 +158,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
      */
     /* package */
     static List<TaskView> constructTaskViewList(List<TaskView> views, LabelAssignedToTask event) {
-        final TaskId targetTaskId = event.getId();
+        final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> builder.setLabelId(event.getLabelId());
         final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);

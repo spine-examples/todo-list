@@ -187,6 +187,10 @@ subprojects {
         testRuntime "org.junit.jupiter:junit-jupiter-engine:${jUnitVersion}"
     }
 
+    configurations.all {
+        resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+    }
+    
     sourceSets {
         main {
             proto.srcDirs = ["${sourcesRootDir}/main/proto"]

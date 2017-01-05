@@ -31,14 +31,15 @@ import "spine/annotations.proto";
 import "spine/enrichment_annotations.proto";
 import "todolist/events.proto";
 
-// Label details enrichment.
+// Enrichment for task and label details enrichment.
 //
-message LabelDetailsEnrichment{
+message DetailsEnrichment{
 
-    option (enrichment_for) = "spine.examples.todolist.LabelDetailsUpdated,"
-                              "spine.examples.todolist.LabelledTaskRestored,"
+    option (enrichment_for) = "spine.examples.todolist.LabelledTaskRestored,"
                               "spine.examples.todolist.LabelAssignedToTask";
 
     // label details
     LabelDetails label_details = 1 [(by) = "label_id"];
+    // task details
+    TaskDetails task_details = 2 [(by) = "task_id"];
 }

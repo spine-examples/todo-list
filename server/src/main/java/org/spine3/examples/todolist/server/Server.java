@@ -22,6 +22,7 @@ package org.spine3.examples.todolist.server;
 
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.Task;
+import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.TaskLabelId;
@@ -58,6 +59,7 @@ public class Server {
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
     private Function<TaskLabelId, LabelDetails> taskLabelIdToLabelDetails;
+    private Function<TaskId, TaskDetails> taskIdToTaskDetails;
     private TaskAggregateRepository taskAggregateRepository;
     private TaskLabelAggregateRepository taskLabelAggregateRepository;
     private MyListViewProjectionRepository projectionRepository;
@@ -78,6 +80,7 @@ public class Server {
 
     private void initiEnricherFunctions() {
         initLabelIdToDetailsFunction();
+        initTaskIdToDetailsFunction();
     }
 
     private void initLabelIdToDetailsFunction() {
@@ -95,6 +98,26 @@ public class Server {
                                                                  .setColor(state.getColor())
                                                                  .setTitle(state.getTitle())
                                                                  .build();
+                        return details;
+                    }
+                };
+    }
+
+    private void initTaskIdToDetailsFunction() {
+        taskIdToTaskDetails =
+                new Function<TaskId, TaskDetails>() {
+                    @Nullable
+                    @Override
+                    public TaskDetails apply(@Nullable TaskId input) {
+                        if (input == null) {
+                            return TaskDetails.getDefaultInstance();
+                        }
+                        final TaskAggregate aggregate = taskAggregateRepository.load(input);
+                        final Task state = aggregate.getState();
+                        final TaskDetails details = TaskDetails.newBuilder()
+                                                               .setDescription(state.getDescription())
+                                                               .setPriority(state.getPriority())
+                                                               .build();
                         return details;
                     }
                 };
@@ -124,6 +147,9 @@ public class Server {
                                                   .addFieldEnrichment(TaskLabelId.class,
                                                                       LabelDetails.class,
                                                                       taskLabelIdToLabelDetails::apply)
+                                                  .addFieldEnrichment(TaskId.class,
+                                                                      TaskDetails.class,
+                                                                      taskIdToTaskDetails::apply)
                                                   .build();
         return result;
     }
