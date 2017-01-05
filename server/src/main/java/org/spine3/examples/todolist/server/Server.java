@@ -102,7 +102,7 @@ public class Server {
 
     private QueryService initQueryService() {
         final QueryService result = QueryService.newBuilder()
-                                                .addBoundedContext(boundedContext)
+                                                .add(boundedContext)
                                                 .build();
         return result;
     }
@@ -166,14 +166,14 @@ public class Server {
 
     private SubscriptionService initSubscriptionService() {
         final SubscriptionService result = SubscriptionService.newBuilder()
-                                                              .addBoundedContext(boundedContext)
+                                                              .add(boundedContext)
                                                               .build();
         return result;
     }
 
     private CommandService initCommandService() {
         final CommandService result = CommandService.newBuilder()
-                                                    .addBoundedContext(boundedContext)
+                                                    .add(boundedContext)
                                                     .build();
         return result;
     }

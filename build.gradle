@@ -127,7 +127,7 @@ ext {
     // Take latest snapshot of Spine from the repo.
     // See: http://stackoverflow.com/questions/22372508/use-latest-snapshot-version-from-the-remote-repo
 //    spineVersion = 'latest.integration'
-    spineVersion = '0.6.5-SNAPSHOT'
+    spineVersion = '0.7.2-SNAPSHOT'
 
 }
 
@@ -174,12 +174,12 @@ subprojects {
         }
         compile group: 'com.google.protobuf', name: 'protobuf-java-util', version: protobufVersion
 
-        compile group: 'org.spine3', name: 'client', version: spineVersion
-        compile group: 'org.spine3', name: 'server', version: spineVersion
-        compile group: 'org.spine3', name: 'users', version: spineVersion
-        compile group: 'org.spine3', name: 'values', version: spineVersion
+        compile group: 'org.spine3', name: 'spine-client-core', version: spineVersion
+        compile group: 'org.spine3', name: 'spine-server-core', version: spineVersion
+        compile group: 'org.spine3', name: 'spine-users', version: spineVersion
+        compile group: 'org.spine3', name: 'spine-values', version: spineVersion
 
-        testCompile("org.spine3:testutil:${spineVersion}") {
+        testCompile("org.spine3:spine-testutil-core:${spineVersion}") {
             // We are using JUnit 5.x instead of 4.x dependency of Spine testing framework.
             exclude group: 'junit'
         }

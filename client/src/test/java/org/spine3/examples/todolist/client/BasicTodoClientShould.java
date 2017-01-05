@@ -74,7 +74,7 @@ class BasicTodoClientShould {
                 server.awaitTermination();
                 serverStartLatch.countDown();
             } catch (IOException e) {
-                throw Exceptions.wrapped(e);
+                throw Exceptions.wrappedCause(e);
             }
         });
 

@@ -28,7 +28,7 @@ option java_outer_classname = "EnrichmentProto";
 option java_multiple_files = true;
 
 import "spine/annotations.proto";
-import "spine/event_annotations.proto";
+import "spine/enrichment_annotations.proto";
 import "todolist/events.proto";
 
 // Label details enrichment.

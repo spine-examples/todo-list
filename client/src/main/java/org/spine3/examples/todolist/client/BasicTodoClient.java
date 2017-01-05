@@ -176,7 +176,7 @@ public class BasicTodoClient implements TodoClient {
                                         .unpack(MyListView.class);
             return result;
         } catch (InvalidProtocolBufferException e) {
-            throw Exceptions.wrapped(e);
+            throw Exceptions.wrappedCause(e);
         }
     }
 
@@ -195,7 +195,7 @@ public class BasicTodoClient implements TodoClient {
             
             return result;
         } catch (InvalidProtocolBufferException e) {
-            throw Exceptions.wrapped(e);
+            throw Exceptions.wrappedCause(e);
         }
     }
 
@@ -208,7 +208,7 @@ public class BasicTodoClient implements TodoClient {
                                                   .unpack(DraftTasksView.class);
             return result;
         } catch (InvalidProtocolBufferException e) {
-            throw Exceptions.wrapped(e);
+            throw Exceptions.wrappedCause(e);
         }
     }
 
@@ -221,7 +221,7 @@ public class BasicTodoClient implements TodoClient {
             channel.shutdown()
                    .awaitTermination(TIMEOUT, SECONDS);
         } catch (InterruptedException e) {
-            throw Exceptions.wrapped(e);
+            throw Exceptions.wrappedCause(e);
         }
     }
 
