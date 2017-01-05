@@ -1,3 +1,4 @@
 ---
 exclude_paths:
-  - "test/*.*"
+  - "api-java/src/test/**/*.*"
+  - "client/src/test/**/*.*"
