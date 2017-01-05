@@ -59,11 +59,6 @@ import org.spine3.examples.todolist.TaskStatus;
      */
     RESTORE_DELETED_TASK(TaskStatus.DELETED, TaskStatus.OPEN);
 
-    /* package */ TaskStatusTransition(TaskStatus currentStatus, TaskStatus newStatus) {
-        this.currentStatus = currentStatus;
-        this.newStatus = newStatus;
-    }
-
     /**
      * Current status of the task.
      */
@@ -73,6 +68,11 @@ import org.spine3.examples.todolist.TaskStatus;
      * New status of the task gets after transition.
      */
     private final TaskStatus newStatus;
+
+    /* package */ TaskStatusTransition(TaskStatus currentStatus, TaskStatus newStatus) {
+        this.currentStatus = currentStatus;
+        this.newStatus = newStatus;
+    }
 
     /**
      * Checks if the current status and new suggested status are associated

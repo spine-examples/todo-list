@@ -421,7 +421,7 @@ public class TaskAggregateShould {
         final Task state = aggregate.getState();
 
         assertEquals(TASK_ID, state.getId());
-        assertEquals(TaskStatus.COMPLETED, state.getTaskStatus());
+        assertEquals(COMPLETED, state.getTaskStatus());
     }
 
     @Test
