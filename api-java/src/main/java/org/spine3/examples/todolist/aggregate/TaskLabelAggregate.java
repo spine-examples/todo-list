@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings({"UnusedMethod", "UnusedMethodParameters"}) //used by spine framework
+@SuppressWarnings({"UnusedMethod", "UnusedMethodParameters"}) //used by spine framework.
 public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLabel.Builder> {
 
     /**
