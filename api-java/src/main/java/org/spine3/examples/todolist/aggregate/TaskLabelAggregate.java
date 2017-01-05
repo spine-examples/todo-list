@@ -41,7 +41,7 @@ import java.util.List;
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings({"UnusedMethod", "UnusedMethodParameters"}) //used by spine framework.
+@SuppressWarnings({"UnusedMethod"}) // The methods annotated with {@link Assign} are declared {@code private} by design.
 public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLabel.Builder> {
 
     /**

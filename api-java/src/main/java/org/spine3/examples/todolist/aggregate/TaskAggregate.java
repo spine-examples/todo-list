@@ -83,7 +83,16 @@ import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateU
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings({"UnusedMethod", "UnsusedMethodParameter"}) //used by spine framework
+@SuppressWarnings({
+        // The methods annotated with {@link Assign} are declared {@code private} by design.
+        "UnusedMethod",
+        // Also, such methods must take a single {@code Event} as a parameter.
+        // However, it is unused in some cases due to the business rules.
+        // E.g. {@code TaskRemoved} event is explicit enough by itself,
+        // so it is not needed to use any of its field values. So the parameter left unused.
+        "UnusedMethodParameters"
+        }
+                )
 public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;
