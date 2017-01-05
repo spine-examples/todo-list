@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.constructTaskViewList;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
+import static org.spine3.examples.todolist.projection.ProjectionHelper.updateTaskViewList;
 
 /**
  * A projection state of tasks in a "draft" state.
@@ -120,7 +121,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
     public void on(TaskDescriptionUpdated event) {
         final List<TaskView> views = getState().getDraftTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final DraftTasksView state = constructDraftTasksViewState(updatedList);
         incrementState(state);
     }
@@ -129,7 +130,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
     public void on(TaskPriorityUpdated event) {
         final List<TaskView> views = getState().getDraftTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final DraftTasksView state = constructDraftTasksViewState(updatedList);
         incrementState(state);
     }
@@ -138,7 +139,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
     public void on(TaskDueDateUpdated event) {
         final List<TaskView> views = getState().getDraftTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final DraftTasksView state = constructDraftTasksViewState(updatedList);
         incrementState(state);
     }
@@ -147,7 +148,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
     public void on(LabelAssignedToTask event) {
         final List<TaskView> views = getState().getDraftTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final DraftTasksView state = constructDraftTasksViewState(updatedList);
         incrementState(state);
     }
@@ -156,7 +157,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
     public void on(LabelRemovedFromTask event) {
         final List<TaskView> views = getState().getDraftTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final DraftTasksView state = constructDraftTasksViewState(updatedList);
         incrementState(state);
     }
@@ -165,7 +166,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
     public void on(LabelDetailsUpdated event) {
         final List<TaskView> views = getState().getDraftTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final DraftTasksView state = constructDraftTasksViewState(updatedList);
         incrementState(state);
     }

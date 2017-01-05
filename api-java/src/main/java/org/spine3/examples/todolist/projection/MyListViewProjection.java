@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.constructTaskViewList;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
+import static org.spine3.examples.todolist.projection.ProjectionHelper.updateTaskViewList;
 
 /**
  * A projection state of the finalized tasks.
@@ -104,7 +105,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(TaskDescriptionUpdated event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -113,7 +114,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(TaskPriorityUpdated event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -122,7 +123,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(TaskDueDateUpdated event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -131,7 +132,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(TaskCompleted event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -140,7 +141,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(TaskReopened event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -149,7 +150,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(LabelAssignedToTask event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -158,7 +159,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(LabelRemovedFromTask event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }
@@ -167,7 +168,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(LabelDetailsUpdated event) {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
-        final List<TaskView> updatedList = constructTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
         incrementState(state);
     }

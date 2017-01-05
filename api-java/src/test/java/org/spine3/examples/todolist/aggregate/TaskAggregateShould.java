@@ -374,6 +374,9 @@ public class TaskAggregateShould {
     public void update_current_state_task_description_after_dispatch_command() {
         final String newDescription = "new description.";
         final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, newDescription);
+        final CreateBasicTask createBasicTask = createTaskInstance();
+
+        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
         aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
@@ -384,8 +387,10 @@ public class TaskAggregateShould {
     @Test
     public void update_current_state_task_due_date_after_dispatch_command() {
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
+        final CreateBasicTask createBasicTask = createTaskInstance();
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(TASK_ID, updatedDueDate);
 
+        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
         aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
@@ -396,8 +401,10 @@ public class TaskAggregateShould {
     @Test
     public void update_current_state_task_priority_after_dispatch_command() {
         final TaskPriority updatedPriority = TaskPriority.HIGH;
+        final CreateBasicTask createBasicTask = createTaskInstance();
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(TASK_ID, updatedPriority);
 
+        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
         aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
@@ -415,7 +422,7 @@ public class TaskAggregateShould {
         final Task state = aggregate.getState();
 
         assertEquals(TASK_ID, state.getId());
-        assertEquals(TaskStatus.COMPLETED, state.getTaskStatus());
+        assertEquals(COMPLETED, state.getTaskStatus());
     }
 
     @Test

@@ -61,7 +61,7 @@ public class TestEventContextFactory {
      * Provides a new {@link EventContext} instance.
      *
      * <p> Created event context contains Enrichments.
-     * <p> Enrichments contains label details by task id and by label ID enrichments.
+     * <p> Enrichments contains label details by task ID and by label ID enrichments.
      *
      * @return {@link EventContext} instance
      */

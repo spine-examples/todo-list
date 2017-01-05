@@ -111,7 +111,9 @@ public class TaskLabelAggregateShould {
 
     @Test
     public void change_current_state_when_label_details_updated_two_times() {
+        final CreateBasicLabel createBasicLabel = createLabelInstance();
         UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance();
+        aggregate.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
         aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
         TaskLabel state = aggregate.getState();
 

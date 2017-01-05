@@ -41,8 +41,7 @@ import org.spine3.examples.todolist.TaskStatus;
      * @param currentStatus current task status
      * @param newStatus     new task status
      */
-    /* package */
-    static void validateTransition(TaskStatus currentStatus, TaskStatus newStatus) {
+    /* package */ static void validateTransition(TaskStatus currentStatus, TaskStatus newStatus) {
         final boolean isValid = TaskStatusTransition.isValid(currentStatus, newStatus);
 
         if (!isValid) {
@@ -52,28 +51,23 @@ import org.spine3.examples.todolist.TaskStatus;
         }
     }
 
-    /* package */
-    static void validateUpdateTaskPriorityCommand(TaskStatus currentStatus) {
+    /* package */ static void validateUpdateTaskPriorityCommand(TaskStatus currentStatus) {
         ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
-    /* package */
-    static void validateUpdateTaskDueDateCommand(TaskStatus currentStatus) {
+    /* package */ static void validateUpdateTaskDueDateCommand(TaskStatus currentStatus) {
         ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
-    /* package */
-    static void validateRemoveLabelFromTaskCommand(TaskStatus currentStatus) {
+    /* package */ static void validateRemoveLabelFromTaskCommand(TaskStatus currentStatus) {
         ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
-    /* package */
-    static void validateAssignLabelToTaskCommand(TaskStatus currentStatus) {
+    /* package */ static void validateAssignLabelToTaskCommand(TaskStatus currentStatus) {
         ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
-    /* package */
-    static void validateCreateDraftCommand(TaskStatus currentStatus) {
+    /* package */ static void validateCreateDraftCommand(TaskStatus currentStatus) {
         ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
@@ -86,8 +80,7 @@ import org.spine3.examples.todolist.TaskStatus;
      * @throws IllegalStateException if status, passed to the method,
      *                               {@code TaskStatus.COMPLETED} or {@code TaskStatus.DELETED}.
      */
-    /* package */
-    static void ensureNeitherCompletedNorDeleted(TaskStatus currentStatus) {
+    /* package */ static void ensureNeitherCompletedNorDeleted(TaskStatus currentStatus) {
         ensureNotDeleted(currentStatus);
         ensureNotCompleted(currentStatus);
     }

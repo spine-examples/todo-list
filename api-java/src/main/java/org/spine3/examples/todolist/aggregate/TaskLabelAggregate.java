@@ -41,6 +41,8 @@ import java.util.List;
  *
  * @author Illia Shepilov
  */
+
+@SuppressWarnings({"unused"}) // The methods annotated with {@link Assign} are declared {@code private} by design.
 public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLabel.Builder> {
 
     /**
@@ -94,8 +96,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     @Apply
     private void labelDetailsUpdated(LabelDetailsUpdated event) {
         final LabelDetails labelDetails = event.getNewDetails();
-        getBuilder().setId(event.getLabelId())
-                    .setTitle(labelDetails.getTitle())
+        getBuilder().setTitle(labelDetails.getTitle())
                     .setColor(labelDetails.getColor());
     }
 }
