@@ -28,8 +28,6 @@ import org.spine3.examples.todolist.view.LabelledTasksView;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.projection.ProjectionRepository;
 
-import static org.spine3.base.Identifiers.newUuid;
-
 /**
  * @author Illia Shepilov
  */
@@ -48,6 +46,6 @@ public class LabelledTasksViewRepository
                 return (TaskLabelId) fieldValue;
             }
         }
-        return super.getEntityId(event, context);
+        return TaskLabelId.getDefaultInstance();
     }
 }
