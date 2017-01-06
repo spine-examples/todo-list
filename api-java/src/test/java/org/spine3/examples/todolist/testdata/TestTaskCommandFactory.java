@@ -27,12 +27,14 @@ import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.DeleteTask;
 import org.spine3.examples.todolist.FinalizeDraft;
+import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
+import org.spine3.examples.todolist.UpdateLabelDetails;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
@@ -55,6 +57,7 @@ public class TestTaskCommandFactory {
                                                           .build();
     public static final String DESCRIPTION = "Create command description.";
     public static final Timestamp DUE_DATE = Timestamps.getCurrentTime();
+    public static final String UPDATED_LABEL_TITLE = "labelTitle";
 
     private TestTaskCommandFactory() {
     }
@@ -184,8 +187,8 @@ public class TestTaskCommandFactory {
      */
     public static ReopenTask reopenTaskInstance() {
         final ReopenTask result = ReopenTask.newBuilder()
-                                           .setId(TASK_ID)
-                                           .build();
+                                            .setId(TASK_ID)
+                                            .build();
         return reopenTaskInstance(TASK_ID);
     }
 
@@ -229,8 +232,8 @@ public class TestTaskCommandFactory {
      */
     public static RestoreDeletedTask restoreDeletedTaskInstance() {
         final RestoreDeletedTask result = RestoreDeletedTask.newBuilder()
-                                                           .setId(TASK_ID)
-                                                           .build();
+                                                            .setId(TASK_ID)
+                                                            .build();
         return restoreDeletedTaskInstance(TASK_ID);
     }
 
@@ -253,8 +256,8 @@ public class TestTaskCommandFactory {
      */
     public static FinalizeDraft finalizeDraftInstance() {
         final FinalizeDraft result = FinalizeDraft.newBuilder()
-                                                 .setId(TASK_ID)
-                                                 .build();
+                                                  .setId(TASK_ID)
+                                                  .build();
         return finalizeDraftInstance(TASK_ID);
     }
 
@@ -323,6 +326,15 @@ public class TestTaskCommandFactory {
                                                               .setId(taskId)
                                                               .setLabelId(labelId)
                                                               .build();
+        return result;
+    }
+
+    public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId id, LabelColor color, String title) {
+        final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
+                                                            .setId(id)
+                                                            .setColor(color)
+                                                            .setNewTitle(title)
+                                                            .build();
         return result;
     }
 }
