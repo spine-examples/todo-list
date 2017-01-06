@@ -44,13 +44,12 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 /**
  * @author Illia Shepilov
  */
-/* package */
-class BasicTodoClientShould {
+/* package */ class BasicTodoClientShould {
 
     private static final String HOST = "localhost";
-    /* package */ static final String UPDATED_TASK_DESCRIPTION = "New task description.";
+    private Server server;
     /* package */ TodoClient client;
-    /* package */ Server server;
+    /* package */ static final String UPDATED_TASK_DESCRIPTION = "New task description.";
 
     @BeforeEach
     public void setUp() throws InterruptedException {
@@ -82,8 +81,7 @@ class BasicTodoClientShould {
         serverStartLatch.await(100, TimeUnit.MILLISECONDS);
     }
 
-    /* package */
-    static CreateBasicLabel createBasicLabel() {
+    /* package */ static CreateBasicLabel createBasicLabel() {
         final CreateBasicLabel result = CommandBuilder.label()
                                                       .createLabel()
                                                       .setTitle(LABEL_TITLE)
@@ -91,16 +89,14 @@ class BasicTodoClientShould {
         return result;
     }
 
-    /* package */
-    static CreateDraft createDraft() {
+    /* package */ static CreateDraft createDraft() {
         final CreateDraft result = CommandBuilder.task()
                                                  .createDraft()
                                                  .build();
         return result;
     }
 
-    /* package */
-    static CreateBasicTask createBasicTask() {
+    /* package */ static CreateBasicTask createBasicTask() {
         final CreateBasicTask result = CommandBuilder.task()
                                                      .createTask()
                                                      .setDescription(DESCRIPTION)
@@ -108,16 +104,14 @@ class BasicTodoClientShould {
         return result;
     }
 
-    /* package */
-    static TaskId getWrongTaskId() {
+    /* package */ static TaskId getWrongTaskId() {
         final TaskId result = TaskId.newBuilder()
                                     .setValue(newUuid())
                                     .build();
         return result;
     }
 
-    /* package */
-    static TaskLabelId getWrongTaskLabelId() {
+    /* package */ static TaskLabelId getWrongTaskLabelId() {
         final TaskLabelId result = TaskLabelId.newBuilder()
                                               .setValue(newUuid())
                                               .build();
