@@ -317,7 +317,7 @@ public class MyListViewClientShould extends BasicTodoClientShould {
     }
 
     @Test
-    public void obtain_my_list_view_when_without_updated_description_handled_command_update_task_description_with_wrong_task_id() {
+    public void obtain_my_list_view_without_updated_description_when_handled_command_update_task_description_with_wrong_task_id() {
         final CreateBasicTask createTask = createBasicTaskInstance();
         client.create(createTask);
 
@@ -328,7 +328,15 @@ public class MyListViewClientShould extends BasicTodoClientShould {
         final List<TaskView> taskViews = client.getMyListView()
                                                .getMyList()
                                                .getItemsList();
-        assertTrue(taskViews.isEmpty());
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, taskViews.size());
+
+        final TaskView view = taskViews.get(0);
+        assertEquals(createTask.getId(), view.getId());
+
+        final String actualDescription = view.getDescription();
+        assertNotEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
+        assertEquals(DESCRIPTION, actualDescription);
     }
 
     @Test
@@ -355,7 +363,7 @@ public class MyListViewClientShould extends BasicTodoClientShould {
     }
 
     @Test
-    public void obtain_empty_my_list_view_when_handled_command_update_task_priority_with_wrong_task_id() {
+    public void obtain_my_list_view_without_updated_priority_when_handled_command_update_task_priority_with_wrong_task_id() {
         final CreateBasicTask createTask = createBasicTaskInstance();
         client.create(createTask);
 
@@ -368,7 +376,14 @@ public class MyListViewClientShould extends BasicTodoClientShould {
         final List<TaskView> taskViews = client.getMyListView()
                                                .getMyList()
                                                .getItemsList();
-        assertTrue(taskViews.isEmpty());
+
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, taskViews.size());
+
+        final TaskView view = taskViews.get(0);
+
+        assertEquals(createTask.getId(), view.getId());
+        assertNotEquals(newPriority, view.getPriority());
     }
 
     @Test
@@ -406,7 +421,14 @@ public class MyListViewClientShould extends BasicTodoClientShould {
         final List<TaskView> taskViews = client.getMyListView()
                                                .getMyList()
                                                .getItemsList();
-        assertTrue(taskViews.isEmpty());
+
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, taskViews.size());
+
+        final TaskView view = taskViews.get(0);
+
+        assertEquals(createTask.getId(), view.getId());
+        assertNotEquals(newDueDate, view.getDueDate());
     }
 
     @Test

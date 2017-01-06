@@ -37,12 +37,13 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.final
 /**
  * @author Illia Shepilov
  */
-public class DraftTasksViewProjectionShould extends BasicTodoClientShould{
+public class DraftTasksViewClientShould extends BasicTodoClientShould{
 
     @Test
     public void obtain_task_draft_when_handled_create_draft_command() {
         final CreateDraft createDraft = createDraftInstance();
         client.create(createDraft);
+
         final DraftTasksView draftTasksView = client.getDraftTasksView();
         final List<TaskView> taskViewList = draftTasksView.getDraftTasks()
                                                           .getItemsList();
@@ -56,8 +57,9 @@ public class DraftTasksViewProjectionShould extends BasicTodoClientShould{
     @Test
     public void obtain_empty_tasks_draft_view_when_handled_command_delete_task() {
         final CreateDraft createDraft = createDraftInstance();
-        final DeleteTask deleteTask = deleteTaskInstance(createDraft.getId());
         client.create(createDraft);
+
+        final DeleteTask deleteTask = deleteTaskInstance(createDraft.getId());
         client.delete(deleteTask);
 
         final List<TaskView> taskViews = client.getDraftTasksView()
@@ -69,8 +71,8 @@ public class DraftTasksViewProjectionShould extends BasicTodoClientShould{
     @Test
     public void obtain_empty_tasks_draft_view_when_handled_command_finalize_draft() {
         final CreateDraft createDraft = createDraftInstance();
-        final FinalizeDraft finalizeDraft = finalizeDraftInstance(createDraft.getId());
         client.create(createDraft);
+
         DraftTasksView draftTasksView = client.getDraftTasksView();
 
         List<TaskView> taskViewList = draftTasksView.getDraftTasks()
@@ -80,7 +82,10 @@ public class DraftTasksViewProjectionShould extends BasicTodoClientShould{
         assertEquals(expectedListSize, taskViewList.size());
         assertEquals(createDraft.getId(), taskViewList.get(0)
                                                       .getId());
+
+        final FinalizeDraft finalizeDraft = finalizeDraftInstance(createDraft.getId());
         client.finalize(finalizeDraft);
+
         draftTasksView = client.getDraftTasksView();
         taskViewList = draftTasksView.getDraftTasks()
                                      .getItemsList();
