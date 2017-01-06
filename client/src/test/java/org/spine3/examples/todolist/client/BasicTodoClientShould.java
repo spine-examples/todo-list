@@ -83,7 +83,7 @@ class BasicTodoClientShould {
     }
 
     /* package */
-    static CreateBasicLabel createBasicLabelInstance() {
+    static CreateBasicLabel createBasicLabel() {
         final CreateBasicLabel result = CommandBuilder.label()
                                                       .createLabel()
                                                       .setTitle(LABEL_TITLE)
@@ -92,7 +92,7 @@ class BasicTodoClientShould {
     }
 
     /* package */
-    static CreateDraft createDraftInstance() {
+    static CreateDraft createDraft() {
         final CreateDraft result = CommandBuilder.task()
                                                  .createDraft()
                                                  .build();
@@ -100,7 +100,7 @@ class BasicTodoClientShould {
     }
 
     /* package */
-    static CreateBasicTask createBasicTaskInstance() {
+    static CreateBasicTask createBasicTask() {
         final CreateBasicTask result = CommandBuilder.task()
                                                      .createTask()
                                                      .setDescription(DESCRIPTION)
