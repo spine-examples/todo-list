@@ -172,6 +172,13 @@ public class BasicTodoClient implements TodoClient {
         try {
             final Query query = Queries.readAll(MyListView.class);
             final QueryResponse response = queryService.read(query);
+
+            final boolean isEmpty = response.getMessagesList()
+                                            .isEmpty();
+            if (isEmpty) {
+                return MyListView.getDefaultInstance();
+            }
+
             MyListView result = response.getMessages(0)
                                         .unpack(MyListView.class);
             return result;
@@ -185,14 +192,14 @@ public class BasicTodoClient implements TodoClient {
         try {
             final Query query = Queries.readAll(LabelledTasksView.class);
             final QueryResponse response = queryService.read(query);
-            final List<Any> messageList= response.getMessagesList();
+            final List<Any> messageList = response.getMessagesList();
             final List<LabelledTasksView> result = newArrayList();
 
-            for (Any any: messageList){
-               final LabelledTasksView labelledView =  any.unpack(LabelledTasksView.class);
-               result.add(labelledView);
+            for (Any any : messageList) {
+                final LabelledTasksView labelledView = any.unpack(LabelledTasksView.class);
+                result.add(labelledView);
             }
-            
+
             return result;
         } catch (InvalidProtocolBufferException e) {
             throw Exceptions.wrappedCause(e);
@@ -204,6 +211,12 @@ public class BasicTodoClient implements TodoClient {
         try {
             final Query query = Queries.readAll(DraftTasksView.class);
             final QueryResponse response = queryService.read(query);
+
+            final boolean isEmpty = response.getMessagesList()
+                                            .isEmpty();
+            if (isEmpty) {
+                return DraftTasksView.getDefaultInstance();
+            }
             final DraftTasksView result = response.getMessages(0)
                                                   .unpack(DraftTasksView.class);
             return result;
