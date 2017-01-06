@@ -29,6 +29,8 @@ import org.spine3.server.BoundedContext;
 import org.spine3.server.projection.ProjectionRepository;
 
 /**
+ * A repository for the {@link LabelledTasksView}.
+ *
  * @author Illia Shepilov
  */
 public class LabelledTasksViewRepository

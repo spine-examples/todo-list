@@ -21,6 +21,10 @@
 package org.spine3.examples.todolist.client.builder;
 
 /**
+ * Utility class.
+ *
+ * <p> Provides methods for building commands.
+ *
  * @author Illia Shepilov
  */
 public final class CommandBuilder {
@@ -28,10 +32,20 @@ public final class CommandBuilder {
     private CommandBuilder() {
     }
 
+    /**
+     * Provides the {@link TaskBuilder}.
+     *
+     * @return the {@code TaskBuilder} instance
+     */
     public static TaskBuilder task() {
         return TaskBuilder.getInstance();
     }
 
+    /**
+     * Provides the {@link LabelBuilder}.
+     *
+     * @return the {@code LabelBuilder} instance
+     */
     public static LabelBuilder label() {
         return LabelBuilder.getInstance();
     }

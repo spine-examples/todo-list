@@ -26,6 +26,8 @@ import org.spine3.server.BoundedContext;
 import org.spine3.server.aggregate.AggregateRepository;
 
 /**
+ * A repository for the {@link TaskAggregate}.
+ *
  * @author Illia Shepilov
  */
 public class TaskAggregateRepository extends AggregateRepository<TaskId, TaskAggregate> {

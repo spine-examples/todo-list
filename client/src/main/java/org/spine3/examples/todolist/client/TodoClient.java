@@ -41,42 +41,131 @@ import org.spine3.examples.todolist.view.MyListView;
 import java.util.List;
 
 /**
+ * A client interface.
+ *
+ * <p> Provides methods to communicate with server.
+ *
  * @author Illia Shepilov
  */
 public interface TodoClient {
 
+    /**
+     * Creates task according to the command data.
+     *
+     * @param cmd the {@link CreateBasicTask} command
+     */
     void create(CreateBasicTask cmd);
 
+    /**
+     * Creates label according to the command data.
+     *
+     * @param cmd the {@link CreateBasicLabel} command
+     */
     void create(CreateBasicLabel cmd);
 
+    /**
+     * Creates draft according to the command data.
+     *
+     * @param cmd the {@link CreateDraft} command
+     */
     void create(CreateDraft cmd);
 
+    /**
+     * Updates task description according to the command data.
+     *
+     * @param cmd the {@link UpdateTaskDescription} command
+     */
     void update(UpdateTaskDescription cmd);
 
+    /**
+     * Updates task due date according to the command data.
+     *
+     * @param cmd the {@link UpdateTaskDueDate} command
+     */
     void update(UpdateTaskDueDate cmd);
 
+    /**
+     * Updates task priority according to the command data.
+     *
+     * @param cmd the {@link UpdateTaskPriority} command
+     */
     void update(UpdateTaskPriority cmd);
 
+    /**
+     * Updates label details according to the command data.
+     *
+     * @param cmd the {@link UpdateLabelDetails} command
+     */
     void update(UpdateLabelDetails cmd);
 
+    /**
+     * Deletes task according to the command data.
+     *
+     * @param cmd the {@link DeleteTask} command
+     */
     void delete(DeleteTask cmd);
 
+    /**
+     * Removes label from task according to the command data.
+     *
+     * @param cmd the {@link RemoveLabelFromTask} command
+     */
     void removeLabel(RemoveLabelFromTask cmd);
 
+    /**
+     * Assigns label to task according to the command data.
+     *
+     * @param cmd the {@link AssignLabelToTask} command
+     */
     void assignLabel(AssignLabelToTask cmd);
 
+    /**
+     * Reopens task according to the command data.
+     *
+     * @param cmd the {@link ReopenTask} command
+     */
     void reopen(ReopenTask cmd);
 
+    /**
+     * Restores deleted task according to the command data.
+     *
+     * @param cmd the {@link RestoreDeletedTask} command
+     */
     void restore(RestoreDeletedTask cmd);
 
+    /**
+     * Completes task according to the command data.
+     *
+     * @param cmd the {@link CompleteTask} command
+     */
     void complete(CompleteTask cmd);
 
+    /**
+     * Finalizes draft acording to the command data.
+     *
+     * @param cmd the {@link FinalizeDraft} command
+     */
     void finalize(FinalizeDraft cmd);
 
+    /**
+     * Obtains the single {@link MyListView}.
+     *
+     * @return the {@code MyListView}
+     */
     MyListView getMyListView();
 
+    /**
+     * Obtains the list of the {@link LabelledTasksView}.
+     *
+     * @return the list of the {@code LabelledTasksView}
+     */
     List<LabelledTasksView> getLabelledTasksView();
 
+    /**
+     * Obtains the single {@link DraftTasksView}.
+     *
+     * @return the {@code DraftTasksView}
+     */
     DraftTasksView getDraftTasksView();
 
     /**

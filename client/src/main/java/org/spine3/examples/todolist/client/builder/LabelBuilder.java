@@ -26,6 +26,8 @@ import org.spine3.examples.todolist.TaskLabelId;
 import static org.spine3.base.Identifiers.newUuid;
 
 /**
+ * Provides label command builders.
+ *
  * @author Illia Shepilov
  */
 public final class LabelBuilder {
@@ -33,23 +35,40 @@ public final class LabelBuilder {
     private LabelBuilder() {
     }
 
-    /* package */
-    static LabelBuilder getInstance() {
+    /* package */ static LabelBuilder getInstance() {
         return new LabelBuilder();
     }
 
+    /**
+     * Provides builder for the {@link CreateBasicLabel} command.
+     * @return the {@link CreateBasicLabelBuilder} onstance
+     */
     public CreateBasicLabelBuilder createLabel() {
         return new CreateBasicLabelBuilder();
     }
 
+    /**
+     * Builder for the {@link CreateBasicLabel} command.
+     */
     public static final class CreateBasicLabelBuilder {
         private final CreateBasicLabel.Builder builder = CreateBasicLabel.newBuilder();
 
+        /**
+         * Sets the title to the {@link CreateBasicLabel.Builder}.
+         *
+         * @param title the title of the command
+         * @return the {@link CreateBasicLabelBuilder} instance
+         */
         public CreateBasicLabelBuilder setTitle(String title) {
             builder.setLabelTitle(title);
             return this;
         }
 
+        /**
+         * Builds {@link CreateBasicLabel} command.
+         *
+         * @return the {@link CreateBasicLabel} command
+         */
         public CreateBasicLabel build() {
             final TaskLabelId id = generateId();
             builder.setLabelId(id);

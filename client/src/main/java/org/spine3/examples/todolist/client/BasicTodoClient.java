@@ -225,9 +225,6 @@ public class BasicTodoClient implements TodoClient {
         }
     }
 
-    /**
-     * Shutdown the connection channel.
-     */
     @Override
     public void shutdown() {
         try {

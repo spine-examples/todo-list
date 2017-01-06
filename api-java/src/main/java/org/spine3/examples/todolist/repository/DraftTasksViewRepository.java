@@ -20,7 +20,6 @@
 
 package org.spine3.examples.todolist.repository;
 
-import com.google.protobuf.ByteString;
 import com.google.protobuf.Message;
 import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.TaskListId;
@@ -30,6 +29,8 @@ import org.spine3.server.BoundedContext;
 import org.spine3.server.projection.ProjectionRepository;
 
 /**
+ * A repository for the {@link DraftTasksView}.
+ *
  * @author Illia Shepilov
  */
 public class DraftTasksViewRepository

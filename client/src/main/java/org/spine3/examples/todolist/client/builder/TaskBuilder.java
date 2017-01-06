@@ -27,6 +27,8 @@ import org.spine3.examples.todolist.TaskId;
 import static org.spine3.base.Identifiers.newUuid;
 
 /**
+ * Provides task command builders.
+ *
  * @author Illia Shepilov
  */
 public final class TaskBuilder {
@@ -34,27 +36,50 @@ public final class TaskBuilder {
     private TaskBuilder() {
     }
 
-    /* package */
-    static TaskBuilder getInstance() {
+    /* package */ static TaskBuilder getInstance() {
         return new TaskBuilder();
     }
 
+    /**
+     * Provides builder for the {@link CreateBasicTask} command.
+     *
+     * @return the {@link CreateBasicTaskBuilder} instance
+     */
     public CreateBasicTaskBuilder createTask() {
         return new CreateBasicTaskBuilder();
     }
 
+    /**
+     * Provides builder for the {@link CreateDraft} command.
+     *
+     * @return the {@link CreateTaskDraftBuilder} instance
+     */
     public CreateTaskDraftBuilder createDraft() {
         return new CreateTaskDraftBuilder();
     }
 
+    /**
+     * Builder for the {@link CreateBasicTask} command.
+     */
     public static final class CreateBasicTaskBuilder {
         private final CreateBasicTask.Builder builder = CreateBasicTask.newBuilder();
 
+        /**
+         * Sets the description to the {@link CreateBasicTask.Builder}.
+         *
+         * @param description the description of the command
+         * @return the {@code CreateBasicTaskBuilder} instance
+         */
         public CreateBasicTaskBuilder setDescription(String description) {
             builder.setDescription(description);
             return this;
         }
 
+        /**
+         * Builds the {@link CreateBasicTask} command.
+         *
+         * @return the {@code CreateBasicTask} command
+         */
         public CreateBasicTask build() {
             final TaskId id = generateId();
             builder.setId(id);
@@ -62,9 +87,17 @@ public final class TaskBuilder {
         }
     }
 
+    /**
+     * Builder for the {@link CreateDraft} command.
+     */
     public static final class CreateTaskDraftBuilder {
         private final CreateDraft.Builder builder = CreateDraft.newBuilder();
 
+        /**
+         * Builds the {@link CreateDraft} command.
+         *
+         * @return the {@code CreateDraft} command
+         */
         public CreateDraft build() {
             final TaskId id = generateId();
             builder.setId(id);
