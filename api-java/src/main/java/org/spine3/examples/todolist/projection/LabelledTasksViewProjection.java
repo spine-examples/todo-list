@@ -106,9 +106,12 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     @Subscribe
     public void on(LabelRemovedFromTask event) {
         final TaskLabelId labelId = event.getLabelId();
-
-        if (labelId.equals(getState().getLabelId())) {
-            final LabelledTasksView state = LabelledTasksView.getDefaultInstance();
+        final boolean isEquals = getState().getLabelId()
+                                           .equals(labelId);
+        if (isEquals) {
+            final LabelledTasksView state = LabelledTasksView.newBuilder()
+                                                             .setLabelId(getState().getLabelId())
+                                                             .build();
             incrementState(state);
         }
     }
@@ -179,8 +182,22 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final LabelledTasksView state = toViewState(updatedList);
+        final LabelledTasksView state = toViewState(event.getNewDetails(), updatedList);
         incrementState(state);
+    }
+
+    private LabelledTasksView toViewState(LabelDetails labelDetails, List<TaskView> updatedList) {
+        final LabelledTasksView state = getState();
+        final TaskListView listView = TaskListView.newBuilder()
+                                                  .addAllItems(updatedList)
+                                                  .build();
+        final LabelledTasksView result = getState().newBuilderForType()
+                                                   .setLabelId(state.getLabelId())
+                                                   .setLabelColor(LabelColorView.valueOf(labelDetails.getColor()))
+                                                   .setLabelTitle(labelDetails.getTitle())
+                                                   .setLabelledTasks(listView)
+                                                   .build();
+        return result;
     }
 
     private LabelledTasksView toViewState(List<TaskView> updatedList) {
@@ -189,6 +206,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
                                                   .addAllItems(updatedList)
                                                   .build();
         final LabelledTasksView result = getState().newBuilderForType()
+                                                   .setLabelId(state.getLabelId())
                                                    .setLabelColor(state.getLabelColor())
                                                    .setLabelTitle(state.getLabelTitle())
                                                    .setLabelledTasks(listView)
