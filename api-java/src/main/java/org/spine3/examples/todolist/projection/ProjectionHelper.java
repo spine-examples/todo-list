@@ -121,6 +121,7 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
                                         .setPriority(view.getPriority())
                                         .setDescription(view.getDescription())
                                         .setLabelId(view.getLabelId())
+                                        .setId(view.getId())
                                         .build();
             }
             updatedList.add(addedView);
