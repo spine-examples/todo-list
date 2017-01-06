@@ -38,7 +38,6 @@ import org.spine3.examples.todolist.UpdateLabelDetails;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
-import org.spine3.examples.todolist.view.MyListView;
 import org.spine3.examples.todolist.view.TaskView;
 import org.spine3.protobuf.Timestamps;
 
@@ -68,10 +67,10 @@ public class MyListViewClientShould extends BasicTodoClientShould {
 
     @Test
     public void obtain_my_list_view_when_handled_create_task_command() {
-        final CreateBasicTask createFirstTask = createBasicTaskInstance();
+        final CreateBasicTask createFirstTask = createBasicTask();
         client.create(createFirstTask);
 
-        final CreateBasicTask createSecondTask = createBasicTaskInstance();
+        final CreateBasicTask createSecondTask = createBasicTask();
         client.create(createSecondTask);
 
         final List<TaskView> taskViews = client.getMyListView()
@@ -94,362 +93,158 @@ public class MyListViewClientShould extends BasicTodoClientShould {
 
     @Test
     public void obtain_updated_task_description_from_my_list_view_when_handled_command_update_task_description() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
-        final String newDescription = UPDATED_TASK_DESCRIPTION;
-        final TaskId taskId = createTask.getId();
-
-        final UpdateTaskDescription updateTaskDescription = updateTaskDescriptionInstance(taskId, newDescription);
-        client.update(updateTaskDescription);
-
-        final MyListView view = client.getMyListView();
-
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, view.getMyList()
-                                           .getItemsCount());
-        final TaskView taskView = view.getMyList()
-                                      .getItems(0);
-        assertEquals(taskId, taskView.getId());
-        assertEquals(newDescription, taskView.getDescription());
-    }
-
-    @Test
-    public void obtain_my_list_view_with_completed_task_view_when_handled_complete_task_command() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
-        final TaskId taskId = createTask.getId();
-
-        final CompleteTask completeTask = completeTaskInstance(taskId);
-        client.complete(completeTask);
-
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView view = taskViews.get(0);
-
-        assertEquals(taskId, view.getId());
-        assertTrue(view.getCompleted());
-    }
-
-    @Test
-    public void obtain_my_list_view_when_handled_assign_label_to_task_command() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
-        final CreateBasicLabel createLabel = createBasicLabelInstance();
-        client.create(createLabel);
-
-        final TaskLabelId labelId = createLabel.getLabelId();
-        final TaskId taskId = createTask.getId();
-
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
-
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView taskView = taskViews.get(0);
-
-        assertEquals(taskId, taskView.getId());
-        assertEquals(labelId, taskView.getLabelId());
-    }
-
-    @Test
-    public void obtain_my_list_view_when_handled_remove_label_from_task_command() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
-        final CreateBasicLabel createLabel = createBasicLabelInstance();
-        client.create(createLabel);
-
-        final TaskLabelId labelId = createLabel.getLabelId();
-        final TaskId taskId = createTask.getId();
-
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
-
-        final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId, labelId);
-        client.removeLabel(removeLabelFromTask);
-
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView taskView = taskViews.get(0);
-
-        assertEquals(taskId, taskView.getId());
-        assertNotEquals(labelId, taskView.getLabelId());
-    }
-
-    @Test
-    public void obtain_my_list_view_when_handled_command_remove_label_from_task_with_wrong_task_id() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
-        final CreateBasicLabel createLabel = createBasicLabelInstance();
-        client.create(createLabel);
-
-        final TaskLabelId labelId = createLabel.getLabelId();
-        final TaskId taskId = createTask.getId();
-
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
-
-        final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(getWrongTaskId(), labelId);
-        client.removeLabel(removeLabelFromTask);
-
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView taskView = taskViews.get(0);
-
-        assertEquals(taskId, taskView.getId());
-        assertEquals(labelId, taskView.getLabelId());
-    }
-
-    @Test
-    public void obtain_my_list_view_when_handled_command_assign_label_to_task_with_wrong_task_id() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
-        final CreateBasicLabel createLabel = createBasicLabelInstance();
-        client.create(createLabel);
-
-        final TaskLabelId labelId = createLabel.getLabelId();
-        final TaskId taskId = createTask.getId();
-
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(getWrongTaskId(), labelId);
-        client.assignLabel(assignLabelToTask);
-
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView taskView = taskViews.get(0);
-
-        assertEquals(taskId, taskView.getId());
-        assertNotEquals(labelId, taskView.getLabelId());
-    }
-
-    @Test
-    public void obtain_my_list_view_with_uncompleted_task_view_when_handled_command_complete_task_with_wrong_task_id() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
-        final CompleteTask completeTask = completeTaskInstance(getWrongTaskId());
-        client.complete(completeTask);
-
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView view = taskViews.get(0);
-
-        assertFalse(view.getCompleted());
-    }
-
-    @Test
-    public void obtain_my_list_view_with_task_view_when_handled_command_reopen_task_with_wrong_task_id() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
-        final TaskId taskId = createTask.getId();
-
-        final CompleteTask completeTask = completeTaskInstance(taskId);
-        client.complete(completeTask);
-
-        final ReopenTask reopenTask = reopenTaskInstance(getWrongTaskId());
-        client.reopen(reopenTask);
-
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView taskView = taskViews.get(0);
-
-        assertEquals(taskId, taskView.getId());
-        assertTrue(taskView.getCompleted());
-    }
-
-    @Test
-    public void obtain_my_list_view_with_uncompleted_task_view_when_handled_command_reopen_task() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
-        final TaskId taskId = createTask.getId();
-
-        final CompleteTask completeTask = completeTaskInstance(taskId);
-        client.complete(completeTask);
-
-        final ReopenTask reopenTask = reopenTaskInstance(taskId);
-        client.reopen(reopenTask);
-
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
-        final int expectedListSize = 1;
-
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView taskView = taskViews.get(0);
-
-        assertEquals(taskId, taskView.getId());
-        assertFalse(taskView.getCompleted());
+        final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, true);
+        final String actualDescription = view.getDescription();
+        assertEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
     }
 
     @Test
     public void obtain_my_list_view_without_updated_description_when_handled_command_update_task_description_with_wrong_task_id() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
-        final UpdateTaskDescription updateTaskDescription =
-                updateTaskDescriptionInstance(getWrongTaskId(), UPDATED_TASK_DESCRIPTION);
-        client.update(updateTaskDescription);
-
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView view = taskViews.get(0);
-        assertEquals(createTask.getId(), view.getId());
-
+        final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, false);
         final String actualDescription = view.getDescription();
-        assertNotEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
         assertEquals(DESCRIPTION, actualDescription);
+        assertNotEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
+    }
+
+    @Test
+    public void obtain_my_list_view_with_completed_task_view_when_handled_complete_task_command() {
+        final TaskView view = obtainTaskViewWhenHandledCompleteTask(true);
+        assertTrue(view.getCompleted());
+    }
+
+    @Test
+    public void obtain_my_list_view_with_uncompleted_task_view_when_handled_command_complete_task_with_wrong_task_id() {
+        final TaskView view = obtainTaskViewWhenHandledCompleteTask(false);
+        assertFalse(view.getCompleted());
+    }
+
+    @Test
+    public void obtain_my_list_view_when_handled_remove_label_from_task_command() {
+        final CreateBasicLabel createLabel = createBasicLabel();
+        client.create(createLabel);
+        final TaskLabelId labelId = createLabel.getLabelId();
+
+        final TaskView view = obtainTaskViewWhenHandledRemoveLabelFromTask(labelId, true);
+        assertNotEquals(labelId, view.getLabelId());
+    }
+
+    @Test
+    public void obtain_my_list_view_when_handled_command_remove_label_from_task_with_wrong_task_id() {
+        final CreateBasicLabel createLabel = createBasicLabel();
+        client.create(createLabel);
+        final TaskLabelId labelId = createLabel.getLabelId();
+
+        final TaskView view = obtainTaskViewWhenHandledRemoveLabelFromTask(labelId, false);
+        assertEquals(labelId, view.getLabelId());
+    }
+
+    @Test
+    public void obtain_my_list_view_when_handled_command_assign_label_to_task() {
+        final CreateBasicLabel createLabel = createBasicLabel();
+        client.create(createLabel);
+
+        final TaskLabelId labelId = createLabel.getLabelId();
+        final TaskView view = obtainTaskViewWhenHandledAssignLabelToTask(labelId, true);
+
+        assertEquals(labelId, view.getLabelId());
+    }
+
+    @Test
+    public void obtain_my_list_view_when_handled_command_assign_label_to_task_with_wrong_task_id() {
+        final CreateBasicLabel createLabel = createBasicLabel();
+        client.create(createLabel);
+
+        final TaskLabelId labelId = createLabel.getLabelId();
+        final TaskView view = obtainTaskViewWhenHandledAssignLabelToTask(labelId, false);
+
+        assertNotEquals(labelId, view.getLabelId());
+    }
+
+    @Test
+    public void obtain_my_list_view_with_uncompleted_task_view_when_handled_command_reopen_task() {
+        final TaskView view = obtainTaskViewWhenHandledReopenTask(true);
+        assertFalse(view.getCompleted());
+    }
+
+    @Test
+    public void obtain_my_list_view_with_completed_task_view_when_handled_command_reopen_task_with_wrong_task_id() {
+        final TaskView view = obtainTaskViewWhenHandledReopenTask(false);
+        assertTrue(view.getCompleted());
     }
 
     @Test
     public void obtain_updated_task_priority_from_my_list_view_when_handled_command_update_task_priority() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
         final TaskPriority newPriority = TaskPriority.HIGH;
-        final TaskId taskId = createTask.getId();
-
-        final UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(taskId, newPriority);
-        client.update(updateTaskPriority);
-
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView view = taskViews.get(0);
-
-        assertEquals(taskId, view.getId());
+        final TaskView view = obtainTaskViewWhenHandledUpdateTaskPriority(newPriority, true);
         assertEquals(newPriority, view.getPriority());
     }
 
     @Test
     public void obtain_my_list_view_without_updated_priority_when_handled_command_update_task_priority_with_wrong_task_id() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
         final TaskPriority newPriority = TaskPriority.HIGH;
-
-        final UpdateTaskPriority updateTaskPriority =
-                updateTaskPriorityInstance(getWrongTaskId(), newPriority);
-        client.update(updateTaskPriority);
-
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
-
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView view = taskViews.get(0);
-
-        assertEquals(createTask.getId(), view.getId());
+        final TaskView view = obtainTaskViewWhenHandledUpdateTaskPriority(newPriority, false);
         assertNotEquals(newPriority, view.getPriority());
     }
 
     @Test
     public void obtain_updated_task_due_date_from_my_list_view_when_handled_command_update_task_due_date() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
         final Timestamp newDueDate = Timestamps.getCurrentTime();
-        final TaskId taskId = createTask.getId();
-
-        final UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(taskId, newDueDate);
-        client.update(updateTaskDueDate);
-
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView view = taskViews.get(0);
-
-        assertEquals(taskId, view.getId());
+        final TaskView view = obtainTaskViewWhenHandledUpdateTaskDueDate(newDueDate, true);
         assertEquals(newDueDate, view.getDueDate());
     }
 
     @Test
     public void obtain_empty_my_list_view_when_handled_command_update_task_due_date_with_wrong_task_id() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
+        final Timestamp newDueDate = Timestamps.getCurrentTime();
+        final TaskView view = obtainTaskViewWhenHandledUpdateTaskDueDate(newDueDate, false);
+        assertNotEquals(newDueDate, view.getDueDate());
+    }
+
+    @Test
+    public void obtain_updated_label_details_from_my_list_view_when_handled_command_update_label_details() {
+        final LabelColor newColor = LabelColor.BLUE;
+        final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetails(newColor, true);
+        assertEquals(LabelColor.BLUE, view.getLabelColor());
+    }
+
+    @Test
+    public void obtain_not_updated_label_details_from_my_list_view_when_handled_command_update_label_details_with_wrong_task_id() {
+        final LabelColor newColor = LabelColor.BLUE;
+        final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetails(newColor, false);
+        assertNotEquals(newColor, view.getLabelColor());
+    }
+
+    @Test
+    public void obtain_empty_my_list_view_when_handled_command_delete_task() {
+        final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 
-        final Timestamp newDueDate = Timestamps.getCurrentTime();
-        final UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(getWrongTaskId(), newDueDate);
+        final TaskId idOfCreatedTask = createTask.getId();
+        final List<TaskView> taskViews = obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, true);
 
-        client.update(updateTaskDueDate);
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+        assertTrue(taskViews.isEmpty());
+    }
+
+    @Test
+    public void obtain_not_empty_my_list_view_when_handled_command_delete_task_with_wrong_task_id() {
+        final CreateBasicTask createTask = createBasicTask();
+        client.create(createTask);
+
+        final TaskId idOfCreatedTask = createTask.getId();
+        final List<TaskView> taskViews = obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, false);
 
         final int expectedListSize = 1;
         assertEquals(expectedListSize, taskViews.size());
 
         final TaskView view = taskViews.get(0);
 
-        assertEquals(createTask.getId(), view.getId());
-        assertNotEquals(newDueDate, view.getDueDate());
-    }
-
-    @Test
-    public void obtain_empty_my_list_view_when_handled_command_delete_task() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
-
         final TaskId taskId = createTask.getId();
-
-        final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        client.delete(deleteTask);
-
-        final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
-        assertTrue(taskViews.isEmpty());
+        assertEquals(taskId, view.getId());
     }
 
     @Test
     public void obtain_empty_my_list_view_when_handled_command_create_draft() {
-        final CreateDraft createDraft = createDraftInstance();
+        final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 
         final List<TaskView> taskViews = client.getMyListView()
@@ -458,64 +253,210 @@ public class MyListViewClientShould extends BasicTodoClientShould {
         assertTrue(taskViews.isEmpty());
     }
 
-    @Test
-    public void obtain_updated_label_details_from_my_list_view_when_handled_command_update_label_details() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
-        client.create(createTask);
+    private List<TaskView> obtainTaskViewListWhenHandledDeleteTask(TaskId idOfCreatedTask, boolean isCorrectId) {
+        final TaskId idOfDeletedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
 
-        final CreateBasicLabel createLabel = createBasicLabelInstance();
-        client.create(createLabel);
-
-        final TaskId taskId = createTask.getId();
-        final TaskLabelId labelId = createLabel.getLabelId();
-
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
-
-        final UpdateLabelDetails updateLabelDetails =
-                updateLabelDetailsInstance(labelId, LabelColor.BLUE, UPDATED_LABEL_TITLE);
-        client.update(updateLabelDetails);
+        final DeleteTask deleteTask = deleteTaskInstance(idOfDeletedTask);
+        client.delete(deleteTask);
 
         final List<TaskView> taskViews = client.getMyListView()
                                                .getMyList()
                                                .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView taskView = taskViews.get(0);
-
-        assertEquals(taskId, taskView.getId());
-        assertEquals(LabelColor.BLUE, taskView.getLabelColor());
+        return taskViews;
     }
 
-    @Test
-    public void obtain_not_updated_label_details_from_my_list_view_when_handled_command_update_label_details_with_wrong_task_id() {
-        final CreateBasicTask createTask = createBasicTaskInstance();
+    private TaskView obtainTaskViewWhenHandledUpdateTaskDueDate(Timestamp newDueDate, boolean isCorrectId) {
+        final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 
-        final CreateBasicLabel createLabel = createBasicLabelInstance();
+        final TaskId idOfCreatedTask = createTask.getId();
+        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+
+        final UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(idOfUpdatedTask, newDueDate);
+
+        client.update(updateTaskDueDate);
+        final List<TaskView> taskViews = client.getMyListView()
+                                               .getMyList()
+                                               .getItemsList();
+
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, taskViews.size());
+
+        final TaskView view = taskViews.get(0);
+
+        assertEquals(idOfCreatedTask, view.getId());
+
+        return view;
+    }
+
+    private TaskView obtainTaskViewWhenHandledUpdateLabelDetails(LabelColor newColor, boolean isCorrectId) {
+        final CreateBasicTask createTask = createBasicTask();
+        client.create(createTask);
+
+        final CreateBasicLabel createLabel = createBasicLabel();
         client.create(createLabel);
 
-        final TaskId taskId = createTask.getId();
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final TaskId idOfCreatedTask = createTask.getId();
+        final TaskLabelId idOfCreatedLabel = createLabel.getLabelId();
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(getWrongTaskId(), labelId);
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfCreatedTask, idOfCreatedLabel);
         client.assignLabel(assignLabelToTask);
 
+        final TaskLabelId idOfUpdatedLabel = isCorrectId ? idOfCreatedLabel : getWrongTaskLabelId();
+
         final UpdateLabelDetails updateLabelDetails =
-                updateLabelDetailsInstance(labelId, LabelColor.BLUE, UPDATED_LABEL_TITLE);
+                updateLabelDetailsInstance(idOfUpdatedLabel, newColor, UPDATED_LABEL_TITLE);
         client.update(updateLabelDetails);
 
         final List<TaskView> taskViews = client.getMyListView()
                                                .getMyList()
                                                .getItemsList();
         final int expectedListSize = 1;
-
         assertEquals(expectedListSize, taskViews.size());
 
-        final TaskView taskView = taskViews.get(0);
+        final TaskView view = taskViews.get(0);
+        assertEquals(idOfCreatedTask, view.getId());
 
-        assertEquals(taskId, taskView.getId());
-        assertNotEquals(LabelColor.BLUE, taskView.getLabelColor());
+        return view;
+    }
+
+    private TaskView obtainTaskViewWhenHandledUpdateTaskPriority(TaskPriority newPriority, boolean isCorrectId) {
+        final CreateBasicTask createTask = createBasicTask();
+        client.create(createTask);
+
+        final TaskId idOfCreatedTask = createTask.getId();
+        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+
+        final UpdateTaskPriority updateTaskPriority =
+                updateTaskPriorityInstance(idOfUpdatedTask, newPriority);
+        client.update(updateTaskPriority);
+
+        final List<TaskView> taskViews = client.getMyListView()
+                                               .getMyList()
+                                               .getItemsList();
+
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, taskViews.size());
+
+        final TaskView view = taskViews.get(0);
+
+        assertEquals(idOfCreatedTask, view.getId());
+
+        return view;
+    }
+
+    private TaskView obtainTaskViewWhenHandledReopenTask(boolean isCorrectId) {
+        final CreateBasicTask createTask = createBasicTask();
+        client.create(createTask);
+
+        final TaskId idOfCreatedTask = createTask.getId();
+        final TaskId idOfReopenedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+
+        final CompleteTask completeTask = completeTaskInstance(idOfCreatedTask);
+        client.complete(completeTask);
+
+        final ReopenTask reopenTask = reopenTaskInstance(idOfReopenedTask);
+        client.reopen(reopenTask);
+
+        final List<TaskView> taskViews = client.getMyListView()
+                                               .getMyList()
+                                               .getItemsList();
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, taskViews.size());
+
+        final TaskView view = taskViews.get(0);
+        assertEquals(idOfCreatedTask, view.getId());
+
+        return view;
+    }
+
+    private TaskView obtainTaskViewWhenHandledAssignLabelToTask(TaskLabelId labelId, boolean isCorrectId) {
+        final CreateBasicTask createTask = createBasicTask();
+        client.create(createTask);
+
+        final TaskId idOfCreatedTask = createTask.getId();
+        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfUpdatedTask, labelId);
+        client.assignLabel(assignLabelToTask);
+
+        final List<TaskView> taskViews = client.getMyListView()
+                                               .getMyList()
+                                               .getItemsList();
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, taskViews.size());
+
+        final TaskView view = taskViews.get(0);
+        assertEquals(idOfCreatedTask, view.getId());
+
+        return view;
+    }
+
+    private TaskView obtainTaskViewWhenHandledRemoveLabelFromTask(TaskLabelId labelId, boolean isCorrectId) {
+        final CreateBasicTask createTask = createBasicTask();
+        client.create(createTask);
+
+        final TaskId idOfCreatedTask = createTask.getId();
+
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfCreatedTask, labelId);
+        client.assignLabel(assignLabelToTask);
+
+        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+        final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(idOfUpdatedTask, labelId);
+        client.removeLabel(removeLabelFromTask);
+
+        final List<TaskView> taskViews = client.getMyListView()
+                                               .getMyList()
+                                               .getItemsList();
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, taskViews.size());
+
+        final TaskView view = taskViews.get(0);
+        assertEquals(idOfCreatedTask, view.getId());
+
+        return view;
+    }
+
+    private TaskView obtainTaskViewWhenHandledCompleteTask(boolean isCorrectId) {
+        final CreateBasicTask createTask = createBasicTask();
+        final TaskId idOfCreatedTask = createTask.getId();
+        client.create(createTask);
+
+        final TaskId idOfCompletedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+        final CompleteTask completeTask = completeTaskInstance(idOfCompletedTask);
+        client.complete(completeTask);
+
+        final List<TaskView> taskViews = client.getMyListView()
+                                               .getMyList()
+                                               .getItemsList();
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, taskViews.size());
+
+        final TaskView view = taskViews.get(0);
+        assertEquals(idOfCreatedTask, view.getId());
+
+        return view;
+    }
+
+    private TaskView obtainTaskViewWhenHandledUpdateTaskDescription(String newDescription, boolean isCorrectId) {
+        final CreateBasicTask createTask = createBasicTask();
+        client.create(createTask);
+        final TaskId idOfCreatedTask = createTask.getId();
+
+        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+        final UpdateTaskDescription updateTaskDescription =
+                updateTaskDescriptionInstance(idOfUpdatedTask, newDescription);
+        client.update(updateTaskDescription);
+
+        final List<TaskView> taskViews = client.getMyListView()
+                                               .getMyList()
+                                               .getItemsList();
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, taskViews.size());
+
+        final TaskView view = taskViews.get(0);
+        assertEquals(createTask.getId(), view.getId());
+
+        return view;
     }
 }
