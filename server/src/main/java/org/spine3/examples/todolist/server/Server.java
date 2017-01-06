@@ -243,9 +243,4 @@ public class Server {
         grpcContainer.shutdown();
         boundedContext.close();
     }
-
-    public static void main(String[] args) throws IOException {
-        final Server server = new Server(InMemoryStorageFactory.getInstance());
-        server.start();
-    }
 }
