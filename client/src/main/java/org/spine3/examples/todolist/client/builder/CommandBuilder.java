@@ -23,9 +23,9 @@ package org.spine3.examples.todolist.client.builder;
 /**
  * @author Illia Shepilov
  */
-public final class CommandsBuilder {
+public final class CommandBuilder {
 
-    private CommandsBuilder() {
+    private CommandBuilder() {
     }
 
     public static TaskBuilder task() {
