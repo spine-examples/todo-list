@@ -1,22 +1,22 @@
-//
-// Copyright 2016, TeamDev Ltd. All rights reserved.
-//
-// Redistribution and use in source and/or binary forms, with or without
-// modification, must retain the above copyright notice and the following
-// disclaimer.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
+/*
+ * Copyright 2016, TeamDev Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
 
 buildscript {
     ext {
@@ -25,9 +25,10 @@ buildscript {
         spineRepository = 'http://maven.teamdev.com/repository/spine'
         spineSnapshotsRepository = 'http://maven.teamdev.com/repository/spine-snapshots'
         appEngineGradlePlugin = 'com.google.cloud.tools:appengine-gradle-plugin:+'
-        spinePluginVersion = '1.4.11'
+        spinePluginVersion = '0.6.6-SNAPSHOT'
         guavaVersion = '20.0'
-        jUnitPlatformVersion = '1.0.0-M2'
+        jUnitPlatformVersion = '1.0.0-M3'
+        jUnitVersion = '5.0.0-M3'
     }
 
     repositories {
@@ -42,7 +43,7 @@ buildscript {
 
     dependencies {
         classpath group: 'com.google.guava', name: 'guava', version: guavaVersion
-        classpath (group: 'com.google.protobuf', name:'protobuf-gradle-plugin', version: protobufGradlePluginVersion) {
+        classpath(group: 'com.google.protobuf', name: 'protobuf-gradle-plugin', version: protobufGradlePluginVersion) {
             // exclude an old Guava version
             exclude group: 'com.google.guava'
         }
@@ -91,7 +92,7 @@ allprojects {
 
     group = 'org.spine3.examples.todolist'       // Generated output GroupId
     version = '0.6.5-SNAPSHOT'  // Version in generated output. This is the version of the code.
-                                // For the deployment version see `project.ext.getDeploymentVersion`.
+    // For the deployment version see `project.ext.getDeploymentVersion`.
 
     repositories {
         jcenter()
@@ -113,7 +114,6 @@ allprojects {
 rootProject.jar { onlyIf { false } }
 
 final boolean isTravis = System.env.TRAVIS == 'true'
-final String SNAPSHOT_SUFFIX = "-SNAPSHOT"
 
 ext {
     protobufVersion = '3.0.0'
@@ -122,7 +122,6 @@ ext {
     slf4jVersion = '1.7.21'
     servletApiVersion = '3.1.0'
     gcloudJavaVersion = '0.2.8'
-    jUnitVersion = '5.0.0-M2'
     spineProtobufPluginId = 'org.spine3.tools.protobuf-plugin'
 
     // Take latest snapshot of Spine from the repo.
@@ -165,7 +164,7 @@ subprojects {
         compile group: 'com.google.guava', name: 'guava', version: guavaVersion
         compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
 
-        compile ("com.google.protobuf:protobuf-java:${protobufVersion}") {
+        compile("com.google.protobuf:protobuf-java:${protobufVersion}") {
             // Do not use Guava v18, we use newer version.
             exclude group: 'com.google.guava'
             // Use Gson v2.7 instead of v2.3. See: https://github.com/google/gson/blob/master/CHANGELOG.md
@@ -178,7 +177,10 @@ subprojects {
         compile group: 'org.spine3', name: 'users', version: spineVersion
         compile group: 'org.spine3', name: 'values', version: spineVersion
 
-        testCompile group: 'org.spine3', name: 'testutil', version: spineVersion
+        testCompile("org.spine3:testutil:${spineVersion}") {
+            // We are using JUnit 5.x instead of 4.x dependency of Spine testing framework.
+            exclude group: 'junit'
+        }
         testCompile "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
         testRuntime "org.junit.jupiter:junit-jupiter-engine:${jUnitVersion}"
     }
@@ -228,20 +230,14 @@ subprojects {
 
         logManager 'java.util.logging.LogManager'
 
-        //reportsDir "build/test-results/junit-platform" // this is the default
-
-        // enableStandardTestTask true
-        engines {
-            include 'junit-jupiter'
-            // exclude 'junit-vintage'
+        selectors {
+            directory '${sourceRootDir}/test/java'
+            aPackage 'org.spine3.examples.todolist'
         }
 
-        tags {
-            // include 'fast', 'smoke'
-            // exclude 'slow', 'ci'
+        filters {
+            includeClassNamePatterns '.*Should'
         }
-
-        includeClassNamePattern '.*Tests'
     }
 
     idea {
@@ -263,6 +259,26 @@ subprojects {
             module.dependencies*.exported = true
         }
     }
+
+    // This is a workaround to make JUnit 5 work with Jacoco library.
+    // There is an open issue here:
+    // <link>https://discuss.gradle.org/t/jacocotestreport-task-fails-if-jacoco-plugin-is-applied-in-afterevaluate/835</link>
+    // todo:13-12-16:illia.shepilov: revisit the workaround once the issue is resolved.
+    project.afterEvaluate {
+        def junitPlatformTestTask = project.tasks.getByName('junitPlatformTest')
+
+        // configure jacoco to analyze the junitPlatformTest task
+        jacoco {
+            // this tool version is known to be compatible with JUnit 5.
+            toolVersion = "0.7.6.201602180812"
+            applyTo junitPlatformTestTask
+        }
+
+        codeCoverageReport.dependsOn {
+            subprojects*.test
+        }
+    }
+
 }
 
 idea.project.ipr {

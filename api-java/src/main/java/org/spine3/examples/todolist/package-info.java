@@ -18,6 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: generateDescriptorSetPlugin
+/**
+ * This package contains implementation for classes which provides
+ * methods to process aggregates and projections.
+ */
+@ParametersAreNonnullByDefault
+package org.spine3.examples.todolist;
 
-apply plugin: spineProtobufPluginId
+import javax.annotation.ParametersAreNonnullByDefault;

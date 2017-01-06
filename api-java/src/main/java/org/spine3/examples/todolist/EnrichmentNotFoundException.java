@@ -18,6 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: generateDescriptorSetPlugin
+package org.spine3.examples.todolist;
 
-apply plugin: spineProtobufPluginId
+/**
+ * An exception thrown when enrichment cannot be found in {@link org.spine3.base.EventContext}.
+ *
+ * @author Illia Shepilov
+ */
+public class EnrichmentNotFoundException extends RuntimeException {
+
+    public EnrichmentNotFoundException(String message) {
+        super(message);
+    }
+}

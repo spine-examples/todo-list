@@ -18,6 +18,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: generateDescriptorSetPlugin
+syntax = "proto3";
 
-apply plugin: spineProtobufPluginId
+package spine.examples.todolist;
+
+option (type_url_prefix) = "type.spine.examples.todolist";
+option java_package = "org.spine3.examples.todolist";
+option java_outer_classname = "EnrichmentProto";
+option java_multiple_files = true;
+
+import "spine/annotations.proto";
+import "spine/event_annotations.proto";
+import "todolist/events.proto";
+
+// Label details enrichment.
+//
+message LabelDetailsEnrichment{
+
+    option (enrichment_for) = "spine.examples.todolist.LabelDetailsUpdated,"
+                              "spine.examples.todolist.LabelledTaskRestored,"
+                              "spine.examples.todolist.LabelAssignedToTask";
+
+    // label details
+    LabelDetails label_details = 1 [(by) = "label_id"];
+}

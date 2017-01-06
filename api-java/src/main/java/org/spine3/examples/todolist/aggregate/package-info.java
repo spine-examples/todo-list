@@ -18,6 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: generateDescriptorSetPlugin
+/**
+ * This package provides implementation for aggregate classes.
+ */
+@ParametersAreNonnullByDefault
+package org.spine3.examples.todolist.aggregate;
 
-apply plugin: spineProtobufPluginId
+import javax.annotation.ParametersAreNonnullByDefault;
