@@ -27,7 +27,7 @@ import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
-import org.spine3.examples.todolist.client.builder.CommandsBuilder;
+import org.spine3.examples.todolist.client.builder.CommandBuilder;
 import org.spine3.examples.todolist.server.Server;
 import org.spine3.server.storage.memory.InMemoryStorageFactory;
 import org.spine3.util.Exceptions;
@@ -84,27 +84,27 @@ class BasicTodoClientShould {
 
     /* package */
     static CreateBasicLabel createBasicLabelInstance() {
-        final CreateBasicLabel result = CommandsBuilder.label()
-                                                       .createLabel()
-                                                       .setTitle(LABEL_TITLE)
-                                                       .build();
+        final CreateBasicLabel result = CommandBuilder.label()
+                                                      .createLabel()
+                                                      .setTitle(LABEL_TITLE)
+                                                      .build();
         return result;
     }
 
     /* package */
     static CreateDraft createDraftInstance() {
-        final CreateDraft result = CommandsBuilder.task()
-                                                  .createDraft()
-                                                  .build();
+        final CreateDraft result = CommandBuilder.task()
+                                                 .createDraft()
+                                                 .build();
         return result;
     }
 
     /* package */
     static CreateBasicTask createBasicTaskInstance() {
-        final CreateBasicTask result = CommandsBuilder.task()
-                                                      .createTask()
-                                                      .setDescription(DESCRIPTION)
-                                                      .build();
+        final CreateBasicTask result = CommandBuilder.task()
+                                                     .createTask()
+                                                     .setDescription(DESCRIPTION)
+                                                     .build();
         return result;
     }
 
