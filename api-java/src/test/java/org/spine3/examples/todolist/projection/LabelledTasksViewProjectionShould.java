@@ -28,15 +28,15 @@ import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
-import org.spine3.examples.todolist.LabelledTaskCompleted;
-import org.spine3.examples.todolist.LabelledTaskDeleted;
-import org.spine3.examples.todolist.LabelledTaskDescriptionUpdated;
-import org.spine3.examples.todolist.LabelledTaskDueDateUpdated;
-import org.spine3.examples.todolist.LabelledTaskPriorityUpdated;
-import org.spine3.examples.todolist.LabelledTaskReopened;
 import org.spine3.examples.todolist.LabelledTaskRestored;
+import org.spine3.examples.todolist.TaskCompleted;
+import org.spine3.examples.todolist.TaskDeleted;
+import org.spine3.examples.todolist.TaskDescriptionUpdated;
+import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.TaskPriorityUpdated;
+import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.repository.LabelledTasksViewRepository;
 import org.spine3.examples.todolist.view.LabelledTasksView;
 import org.spine3.examples.todolist.view.TaskListView;
@@ -65,14 +65,13 @@ import static org.spine3.examples.todolist.testdata.TestEventFactory.UPDATED_TAS
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelAssignedToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelDetailsUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelRemovedFromTaskInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskCompletedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskDeletedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskDescriptionUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskDueDateUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskPriorityUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskReopenedInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskRestoredInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTskPriorityUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.taskCompletedInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDeletedInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDescriptionUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDueDateUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.taskPriorityUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.taskReopenedInstance;
 
 /**
  * @author Illia Shepilov
@@ -218,7 +217,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(labelAssignedToTaskEvent);
         eventBus.post(labelAssignedToTaskEvent);
 
-        final LabelledTaskDeleted taskDeleted = labelledTaskDeletedInstance();
+        final TaskDeleted taskDeleted = taskDeletedInstance();
         final Event deletedTaskEvent = createEvent(taskDeleted, eventContext);
         eventBus.post(deletedTaskEvent);
 
@@ -256,7 +255,7 @@ public class LabelledTasksViewProjectionShould {
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         eventBus.post(labelAssignedToTaskEvent);
 
-        final LabelledTaskDescriptionUpdated taskDescriptionUpdated = labelledTaskDescriptionUpdatedInstance();
+        final TaskDescriptionUpdated taskDescriptionUpdated = taskDescriptionUpdatedInstance();
         final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated, eventContext);
         eventBus.post(descriptionUpdatedEvent);
 
@@ -281,8 +280,8 @@ public class LabelledTasksViewProjectionShould {
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         eventBus.post(labelAssignedToTaskEvent);
 
-        final LabelledTaskDescriptionUpdated taskDescriptionUpdated =
-                labelledTaskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), LABEL_ID, UPDATED_DESCRIPTION);
+        final TaskDescriptionUpdated taskDescriptionUpdated =
+                taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), UPDATED_DESCRIPTION);
         final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated, eventContext);
         eventBus.post(descriptionUpdatedEvent);
 
@@ -306,7 +305,7 @@ public class LabelledTasksViewProjectionShould {
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         eventBus.post(labelAssignedToTaskEvent);
 
-        final LabelledTaskPriorityUpdated taskPriorityUpdated = labelledTskPriorityUpdatedInstance();
+        final TaskPriorityUpdated taskPriorityUpdated = taskPriorityUpdatedInstance();
         final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated, eventContext);
         eventBus.post(taskPriorityUpdatedEvent);
 
@@ -330,8 +329,8 @@ public class LabelledTasksViewProjectionShould {
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         eventBus.post(labelAssignedToTaskEvent);
 
-        final LabelledTaskPriorityUpdated taskPriorityUpdated =
-                labelledTaskPriorityUpdatedInstance(TaskId.getDefaultInstance(), LABEL_ID, UPDATED_TASK_PRIORITY);
+        final TaskPriorityUpdated taskPriorityUpdated =
+                taskPriorityUpdatedInstance(TaskId.getDefaultInstance(), UPDATED_TASK_PRIORITY);
         final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated, eventContext);
         eventBus.post(taskPriorityUpdatedEvent);
 
@@ -355,7 +354,7 @@ public class LabelledTasksViewProjectionShould {
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         eventBus.post(labelAssignedToTaskEvent);
 
-        final LabelledTaskDueDateUpdated taskDueDateUpdated = labelledTaskDueDateUpdatedInstance();
+        final TaskDueDateUpdated taskDueDateUpdated = taskDueDateUpdatedInstance();
         final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated, eventContext);
         eventBus.post(taskDueDateUpdatedEvent);
 
@@ -379,8 +378,8 @@ public class LabelledTasksViewProjectionShould {
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         eventBus.post(labelAssignedToTaskEvent);
 
-        final LabelledTaskDueDateUpdated taskDueDateUpdated =
-                labelledTaskDueDateUpdatedInstance(TaskId.getDefaultInstance(), LABEL_ID, UPDATED_TASK_DUE_DATE);
+        final TaskDueDateUpdated taskDueDateUpdated =
+                taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), UPDATED_TASK_DUE_DATE);
         final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated, eventContext);
         eventBus.post(taskDueDateUpdatedEvent);
 
@@ -404,7 +403,7 @@ public class LabelledTasksViewProjectionShould {
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         eventBus.post(labelAssignedToTaskEvent);
 
-        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
+        final TaskCompleted taskCompleted = taskCompletedInstance();
         final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
         eventBus.post(taskCompletedEvent);
 
@@ -428,7 +427,7 @@ public class LabelledTasksViewProjectionShould {
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         eventBus.post(labelAssignedToTaskEvent);
 
-        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
+        final TaskCompleted taskCompleted = taskCompletedInstance();
         final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
         eventBus.post(taskCompletedEvent);
 
@@ -452,11 +451,11 @@ public class LabelledTasksViewProjectionShould {
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         eventBus.post(labelAssignedToTaskEvent);
 
-        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
+        final TaskCompleted taskCompleted = taskCompletedInstance();
         final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
         eventBus.post(taskCompletedEvent);
 
-        final LabelledTaskReopened taskReopened = labelledTaskReopenedInstance();
+        final TaskReopened taskReopened = taskReopenedInstance();
         final Event taskReopenedEvent = createEvent(taskReopened, eventContext);
         eventBus.post(taskReopenedEvent);
 
@@ -480,11 +479,11 @@ public class LabelledTasksViewProjectionShould {
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         eventBus.post(labelAssignedToTaskEvent);
 
-        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
+        final TaskCompleted taskCompleted = taskCompletedInstance();
         final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
         eventBus.post(taskCompletedEvent);
 
-        final LabelledTaskReopened taskReopened = labelledTaskReopenedInstance(TaskId.getDefaultInstance(), LABEL_ID);
+        final TaskReopened taskReopened = taskReopenedInstance(TaskId.getDefaultInstance());
         final Event taskReopenedEvent = createEvent(taskReopened, eventContext);
         eventBus.post(taskReopenedEvent);
 
