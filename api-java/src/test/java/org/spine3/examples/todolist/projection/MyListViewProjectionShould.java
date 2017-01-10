@@ -243,7 +243,7 @@ public class MyListViewProjectionShould {
         projection.on(labelAssignedToTaskEvent);
         final LabelColor updatedColor = LabelColor.BLUE;
         final LabelDetailsUpdated labelDetailsUpdatedEvent =
-                labelDetailsUpdatedInstance(updatedColor, UPDATED_LABEL_TITLE);
+                labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
         projection.on(labelDetailsUpdatedEvent);
         final int expectedViewListSize = 1;
         final TaskListView taskListView = projection.getState()
@@ -266,7 +266,7 @@ public class MyListViewProjectionShould {
         projection.on(labelAssignedToTaskEvent);
         final LabelColor updatedColor = LabelColor.BLUE;
         final LabelDetailsUpdated labelDetailsUpdatedEvent =
-                labelDetailsUpdatedInstance(updatedColor, UPDATED_LABEL_TITLE);
+                labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
         projection.on(labelDetailsUpdatedEvent);
         final int expectedViewListSize = 1;
         final TaskListView taskListView = projection.getState()

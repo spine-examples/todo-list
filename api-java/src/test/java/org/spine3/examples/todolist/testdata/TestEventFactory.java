@@ -511,7 +511,7 @@ public class TestEventFactory {
      * @return {@link LabelDetailsUpdated} instance.
      */
     public static LabelDetailsUpdated labelDetailsUpdatedInstance() {
-        return labelDetailsUpdatedInstance(LabelColor.GRAY, LABEL_TITLE);
+        return labelDetailsUpdatedInstance(LABEL_ID, LabelColor.GRAY, LABEL_TITLE);
     }
 
     /**
@@ -521,12 +521,12 @@ public class TestEventFactory {
      * @param title the title of the updated label details
      * @return {@link LabelDetailsUpdated} instance
      */
-    public static LabelDetailsUpdated labelDetailsUpdatedInstance(LabelColor color, String title) {
+    public static LabelDetailsUpdated labelDetailsUpdatedInstance(TaskLabelId labelId, LabelColor color, String title) {
         final LabelDetails.Builder labelDetailsBuilder = LabelDetails.newBuilder()
                                                                      .setColor(color)
                                                                      .setTitle(title);
         final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
-                                                              .setLabelId(LABEL_ID)
+                                                              .setLabelId(labelId)
                                                               .setNewDetails(labelDetailsBuilder)
                                                               .build();
         return result;
