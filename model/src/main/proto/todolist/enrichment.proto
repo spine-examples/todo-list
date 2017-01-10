@@ -30,6 +30,7 @@ option java_multiple_files = true;
 import "spine/annotations.proto";
 import "spine/enrichment_annotations.proto";
 import "todolist/events.proto";
+import "todolist/identifiers.proto";
 
 // Enrichment for task and label details enrichment.
 //
@@ -42,4 +43,25 @@ message DetailsEnrichment{
     LabelDetails label_details = 1 [(by) = "label_id"];
     // task details
     TaskDetails task_details = 2 [(by) = "task_id"];
+}
+
+message LabelListEnrichment{
+
+    option (enrichment_for) = "spine.examples.todolist.RestoreDeletedTask,"
+                              "spine.examples.todolist.TaskDescriptionUpdated,"
+                              "spine.examples.todolist.TaskPriorityUpdated,"
+                              "spine.examples.todolist.TaskDueDateUpdated,"
+                              "spine.examples.todolist.TaskCompleted,"
+                              "spine.examples.todolist.TaskReopened,"
+                              "spine.examples.todolist.TaskDeleted";
+
+    LabelList label_list = 1 [(by) = "id"];
+}
+
+// DTO
+message LabelList{
+
+    repeated TaskLabelId label_id = 1;
+
+    reserved 2 to 5;
 }
