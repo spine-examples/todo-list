@@ -284,13 +284,14 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         client.removeLabel(removeLabelFromTask);
 
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
-        final int expectedListSize = 1;
+        int expectedListSize = 2;
         assertEquals(expectedListSize, tasksViewList.size());
 
-        final List<TaskView> taskViews = tasksViewList.get(0)
-                                                      .getLabelledTasks()
-                                                      .getItemsList();
+        final LabelledTasksView labelledTasksView = getLabelledTasksView(tasksViewList);
+        final List<TaskView> taskViews = labelledTasksView.getLabelledTasks()
+                                                          .getItemsList();
 
+        expectedListSize = 1;
         assertEquals(expectedListSize, taskViews.size());
         final TaskView view = taskViews.get(0);
 
@@ -385,7 +386,6 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(updatedColor,
                                                                                       UPDATED_LABEL_TITLE,
                                                                                       true);
-
         assertEquals(UPDATED_LABEL_TITLE, view.getLabelTitle());
         final String expectedColor = "#0000ff";
         assertEquals(expectedColor, view.getLabelColor());
@@ -397,7 +397,6 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(updatedColor,
                                                                                       UPDATED_LABEL_TITLE,
                                                                                       false);
-
         assertNotEquals(UPDATED_LABEL_TITLE, view.getLabelTitle());
         final String expectedColor = "#0000ff";
         assertNotEquals(expectedColor, view.getLabelColor());
@@ -419,6 +418,21 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
 
         final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
         assertTrue(labelledTasksView.isEmpty());
+    }
+
+    private LabelledTasksView getLabelledTasksView(List<LabelledTasksView> tasksViewList) {
+        LabelledTasksView result = LabelledTasksView.getDefaultInstance();
+
+        for (LabelledTasksView labelledView : tasksViewList) {
+            final boolean isEmpty = labelledView.getLabelId()
+                                                .getValue()
+                                                .isEmpty();
+            if (!isEmpty) {
+                result = labelledView;
+            }
+        }
+
+        return result;
     }
 
     private LabelledTasksView obtainViewWhenHandledCommandUpdateLabelDetails(LabelColor updatedColor,
@@ -443,10 +457,10 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         client.update(updateLabelDetails);
 
         final List<LabelledTasksView> labelledTasksViewList = client.getLabelledTasksView();
-        final int expectedListSize = 1;
+        final int expectedListSize = isCorrectId ? 1 : 2;
         assertEquals(expectedListSize, labelledTasksViewList.size());
 
-        final LabelledTasksView view = labelledTasksViewList.get(0);
+        final LabelledTasksView view = getLabelledTasksView(labelledTasksViewList);
         assertEquals(labelId, view.getLabelId());
 
         return view;
