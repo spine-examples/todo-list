@@ -457,7 +457,9 @@ public class LabelledTasksViewClientShould extends BasicTodoClientShould {
         client.update(updateLabelDetails);
 
         final List<LabelledTasksView> labelledTasksViewList = client.getLabelledTasksView();
-        final int expectedListSize = isCorrectId ? 1 : 2;
+        final int expectedSizeWhenIdIsCorrect = 1;
+        final int expectedSizeWhenIdIsIncorrect = 2;
+        final int expectedListSize = isCorrectId ? expectedSizeWhenIdIsCorrect : expectedSizeWhenIdIsIncorrect;
         assertEquals(expectedListSize, labelledTasksViewList.size());
 
         final LabelledTasksView view = getLabelledTasksView(labelledTasksViewList);
