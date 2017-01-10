@@ -39,7 +39,6 @@ import org.spine3.server.QueryService;
 import org.spine3.server.SubscriptionService;
 import org.spine3.server.event.enrich.EventEnricher;
 import org.spine3.server.storage.StorageFactory;
-import org.spine3.server.storage.memory.InMemoryStorageFactory;
 import org.spine3.server.transport.GrpcContainer;
 
 import javax.annotation.Nullable;
@@ -62,7 +61,7 @@ public class Server {
     private Function<TaskId, TaskDetails> taskIdToTaskDetails;
     private TaskAggregateRepository taskAggregateRepository;
     private TaskLabelAggregateRepository taskLabelAggregateRepository;
-    private MyListViewProjectionRepository projectionRepository;
+    private MyListViewProjectionRepository myListViewRepository;
     private LabelledTasksViewRepository labelledViewRepository;
     private DraftTasksViewRepository draftTasksViewRepository;
 
@@ -169,9 +168,9 @@ public class Server {
         taskLabelAggregateRepository = new TaskLabelAggregateRepository(boundedContext);
         taskLabelAggregateRepository.initStorage(storageFactory);
 
-        projectionRepository = new MyListViewProjectionRepository(boundedContext);
-        projectionRepository.initStorage(storageFactory);
-        projectionRepository.setOnline();
+        myListViewRepository = new MyListViewProjectionRepository(boundedContext);
+        myListViewRepository.initStorage(storageFactory);
+        myListViewRepository.setOnline();
 
         labelledViewRepository = new LabelledTasksViewRepository(boundedContext);
         labelledViewRepository.initStorage(storageFactory);
@@ -185,7 +184,7 @@ public class Server {
     private void registerRepositories() {
         boundedContext.register(taskAggregateRepository);
         boundedContext.register(taskLabelAggregateRepository);
-        boundedContext.register(projectionRepository);
+        boundedContext.register(myListViewRepository);
         boundedContext.register(labelledViewRepository);
         boundedContext.register(draftTasksViewRepository);
     }
