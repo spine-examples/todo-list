@@ -26,6 +26,7 @@ import org.spine3.base.Event;
 import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelColor;
+import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.LabelledTaskCompleted;
 import org.spine3.examples.todolist.LabelledTaskDeleted;
@@ -51,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Events.createEvent;
+import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
 import static org.spine3.examples.todolist.testdata.TestEventContextFactory.eventContextInstance;
 import static org.spine3.examples.todolist.testdata.TestEventEnricherFactory.LABEL_TITLE;
@@ -61,6 +63,7 @@ import static org.spine3.examples.todolist.testdata.TestEventFactory.UPDATED_DES
 import static org.spine3.examples.todolist.testdata.TestEventFactory.UPDATED_TASK_DUE_DATE;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.UPDATED_TASK_PRIORITY;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelAssignedToTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestEventFactory.labelDetailsUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelRemovedFromTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskCompletedInstance;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.labelledTaskDeletedInstance;
@@ -466,6 +469,48 @@ public class LabelledTasksViewProjectionShould {
         final TaskView taskView = listView.getItems(0);
 
         assertTrue(taskView.getCompleted());
+    }
+
+    @Test
+    public void update_label_details_when_handled_event_label_details_updated() {
+        final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+        final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+        eventBus.post(labelAssignedToTaskEvent);
+
+        final String newTitle = "Updated label title.";
+
+        final LabelDetailsUpdated labelDetailsUpdated = labelDetailsUpdatedInstance(LABEL_ID, LabelColor.RED, newTitle);
+        final Event labelDetailsUpdatedEvent = createEvent(labelDetailsUpdated, eventContext);
+        eventBus.post(labelDetailsUpdatedEvent);
+
+        final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .getState();
+        assertEquals(LABEL_ID, labelledTasksView.getLabelId());
+        assertEquals(newTitle, labelledTasksView.getLabelTitle());
+        assertEquals("#ff0000", labelledTasksView.getLabelColor());
+    }
+
+    @Test
+    public void not_update_label_details_when_handled_event_label_details_updated_with_wrong_label_id() {
+        final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+        final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+        eventBus.post(labelAssignedToTaskEvent);
+
+        final String newTitle = "Updated label title.";
+        final TaskLabelId wrongLabelId = TaskLabelId.newBuilder()
+                                                    .setValue(newUuid())
+                                                    .build();
+
+        final LabelDetailsUpdated labelDetailsUpdated =
+                labelDetailsUpdatedInstance(wrongLabelId, LabelColor.RED, newTitle);
+        final Event labelDetailsUpdatedEvent = createEvent(labelDetailsUpdated, eventContext);
+        eventBus.post(labelDetailsUpdatedEvent);
+
+        final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .getState();
+        assertEquals(LABEL_ID, labelledTasksView.getLabelId());
+        assertNotEquals(newTitle, labelledTasksView.getLabelTitle());
+        assertNotEquals("#ff0000", labelledTasksView.getLabelColor());
     }
 
     private static void matchesExpectedValues(TaskView taskView) {

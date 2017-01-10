@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.repository;
 
 import org.spine3.examples.todolist.LabelAssignedToTask;
+import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.LabelledTaskCompleted;
 import org.spine3.examples.todolist.LabelledTaskDeleted;
@@ -86,5 +87,9 @@ public class LabelledTasksViewRepository
         final IdSetEventFunction<TaskLabelId, LabelledTaskDeleted> taskDeletedFn =
                 (message, context) -> Collections.singleton(message.getLabelId());
         addIdSetFunction(LabelledTaskDeleted.class, taskDeletedFn);
+
+        final IdSetEventFunction<TaskLabelId, LabelDetailsUpdated> labelDetailsUpdatedFn =
+                (message, context) -> Collections.singleton(message.getLabelId());
+        addIdSetFunction(LabelDetailsUpdated.class, labelDetailsUpdatedFn);
     }
 }
