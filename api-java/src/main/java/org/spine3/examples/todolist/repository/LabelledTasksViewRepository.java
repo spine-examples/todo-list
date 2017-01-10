@@ -20,13 +20,23 @@
 
 package org.spine3.examples.todolist.repository;
 
-import com.google.protobuf.Message;
-import org.spine3.base.EventContext;
+import org.spine3.examples.todolist.LabelAssignedToTask;
+import org.spine3.examples.todolist.LabelRemovedFromTask;
+import org.spine3.examples.todolist.LabelledTaskCompleted;
+import org.spine3.examples.todolist.LabelledTaskDeleted;
+import org.spine3.examples.todolist.LabelledTaskDescriptionUpdated;
+import org.spine3.examples.todolist.LabelledTaskDueDateUpdated;
+import org.spine3.examples.todolist.LabelledTaskPriorityUpdated;
+import org.spine3.examples.todolist.LabelledTaskReopened;
+import org.spine3.examples.todolist.LabelledTaskRestored;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.projection.LabelledTasksViewProjection;
 import org.spine3.examples.todolist.view.LabelledTasksView;
 import org.spine3.server.BoundedContext;
+import org.spine3.server.entity.IdSetEventFunction;
 import org.spine3.server.projection.ProjectionRepository;
+
+import java.util.Collections;
 
 /**
  * A repository for the {@link LabelledTasksView}.
@@ -37,17 +47,44 @@ public class LabelledTasksViewRepository
         extends ProjectionRepository<TaskLabelId, LabelledTasksViewProjection, LabelledTasksView> {
     public LabelledTasksViewRepository(BoundedContext boundedContext) {
         super(boundedContext);
+        addEventFunctions();
     }
 
-    @Override
-    protected TaskLabelId getEntityId(Message event, EventContext context) {
+    private void addEventFunctions() {
+        final IdSetEventFunction<TaskLabelId, LabelAssignedToTask> labelAssignedFn =
+                (message, context) -> Collections.singleton(message.getLabelId());
+        addIdSetFunction(LabelAssignedToTask.class, labelAssignedFn);
 
-        for (Object fieldValue : event.getAllFields()
-                                      .values()) {
-            if (fieldValue instanceof TaskLabelId) {
-                return (TaskLabelId) fieldValue;
-            }
-        }
-        return TaskLabelId.getDefaultInstance();
+        final IdSetEventFunction<TaskLabelId, LabelRemovedFromTask> labelRemovedFn =
+                (message, context) -> Collections.singleton(message.getLabelId());
+        addIdSetFunction(LabelRemovedFromTask.class, labelRemovedFn);
+
+        final IdSetEventFunction<TaskLabelId, LabelledTaskRestored> deletedTaskRestoredFn =
+                (message, context) -> Collections.singleton(message.getLabelId());
+        addIdSetFunction(LabelledTaskRestored.class, deletedTaskRestoredFn);
+
+        final IdSetEventFunction<TaskLabelId, LabelledTaskDescriptionUpdated> taskDescriptionUpdatedFn =
+                (message, context) -> Collections.singleton(message.getLabelId());
+        addIdSetFunction(LabelledTaskDescriptionUpdated.class, taskDescriptionUpdatedFn);
+
+        final IdSetEventFunction<TaskLabelId, LabelledTaskReopened> taskReopenedFn =
+                (message, context) -> Collections.singleton(message.getLabelId());
+        addIdSetFunction(LabelledTaskReopened.class, taskReopenedFn);
+
+        final IdSetEventFunction<TaskLabelId, LabelledTaskPriorityUpdated> updatedTaskPriorityFn =
+                (message, context) -> Collections.singleton(message.getLabelId());
+        addIdSetFunction(LabelledTaskPriorityUpdated.class, updatedTaskPriorityFn);
+
+        final IdSetEventFunction<TaskLabelId, LabelledTaskDueDateUpdated> updatedTaskDueDateFn =
+                (message, context) -> Collections.singleton(message.getLabelId());
+        addIdSetFunction(LabelledTaskDueDateUpdated.class, updatedTaskDueDateFn);
+
+        final IdSetEventFunction<TaskLabelId, LabelledTaskCompleted> taskCompletedFn =
+                (message, context) -> Collections.singleton(message.getLabelId());
+        addIdSetFunction(LabelledTaskCompleted.class, taskCompletedFn);
+
+        final IdSetEventFunction<TaskLabelId, LabelledTaskDeleted> taskDeletedFn =
+                (message, context) -> Collections.singleton(message.getLabelId());
+        addIdSetFunction(LabelledTaskDeleted.class, taskDeletedFn);
     }
 }

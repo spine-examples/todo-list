@@ -20,7 +20,6 @@
 
 package org.spine3.examples.todolist.projection;
 
-import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.Event;
@@ -37,6 +36,7 @@ import org.spine3.examples.todolist.LabelledTaskReopened;
 import org.spine3.examples.todolist.LabelledTaskRestored;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.repository.LabelledTasksViewRepository;
 import org.spine3.examples.todolist.view.LabelledTasksView;
 import org.spine3.examples.todolist.view.TaskListView;
 import org.spine3.examples.todolist.view.TaskView;
@@ -85,7 +85,7 @@ public class LabelledTasksViewProjectionShould {
         final InMemoryStorageFactory storageFactory = InMemoryStorageFactory.getInstance();
         final EventEnricher eventEnricher = eventEnricherInstance();
         final BoundedContext boundedContext = boundedContextInstance(eventEnricher, storageFactory);
-        repository = new LabelledTasksViewProjectionRepository(boundedContext);
+        repository = new LabelledTasksViewRepository(boundedContext);
         repository.initStorage(storageFactory);
         repository.setOnline();
         boundedContext.register(repository);
@@ -481,21 +481,5 @@ public class LabelledTasksViewProjectionShould {
     private static void doesNotMatchValues(LabelledTasksView labelledTaskView) {
         assertNotEquals(LabelColorView.valueOf(LabelColor.BLUE), labelledTaskView.getLabelColor());
         assertNotEquals(LABEL_TITLE, labelledTaskView.getLabelTitle());
-    }
-
-    /*
-     * Stub projection repository
-     */
-    private static class LabelledTasksViewProjectionRepository
-            extends ProjectionRepository<TaskLabelId, LabelledTasksViewProjection, LabelledTasksView> {
-
-        @Override
-        protected TaskLabelId getEntityId(Message event, EventContext context) {
-            return LABEL_ID;
-        }
-
-        protected LabelledTasksViewProjectionRepository(BoundedContext boundedContext) {
-            super(boundedContext);
-        }
     }
 }
