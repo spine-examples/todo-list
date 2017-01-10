@@ -40,7 +40,7 @@ import org.spine3.server.projection.ProjectionRepository;
 import java.util.Collections;
 
 /**
- * A repository for the {@link LabelledTasksView}.
+ * A repository for the {@link LabelledTasksViewProjection}.
  *
  * @author Illia Shepilov
  */
