@@ -20,26 +20,22 @@
 
 package org.spine3.examples.todolist.projection;
 
-import com.google.common.base.Optional;
-import com.google.protobuf.Message;
 import org.spine3.base.EventContext;
-import org.spine3.base.Events;
 import org.spine3.examples.todolist.DetailsEnrichment;
-import org.spine3.examples.todolist.EnrichmentNotFoundException;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
-import org.spine3.examples.todolist.LabelledTaskCompleted;
-import org.spine3.examples.todolist.LabelledTaskDeleted;
-import org.spine3.examples.todolist.LabelledTaskDescriptionUpdated;
-import org.spine3.examples.todolist.LabelledTaskDueDateUpdated;
-import org.spine3.examples.todolist.LabelledTaskPriorityUpdated;
-import org.spine3.examples.todolist.LabelledTaskReopened;
 import org.spine3.examples.todolist.LabelledTaskRestored;
+import org.spine3.examples.todolist.TaskCompleted;
+import org.spine3.examples.todolist.TaskDeleted;
+import org.spine3.examples.todolist.TaskDescriptionUpdated;
 import org.spine3.examples.todolist.TaskDetails;
+import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.TaskPriorityUpdated;
+import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.view.LabelledTasksView;
 import org.spine3.examples.todolist.view.TaskListView;
 import org.spine3.examples.todolist.view.TaskView;
@@ -49,6 +45,7 @@ import org.spine3.server.projection.Projection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.spine3.examples.todolist.CommonHelper.getEnrichment;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.updateTaskViewList;
 
@@ -117,12 +114,12 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     }
 
     @Subscribe
-    public void on(LabelledTaskDeleted event) {
+    public void on(TaskDeleted event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
-        final TaskListView taskListView = removeViewByTaskId(views, event.getTaskId());
+        final TaskListView taskListView = removeViewByTaskId(views, event.getId());
         final LabelledTasksView labelledTasksView = getState();
         final LabelledTasksView state = getState().newBuilderForType()
                                                   .setLabelledTasks(taskListView)
@@ -133,7 +130,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     }
 
     @Subscribe
-    public void on(LabelledTaskDescriptionUpdated event) {
+    public void on(TaskDescriptionUpdated event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
@@ -142,7 +139,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     }
 
     @Subscribe
-    public void on(LabelledTaskPriorityUpdated event) {
+    public void on(TaskPriorityUpdated event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
@@ -151,7 +148,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     }
 
     @Subscribe
-    public void on(LabelledTaskDueDateUpdated event) {
+    public void on(TaskDueDateUpdated event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
@@ -160,7 +157,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     }
 
     @Subscribe
-    public void on(LabelledTaskCompleted event) {
+    public void on(TaskCompleted event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
@@ -169,7 +166,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     }
 
     @Subscribe
-    public void on(LabelledTaskReopened event) {
+    public void on(TaskReopened event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
@@ -212,17 +209,6 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
                                                    .setLabelledTasks(listView)
                                                    .build();
         return result;
-    }
-
-    @SuppressWarnings("Guava")
-    //As long as Spine API is based on Java 7, {@link Events#getEnrichment} uses Guava {@link Optional}.
-    private static <T extends Message, E extends Class<T>> T getEnrichment(E enrichmentClass, EventContext context) {
-        final Optional<T> enrichmentOptional = Events.getEnrichment(enrichmentClass, context);
-        if (enrichmentOptional.isPresent()) {
-            T result = enrichmentOptional.get();
-            return result;
-        }
-        throw new EnrichmentNotFoundException(enrichmentClass + " not found");
     }
 
     private LabelledTasksView.Builder addLabel(TaskView taskView, LabelDetails labelDetails) {
