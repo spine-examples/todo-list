@@ -99,9 +99,8 @@ public class LabelledTasksViewProjectionShould {
     public void add_task_view_to_state_when_label_assigned_to_task() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
-
-        int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
+
         LabelledTasksView labelledTaskView = repository.load(LABEL_ID)
                                                        .getState();
         TaskListView listView = labelledTaskView.getLabelledTasks();
@@ -109,6 +108,7 @@ public class LabelledTasksViewProjectionShould {
         matchesExpectedValues(labelledTaskView);
 
         int actualListSize = listView.getItemsCount();
+        int expectedListSize = 1;
         assertEquals(expectedListSize, actualListSize);
 
         TaskView view = listView.getItems(0);
@@ -116,12 +116,13 @@ public class LabelledTasksViewProjectionShould {
         matchesExpectedValues(view);
 
         eventBus.post(labelAssignedToTaskEvent);
-        expectedListSize = 2;
+
         labelledTaskView = repository.load(LABEL_ID)
                                      .getState();
         listView = labelledTaskView.getLabelledTasks();
         actualListSize = listView.getItemsCount();
 
+        expectedListSize = 2;
         assertEquals(expectedListSize, actualListSize);
 
         view = listView.getItems(0);
@@ -138,15 +139,16 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void remove_task_view_from_state_when_label_removed_from_task() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
-        final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask, eventContext);
         eventBus.post(labelAssignedToTaskEvent);
         eventBus.post(labelAssignedToTaskEvent);
+
         LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
                                                         .getState();
         assertEquals(LABEL_ID, labelledTasksView.getLabelId());
 
+        final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
+        final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask, eventContext);
         eventBus.post(labelRemovedFromTaskEvent);
 
         labelledTasksView = repository.load(LABEL_ID)
@@ -162,16 +164,18 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void remove_task_view_from_state_when_deleted_task_is_restored() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
-        final LabelledTaskRestored deletedTaskRestored = labelledTaskRestoredInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+        eventBus.post(labelAssignedToTaskEvent);
+        eventBus.post(labelAssignedToTaskEvent);
+
+        final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
         final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask, eventContext);
-        final Event deletedTaskRestoredEvent = createEvent(deletedTaskRestored, eventContext);
-        int expectedListSize = 1;
-        eventBus.post(labelAssignedToTaskEvent);
-        eventBus.post(labelAssignedToTaskEvent);
         eventBus.post(labelRemovedFromTaskEvent);
+
+        final LabelledTaskRestored deletedTaskRestored = labelledTaskRestoredInstance();
+        final Event deletedTaskRestoredEvent = createEvent(deletedTaskRestored, eventContext);
         eventBus.post(deletedTaskRestoredEvent);
+
         LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
                                                         .getState();
         matchesExpectedValues(labelledTasksView);
@@ -179,14 +183,15 @@ public class LabelledTasksViewProjectionShould {
         TaskListView listView = labelledTasksView.getLabelledTasks();
         int actualListSize = listView.getItemsCount();
 
+        int expectedListSize = 1;
         assertEquals(expectedListSize, actualListSize);
 
         eventBus.post(deletedTaskRestoredEvent);
+
         final TaskView taskView = listView.getItems(0);
 
         assertEquals(TASK_ID, taskView.getId());
 
-        expectedListSize = 2;
         labelledTasksView = repository.load(LABEL_ID)
                                       .getState();
 
@@ -197,6 +202,7 @@ public class LabelledTasksViewProjectionShould {
                              .getLabelledTasks();
         actualListSize = listView.getItemsCount();
 
+        expectedListSize = 2;
         assertEquals(expectedListSize, actualListSize);
         assertEquals(TASK_ID, listView.getItems(0)
                                       .getId());
@@ -208,13 +214,14 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void remove_task_view_from_state_when_task_is_deleted() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final LabelledTaskDeleted taskDeleted = labelledTaskDeletedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+        eventBus.post(labelAssignedToTaskEvent);
+        eventBus.post(labelAssignedToTaskEvent);
+
+        final LabelledTaskDeleted taskDeleted = labelledTaskDeletedInstance();
         final Event deletedTaskEvent = createEvent(taskDeleted, eventContext);
-        int expectedListSize = 1;
-        eventBus.post(labelAssignedToTaskEvent);
-        eventBus.post(labelAssignedToTaskEvent);
         eventBus.post(deletedTaskEvent);
+
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
@@ -222,6 +229,7 @@ public class LabelledTasksViewProjectionShould {
         TaskListView listView = labelledTasksView.getLabelledTasks();
         int actualListSize = listView.getItemsCount();
 
+        int expectedListSize = 1;
         assertEquals(expectedListSize, actualListSize);
 
         final TaskView taskView = listView.getItems(0);
@@ -229,12 +237,14 @@ public class LabelledTasksViewProjectionShould {
         matchesExpectedValues(taskView);
 
         eventBus.post(deletedTaskEvent);
+
         expectedListSize = 0;
         listView = repository.load(LABEL_ID)
                              .getState()
                              .getLabelledTasks();
         actualListSize = listView.getItemsCount();
 
+        eventBus.post(deletedTaskEvent);
         assertEquals(expectedListSize, actualListSize);
         assertTrue(listView.getItemsList()
                            .isEmpty());
@@ -243,12 +253,13 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_description_when_handled_event_task_description_updated() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final LabelledTaskDescriptionUpdated taskDescriptionUpdated = labelledTaskDescriptionUpdatedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
-        final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated, eventContext);
-        final int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
+
+        final LabelledTaskDescriptionUpdated taskDescriptionUpdated = labelledTaskDescriptionUpdatedInstance();
+        final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated, eventContext);
         eventBus.post(descriptionUpdatedEvent);
+
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
@@ -256,6 +267,7 @@ public class LabelledTasksViewProjectionShould {
         final TaskListView listView = labelledTasksView.getLabelledTasks();
         final int actualListSize = listView.getItemsCount();
 
+        final int expectedListSize = 1;
         assertEquals(expectedListSize, actualListSize);
 
         final TaskView taskView = listView.getItems(0);
@@ -267,18 +279,20 @@ public class LabelledTasksViewProjectionShould {
     public void not_update_task_description_when_handled_event_task_description_updated_with_wrong_task_id() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
-        final int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
+
         final LabelledTaskDescriptionUpdated taskDescriptionUpdated =
                 labelledTaskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), LABEL_ID, UPDATED_DESCRIPTION);
         final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated, eventContext);
         eventBus.post(descriptionUpdatedEvent);
+
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
         int actualListSize = listView.getItemsCount();
 
+        final int expectedListSize = 1;
         assertEquals(expectedListSize, actualListSize);
 
         final TaskView taskView = listView.getItems(0);
@@ -289,18 +303,20 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_priority_when_handled_event_task_priority_updated() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final LabelledTaskPriorityUpdated taskPriorityUpdated = labelledTskPriorityUpdatedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
-        final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated, eventContext);
-        final int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
+
+        final LabelledTaskPriorityUpdated taskPriorityUpdated = labelledTskPriorityUpdatedInstance();
+        final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated, eventContext);
         eventBus.post(taskPriorityUpdatedEvent);
+
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
         final int actualListSize = listView.getItemsCount();
 
+        final int expectedListSize = 1;
         assertEquals(expectedListSize, actualListSize);
 
         final TaskView taskView = listView.getItems(0);
@@ -312,18 +328,20 @@ public class LabelledTasksViewProjectionShould {
     public void not_update_task_priority_when_handled_event_task_priority_updated_with_wrong_task_id() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
-        final int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
+
         final LabelledTaskPriorityUpdated taskPriorityUpdated =
                 labelledTaskPriorityUpdatedInstance(TaskId.getDefaultInstance(), LABEL_ID, UPDATED_TASK_PRIORITY);
         final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated, eventContext);
         eventBus.post(taskPriorityUpdatedEvent);
+
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
         final int actualListSize = listView.getItemsCount();
 
+        final int expectedListSize = 1;
         assertEquals(expectedListSize, actualListSize);
 
         final TaskView taskView = listView.getItems(0);
@@ -334,18 +352,20 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_due_date_when_handled_event_task_due_date_updated() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final LabelledTaskDueDateUpdated taskDueDateUpdated = labelledTaskDueDateUpdatedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
-        final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated, eventContext);
-        final int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
+
+        final LabelledTaskDueDateUpdated taskDueDateUpdated = labelledTaskDueDateUpdatedInstance();
+        final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated, eventContext);
         eventBus.post(taskDueDateUpdatedEvent);
+
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
         final int actualListSize = listView.getItemsCount();
 
+        final int expectedListSize = 1;
         assertEquals(expectedListSize, actualListSize);
 
         final TaskView taskView = listView.getItems(0);
@@ -356,19 +376,21 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_due_date_when_handled_event_task_due_date_updated_with_wrong_task_id() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+        final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+        eventBus.post(labelAssignedToTaskEvent);
+
         final LabelledTaskDueDateUpdated taskDueDateUpdated =
                 labelledTaskDueDateUpdatedInstance(TaskId.getDefaultInstance(), LABEL_ID, UPDATED_TASK_DUE_DATE);
-        final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated, eventContext);
-        final int expectedListSize = 1;
-        eventBus.post(labelAssignedToTaskEvent);
         eventBus.post(taskDueDateUpdatedEvent);
+
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
         final int actualListSize = listView.getItemsCount();
 
+        final int expectedListSize = 1;
         assertEquals(expectedListSize, actualListSize);
 
         final TaskView taskView = listView.getItems(0);
@@ -379,18 +401,20 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_completed_state_when_handled_event_task_completed() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
-        final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
-        final int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
+
+        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
+        final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
         eventBus.post(taskCompletedEvent);
+
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
         final int actualListSize = listView.getItemsCount();
 
+        final int expectedListSize = 1;
         assertEquals(expectedListSize, actualListSize);
 
         final TaskView taskView = listView.getItems(0);
@@ -401,18 +425,20 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_completed_state_when_handled_event_task_completed_with_wrong_task_id() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
-        final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
-        final int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
+
+        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
+        final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
         eventBus.post(taskCompletedEvent);
+
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
         final int actualListSize = listView.getItemsCount();
 
+        final int expectedListSize = 1;
         assertEquals(expectedListSize, actualListSize);
 
         final TaskView taskView = listView.getItems(0);
@@ -423,21 +449,24 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_completed_state_when_handled_event_task_reopened() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
-        final LabelledTaskReopened taskReopened = labelledTaskReopenedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
-        final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
-        final Event taskReopenedEvent = createEvent(taskReopened, eventContext);
-        final int expectedListSize = 1;
         eventBus.post(labelAssignedToTaskEvent);
+
+        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
+        final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
         eventBus.post(taskCompletedEvent);
+
+        final LabelledTaskReopened taskReopened = labelledTaskReopenedInstance();
+        final Event taskReopenedEvent = createEvent(taskReopened, eventContext);
         eventBus.post(taskReopenedEvent);
+
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
         final int actualListSize = listView.getItemsCount();
 
+        final int expectedListSize = 1;
         assertEquals(expectedListSize, actualListSize);
 
         final TaskView taskView = listView.getItems(0);
@@ -448,21 +477,24 @@ public class LabelledTasksViewProjectionShould {
     @Test
     public void update_task_completed_state_when_handled_event_task_reopened_with_wrong_task_id() {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+        eventBus.post(labelAssignedToTaskEvent);
+
+        final LabelledTaskCompleted taskCompleted = labelledTaskCompletedInstance();
         final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
+        eventBus.post(taskCompletedEvent);
+
         final LabelledTaskReopened taskReopened = labelledTaskReopenedInstance(TaskId.getDefaultInstance(), LABEL_ID);
         final Event taskReopenedEvent = createEvent(taskReopened, eventContext);
-        final int expectedListSize = 1;
-        eventBus.post(labelAssignedToTaskEvent);
-        eventBus.post(taskCompletedEvent);
         eventBus.post(taskReopenedEvent);
+
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
         final int actualListSize = listView.getItemsCount();
 
+        final int expectedListSize = 1;
         assertEquals(expectedListSize, actualListSize);
 
         final TaskView taskView = listView.getItems(0);

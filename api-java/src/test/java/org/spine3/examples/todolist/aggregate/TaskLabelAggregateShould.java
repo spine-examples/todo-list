@@ -62,10 +62,10 @@ public class TaskLabelAggregateShould {
     @Test
     public void emit_label_created_event_upon_create_task_label_command() {
         final CreateBasicLabel createLabelCmd = createLabelInstance();
-        final int expectedListSize = 1;
         final List<? extends com.google.protobuf.Message> messageList =
                 aggregate.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
 
+        final int expectedListSize = 1;
         assertEquals(expectedListSize, messageList.size());
         assertEquals(LabelCreated.class, messageList.get(0)
                                                     .getClass());
@@ -82,10 +82,10 @@ public class TaskLabelAggregateShould {
     @Test
     public void emit_label_details_updated_event_upon_update_label_details_command() {
         final UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance();
-        final int expectedListSize = 1;
         final List<? extends com.google.protobuf.Message> messageList =
                 aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
 
+        final int expectedListSize = 1;
         assertEquals(expectedListSize, messageList.size());
         assertEquals(LabelDetailsUpdated.class, messageList.get(0)
                                                            .getClass());
@@ -112,9 +112,11 @@ public class TaskLabelAggregateShould {
     @Test
     public void change_current_state_when_label_details_updated_two_times() {
         final CreateBasicLabel createBasicLabel = createLabelInstance();
-        UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance();
         aggregate.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
+
+        UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance();
         aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
+
         TaskLabel state = aggregate.getState();
 
         assertEquals(LABEL_ID, state.getId());
@@ -126,6 +128,7 @@ public class TaskLabelAggregateShould {
 
         updateLabelDetailsCmd = updateLabelDetailsInstance(LABEL_ID, updatedLabelColor, updatedTitle);
         aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
+
         state = aggregate.getState();
 
         assertEquals(LABEL_ID, state.getId());
