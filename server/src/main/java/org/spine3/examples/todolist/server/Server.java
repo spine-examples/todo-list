@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.server;
 
 import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelList;
 import org.spine3.examples.todolist.Task;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
@@ -43,6 +44,7 @@ import org.spine3.server.transport.GrpcContainer;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.List;
 import java.util.function.Function;
 
 import static org.spine3.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
@@ -59,6 +61,7 @@ public class Server {
     private final BoundedContext boundedContext;
     private Function<TaskLabelId, LabelDetails> taskLabelIdToLabelDetails;
     private Function<TaskId, TaskDetails> taskIdToTaskDetails;
+    private Function<TaskId, LabelList> taskIdToLabelList;
     private TaskAggregateRepository taskAggregateRepository;
     private TaskLabelAggregateRepository taskLabelAggregateRepository;
     private MyListViewProjectionRepository myListViewRepository;
@@ -80,6 +83,7 @@ public class Server {
     private void initiEnricherFunctions() {
         initLabelIdToDetailsFunction();
         initTaskIdToDetailsFunction();
+        initTaskIdToLabelListFunction();
     }
 
     private void initLabelIdToDetailsFunction() {
@@ -122,6 +126,18 @@ public class Server {
                 };
     }
 
+    private void initTaskIdToLabelListFunction() {
+        taskIdToLabelList = taskId -> {
+            final TaskAggregate aggregate = taskAggregateRepository.load(taskId);
+            final List<TaskLabelId> labelIdsList = aggregate.getState()
+                                                            .getLabelIdsList();
+            final LabelList result = LabelList.newBuilder()
+                                              .addAllLabelId(labelIdsList)
+                                              .build();
+            return result;
+        };
+    }
+
     private QueryService initQueryService() {
         final QueryService result = QueryService.newBuilder()
                                                 .add(boundedContext)
@@ -149,6 +165,9 @@ public class Server {
                                                   .addFieldEnrichment(TaskId.class,
                                                                       TaskDetails.class,
                                                                       taskIdToTaskDetails::apply)
+                                                  .addFieldEnrichment(TaskId.class,
+                                                                      LabelList.class,
+                                                                      taskIdToLabelList::apply)
                                                   .build();
         return result;
     }

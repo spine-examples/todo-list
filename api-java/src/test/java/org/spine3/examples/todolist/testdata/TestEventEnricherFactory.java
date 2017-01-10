@@ -22,14 +22,16 @@ package org.spine3.examples.todolist.testdata;
 
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelList;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.server.event.enrich.EventEnricher;
 
-import javax.annotation.Nullable;
 import java.util.function.Function;
+
+import static org.spine3.examples.todolist.testdata.TestEventFactory.LABEL_ID;
 
 /**
  * Provides event enricher for test needs.
@@ -51,23 +53,13 @@ public class TestEventEnricherFactory {
     private TestEventEnricherFactory() {
     }
 
-    private static final Function<TaskLabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS =
-            new Function<TaskLabelId, LabelDetails>() {
-                @Nullable
-                @Override
-                public LabelDetails apply(@Nullable TaskLabelId input) {
-                    return LABEL_DETAILS;
-                }
-            };
+    private static final Function<TaskLabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS = labelId -> LABEL_DETAILS;
 
-    private static final Function<TaskId, TaskDetails> TASK_ID_TO_TASK_DETAILS =
-            new Function<TaskId, TaskDetails>() {
-                @Nullable
-                @Override
-                public TaskDetails apply(@Nullable TaskId input) {
-                    return TASK_DETAILS;
-                }
-            };
+    private static final Function<TaskId, TaskDetails> TASK_ID_TO_TASK_DETAILS = taskId -> TASK_DETAILS;
+
+    private static final Function<TaskId, LabelList> TASK_ID_TO_LABEL_ID_LIST = taskId -> LabelList.newBuilder()
+                                                                                                   .addLabelId(LABEL_ID)
+                                                                                                   .build();
 
     /**
      * Provides a pre-configured {@link EventEnricher} event instance.
@@ -82,6 +74,9 @@ public class TestEventEnricherFactory {
                                                   .addFieldEnrichment(TaskId.class,
                                                                       TaskDetails.class,
                                                                       TASK_ID_TO_TASK_DETAILS::apply)
+                                                  .addFieldEnrichment(TaskId.class,
+                                                                      LabelList.class,
+                                                                      TASK_ID_TO_LABEL_ID_LIST::apply)
                                                   .build();
         return result;
     }
