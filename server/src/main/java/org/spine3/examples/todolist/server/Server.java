@@ -170,15 +170,12 @@ public class Server {
 
         myListViewRepository = new MyListViewProjectionRepository(boundedContext);
         myListViewRepository.initStorage(storageFactory);
-        myListViewRepository.setOnline();
 
         labelledViewRepository = new LabelledTasksViewRepository(boundedContext);
         labelledViewRepository.initStorage(storageFactory);
-        labelledViewRepository.setOnline();
 
         draftTasksViewRepository = new DraftTasksViewRepository(boundedContext);
         draftTasksViewRepository.initStorage(storageFactory);
-        draftTasksViewRepository.setOnline();
     }
 
     private void registerRepositories() {

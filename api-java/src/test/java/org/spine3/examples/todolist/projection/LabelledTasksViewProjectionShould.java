@@ -90,7 +90,6 @@ public class LabelledTasksViewProjectionShould {
         final BoundedContext boundedContext = boundedContextInstance(eventEnricher, storageFactory);
         repository = new LabelledTasksViewRepository(boundedContext);
         repository.initStorage(storageFactory);
-        repository.setOnline();
         boundedContext.register(repository);
         eventBus = boundedContext.getEventBus();
         eventContext = eventContextInstance();
