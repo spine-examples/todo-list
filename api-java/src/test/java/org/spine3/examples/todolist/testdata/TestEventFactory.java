@@ -21,14 +21,18 @@
 package org.spine3.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
+import org.spine3.change.StringChange;
+import org.spine3.change.TimestampChange;
 import org.spine3.examples.todolist.DeletedTaskRestored;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelCreated;
 import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelDetailsChange;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.LabelledTaskRestored;
+import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.TaskCompleted;
 import org.spine3.examples.todolist.TaskCreated;
 import org.spine3.examples.todolist.TaskDeleted;
@@ -158,9 +162,12 @@ public class TestEventFactory {
      * @return {@link TaskDescriptionUpdated} instance
      */
     public static TaskDescriptionUpdated taskDescriptionUpdatedInstance(TaskId id, String description) {
+        final StringChange descriptionChange = StringChange.newBuilder()
+                                                           .setNewValue(description)
+                                                           .build();
         final TaskDescriptionUpdated result = TaskDescriptionUpdated.newBuilder()
                                                                     .setId(id)
-                                                                    .setNewDescription(description)
+                                                                    .setDescriptionChange(descriptionChange)
                                                                     .build();
         return result;
     }
@@ -181,9 +188,12 @@ public class TestEventFactory {
      * @return {@link TaskPriorityUpdated} instance
      */
     public static TaskPriorityUpdated taskPriorityUpdatedInstance(TaskId id, TaskPriority priority) {
+        final PriorityChange taskPriorityChange = PriorityChange.newBuilder()
+                                                                .setNewValue(priority)
+                                                                .build();
         final TaskPriorityUpdated result = TaskPriorityUpdated.newBuilder()
                                                               .setId(id)
-                                                              .setNewPriority(priority)
+                                                              .setPriorityChange(taskPriorityChange)
                                                               .build();
         return result;
     }
@@ -204,9 +214,12 @@ public class TestEventFactory {
      * @return {@link TaskDueDateUpdated} instance
      */
     public static TaskDueDateUpdated taskDueDateUpdatedInstance(TaskId id, Timestamp dueDate) {
+        final TimestampChange dueDateChange = TimestampChange.newBuilder()
+                                                             .setNewValue(dueDate)
+                                                             .build();
         final TaskDueDateUpdated result = TaskDueDateUpdated.newBuilder()
                                                             .setId(id)
-                                                            .setNewDueDate(dueDate)
+                                                            .setDueDateChange(dueDateChange)
                                                             .build();
         return result;
     }
@@ -384,9 +397,12 @@ public class TestEventFactory {
         final LabelDetails.Builder labelDetailsBuilder = LabelDetails.newBuilder()
                                                                      .setColor(color)
                                                                      .setTitle(title);
+        final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()
+                                                                        .setNewDetails(labelDetailsBuilder)
+                                                                        .build();
         final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
                                                               .setLabelId(labelId)
-                                                              .setNewDetails(labelDetailsBuilder)
+                                                              .setLabelDetailsChange(labelDetailsChange)
                                                               .build();
         return result;
     }

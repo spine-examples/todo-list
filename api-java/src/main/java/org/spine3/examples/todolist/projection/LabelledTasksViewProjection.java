@@ -179,7 +179,9 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final LabelledTasksView state = toViewState(event.getNewDetails(), updatedList);
+        final LabelDetails newDetails = event.getLabelDetailsChange()
+                                             .getNewDetails();
+        final LabelledTasksView state = toViewState(newDetails, updatedList);
         incrementState(state);
     }
 

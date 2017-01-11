@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.projection;
 
+import com.google.protobuf.Timestamp;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
@@ -29,6 +30,7 @@ import org.spine3.examples.todolist.TaskDescriptionUpdated;
 import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskPriorityUpdated;
 import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.view.TaskListView;
@@ -110,7 +112,8 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
             final boolean willUpdate = view.getLabelId()
                                            .equals(event.getLabelId());
             if (willUpdate) {
-                final LabelDetails labelDetails = event.getNewDetails();
+                final LabelDetails labelDetails = event.getLabelDetailsChange()
+                                                       .getNewDetails();
                 addedView = newBuilder().setLabelColor(labelDetails.getColor())
                                         .setDueDate(view.getDueDate())
                                         .setPriority(view.getPriority())
@@ -194,7 +197,12 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, TaskDueDateUpdated event) {
         final TaskId targetTaskId = event.getId();
 
-        final TaskTransformation updateFn = builder -> builder.setDueDate(event.getNewDueDate());
+        final TaskTransformation updateFn = builder -> {
+            final Timestamp newDueDate = event.getDueDateChange()
+                                              .getNewValue();
+            final TaskView.Builder result = builder.setDueDate(newDueDate);
+            return result;
+        };
         final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
         return result;
     }
@@ -209,7 +217,12 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, TaskPriorityUpdated event) {
         final TaskId targetTaskId = event.getId();
 
-        final TaskTransformation updateFn = builder -> builder.setPriority(event.getNewPriority());
+        final TaskTransformation updateFn = builder -> {
+            final TaskPriority newPriority = event.getPriorityChange()
+                                                  .getNewValue();
+            final TaskView.Builder result = builder.setPriority(newPriority);
+            return result;
+        };
         final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
         return result;
     }
@@ -224,7 +237,12 @@ import static org.spine3.examples.todolist.view.TaskView.newBuilder;
     /* package */ static List<TaskView> updateTaskViewList(List<TaskView> views, TaskDescriptionUpdated event) {
         final TaskId targetTaskId = event.getId();
 
-        final TaskTransformation updateFn = builder -> builder.setDescription(event.getNewDescription());
+        final TaskTransformation updateFn = builder -> {
+            final String newDescription = event.getDescriptionChange()
+                                               .getNewValue();
+            final TaskView.Builder result = builder.setDescription(newDescription);
+            return result;
+        };
         final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
         return result;
     }
