@@ -32,9 +32,11 @@ import "google/protobuf/timestamp.proto";
 
 import "spine/annotations.proto";
 import "spine/validate.proto";
+import "spine/change/change.proto";
 
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
+import "todolist/change.proto";
 
 // An attempt to create a task in a "Quick" mode.
 //
@@ -72,7 +74,7 @@ message UpdateTaskDescription {
     TaskId id = 1;
 
     // The description to set for the target task.
-    string updated_description = 2 [(required) = true];
+    change.StringChange description_change = 2 [(required) = true];
 
     // Reserved for future extension.
     reserved 3 to 10;
@@ -92,7 +94,7 @@ message UpdateTaskDueDate {
     // The due date to set for the target task.
     //
     // The updated value cannot be in the past.
-    google.protobuf.Timestamp updated_due_date = 2 [(required) = true];
+    change.TimestampChange due_date_change = 2 [(required) = true];
 
     // Reserved for future extension.
     reserved 3 to 10;
@@ -110,7 +112,7 @@ message UpdateTaskPriority {
     TaskId id = 1;
 
     // The priority to set for the target task.
-    TaskPriority updated_priority = 2 [(required) = true];
+    PriorityChange priority_change = 2 [(required) = true];
 
     // Reserved for future extension.
     reserved 3 to 10;
@@ -258,16 +260,8 @@ message UpdateLabelDetails {
     // An identifier of the target label.
     TaskLabelId id = 1;
 
-    // A title to set to the label.
-    //
-    // Optional field. If unset, the title of the target label is not updated.
-    string new_title = 2;
-
-    // A color to set to the label.
-    //
-    // Optional field. If unset, the color of the target label is not updated.
-    LabelColor color = 3;
+    LabelDetailsChange label_details_change = 2 [(required) = true];
 
     // Reserved for future extension.
-    reserved 4 to 10;
+    reserved 3 to 10;
 }

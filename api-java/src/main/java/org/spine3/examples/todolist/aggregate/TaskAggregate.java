@@ -22,8 +22,6 @@ package org.spine3.examples.todolist.aggregate;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
-import org.spine3.change.StringChange;
-import org.spine3.change.TimestampChange;
 import org.spine3.examples.todolist.AssignLabelToTask;
 import org.spine3.examples.todolist.CompleteTask;
 import org.spine3.examples.todolist.CreateBasicTask;
@@ -34,7 +32,6 @@ import org.spine3.examples.todolist.FinalizeDraft;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.LabelledTaskRestored;
-import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
@@ -120,13 +117,12 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         validateCommand(cmd);
         final Task state = getState();
         final String previousDescription = state.getDescription();
-        final StringChange descriptionChange = StringChange.newBuilder()
-                                                           .setPreviousValue(previousDescription)
-                                                           .setNewValue(cmd.getUpdatedDescription())
-                                                           .build();
+        final String newDescription = cmd.getDescriptionChange()
+                                         .getNewValue();
         final TaskDescriptionUpdated taskDescriptionUpdated = TaskDescriptionUpdated.newBuilder()
                                                                                     .setId(cmd.getId())
-                                                                                    .setDescriptionChange(descriptionChange)
+                                                                                    .setDescriptionChange(
+                                                                                            cmd.getDescriptionChange())
                                                                                     .build();
         final List<TaskDescriptionUpdated> result = Collections.singletonList(taskDescriptionUpdated);
         return result;
@@ -137,13 +133,9 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final Task state = getState();
         validateUpdateTaskDueDateCommand(getState().getTaskStatus());
         final Timestamp previousDueDate = getState().getDueDate();
-        final TimestampChange taskDueDateChange = TimestampChange.newBuilder()
-                                                                 .setPreviousValue(previousDueDate)
-                                                                 .setNewValue(cmd.getUpdatedDueDate())
-                                                                 .build();
         final TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated.newBuilder()
                                                                         .setId(cmd.getId())
-                                                                        .setDueDateChange(taskDueDateChange)
+                                                                        .setDueDateChange(cmd.getDueDateChange())
                                                                         .build();
         final List<TaskDueDateUpdated> result = Collections.singletonList(taskDueDateUpdated);
         return result;
@@ -154,13 +146,9 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final Task state = getState();
         validateUpdateTaskPriorityCommand(state.getTaskStatus());
         final TaskPriority previousPriority = state.getPriority();
-        final PriorityChange taskPriorityChange = PriorityChange.newBuilder()
-                                                                .setPreviousValue(previousPriority)
-                                                                .setNewValue(cmd.getUpdatedPriority())
-                                                                .build();
         final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
                                                                            .setId(cmd.getId())
-                                                                           .setPriorityChange(taskPriorityChange)
+                                                                           .setPriorityChange(cmd.getPriorityChange())
                                                                            .build();
         final List<TaskPriorityUpdated> result = Collections.singletonList(taskPriorityUpdated);
         return result;
@@ -365,7 +353,8 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     private void validateCommand(UpdateTaskDescription cmd) {
-        final String description = cmd.getUpdatedDescription();
+        final String description = cmd.getDescriptionChange()
+                                      .getNewValue();
         checkNotNull(description, NULL_DESCRIPTION_EXCEPTION_MESSAGE);
 
         if (description.length() < MIN_DESCRIPTION_LENGTH) {

@@ -22,6 +22,8 @@ package org.spine3.examples.todolist.testdata;
 
 import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelColor;
+import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelDetailsChange;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.UpdateLabelDetails;
@@ -74,10 +76,16 @@ public class TestTaskLabelCommandFactory {
      * @return {@link UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId id, LabelColor color, String title) {
+        final LabelDetails labelDetails = LabelDetails.newBuilder()
+                                                      .setTitle(title)
+                                                      .setColor(color)
+                                                      .build();
+        final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()
+                                                                        .setNewDetails(labelDetails)
+                                                                        .build();
         final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
                                                             .setId(id)
-                                                            .setColor(color)
-                                                            .setNewTitle(title)
+                                                            .setLabelDetailsChange(labelDetailsChange)
                                                             .build();
         return result;
     }

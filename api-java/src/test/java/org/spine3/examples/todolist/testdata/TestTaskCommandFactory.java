@@ -21,6 +21,8 @@
 package org.spine3.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
+import org.spine3.change.StringChange;
+import org.spine3.change.TimestampChange;
 import org.spine3.examples.todolist.AssignLabelToTask;
 import org.spine3.examples.todolist.CompleteTask;
 import org.spine3.examples.todolist.CreateBasicTask;
@@ -28,6 +30,9 @@ import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.DeleteTask;
 import org.spine3.examples.todolist.FinalizeDraft;
 import org.spine3.examples.todolist.LabelColor;
+import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelDetailsChange;
+import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
@@ -106,10 +111,13 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id, String description) {
-        UpdateTaskDescription result = UpdateTaskDescription.newBuilder()
-                                                            .setId(id)
-                                                            .setUpdatedDescription(description)
-                                                            .build();
+        final StringChange descriptionChange = StringChange.newBuilder()
+                                                           .setNewValue(description)
+                                                           .build();
+        final UpdateTaskDescription result = UpdateTaskDescription.newBuilder()
+                                                                  .setId(id)
+                                                                  .setDescriptionChange(descriptionChange)
+                                                                  .build();
         return result;
     }
 
@@ -129,9 +137,12 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance(TaskId id, Timestamp updatedDueDate) {
+        final TimestampChange dueDateChange = TimestampChange.newBuilder()
+                                                             .setNewValue(updatedDueDate)
+                                                             .build();
         final UpdateTaskDueDate result = UpdateTaskDueDate.newBuilder()
                                                           .setId(id)
-                                                          .setUpdatedDueDate(updatedDueDate)
+                                                          .setDueDateChange(dueDateChange)
                                                           .build();
         return result;
     }
@@ -152,9 +163,12 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskId id, TaskPriority priority) {
+        final PriorityChange taskPriorityChange = PriorityChange.newBuilder()
+                                                                .setNewValue(priority)
+                                                                .build();
         final UpdateTaskPriority result = UpdateTaskPriority.newBuilder()
                                                             .setId(id)
-                                                            .setUpdatedPriority(priority)
+                                                            .setPriorityChange(taskPriorityChange)
                                                             .build();
         return result;
     }
@@ -330,10 +344,16 @@ public class TestTaskCommandFactory {
     }
 
     public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId id, LabelColor color, String title) {
+        final LabelDetails labelDetails = LabelDetails.newBuilder()
+                                                      .setColor(color)
+                                                      .setTitle(title)
+                                                      .build();
+        final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()
+                                                                        .setNewDetails(labelDetails)
+                                                                        .build();
         final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
                                                             .setId(id)
-                                                            .setColor(color)
-                                                            .setNewTitle(title)
+                                                            .setLabelDetailsChange(labelDetailsChange)
                                                             .build();
         return result;
     }

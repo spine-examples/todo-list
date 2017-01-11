@@ -74,17 +74,9 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
                                                               .setColor(getState().getColor())
                                                               .setTitle(getState().getTitle())
                                                               .build();
-        final LabelDetails newLabelDetails = LabelDetails.newBuilder()
-                                                         .setTitle(cmd.getNewTitle())
-                                                         .setColor(cmd.getColor())
-                                                         .build();
-        final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()
-                                                                        .setPreviousDetails(previousLabelDetails)
-                                                                        .setNewDetails(newLabelDetails)
-                                                                        .build();
         final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
                                                               .setLabelId(cmd.getId())
-                                                              .setLabelDetailsChange(labelDetailsChange)
+                                                              .setLabelDetailsChange(cmd.getLabelDetailsChange())
                                                               .build();
         return Collections.singletonList(result);
     }
