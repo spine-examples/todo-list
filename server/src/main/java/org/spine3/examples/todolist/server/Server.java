@@ -42,7 +42,6 @@ import org.spine3.server.event.enrich.EventEnricher;
 import org.spine3.server.storage.StorageFactory;
 import org.spine3.server.transport.GrpcContainer;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Function;
@@ -87,43 +86,33 @@ public class Server {
     }
 
     private void initLabelIdToDetailsFunction() {
-        taskLabelIdToLabelDetails =
-                new Function<TaskLabelId, LabelDetails>() {
-                    @Nullable
-                    @Override
-                    public LabelDetails apply(@Nullable TaskLabelId input) {
-                        if (input == null) {
-                            return LabelDetails.getDefaultInstance();
-                        }
-                        final TaskLabelAggregate aggregate = taskLabelAggregateRepository.load(input);
-                        final TaskLabel state = aggregate.getState();
-                        final LabelDetails details = LabelDetails.newBuilder()
-                                                                 .setColor(state.getColor())
-                                                                 .setTitle(state.getTitle())
-                                                                 .build();
-                        return details;
-                    }
-                };
+        taskLabelIdToLabelDetails = labelId -> {
+            if (labelId == null) {
+                return LabelDetails.getDefaultInstance();
+            }
+            final TaskLabelAggregate aggregate = taskLabelAggregateRepository.load(labelId);
+            final TaskLabel state = aggregate.getState();
+            final LabelDetails details = LabelDetails.newBuilder()
+                                                     .setColor(state.getColor())
+                                                     .setTitle(state.getTitle())
+                                                     .build();
+            return details;
+        };
     }
 
     private void initTaskIdToDetailsFunction() {
-        taskIdToTaskDetails =
-                new Function<TaskId, TaskDetails>() {
-                    @Nullable
-                    @Override
-                    public TaskDetails apply(@Nullable TaskId input) {
-                        if (input == null) {
-                            return TaskDetails.getDefaultInstance();
-                        }
-                        final TaskAggregate aggregate = taskAggregateRepository.load(input);
-                        final Task state = aggregate.getState();
-                        final TaskDetails details = TaskDetails.newBuilder()
-                                                               .setDescription(state.getDescription())
-                                                               .setPriority(state.getPriority())
-                                                               .build();
-                        return details;
-                    }
-                };
+        taskIdToTaskDetails = taskId -> {
+            if (taskId == null) {
+                return TaskDetails.getDefaultInstance();
+            }
+            final TaskAggregate aggregate = taskAggregateRepository.load(taskId);
+            final Task state = aggregate.getState();
+            final TaskDetails details = TaskDetails.newBuilder()
+                                                   .setDescription(state.getDescription())
+                                                   .setPriority(state.getPriority())
+                                                   .build();
+            return details;
+        };
     }
 
     private void initTaskIdToLabelListFunction() {
@@ -138,25 +127,6 @@ public class Server {
         };
     }
 
-    private QueryService initQueryService() {
-        final QueryService result = QueryService.newBuilder()
-                                                .add(boundedContext)
-                                                .build();
-        return result;
-    }
-
-    private static GrpcContainer initGrpcContainer(CommandService commandService,
-                                                   SubscriptionService subscriptionService,
-                                                   QueryService queryService) {
-        final GrpcContainer result = GrpcContainer.newBuilder()
-                                                  .addService(commandService)
-                                                  .addService(subscriptionService)
-                                                  .addService(queryService)
-                                                  .setPort(DEFAULT_CLIENT_SERVICE_PORT)
-                                                  .build();
-        return result;
-    }
-
     private EventEnricher initEventEnricher() {
         final EventEnricher result = EventEnricher.newBuilder()
                                                   .addFieldEnrichment(TaskLabelId.class,
@@ -168,6 +138,39 @@ public class Server {
                                                   .addFieldEnrichment(TaskId.class,
                                                                       LabelList.class,
                                                                       taskIdToLabelList::apply)
+                                                  .build();
+        return result;
+    }
+
+    private QueryService initQueryService() {
+        final QueryService result = QueryService.newBuilder()
+                                                .add(boundedContext)
+                                                .build();
+        return result;
+    }
+
+    private SubscriptionService initSubscriptionService() {
+        final SubscriptionService result = SubscriptionService.newBuilder()
+                                                              .add(boundedContext)
+                                                              .build();
+        return result;
+    }
+
+    private CommandService initCommandService() {
+        final CommandService result = CommandService.newBuilder()
+                                                    .add(boundedContext)
+                                                    .build();
+        return result;
+    }
+
+    private static GrpcContainer initGrpcContainer(CommandService commandService,
+                                                   SubscriptionService subscriptionService,
+                                                   QueryService queryService) {
+        final GrpcContainer result = GrpcContainer.newBuilder()
+                                                  .addService(commandService)
+                                                  .addService(subscriptionService)
+                                                  .addService(queryService)
+                                                  .setPort(DEFAULT_CLIENT_SERVICE_PORT)
                                                   .build();
         return result;
     }
@@ -205,20 +208,6 @@ public class Server {
         boundedContext.register(draftTasksViewRepository);
     }
 
-    private SubscriptionService initSubscriptionService() {
-        final SubscriptionService result = SubscriptionService.newBuilder()
-                                                              .add(boundedContext)
-                                                              .build();
-        return result;
-    }
-
-    private CommandService initCommandService() {
-        final CommandService result = CommandService.newBuilder()
-                                                    .add(boundedContext)
-                                                    .build();
-        return result;
-    }
-
     /**
      * Starts the service.
      *
@@ -230,11 +219,6 @@ public class Server {
         awaitTermination();
     }
 
-    /**
-     * Starts the service.
-     *
-     * @throws IOException if unable to bind
-     */
     private void startServer() throws IOException {
         grpcContainer.start();
         grpcContainer.addShutdownHook();
