@@ -33,7 +33,6 @@ import "google/protobuf/timestamp.proto";
 import "spine/annotations.proto";
 import "spine/validate.proto";
 import "spine/change/change.proto";
-import "spine/time/change/change.proto";
 
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
