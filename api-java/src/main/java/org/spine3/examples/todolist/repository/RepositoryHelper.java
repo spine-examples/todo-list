@@ -66,7 +66,7 @@ import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
      *
      * @param repository {@code MyListViewRepository}
      */
-    static void addIdSetFunctions(MyListViewRepository repository) {
+    /* package */ static void addIdSetFunctions(MyListViewRepository repository) {
         final IdSetEventFunction<TaskListId, TaskCreated> taskCreatedFn =
                 (message, context) -> Collections.singleton(MyListViewProjection.ID);
         repository.addIdSetFunction(TaskCreated.class, taskCreatedFn);
@@ -87,7 +87,7 @@ import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
      *
      * @param repository {@code DraftTasksViewRepository}
      */
-    static void addIdSetFunctions(DraftTasksViewRepository repository) {
+    /* package */ static void addIdSetFunctions(DraftTasksViewRepository repository) {
         final IdSetEventFunction<TaskListId, TaskDraftCreated> draftCreatedFn =
                 (message, context) -> Collections.singleton(DraftTasksViewProjection.ID);
         repository.addIdSetFunction(TaskDraftCreated.class, draftCreatedFn);
@@ -104,7 +104,7 @@ import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
      *
      * @param repository {@code LabelledTasksViewRepository}
      */
-    static void addIdSetFunctions(LabelledTasksViewRepository repository) {
+    /* package */ static void addIdSetFunctions(LabelledTasksViewRepository repository) {
         final IdSetEventFunction<TaskLabelId, LabelAssignedToTask> labelAssignedFn =
                 (message, context) -> Collections.singleton(message.getLabelId());
         repository.addIdSetFunction(LabelAssignedToTask.class, labelAssignedFn);
