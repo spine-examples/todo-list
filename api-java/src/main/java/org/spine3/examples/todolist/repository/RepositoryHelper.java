@@ -50,7 +50,6 @@ import java.util.Collections;
 import java.util.Set;
 
 import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
-import static org.spine3.examples.todolist.projection.MyListViewProjection.ID;
 
 /**
  * Utility class for working with repositories.
@@ -69,15 +68,15 @@ import static org.spine3.examples.todolist.projection.MyListViewProjection.ID;
      */
     static void addIdSetFunctions(MyListViewRepository repository) {
         final IdSetEventFunction<TaskListId, TaskCreated> taskCreatedFn =
-                (message, context) -> Collections.singleton(ID);
+                (message, context) -> Collections.singleton(MyListViewProjection.ID);
         repository.addIdSetFunction(TaskCreated.class, taskCreatedFn);
 
         final IdSetEventFunction<TaskListId, TaskCompleted> taskCompletedFn =
-                (message, context) -> Collections.singleton(ID);
+                (message, context) -> Collections.singleton(MyListViewProjection.ID);
         repository.addIdSetFunction(TaskCompleted.class, taskCompletedFn);
 
         final IdSetEventFunction<TaskListId, TaskReopened> taskReopenedFn =
-                (message, context) -> Collections.singleton(ID);
+                (message, context) -> Collections.singleton(MyListViewProjection.ID);
         repository.addIdSetFunction(TaskReopened.class, taskReopenedFn);
 
         addCommonIdSetFunctions(repository, MyListViewProjection.ID);
