@@ -29,7 +29,7 @@ option java_multiple_files = true;
 
 import "spine/annotations.proto";
 import "spine/enrichment_annotations.proto";
-import "todolist/events.proto";
+import "todolist/details.proto";
 import "todolist/identifiers.proto";
 
 // Enrichment for task and label details.
