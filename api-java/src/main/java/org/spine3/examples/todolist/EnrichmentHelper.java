@@ -26,12 +26,22 @@ import org.spine3.base.EventContext;
 import org.spine3.base.Events;
 
 /**
+ * Utility class for working with enrichments.
+ *
  * @author Illia Shepilov
  */
-public class CommonHelper {
+public class EnrichmentHelper {
 
-    private CommonHelper(){}
+    private EnrichmentHelper() {
+    }
 
+    /**
+     * Obtains enrichment from the {@link EventContext} according to the enrichment class.
+     *
+     * @param enrichmentClass the class of the enrichment
+     * @param context         the {@code EventContext}
+     * @return the enrichment if it is present, throws {@code EnrichmentNotFoundException} otherwise
+     */
     @SuppressWarnings("Guava")
     //As long as Spine API is based on Java 7, {@link Events#getEnrichment} uses Guava {@link Optional}.
     public static <T extends Message, E extends Class<T>> T getEnrichment(E enrichmentClass, EventContext context) {
