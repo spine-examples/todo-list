@@ -47,7 +47,7 @@ import java.util.Set;
 import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
 
 /**
- * A repository for the {@link LabelledTasksViewProjection}.
+ * Repository for the {@link LabelledTasksViewProjection}.
  *
  * @author Illia Shepilov
  */

@@ -42,7 +42,7 @@ import java.util.Collections;
 import static org.spine3.examples.todolist.projection.MyListViewProjection.ID;
 
 /**
- * A repository for the {@link MyListViewProjection}.
+ * Repository for the {@link MyListViewProjection}.
  *
  * @author Illia Shepilov
  */

@@ -26,7 +26,7 @@ import org.spine3.server.BoundedContext;
 import org.spine3.server.aggregate.AggregateRepository;
 
 /**
- * A repository for the {@link TaskLabelAggregate}.
+ * Repository for the {@link TaskLabelAggregate}.
  *
  * @author Illia Shepilov
  */

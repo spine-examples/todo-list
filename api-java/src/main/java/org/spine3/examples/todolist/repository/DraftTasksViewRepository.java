@@ -41,7 +41,7 @@ import java.util.Collections;
 import static org.spine3.examples.todolist.projection.DraftTasksViewProjection.ID;
 
 /**
- * A repository for the {@link DraftTasksViewProjection}.
+ * Repository for the {@link DraftTasksViewProjection}.
  *
  * @author Illia Shepilov
  */
