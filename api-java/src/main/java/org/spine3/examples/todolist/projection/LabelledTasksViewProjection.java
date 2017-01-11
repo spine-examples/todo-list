@@ -45,7 +45,7 @@ import org.spine3.server.projection.Projection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.spine3.examples.todolist.CommonHelper.getEnrichment;
+import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.removeViewByTaskId;
 import static org.spine3.examples.todolist.projection.ProjectionHelper.updateTaskViewList;
 

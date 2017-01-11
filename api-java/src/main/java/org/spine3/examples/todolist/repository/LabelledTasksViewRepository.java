@@ -44,7 +44,7 @@ import org.spine3.server.projection.ProjectionRepository;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.spine3.examples.todolist.CommonHelper.getEnrichment;
+import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
 
 /**
  * A repository for the {@link LabelledTasksViewProjection}.
