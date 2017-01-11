@@ -20,26 +20,13 @@
 
 package org.spine3.examples.todolist.repository;
 
-import org.spine3.examples.todolist.LabelAssignedToTask;
-import org.spine3.examples.todolist.LabelDetailsUpdated;
-import org.spine3.examples.todolist.LabelRemovedFromTask;
-import org.spine3.examples.todolist.TaskCompleted;
-import org.spine3.examples.todolist.TaskCreated;
-import org.spine3.examples.todolist.TaskDeleted;
-import org.spine3.examples.todolist.TaskDescriptionUpdated;
-import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskListId;
-import org.spine3.examples.todolist.TaskPriorityUpdated;
-import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.projection.MyListViewProjection;
 import org.spine3.examples.todolist.view.MyListView;
 import org.spine3.server.BoundedContext;
-import org.spine3.server.entity.IdSetEventFunction;
 import org.spine3.server.projection.ProjectionRepository;
 
-import java.util.Collections;
-
-import static org.spine3.examples.todolist.projection.MyListViewProjection.ID;
+import static org.spine3.examples.todolist.repository.RepositoryHelper.addIdSetFunctions;
 
 /**
  * Repository for the {@link MyListViewProjection}.
@@ -50,48 +37,6 @@ public class MyListViewRepository extends ProjectionRepository<TaskListId, MyLis
 
     public MyListViewRepository(BoundedContext boundedContext) {
         super(boundedContext);
-        addIdSetFunctions();
-    }
-
-    private void addIdSetFunctions() {
-        final IdSetEventFunction<TaskListId, TaskCreated> taskCreatedFn =
-                (message, context) -> Collections.singleton(ID);
-        addIdSetFunction(TaskCreated.class, taskCreatedFn);
-
-        final IdSetEventFunction<TaskListId, TaskDeleted> taskDeletedFn =
-                (message, context) -> Collections.singleton(ID);
-        addIdSetFunction(TaskDeleted.class, taskDeletedFn);
-
-        final IdSetEventFunction<TaskListId, TaskCompleted> taskCompletedFn =
-                (message, context) -> Collections.singleton(ID);
-        addIdSetFunction(TaskCompleted.class, taskCompletedFn);
-
-        final IdSetEventFunction<TaskListId, TaskReopened> taskReopenedFn =
-                (message, context) -> Collections.singleton(ID);
-        addIdSetFunction(TaskReopened.class, taskReopenedFn);
-
-        final IdSetEventFunction<TaskListId, TaskDescriptionUpdated> taskDescriptionUpdatedFn =
-                (message, context) -> Collections.singleton(ID);
-        addIdSetFunction(TaskDescriptionUpdated.class, taskDescriptionUpdatedFn);
-
-        final IdSetEventFunction<TaskListId, TaskPriorityUpdated> updatedTaskPriorityFn =
-                (message, context) -> Collections.singleton(ID);
-        addIdSetFunction(TaskPriorityUpdated.class, updatedTaskPriorityFn);
-
-        final IdSetEventFunction<TaskListId, TaskDueDateUpdated> updatedTaskDueDateFn =
-                (message, context) -> Collections.singleton(ID);
-        addIdSetFunction(TaskDueDateUpdated.class, updatedTaskDueDateFn);
-
-        final IdSetEventFunction<TaskListId, LabelAssignedToTask> labelAssignedFn =
-                (message, context) -> Collections.singleton(ID);
-        addIdSetFunction(LabelAssignedToTask.class, labelAssignedFn);
-
-        final IdSetEventFunction<TaskListId, LabelRemovedFromTask> labelRemovedFn =
-                (message, context) -> Collections.singleton(ID);
-        addIdSetFunction(LabelRemovedFromTask.class, labelRemovedFn);
-
-        final IdSetEventFunction<TaskListId, LabelDetailsUpdated> labelDetailsUpdatedFn =
-                (message, context) -> Collections.singleton(ID);
-        addIdSetFunction(LabelDetailsUpdated.class, labelDetailsUpdatedFn);
+        addIdSetFunctions(this);
     }
 }
