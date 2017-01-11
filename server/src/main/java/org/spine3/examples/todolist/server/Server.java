@@ -31,7 +31,7 @@ import org.spine3.examples.todolist.aggregate.TaskAggregate;
 import org.spine3.examples.todolist.aggregate.TaskLabelAggregate;
 import org.spine3.examples.todolist.repository.DraftTasksViewRepository;
 import org.spine3.examples.todolist.repository.LabelledTasksViewRepository;
-import org.spine3.examples.todolist.repository.MyListViewProjectionRepository;
+import org.spine3.examples.todolist.repository.MyListViewRepository;
 import org.spine3.examples.todolist.repository.TaskAggregateRepository;
 import org.spine3.examples.todolist.repository.TaskLabelAggregateRepository;
 import org.spine3.server.BoundedContext;
@@ -63,7 +63,7 @@ public class Server {
     private Function<TaskId, LabelList> taskIdToLabelList;
     private TaskAggregateRepository taskAggregateRepository;
     private TaskLabelAggregateRepository taskLabelAggregateRepository;
-    private MyListViewProjectionRepository myListViewRepository;
+    private MyListViewRepository myListViewRepository;
     private LabelledTasksViewRepository labelledViewRepository;
     private DraftTasksViewRepository draftTasksViewRepository;
 
@@ -190,7 +190,7 @@ public class Server {
         taskLabelAggregateRepository = new TaskLabelAggregateRepository(boundedContext);
         taskLabelAggregateRepository.initStorage(storageFactory);
 
-        myListViewRepository = new MyListViewProjectionRepository(boundedContext);
+        myListViewRepository = new MyListViewRepository(boundedContext);
         myListViewRepository.initStorage(storageFactory);
 
         labelledViewRepository = new LabelledTasksViewRepository(boundedContext);

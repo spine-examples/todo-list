@@ -46,9 +46,9 @@ import static org.spine3.examples.todolist.projection.MyListViewProjection.ID;
  *
  * @author Illia Shepilov
  */
-public class MyListViewProjectionRepository extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {
+public class MyListViewRepository extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {
 
-    public MyListViewProjectionRepository(BoundedContext boundedContext) {
+    public MyListViewRepository(BoundedContext boundedContext) {
         super(boundedContext);
         addIdSetFunctions();
     }
