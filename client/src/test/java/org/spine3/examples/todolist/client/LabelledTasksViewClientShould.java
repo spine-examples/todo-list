@@ -66,7 +66,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updat
 /**
  * @author Illia Shepilov
  */
-public class LabelledTasksViewClientShould extends BasicTodoClientShould {
+public class LabelledTasksViewClientShould extends CommandLineTodoClientShould {
 
     @Test
     public void obtain_labelled_tasks_view_when_handled_command_deleted_task_restored() {

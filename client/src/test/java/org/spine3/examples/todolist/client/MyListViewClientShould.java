@@ -63,7 +63,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 /**
  * @author Illia Shepilov
  */
-public class MyListViewClientShould extends BasicTodoClientShould {
+public class MyListViewClientShould extends CommandLineTodoClientShould {
 
     @Test
     public void obtain_my_list_view_when_handled_create_task_command() {

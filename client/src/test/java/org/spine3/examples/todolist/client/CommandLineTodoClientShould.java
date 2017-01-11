@@ -44,7 +44,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 /**
  * @author Illia Shepilov
  */
-/* package */ class BasicTodoClientShould {
+/* package */ class CommandLineTodoClientShould {
 
     private static final String HOST = "localhost";
     private Server server;
@@ -56,7 +56,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
         final InMemoryStorageFactory storageFactory = InMemoryStorageFactory.getInstance();
         server = new Server(storageFactory);
         startServer();
-        client = new BasicTodoClient(HOST, DEFAULT_CLIENT_SERVICE_PORT);
+        client = new CommandLineTodoClient(HOST, DEFAULT_CLIENT_SERVICE_PORT);
     }
 
     @AfterEach

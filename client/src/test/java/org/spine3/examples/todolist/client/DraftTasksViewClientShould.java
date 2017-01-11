@@ -59,7 +59,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updat
 /**
  * @author Illia Shepilov
  */
-public class DraftTasksViewClientShould extends BasicTodoClientShould {
+public class DraftTasksViewClientShould extends CommandLineTodoClientShould {
 
     @Test
     public void obtain_task_draft_when_handled_create_draft_command() {

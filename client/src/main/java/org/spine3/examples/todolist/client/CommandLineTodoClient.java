@@ -61,11 +61,11 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.spine3.base.Identifiers.newUuid;
 
 /**
- * Sample gRPC client implementation.
+ * Implementation of the command line gRPC client.
  *
  * @author Illia Shepilov
  */
-public class BasicTodoClient implements TodoClient {
+public class CommandLineTodoClient implements TodoClient {
 
     private static final int TIMEOUT = 10;
     private final ManagedChannel channel;
@@ -76,7 +76,7 @@ public class BasicTodoClient implements TodoClient {
     /**
      * Construct the client connecting to server at {@code host:port}.
      */
-    public BasicTodoClient(String host, int port) {
+    public CommandLineTodoClient(String host, int port) {
         this.commandFactory = commandFactoryInstance();
         this.channel = initChannel(host, port);
         this.commandService = CommandServiceGrpc.newBlockingStub(channel);
@@ -252,15 +252,5 @@ public class BasicTodoClient implements TodoClient {
                                                     .setZoneOffset(ZoneOffsets.UTC)
                                                     .build();
         return result;
-    }
-
-    private enum LogSingleton {
-        INSTANCE;
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = LoggerFactory.getLogger(BasicTodoClient.class);
-    }
-
-    private static Logger log() {
-        return LogSingleton.INSTANCE.value;
     }
 }
