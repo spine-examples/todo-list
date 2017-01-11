@@ -21,7 +21,7 @@
 package org.spine3.examples.todolist.client.builder;
 
 /**
- * Utility class.
+ * Utility class for working with command builders.
  *
  * <p> Provides methods for building commands.
  *

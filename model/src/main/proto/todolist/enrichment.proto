@@ -32,7 +32,7 @@ import "spine/enrichment_annotations.proto";
 import "todolist/events.proto";
 import "todolist/identifiers.proto";
 
-// Enrichment for task and label details enrichment.
+// Enrichment for task and label details.
 //
 message DetailsEnrichment{
 
@@ -45,6 +45,8 @@ message DetailsEnrichment{
     TaskDetails task_details = 2 [(by) = "task_id"];
 }
 
+// Enrichment for the label list.
+//
 message LabelListEnrichment{
 
     option (enrichment_for) = "spine.examples.todolist.RestoreDeletedTask,"
@@ -58,10 +60,11 @@ message LabelListEnrichment{
     LabelList label_list = 1 [(by) = "id"];
 }
 
-// DTO
+// **** Data transfer objects ****
+
+// DTO for the list of the label ids.
 message LabelList{
 
+    // Label identifiers.
     repeated TaskLabelId label_id = 1;
-
-    reserved 2 to 5;
 }
