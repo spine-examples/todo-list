@@ -25,6 +25,7 @@ import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelCreated;
 import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelDetailsChange;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.TaskLabelId;
@@ -77,10 +78,13 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
                                                          .setTitle(cmd.getNewTitle())
                                                          .setColor(cmd.getColor())
                                                          .build();
+        final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()
+                                                                        .setPreviousDetails(previousLabelDetails)
+                                                                        .setNewDetails(newLabelDetails)
+                                                                        .build();
         final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
                                                               .setLabelId(cmd.getId())
-                                                              .setPreviousDetails(previousLabelDetails)
-                                                              .setNewDetails(newLabelDetails)
+                                                              .setLabelDetailsChange(labelDetailsChange)
                                                               .build();
         return Collections.singletonList(result);
     }
@@ -95,7 +99,8 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
 
     @Apply
     private void labelDetailsUpdated(LabelDetailsUpdated event) {
-        final LabelDetails labelDetails = event.getNewDetails();
+        final LabelDetails labelDetails = event.getLabelDetailsChange()
+                                               .getNewDetails();
         getBuilder().setTitle(labelDetails.getTitle())
                     .setColor(labelDetails.getColor());
     }

@@ -90,7 +90,7 @@ public class TaskLabelAggregateShould {
         assertEquals(LabelDetailsUpdated.class, messageList.get(0)
                                                            .getClass());
         final LabelDetailsUpdated labelDetailsUpdated = (LabelDetailsUpdated) messageList.get(0);
-        final LabelDetails details = labelDetailsUpdated.getNewDetails();
+        final LabelDetails details = labelDetailsUpdated.getLabelDetailsChange().getNewDetails();
 
         assertEquals(LABEL_ID, labelDetailsUpdated.getLabelId());
         assertEquals(LabelColor.GREEN, details.getColor());
