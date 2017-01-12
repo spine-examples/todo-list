@@ -343,19 +343,4 @@ public class TestTaskCommandFactory {
                                                               .build();
         return result;
     }
-
-    //public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId id, LabelColor color, String title) {
-    //    final LabelDetails labelDetails = LabelDetails.newBuilder()
-    //                                                  .setColor(color)
-    //                                                  .setTitle(title)
-    //                                                  .build();
-    //    final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()
-    //                                                                    .setNewDetails(labelDetails)
-    //                                                                    .build();
-    //    final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
-    //                                                        .setId(id)
-    //                                                        .setLabelDetailsChange(labelDetailsChange)
-    //                                                        .build();
-    //    return result;
-    //}
 }
