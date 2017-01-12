@@ -22,7 +22,14 @@ package org.spine3.examples.todolist.aggregate;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
+import org.spine3.change.StringChange;
+import org.spine3.change.StringMismatch;
+import org.spine3.change.TimestampChange;
+import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.AssignLabelToTask;
+import org.spine3.examples.todolist.CannotUpdateTaskDescription;
+import org.spine3.examples.todolist.CannotUpdateTaskDueDate;
+import org.spine3.examples.todolist.CannotUpdateTaskPriority;
 import org.spine3.examples.todolist.CompleteTask;
 import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.CreateDraft;
@@ -32,6 +39,7 @@ import org.spine3.examples.todolist.FinalizeDraft;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.LabelledTaskRestored;
+import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
@@ -116,41 +124,85 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     public List<? extends Message> handle(UpdateTaskDescription cmd) {
         validateCommand(cmd);
         final Task state = getState();
-        final String previousDescription = state.getDescription();
-        final String newDescription = cmd.getDescriptionChange()
-                                         .getNewValue();
-        final TaskDescriptionUpdated taskDescriptionUpdated = TaskDescriptionUpdated.newBuilder()
-                                                                                    .setId(cmd.getId())
-                                                                                    .setDescriptionChange(
-                                                                                            cmd.getDescriptionChange())
-                                                                                    .build();
-        final List<TaskDescriptionUpdated> result = Collections.singletonList(taskDescriptionUpdated);
+        final TaskId taskId = cmd.getId();
+        final StringChange change = cmd.getDescriptionChange();
+
+        final String actualDescription = state.getDescription();
+        final String expectedDescription = change.getPreviousValue();
+
+        final List<? extends Message> result;
+        final boolean isEquals = actualDescription.equals(expectedDescription);
+
+        if (isEquals) {
+            final TaskDescriptionUpdated taskDescriptionUpdated = TaskDescriptionUpdated.newBuilder()
+                                                                                        .setId(taskId)
+                                                                                        .setDescriptionChange(change)
+                                                                                        .build();
+            result = Collections.singletonList(taskDescriptionUpdated);
+            return result;
+        }
+
+        result = constructFailure(taskId, actualDescription, change);
         return result;
     }
 
     @Assign
     public List<? extends Message> handle(UpdateTaskDueDate cmd) {
         final Task state = getState();
-        validateUpdateTaskDueDateCommand(getState().getTaskStatus());
-        final Timestamp previousDueDate = getState().getDueDate();
-        final TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated.newBuilder()
-                                                                        .setId(cmd.getId())
-                                                                        .setDueDateChange(cmd.getDueDateChange())
-                                                                        .build();
-        final List<TaskDueDateUpdated> result = Collections.singletonList(taskDueDateUpdated);
+        final TaskStatus taskStatus = state.getTaskStatus();
+        validateUpdateTaskDueDateCommand(taskStatus);
+
+        final Timestamp actualDueDate = getState().getDueDate();
+        final TimestampChange change = cmd.getDueDateChange();
+
+        final Timestamp actualDueDae = state.getDueDate();
+        final Timestamp expectedDueDate = change.getPreviousValue();
+
+        final boolean isEquals = Timestamps.compare(actualDueDae, expectedDueDate) == 0;
+        final List<? extends Message> result;
+
+        if (isEquals) {
+            final TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated.newBuilder()
+                                                                            .setId(cmd.getId())
+                                                                            .setDueDateChange(cmd.getDueDateChange())
+                                                                            .build();
+            result = Collections.singletonList(taskDueDateUpdated);
+            return result;
+        }
+
+        //TODO Mismatch
+        final CannotUpdateTaskDueDate dueDateFailure = CannotUpdateTaskDueDate.newBuilder()
+                                                                              .build();
+        result = Collections.singletonList(dueDateFailure);
         return result;
     }
 
     @Assign
     public List<? extends Message> handle(UpdateTaskPriority cmd) {
         final Task state = getState();
-        validateUpdateTaskPriorityCommand(state.getTaskStatus());
-        final TaskPriority previousPriority = state.getPriority();
-        final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
-                                                                           .setId(cmd.getId())
-                                                                           .setPriorityChange(cmd.getPriorityChange())
-                                                                           .build();
-        final List<TaskPriorityUpdated> result = Collections.singletonList(taskPriorityUpdated);
+        final TaskStatus taskStatus = state.getTaskStatus();
+        validateUpdateTaskPriorityCommand(taskStatus);
+
+        final PriorityChange priorityChange = cmd.getPriorityChange();
+        final TaskPriority actualPriority = state.getPriority();
+        final TaskPriority expectedPriority = priorityChange.getPreviousValue();
+
+        final List<? extends Message> result;
+        boolean isEquals = actualPriority.equals(expectedPriority);
+
+        if (isEquals) {
+            final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
+                                                                               .setId(cmd.getId())
+                                                                               .setPriorityChange(priorityChange)
+                                                                               .build();
+            result = Collections.singletonList(taskPriorityUpdated);
+            return result;
+        }
+
+        //TODO Mismatch
+        final CannotUpdateTaskPriority priorityFailure = CannotUpdateTaskPriority.newBuilder()
+                                                                                 .build();
+        result = Collections.singletonList(priorityFailure);
         return result;
     }
 
@@ -345,6 +397,11 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                     .setTaskStatus(TaskStatus.DRAFT);
     }
 
+    @Apply
+    private void updateTaskDescriptionFailed(CannotUpdateTaskDescription failure) {
+
+    }
+
     private static void validateCommand(CreateBasicTask cmd) {
         final String description = cmd.getDescription();
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
@@ -362,5 +419,22 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         }
 
         ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
+    }
+
+    private List<? extends Message> constructFailure(TaskId taskId,
+                                                     String actualDescription,
+                                                     StringChange descriptionChange) {
+        final String expectedDescription = descriptionChange.getPreviousValue();
+        final String newDescription = descriptionChange.getNewValue();
+
+        final ValueMismatch mismatch = StringMismatch.unexpectedValue(expectedDescription,
+                                                                      actualDescription,
+                                                                      newDescription,
+                                                                      getVersion());
+        final CannotUpdateTaskDescription descriptionFailure = CannotUpdateTaskDescription.newBuilder()
+                                                                                          .setTaskId(taskId)
+                                                                                          .setDescriptionMismatch(mismatch)
+                                                                                          .build();
+        return Collections.singletonList(descriptionFailure);
     }
 }

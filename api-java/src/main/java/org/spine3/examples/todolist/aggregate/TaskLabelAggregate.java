@@ -21,6 +21,8 @@
 package org.spine3.examples.todolist.aggregate;
 
 import com.google.protobuf.Message;
+import org.spine3.change.ValueMismatch;
+import org.spine3.examples.todolist.CannotUpdateLabelDetails;
 import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelCreated;
@@ -36,6 +38,8 @@ import org.spine3.server.command.Assign;
 
 import java.util.Collections;
 import java.util.List;
+
+import static com.google.protobuf.Any.pack;
 
 /**
  * The aggregate managing the state of a {@link TaskLabel}.
@@ -70,15 +74,29 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
 
     @Assign
     public List<? extends Message> handle(UpdateLabelDetails cmd) {
-        final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
-                                                              .setColor(getState().getColor())
-                                                              .setTitle(getState().getTitle())
-                                                              .build();
-        final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
-                                                              .setLabelId(cmd.getId())
-                                                              .setLabelDetailsChange(cmd.getLabelDetailsChange())
-                                                              .build();
-        return Collections.singletonList(result);
+        final TaskLabel state = getState();
+        final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
+                                                            .setColor(getState().getColor())
+                                                            .setTitle(getState().getTitle())
+                                                            .build();
+        final LabelDetailsChange labelDetailsChange = cmd.getLabelDetailsChange();
+        final LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
+
+        final List<? extends Message> result;
+        final boolean isEquals = actualLabelDetails.equals(expectedLabelDetails);
+        final TaskLabelId labelId = cmd.getId();
+
+        if (isEquals) {
+            final LabelDetailsUpdated labelDetailsUpdated = LabelDetailsUpdated.newBuilder()
+                                                                               .setLabelId(labelId)
+                                                                               .setLabelDetailsChange(labelDetailsChange)
+                                                                               .build();
+            result = Collections.singletonList(labelDetailsUpdated);
+            return result;
+        }
+
+        result = constructFailureResult(labelId, actualLabelDetails, labelDetailsChange);
+        return result;
     }
 
     @Apply
@@ -95,5 +113,30 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
                                                .getNewDetails();
         getBuilder().setTitle(labelDetails.getTitle())
                     .setColor(labelDetails.getColor());
+    }
+
+    @Apply
+    private void updateLabelDetailsFailed(CannotUpdateLabelDetails failure){
+
+    }
+
+    private List<? extends Message> constructFailureResult(TaskLabelId labelId,
+                                                           LabelDetails actualLabelDetails,
+                                                           LabelDetailsChange labelDetailsChange) {
+        List<? extends Message> result;
+        final LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
+        final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
+        final ValueMismatch mismatch = ValueMismatch.newBuilder()
+                                                    .setActual(pack(actualLabelDetails))
+                                                    .setExpected(pack(expectedLabelDetails))
+                                                    .setNewValue(pack(newLabelDetails))
+                                                    .setVersion(getVersion())
+                                                    .build();
+        final CannotUpdateLabelDetails labelDetailsFailure = CannotUpdateLabelDetails.newBuilder()
+                                                                                     .setLabelId(labelId)
+                                                                                     .setLabelDetailsMismatch(mismatch)
+                                                                                     .build();
+        result = Collections.singletonList(labelDetailsFailure);
+        return result;
     }
 }
