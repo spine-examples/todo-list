@@ -923,6 +923,7 @@ public class TaskAggregateShould {
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateTaskPriority);
 
+            @SuppressWarnings("ConstantConditions")
             final Failures.CannotUpdateTaskPriority cannotUpdateTaskPriority =
                     ((CannotUpdateTaskPriority) cause).getFailure();
             final PriorityUpdateFailed priorityUpdateFailed = cannotUpdateTaskPriority.getUpdateFailed();
@@ -962,6 +963,7 @@ public class TaskAggregateShould {
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateTaskDescription);
 
+            @SuppressWarnings("ConstantConditions")
             final Failures.CannotUpdateTaskDescription cannotUpdateTaskDescription =
                     ((CannotUpdateTaskDescription) cause).getFailure();
             final DescriptionUpdateFailed descriptionUpdateFailed = cannotUpdateTaskDescription.getUpdateFailed();
@@ -1005,6 +1007,7 @@ public class TaskAggregateShould {
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateTaskDueDate);
 
+            @SuppressWarnings("ConstantConditions")
             final Failures.CannotUpdateTaskDueDate cannotUpdateTaskDueDate =
                     ((CannotUpdateTaskDueDate) cause).getFailure();
 

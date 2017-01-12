@@ -179,6 +179,7 @@ public class TaskLabelAggregateShould {
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateLabelDetails);
 
+            @SuppressWarnings("ConstantConditions")
             final Failures.CannotUpdateLabelDetails cannotUpdateLabelDetails =
                     ((CannotUpdateLabelDetails) cause).getFailure();
             final LabelDetailsUpdateFailed labelDetailsUpdateFailed = cannotUpdateLabelDetails.getUpdateFailed();
