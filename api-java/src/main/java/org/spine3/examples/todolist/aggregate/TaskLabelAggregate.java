@@ -22,16 +22,17 @@ package org.spine3.examples.todolist.aggregate;
 
 import com.google.protobuf.Message;
 import org.spine3.change.ValueMismatch;
-import org.spine3.examples.todolist.CannotUpdateLabelDetails;
 import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelCreated;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsChange;
+import org.spine3.examples.todolist.LabelDetailsUpdateFailed;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.UpdateLabelDetails;
+import org.spine3.examples.todolist.failures.CannotUpdateLabelDetails;
 import org.spine3.server.aggregate.Aggregate;
 import org.spine3.server.aggregate.Apply;
 import org.spine3.server.command.Assign;
@@ -73,7 +74,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     }
 
     @Assign
-    public List<? extends Message> handle(UpdateLabelDetails cmd) {
+    public List<? extends Message> handle(UpdateLabelDetails cmd) throws CannotUpdateLabelDetails {
         final TaskLabel state = getState();
         final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
                                                             .setColor(getState().getColor())
@@ -95,8 +96,8 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
             return result;
         }
 
-        result = constructFailureResult(labelId, actualLabelDetails, labelDetailsChange);
-        return result;
+       throw constructFailureResult(labelId, actualLabelDetails, labelDetailsChange);
+        //throw failure;
     }
 
     @Apply
@@ -115,15 +116,9 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
                     .setColor(labelDetails.getColor());
     }
 
-    @Apply
-    private void updateLabelDetailsFailed(CannotUpdateLabelDetails failure){
-
-    }
-
-    private List<? extends Message> constructFailureResult(TaskLabelId labelId,
-                                                           LabelDetails actualLabelDetails,
-                                                           LabelDetailsChange labelDetailsChange) {
-        List<? extends Message> result;
+    private CannotUpdateLabelDetails constructFailureResult(TaskLabelId labelId,
+                                                            LabelDetails actualLabelDetails,
+                                                            LabelDetailsChange labelDetailsChange) {
         final LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
         final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
         final ValueMismatch mismatch = ValueMismatch.newBuilder()
@@ -132,11 +127,11 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
                                                     .setNewValue(pack(newLabelDetails))
                                                     .setVersion(getVersion())
                                                     .build();
-        final CannotUpdateLabelDetails labelDetailsFailure = CannotUpdateLabelDetails.newBuilder()
-                                                                                     .setLabelId(labelId)
-                                                                                     .setLabelDetailsMismatch(mismatch)
-                                                                                     .build();
-        result = Collections.singletonList(labelDetailsFailure);
+        final LabelDetailsUpdateFailed labelDetailsUpdateFailed = LabelDetailsUpdateFailed.newBuilder()
+                                                                                          .setLabelId(labelId)
+                                                                                          .setLabelDetailsMismatch(mismatch)
+                                                                                          .build();
+        final CannotUpdateLabelDetails result = new CannotUpdateLabelDetails(labelDetailsUpdateFailed);
         return result;
     }
 }
