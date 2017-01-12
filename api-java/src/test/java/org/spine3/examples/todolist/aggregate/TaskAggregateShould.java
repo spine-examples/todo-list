@@ -28,17 +28,16 @@ import org.junit.jupiter.api.Test;
 import org.spine3.base.CommandContext;
 import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.AssignLabelToTask;
-import org.spine3.examples.todolist.CannotUpdateTaskDescription;
-import org.spine3.examples.todolist.CannotUpdateTaskDueDate;
-import org.spine3.examples.todolist.CannotUpdateTaskPriority;
 import org.spine3.examples.todolist.CompleteTask;
 import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.DeleteTask;
+import org.spine3.examples.todolist.DescriptionUpdateFailed;
 import org.spine3.examples.todolist.FinalizeDraft;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.LabelledTaskRestored;
+import org.spine3.examples.todolist.PriorityUpdateFailed;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
@@ -48,6 +47,7 @@ import org.spine3.examples.todolist.TaskCreated;
 import org.spine3.examples.todolist.TaskDeleted;
 import org.spine3.examples.todolist.TaskDescriptionUpdated;
 import org.spine3.examples.todolist.TaskDraftCreated;
+import org.spine3.examples.todolist.TaskDueDateUpdateFailed;
 import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskPriority;
@@ -57,6 +57,10 @@ import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
+import org.spine3.examples.todolist.failures.CannotUpdateTaskDescription;
+import org.spine3.examples.todolist.failures.CannotUpdateTaskDueDate;
+import org.spine3.examples.todolist.failures.CannotUpdateTaskPriority;
+import org.spine3.examples.todolist.failures.Failures;
 import org.spine3.protobuf.Timestamps;
 
 import java.util.List;
@@ -213,14 +217,14 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_update_task_description_when_task_is_deleted() {
         try {
-            final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance();
-            aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
-
             final CreateBasicTask createTaskCmd = createTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
             final DeleteTask deleteTaskCmd = deleteTaskInstance();
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+
+            final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance();
+            aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
@@ -910,32 +914,34 @@ public class TaskAggregateShould {
 
     @Test
     public void emit_cannot_update_task_priority_failure_upon_update_task_priority_command() {
-        final UpdateTaskPriority updateTaskPriority =
-                updateTaskPriorityInstance(TASK_ID, TaskPriority.LOW, TaskPriority.HIGH);
-        final List<? extends com.google.protobuf.Message> messageList =
-                aggregate.dispatchForTest(updateTaskPriority, COMMAND_CONTEXT);
+        try {
+            final UpdateTaskPriority updateTaskPriority =
+                    updateTaskPriorityInstance(TASK_ID, TaskPriority.LOW, TaskPriority.HIGH);
+            aggregate.dispatchForTest(updateTaskPriority, COMMAND_CONTEXT);
+        } catch (Throwable e) {
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            final Throwable cause = Throwables.getRootCause(e);
+            assertTrue(cause instanceof CannotUpdateTaskPriority);
 
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, messageList.size());
-        assertEquals(CannotUpdateTaskPriority.class, messageList.get(0)
-                                                                .getClass());
-        final CannotUpdateTaskPriority cannotUpdateTaskPriority = (CannotUpdateTaskPriority) messageList.get(0);
+            final Failures.CannotUpdateTaskPriority cannotUpdateTaskPriority =
+                    ((CannotUpdateTaskPriority) cause).getFailure();
+            final PriorityUpdateFailed priorityUpdateFailed = cannotUpdateTaskPriority.getUpdateFailed();
+            assertEquals(TASK_ID, priorityUpdateFailed.getTaskId());
 
-        final ValueMismatch mismatch = cannotUpdateTaskPriority.getPriorityMismatch();
-        assertEquals(TASK_ID, cannotUpdateTaskPriority.getTaskId());
-
-        final TaskPriorityValue expectedValue = TaskPriorityValue.newBuilder()
-                                                                 .setPriorityValue(TaskPriority.LOW)
-                                                                 .build();
-        final TaskPriorityValue actualValue = TaskPriorityValue.newBuilder()
-                                                               .setPriorityValue(TaskPriority.TP_UNDEFINED)
-                                                               .build();
-        final TaskPriorityValue newValue = TaskPriorityValue.newBuilder()
-                                                            .setPriorityValue(TaskPriority.HIGH)
-                                                            .build();
-        assertEquals(actualValue, unpack(mismatch.getActual()));
-        assertEquals(expectedValue, unpack(mismatch.getExpected()));
-        assertEquals(newValue, unpack(mismatch.getNewValue()));
+            final ValueMismatch mismatch = priorityUpdateFailed.getPriorityMismatch();
+            final TaskPriorityValue expectedValue = TaskPriorityValue.newBuilder()
+                                                                     .setPriorityValue(TaskPriority.LOW)
+                                                                     .build();
+            final TaskPriorityValue actualValue = TaskPriorityValue.newBuilder()
+                                                                   .setPriorityValue(TaskPriority.TP_UNDEFINED)
+                                                                   .build();
+            final TaskPriorityValue newValue = TaskPriorityValue.newBuilder()
+                                                                .setPriorityValue(TaskPriority.HIGH)
+                                                                .build();
+            assertEquals(actualValue, unpack(mismatch.getActual()));
+            assertEquals(expectedValue, unpack(mismatch.getExpected()));
+            assertEquals(newValue, unpack(mismatch.getNewValue()));
+        }
     }
 
     @Test
@@ -947,32 +953,36 @@ public class TaskAggregateShould {
         final String newValue = "update description";
         final String actualValue = createBasicTask.getDescription();
 
-        final UpdateTaskDescription updateTaskDescription =
-                updateTaskDescriptionInstance(TASK_ID, expectedValue, newValue);
-        final List<? extends com.google.protobuf.Message> messageList =
-                aggregate.dispatchForTest(updateTaskDescription, COMMAND_CONTEXT);
+        try {
+            final UpdateTaskDescription updateTaskDescription =
+                    updateTaskDescriptionInstance(TASK_ID, expectedValue, newValue);
+            aggregate.dispatchForTest(updateTaskDescription, COMMAND_CONTEXT);
+        } catch (Throwable e) {
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            final Throwable cause = Throwables.getRootCause(e);
+            assertTrue(cause instanceof CannotUpdateTaskDescription);
 
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, messageList.size());
-        assertEquals(CannotUpdateTaskDescription.class, messageList.get(0)
-                                                                   .getClass());
-        final CannotUpdateTaskDescription cannotUpdateTaskDescription = (CannotUpdateTaskDescription) messageList.get(0);
+            final Failures.CannotUpdateTaskDescription cannotUpdateTaskDescription =
+                    ((CannotUpdateTaskDescription) cause).getFailure();
+            final DescriptionUpdateFailed descriptionUpdateFailed = cannotUpdateTaskDescription.getUpdateFailed();
+            assertEquals(TASK_ID, descriptionUpdateFailed.getTaskId());
 
-        final ValueMismatch mismatch = cannotUpdateTaskDescription.getDescriptionMismatch();
-        assertEquals(TASK_ID, cannotUpdateTaskDescription.getTaskId());
+            final StringValue expectedStringValue = StringValue.newBuilder()
+                                                               .setValue(expectedValue)
+                                                               .build();
+            final StringValue actualStringValue = StringValue.newBuilder()
+                                                             .setValue(actualValue)
+                                                             .build();
+            final StringValue newStringValue = StringValue.newBuilder()
+                                                          .setValue(newValue)
+                                                          .build();
 
-        final StringValue expectedStringValue = StringValue.newBuilder()
-                                                           .setValue(expectedValue)
-                                                           .build();
-        final StringValue actualStringValue = StringValue.newBuilder()
-                                                         .setValue(actualValue)
-                                                         .build();
-        final StringValue newStringValue = StringValue.newBuilder()
-                                                      .setValue(newValue)
-                                                      .build();
-        assertEquals(expectedStringValue, unpack(mismatch.getExpected()));
-        assertEquals(actualStringValue, unpack(mismatch.getActual()));
-        assertEquals(newStringValue, unpack(mismatch.getNewValue()));
+            final ValueMismatch mismatch = descriptionUpdateFailed.getDescriptionMismatch();
+            assertEquals(expectedStringValue, unpack(mismatch.getExpected()));
+            assertEquals(actualStringValue, unpack(mismatch.getActual()));
+            assertEquals(newStringValue, unpack(mismatch.getNewValue()));
+
+        }
     }
 
     @Test
@@ -982,26 +992,33 @@ public class TaskAggregateShould {
 
         final Timestamp expectedDueDate = Timestamps.getCurrentTime();
         final Timestamp newDueDate = Timestamps.getCurrentTime();
+        try {
+            final UpdateTaskDueDate updateTaskDueDate =
+                    updateTaskDueDateInstance(TASK_ID, expectedDueDate, newDueDate);
+            final List<? extends com.google.protobuf.Message> messageList =
+                    aggregate.dispatchForTest(updateTaskDueDate, COMMAND_CONTEXT);
 
-        final UpdateTaskDueDate updateTaskDueDate =
-                updateTaskDueDateInstance(TASK_ID, expectedDueDate, newDueDate);
-        final List<? extends com.google.protobuf.Message> messageList =
-                aggregate.dispatchForTest(updateTaskDueDate, COMMAND_CONTEXT);
+            final int expectedListSize = 1;
+            assertEquals(expectedListSize, messageList.size());
+        } catch (Throwable e) {
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            final Throwable cause = Throwables.getRootCause(e);
+            assertTrue(cause instanceof CannotUpdateTaskDueDate);
 
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, messageList.size());
-        assertEquals(CannotUpdateTaskDueDate.class, messageList.get(0)
-                                                               .getClass());
-        final CannotUpdateTaskDueDate cannotUpdateTaskDueDate = (CannotUpdateTaskDueDate) messageList.get(0);
+            final Failures.CannotUpdateTaskDueDate cannotUpdateTaskDueDate =
+                    ((CannotUpdateTaskDueDate) cause).getFailure();
 
-        final ValueMismatch mismatch = cannotUpdateTaskDueDate.getDueDateMismatch();
-        assertEquals(TASK_ID, cannotUpdateTaskDueDate.getTaskId());
+            final TaskDueDateUpdateFailed dueDateUpdateFailed = cannotUpdateTaskDueDate.getUpdateFailed();
+            assertEquals(TASK_ID, dueDateUpdateFailed.getTaskId());
 
-        assertEquals(newDueDate, unpack(mismatch.getNewValue()));
-        assertEquals(expectedDueDate, unpack(mismatch.getExpected()));
+            final ValueMismatch mismatch = dueDateUpdateFailed.getDueDateMismatch();
 
-        final Timestamp actualDueDate = Timestamp.getDefaultInstance();
-        assertEquals(actualDueDate, unpack(mismatch.getActual()));
+            assertEquals(newDueDate, unpack(mismatch.getNewValue()));
+            assertEquals(expectedDueDate, unpack(mismatch.getExpected()));
+
+            final Timestamp actualDueDate = Timestamp.getDefaultInstance();
+            assertEquals(actualDueDate, unpack(mismatch.getActual()));
+        }
     }
 
     private static String constructExceptionMessage(TaskStatus fromState, TaskStatus toState) {
