@@ -56,11 +56,14 @@ import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskPriorityUpdated;
+import org.spine3.examples.todolist.TaskPriorityValue;
 import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.TaskStatus;
+import org.spine3.examples.todolist.TimestampValue;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
+import org.spine3.protobuf.AnyPacker;
 import org.spine3.protobuf.Timestamps;
 import org.spine3.server.aggregate.Aggregate;
 import org.spine3.server.aggregate.Apply;
@@ -142,7 +145,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
             return result;
         }
 
-        result = constructFailure(taskId, actualDescription, change);
+        result = constructFailureResult(taskId, actualDescription, change);
         return result;
     }
 
@@ -161,19 +164,17 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final boolean isEquals = Timestamps.compare(actualDueDae, expectedDueDate) == 0;
         final List<? extends Message> result;
 
+        final TaskId taskId = cmd.getId();
         if (isEquals) {
             final TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated.newBuilder()
-                                                                            .setId(cmd.getId())
+                                                                            .setId(taskId)
                                                                             .setDueDateChange(cmd.getDueDateChange())
                                                                             .build();
             result = Collections.singletonList(taskDueDateUpdated);
             return result;
         }
 
-        //TODO Mismatch
-        final CannotUpdateTaskDueDate dueDateFailure = CannotUpdateTaskDueDate.newBuilder()
-                                                                              .build();
-        result = Collections.singletonList(dueDateFailure);
+        result = constructFailureResult(taskId, actualDueDae, change);
         return result;
     }
 
@@ -190,19 +191,17 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final List<? extends Message> result;
         boolean isEquals = actualPriority.equals(expectedPriority);
 
+        final TaskId taskId = cmd.getId();
         if (isEquals) {
             final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
-                                                                               .setId(cmd.getId())
+                                                                               .setId(taskId)
                                                                                .setPriorityChange(priorityChange)
                                                                                .build();
             result = Collections.singletonList(taskPriorityUpdated);
             return result;
         }
 
-        //TODO Mismatch
-        final CannotUpdateTaskPriority priorityFailure = CannotUpdateTaskPriority.newBuilder()
-                                                                                 .build();
-        result = Collections.singletonList(priorityFailure);
+        result = constructFailureResult(taskId, actualPriority, priorityChange);
         return result;
     }
 
@@ -421,9 +420,9 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
     }
 
-    private List<? extends Message> constructFailure(TaskId taskId,
-                                                     String actualDescription,
-                                                     StringChange descriptionChange) {
+    private List<? extends Message> constructFailureResult(TaskId taskId,
+                                                           String actualDescription,
+                                                           StringChange descriptionChange) {
         final String expectedDescription = descriptionChange.getPreviousValue();
         final String newDescription = descriptionChange.getNewValue();
 
@@ -436,5 +435,58 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                                                                                           .setDescriptionMismatch(mismatch)
                                                                                           .build();
         return Collections.singletonList(descriptionFailure);
+    }
+
+    private List<? extends Message> constructFailureResult(TaskId taskId,
+                                                           TaskPriority actualPriority,
+                                                           PriorityChange priorityChange) {
+        final TaskPriority newPriority = priorityChange.getNewValue();
+        final TaskPriority expectedPriority = priorityChange.getPreviousValue();
+        final TaskPriorityValue actualPriorityValue = TaskPriorityValue.newBuilder()
+                                                                       .setPriorityValue(actualPriority)
+                                                                       .build();
+        final TaskPriorityValue expectedPriorityValue = TaskPriorityValue.newBuilder()
+                                                                         .setPriorityValue(expectedPriority)
+                                                                         .build();
+        final TaskPriorityValue newPriorityValue = TaskPriorityValue.newBuilder()
+                                                                    .setPriorityValue(newPriority)
+                                                                    .build();
+        final ValueMismatch mismatch = ValueMismatch.newBuilder()
+                                                    .setActual(AnyPacker.pack(actualPriorityValue))
+                                                    .setExpected(AnyPacker.pack(expectedPriorityValue))
+                                                    .setNewValue(AnyPacker.pack(newPriorityValue))
+                                                    .setVersion(getVersion())
+                                                    .build();
+        final CannotUpdateTaskPriority priorityFailure = CannotUpdateTaskPriority.newBuilder()
+                                                                                 .setTaskId(taskId)
+                                                                                 .setPriorityMismatch(mismatch)
+                                                                                 .build();
+        final List<? extends Message> result = Collections.singletonList(priorityFailure);
+        return result;
+    }
+
+    private List<? extends Message> constructFailureResult(TaskId taskId, Timestamp actualDueDae, TimestampChange change) {
+        final Timestamp expectedDueDate = change.getPreviousValue();
+        final TimestampValue expectedDueDateValue = TimestampValue.newBuilder()
+                                                                  .setTimestampValue(expectedDueDate)
+                                                                  .build();
+        final TimestampValue actualDueDateValue = TimestampValue.newBuilder()
+                                                                .setTimestampValue(actualDueDae)
+                                                                .build();
+        final TimestampValue newDueDateValue = TimestampValue.newBuilder()
+                                                             .setTimestampValue(change.getNewValue())
+                                                             .build();
+        final ValueMismatch mismatch = ValueMismatch.newBuilder()
+                                                    .setExpected(AnyPacker.pack(expectedDueDate))
+                                                    .setActual(AnyPacker.pack(actualDueDateValue))
+                                                    .setNewValue(AnyPacker.pack(newDueDateValue))
+                                                    .setVersion(getVersion())
+                                                    .build();
+        final CannotUpdateTaskDueDate dueDateFailure = CannotUpdateTaskDueDate.newBuilder()
+                                                                              .setTaskId(taskId)
+                                                                              .setDueDateMismatch(mismatch)
+                                                                              .build();
+        final List<? extends Message> result = Collections.singletonList(dueDateFailure);
+        return result;
     }
 }
