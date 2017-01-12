@@ -28,14 +28,11 @@ option java_outer_classname = "CommandsProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
-import "google/protobuf/timestamp.proto";
-
 import "spine/annotations.proto";
 import "spine/validate.proto";
 import "spine/change/change.proto";
 
 import "todolist/identifiers.proto";
-import "todolist/attributes.proto";
 import "todolist/change.proto";
 
 // An attempt to create a task in a "Quick" mode.
