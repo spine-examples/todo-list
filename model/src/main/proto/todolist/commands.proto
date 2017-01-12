@@ -260,7 +260,7 @@ message UpdateLabelDetails {
     // An identifier of the target label.
     TaskLabelId id = 1;
 
-    // Label details changes.
+    // The label details changes.
     // Contains the previous label details and the label details to set for the target label.
     LabelDetailsChange label_details_change = 2 [(required) = true];
 

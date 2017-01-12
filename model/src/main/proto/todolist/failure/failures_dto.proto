@@ -34,26 +34,42 @@ import "spine/change/value_mismatch.proto";
 
 import "todolist/identifiers.proto";
 
+// DTO for the description mismatch.
 message DescriptionUpdateFailed {
+
+    // An identifier of the task.
     TaskId task_id = 1;
 
+    // A mismatching description value.
     change.ValueMismatch description_mismatch = 2;
 }
 
+// DTO for the priority mismatch.
 message PriorityUpdateFailed {
+
+    // An identifier of the task.
     TaskId task_id = 1;
 
+    // A mismatching priority value.
     change.ValueMismatch priority_mismatch = 2;
 }
 
+// DTO for the due date mismatch.
 message TaskDueDateUpdateFailed {
+
+    // An identifier of the task.
     TaskId task_id = 1;
 
+    // A mismatching due date value.
     change.ValueMismatch due_date_mismatch = 2;
 }
 
+// DTO for the label details mismatch.
 message LabelDetailsUpdateFailed {
+
+    // An identifier of the label.
     TaskLabelId label_id = 1;
 
+    // A mismatching label details value.
     change.ValueMismatch label_details_mismatch = 2;
 }

@@ -32,7 +32,9 @@ import "spine/annotations.proto";
 
 import "todolist/attributes.proto";
 
+// A wrapper for a task priority.
 message TaskPriorityValue {
 
+    // The task priority value.
     TaskPriority priority_value = 1;
 }

@@ -34,16 +34,22 @@ import "spine/validate.proto";
 import "todolist/attributes.proto";
 import "todolist/details.proto";
 
+// Definition of a change in a task priority field.
 message PriorityChange {
 
+    // The value of the priority that's changing.
     TaskPriority previous_value = 1;
 
+    // The new value of the priority.
     TaskPriority new_value = 2;
 }
 
+// Definition of a change in a label details field.
 message LabelDetailsChange {
 
+    // The value of the label details that's changing.
     LabelDetails previous_details = 1;
 
+    // The new value of the label details.
     LabelDetails new_details = 2;
 }

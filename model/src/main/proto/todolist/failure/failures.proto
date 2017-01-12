@@ -31,22 +31,30 @@ import "spine/annotations.proto";
 
 import "todolist/failure/failures_dto.proto";
 
+// Fire the failure when cannot update task description.
 message CannotUpdateTaskDescription {
 
+    // Failed the description update.
     DescriptionUpdateFailed update_failed = 1;
 }
 
+// Fire the failure when cannot update task priority.
 message CannotUpdateTaskPriority {
 
+    // Failed the priority update.
     PriorityUpdateFailed update_failed = 1;
 }
 
+// Fire the failure when cannot update task due date.
 message CannotUpdateTaskDueDate {
 
+    // Failed the due date update.
     TaskDueDateUpdateFailed update_failed = 1;
 }
 
+// Fire the failure when cannot update label details.
 message CannotUpdateLabelDetails {
 
+    //Failed the label details update.
     LabelDetailsUpdateFailed update_failed = 1;
 }

@@ -91,7 +91,7 @@ message TaskDescriptionUpdated {
     // An identifier of the updated task.
     TaskId id = 1;
 
-    // The change of the task description.
+    // The changes of the task description.
     change.StringChange description_change = 2 [(required) = true];
 
     // Reserved for future extension.
@@ -109,7 +109,7 @@ message TaskPriorityUpdated {
     // An identifier of the updated task.
     TaskId id = 1;
 
-    // The change of the task priority.
+    // The changes of the task priority.
     PriorityChange priority_change = 2 [(required) = true];
 
     // Reserved for future extension.
@@ -127,7 +127,7 @@ message TaskDueDateUpdated {
     // An identifier of the updated task.
     TaskId id = 1;
 
-    // The task due date change.
+    // The task due date changes.
     change.TimestampChange due_date_change = 2 [(required) = true];
 
     // Reserved for future extension.
@@ -245,7 +245,7 @@ message LabelDetailsUpdated {
     // An identifier of the updated label.
     TaskLabelId label_id = 1;
 
-    // The label details change.
+    // The label details changes.
     LabelDetailsChange label_details_change = 2 [(required) = true];
 }
 
