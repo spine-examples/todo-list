@@ -35,7 +35,6 @@ import "spine/validate.proto";
 import "spine/change/change.proto";
 
 import "todolist/identifiers.proto";
-import "todolist/attributes.proto";
 import "todolist/details.proto";
 import "todolist/change.proto";
 
