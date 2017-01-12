@@ -59,7 +59,6 @@ import org.spine3.examples.todolist.TaskPriorityUpdated;
 import org.spine3.examples.todolist.TaskPriorityValue;
 import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.TaskStatus;
-import org.spine3.examples.todolist.TimestampValue;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
@@ -398,7 +397,14 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     @Apply
     private void updateTaskDescriptionFailed(CannotUpdateTaskDescription failure) {
+    }
 
+    @Apply
+    private void updateTaskPriorityFailed(CannotUpdateTaskPriority failure) {
+    }
+
+    @Apply
+    private void updateTaskDueDateFailed(CannotUpdateTaskDueDate failure) {
     }
 
     private static void validateCommand(CreateBasicTask cmd) {
@@ -465,21 +471,16 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         return result;
     }
 
-    private List<? extends Message> constructFailureResult(TaskId taskId, Timestamp actualDueDae, TimestampChange change) {
+    private List<? extends Message> constructFailureResult(TaskId taskId,
+                                                           Timestamp actualDueDate,
+                                                           TimestampChange change) {
         final Timestamp expectedDueDate = change.getPreviousValue();
-        final TimestampValue expectedDueDateValue = TimestampValue.newBuilder()
-                                                                  .setTimestampValue(expectedDueDate)
-                                                                  .build();
-        final TimestampValue actualDueDateValue = TimestampValue.newBuilder()
-                                                                .setTimestampValue(actualDueDae)
-                                                                .build();
-        final TimestampValue newDueDateValue = TimestampValue.newBuilder()
-                                                             .setTimestampValue(change.getNewValue())
-                                                             .build();
+        final Timestamp newDueDate = change.getNewValue();
+
         final ValueMismatch mismatch = ValueMismatch.newBuilder()
                                                     .setExpected(AnyPacker.pack(expectedDueDate))
-                                                    .setActual(AnyPacker.pack(actualDueDateValue))
-                                                    .setNewValue(AnyPacker.pack(newDueDateValue))
+                                                    .setActual(AnyPacker.pack(actualDueDate))
+                                                    .setNewValue(AnyPacker.pack(newDueDate))
                                                     .setVersion(getVersion())
                                                     .build();
         final CannotUpdateTaskDueDate dueDateFailure = CannotUpdateTaskDueDate.newBuilder()
