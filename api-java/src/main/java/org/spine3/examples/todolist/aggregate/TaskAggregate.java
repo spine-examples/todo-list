@@ -129,26 +129,25 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     public List<? extends Message> handle(UpdateTaskDescription cmd) throws CannotUpdateTaskDescription {
         validateCommand(cmd);
         final Task state = getState();
-        final TaskId taskId = cmd.getId();
         final StringChange change = cmd.getDescriptionChange();
 
         final String actualDescription = state.getDescription();
         final String expectedDescription = change.getPreviousValue();
-
-        final List<? extends Message> result;
         final boolean isEquals = actualDescription.equals(expectedDescription);
+        final TaskId taskId = cmd.getId();
 
-        if (isEquals) {
-            final TaskDescriptionUpdated taskDescriptionUpdated = TaskDescriptionUpdated.newBuilder()
-                                                                                        .setId(taskId)
-                                                                                        .setDescriptionChange(change)
-                                                                                        .build();
-            result = Collections.singletonList(taskDescriptionUpdated);
-            return result;
+        if (!isEquals) {
+            final CannotUpdateTaskDescription failure = constructFailure(taskId, actualDescription, change);
+            checkNotNull(failure);
+            throw failure;
         }
 
-        final CannotUpdateTaskDescription failure = constructFailure(taskId, actualDescription, change);
-        throw failure;
+        final TaskDescriptionUpdated taskDescriptionUpdated = TaskDescriptionUpdated.newBuilder()
+                                                                                    .setId(taskId)
+                                                                                    .setDescriptionChange(change)
+                                                                                    .build();
+        final List<? extends Message> result = Collections.singletonList(taskDescriptionUpdated);
+        return result;
     }
 
     @Assign
@@ -164,20 +163,20 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final Timestamp expectedDueDate = change.getPreviousValue();
 
         final boolean isEquals = Timestamps.compare(actualDueDae, expectedDueDate) == 0;
-        final List<? extends Message> result;
-
         final TaskId taskId = cmd.getId();
-        if (isEquals) {
-            final TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated.newBuilder()
-                                                                            .setId(taskId)
-                                                                            .setDueDateChange(cmd.getDueDateChange())
-                                                                            .build();
-            result = Collections.singletonList(taskDueDateUpdated);
-            return result;
+
+        if (!isEquals) {
+            final CannotUpdateTaskDueDate failure = constructFailure(taskId, actualDueDae, change);
+            checkNotNull(failure);
+            throw failure;
         }
 
-        final CannotUpdateTaskDueDate failure = constructFailure(taskId, actualDueDae, change);
-        throw failure;
+        final TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated.newBuilder()
+                                                                        .setId(taskId)
+                                                                        .setDueDateChange(cmd.getDueDateChange())
+                                                                        .build();
+        final List<? extends Message> result = Collections.singletonList(taskDueDateUpdated);
+        return result;
     }
 
     @Assign
@@ -190,21 +189,21 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final TaskPriority actualPriority = state.getPriority();
         final TaskPriority expectedPriority = priorityChange.getPreviousValue();
 
-        final List<? extends Message> result;
         boolean isEquals = actualPriority.equals(expectedPriority);
-
         final TaskId taskId = cmd.getId();
-        if (isEquals) {
-            final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
-                                                                               .setId(taskId)
-                                                                               .setPriorityChange(priorityChange)
-                                                                               .build();
-            result = Collections.singletonList(taskPriorityUpdated);
-            return result;
+
+        if (!isEquals) {
+            final CannotUpdateTaskPriority failure = constructFailure(taskId, actualPriority, priorityChange);
+            checkNotNull(failure);
+            throw failure;
         }
 
-        final CannotUpdateTaskPriority failure = constructFailure(taskId, actualPriority, priorityChange);
-        throw failure;
+        final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
+                                                                           .setId(taskId)
+                                                                           .setPriorityChange(priorityChange)
+                                                                           .build();
+        final List<? extends Message> result = Collections.singletonList(taskPriorityUpdated);
+        return result;
     }
 
     @Assign
@@ -427,7 +426,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                                                                       actualDescription,
                                                                       newDescription,
                                                                       getVersion());
-
         final DescriptionUpdateFailed descriptionUpdateFailed = DescriptionUpdateFailed.newBuilder()
                                                                                        .setTaskId(taskId)
                                                                                        .setDescriptionMismatch(mismatch)

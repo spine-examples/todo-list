@@ -40,6 +40,7 @@ import org.spine3.server.command.Assign;
 import java.util.Collections;
 import java.util.List;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.protobuf.Any.pack;
 
 /**
@@ -83,21 +84,21 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
         final LabelDetailsChange labelDetailsChange = cmd.getLabelDetailsChange();
         final LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
 
-        final List<? extends Message> result;
         final boolean isEquals = actualLabelDetails.equals(expectedLabelDetails);
         final TaskLabelId labelId = cmd.getId();
 
-        if (isEquals) {
-            final LabelDetailsUpdated labelDetailsUpdated = LabelDetailsUpdated.newBuilder()
-                                                                               .setLabelId(labelId)
-                                                                               .setLabelDetailsChange(labelDetailsChange)
-                                                                               .build();
-            result = Collections.singletonList(labelDetailsUpdated);
-            return result;
+        if (!isEquals) {
+            CannotUpdateLabelDetails failure = constructFailureResult(labelId, actualLabelDetails, labelDetailsChange);
+            checkNotNull(failure);
+            throw failure;
         }
 
-       throw constructFailureResult(labelId, actualLabelDetails, labelDetailsChange);
-        //throw failure;
+        final LabelDetailsUpdated labelDetailsUpdated = LabelDetailsUpdated.newBuilder()
+                                                                           .setLabelId(labelId)
+                                                                           .setLabelDetailsChange(labelDetailsChange)
+                                                                           .build();
+        final List<? extends Message> result = Collections.singletonList(labelDetailsUpdated);
+        return result;
     }
 
     @Apply
