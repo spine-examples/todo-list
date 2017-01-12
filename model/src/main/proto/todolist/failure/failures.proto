@@ -23,40 +23,30 @@ syntax = "proto3";
 package spine.examples.todolist;
 
 option (type_url_prefix) = "type.spine.examples.todolist";
-option java_package = "org.spine3.examples.todolist";
-option java_outer_classname = "FailuresProto";
-option java_multiple_files = true;
+option java_package = "org.spine3.examples.todolist.failures";
+option java_multiple_files = false;
 option java_generate_equals_and_hash = true;
 
 import "spine/annotations.proto";
-import "spine/change/value_mismatch.proto";
 
-import "todolist/identifiers.proto";
+import "todolist/failure/failures_dto.proto";
 
 message CannotUpdateTaskDescription {
 
-    TaskId task_id = 1;
-
-    change.ValueMismatch description_mismatch = 2;
+    DescriptionUpdateFailed update_failed = 1;
 }
 
 message CannotUpdateTaskPriority {
 
-    TaskId task_id = 1;
-
-    change.ValueMismatch priority_mismatch = 2;
+    PriorityUpdateFailed update_failed = 1;
 }
 
 message CannotUpdateTaskDueDate {
 
-    TaskId task_id = 1;
-
-    change.ValueMismatch due_date_mismatch = 2;
+    TaskDueDateUpdateFailed update_failed = 1;
 }
 
 message CannotUpdateLabelDetails {
 
-    TaskLabelId label_id = 1;
-
-    change.ValueMismatch label_details_mismatch = 2;
+    LabelDetailsUpdateFailed update_failed = 1;
 }
