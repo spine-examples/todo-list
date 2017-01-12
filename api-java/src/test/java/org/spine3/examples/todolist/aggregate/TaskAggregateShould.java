@@ -21,11 +21,16 @@
 package org.spine3.examples.todolist.aggregate;
 
 import com.google.common.base.Throwables;
+import com.google.protobuf.StringValue;
 import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.CommandContext;
+import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.AssignLabelToTask;
+import org.spine3.examples.todolist.CannotUpdateTaskDescription;
+import org.spine3.examples.todolist.CannotUpdateTaskDueDate;
+import org.spine3.examples.todolist.CannotUpdateTaskPriority;
 import org.spine3.examples.todolist.CompleteTask;
 import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.CreateDraft;
@@ -47,6 +52,7 @@ import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskPriorityUpdated;
+import org.spine3.examples.todolist.TaskPriorityValue;
 import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
@@ -84,6 +90,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.resto
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;
+import static org.spine3.protobuf.AnyPacker.unpack;
 
 /**
  * @author Illia Shepilov
@@ -337,6 +344,9 @@ public class TaskAggregateShould {
 
     @Test
     public void emit_task_priority_updated_event_upon_update_task_priority_command() {
+        final CreateBasicTask createBasicTask = createTaskInstance();
+        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
+
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance();
         final List<? extends com.google.protobuf.Message> messageList =
                 aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
@@ -392,7 +402,8 @@ public class TaskAggregateShould {
         final CreateBasicTask createBasicTask = createTaskInstance();
         aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
 
-        final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(TASK_ID, updatedDueDate);
+        final UpdateTaskDueDate updateTaskDueDateCmd =
+                updateTaskDueDateInstance(TASK_ID, Timestamp.getDefaultInstance(), updatedDueDate);
         aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
@@ -406,7 +417,8 @@ public class TaskAggregateShould {
         final CreateBasicTask createBasicTask = createTaskInstance();
         aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
 
-        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(TASK_ID, updatedPriority);
+        final UpdateTaskPriority updateTaskPriorityCmd =
+                updateTaskPriorityInstance(TASK_ID, TaskPriority.TP_UNDEFINED, updatedPriority);
         aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
@@ -894,6 +906,102 @@ public class TaskAggregateShould {
         final LabelledTaskRestored labelledTaskRestored = (LabelledTaskRestored) messageList.get(1);
         assertEquals(TASK_ID, labelledTaskRestored.getTaskId());
         assertEquals(LABEL_ID, labelledTaskRestored.getLabelId());
+    }
+
+    @Test
+    public void emit_cannot_update_task_priority_failure_upon_update_task_priority_command() {
+        final UpdateTaskPriority updateTaskPriority =
+                updateTaskPriorityInstance(TASK_ID, TaskPriority.LOW, TaskPriority.HIGH);
+        final List<? extends com.google.protobuf.Message> messageList =
+                aggregate.dispatchForTest(updateTaskPriority, COMMAND_CONTEXT);
+
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, messageList.size());
+        assertEquals(CannotUpdateTaskPriority.class, messageList.get(0)
+                                                                .getClass());
+        final CannotUpdateTaskPriority cannotUpdateTaskPriority = (CannotUpdateTaskPriority) messageList.get(0);
+
+        final ValueMismatch mismatch = cannotUpdateTaskPriority.getPriorityMismatch();
+        assertEquals(TASK_ID, cannotUpdateTaskPriority.getTaskId());
+
+        final TaskPriorityValue expectedValue = TaskPriorityValue.newBuilder()
+                                                                 .setPriorityValue(TaskPriority.LOW)
+                                                                 .build();
+        final TaskPriorityValue actualValue = TaskPriorityValue.newBuilder()
+                                                               .setPriorityValue(TaskPriority.TP_UNDEFINED)
+                                                               .build();
+        final TaskPriorityValue newValue = TaskPriorityValue.newBuilder()
+                                                            .setPriorityValue(TaskPriority.HIGH)
+                                                            .build();
+        assertEquals(actualValue, unpack(mismatch.getActual()));
+        assertEquals(expectedValue, unpack(mismatch.getExpected()));
+        assertEquals(newValue, unpack(mismatch.getNewValue()));
+    }
+
+    @Test
+    public void emit_cannot_update_task_description_failure_upon_update_task_description_command() {
+        final CreateBasicTask createBasicTask = createTaskInstance();
+        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
+
+        final String expectedValue = "description";
+        final String newValue = "update description";
+        final String actualValue = createBasicTask.getDescription();
+
+        final UpdateTaskDescription updateTaskDescription =
+                updateTaskDescriptionInstance(TASK_ID, expectedValue, newValue);
+        final List<? extends com.google.protobuf.Message> messageList =
+                aggregate.dispatchForTest(updateTaskDescription, COMMAND_CONTEXT);
+
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, messageList.size());
+        assertEquals(CannotUpdateTaskDescription.class, messageList.get(0)
+                                                                   .getClass());
+        final CannotUpdateTaskDescription cannotUpdateTaskDescription = (CannotUpdateTaskDescription) messageList.get(0);
+
+        final ValueMismatch mismatch = cannotUpdateTaskDescription.getDescriptionMismatch();
+        assertEquals(TASK_ID, cannotUpdateTaskDescription.getTaskId());
+
+        final StringValue expectedStringValue = StringValue.newBuilder()
+                                                           .setValue(expectedValue)
+                                                           .build();
+        final StringValue actualStringValue = StringValue.newBuilder()
+                                                         .setValue(actualValue)
+                                                         .build();
+        final StringValue newStringValue = StringValue.newBuilder()
+                                                      .setValue(newValue)
+                                                      .build();
+        assertEquals(expectedStringValue, unpack(mismatch.getExpected()));
+        assertEquals(actualStringValue, unpack(mismatch.getActual()));
+        assertEquals(newStringValue, unpack(mismatch.getNewValue()));
+    }
+
+    @Test
+    public void emit_cannot_update_task_due_date_failure_upon_update_task_due_date_command() {
+        final CreateBasicTask createBasicTask = createTaskInstance();
+        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
+
+        final Timestamp expectedDueDate = Timestamps.getCurrentTime();
+        final Timestamp newDueDate = Timestamps.getCurrentTime();
+
+        final UpdateTaskDueDate updateTaskDueDate =
+                updateTaskDueDateInstance(TASK_ID, expectedDueDate, newDueDate);
+        final List<? extends com.google.protobuf.Message> messageList =
+                aggregate.dispatchForTest(updateTaskDueDate, COMMAND_CONTEXT);
+
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, messageList.size());
+        assertEquals(CannotUpdateTaskDueDate.class, messageList.get(0)
+                                                               .getClass());
+        final CannotUpdateTaskDueDate cannotUpdateTaskDueDate = (CannotUpdateTaskDueDate) messageList.get(0);
+
+        final ValueMismatch mismatch = cannotUpdateTaskDueDate.getDueDateMismatch();
+        assertEquals(TASK_ID, cannotUpdateTaskDueDate.getTaskId());
+
+        assertEquals(newDueDate, unpack(mismatch.getNewValue()));
+        assertEquals(expectedDueDate, unpack(mismatch.getExpected()));
+
+        final Timestamp actualDueDate = Timestamp.getDefaultInstance();
+        assertEquals(actualDueDate, unpack(mismatch.getActual()));
     }
 
     private static String constructExceptionMessage(TaskStatus fromState, TaskStatus toState) {

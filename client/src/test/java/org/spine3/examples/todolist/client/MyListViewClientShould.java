@@ -274,7 +274,8 @@ public class MyListViewClientShould extends CommandLineTodoClientShould {
         final TaskId idOfCreatedTask = createTask.getId();
         final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
 
-        final UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(idOfUpdatedTask, newDueDate);
+        final Timestamp previousDueDate = Timestamp.getDefaultInstance();
+        final UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(idOfUpdatedTask, previousDueDate, newDueDate);
 
         client.update(updateTaskDueDate);
         final List<TaskView> taskViews = client.getMyListView()
@@ -338,7 +339,7 @@ public class MyListViewClientShould extends CommandLineTodoClientShould {
         final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
 
         final UpdateTaskPriority updateTaskPriority =
-                updateTaskPriorityInstance(idOfUpdatedTask, newPriority);
+                updateTaskPriorityInstance(idOfUpdatedTask, TaskPriority.TP_UNDEFINED, newPriority);
         client.update(updateTaskPriority);
 
         final List<TaskView> taskViews = client.getMyListView()

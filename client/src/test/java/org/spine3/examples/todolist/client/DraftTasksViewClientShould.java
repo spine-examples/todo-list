@@ -355,8 +355,9 @@ public class DraftTasksViewClientShould extends CommandLineTodoClientShould {
 
         final TaskId createdTaskId = createDraft.getId();
         final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
+        final Timestamp previousDueDate = Timestamp.getDefaultInstance();
 
-        final UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(updatedTaskId, newDueDate);
+        final UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(updatedTaskId, previousDueDate, newDueDate);
         client.update(updateTaskDueDate);
 
         final List<TaskView> taskViews = client.getDraftTasksView()
@@ -378,7 +379,8 @@ public class DraftTasksViewClientShould extends CommandLineTodoClientShould {
         final TaskId createdTaskId = createDraft.getId();
 
         final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
-        final UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(updatedTaskId, newPriority);
+        final UpdateTaskPriority updateTaskPriority =
+                updateTaskPriorityInstance(updatedTaskId, TaskPriority.TP_UNDEFINED, newPriority);
         client.update(updateTaskPriority);
 
         final List<TaskView> taskViews = client.getDraftTasksView()

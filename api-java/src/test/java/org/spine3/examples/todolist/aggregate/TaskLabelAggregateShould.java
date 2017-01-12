@@ -23,6 +23,8 @@ package org.spine3.examples.todolist.aggregate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.CommandContext;
+import org.spine3.change.ValueMismatch;
+import org.spine3.examples.todolist.CannotUpdateLabelDetails;
 import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelCreated;
@@ -34,6 +36,7 @@ import org.spine3.examples.todolist.UpdateLabelDetails;
 
 import java.util.List;
 
+import static com.google.protobuf.Any.pack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
@@ -42,6 +45,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.UPDATED_LABEL_TITLE;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.createLabelInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.updateLabelDetailsInstance;
+import static org.spine3.protobuf.AnyPacker.unpack;
 
 /**
  * @author Illia Shepilov
@@ -148,5 +152,41 @@ public class TaskLabelAggregateShould {
         assertEquals(LABEL_ID, state.getId());
         assertEquals(updatedLabelColor, state.getColor());
         assertEquals(updatedTitle, state.getTitle());
+    }
+
+    @Test
+    public void emit_cannot_update_label_details_failure_upon_update_label_details_command() {
+        final CreateBasicLabel createBasicLabel = createLabelInstance();
+        aggregate.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
+
+        final LabelDetails expectedLabelDetails = LabelDetails.newBuilder()
+                                                              .setColor(LabelColor.BLUE)
+                                                              .setTitle(LABEL_TITLE)
+                                                              .build();
+        final LabelDetails newLabelDetails = LabelDetails.newBuilder()
+                                                         .setColor(LabelColor.RED)
+                                                         .setTitle(UPDATED_LABEL_TITLE)
+                                                         .build();
+        final UpdateLabelDetails updateLabelDetailsCmd =
+                updateLabelDetailsInstance(LABEL_ID, expectedLabelDetails, newLabelDetails);
+        final List<? extends com.google.protobuf.Message> messageList =
+                aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
+
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, messageList.size());
+        assertEquals(CannotUpdateLabelDetails.class, messageList.get(0)
+                                                                .getClass());
+        final CannotUpdateLabelDetails cannotUpdateLabelDetails = (CannotUpdateLabelDetails) messageList.get(0);
+        final ValueMismatch mismatch = cannotUpdateLabelDetails.getLabelDetailsMismatch();
+
+        assertEquals(LABEL_ID, cannotUpdateLabelDetails.getLabelId());
+        assertEquals(pack(expectedLabelDetails), mismatch.getExpected());
+        assertEquals(pack(newLabelDetails), mismatch.getNewValue());
+
+        final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
+                                                            .setColor(LabelColor.GRAY)
+                                                            .setTitle(LABEL_TITLE)
+                                                            .build();
+        assertEquals(pack(actualLabelDetails), mismatch.getActual());
     }
 }

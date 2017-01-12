@@ -29,9 +29,6 @@ import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.DeleteTask;
 import org.spine3.examples.todolist.FinalizeDraft;
-import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelDetailsChange;
 import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
@@ -39,7 +36,6 @@ import org.spine3.examples.todolist.RestoreDeletedTask;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.examples.todolist.UpdateLabelDetails;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
@@ -107,7 +103,8 @@ public class TestTaskCommandFactory {
     /**
      * Provides {@link UpdateTaskDescription} instance by description and task id specified.
      *
-     * @param description the description of the updated task
+     * @param previousDescription the previous description of the task
+     * @param newDescription      the description of the updated task
      * @return {@link UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id, String previousDescription, String newDescription) {
@@ -128,17 +125,21 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance() {
-        return updateTaskDueDateInstance(TASK_ID, DUE_DATE);
+        return updateTaskDueDateInstance(TASK_ID, Timestamp.getDefaultInstance(), DUE_DATE);
     }
 
     /**
      * Provides {@link UpdateTaskDueDate} instance with specified update due date and {@link TaskId} fields.
      *
-     * @param updatedDueDate the due date of the updated task
+     * @param previousDueDate the previous due date of the task
+     * @param updatedDueDate  the due date of the updated task
      * @return {@link UpdateTaskDueDate} instance
      */
-    public static UpdateTaskDueDate updateTaskDueDateInstance(TaskId id, Timestamp updatedDueDate) {
+    public static UpdateTaskDueDate updateTaskDueDateInstance(TaskId id,
+                                                              Timestamp previousDueDate,
+                                                              Timestamp updatedDueDate) {
         final TimestampChange dueDateChange = TimestampChange.newBuilder()
+                                                             .setPreviousValue(previousDueDate)
                                                              .setNewValue(updatedDueDate)
                                                              .build();
         final UpdateTaskDueDate result = UpdateTaskDueDate.newBuilder()
@@ -154,18 +155,22 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance() {
-        return updateTaskPriorityInstance(TASK_ID, TaskPriority.HIGH);
+        return updateTaskPriorityInstance(TASK_ID, TaskPriority.TP_UNDEFINED, TaskPriority.HIGH);
     }
 
     /**
      * Provides a pre-configured {@link UpdateTaskPriority} command instance.
      *
-     * @param priority the priority of the updated task
+     * @param previousPriority the previous task priority
+     * @param newPriority      the priority of the updated task
      * @return {@link UpdateTaskPriority} instance
      */
-    public static UpdateTaskPriority updateTaskPriorityInstance(TaskId id, TaskPriority priority) {
+    public static UpdateTaskPriority updateTaskPriorityInstance(TaskId id,
+                                                                TaskPriority previousPriority,
+                                                                TaskPriority newPriority) {
         final PriorityChange taskPriorityChange = PriorityChange.newBuilder()
-                                                                .setNewValue(priority)
+                                                                .setPreviousValue(previousPriority)
+                                                                .setNewValue(newPriority)
                                                                 .build();
         final UpdateTaskPriority result = UpdateTaskPriority.newBuilder()
                                                             .setId(id)

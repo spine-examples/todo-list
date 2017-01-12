@@ -79,8 +79,8 @@ public class TestTaskLabelCommandFactory {
     /**
      * Provides {@link UpdateLabelDetails} event by specified label color and title.
      *
-     * @param previousLabelDetails previous label details
-     * @param newLabelDetails      new label details
+     * @param previousLabelDetails the previous label details
+     * @param newLabelDetails      the new label details
      * @return {@link UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId id,

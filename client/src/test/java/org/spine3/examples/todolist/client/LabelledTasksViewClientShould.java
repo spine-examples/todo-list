@@ -593,7 +593,8 @@ public class LabelledTasksViewClientShould extends CommandLineTodoClientShould {
         client.assignLabel(assignLabelToTask);
 
         final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
-        final UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(updatedTaskId, priority);
+        final UpdateTaskPriority updateTaskPriority =
+                updateTaskPriorityInstance(updatedTaskId, TaskPriority.TP_UNDEFINED, priority);
         client.update(updateTaskPriority);
 
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
@@ -627,7 +628,9 @@ public class LabelledTasksViewClientShould extends CommandLineTodoClientShould {
         client.assignLabel(assignLabelToTask);
 
         final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
-        final UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(updatedTaskId, newDueDate);
+        final Timestamp previousDueDate = Timestamp.getDefaultInstance();
+
+        final UpdateTaskDueDate updateTaskDueDate = updateTaskDueDateInstance(updatedTaskId, previousDueDate, newDueDate);
         client.update(updateTaskDueDate);
 
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
