@@ -375,10 +375,10 @@ public class TaskAggregateShould {
     public void update_current_state_task_description_after_dispatch_command() {
         final String newDescription = "new description.";
         final CreateBasicTask createBasicTask = createTaskInstance();
+        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
+
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(TASK_ID, DESCRIPTION, newDescription);
-
-        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
         aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
@@ -390,9 +390,9 @@ public class TaskAggregateShould {
     public void update_current_state_task_due_date_after_dispatch_command() {
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
         final CreateBasicTask createBasicTask = createTaskInstance();
-        final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(TASK_ID, updatedDueDate);
-
         aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
+
+        final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(TASK_ID, updatedDueDate);
         aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
@@ -404,9 +404,9 @@ public class TaskAggregateShould {
     public void update_current_state_task_priority_after_dispatch_command() {
         final TaskPriority updatedPriority = TaskPriority.HIGH;
         final CreateBasicTask createBasicTask = createTaskInstance();
-        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(TASK_ID, updatedPriority);
-
         aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
+
+        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(TASK_ID, updatedPriority);
         aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
@@ -417,9 +417,9 @@ public class TaskAggregateShould {
     @Test
     public void change_task_status_state_when_task_is_completed() {
         final CreateBasicTask createTaskCmd = createTaskInstance();
-        final CompleteTask completeTaskCmd = completeTaskInstance();
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
+        final CompleteTask completeTaskCmd = completeTaskInstance();
         aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
@@ -430,9 +430,9 @@ public class TaskAggregateShould {
     @Test
     public void change_task_status_state_when_task_is_deleted() {
         final CreateBasicTask createTaskCmd = createTaskInstance();
-        final DeleteTask deleteTaskCmd = deleteTaskInstance();
         aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
+        final DeleteTask deleteTaskCmd = deleteTaskInstance();
         aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
         final Task state = aggregate.getState();
 
