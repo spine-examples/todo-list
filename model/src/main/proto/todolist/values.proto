@@ -28,8 +28,6 @@ option java_outer_classname = "ValuesProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
-import "google/protobuf/timestamp.proto";
-
 import "spine/annotations.proto";
 
 import "todolist/attributes.proto";
@@ -37,9 +35,4 @@ import "todolist/attributes.proto";
 message TaskPriorityValue {
 
     TaskPriority priority_value = 1;
-}
-
-message TimestampValue {
-
-    google.protobuf.Timestamp timestamp_value = 1;
 }
