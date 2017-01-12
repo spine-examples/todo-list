@@ -29,6 +29,7 @@ import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.DeleteTask;
 import org.spine3.examples.todolist.FinalizeDraft;
 import org.spine3.examples.todolist.LabelColor;
+import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
@@ -51,10 +52,10 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assig
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.finalizeDraftInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.removeLabelFromTaskInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateLabelDetailsInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.updateLabelDetailsInstance;
 
 /**
  * @author Illia Shepilov
@@ -275,8 +276,17 @@ public class DraftTasksViewClientShould extends CommandLineTodoClientShould {
         client.assignLabel(assignLabelToTask);
 
         final TaskLabelId updatedLabelId = isCorrectId ? labelId : getWrongTaskLabelId();
+
+        final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
+                                                              .setTitle(createBasicLabel.getLabelTitle())
+                                                              .setColor(LabelColor.GRAY)
+                                                              .build();
+        final LabelDetails newLabelDetails = LabelDetails.newBuilder()
+                                                         .setTitle(UPDATED_LABEL_TITLE)
+                                                         .setColor(newLabelColor)
+                                                         .build();
         final UpdateLabelDetails updateLabelDetails =
-                updateLabelDetailsInstance(updatedLabelId, newLabelColor, UPDATED_LABEL_TITLE);
+                updateLabelDetailsInstance(updatedLabelId, previousLabelDetails, newLabelDetails);
         client.update(updateLabelDetails);
 
         final List<TaskView> taskViews = client.getDraftTasksView()
@@ -390,8 +400,9 @@ public class DraftTasksViewClientShould extends CommandLineTodoClientShould {
         final TaskId createdTaskId = createDraft.getId();
 
         final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
+        final String previousDescription = "";
         final UpdateTaskDescription updateTaskDescription =
-                updateTaskDescriptionInstance(updatedTaskId, newDescription);
+                updateTaskDescriptionInstance(updatedTaskId, previousDescription, newDescription);
         client.update(updateTaskDescription);
 
         final List<TaskView> taskViews = client.getDraftTasksView()

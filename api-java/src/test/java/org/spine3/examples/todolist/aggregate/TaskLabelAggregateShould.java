@@ -81,6 +81,9 @@ public class TaskLabelAggregateShould {
 
     @Test
     public void emit_label_details_updated_event_upon_update_label_details_command() {
+        final CreateBasicLabel createBasicLabel = createLabelInstance();
+        aggregate.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
+
         final UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance();
         final List<? extends com.google.protobuf.Message> messageList =
                 aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
@@ -90,7 +93,8 @@ public class TaskLabelAggregateShould {
         assertEquals(LabelDetailsUpdated.class, messageList.get(0)
                                                            .getClass());
         final LabelDetailsUpdated labelDetailsUpdated = (LabelDetailsUpdated) messageList.get(0);
-        final LabelDetails details = labelDetailsUpdated.getLabelDetailsChange().getNewDetails();
+        final LabelDetails details = labelDetailsUpdated.getLabelDetailsChange()
+                                                        .getNewDetails();
 
         assertEquals(LABEL_ID, labelDetailsUpdated.getLabelId());
         assertEquals(LabelColor.GREEN, details.getColor());
@@ -123,10 +127,20 @@ public class TaskLabelAggregateShould {
         assertEquals(LabelColor.GREEN, state.getColor());
         assertEquals(UPDATED_LABEL_TITLE, state.getTitle());
 
+        final LabelColor previousLabelColor = LabelColor.GREEN;
+        final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
+                                                              .setTitle(UPDATED_LABEL_TITLE)
+                                                              .setColor(previousLabelColor)
+                                                              .build();
+
         final LabelColor updatedLabelColor = LabelColor.BLUE;
         final String updatedTitle = "updated title";
+        final LabelDetails newLabelDetails = LabelDetails.newBuilder()
+                                                         .setColor(updatedLabelColor)
+                                                         .setTitle(updatedTitle)
+                                                         .build();
 
-        updateLabelDetailsCmd = updateLabelDetailsInstance(LABEL_ID, updatedLabelColor, updatedTitle);
+        updateLabelDetailsCmd = updateLabelDetailsInstance(LABEL_ID, previousLabelDetails, newLabelDetails);
         aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
 
         state = aggregate.getState();

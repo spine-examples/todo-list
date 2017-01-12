@@ -29,6 +29,7 @@ import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.DeleteTask;
 import org.spine3.examples.todolist.LabelColor;
+import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
@@ -58,10 +59,10 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.removeLabelFromTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.restoreDeletedTaskInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateLabelDetailsInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.updateLabelDetailsInstance;
 
 /**
  * @author Illia Shepilov
@@ -450,10 +451,19 @@ public class LabelledTasksViewClientShould extends CommandLineTodoClientShould {
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
 
+        final LabelDetails previousLabelDetailsWhenIdOsCorrect = LabelDetails.newBuilder()
+                                                                             .setColor(LabelColor.GRAY)
+                                                                             .setTitle(createLabel.getLabelTitle())
+                                                                             .build();
+        final LabelDetails newLabelDetails = LabelDetails.newBuilder()
+                                                         .setColor(updatedColor)
+                                                         .setTitle(updatedTitle)
+                                                         .build();
+        final LabelDetails previousLabelDetails =
+                isCorrectId ? previousLabelDetailsWhenIdOsCorrect : LabelDetails.getDefaultInstance();
         final TaskLabelId updatedLabelId = isCorrectId ? labelId : getWrongTaskLabelId();
-        final UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(updatedLabelId,
-                                                                                 updatedColor,
-                                                                                 updatedTitle);
+        final UpdateLabelDetails updateLabelDetails =
+                updateLabelDetailsInstance(updatedLabelId, previousLabelDetails, newLabelDetails);
         client.update(updateLabelDetails);
 
         final List<LabelledTasksView> labelledTasksViewList = client.getLabelledTasksView();
@@ -537,7 +547,7 @@ public class LabelledTasksViewClientShould extends CommandLineTodoClientShould {
         return view;
     }
 
-    private TaskView obtainViewWhenHandledCommandUpdateTaskDescription(String description, boolean isCorrectId) {
+    private TaskView obtainViewWhenHandledCommandUpdateTaskDescription(String newDescription, boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
         final TaskId createdTaskId = createTask.getId();
         client.create(createTask);
@@ -552,7 +562,8 @@ public class LabelledTasksViewClientShould extends CommandLineTodoClientShould {
         client.assignLabel(assignLabelToTask);
 
         final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
-        final UpdateTaskDescription updateTaskDescription = updateTaskDescriptionInstance(updatedTaskId, description);
+        final UpdateTaskDescription updateTaskDescription =
+                updateTaskDescriptionInstance(updatedTaskId, createTask.getDescription(), newDescription);
         client.update(updateTaskDescription);
 
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();

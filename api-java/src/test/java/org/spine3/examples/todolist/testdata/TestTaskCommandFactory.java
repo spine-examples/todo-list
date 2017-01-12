@@ -101,7 +101,7 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance() {
-        return updateTaskDescriptionInstance(TASK_ID, DESCRIPTION);
+        return updateTaskDescriptionInstance(TASK_ID, DESCRIPTION, DESCRIPTION);
     }
 
     /**
@@ -110,9 +110,10 @@ public class TestTaskCommandFactory {
      * @param description the description of the updated task
      * @return {@link UpdateTaskDescription} instance
      */
-    public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id, String description) {
+    public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id, String previousDescription, String newDescription) {
         final StringChange descriptionChange = StringChange.newBuilder()
-                                                           .setNewValue(description)
+                                                           .setPreviousValue(previousDescription)
+                                                           .setNewValue(newDescription)
                                                            .build();
         final UpdateTaskDescription result = UpdateTaskDescription.newBuilder()
                                                                   .setId(id)
@@ -343,18 +344,18 @@ public class TestTaskCommandFactory {
         return result;
     }
 
-    public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId id, LabelColor color, String title) {
-        final LabelDetails labelDetails = LabelDetails.newBuilder()
-                                                      .setColor(color)
-                                                      .setTitle(title)
-                                                      .build();
-        final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()
-                                                                        .setNewDetails(labelDetails)
-                                                                        .build();
-        final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
-                                                            .setId(id)
-                                                            .setLabelDetailsChange(labelDetailsChange)
-                                                            .build();
-        return result;
-    }
+    //public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId id, LabelColor color, String title) {
+    //    final LabelDetails labelDetails = LabelDetails.newBuilder()
+    //                                                  .setColor(color)
+    //                                                  .setTitle(title)
+    //                                                  .build();
+    //    final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()
+    //                                                                    .setNewDetails(labelDetails)
+    //                                                                    .build();
+    //    final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
+    //                                                        .setId(id)
+    //                                                        .setLabelDetailsChange(labelDetailsChange)
+    //                                                        .build();
+    //    return result;
+    //}
 }

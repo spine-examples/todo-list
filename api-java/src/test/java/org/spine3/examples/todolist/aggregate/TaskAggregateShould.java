@@ -118,6 +118,8 @@ public class TaskAggregateShould {
 
     @Test
     public void emit_task_description_updated_event_upon_update_task_description_command() {
+        final CreateBasicTask createBasicTask = createTaskInstance();
+        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
         final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance();
         final List<? extends com.google.protobuf.Message> messageList =
                 aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
@@ -190,8 +192,8 @@ public class TaskAggregateShould {
     @Test
     public void catch_exception_when_handle_update_task_description_when_description_contains_one_symbol() {
         try {
-            UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, ".");
-            updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, "description");
+            UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, "", ".");
+            updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, "", "description");
             aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
@@ -372,8 +374,9 @@ public class TaskAggregateShould {
     @Test
     public void update_current_state_task_description_after_dispatch_command() {
         final String newDescription = "new description.";
-        final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, newDescription);
         final CreateBasicTask createBasicTask = createTaskInstance();
+        final UpdateTaskDescription updateTaskDescriptionCmd =
+                updateTaskDescriptionInstance(TASK_ID, DESCRIPTION, newDescription);
 
         aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
         aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);

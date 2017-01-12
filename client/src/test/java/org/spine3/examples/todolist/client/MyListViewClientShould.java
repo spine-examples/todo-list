@@ -29,6 +29,7 @@ import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.DeleteTask;
 import org.spine3.examples.todolist.LabelColor;
+import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.TaskId;
@@ -57,6 +58,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.reope
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.LABEL_TITLE;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.UPDATED_LABEL_TITLE;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.updateLabelDetailsInstance;
 
@@ -304,8 +306,16 @@ public class MyListViewClientShould extends CommandLineTodoClientShould {
 
         final TaskLabelId idOfUpdatedLabel = isCorrectId ? idOfCreatedLabel : getWrongTaskLabelId();
 
+        final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
+                                                              .setColor(LabelColor.GRAY)
+                                                              .setTitle(LABEL_TITLE)
+                                                              .build();
+        final LabelDetails newLabelDetails = LabelDetails.newBuilder()
+                                                         .setTitle(UPDATED_LABEL_TITLE)
+                                                         .setColor(newColor)
+                                                         .build();
         final UpdateLabelDetails updateLabelDetails =
-                updateLabelDetailsInstance(idOfUpdatedLabel, newColor, UPDATED_LABEL_TITLE);
+                updateLabelDetailsInstance(idOfUpdatedLabel, previousLabelDetails, newLabelDetails);
         client.update(updateLabelDetails);
 
         final List<TaskView> taskViews = client.getMyListView()
@@ -445,7 +455,7 @@ public class MyListViewClientShould extends CommandLineTodoClientShould {
 
         final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
         final UpdateTaskDescription updateTaskDescription =
-                updateTaskDescriptionInstance(idOfUpdatedTask, newDescription);
+                updateTaskDescriptionInstance(idOfUpdatedTask, createTask.getDescription(), newDescription);
         client.update(updateTaskDescription);
 
         final List<TaskView> taskViews = client.getMyListView()

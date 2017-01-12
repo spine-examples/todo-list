@@ -65,23 +65,30 @@ public class TestTaskLabelCommandFactory {
      * @return {@link UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance() {
-        return updateLabelDetailsInstance(LABEL_ID, LabelColor.GREEN, UPDATED_LABEL_TITLE);
+        final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
+                                                              .setTitle(LABEL_TITLE)
+                                                              .setColor(LabelColor.GRAY)
+                                                              .build();
+        final LabelDetails newLabelDetails = LabelDetails.newBuilder()
+                                                         .setTitle(UPDATED_LABEL_TITLE)
+                                                         .setColor(LabelColor.GREEN)
+                                                         .build();
+        return updateLabelDetailsInstance(LABEL_ID, previousLabelDetails, newLabelDetails);
     }
 
     /**
      * Provides {@link UpdateLabelDetails} event by specified label color and title.
      *
-     * @param color the color of the updated label details
-     * @param title the title of the updated label details
+     * @param previousLabelDetails previous label details
+     * @param newLabelDetails      new label details
      * @return {@link UpdateLabelDetails} instance.
      */
-    public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId id, LabelColor color, String title) {
-        final LabelDetails labelDetails = LabelDetails.newBuilder()
-                                                      .setTitle(title)
-                                                      .setColor(color)
-                                                      .build();
+    public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId id,
+                                                                LabelDetails previousLabelDetails,
+                                                                LabelDetails newLabelDetails) {
         final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()
-                                                                        .setNewDetails(labelDetails)
+                                                                        .setPreviousDetails(previousLabelDetails)
+                                                                        .setNewDetails(newLabelDetails)
                                                                         .build();
         final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
                                                             .setId(id)
