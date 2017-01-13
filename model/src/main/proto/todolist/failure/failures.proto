@@ -55,67 +55,90 @@ message CannotUpdateTaskDueDate {
 // Fire the failure when cannot update label details.
 message CannotUpdateLabelDetails {
 
-    //Failed the label details update.
+    // Failed the label details update.
     LabelDetailsUpdateFailed update_failed = 1;
 }
 
+// Fire the failure when cannot create basic task.
 message CannotCreateBasicTask {
 
+    // Failed the task creation.
     CreateBasicTaskFailed create_task_failed = 1;
 }
 
+// Fire the failure when cannot create basic label.
 message CannotCreateBasicLabel {
 
+    // Failed the label creation.
     CreateBasicLabelFailed create_label_failed = 1;
 }
 
+// Fire the failure when cannot assign label to task.
 message CannotAssignLabelToTask {
 
+    // Failed the label assigning to the task.
     AssignLabelToTaskFailed assign_label_failed = 1;
 }
 
+// Fire the failure when cannot remove label from task.
 message CannotRemoveLabelFromTask {
 
+    // Failed the label removing from task.
     RemoveLabelFromTaskFailed remove_label_failed = 1;
 }
 
+// Fire the failure when cannot reopen task.
 message CannotReopenTask {
 
+    // Failed the task reopening.
     ReopenTaskFailed reopen_task_failed = 1;
 }
 
+// Fire the failure when cannot delete task.
 message CannotDeleteTask {
 
+    // Failed the task deletion.
     DeleteTaskFailed delete_task_failed = 1;
 }
 
+// Fire the failure when cannot restore deleted task.
 message CannotRestoreDeletedTask {
 
+    // Failed the task restoring.
     RestoreDeletedTaskFailed restore_task_failed = 1;
 }
 
+// Fire the failure when cannot complete task.
 message CannotCompleteTask {
 
+    // Failed the task completion.
     CompleteTaskFailed complete_task_failed = 1;
 }
 
+// Fire the failure when cannot create task draft.
 message CannotCreateDraft {
 
+    // Failed the draft creation.
     CreateDraftFailed create_draft_failed = 1;
 }
 
+// Fire the failure when cannot finalize task draft.
 message CannotFinalizeDraft {
 
+    // Failed the draft finalization.
     FinalizeDraftFailed finalize_draft_failed = 1;
 }
 
+// Fire the failure when cannot update task with inappropriate description.
 message CannotUpdateTaskWithInappropriateDescription {
 
     // Failed the description update.
     DescriptionUpdateFailed update_failed = 1;
 }
 
+// Fire the failure when cannot create task with inapproprriate descriprion.
 message CannotCreateTaskWithInappropriateDescription{
 
+    // Failed the task creation.
     CreateBasicTaskFailed create_task_failed = 1;
 }
