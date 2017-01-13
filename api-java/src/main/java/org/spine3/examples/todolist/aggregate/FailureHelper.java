@@ -66,6 +66,9 @@ import java.util.List;
     private static final String TOO_SHORT_TASK_DESCRIPTION_EXCEPTION_MESSAGE = "Description should contain " +
             "at least 3 alphanumeric symbols.";
 
+    private FailureHelper() {
+    }
+
     static void throwCannotReopenTaskFailure(TaskId taskId, String message) throws CannotReopenTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)

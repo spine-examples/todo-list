@@ -35,6 +35,9 @@ import static com.google.protobuf.Any.pack;
  */
 /* package */ class MismatchHelper {
 
+    private MismatchHelper() {
+    }
+
     static ValueMismatch of(TaskPriority expectedPriority,
                             TaskPriority actualPriority,
                             TaskPriority newPriority,
