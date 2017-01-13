@@ -53,13 +53,20 @@ import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskPriorityUpdated;
 import org.spine3.examples.todolist.TaskPriorityValue;
-import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
+import org.spine3.examples.todolist.failures.CannotAssignLabelToTask;
+import org.spine3.examples.todolist.failures.CannotCompleteTask;
+import org.spine3.examples.todolist.failures.CannotDeleteTask;
+import org.spine3.examples.todolist.failures.CannotFinalizeDraft;
+import org.spine3.examples.todolist.failures.CannotRemoveLabelFromTask;
+import org.spine3.examples.todolist.failures.CannotReopenTask;
+import org.spine3.examples.todolist.failures.CannotRestoreDeletedTask;
 import org.spine3.examples.todolist.failures.CannotUpdateTaskDescription;
 import org.spine3.examples.todolist.failures.CannotUpdateTaskDueDate;
 import org.spine3.examples.todolist.failures.CannotUpdateTaskPriority;
+import org.spine3.examples.todolist.failures.CannotUpdateTaskWithInappropriateDescription;
 import org.spine3.examples.todolist.failures.Failures;
 import org.spine3.protobuf.Timestamps;
 
@@ -68,6 +75,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.spine3.base.Identifiers.newUuid;
@@ -76,7 +84,6 @@ import static org.spine3.examples.todolist.TaskStatus.DELETED;
 import static org.spine3.examples.todolist.TaskStatus.DRAFT;
 import static org.spine3.examples.todolist.TaskStatus.FINALIZED;
 import static org.spine3.examples.todolist.TaskStatus.OPEN;
-import static org.spine3.examples.todolist.TaskStatus.TS_UNDEFINED;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DUE_DATE;
@@ -102,10 +109,6 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 public class TaskAggregateShould {
 
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
-    private static final String COMPLETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied to the completed task.";
-    private static final String DELETED_TASK_EXCEPTION_MESSAGE = "Command cannot be applied to the deleted task.";
-    private static final String INAPPROPRIATE_TASK_DESCRIPTION = "Description should contain " +
-            "at least 3 alphanumeric symbols.";
     private TaskAggregate aggregate;
 
     private static final TaskId ID = TaskId.newBuilder()
@@ -209,8 +212,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(INAPPROPRIATE_TASK_DESCRIPTION, cause.getMessage());
+            assertTrue(cause instanceof CannotUpdateTaskWithInappropriateDescription);
         }
     }
 
@@ -224,12 +226,11 @@ public class TaskAggregateShould {
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
 
             final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance();
-            aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
+            assertThrows(CannotUpdateTaskDescription.class, () -> aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT));
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof CannotUpdateTaskDescription);
         }
     }
 
@@ -247,8 +248,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(COMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof CannotUpdateTaskDescription);
         }
     }
 
@@ -266,8 +266,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(COMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof CannotUpdateTaskDueDate);
         }
     }
 
@@ -285,8 +284,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof CannotUpdateTaskDueDate);
         }
     }
 
@@ -304,8 +302,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof CannotUpdateTaskPriority);
         }
     }
 
@@ -323,8 +320,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(COMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof CannotUpdateTaskPriority);
         }
     }
 
@@ -523,8 +519,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(constructExceptionMessage(COMPLETED, DRAFT), cause.getMessage());
+            assertTrue(cause instanceof CannotRestoreDeletedTask);
         }
     }
 
@@ -539,8 +534,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(constructExceptionMessage(FINALIZED, OPEN), cause.getMessage());
+            assertTrue(cause instanceof CannotRestoreDeletedTask);
         }
     }
 
@@ -555,8 +549,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(constructExceptionMessage(DRAFT, OPEN), cause.getMessage());
+            assertTrue(cause instanceof CannotRestoreDeletedTask);
         }
     }
 
@@ -607,8 +600,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(constructExceptionMessage(DELETED, FINALIZED), cause.getMessage());
+            assertTrue(cause instanceof CannotFinalizeDraft);
         }
     }
 
@@ -620,8 +612,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(constructExceptionMessage(TS_UNDEFINED, FINALIZED), cause.getMessage());
+            assertTrue(cause instanceof CannotFinalizeDraft);
         }
     }
 
@@ -649,8 +640,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(constructExceptionMessage(DELETED, COMPLETED), cause.getMessage());
+            assertTrue(cause instanceof CannotCompleteTask);
         }
     }
 
@@ -665,8 +655,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(constructExceptionMessage(DRAFT, COMPLETED), cause.getMessage());
+            assertTrue(cause instanceof CannotCompleteTask);
         }
     }
 
@@ -681,8 +670,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(constructExceptionMessage(FINALIZED, OPEN), cause.getMessage());
+            assertTrue(cause instanceof CannotReopenTask);
         }
     }
 
@@ -718,8 +706,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(constructExceptionMessage(FINALIZED, OPEN), cause.getMessage());
+            assertTrue(cause instanceof CannotReopenTask);
         }
     }
 
@@ -751,8 +738,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(constructExceptionMessage(DRAFT, OPEN), cause.getMessage());
+            assertTrue(cause instanceof CannotReopenTask);
         }
     }
 
@@ -770,8 +756,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof CannotAssignLabelToTask);
         }
     }
 
@@ -789,8 +774,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(COMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof CannotAssignLabelToTask);
         }
     }
 
@@ -808,8 +792,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(COMPLETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof CannotRemoveLabelFromTask);
         }
     }
 
@@ -827,8 +810,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(DELETED_TASK_EXCEPTION_MESSAGE, cause.getMessage());
+            assertTrue(cause instanceof CannotRemoveLabelFromTask);
         }
     }
 
@@ -844,8 +826,7 @@ public class TaskAggregateShould {
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof IllegalStateException);
-            assertEquals(constructExceptionMessage(DELETED, DELETED), cause.getMessage());
+            assertTrue(cause instanceof CannotDeleteTask);
         }
     }
 
@@ -927,7 +908,9 @@ public class TaskAggregateShould {
             final Failures.CannotUpdateTaskPriority cannotUpdateTaskPriority =
                     ((CannotUpdateTaskPriority) cause).getFailure();
             final PriorityUpdateFailed priorityUpdateFailed = cannotUpdateTaskPriority.getUpdateFailed();
-            assertEquals(TASK_ID, priorityUpdateFailed.getTaskId());
+            final TaskId actualTaskId = priorityUpdateFailed.getUpdatePriorityFailed()
+                                                            .getTaskId();
+            assertEquals(TASK_ID, actualTaskId);
 
             final ValueMismatch mismatch = priorityUpdateFailed.getPriorityMismatch();
             final TaskPriorityValue expectedValue = TaskPriorityValue.newBuilder()
@@ -967,7 +950,9 @@ public class TaskAggregateShould {
             final Failures.CannotUpdateTaskDescription cannotUpdateTaskDescription =
                     ((CannotUpdateTaskDescription) cause).getFailure();
             final DescriptionUpdateFailed descriptionUpdateFailed = cannotUpdateTaskDescription.getUpdateFailed();
-            assertEquals(TASK_ID, descriptionUpdateFailed.getTaskId());
+            final TaskId actualTaskId = descriptionUpdateFailed.getUpdateDescriptionFailed()
+                                                               .getTaskId();
+            assertEquals(TASK_ID, actualTaskId);
 
             final StringValue expectedStringValue = StringValue.newBuilder()
                                                                .setValue(expectedValue)
@@ -1012,7 +997,9 @@ public class TaskAggregateShould {
                     ((CannotUpdateTaskDueDate) cause).getFailure();
 
             final TaskDueDateUpdateFailed dueDateUpdateFailed = cannotUpdateTaskDueDate.getUpdateFailed();
-            assertEquals(TASK_ID, dueDateUpdateFailed.getTaskId());
+            final TaskId actualTaskId = dueDateUpdateFailed.getUpdateDueDateFailed()
+                                                           .getTaskId();
+            assertEquals(TASK_ID, actualTaskId);
 
             final ValueMismatch mismatch = dueDateUpdateFailed.getDueDateMismatch();
 
@@ -1022,10 +1009,5 @@ public class TaskAggregateShould {
             final Timestamp actualDueDate = Timestamp.getDefaultInstance();
             assertEquals(actualDueDate, unpack(mismatch.getActual()));
         }
-    }
-
-    private static String constructExceptionMessage(TaskStatus fromState, TaskStatus toState) {
-        return String.format("Cannot make transition from: %s to: %s state",
-                             fromState, toState);
     }
 }

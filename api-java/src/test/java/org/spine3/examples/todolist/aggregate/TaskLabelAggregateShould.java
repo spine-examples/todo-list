@@ -183,7 +183,9 @@ public class TaskLabelAggregateShould {
             final Failures.CannotUpdateLabelDetails cannotUpdateLabelDetails =
                     ((CannotUpdateLabelDetails) cause).getFailure();
             final LabelDetailsUpdateFailed labelDetailsUpdateFailed = cannotUpdateLabelDetails.getUpdateFailed();
-            assertEquals(LABEL_ID, labelDetailsUpdateFailed.getLabelId());
+            final TaskLabelId actualLabelId = labelDetailsUpdateFailed.getUpdateLabelDetailsFailed()
+                                                                      .getLabelId();
+            assertEquals(LABEL_ID, actualLabelId);
 
             final ValueMismatch mismatch = labelDetailsUpdateFailed.getLabelDetailsMismatch();
             assertEquals(pack(expectedLabelDetails), mismatch.getExpected());

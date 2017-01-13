@@ -27,7 +27,6 @@ import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelCreated;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsChange;
-import org.spine3.examples.todolist.LabelDetailsUpdateFailed;
 import org.spine3.examples.todolist.LabelDetailsUpdated;
 import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.TaskLabelId;
@@ -40,8 +39,8 @@ import org.spine3.server.command.Assign;
 import java.util.Collections;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.protobuf.Any.pack;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotUpdateLabelDetailsFailure;
+import static org.spine3.examples.todolist.aggregate.MismatchHelper.of;
 
 /**
  * The aggregate managing the state of a {@link TaskLabel}.
@@ -88,9 +87,9 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
         final TaskLabelId labelId = cmd.getId();
 
         if (!isEquals) {
-            CannotUpdateLabelDetails failure = constructFailureResult(labelId, actualLabelDetails, labelDetailsChange);
-            checkNotNull(failure);
-            throw failure;
+            final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
+            final ValueMismatch mismatch = of(expectedLabelDetails, actualLabelDetails, newLabelDetails, getVersion());
+            throwCannotUpdateLabelDetailsFailure(labelId, mismatch);
         }
 
         final LabelDetailsUpdated labelDetailsUpdated = LabelDetailsUpdated.newBuilder()
@@ -115,24 +114,5 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
                                                .getNewDetails();
         getBuilder().setTitle(labelDetails.getTitle())
                     .setColor(labelDetails.getColor());
-    }
-
-    private CannotUpdateLabelDetails constructFailureResult(TaskLabelId labelId,
-                                                            LabelDetails actualLabelDetails,
-                                                            LabelDetailsChange labelDetailsChange) {
-        final LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
-        final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
-        final ValueMismatch mismatch = ValueMismatch.newBuilder()
-                                                    .setActual(pack(actualLabelDetails))
-                                                    .setExpected(pack(expectedLabelDetails))
-                                                    .setNewValue(pack(newLabelDetails))
-                                                    .setVersion(getVersion())
-                                                    .build();
-        final LabelDetailsUpdateFailed labelDetailsUpdateFailed = LabelDetailsUpdateFailed.newBuilder()
-                                                                                          .setLabelId(labelId)
-                                                                                          .setLabelDetailsMismatch(mismatch)
-                                                                                          .build();
-        final CannotUpdateLabelDetails result = new CannotUpdateLabelDetails(labelDetailsUpdateFailed);
-        return result;
     }
 }

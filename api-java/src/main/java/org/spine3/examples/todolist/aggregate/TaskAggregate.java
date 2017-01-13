@@ -23,7 +23,6 @@ package org.spine3.examples.todolist.aggregate;
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
 import org.spine3.change.StringChange;
-import org.spine3.change.StringMismatch;
 import org.spine3.change.TimestampChange;
 import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.AssignLabelToTask;
@@ -32,13 +31,11 @@ import org.spine3.examples.todolist.CreateBasicTask;
 import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.DeleteTask;
 import org.spine3.examples.todolist.DeletedTaskRestored;
-import org.spine3.examples.todolist.DescriptionUpdateFailed;
 import org.spine3.examples.todolist.FinalizeDraft;
 import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.LabelledTaskRestored;
 import org.spine3.examples.todolist.PriorityChange;
-import org.spine3.examples.todolist.PriorityUpdateFailed;
 import org.spine3.examples.todolist.RemoveLabelFromTask;
 import org.spine3.examples.todolist.ReopenTask;
 import org.spine3.examples.todolist.RestoreDeletedTask;
@@ -50,22 +47,30 @@ import org.spine3.examples.todolist.TaskDescriptionUpdated;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskDraftCreated;
 import org.spine3.examples.todolist.TaskDraftFinalized;
-import org.spine3.examples.todolist.TaskDueDateUpdateFailed;
 import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskPriorityUpdated;
-import org.spine3.examples.todolist.TaskPriorityValue;
 import org.spine3.examples.todolist.TaskReopened;
 import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.UpdateTaskDescription;
 import org.spine3.examples.todolist.UpdateTaskDueDate;
 import org.spine3.examples.todolist.UpdateTaskPriority;
+import org.spine3.examples.todolist.failures.CannotAssignLabelToTask;
+import org.spine3.examples.todolist.failures.CannotCompleteTask;
+import org.spine3.examples.todolist.failures.CannotCreateBasicTask;
+import org.spine3.examples.todolist.failures.CannotCreateDraft;
+import org.spine3.examples.todolist.failures.CannotCreateTaskWithInappropriateDescription;
+import org.spine3.examples.todolist.failures.CannotDeleteTask;
+import org.spine3.examples.todolist.failures.CannotFinalizeDraft;
+import org.spine3.examples.todolist.failures.CannotRemoveLabelFromTask;
+import org.spine3.examples.todolist.failures.CannotReopenTask;
+import org.spine3.examples.todolist.failures.CannotRestoreDeletedTask;
 import org.spine3.examples.todolist.failures.CannotUpdateTaskDescription;
 import org.spine3.examples.todolist.failures.CannotUpdateTaskDueDate;
 import org.spine3.examples.todolist.failures.CannotUpdateTaskPriority;
-import org.spine3.protobuf.AnyPacker;
+import org.spine3.examples.todolist.failures.CannotUpdateTaskWithInappropriateDescription;
 import org.spine3.protobuf.Timestamps;
 import org.spine3.server.aggregate.Aggregate;
 import org.spine3.server.aggregate.Apply;
@@ -75,8 +80,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Lists.newLinkedList;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotAssignLabelToTaskFailure;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotCompleteTaskFailure;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotCreateDraftFailure;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotCreateTaskWithInappropriateDescription;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotDeleteTask;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotFinalizeDraftFailure;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotRemoveLabelFromTaskFailure;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotReopenTaskFailure;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotRestoreDeletedTaskFailure;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotUpdateDescriptionFailure;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotUpdateTaskDescriptionFailure;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotUpdateTaskDueDateFailure;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotUpdateTaskPriorityFailure;
+import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotUpdateTooShortDescriptionFailure;
+import static org.spine3.examples.todolist.aggregate.MismatchHelper.of;
 import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.ensureNeitherCompletedNorDeleted;
 import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateAssignLabelToTaskCommand;
 import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateCreateDraftCommand;
@@ -99,9 +119,6 @@ import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateU
 public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;
-    private static final String SHORT_DESCRIPTION_EXCEPTION_MESSAGE =
-            "Description should contain at least 3 alphanumeric symbols.";
-    private static final String NULL_DESCRIPTION_EXCEPTION_MESSAGE = "Description cannot be null.";
 
     /**
      * Creates a new aggregate instance.
@@ -114,19 +131,23 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(CreateBasicTask cmd) {
+    public List<? extends Message> handle(CreateBasicTask cmd)
+            throws CannotCreateBasicTask, CannotCreateTaskWithInappropriateDescription {
         validateCommand(cmd);
+        final TaskId taskId = cmd.getId();
+
         final TaskDetails.Builder taskDetails = TaskDetails.newBuilder()
                                                            .setDescription(cmd.getDescription());
         final TaskCreated result = TaskCreated.newBuilder()
-                                              .setId(cmd.getId())
+                                              .setId(taskId)
                                               .setDetails(taskDetails)
                                               .build();
         return Collections.singletonList(result);
     }
 
     @Assign
-    public List<? extends Message> handle(UpdateTaskDescription cmd) throws CannotUpdateTaskDescription {
+    public List<? extends Message> handle(UpdateTaskDescription cmd)
+            throws CannotUpdateTaskDescription, CannotUpdateTaskWithInappropriateDescription {
         validateCommand(cmd);
         final Task state = getState();
         final StringChange change = cmd.getDescriptionChange();
@@ -137,9 +158,9 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final TaskId taskId = cmd.getId();
 
         if (!isEquals) {
-            final CannotUpdateTaskDescription failure = constructFailure(taskId, actualDescription, change);
-            checkNotNull(failure);
-            throw failure;
+            final String newDescription = change.getNewValue();
+            final ValueMismatch mismatch = of(expectedDescription, actualDescription, newDescription, getVersion());
+            throwCannotUpdateDescriptionFailure(taskId, mismatch);
         }
 
         final TaskDescriptionUpdated taskDescriptionUpdated = TaskDescriptionUpdated.newBuilder()
@@ -154,21 +175,24 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     public List<? extends Message> handle(UpdateTaskDueDate cmd) throws CannotUpdateTaskDueDate {
         final Task state = getState();
         final TaskStatus taskStatus = state.getTaskStatus();
-        validateUpdateTaskDueDateCommand(taskStatus);
+        final boolean isValid = validateUpdateTaskDueDateCommand(taskStatus);
 
-        final Timestamp actualDueDate = getState().getDueDate();
-        final TimestampChange change = cmd.getDueDateChange();
-
-        final Timestamp actualDueDae = state.getDueDate();
-        final Timestamp expectedDueDate = change.getPreviousValue();
-
-        final boolean isEquals = Timestamps.compare(actualDueDae, expectedDueDate) == 0;
         final TaskId taskId = cmd.getId();
 
+        if (!isValid) {
+            throwCannotUpdateTaskDueDateFailure(taskId);
+        }
+
+        final TimestampChange change = cmd.getDueDateChange();
+        final Timestamp actualDueDate = state.getDueDate();
+        final Timestamp expectedDueDate = change.getPreviousValue();
+
+        final boolean isEquals = Timestamps.compare(actualDueDate, expectedDueDate) == 0;
+
         if (!isEquals) {
-            final CannotUpdateTaskDueDate failure = constructFailure(taskId, actualDueDae, change);
-            checkNotNull(failure);
-            throw failure;
+            final Timestamp newDueDate = change.getNewValue();
+            final ValueMismatch mismatch = of(expectedDueDate, actualDueDate, newDueDate, getVersion());
+            throwCannotUpdateTaskDueDateFailure(taskId, mismatch);
         }
 
         final TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated.newBuilder()
@@ -183,19 +207,23 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     public List<? extends Message> handle(UpdateTaskPriority cmd) throws CannotUpdateTaskPriority {
         final Task state = getState();
         final TaskStatus taskStatus = state.getTaskStatus();
-        validateUpdateTaskPriorityCommand(taskStatus);
+        final boolean isValid = validateUpdateTaskPriorityCommand(taskStatus);
+        final TaskId taskId = cmd.getId();
+
+        if (!isValid) {
+            throwCannotUpdateTaskPriorityFailure(taskId);
+        }
 
         final PriorityChange priorityChange = cmd.getPriorityChange();
         final TaskPriority actualPriority = state.getPriority();
         final TaskPriority expectedPriority = priorityChange.getPreviousValue();
 
         boolean isEquals = actualPriority.equals(expectedPriority);
-        final TaskId taskId = cmd.getId();
 
         if (!isEquals) {
-            final CannotUpdateTaskPriority failure = constructFailure(taskId, actualPriority, priorityChange);
-            checkNotNull(failure);
-            throw failure;
+            final TaskPriority newPriority = priorityChange.getNewValue();
+            final ValueMismatch mismatch = of(expectedPriority, actualPriority, newPriority, getVersion());
+            throwCannotUpdateTaskPriorityFailure(taskId, mismatch);
         }
 
         final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
@@ -207,39 +235,66 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(ReopenTask cmd) {
+    public List<? extends Message> handle(ReopenTask cmd) throws CannotReopenTask {
         final Task state = getState();
-        validateTransition(state.getTaskStatus(), TaskStatus.OPEN);
+        final TaskStatus currentStatus = state.getTaskStatus();
+        final TaskStatus newStatus = TaskStatus.OPEN;
+        final boolean isValid = validateTransition(currentStatus, newStatus);
+        final TaskId taskId = cmd.getId();
+
+        if (!isValid) {
+            final String message = generateExceptionMessage(currentStatus, newStatus);
+            throwCannotReopenTaskFailure(taskId, message);
+        }
+
         final TaskReopened taskReopened = TaskReopened.newBuilder()
-                                                      .setId(cmd.getId())
+                                                      .setId(taskId)
                                                       .build();
         final List<TaskReopened> result = Collections.singletonList(taskReopened);
         return result;
     }
 
     @Assign
-    public List<? extends Message> handle(DeleteTask cmd) {
+    public List<? extends Message> handle(DeleteTask cmd) throws CannotDeleteTask {
         final Task state = getState();
-        validateTransition(state.getTaskStatus(), TaskStatus.DELETED);
+        final TaskStatus currentStatus = state.getTaskStatus();
+        final TaskStatus newStatus = TaskStatus.DELETED;
+        final TaskId taskId = cmd.getId();
+        final boolean isValid = validateTransition(currentStatus, newStatus);
+
+        if (!isValid) {
+            final String message = generateExceptionMessage(currentStatus, newStatus);
+            throwCannotDeleteTask(taskId, message);
+        }
+
         final TaskDeleted taskDeleted = TaskDeleted.newBuilder()
-                                                   .setId(cmd.getId())
+                                                   .setId(taskId)
                                                    .build();
         final List<TaskDeleted> result = Collections.singletonList(taskDeleted);
         return result;
     }
 
     @Assign
-    public List<? extends Message> handle(RestoreDeletedTask cmd) {
+    public List<? extends Message> handle(RestoreDeletedTask cmd) throws CannotRestoreDeletedTask {
         final Task state = getState();
-        validateTransition(state.getTaskStatus(), TaskStatus.OPEN);
+        final TaskStatus currentStatus = state.getTaskStatus();
+        final TaskStatus newStatus = TaskStatus.OPEN;
+        final TaskId taskId = cmd.getId();
+        final boolean isValid = validateTransition(currentStatus, newStatus);
+
+        if (!isValid) {
+            final String message = generateExceptionMessage(currentStatus, newStatus);
+            throwCannotRestoreDeletedTaskFailure(taskId, message);
+        }
+
         final DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored.newBuilder()
-                                                                           .setId(cmd.getId())
+                                                                           .setId(taskId)
                                                                            .build();
         final List<Message> result = newLinkedList();
         result.add(deletedTaskRestored);
         for (TaskLabelId labelId : state.getLabelIdsList()) {
             final LabelledTaskRestored labelledTaskRestored = LabelledTaskRestored.newBuilder()
-                                                                                  .setTaskId(cmd.getId())
+                                                                                  .setTaskId(taskId)
                                                                                   .setLabelId(labelId)
                                                                                   .build();
             result.add(labelledTaskRestored);
@@ -248,56 +303,94 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(CompleteTask cmd) {
+    public List<? extends Message> handle(CompleteTask cmd) throws CannotCompleteTask {
         final Task state = getState();
-        validateTransition(state.getTaskStatus(), TaskStatus.COMPLETED);
+        final TaskStatus currentStatus = state.getTaskStatus();
+        final TaskStatus newStatus = TaskStatus.COMPLETED;
+        final TaskId taskId = cmd.getId();
+        final boolean isValid = validateTransition(currentStatus, newStatus);
+
+        if (!isValid) {
+            final String message = generateExceptionMessage(currentStatus, newStatus);
+            throwCannotCompleteTaskFailure(taskId, message);
+        }
+
         final TaskCompleted taskCompleted = TaskCompleted.newBuilder()
-                                                         .setId(cmd.getId())
+                                                         .setId(taskId)
                                                          .build();
         final List<TaskCompleted> result = Collections.singletonList(taskCompleted);
         return result;
     }
 
     @Assign
-    public List<? extends Message> handle(FinalizeDraft cmd) {
-        validateTransition(getState().getTaskStatus(), TaskStatus.FINALIZED);
+    public List<? extends Message> handle(CreateDraft cmd) throws CannotCreateDraft {
+        final TaskId taskId = cmd.getId();
+        final boolean isValid = validateCreateDraftCommand(getState().getTaskStatus());
+
+        if (!isValid) {
+            throwCannotCreateDraftFailure(taskId);
+        }
+
+        final TaskDraftCreated draftCreated = TaskDraftCreated.newBuilder()
+                                                              .setId(taskId)
+                                                              .setDraftCreationTime(Timestamps.getCurrentTime())
+                                                              .build();
+        final List<TaskDraftCreated> result = Collections.singletonList(draftCreated);
+        return result;
+    }
+
+    @Assign
+    public List<? extends Message> handle(FinalizeDraft cmd) throws CannotFinalizeDraft {
+        final TaskStatus currentStatus = getState().getTaskStatus();
+        final TaskStatus newStatus = TaskStatus.FINALIZED;
+        final TaskId taskId = cmd.getId();
+        final boolean isValid = validateTransition(currentStatus, newStatus);
+
+        if (!isValid) {
+            final String message = generateExceptionMessage(currentStatus, newStatus);
+            throwCannotFinalizeDraftFailure(taskId, message);
+        }
+
         final TaskDraftFinalized taskDraftFinalized = TaskDraftFinalized.newBuilder()
-                                                                        .setId(cmd.getId())
+                                                                        .setId(taskId)
                                                                         .build();
         final List<TaskDraftFinalized> result = Collections.singletonList(taskDraftFinalized);
         return result;
     }
 
     @Assign
-    public List<? extends Message> handle(RemoveLabelFromTask cmd) {
-        validateRemoveLabelFromTaskCommand(getState().getTaskStatus());
+    public List<? extends Message> handle(RemoveLabelFromTask cmd) throws CannotRemoveLabelFromTask {
+        final TaskLabelId labelId = cmd.getLabelId();
+        final TaskId taskId = cmd.getId();
+        final boolean isValid = validateRemoveLabelFromTaskCommand(getState().getTaskStatus());
+
+        if (!isValid) {
+            throwCannotRemoveLabelFromTaskFailure(labelId, taskId);
+        }
+
         final LabelRemovedFromTask labelRemoved = LabelRemovedFromTask.newBuilder()
-                                                                      .setId(cmd.getId())
-                                                                      .setLabelId(cmd.getLabelId())
+                                                                      .setId(taskId)
+                                                                      .setLabelId(labelId)
                                                                       .build();
         final List<LabelRemovedFromTask> result = Collections.singletonList(labelRemoved);
         return result;
     }
 
     @Assign
-    public List<? extends Message> handle(AssignLabelToTask cmd) {
-        validateAssignLabelToTaskCommand(getState().getTaskStatus());
+    public List<? extends Message> handle(AssignLabelToTask cmd) throws CannotAssignLabelToTask {
+        final TaskId taskId = cmd.getId();
+        final TaskLabelId labelId = cmd.getLabelId();
+        final boolean isValid = validateAssignLabelToTaskCommand(getState().getTaskStatus());
+
+        if (!isValid) {
+            throwCannotAssignLabelToTaskFailure(taskId, labelId);
+        }
+
         final LabelAssignedToTask labelAssigned = LabelAssignedToTask.newBuilder()
-                                                                     .setTaskId(cmd.getId())
-                                                                     .setLabelId(cmd.getLabelId())
+                                                                     .setTaskId(taskId)
+                                                                     .setLabelId(labelId)
                                                                      .build();
         final List<LabelAssignedToTask> result = Collections.singletonList(labelAssigned);
-        return result;
-    }
-
-    @Assign
-    public List<? extends Message> handle(CreateDraft cmd) {
-        validateCreateDraftCommand(getState().getTaskStatus());
-        final TaskDraftCreated draftCreated = TaskDraftCreated.newBuilder()
-                                                              .setId(cmd.getId())
-                                                              .setDraftCreationTime(Timestamps.getCurrentTime())
-                                                              .build();
-        final List<TaskDraftCreated> result = Collections.singletonList(draftCreated);
         return result;
     }
 
@@ -397,88 +490,36 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
                     .setTaskStatus(TaskStatus.DRAFT);
     }
 
-    private static void validateCommand(CreateBasicTask cmd) {
+    private static void validateCommand(CreateBasicTask cmd)
+            throws CannotCreateBasicTask, CannotCreateTaskWithInappropriateDescription {
         final String description = cmd.getDescription();
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
-            throw new IllegalStateException(SHORT_DESCRIPTION_EXCEPTION_MESSAGE);
+            final TaskId taskId = cmd.getId();
+            throwCannotCreateTaskWithInappropriateDescription(taskId);
         }
     }
 
-    private void validateCommand(UpdateTaskDescription cmd) {
+    private void validateCommand(UpdateTaskDescription cmd)
+            throws CannotUpdateTaskDescription, CannotUpdateTaskWithInappropriateDescription {
+        final ValueMismatch mismatch = ValueMismatch.getDefaultInstance();
         final String description = cmd.getDescriptionChange()
                                       .getNewValue();
-        checkNotNull(description, NULL_DESCRIPTION_EXCEPTION_MESSAGE);
+        final TaskId taskId = cmd.getId();
 
-        if (description.length() < MIN_DESCRIPTION_LENGTH) {
-            throw new IllegalStateException(SHORT_DESCRIPTION_EXCEPTION_MESSAGE);
+        if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
+            throwCannotUpdateTooShortDescriptionFailure(taskId);
         }
 
-        ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
+        boolean isValid = ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
+
+        if (!isValid) {
+            throwCannotUpdateTaskDescriptionFailure(taskId, TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE);
+        }
     }
 
-    private CannotUpdateTaskDescription constructFailure(TaskId taskId,
-                                                         String actualDescription,
-                                                         StringChange descriptionChange) {
-        final String expectedDescription = descriptionChange.getPreviousValue();
-        final String newDescription = descriptionChange.getNewValue();
-
-        final ValueMismatch mismatch = StringMismatch.unexpectedValue(expectedDescription,
-                                                                      actualDescription,
-                                                                      newDescription,
-                                                                      getVersion());
-        final DescriptionUpdateFailed descriptionUpdateFailed = DescriptionUpdateFailed.newBuilder()
-                                                                                       .setTaskId(taskId)
-                                                                                       .setDescriptionMismatch(mismatch)
-                                                                                       .build();
-        final CannotUpdateTaskDescription result = new CannotUpdateTaskDescription(descriptionUpdateFailed);
-        return result;
-    }
-
-    private CannotUpdateTaskPriority constructFailure(TaskId taskId,
-                                                      TaskPriority actualPriority,
-                                                      PriorityChange priorityChange) {
-        final TaskPriority newPriority = priorityChange.getNewValue();
-        final TaskPriority expectedPriority = priorityChange.getPreviousValue();
-        final TaskPriorityValue actualPriorityValue = TaskPriorityValue.newBuilder()
-                                                                       .setPriorityValue(actualPriority)
-                                                                       .build();
-        final TaskPriorityValue expectedPriorityValue = TaskPriorityValue.newBuilder()
-                                                                         .setPriorityValue(expectedPriority)
-                                                                         .build();
-        final TaskPriorityValue newPriorityValue = TaskPriorityValue.newBuilder()
-                                                                    .setPriorityValue(newPriority)
-                                                                    .build();
-        final ValueMismatch mismatch = ValueMismatch.newBuilder()
-                                                    .setActual(AnyPacker.pack(actualPriorityValue))
-                                                    .setExpected(AnyPacker.pack(expectedPriorityValue))
-                                                    .setNewValue(AnyPacker.pack(newPriorityValue))
-                                                    .setVersion(getVersion())
-                                                    .build();
-        final PriorityUpdateFailed priorityUpdateFailed = PriorityUpdateFailed.newBuilder()
-                                                                              .setTaskId(taskId)
-                                                                              .setPriorityMismatch(mismatch)
-                                                                              .build();
-        final CannotUpdateTaskPriority result = new CannotUpdateTaskPriority(priorityUpdateFailed);
-        return result;
-    }
-
-    private CannotUpdateTaskDueDate constructFailure(TaskId taskId,
-                                                     Timestamp actualDueDate,
-                                                     TimestampChange change) {
-        final Timestamp expectedDueDate = change.getPreviousValue();
-        final Timestamp newDueDate = change.getNewValue();
-
-        final ValueMismatch mismatch = ValueMismatch.newBuilder()
-                                                    .setExpected(AnyPacker.pack(expectedDueDate))
-                                                    .setActual(AnyPacker.pack(actualDueDate))
-                                                    .setNewValue(AnyPacker.pack(newDueDate))
-                                                    .setVersion(getVersion())
-                                                    .build();
-        final TaskDueDateUpdateFailed dueDateUpdateFailed = TaskDueDateUpdateFailed.newBuilder()
-                                                                                   .setTaskId(taskId)
-                                                                                   .setDueDateMismatch(mismatch)
-                                                                                   .build();
-        final CannotUpdateTaskDueDate result = new CannotUpdateTaskDueDate(dueDateUpdateFailed);
+    private String generateExceptionMessage(TaskStatus currentStatus, TaskStatus newStatus) {
+        final String result = String.format("Cannot make transition from: %s to: %s state",
+                                            currentStatus, newStatus);
         return result;
     }
 }
