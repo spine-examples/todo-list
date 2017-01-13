@@ -20,13 +20,18 @@
 
 package org.spine3.examples.todolist.repository;
 
+import org.spine3.examples.todolist.TaskDraftCreated;
+import org.spine3.examples.todolist.TaskDraftFinalized;
 import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.projection.DraftTasksViewProjection;
 import org.spine3.examples.todolist.view.DraftTasksView;
 import org.spine3.server.BoundedContext;
+import org.spine3.server.entity.IdSetEventFunction;
 import org.spine3.server.projection.ProjectionRepository;
 
-import static org.spine3.examples.todolist.repository.RepositoryHelper.addIdSetFunctions;
+import java.util.Collections;
+
+import static org.spine3.examples.todolist.repository.RepositoryHelper.addCommonIdSetFunctions;
 
 /**
  * Repository for the {@link DraftTasksViewProjection}.
@@ -37,6 +42,21 @@ public class DraftTasksViewRepository
         extends ProjectionRepository<TaskListId, DraftTasksViewProjection, DraftTasksView> {
     public DraftTasksViewRepository(BoundedContext boundedContext) {
         super(boundedContext);
-        addIdSetFunctions(this);
+        addIdSetFunctions();
+    }
+
+    /**
+     *
+     */
+    protected void addIdSetFunctions() {
+        final IdSetEventFunction<TaskListId, TaskDraftCreated> draftCreatedFn =
+                (message, context) -> Collections.singleton(DraftTasksViewProjection.ID);
+        addIdSetFunction(TaskDraftCreated.class, draftCreatedFn);
+
+        final IdSetEventFunction<TaskListId, TaskDraftFinalized> draftFinalizedFn =
+                (message, context) -> Collections.singleton(DraftTasksViewProjection.ID);
+        addIdSetFunction(TaskDraftFinalized.class, draftFinalizedFn);
+
+        addCommonIdSetFunctions(this, DraftTasksViewProjection.ID);
     }
 }
