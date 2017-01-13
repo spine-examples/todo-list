@@ -37,8 +37,7 @@ import "todolist/identifiers.proto";
 // DTO for the description mismatch.
 message DescriptionUpdateFailed {
 
-    // An identifier of the task.
-    TaskId task_id = 1;
+    TaskCommandFailed update_description_failed = 1;
 
     // A mismatching description value.
     change.ValueMismatch description_mismatch = 2;
@@ -47,8 +46,7 @@ message DescriptionUpdateFailed {
 // DTO for the priority mismatch.
 message PriorityUpdateFailed {
 
-    // An identifier of the task.
-    TaskId task_id = 1;
+    TaskCommandFailed update_priority_failed = 1;
 
     // A mismatching priority value.
     change.ValueMismatch priority_mismatch = 2;
@@ -57,8 +55,7 @@ message PriorityUpdateFailed {
 // DTO for the due date mismatch.
 message TaskDueDateUpdateFailed {
 
-    // An identifier of the task.
-    TaskId task_id = 1;
+    TaskCommandFailed update_due_date_failed = 1;
 
     // A mismatching due date value.
     change.ValueMismatch due_date_mismatch = 2;
@@ -67,9 +64,76 @@ message TaskDueDateUpdateFailed {
 // DTO for the label details mismatch.
 message LabelDetailsUpdateFailed {
 
-    // An identifier of the label.
-    TaskLabelId label_id = 1;
+    LabelCommandFailed update_label_details_failed = 1;
 
     // A mismatching label details value.
     change.ValueMismatch label_details_mismatch = 2;
+}
+
+message CreateBasicTaskFailed {
+
+    TaskCommandFailed create_task_failed = 1;
+}
+
+message CreateBasicLabelFailed {
+
+    LabelCommandFailed create_label_failed = 1;
+}
+
+message AssignLabelToTaskFailed {
+
+    TaskCommandFailed assign_label_failed = 1;
+
+    TaskLabelId label_id = 2;
+}
+
+message RemoveLabelFromTaskFailed {
+
+    TaskCommandFailed remove_label_failed = 1;
+
+    TaskLabelId label_id = 2;
+}
+
+message ReopenTaskFailed {
+
+    TaskCommandFailed reopen_task_failed = 1;
+}
+
+message DeleteTaskFailed {
+
+    TaskCommandFailed delete_task_failed = 1;
+}
+
+message RestoreDeletedTaskFailed {
+
+    TaskCommandFailed restore_deleted_task_failed = 1;
+}
+
+message CompleteTaskFailed {
+
+    TaskCommandFailed complete_task_failed = 1;
+}
+
+message CreateDraftFailed {
+
+    TaskCommandFailed create_draft_failed = 1;
+}
+
+message FinalizeDraftFailed {
+
+    TaskCommandFailed finalize_draft_failed = 1;
+}
+
+message TaskCommandFailed {
+
+    TaskId task_id = 1;
+
+    string message = 2;
+}
+
+message LabelCommandFailed {
+
+    TaskLabelId label_id = 1;
+
+    string message = 2;
 }
