@@ -29,9 +29,6 @@ import org.spine3.examples.todolist.TaskStatus;
  */
 /* package */ class TaskFlowValidator {
 
-    private static final String TASK_COMPLETED_EXCEPTION_MESSAGE = "Command cannot be applied to the completed task.";
-    private static final String TASK_DELETED_EXCEPTION_MESSAGE = "Command cannot be applied to the deleted task.";
-
     private TaskFlowValidator() {
     }
 
@@ -41,34 +38,34 @@ import org.spine3.examples.todolist.TaskStatus;
      * @param currentStatus current task status
      * @param newStatus     new task status
      */
-    /* package */ static void validateTransition(TaskStatus currentStatus, TaskStatus newStatus) {
+    /* package */ static boolean isValidTransition(TaskStatus currentStatus, TaskStatus newStatus) {
         final boolean isValid = TaskStatusTransition.isValid(currentStatus, newStatus);
-
-        if (!isValid) {
-            String message = String.format("Cannot make transition from: %s to: %s state",
-                                           currentStatus, newStatus);
-            throw new IllegalStateException(message);
-        }
+        return isValid;
     }
 
-    /* package */ static void validateUpdateTaskPriorityCommand(TaskStatus currentStatus) {
-        ensureNeitherCompletedNorDeleted(currentStatus);
+    /* package */ static boolean isValidUpdateTaskPriorityCommand(TaskStatus currentStatus) {
+        final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
+        return isValid;
     }
 
-    /* package */ static void validateUpdateTaskDueDateCommand(TaskStatus currentStatus) {
-        ensureNeitherCompletedNorDeleted(currentStatus);
+    /* package */ static boolean isValidUpdateTaskDueDateCommand(TaskStatus currentStatus) {
+        final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
+        return isValid;
     }
 
-    /* package */ static void validateRemoveLabelFromTaskCommand(TaskStatus currentStatus) {
-        ensureNeitherCompletedNorDeleted(currentStatus);
+    /* package */ static boolean isValidRemoveLabelFromTaskCommand(TaskStatus currentStatus) {
+        final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
+        return isValid;
     }
 
-    /* package */ static void validateAssignLabelToTaskCommand(TaskStatus currentStatus) {
-        ensureNeitherCompletedNorDeleted(currentStatus);
+    /* package */ static boolean isValidAssignLabelToTaskCommand(TaskStatus currentStatus) {
+        final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
+        return isValid;
     }
 
-    /* package */ static void validateCreateDraftCommand(TaskStatus currentStatus) {
-        ensureNeitherCompletedNorDeleted(currentStatus);
+    /* package */ static boolean isValidCreateDraftCommand(TaskStatus currentStatus) {
+        final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
+        return isValid;
     }
 
     /**
@@ -80,20 +77,20 @@ import org.spine3.examples.todolist.TaskStatus;
      * @throws IllegalStateException if status, passed to the method,
      *                               {@code TaskStatus.COMPLETED} or {@code TaskStatus.DELETED}.
      */
-    /* package */ static void ensureNeitherCompletedNorDeleted(TaskStatus currentStatus) {
-        ensureNotDeleted(currentStatus);
-        ensureNotCompleted(currentStatus);
+    /* package */ static boolean ensureNeitherCompletedNorDeleted(TaskStatus currentStatus) {
+        boolean isDeleted = ensureNotDeleted(currentStatus);
+        boolean isCompleted = ensureNotCompleted(currentStatus);
+        final boolean result = !isDeleted && !isCompleted;
+        return result;
     }
 
-    private static void ensureNotCompleted(TaskStatus currentStatus) {
-        if (currentStatus == TaskStatus.COMPLETED) {
-            throw new IllegalStateException(TASK_COMPLETED_EXCEPTION_MESSAGE);
-        }
+    private static boolean ensureNotCompleted(TaskStatus currentStatus) {
+        final boolean isCompleted = currentStatus == TaskStatus.COMPLETED;
+        return isCompleted;
     }
 
-    private static void ensureNotDeleted(TaskStatus currentStatus) {
-        if (currentStatus == TaskStatus.DELETED) {
-            throw new IllegalStateException(TASK_DELETED_EXCEPTION_MESSAGE);
-        }
+    private static boolean ensureNotDeleted(TaskStatus currentStatus) {
+        final boolean isDeleted = currentStatus == TaskStatus.DELETED;
+        return isDeleted;
     }
 }

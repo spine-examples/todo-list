@@ -98,12 +98,12 @@ import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotUp
 import static org.spine3.examples.todolist.aggregate.FailureHelper.throwCannotUpdateTooShortDescriptionFailure;
 import static org.spine3.examples.todolist.aggregate.MismatchHelper.of;
 import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.ensureNeitherCompletedNorDeleted;
-import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateAssignLabelToTaskCommand;
-import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateCreateDraftCommand;
-import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateRemoveLabelFromTaskCommand;
-import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateTransition;
-import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateUpdateTaskDueDateCommand;
-import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.validateUpdateTaskPriorityCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.isValidAssignLabelToTaskCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.isValidCreateDraftCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.isValidRemoveLabelFromTaskCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.isValidTransition;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
+import static org.spine3.examples.todolist.aggregate.TaskFlowValidator.isValidUpdateTaskPriorityCommand;
 
 /**
  * The aggregate managing the state of a {@link Task}.
@@ -175,7 +175,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     public List<? extends Message> handle(UpdateTaskDueDate cmd) throws CannotUpdateTaskDueDate {
         final Task state = getState();
         final TaskStatus taskStatus = state.getTaskStatus();
-        final boolean isValid = validateUpdateTaskDueDateCommand(taskStatus);
+        final boolean isValid = isValidUpdateTaskDueDateCommand(taskStatus);
 
         final TaskId taskId = cmd.getId();
 
@@ -207,7 +207,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     public List<? extends Message> handle(UpdateTaskPriority cmd) throws CannotUpdateTaskPriority {
         final Task state = getState();
         final TaskStatus taskStatus = state.getTaskStatus();
-        final boolean isValid = validateUpdateTaskPriorityCommand(taskStatus);
+        final boolean isValid = isValidUpdateTaskPriorityCommand(taskStatus);
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
@@ -239,7 +239,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final Task state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.OPEN;
-        final boolean isValid = validateTransition(currentStatus, newStatus);
+        final boolean isValid = isValidTransition(currentStatus, newStatus);
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
@@ -260,7 +260,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.DELETED;
         final TaskId taskId = cmd.getId();
-        final boolean isValid = validateTransition(currentStatus, newStatus);
+        final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
@@ -280,7 +280,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.OPEN;
         final TaskId taskId = cmd.getId();
-        final boolean isValid = validateTransition(currentStatus, newStatus);
+        final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
@@ -308,7 +308,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.COMPLETED;
         final TaskId taskId = cmd.getId();
-        final boolean isValid = validateTransition(currentStatus, newStatus);
+        final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
@@ -325,7 +325,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     @Assign
     public List<? extends Message> handle(CreateDraft cmd) throws CannotCreateDraft {
         final TaskId taskId = cmd.getId();
-        final boolean isValid = validateCreateDraftCommand(getState().getTaskStatus());
+        final boolean isValid = isValidCreateDraftCommand(getState().getTaskStatus());
 
         if (!isValid) {
             throwCannotCreateDraftFailure(taskId);
@@ -344,7 +344,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final TaskStatus currentStatus = getState().getTaskStatus();
         final TaskStatus newStatus = TaskStatus.FINALIZED;
         final TaskId taskId = cmd.getId();
-        final boolean isValid = validateTransition(currentStatus, newStatus);
+        final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
@@ -362,7 +362,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     public List<? extends Message> handle(RemoveLabelFromTask cmd) throws CannotRemoveLabelFromTask {
         final TaskLabelId labelId = cmd.getLabelId();
         final TaskId taskId = cmd.getId();
-        final boolean isValid = validateRemoveLabelFromTaskCommand(getState().getTaskStatus());
+        final boolean isValid = isValidRemoveLabelFromTaskCommand(getState().getTaskStatus());
 
         if (!isValid) {
             throwCannotRemoveLabelFromTaskFailure(labelId, taskId);
@@ -380,7 +380,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     public List<? extends Message> handle(AssignLabelToTask cmd) throws CannotAssignLabelToTask {
         final TaskId taskId = cmd.getId();
         final TaskLabelId labelId = cmd.getLabelId();
-        final boolean isValid = validateAssignLabelToTaskCommand(getState().getTaskStatus());
+        final boolean isValid = isValidAssignLabelToTaskCommand(getState().getTaskStatus());
 
         if (!isValid) {
             throwCannotAssignLabelToTaskFailure(taskId, labelId);
