@@ -21,7 +21,7 @@
 package org.spine3.examples.todolist.server;
 
 import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelList;
+import org.spine3.examples.todolist.LabelIdList;
 import org.spine3.examples.todolist.Task;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
@@ -60,7 +60,7 @@ public class Server {
     private final BoundedContext boundedContext;
     private Function<TaskLabelId, LabelDetails> taskLabelIdToLabelDetails;
     private Function<TaskId, TaskDetails> taskIdToTaskDetails;
-    private Function<TaskId, LabelList> taskIdToLabelList;
+    private Function<TaskId, LabelIdList> taskIdToLabelList;
     private TaskAggregateRepository taskAggregateRepository;
     private TaskLabelAggregateRepository taskLabelAggregateRepository;
     private MyListViewRepository myListViewRepository;
@@ -120,9 +120,9 @@ public class Server {
             final TaskAggregate aggregate = taskAggregateRepository.load(taskId);
             final List<TaskLabelId> labelIdsList = aggregate.getState()
                                                             .getLabelIdsList();
-            final LabelList result = LabelList.newBuilder()
-                                              .addAllLabelId(labelIdsList)
-                                              .build();
+            final LabelIdList result = LabelIdList.newBuilder()
+                                                  .addAllLabelId(labelIdsList)
+                                                  .build();
             return result;
         };
     }
@@ -136,7 +136,7 @@ public class Server {
                                                                       TaskDetails.class,
                                                                       taskIdToTaskDetails::apply)
                                                   .addFieldEnrichment(TaskId.class,
-                                                                      LabelList.class,
+                                                                      LabelIdList.class,
                                                                       taskIdToLabelList::apply)
                                                   .build();
         return result;
