@@ -31,6 +31,8 @@ import org.spine3.protobuf.AnyPacker;
 import static com.google.protobuf.Any.pack;
 
 /**
+ * Utility class for working with mismatches.
+ *
  * @author Illia Shepilov
  */
 /* package */ class MismatchHelper {
@@ -38,10 +40,19 @@ import static com.google.protobuf.Any.pack;
     private MismatchHelper() {
     }
 
-    static ValueMismatch of(TaskPriority expectedPriority,
-                            TaskPriority actualPriority,
-                            TaskPriority newPriority,
-                            int version) {
+    /**
+     * Creates a new instance of {@link ValueMismatch} with the passed values.
+     *
+     * @param expectedPriority the {@link TaskPriority} expected by the command
+     * @param actualPriority   the {@code TaskPriority} discovered instead of the expected
+     * @param newPriority      the new {@code TaskPriority} requested in the command
+     * @param version          the version of the entity in which the mismatch is discovered
+     * @return new {@code ValueMismatch} instance
+     */
+    /* package */ static ValueMismatch of(TaskPriority expectedPriority,
+                                          TaskPriority actualPriority,
+                                          TaskPriority newPriority,
+                                          int version) {
         final TaskPriorityValue actualPriorityValue = TaskPriorityValue.newBuilder()
                                                                        .setPriorityValue(actualPriority)
                                                                        .build();
@@ -60,7 +71,16 @@ import static com.google.protobuf.Any.pack;
         return result;
     }
 
-    static ValueMismatch of(String expectedValue, String actualValue, String newValue, int version) {
+    /**
+     * Creates a new instance of {@link ValueMismatch} with the passed values.
+     *
+     * @param expectedValue the value expected by the command
+     * @param actualValue   the value discovered instead of the expected
+     * @param newValue      the new value requested in the command
+     * @param version       the version of the entity in which the mismatch is discovered
+     * @return new {@code ValueMismatch} instance
+     */
+    /* package */ static ValueMismatch of(String expectedValue, String actualValue, String newValue, int version) {
         final ValueMismatch result = StringMismatch.unexpectedValue(expectedValue,
                                                                     actualValue,
                                                                     newValue,
@@ -68,7 +88,19 @@ import static com.google.protobuf.Any.pack;
         return result;
     }
 
-    static ValueMismatch of(Timestamp expectedTime, Timestamp actualTime, Timestamp newTime, int version) {
+    /**
+     * Creates a new instance of {@link ValueMismatch} with the passed values.
+     *
+     * @param expectedTime the value expected by the command
+     * @param actualTime   the value discovered instead of the expected
+     * @param newTime      the new value requested in the command
+     * @param version      the version of the entity in which the mismatch is discovered
+     * @return new {@code ValueMismatch} instance
+     */
+    /* package */ static ValueMismatch of(Timestamp expectedTime,
+                                          Timestamp actualTime,
+                                          Timestamp newTime,
+                                          int version) {
         final ValueMismatch result = ValueMismatch.newBuilder()
                                                   .setExpected(AnyPacker.pack(expectedTime))
                                                   .setActual(AnyPacker.pack(actualTime))
@@ -78,10 +110,19 @@ import static com.google.protobuf.Any.pack;
         return result;
     }
 
-    static ValueMismatch of(LabelDetails expectedLabelDetails,
-                            LabelDetails actualLabelDetails,
-                            LabelDetails newLabelDetails,
-                            int version) {
+    /**
+     * Creates a new instance of {@link ValueMismatch} with the passed values.
+     *
+     * @param expectedLabelDetails the {@link LabelDetails} expected by the command
+     * @param actualLabelDetails   the {@code LabelDetails} discovered instead of the expected
+     * @param newLabelDetails      the new {@code LabelDetails} requested in the command
+     * @param version              the version of the entity in which the mismatch is discovered
+     * @return new {@code ValueMismatch} instance
+     */
+    /* package */ static ValueMismatch of(LabelDetails expectedLabelDetails,
+                                          LabelDetails actualLabelDetails,
+                                          LabelDetails newLabelDetails,
+                                          int version) {
         final ValueMismatch result = ValueMismatch.newBuilder()
                                                   .setActual(pack(actualLabelDetails))
                                                   .setExpected(pack(expectedLabelDetails))

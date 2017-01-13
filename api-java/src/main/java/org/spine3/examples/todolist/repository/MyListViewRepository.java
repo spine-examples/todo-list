@@ -32,6 +32,7 @@ import org.spine3.server.projection.ProjectionRepository;
 
 import java.util.Collections;
 
+import static org.spine3.examples.todolist.projection.MyListViewProjection.ID;
 import static org.spine3.examples.todolist.repository.RepositoryHelper.addCommonIdSetFunctions;
 
 /**
@@ -47,21 +48,24 @@ public class MyListViewRepository extends ProjectionRepository<TaskListId, MyLis
     }
 
     /**
-     *
+     * Adds the {@link IdSetEventFunction}s to the repository.
+     * Should to be overridden in an successor classes,
+     * otherwise all successors will use {@code MyListViewProjection.ID}
+     * and only with specified events below.
      */
     protected void addIdSetFunctions() {
         final IdSetEventFunction<TaskListId, TaskCreated> taskCreatedFn =
-                (message, context) -> Collections.singleton(MyListViewProjection.ID);
+                (message, context) -> Collections.singleton(ID);
         addIdSetFunction(TaskCreated.class, taskCreatedFn);
 
         final IdSetEventFunction<TaskListId, TaskCompleted> taskCompletedFn =
-                (message, context) -> Collections.singleton(MyListViewProjection.ID);
+                (message, context) -> Collections.singleton(ID);
         addIdSetFunction(TaskCompleted.class, taskCompletedFn);
 
         final IdSetEventFunction<TaskListId, TaskReopened> taskReopenedFn =
-                (message, context) -> Collections.singleton(MyListViewProjection.ID);
+                (message, context) -> Collections.singleton(ID);
         addIdSetFunction(TaskReopened.class, taskReopenedFn);
 
-        addCommonIdSetFunctions(this, MyListViewProjection.ID);
+        addCommonIdSetFunctions(this, ID);
     }
 }

@@ -60,7 +60,11 @@ public class LabelledTasksViewRepository
     }
 
     /**
-     *
+     * Adds the {@link IdSetEventFunction}s to the repository.
+     * Adds the {@link IdSetEventFunction}s to the repository.
+     * Should to be overridden in an successor classes,
+     * otherwise all successors will use {@code TaskLabelId}
+     * and only with specified events below.
      */
     protected void addIdSetFunctions() {
         final IdSetEventFunction<TaskLabelId, LabelAssignedToTask> labelAssignedFn =

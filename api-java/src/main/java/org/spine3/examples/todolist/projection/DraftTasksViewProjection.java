@@ -53,10 +53,12 @@ import static org.spine3.examples.todolist.projection.ProjectionHelper.updateTas
  */
 public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksView> {
 
+    /**
+     * Required the singleton {@link DraftTasksViewProjection} according to the business rules.
+     */
     public static final TaskListId ID = TaskListId.newBuilder()
                                                   .setValue(newUuid())
                                                   .build();
-
     /**
      * Creates a new instance.
      *

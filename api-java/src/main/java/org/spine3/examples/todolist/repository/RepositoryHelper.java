@@ -46,8 +46,10 @@ import java.util.Collections;
     }
 
     /**
-     * @param repository
-     * @param id
+     * Adds the {@link IdSetEventFunction}s to the repository.
+     *
+     * @param repository the {@link EventDispatchingRepository}
+     * @param id         the {@link TaskListId}
      */
     /* package */ static <M extends Message, P extends Entity<TaskListId, M>> void
     addCommonIdSetFunctions(EventDispatchingRepository<TaskListId, P, M> repository, TaskListId id) {

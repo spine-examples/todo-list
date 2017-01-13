@@ -57,11 +57,13 @@ import org.spine3.examples.todolist.failures.CannotUpdateTaskWithInappropriateDe
 import java.util.List;
 
 /**
+ * Utility class for working with failures.
+ *
  * @author Illia Shepilov
  */
 /* package */ class FailureHelper {
 
-    static final String TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE = "Command cannot be applied " +
+    /* package */ static final String TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE = "Command cannot be applied " +
             "to the deleted or completed task.";
     private static final String TOO_SHORT_TASK_DESCRIPTION_EXCEPTION_MESSAGE = "Description should contain " +
             "at least 3 alphanumeric symbols.";

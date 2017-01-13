@@ -31,6 +31,7 @@ import org.spine3.server.projection.ProjectionRepository;
 
 import java.util.Collections;
 
+import static org.spine3.examples.todolist.projection.DraftTasksViewProjection.ID;
 import static org.spine3.examples.todolist.repository.RepositoryHelper.addCommonIdSetFunctions;
 
 /**
@@ -46,17 +47,20 @@ public class DraftTasksViewRepository
     }
 
     /**
-     *
+     * Adds the {@link IdSetEventFunction}s to the repository.
+     * Should to be overridden in an successor classes,
+     * otherwise all successors will use {@code DraftTasksViewProjection.ID}
+     * and only with specified events below.
      */
     protected void addIdSetFunctions() {
         final IdSetEventFunction<TaskListId, TaskDraftCreated> draftCreatedFn =
-                (message, context) -> Collections.singleton(DraftTasksViewProjection.ID);
+                (message, context) -> Collections.singleton(ID);
         addIdSetFunction(TaskDraftCreated.class, draftCreatedFn);
 
         final IdSetEventFunction<TaskListId, TaskDraftFinalized> draftFinalizedFn =
-                (message, context) -> Collections.singleton(DraftTasksViewProjection.ID);
+                (message, context) -> Collections.singleton(ID);
         addIdSetFunction(TaskDraftFinalized.class, draftFinalizedFn);
 
-        addCommonIdSetFunctions(this, DraftTasksViewProjection.ID);
+        addCommonIdSetFunctions(this, ID);
     }
 }
