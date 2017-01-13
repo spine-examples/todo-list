@@ -908,7 +908,7 @@ public class TaskAggregateShould {
             final Failures.CannotUpdateTaskPriority cannotUpdateTaskPriority =
                     ((CannotUpdateTaskPriority) cause).getFailure();
             final PriorityUpdateFailed priorityUpdateFailed = cannotUpdateTaskPriority.getUpdateFailed();
-            final TaskId actualTaskId = priorityUpdateFailed.getUpdatePriorityFailed()
+            final TaskId actualTaskId = priorityUpdateFailed.getFailedCommand()
                                                             .getTaskId();
             assertEquals(TASK_ID, actualTaskId);
 
@@ -950,7 +950,7 @@ public class TaskAggregateShould {
             final Failures.CannotUpdateTaskDescription cannotUpdateTaskDescription =
                     ((CannotUpdateTaskDescription) cause).getFailure();
             final DescriptionUpdateFailed descriptionUpdateFailed = cannotUpdateTaskDescription.getUpdateFailed();
-            final TaskId actualTaskId = descriptionUpdateFailed.getUpdateDescriptionFailed()
+            final TaskId actualTaskId = descriptionUpdateFailed.getFailedCommand()
                                                                .getTaskId();
             assertEquals(TASK_ID, actualTaskId);
 
@@ -997,7 +997,7 @@ public class TaskAggregateShould {
                     ((CannotUpdateTaskDueDate) cause).getFailure();
 
             final TaskDueDateUpdateFailed dueDateUpdateFailed = cannotUpdateTaskDueDate.getUpdateFailed();
-            final TaskId actualTaskId = dueDateUpdateFailed.getUpdateDueDateFailed()
+            final TaskId actualTaskId = dueDateUpdateFailed.getFailedCommand()
                                                            .getTaskId();
             assertEquals(TASK_ID, actualTaskId);
 
