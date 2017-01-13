@@ -35,7 +35,7 @@ import "spine/validate.proto";
 import "spine/change/change.proto";
 
 import "todolist/identifiers.proto";
-import "todolist/details.proto";
+import "todolist/values.proto";
 import "todolist/changes.proto";
 
 // An event signalizing about the successful task creation.

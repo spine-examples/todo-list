@@ -32,7 +32,7 @@ import "spine/annotations.proto";
 import "spine/validate.proto";
 
 import "todolist/attributes.proto";
-import "todolist/details.proto";
+import "todolist/values.proto";
 
 // Definition of a change in a task priority field.
 message PriorityChange {

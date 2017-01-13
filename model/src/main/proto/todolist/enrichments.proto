@@ -30,8 +30,7 @@ option java_generate_equals_and_hash = true;
 
 import "spine/annotations.proto";
 import "spine/enrichment_annotations.proto";
-import "todolist/details.proto";
-import "todolist/identifiers.proto";
+import "todolist/values.proto";
 
 // Enrichment for task and label details.
 //
@@ -59,13 +58,4 @@ message LabelListEnrichment {
                               "spine.examples.todolist.TaskDeleted";
 
     LabelIdList label_id_list = 1 [(by) = "id"];
-}
-
-// **** Data transfer objects ****
-
-// DTO for the list of the label IDs.
-message LabelIdList {
-
-    // Label identifiers.
-    repeated TaskLabelId label_id = 1;
 }

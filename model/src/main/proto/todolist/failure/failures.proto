@@ -29,7 +29,7 @@ option java_generate_equals_and_hash = true;
 
 import "spine/annotations.proto";
 
-import "todolist/failure/failures_dto.proto";
+import "todolist/values.proto";
 
 // Fire the failure when cannot update task description.
 message CannotUpdateTaskDescription {
