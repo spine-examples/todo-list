@@ -58,3 +58,64 @@ message CannotUpdateLabelDetails {
     //Failed the label details update.
     LabelDetailsUpdateFailed update_failed = 1;
 }
+
+message CannotCreateBasicTask {
+
+    CreateBasicTaskFailed create_task_failed = 1;
+}
+
+message CannotCreateBasicLabel {
+
+    CreateBasicLabelFailed create_label_failed = 1;
+}
+
+message CannotAssignLabelToTask {
+
+    AssignLabelToTaskFailed assign_label_failed = 1;
+}
+
+message CannotRemoveLabelFromTask {
+
+    RemoveLabelFromTaskFailed remove_label_failed = 1;
+}
+
+message CannotReopenTask {
+
+    ReopenTaskFailed reopen_task_failed = 1;
+}
+
+message CannotDeleteTask {
+
+    DeleteTaskFailed delete_task_failed = 1;
+}
+
+message CannotRestoreDeletedTask {
+
+    RestoreDeletedTaskFailed restore_task_failed = 1;
+}
+
+message CannotCompleteTask {
+
+    CompleteTaskFailed complete_task_failed = 1;
+}
+
+message CannotCreateDraft {
+
+    CreateDraftFailed create_draft_failed = 1;
+}
+
+message CannotFinalizeDraft {
+
+    FinalizeDraftFailed finalize_draft_failed = 1;
+}
+
+message CannotUpdateTaskWithInappropriateDescription {
+
+    // Failed the description update.
+    DescriptionUpdateFailed update_failed = 1;
+}
+
+message CannotCreateTaskWithInappropriateDescription{
+
+    CreateBasicTaskFailed create_task_failed = 1;
+}
