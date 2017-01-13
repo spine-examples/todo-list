@@ -22,7 +22,7 @@ package org.spine3.examples.todolist.testdata;
 
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelList;
+import org.spine3.examples.todolist.LabelIdList;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
@@ -57,9 +57,10 @@ public class TestEventEnricherFactory {
 
     private static final Function<TaskId, TaskDetails> TASK_ID_TO_TASK_DETAILS = taskId -> TASK_DETAILS;
 
-    private static final Function<TaskId, LabelList> TASK_ID_TO_LABEL_ID_LIST = taskId -> LabelList.newBuilder()
-                                                                                                   .addLabelId(LABEL_ID)
-                                                                                                   .build();
+    private static final Function<TaskId, LabelIdList> TASK_ID_TO_LABEL_ID_LIST = taskId ->
+            LabelIdList.newBuilder()
+                       .addLabelId(LABEL_ID)
+                       .build();
 
     /**
      * Provides a pre-configured {@link EventEnricher} event instance.
@@ -75,7 +76,7 @@ public class TestEventEnricherFactory {
                                                                       TaskDetails.class,
                                                                       TASK_ID_TO_TASK_DETAILS::apply)
                                                   .addFieldEnrichment(TaskId.class,
-                                                                      LabelList.class,
+                                                                      LabelIdList.class,
                                                                       TASK_ID_TO_LABEL_ID_LIST::apply)
                                                   .build();
         return result;
