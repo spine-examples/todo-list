@@ -24,7 +24,7 @@ package spine.examples.todolist;
 
 option (type_url_prefix) = "type.spine.examples.todolist";
 option java_package = "org.spine3.examples.todolist";
-option java_outer_classname = "ChangeProto";
+option java_outer_classname = "ChangesProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 

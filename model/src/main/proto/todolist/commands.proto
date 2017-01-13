@@ -33,7 +33,7 @@ import "spine/validate.proto";
 import "spine/change/change.proto";
 
 import "todolist/identifiers.proto";
-import "todolist/change.proto";
+import "todolist/changes.proto";
 
 // An attempt to create a task in a "Quick" mode.
 //
@@ -70,7 +70,7 @@ message UpdateTaskDescription {
     // An identifier of the target task.
     TaskId id = 1;
 
-    // The description changes.
+    // The description change.
     // Contains the previous description and the description to set for the target task.
     change.StringChange description_change = 2 [(required) = true];
 
@@ -89,7 +89,7 @@ message UpdateTaskDueDate {
     // An identifier of the target task.
     TaskId id = 1;
 
-    // The due date changes.
+    // The due date change.
     // Contains the previous due date and the due date to set for the target task.
     //
     // The updated value cannot be in the past.
@@ -110,7 +110,7 @@ message UpdateTaskPriority {
     // An identifier of the target task.
     TaskId id = 1;
 
-    // The priority changes.
+    // The priority change.
     // Contains the previous priority and the priority to set for the target task.
     PriorityChange priority_change = 2 [(required) = true];
 
@@ -260,7 +260,7 @@ message UpdateLabelDetails {
     // An identifier of the target label.
     TaskLabelId id = 1;
 
-    // The label details changes.
+    // The label details change.
     // Contains the previous label details and the label details to set for the target label.
     LabelDetailsChange label_details_change = 2 [(required) = true];
 

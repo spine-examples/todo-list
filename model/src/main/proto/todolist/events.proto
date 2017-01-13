@@ -36,7 +36,7 @@ import "spine/change/change.proto";
 
 import "todolist/identifiers.proto";
 import "todolist/details.proto";
-import "todolist/change.proto";
+import "todolist/changes.proto";
 
 // An event signalizing about the successful task creation.
 //
@@ -91,7 +91,7 @@ message TaskDescriptionUpdated {
     // An identifier of the updated task.
     TaskId id = 1;
 
-    // The changes of the task description.
+    // The change of the task description.
     change.StringChange description_change = 2 [(required) = true];
 
     // Reserved for future extension.
@@ -109,7 +109,7 @@ message TaskPriorityUpdated {
     // An identifier of the updated task.
     TaskId id = 1;
 
-    // The changes of the task priority.
+    // The change of the task priority.
     PriorityChange priority_change = 2 [(required) = true];
 
     // Reserved for future extension.
@@ -127,7 +127,7 @@ message TaskDueDateUpdated {
     // An identifier of the updated task.
     TaskId id = 1;
 
-    // The task due date changes.
+    // The task due date change.
     change.TimestampChange due_date_change = 2 [(required) = true];
 
     // Reserved for future extension.
@@ -245,7 +245,7 @@ message LabelDetailsUpdated {
     // An identifier of the updated label.
     TaskLabelId label_id = 1;
 
-    // The label details changes.
+    // The label details change.
     LabelDetailsChange label_details_change = 2 [(required) = true];
 }
 
