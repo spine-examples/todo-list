@@ -29,7 +29,7 @@ import org.spine3.base.Enrichments;
 import org.spine3.base.EventContext;
 import org.spine3.base.EventId;
 import org.spine3.base.Events;
-import org.spine3.examples.todolist.DetailsEnrichment;
+import org.spine3.examples.todolist.c.enrichments.DetailsEnrichment;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.protobuf.AnyPacker;

@@ -20,13 +20,13 @@
 
 package org.spine3.examples.todolist.testdata;
 
-import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsChange;
-import org.spine3.examples.todolist.LabelRemovedFromTask;
 import org.spine3.examples.todolist.TaskLabelId;
-import org.spine3.examples.todolist.UpdateLabelDetails;
+import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
+import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
+import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
 
 import static org.spine3.base.Identifiers.newUuid;
 

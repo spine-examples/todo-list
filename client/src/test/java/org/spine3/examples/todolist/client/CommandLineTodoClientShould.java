@@ -22,11 +22,11 @@ package org.spine3.examples.todolist.client;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.spine3.examples.todolist.CreateBasicLabel;
-import org.spine3.examples.todolist.CreateBasicTask;
-import org.spine3.examples.todolist.CreateDraft;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
+import org.spine3.examples.todolist.c.commands.CreateBasicTask;
+import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.client.builder.CommandBuilder;
 import org.spine3.examples.todolist.server.Server;
 import org.spine3.server.storage.memory.InMemoryStorageFactory;

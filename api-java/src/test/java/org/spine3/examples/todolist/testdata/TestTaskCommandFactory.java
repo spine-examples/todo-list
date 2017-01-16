@@ -23,22 +23,22 @@ package org.spine3.examples.todolist.testdata;
 import com.google.protobuf.Timestamp;
 import org.spine3.change.StringChange;
 import org.spine3.change.TimestampChange;
-import org.spine3.examples.todolist.AssignLabelToTask;
-import org.spine3.examples.todolist.CompleteTask;
-import org.spine3.examples.todolist.CreateBasicTask;
-import org.spine3.examples.todolist.CreateDraft;
-import org.spine3.examples.todolist.DeleteTask;
-import org.spine3.examples.todolist.FinalizeDraft;
 import org.spine3.examples.todolist.PriorityChange;
-import org.spine3.examples.todolist.RemoveLabelFromTask;
-import org.spine3.examples.todolist.ReopenTask;
-import org.spine3.examples.todolist.RestoreDeletedTask;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.examples.todolist.UpdateTaskDescription;
-import org.spine3.examples.todolist.UpdateTaskDueDate;
-import org.spine3.examples.todolist.UpdateTaskPriority;
+import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
+import org.spine3.examples.todolist.c.commands.CompleteTask;
+import org.spine3.examples.todolist.c.commands.CreateBasicTask;
+import org.spine3.examples.todolist.c.commands.CreateDraft;
+import org.spine3.examples.todolist.c.commands.DeleteTask;
+import org.spine3.examples.todolist.c.commands.FinalizeDraft;
+import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
+import org.spine3.examples.todolist.c.commands.ReopenTask;
+import org.spine3.examples.todolist.c.commands.RestoreDeletedTask;
+import org.spine3.examples.todolist.c.commands.UpdateTaskDescription;
+import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
+import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
 import org.spine3.protobuf.Timestamps;
 
 import static org.spine3.base.Identifiers.newUuid;
@@ -101,7 +101,7 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link UpdateTaskDescription} instance by description and task id specified.
+     * Provides {@link UpdateTaskDescription} instance by description and task ID specified.
      *
      * @param previousDescription the previous description of the task
      * @param newDescription      the description of the updated task

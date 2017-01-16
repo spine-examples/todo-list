@@ -20,7 +20,7 @@
 
 package org.spine3.examples.todolist.client.builder;
 
-import org.spine3.examples.todolist.CreateBasicLabel;
+import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 import org.spine3.examples.todolist.TaskLabelId;
 
 import static org.spine3.base.Identifiers.newUuid;

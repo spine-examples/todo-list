@@ -1,0 +1,144 @@
+/*
+ * Copyright 2016, TeamDev Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+syntax = "proto3";
+
+package spine.examples.todolist;
+
+option (type_url_prefix) = "type.spine.examples.todolist";
+option java_package = "org.spine3.examples.todolist.c.failures";
+option java_multiple_files = false;
+option java_generate_equals_and_hash = true;
+
+import "spine/annotations.proto";
+
+import "todolist/values.proto";
+
+// Fire the failure when cannot update task description.
+message CannotUpdateTaskDescription {
+
+    // Failed the description update.
+    DescriptionUpdateFailed update_failed = 1;
+}
+
+// Fire the failure when cannot update task priority.
+message CannotUpdateTaskPriority {
+
+    // Failed the priority update.
+    PriorityUpdateFailed update_failed = 1;
+}
+
+// Fire the failure when cannot update task due date.
+message CannotUpdateTaskDueDate {
+
+    // Failed the due date update.
+    TaskDueDateUpdateFailed update_failed = 1;
+}
+
+// Fire the failure when cannot update label details.
+message CannotUpdateLabelDetails {
+
+    // Failed the label details update.
+    LabelDetailsUpdateFailed update_failed = 1;
+}
+
+// Fire the failure when cannot create basic task.
+message CannotCreateBasicTask {
+
+    // Failed the task creation.
+    CreateBasicTaskFailed create_task_failed = 1;
+}
+
+// Fire the failure when cannot create basic label.
+message CannotCreateBasicLabel {
+
+    // Failed the label creation.
+    CreateBasicLabelFailed create_label_failed = 1;
+}
+
+// Fire the failure when cannot assign label to task.
+message CannotAssignLabelToTask {
+
+    // Failed the label assigning to the task.
+    AssignLabelToTaskFailed assign_label_failed = 1;
+}
+
+// Fire the failure when cannot remove label from task.
+message CannotRemoveLabelFromTask {
+
+    // Failed the label removing from task.
+    RemoveLabelFromTaskFailed remove_label_failed = 1;
+}
+
+// Fire the failure when cannot reopen task.
+message CannotReopenTask {
+
+    // Failed the task reopening.
+    ReopenTaskFailed reopen_task_failed = 1;
+}
+
+// Fire the failure when cannot delete task.
+message CannotDeleteTask {
+
+    // Failed the task deletion.
+    DeleteTaskFailed delete_task_failed = 1;
+}
+
+// Fire the failure when cannot restore deleted task.
+message CannotRestoreDeletedTask {
+
+    // Failed the task restoring.
+    RestoreDeletedTaskFailed restore_task_failed = 1;
+}
+
+// Fire the failure when cannot complete task.
+message CannotCompleteTask {
+
+    // Failed the task completion.
+    CompleteTaskFailed complete_task_failed = 1;
+}
+
+// Fire the failure when cannot create task draft.
+message CannotCreateDraft {
+
+    // Failed the draft creation.
+    CreateDraftFailed create_draft_failed = 1;
+}
+
+// Fire the failure when cannot finalize task draft.
+message CannotFinalizeDraft {
+
+    // Failed the draft finalization.
+    FinalizeDraftFailed finalize_draft_failed = 1;
+}
+
+// Fire the failure when cannot update task with inappropriate description.
+message CannotUpdateTaskWithInappropriateDescription {
+
+    // Failed the description update.
+    DescriptionUpdateFailed update_failed = 1;
+}
+
+// Fire the failure when cannot create task with inapproprriate descriprion.
+message CannotCreateTaskWithInappropriateDescription{
+
+    // Failed the task creation.
+    CreateBasicTaskFailed create_task_failed = 1;
+}

@@ -23,29 +23,29 @@ package org.spine3.examples.todolist.testdata;
 import com.google.protobuf.Timestamp;
 import org.spine3.change.StringChange;
 import org.spine3.change.TimestampChange;
-import org.spine3.examples.todolist.DeletedTaskRestored;
-import org.spine3.examples.todolist.LabelAssignedToTask;
 import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelCreated;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsChange;
-import org.spine3.examples.todolist.LabelDetailsUpdated;
-import org.spine3.examples.todolist.LabelRemovedFromTask;
-import org.spine3.examples.todolist.LabelledTaskRestored;
 import org.spine3.examples.todolist.PriorityChange;
-import org.spine3.examples.todolist.TaskCompleted;
-import org.spine3.examples.todolist.TaskCreated;
-import org.spine3.examples.todolist.TaskDeleted;
-import org.spine3.examples.todolist.TaskDescriptionUpdated;
 import org.spine3.examples.todolist.TaskDetails;
-import org.spine3.examples.todolist.TaskDraftCreated;
-import org.spine3.examples.todolist.TaskDraftFinalized;
-import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.examples.todolist.TaskPriorityUpdated;
-import org.spine3.examples.todolist.TaskReopened;
+import org.spine3.examples.todolist.c.events.DeletedTaskRestored;
+import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
+import org.spine3.examples.todolist.c.events.LabelCreated;
+import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
+import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
+import org.spine3.examples.todolist.c.events.LabelledTaskRestored;
+import org.spine3.examples.todolist.c.events.TaskCompleted;
+import org.spine3.examples.todolist.c.events.TaskCreated;
+import org.spine3.examples.todolist.c.events.TaskDeleted;
+import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
+import org.spine3.examples.todolist.c.events.TaskDraftCreated;
+import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
+import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
+import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
+import org.spine3.examples.todolist.c.events.TaskReopened;
 import org.spine3.protobuf.Timestamps;
 
 import static org.spine3.base.Identifiers.newUuid;
@@ -156,7 +156,7 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides {@link TaskDescriptionUpdated} event by task description and task id specified.
+     * Provides {@link TaskDescriptionUpdated} event by task description and task ID specified.
      *
      * @param description the description of the updated task
      * @return {@link TaskDescriptionUpdated} instance
@@ -208,7 +208,7 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides {@link TaskDueDateUpdated} event by task due date and task id specified.
+     * Provides {@link TaskDueDateUpdated} event by task due date and task ID specified.
      *
      * @param dueDate the due date of the updated task
      * @return {@link TaskDueDateUpdated} instance
