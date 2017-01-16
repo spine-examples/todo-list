@@ -41,7 +41,7 @@ import static com.google.protobuf.Any.pack;
     }
 
     /**
-     * Creates a new instance of {@link ValueMismatch} with the passed values.
+     * Creates a new instance of the {@link ValueMismatch} with the passed values.
      *
      * @param expectedPriority the {@link TaskPriority} expected by the command
      * @param actualPriority   the {@code TaskPriority} discovered instead of the expected
@@ -72,7 +72,7 @@ import static com.google.protobuf.Any.pack;
     }
 
     /**
-     * Creates a new instance of {@link ValueMismatch} with the passed values.
+     * Creates a new instance of the {@link ValueMismatch} with the passed values.
      *
      * @param expectedValue the value expected by the command
      * @param actualValue   the value discovered instead of the expected
@@ -89,7 +89,7 @@ import static com.google.protobuf.Any.pack;
     }
 
     /**
-     * Creates a new instance of {@link ValueMismatch} with the passed values.
+     * Creates a new instance of the {@link ValueMismatch} with the passed values.
      *
      * @param expectedTime the value expected by the command
      * @param actualTime   the value discovered instead of the expected
@@ -111,7 +111,7 @@ import static com.google.protobuf.Any.pack;
     }
 
     /**
-     * Creates a new instance of {@link ValueMismatch} with the passed values.
+     * Creates a new instance of the {@link ValueMismatch} with the passed values.
      *
      * @param expectedLabelDetails the {@link LabelDetails} expected by the command
      * @param actualLabelDetails   the {@code LabelDetails} discovered instead of the expected

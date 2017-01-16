@@ -140,7 +140,7 @@ message AssignLabelToTaskFailed {
 // DTO for the failed remove label from task command.
 message RemoveLabelFromTaskFailed {
 
-    // Unsuccessful task command.
+    // An unsuccessful task command.
     UnsuccessfulTaskCommand failed_command = 1;
 
     // An identifier of the label.
@@ -150,42 +150,42 @@ message RemoveLabelFromTaskFailed {
 // DTO for the failed reopen task command.
 message ReopenTaskFailed {
 
-    // Unsuccessful task command.
+    // An unsuccessful task command.
     UnsuccessfulTaskCommand failed_command = 1;
 }
 
 // DTO for the failed delete task command.
 message DeleteTaskFailed {
 
-    // Unsuccessful task command.
+    // An unsuccessful task command.
     UnsuccessfulTaskCommand failed_command = 1;
 }
 
 // DTO for the failed restore deleted task command.
 message RestoreDeletedTaskFailed {
 
-    // Unsuccessful task command.
+    // An unsuccessful task command.
     UnsuccessfulTaskCommand failed_command = 1;
 }
 
 // DTO for the failed complete task command.
 message CompleteTaskFailed {
 
-    // Unsuccessful task command.
+    // An unsuccessful task command.
     UnsuccessfulTaskCommand failed_command = 1;
 }
 
 // DTO for the failed create task draft command.
 message CreateDraftFailed {
 
-    // Unsuccessful task command.
+    // An unsuccessful task command.
     UnsuccessfulTaskCommand failed_command = 1;
 }
 
 // DTO for the failed finalize draft command.
 message FinalizeDraftFailed {
 
-    // Unsuccessful task command.
+    // An unsuccessful task command.
     UnsuccessfulTaskCommand failed_command = 1;
 }
 
