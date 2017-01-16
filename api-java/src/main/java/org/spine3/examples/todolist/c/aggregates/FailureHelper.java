@@ -93,8 +93,7 @@ class FailureHelper {
      * @param message the exception message
      * @throws CannotFinalizeDraft the {@code CannotFinalizeDraft} failure
      */
-    static void throwCannotFinalizeDraftFailure(TaskId taskId, String message)
-            throws CannotFinalizeDraft {
+    static void throwCannotFinalizeDraftFailure(TaskId taskId, String message) throws CannotFinalizeDraft {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
                                                                              .setMessage(message)
@@ -130,8 +129,7 @@ class FailureHelper {
      * @param message the exception message
      * @throws CannotDeleteTask the {@code CannotDeleteTask} failure
      */
-    static void throwCannotDeleteTaskFailure(TaskId taskId, String message)
-            throws CannotDeleteTask {
+    static void throwCannotDeleteTaskFailure(TaskId taskId, String message) throws CannotDeleteTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
                                                                              .setMessage(message)
@@ -188,8 +186,7 @@ class FailureHelper {
      * @param message the exception message
      * @throws CannotRestoreDeletedTask the {@code CannotRestoreDeletedTask} failure
      */
-    static void throwCannotRestoreDeletedTaskFailure(TaskId taskId, String message)
-            throws CannotRestoreDeletedTask {
+    static void throwCannotRestoreDeletedTaskFailure(TaskId taskId, String message) throws CannotRestoreDeletedTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
                                                                              .setMessage(message)
@@ -228,9 +225,7 @@ class FailureHelper {
      * @param mismatch the {@link ValueMismatch}
      * @throws CannotUpdateTaskDescription the {@code CannotUpdateTaskDescription} failure
      */
-    static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId,
-                                                        String message,
-                                                        ValueMismatch mismatch)
+    static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, String message, ValueMismatch mismatch)
             throws CannotUpdateTaskDescription {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
@@ -271,8 +266,7 @@ class FailureHelper {
      * @param labelId the ID of the label
      * @throws CannotAssignLabelToTask the {@code CannotAssignLabelToTask} failure
      */
-    static void throwCannotAssignLabelToTaskFailure(TaskId taskId, TaskLabelId labelId)
-            throws CannotAssignLabelToTask {
+    static void throwCannotAssignLabelToTaskFailure(TaskId taskId, TaskLabelId labelId) throws CannotAssignLabelToTask {
         final UnsuccessfulTaskCommand commandFailed =
                 UnsuccessfulTaskCommand.newBuilder()
                                        .setTaskId(taskId)
@@ -388,7 +382,8 @@ class FailureHelper {
      * according to the passed parameters.
      *
      * @param taskId the ID of the task
-     * @throws CannotUpdateTaskWithInappropriateDescription the {@code CannotUpdateTaskWithInappropriateDescription} failure
+     * @throws CannotUpdateTaskWithInappropriateDescription
+     * the {@code CannotUpdateTaskWithInappropriateDescription} failure
      */
     static void throwCannotUpdateTooShortDescriptionFailure(TaskId taskId)
             throws CannotUpdateTaskWithInappropriateDescription {
@@ -408,7 +403,8 @@ class FailureHelper {
      * according to the passed parameters.
      *
      * @param taskId the ID of the task
-     * @throws CannotCreateTaskWithInappropriateDescription the {@code CannotCreateTaskWithInappropriateDescription} failure
+     * @throws CannotCreateTaskWithInappropriateDescription
+     * the {@code CannotCreateTaskWithInappropriateDescription} failure
      */
     static void throwCannotCreateTaskWithInappropriateDescription(TaskId taskId)
             throws CannotCreateTaskWithInappropriateDescription {
