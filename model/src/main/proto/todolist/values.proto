@@ -1,0 +1,217 @@
+/*
+ * Copyright 2016, TeamDev Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+syntax = "proto3";
+
+package spine.examples.todolist;
+
+option (type_url_prefix) = "type.spine.examples.todolist";
+option java_package = "org.spine3.examples.todolist";
+option java_outer_classname = "ValuesProto";
+option java_multiple_files = true;
+option java_generate_equals_and_hash = true;
+
+import "spine/change/value_mismatch.proto";
+import "spine/annotations.proto";
+import "spine/validate.proto";
+
+import "todolist/identifiers.proto";
+import "todolist/attributes.proto";
+
+// A wrapper for a task priority.
+message TaskPriorityValue {
+
+    // The task priority value.
+    TaskPriority priority_value = 1;
+}
+
+// **** Data transfer objects ****
+
+// DTO for the task details.
+//
+// Wrapped by several events to transfer the task data.
+//
+message TaskDetails {
+
+    // A description of the task.
+    string description = 1 [(required) = true];
+
+    // A priority of the task.
+    TaskPriority priority = 2 [(required) = true];
+
+    // Whether this task is completed.
+    bool completed = 3 [(required) = true];
+}
+
+// DTO for the label details.
+//
+// Wrapped by several events to transfer the label data.
+//
+message LabelDetails {
+
+    // Label title.
+    string title = 1 [(required) = true];
+
+    // Label color.
+    LabelColor color = 2;
+}
+
+// DTO for the description mismatch.
+message DescriptionUpdateFailed {
+
+    // Unsuccessful task command.
+    UnsuccessfulTaskCommand failed_command = 1;
+
+    // A mismatching description value.
+    change.ValueMismatch description_mismatch = 2;
+}
+
+// DTO for the priority mismatch.
+message PriorityUpdateFailed {
+
+    // Unsuccessful task command.
+    UnsuccessfulTaskCommand failed_command = 1;
+
+    // A mismatching priority value.
+    change.ValueMismatch priority_mismatch = 2;
+}
+
+// DTO for the due date mismatch.
+message TaskDueDateUpdateFailed {
+
+    // Unsuccessful task command.
+    UnsuccessfulTaskCommand failed_command = 1;
+
+    // A mismatching due date value.
+    change.ValueMismatch due_date_mismatch = 2;
+}
+
+// DTO for the label details mismatch.
+message LabelDetailsUpdateFailed {
+
+    // Unsuccessful label command.
+    UnsuccessfulLabelCommand failed_command = 1;
+
+    // A mismatching label details value.
+    change.ValueMismatch label_details_mismatch = 2;
+}
+
+// DTO for the failed craete basic task command.
+message CreateBasicTaskFailed {
+
+    // Unsuccessful task command.
+    UnsuccessfulTaskCommand failed_command = 1;
+}
+
+// DTO for the failed created basic label command.
+message CreateBasicLabelFailed {
+
+    // Unsuccessful label command.
+    UnsuccessfulLabelCommand failed_command = 1;
+}
+
+// DTO for the failed assign label to task command.
+message AssignLabelToTaskFailed {
+
+    // Unsuccessful task command.
+    UnsuccessfulTaskCommand assign_label_failed = 1;
+
+    // An identifier of the label.
+    TaskLabelId label_id = 2;
+}
+
+// DTO for the failed remove label from task command.
+message RemoveLabelFromTaskFailed {
+
+    // An unsuccessful task command.
+    UnsuccessfulTaskCommand failed_command = 1;
+
+    // An identifier of the label.
+    TaskLabelId label_id = 2;
+}
+
+// DTO for the failed reopen task command.
+message ReopenTaskFailed {
+
+    // An unsuccessful task command.
+    UnsuccessfulTaskCommand failed_command = 1;
+}
+
+// DTO for the failed delete task command.
+message DeleteTaskFailed {
+
+    // An unsuccessful task command.
+    UnsuccessfulTaskCommand failed_command = 1;
+}
+
+// DTO for the failed restore deleted task command.
+message RestoreDeletedTaskFailed {
+
+    // An unsuccessful task command.
+    UnsuccessfulTaskCommand failed_command = 1;
+}
+
+// DTO for the failed complete task command.
+message CompleteTaskFailed {
+
+    // An unsuccessful task command.
+    UnsuccessfulTaskCommand failed_command = 1;
+}
+
+// DTO for the failed create task draft command.
+message CreateDraftFailed {
+
+    // An unsuccessful task command.
+    UnsuccessfulTaskCommand failed_command = 1;
+}
+
+// DTO for the failed finalize draft command.
+message FinalizeDraftFailed {
+
+    // An unsuccessful task command.
+    UnsuccessfulTaskCommand failed_command = 1;
+}
+
+// DTO for the unsuccessful task command.
+message UnsuccessfulTaskCommand {
+
+    // A task identifier.
+    TaskId task_id = 1;
+
+    // A failure message.
+    string message = 2;
+}
+
+// DTO for the unsuccessful label command.
+message UnsuccessfulLabelCommand {
+
+    // A task label identifier.
+    TaskLabelId label_id = 1;
+
+    // A failure message.
+    string message = 2;
+}
+
+// DTO for the list of the label IDs.
+message LabelIdList {
+
+    // A label identifiers.
+    repeated TaskLabelId label_id = 1;
+}

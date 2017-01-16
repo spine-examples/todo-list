@@ -20,11 +20,13 @@
 
 package org.spine3.examples.todolist.testdata;
 
-import org.spine3.examples.todolist.CreateBasicLabel;
 import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelRemovedFromTask;
+import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelDetailsChange;
 import org.spine3.examples.todolist.TaskLabelId;
-import org.spine3.examples.todolist.UpdateLabelDetails;
+import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
+import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
+import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
 
 import static org.spine3.base.Identifiers.newUuid;
 
@@ -63,21 +65,34 @@ public class TestTaskLabelCommandFactory {
      * @return {@link UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance() {
-        return updateLabelDetailsInstance(LabelColor.GREEN, UPDATED_LABEL_TITLE);
+        final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
+                                                              .setTitle(LABEL_TITLE)
+                                                              .setColor(LabelColor.GRAY)
+                                                              .build();
+        final LabelDetails newLabelDetails = LabelDetails.newBuilder()
+                                                         .setTitle(UPDATED_LABEL_TITLE)
+                                                         .setColor(LabelColor.GREEN)
+                                                         .build();
+        return updateLabelDetailsInstance(LABEL_ID, previousLabelDetails, newLabelDetails);
     }
 
     /**
      * Provides {@link UpdateLabelDetails} event by specified label color and title.
      *
-     * @param color the color of the updated label details
-     * @param title the title of the updated label details
+     * @param previousLabelDetails the previous label details
+     * @param newLabelDetails      the new label details
      * @return {@link UpdateLabelDetails} instance.
      */
-    public static UpdateLabelDetails updateLabelDetailsInstance(LabelColor color, String title) {
+    public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId id,
+                                                                LabelDetails previousLabelDetails,
+                                                                LabelDetails newLabelDetails) {
+        final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()
+                                                                        .setPreviousDetails(previousLabelDetails)
+                                                                        .setNewDetails(newLabelDetails)
+                                                                        .build();
         final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
-                                                            .setId(LABEL_ID)
-                                                            .setColor(color)
-                                                            .setNewTitle(title)
+                                                            .setId(id)
+                                                            .setLabelDetailsChange(labelDetailsChange)
                                                             .build();
         return result;
     }

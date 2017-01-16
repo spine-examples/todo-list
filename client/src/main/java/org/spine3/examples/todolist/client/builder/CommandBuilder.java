@@ -18,18 +18,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Apply this script to use `grpc` plugin in `generateProto` tasks.
-// This is needed for gRPC services generation.
-// Also adds generated gRPC code to the source sets.
+package org.spine3.examples.todolist.client.builder;
 
-protobuf {
-    generateProtoTasks {
-        all().each { final task ->
-            task.plugins {
-                grpc {}
-            }
-        }
+/**
+ * Utility class for working with command builders.
+ *
+ * <p> Provides methods for building commands.
+ *
+ * @author Illia Shepilov
+ */
+public final class CommandBuilder {
+
+    private CommandBuilder() {
+    }
+
+    /**
+     * Provides the {@link TaskBuilder}.
+     *
+     * @return the {@code TaskBuilder} instance
+     */
+    public static TaskBuilder task() {
+        return TaskBuilder.getInstance();
+    }
+
+    /**
+     * Provides the {@link LabelBuilder}.
+     *
+     * @return the {@code LabelBuilder} instance
+     */
+    public static LabelBuilder label() {
+        return LabelBuilder.getInstance();
     }
 }
-
-sourceSets.main.java.srcDirs += [generatedGrpcDir]

@@ -18,18 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Apply this script to use `grpc` plugin in `generateProto` tasks.
-// This is needed for gRPC services generation.
-// Also adds generated gRPC code to the source sets.
+package org.spine3.examples.todolist.repositories;
 
-protobuf {
-    generateProtoTasks {
-        all().each { final task ->
-            task.plugins {
-                grpc {}
-            }
-        }
+import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.c.aggregates.TaskAggregate;
+import org.spine3.server.BoundedContext;
+import org.spine3.server.aggregate.AggregateRepository;
+
+/**
+ * Repository for the {@link TaskAggregate}.
+ *
+ * @author Illia Shepilov
+ */
+public class TaskAggregateRepository extends AggregateRepository<TaskId, TaskAggregate> {
+
+    /**
+     * Creates a new repository instance.
+     *
+     * @param boundedContext the bounded context to which this repository belongs
+     */
+    public TaskAggregateRepository(BoundedContext boundedContext) {
+        super(boundedContext);
     }
 }
-
-sourceSets.main.java.srcDirs += [generatedGrpcDir]

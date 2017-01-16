@@ -21,33 +21,31 @@
 package org.spine3.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
-import org.spine3.examples.todolist.DeletedTaskRestored;
-import org.spine3.examples.todolist.LabelAssignedToTask;
+import org.spine3.change.StringChange;
+import org.spine3.change.TimestampChange;
 import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelCreated;
 import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelDetailsUpdated;
-import org.spine3.examples.todolist.LabelRemovedFromTask;
-import org.spine3.examples.todolist.LabelledTaskCompleted;
-import org.spine3.examples.todolist.LabelledTaskDeleted;
-import org.spine3.examples.todolist.LabelledTaskDescriptionUpdated;
-import org.spine3.examples.todolist.LabelledTaskDueDateUpdated;
-import org.spine3.examples.todolist.LabelledTaskPriorityUpdated;
-import org.spine3.examples.todolist.LabelledTaskReopened;
-import org.spine3.examples.todolist.LabelledTaskRestored;
-import org.spine3.examples.todolist.TaskCompleted;
-import org.spine3.examples.todolist.TaskCreated;
-import org.spine3.examples.todolist.TaskDeleted;
-import org.spine3.examples.todolist.TaskDescriptionUpdated;
+import org.spine3.examples.todolist.LabelDetailsChange;
+import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.TaskDetails;
-import org.spine3.examples.todolist.TaskDraftCreated;
-import org.spine3.examples.todolist.TaskDraftFinalized;
-import org.spine3.examples.todolist.TaskDueDateUpdated;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.examples.todolist.TaskPriorityUpdated;
-import org.spine3.examples.todolist.TaskReopened;
+import org.spine3.examples.todolist.c.events.DeletedTaskRestored;
+import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
+import org.spine3.examples.todolist.c.events.LabelCreated;
+import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
+import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
+import org.spine3.examples.todolist.c.events.LabelledTaskRestored;
+import org.spine3.examples.todolist.c.events.TaskCompleted;
+import org.spine3.examples.todolist.c.events.TaskCreated;
+import org.spine3.examples.todolist.c.events.TaskDeleted;
+import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
+import org.spine3.examples.todolist.c.events.TaskDraftCreated;
+import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
+import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
+import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
+import org.spine3.examples.todolist.c.events.TaskReopened;
 import org.spine3.protobuf.Timestamps;
 
 import static org.spine3.base.Identifiers.newUuid;
@@ -158,68 +156,19 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides a pre-configured {@link LabelledTaskDescriptionUpdated} event instance.
-     *
-     * @param description the description of the labelled task
-     * @return {@link LabelledTaskDescriptionUpdated} instance
-     */
-    public static LabelledTaskDescriptionUpdated labelledTaskDescriptionUpdatedInstance(TaskId taskId,
-                                                                                        TaskLabelId labelId,
-                                                                                        String description) {
-        final LabelledTaskDescriptionUpdated result = LabelledTaskDescriptionUpdated.newBuilder()
-                                                                                    .setTaskId(taskId)
-                                                                                    .setLabelId(labelId)
-                                                                                    .setNewDescription(description)
-                                                                                    .build();
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link LabelledTaskDescriptionUpdated} event instance.
-     *
-     * @return {@link LabelledTaskDescriptionUpdated} instance
-     */
-    public static LabelledTaskDescriptionUpdated labelledTaskDescriptionUpdatedInstance() {
-        return labelledTaskDescriptionUpdatedInstance(TASK_ID, LABEL_ID, UPDATED_DESCRIPTION);
-    }
-
-    /**
-     * Provides {@link TaskDescriptionUpdated} event by task description and task id specified.
+     * Provides {@link TaskDescriptionUpdated} event by task description and task ID specified.
      *
      * @param description the description of the updated task
      * @return {@link TaskDescriptionUpdated} instance
      */
     public static TaskDescriptionUpdated taskDescriptionUpdatedInstance(TaskId id, String description) {
+        final StringChange descriptionChange = StringChange.newBuilder()
+                                                           .setNewValue(description)
+                                                           .build();
         final TaskDescriptionUpdated result = TaskDescriptionUpdated.newBuilder()
                                                                     .setId(id)
-                                                                    .setNewDescription(description)
+                                                                    .setDescriptionChange(descriptionChange)
                                                                     .build();
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link LabelledTaskPriorityUpdated} event instance.
-     *
-     * @return {@link LabelledTaskPriorityUpdated} instance
-     */
-    public static LabelledTaskPriorityUpdated labelledTskPriorityUpdatedInstance() {
-        return labelledTaskPriorityUpdatedInstance(TASK_ID, LABEL_ID, UPDATED_TASK_PRIORITY);
-    }
-
-    /**
-     * Provides {@link LabelledTaskPriorityUpdated} event by specified task priority.
-     *
-     * @param priority the priority of the updated task
-     * @return {@link LabelledTaskPriorityUpdated} instance
-     */
-    public static LabelledTaskPriorityUpdated labelledTaskPriorityUpdatedInstance(TaskId taskId,
-                                                                                  TaskLabelId labelId,
-                                                                                  TaskPriority priority) {
-        final LabelledTaskPriorityUpdated result = LabelledTaskPriorityUpdated.newBuilder()
-                                                                              .setTaskId(taskId)
-                                                                              .setLabelId(labelId)
-                                                                              .setNewPriority(priority)
-                                                                              .build();
         return result;
     }
 
@@ -239,36 +188,13 @@ public class TestEventFactory {
      * @return {@link TaskPriorityUpdated} instance
      */
     public static TaskPriorityUpdated taskPriorityUpdatedInstance(TaskId id, TaskPriority priority) {
+        final PriorityChange taskPriorityChange = PriorityChange.newBuilder()
+                                                                .setNewValue(priority)
+                                                                .build();
         final TaskPriorityUpdated result = TaskPriorityUpdated.newBuilder()
                                                               .setId(id)
-                                                              .setNewPriority(priority)
+                                                              .setPriorityChange(taskPriorityChange)
                                                               .build();
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link LabelledTaskDueDateUpdated} event instance.
-     *
-     * @return {@link LabelledTaskDueDateUpdated} instance
-     */
-    public static LabelledTaskDueDateUpdated labelledTaskDueDateUpdatedInstance() {
-        return labelledTaskDueDateUpdatedInstance(TASK_ID, LABEL_ID, UPDATED_TASK_DUE_DATE);
-    }
-
-    /**
-     * Provides {@link LabelledTaskDueDateUpdated} event by task due date and task id specified.
-     *
-     * @param dueDate the due date of the updated task
-     * @return {@link LabelledTaskDueDateUpdated} instance
-     */
-    public static LabelledTaskDueDateUpdated labelledTaskDueDateUpdatedInstance(TaskId taskId,
-                                                                                TaskLabelId labelId,
-                                                                                Timestamp dueDate) {
-        final LabelledTaskDueDateUpdated result = LabelledTaskDueDateUpdated.newBuilder()
-                                                                            .setTaskId(taskId)
-                                                                            .setLabelId(labelId)
-                                                                            .setNewDueDate(dueDate)
-                                                                            .build();
         return result;
     }
 
@@ -282,15 +208,18 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides {@link TaskDueDateUpdated} event by task due date and task id specified.
+     * Provides {@link TaskDueDateUpdated} event by task due date and task ID specified.
      *
      * @param dueDate the due date of the updated task
      * @return {@link TaskDueDateUpdated} instance
      */
     public static TaskDueDateUpdated taskDueDateUpdatedInstance(TaskId id, Timestamp dueDate) {
+        final TimestampChange dueDateChange = TimestampChange.newBuilder()
+                                                             .setNewValue(dueDate)
+                                                             .build();
         final TaskDueDateUpdated result = TaskDueDateUpdated.newBuilder()
                                                             .setId(id)
-                                                            .setNewDueDate(dueDate)
+                                                            .setDueDateChange(dueDateChange)
                                                             .build();
         return result;
     }
@@ -304,28 +233,6 @@ public class TestEventFactory {
         final TaskDraftFinalized result = TaskDraftFinalized.newBuilder()
                                                             .setId(TASK_ID)
                                                             .build();
-        return result;
-    }
-
-    /**
-     * Provides pre-configured {@link LabelledTaskCompleted} event instance.
-     *
-     * @return {@link LabelledTaskCompleted} instance
-     */
-    public static LabelledTaskCompleted labelledTaskCompletedInstance() {
-        return labelledTaskCompletedInstance(TASK_ID, LABEL_ID);
-    }
-
-    /**
-     * Provides pre-configured {@link LabelledTaskCompleted} event instance.
-     *
-     * @return {@link LabelledTaskCompleted} instance
-     */
-    public static LabelledTaskCompleted labelledTaskCompletedInstance(TaskId taskId, TaskLabelId labelId) {
-        final LabelledTaskCompleted result = LabelledTaskCompleted.newBuilder()
-                                                                  .setTaskId(taskId)
-                                                                  .setLabelId(labelId)
-                                                                  .build();
         return result;
     }
 
@@ -351,28 +258,6 @@ public class TestEventFactory {
     }
 
     /**
-     * Provides pre-configured {@link LabelledTaskReopened} event instance.
-     *
-     * @return {@link LabelledTaskReopened} instance
-     */
-    public static LabelledTaskReopened labelledTaskReopenedInstance() {
-        return labelledTaskReopenedInstance(TASK_ID, LABEL_ID);
-    }
-
-    /**
-     * Provides pre-configured {@link LabelledTaskReopened} event instance.
-     *
-     * @return {@link LabelledTaskReopened} instance
-     */
-    public static LabelledTaskReopened labelledTaskReopenedInstance(TaskId taskId, TaskLabelId labelId) {
-        final LabelledTaskReopened result = LabelledTaskReopened.newBuilder()
-                                                                .setTaskId(taskId)
-                                                                .setLabelId(labelId)
-                                                                .build();
-        return result;
-    }
-
-    /**
      * Provides pre-configured {@link TaskReopened} event instance.
      *
      * @return {@link TaskReopened} instance
@@ -390,19 +275,6 @@ public class TestEventFactory {
         final TaskReopened result = TaskReopened.newBuilder()
                                                 .setId(id)
                                                 .build();
-        return result;
-    }
-
-    /**
-     * Provides default {@link LabelledTaskDeleted} event instance.
-     *
-     * @return {@link LabelledTaskDeleted} instance
-     */
-    public static LabelledTaskDeleted labelledTaskDeletedInstance() {
-        final LabelledTaskDeleted result = LabelledTaskDeleted.newBuilder()
-                                                              .setTaskId(TASK_ID)
-                                                              .setLabelId(LABEL_ID)
-                                                              .build();
         return result;
     }
 
@@ -460,7 +332,7 @@ public class TestEventFactory {
      */
     public static LabelAssignedToTask labelAssignedToTaskInstance(TaskId taskId, TaskLabelId labelId) {
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
-                                                              .setId(taskId)
+                                                              .setTaskId(taskId)
                                                               .setLabelId(labelId)
                                                               .build();
         return result;
@@ -511,7 +383,7 @@ public class TestEventFactory {
      * @return {@link LabelDetailsUpdated} instance.
      */
     public static LabelDetailsUpdated labelDetailsUpdatedInstance() {
-        return labelDetailsUpdatedInstance(LabelColor.GRAY, LABEL_TITLE);
+        return labelDetailsUpdatedInstance(LABEL_ID, LabelColor.GRAY, LABEL_TITLE);
     }
 
     /**
@@ -521,13 +393,16 @@ public class TestEventFactory {
      * @param title the title of the updated label details
      * @return {@link LabelDetailsUpdated} instance
      */
-    public static LabelDetailsUpdated labelDetailsUpdatedInstance(LabelColor color, String title) {
+    public static LabelDetailsUpdated labelDetailsUpdatedInstance(TaskLabelId labelId, LabelColor color, String title) {
         final LabelDetails.Builder labelDetailsBuilder = LabelDetails.newBuilder()
                                                                      .setColor(color)
                                                                      .setTitle(title);
+        final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()
+                                                                        .setNewDetails(labelDetailsBuilder)
+                                                                        .build();
         final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
-                                                              .setLabelId(LABEL_ID)
-                                                              .setNewDetails(labelDetailsBuilder)
+                                                              .setLabelId(labelId)
+                                                              .setLabelDetailsChange(labelDetailsChange)
                                                               .build();
         return result;
     }

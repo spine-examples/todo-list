@@ -18,18 +18,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Apply this script to use `grpc` plugin in `generateProto` tasks.
-// This is needed for gRPC services generation.
-// Also adds generated gRPC code to the source sets.
+package org.spine3.examples.todolist.q.projections;
 
-protobuf {
-    generateProtoTasks {
-        all().each { final task ->
-            task.plugins {
-                grpc {}
+import org.spine3.examples.todolist.LabelColor;
+
+/**
+ * Supplies {@link LabelColor} with hexadecimal representation of color.
+ */
+/* package */ enum LabelColorView {
+    RED_COLOR(LabelColor.RED, "#ff0000"),
+    BLUE_COLOR(LabelColor.BLUE, "#0000ff"),
+    GREEN_COLOR(LabelColor.GREEN, "#008000"),
+    GRAY_COLOR(LabelColor.GRAY, "#808080");
+
+    private static final String WRONG_LABEL_COLOR_EXCEPTION_MESSAGE = "No enum constant by specified label color: ";
+
+    private final LabelColor labelColor;
+    private final String hexColor;
+
+    LabelColorView(LabelColor labelColor, String hexColor) {
+        this.labelColor = labelColor;
+        this.hexColor = hexColor;
+    }
+
+    /* package */ static String valueOf(LabelColor labelColor) {
+        for (LabelColorView colorView : values()) {
+            if (colorView.labelColor == labelColor) {
+                return colorView.hexColor;
             }
         }
+        throw new IllegalArgumentException(WRONG_LABEL_COLOR_EXCEPTION_MESSAGE + labelColor);
     }
 }
-
-sourceSets.main.java.srcDirs += [generatedGrpcDir]

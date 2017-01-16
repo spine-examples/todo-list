@@ -21,21 +21,24 @@
 package org.spine3.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
-import org.spine3.examples.todolist.AssignLabelToTask;
-import org.spine3.examples.todolist.CompleteTask;
-import org.spine3.examples.todolist.CreateBasicTask;
-import org.spine3.examples.todolist.CreateDraft;
-import org.spine3.examples.todolist.DeleteTask;
-import org.spine3.examples.todolist.FinalizeDraft;
-import org.spine3.examples.todolist.RemoveLabelFromTask;
-import org.spine3.examples.todolist.ReopenTask;
-import org.spine3.examples.todolist.RestoreDeletedTask;
+import org.spine3.change.StringChange;
+import org.spine3.change.TimestampChange;
+import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.examples.todolist.UpdateTaskDescription;
-import org.spine3.examples.todolist.UpdateTaskDueDate;
-import org.spine3.examples.todolist.UpdateTaskPriority;
+import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
+import org.spine3.examples.todolist.c.commands.CompleteTask;
+import org.spine3.examples.todolist.c.commands.CreateBasicTask;
+import org.spine3.examples.todolist.c.commands.CreateDraft;
+import org.spine3.examples.todolist.c.commands.DeleteTask;
+import org.spine3.examples.todolist.c.commands.FinalizeDraft;
+import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
+import org.spine3.examples.todolist.c.commands.ReopenTask;
+import org.spine3.examples.todolist.c.commands.RestoreDeletedTask;
+import org.spine3.examples.todolist.c.commands.UpdateTaskDescription;
+import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
+import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
 import org.spine3.protobuf.Timestamps;
 
 import static org.spine3.base.Identifiers.newUuid;
@@ -55,6 +58,7 @@ public class TestTaskCommandFactory {
                                                           .build();
     public static final String DESCRIPTION = "Create command description.";
     public static final Timestamp DUE_DATE = Timestamps.getCurrentTime();
+    public static final String UPDATED_LABEL_TITLE = "labelTitle";
 
     private TestTaskCommandFactory() {
     }
@@ -65,8 +69,23 @@ public class TestTaskCommandFactory {
      * @return {@link CreateBasicTask} instance
      */
     public static CreateBasicTask createTaskInstance() {
+        final CreateBasicTask result = createTaskInstance(TASK_ID, DESCRIPTION);
+        return result;
+    }
+
+    public static CreateBasicTask createTaskInstance(TaskId id, String description) {
         final CreateBasicTask result = CreateBasicTask.newBuilder()
-                                                      .setId(TASK_ID)
+                                                      .setId(id)
+                                                      .setDescription(description)
+                                                      .build();
+        return result;
+    }
+
+    public static CreateBasicTask createUniqueTask() {
+        final TaskId.Builder id = TaskId.newBuilder()
+                                        .setValue(newUuid());
+        final CreateBasicTask result = CreateBasicTask.newBuilder()
+                                                      .setId(id)
                                                       .setDescription(DESCRIPTION)
                                                       .build();
         return result;
@@ -78,19 +97,24 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance() {
-        return updateTaskDescriptionInstance(DESCRIPTION);
+        return updateTaskDescriptionInstance(TASK_ID, DESCRIPTION, DESCRIPTION);
     }
 
     /**
-     * Provides {@link UpdateTaskDescription} instance by specified description.
+     * Provides {@link UpdateTaskDescription} instance by description and task ID specified.
      *
-     * @param description the description of the updated task
+     * @param previousDescription the previous description of the task
+     * @param newDescription      the description of the updated task
      * @return {@link UpdateTaskDescription} instance
      */
-    public static UpdateTaskDescription updateTaskDescriptionInstance(String description) {
+    public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id, String previousDescription, String newDescription) {
+        final StringChange descriptionChange = StringChange.newBuilder()
+                                                           .setPreviousValue(previousDescription)
+                                                           .setNewValue(newDescription)
+                                                           .build();
         final UpdateTaskDescription result = UpdateTaskDescription.newBuilder()
-                                                                  .setId(TASK_ID)
-                                                                  .setUpdatedDescription(description)
+                                                                  .setId(id)
+                                                                  .setDescriptionChange(descriptionChange)
                                                                   .build();
         return result;
     }
@@ -101,19 +125,26 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance() {
-        return updateTaskDueDateInstance(DUE_DATE);
+        return updateTaskDueDateInstance(TASK_ID, Timestamp.getDefaultInstance(), DUE_DATE);
     }
 
     /**
-     * Provides {@link UpdateTaskDueDate} instance with specified update due date field.
+     * Provides {@link UpdateTaskDueDate} instance with specified update due date and {@link TaskId} fields.
      *
-     * @param updatedDueDate the due date of the updated task
+     * @param previousDueDate the previous due date of the task
+     * @param updatedDueDate  the due date of the updated task
      * @return {@link UpdateTaskDueDate} instance
      */
-    public static UpdateTaskDueDate updateTaskDueDateInstance(Timestamp updatedDueDate) {
+    public static UpdateTaskDueDate updateTaskDueDateInstance(TaskId id,
+                                                              Timestamp previousDueDate,
+                                                              Timestamp updatedDueDate) {
+        final TimestampChange dueDateChange = TimestampChange.newBuilder()
+                                                             .setPreviousValue(previousDueDate)
+                                                             .setNewValue(updatedDueDate)
+                                                             .build();
         final UpdateTaskDueDate result = UpdateTaskDueDate.newBuilder()
-                                                          .setId(TASK_ID)
-                                                          .setUpdatedDueDate(updatedDueDate)
+                                                          .setId(id)
+                                                          .setDueDateChange(dueDateChange)
                                                           .build();
         return result;
     }
@@ -124,21 +155,37 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance() {
-        return updateTaskPriorityInstance(TaskPriority.HIGH);
+        return updateTaskPriorityInstance(TASK_ID, TaskPriority.TP_UNDEFINED, TaskPriority.HIGH);
     }
 
     /**
-     * Provides {@link UpdateTaskPriority} instance by specified priority.
+     * Provides a pre-configured {@link UpdateTaskPriority} command instance.
      *
-     * @param priority the priority of the updated task
+     * @param previousPriority the previous task priority
+     * @param newPriority      the priority of the updated task
      * @return {@link UpdateTaskPriority} instance
      */
-    public static UpdateTaskPriority updateTaskPriorityInstance(TaskPriority priority) {
+    public static UpdateTaskPriority updateTaskPriorityInstance(TaskId id,
+                                                                TaskPriority previousPriority,
+                                                                TaskPriority newPriority) {
+        final PriorityChange taskPriorityChange = PriorityChange.newBuilder()
+                                                                .setPreviousValue(previousPriority)
+                                                                .setNewValue(newPriority)
+                                                                .build();
         final UpdateTaskPriority result = UpdateTaskPriority.newBuilder()
-                                                            .setId(TASK_ID)
-                                                            .setUpdatedPriority(priority)
+                                                            .setId(id)
+                                                            .setPriorityChange(taskPriorityChange)
                                                             .build();
         return result;
+    }
+
+    /**
+     * Provides default {@link CompleteTask} command instance.
+     *
+     * @return {@link CompleteTask} instance
+     */
+    public static CompleteTask completeTaskInstance() {
+        return completeTaskInstance(TASK_ID);
     }
 
     /**
@@ -146,9 +193,9 @@ public class TestTaskCommandFactory {
      *
      * @return {@link CompleteTask} instance
      */
-    public static CompleteTask completeTaskInstance() {
+    public static CompleteTask completeTaskInstance(TaskId id) {
         final CompleteTask result = CompleteTask.newBuilder()
-                                                .setId(TASK_ID)
+                                                .setId(id)
                                                 .build();
         return result;
     }
@@ -162,6 +209,18 @@ public class TestTaskCommandFactory {
         final ReopenTask result = ReopenTask.newBuilder()
                                             .setId(TASK_ID)
                                             .build();
+        return reopenTaskInstance(TASK_ID);
+    }
+
+    /**
+     * Provides a pre-configured {@link ReopenTask} command instance.
+     *
+     * @return {@link ReopenTask} instance
+     */
+    public static ReopenTask reopenTaskInstance(TaskId id) {
+        final ReopenTask result = ReopenTask.newBuilder()
+                                            .setId(id)
+                                            .build();
         return result;
     }
 
@@ -171,8 +230,17 @@ public class TestTaskCommandFactory {
      * @return {@link DeleteTask} instance
      */
     public static DeleteTask deleteTaskInstance() {
+        return deleteTaskInstance(TASK_ID);
+    }
+
+    /**
+     * Provides a pre-configured {@link DeleteTask} command instance.
+     *
+     * @return {@link DeleteTask} instance
+     */
+    public static DeleteTask deleteTaskInstance(TaskId id) {
         final DeleteTask result = DeleteTask.newBuilder()
-                                            .setId(TASK_ID)
+                                            .setId(id)
                                             .build();
         return result;
     }
@@ -186,6 +254,18 @@ public class TestTaskCommandFactory {
         final RestoreDeletedTask result = RestoreDeletedTask.newBuilder()
                                                             .setId(TASK_ID)
                                                             .build();
+        return restoreDeletedTaskInstance(TASK_ID);
+    }
+
+    /**
+     * Provides a pre-configured {@link RestoreDeletedTask} command instance.
+     *
+     * @return {@link RestoreDeletedTask} instance
+     */
+    public static RestoreDeletedTask restoreDeletedTaskInstance(TaskId id) {
+        final RestoreDeletedTask result = RestoreDeletedTask.newBuilder()
+                                                            .setId(id)
+                                                            .build();
         return result;
     }
 
@@ -197,6 +277,18 @@ public class TestTaskCommandFactory {
     public static FinalizeDraft finalizeDraftInstance() {
         final FinalizeDraft result = FinalizeDraft.newBuilder()
                                                   .setId(TASK_ID)
+                                                  .build();
+        return finalizeDraftInstance(TASK_ID);
+    }
+
+    /**
+     * Provides default {@link FinalizeDraft} command instance.
+     *
+     * @return {@link FinalizeDraft} instance
+     */
+    public static FinalizeDraft finalizeDraftInstance(TaskId id) {
+        final FinalizeDraft result = FinalizeDraft.newBuilder()
+                                                  .setId(id)
                                                   .build();
         return result;
     }
@@ -218,15 +310,6 @@ public class TestTaskCommandFactory {
      *
      * @return {@link AssignLabelToTask} instance
      */
-    public static AssignLabelToTask assignLabelToTaskInstance() {
-        return assignLabelToTaskInstance(TASK_ID, LABEL_ID);
-    }
-
-    /**
-     * Provides a pre-configured {@link AssignLabelToTask} command instance.
-     *
-     * @return {@link AssignLabelToTask} instance
-     */
     public static AssignLabelToTask assignLabelToTaskInstance(TaskId taskId, TaskLabelId labelId) {
         final AssignLabelToTask result = AssignLabelToTask.newBuilder()
                                                           .setId(taskId)
@@ -236,14 +319,32 @@ public class TestTaskCommandFactory {
     }
 
     /**
+     * Provides a pre-configured {@link AssignLabelToTask} command instance.
+     *
+     * @return {@link AssignLabelToTask} instance
+     */
+    public static AssignLabelToTask assignLabelToTaskInstance() {
+        return assignLabelToTaskInstance(TASK_ID, LABEL_ID);
+    }
+
+    /**
      * Provides a pre-configured {@link RemoveLabelFromTask} command instance.
      *
      * @return {@link RemoveLabelFromTask} instance
      */
     public static RemoveLabelFromTask removeLabelFromTaskInstance() {
+        return removeLabelFromTaskInstance(TASK_ID, LABEL_ID);
+    }
+
+    /**
+     * Provides a pre-configured {@link RemoveLabelFromTask} command instance.
+     *
+     * @return {@link RemoveLabelFromTask} instance
+     */
+    public static RemoveLabelFromTask removeLabelFromTaskInstance(TaskId taskId, TaskLabelId labelId) {
         final RemoveLabelFromTask result = RemoveLabelFromTask.newBuilder()
-                                                              .setId(TASK_ID)
-                                                              .setLabelId(LABEL_ID)
+                                                              .setId(taskId)
+                                                              .setLabelId(labelId)
                                                               .build();
         return result;
     }

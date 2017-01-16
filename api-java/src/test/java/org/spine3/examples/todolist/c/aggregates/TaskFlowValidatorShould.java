@@ -18,18 +18,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// Apply this script to use `grpc` plugin in `generateProto` tasks.
-// This is needed for gRPC services generation.
-// Also adds generated gRPC code to the source sets.
+package org.spine3.examples.todolist.c.aggregates;
 
-protobuf {
-    generateProtoTasks {
-        all().each { final task ->
-            task.plugins {
-                grpc {}
-            }
-        }
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.spine3.test.Tests.hasPrivateUtilityConstructor;
+
+/**
+ * @author Illia Shepilov
+ */
+public class TaskFlowValidatorShould {
+
+    @Test
+    public void have_private_constructor() {
+        assertTrue(hasPrivateUtilityConstructor(TaskFlowValidator.class));
     }
 }
-
-sourceSets.main.java.srcDirs += [generatedGrpcDir]
