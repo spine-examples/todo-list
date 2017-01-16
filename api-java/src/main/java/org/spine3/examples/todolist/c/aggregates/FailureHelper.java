@@ -133,7 +133,7 @@ import java.util.List;
      * @param message the exception message
      * @throws CannotDeleteTask the {@code CannotDeleteTask} failure
      */
-    /* package */ static List<? extends Message> throwCannotDeleteTask(TaskId taskId, String message)
+    /* package */ static void throwCannotDeleteTaskFailure(TaskId taskId, String message)
             throws CannotDeleteTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
@@ -304,6 +304,7 @@ import java.util.List;
         final TaskDueDateUpdateFailed dueDateUpdateFailed =
                 TaskDueDateUpdateFailed.newBuilder()
                                        .setFailedCommand(commandFailed)
+                                       .setDueDateMismatch(mismatch)
                                        .build();
         throw new CannotUpdateTaskDueDate(dueDateUpdateFailed);
     }
