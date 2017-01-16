@@ -71,7 +71,14 @@ import java.util.List;
     private FailureHelper() {
     }
 
-    static void throwCannotReopenTaskFailure(TaskId taskId, String message) throws CannotReopenTask {
+    /**
+     * Constructs and throws the {@link CannotReopenTask} failure according to the passed parameters.
+     *
+     * @param taskId  the ID of the task
+     * @param message the exception message
+     * @throws CannotReopenTask the {@code CannotReopenTask} failure
+     */
+    /* package */ static void throwCannotReopenTaskFailure(TaskId taskId, String message) throws CannotReopenTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
                                                                              .setMessage(message)
@@ -82,7 +89,14 @@ import java.util.List;
         throw new CannotReopenTask(reopenTaskFailed);
     }
 
-    static void throwCannotFinalizeDraftFailure(TaskId taskId, String message)
+    /**
+     * Constructs and throws the {@link CannotFinalizeDraft} failure according to the passed parameters.
+     *
+     * @param taskId  the ID of the task
+     * @param message the exception message
+     * @throws CannotFinalizeDraft the {@code CannotFinalizeDraft} failure
+     */
+    /* package */ static void throwCannotFinalizeDraftFailure(TaskId taskId, String message)
             throws CannotFinalizeDraft {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
@@ -94,7 +108,13 @@ import java.util.List;
         throw new CannotFinalizeDraft(finalizeDraftFailed);
     }
 
-    static void throwCannotCreateDraftFailure(TaskId taskId) throws CannotCreateDraft {
+    /**
+     * Constructs and throws the {@link CannotCreateDraft} failure according to the passed parameters.
+     *
+     * @param taskId the ID of the task
+     * @throws CannotCreateDraft the {@code CannotCreateDraft} failure
+     */
+    /* package */ static void throwCannotCreateDraftFailure(TaskId taskId) throws CannotCreateDraft {
         final UnsuccessfulTaskCommand commandFailed =
                 UnsuccessfulTaskCommand.newBuilder()
                                        .setTaskId(taskId)
@@ -106,8 +126,15 @@ import java.util.List;
         throw new CannotCreateDraft(createDraftFailed);
     }
 
-    static List<? extends Message> throwCannotDeleteTask(TaskId taskId, String message) throws CannotDeleteTask {
-
+    /**
+     * Constructs and throws the {@link CannotDeleteTask} failure according to the passed parameters.
+     *
+     * @param taskId  the ID of the task
+     * @param message the exception message
+     * @throws CannotDeleteTask the {@code CannotDeleteTask} failure
+     */
+    /* package */ static List<? extends Message> throwCannotDeleteTask(TaskId taskId, String message)
+            throws CannotDeleteTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
                                                                              .setMessage(message)
@@ -118,7 +145,13 @@ import java.util.List;
         throw new CannotDeleteTask(deleteTaskFailed);
     }
 
-    static void throwCannotRemoveLabelFromTaskFailure(TaskLabelId labelId, TaskId taskId)
+    /**
+     * Constructs and throws the {@link CannotRemoveLabelFromTask} failure according to the passed parameters.
+     *
+     * @param taskId the ID of the task
+     * @throws CannotRemoveLabelFromTask the {@code CannotRemoveLabelFromTask} failure
+     */
+    /* package */ static void throwCannotRemoveLabelFromTaskFailure(TaskLabelId labelId, TaskId taskId)
             throws CannotRemoveLabelFromTask {
         final UnsuccessfulTaskCommand commandFailed =
                 UnsuccessfulTaskCommand.newBuilder()
@@ -133,7 +166,14 @@ import java.util.List;
         throw new CannotRemoveLabelFromTask(removeLabelFromTaskFailed);
     }
 
-    static void throwCannotCompleteTaskFailure(TaskId taskId, String message) throws CannotCompleteTask {
+    /**
+     * Constructs and throws the {@link CannotCompleteTask} failure according to the passed parameters.
+     *
+     * @param taskId  the ID of the task
+     * @param message the exception message
+     * @throws CannotCompleteTask the {@code CannotCompleteTask} failure
+     */
+    /* package */ static void throwCannotCompleteTaskFailure(TaskId taskId, String message) throws CannotCompleteTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
                                                                              .setMessage(message)
@@ -144,7 +184,14 @@ import java.util.List;
         throw new CannotCompleteTask(completeTaskFailed);
     }
 
-    static void throwCannotRestoreDeletedTaskFailure(TaskId taskId, String message)
+    /**
+     * Constructs and throws the {@link CannotRestoreDeletedTask} failure according to the passed parameters.
+     *
+     * @param taskId  the ID of the task
+     * @param message the exception message
+     * @throws CannotRestoreDeletedTask the {@code CannotRestoreDeletedTask} failure
+     */
+    /* package */ static void throwCannotRestoreDeletedTaskFailure(TaskId taskId, String message)
             throws CannotRestoreDeletedTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
@@ -157,7 +204,13 @@ import java.util.List;
         throw new CannotRestoreDeletedTask(restoreDeletedTaskFailed);
     }
 
-    static void throwCannotUpdateTaskDueDateFailure(TaskId taskId) throws CannotUpdateTaskDueDate {
+    /**
+     * Constructs and throws the {@link CannotUpdateTaskDueDate} failure according to the passed parameters.
+     *
+     * @param taskId the ID of the task
+     * @throws CannotUpdateTaskDueDate the {@code CannotUpdateTaskDueDate} failure
+     */
+    /* package */ static void throwCannotUpdateTaskDueDateFailure(TaskId taskId) throws CannotUpdateTaskDueDate {
         final UnsuccessfulTaskCommand commandFailed =
                 UnsuccessfulTaskCommand.newBuilder()
                                        .setTaskId(taskId)
@@ -170,7 +223,17 @@ import java.util.List;
         throw new CannotUpdateTaskDueDate(dueDateUpdateFailed);
     }
 
-    static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, String message, ValueMismatch mismatch)
+    /**
+     * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to the passed parameters.
+     *
+     * @param taskId   the ID of the task
+     * @param message  the exception message
+     * @param mismatch the {@link ValueMismatch}
+     * @throws CannotUpdateTaskDescription the {@code CannotUpdateTaskDescription} failure
+     */
+    /* package */ static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId,
+                                                                      String message,
+                                                                      ValueMismatch mismatch)
             throws CannotUpdateTaskDescription {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
@@ -184,7 +247,14 @@ import java.util.List;
         throw new CannotUpdateTaskDescription(descriptionUpdateFailed);
     }
 
-    static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, String message)
+    /**
+     * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to the passed parameters.
+     *
+     * @param taskId  the ID of the task
+     * @param message the exception message
+     * @throws CannotUpdateTaskDescription the {@code CannotUpdateTaskDescription} failure
+     */
+    /* package */ static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, String message)
             throws CannotUpdateTaskDescription {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
@@ -197,7 +267,15 @@ import java.util.List;
         throw new CannotUpdateTaskDescription(descriptionUpdateFailed);
     }
 
-    static void throwCannotAssignLabelToTaskFailure(TaskId taskId, TaskLabelId labelId) throws CannotAssignLabelToTask {
+    /**
+     * Constructs and throws the {@link CannotAssignLabelToTask} failure according to the passed parameters.
+     *
+     * @param taskId  the ID of the task
+     * @param labelId the ID of the label
+     * @throws CannotAssignLabelToTask the {@code CannotAssignLabelToTask} failure
+     */
+    /* package */ static void throwCannotAssignLabelToTaskFailure(TaskId taskId, TaskLabelId labelId)
+            throws CannotAssignLabelToTask {
         final UnsuccessfulTaskCommand commandFailed =
                 UnsuccessfulTaskCommand.newBuilder()
                                        .setTaskId(taskId)
@@ -211,7 +289,14 @@ import java.util.List;
         throw new CannotAssignLabelToTask(assignLabelToTaskFailed);
     }
 
-    static void throwCannotUpdateTaskDueDateFailure(TaskId taskId, ValueMismatch mismatch)
+    /**
+     * Constructs and throws the {@link CannotUpdateTaskDueDate} failure according to the passed parameters.
+     *
+     * @param taskId   the ID of the task
+     * @param mismatch the {@link ValueMismatch}
+     * @throws CannotUpdateTaskDueDate the {@code CannotUpdateTaskDueDate} failure
+     */
+    /* package */ static void throwCannotUpdateTaskDueDateFailure(TaskId taskId, ValueMismatch mismatch)
             throws CannotUpdateTaskDueDate {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
@@ -219,12 +304,18 @@ import java.util.List;
         final TaskDueDateUpdateFailed dueDateUpdateFailed =
                 TaskDueDateUpdateFailed.newBuilder()
                                        .setFailedCommand(commandFailed)
-                                       .setDueDateMismatch(mismatch)
                                        .build();
         throw new CannotUpdateTaskDueDate(dueDateUpdateFailed);
     }
 
-    static void throwCannotUpdateDescriptionFailure(TaskId taskId, ValueMismatch mismatch)
+    /**
+     * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to the passed parameters.
+     *
+     * @param taskId   the ID of the task
+     * @param mismatch the {@link ValueMismatch}
+     * @throws CannotUpdateTaskDescription the {@code CannotUpdateTaskDescription} failure
+     */
+    /* package */ static void throwCannotUpdateDescriptionFailure(TaskId taskId, ValueMismatch mismatch)
             throws CannotUpdateTaskDescription {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
@@ -237,7 +328,14 @@ import java.util.List;
         throw new CannotUpdateTaskDescription(descriptionUpdateFailed);
     }
 
-    static void throwCannotUpdateTaskPriorityFailure(TaskId taskId, ValueMismatch mismatch)
+    /**
+     * Constructs and throws the {@link CannotUpdateTaskPriority} failure according to the passed parameters.
+     *
+     * @param taskId   the ID of the task
+     * @param mismatch the {@link ValueMismatch}
+     * @throws CannotUpdateTaskPriority the {@code CannotUpdateTaskPriority} failure
+     */
+    /* package */ static void throwCannotUpdateTaskPriorityFailure(TaskId taskId, ValueMismatch mismatch)
             throws CannotUpdateTaskPriority {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
@@ -249,7 +347,13 @@ import java.util.List;
         throw new CannotUpdateTaskPriority(priorityUpdateFailed);
     }
 
-    static void throwCannotUpdateTaskPriorityFailure(TaskId taskId) throws CannotUpdateTaskPriority {
+    /**
+     * Constructs and throws the {@link CannotUpdateTaskPriority} failure according to the passed parameters.
+     *
+     * @param taskId the ID of the task
+     * @throws CannotUpdateTaskPriority the {@code CannotUpdateTaskPriority} failure
+     */
+    /* package */ static void throwCannotUpdateTaskPriorityFailure(TaskId taskId) throws CannotUpdateTaskPriority {
         final UnsuccessfulTaskCommand commandFailed =
                 UnsuccessfulTaskCommand.newBuilder()
                                        .setTaskId(taskId)
@@ -261,7 +365,14 @@ import java.util.List;
         throw new CannotUpdateTaskPriority(priorityUpdateFailed);
     }
 
-    static void throwCannotUpdateLabelDetailsFailure(TaskLabelId labelId, ValueMismatch mismatch)
+    /**
+     * Constructs and throws the {@link CannotUpdateLabelDetails} failure according to the passed parameters.
+     *
+     * @param labelId  the ID of the label
+     * @param mismatch the {@link ValueMismatch}
+     * @throws CannotUpdateLabelDetails the {@code CannotUpdateLabelDetails} failure
+     */
+    /* package */ static void throwCannotUpdateLabelDetailsFailure(TaskLabelId labelId, ValueMismatch mismatch)
             throws CannotUpdateLabelDetails {
         final UnsuccessfulLabelCommand labelCommandFailed = UnsuccessfulLabelCommand.newBuilder()
                                                                                     .setLabelId(labelId)
@@ -274,7 +385,15 @@ import java.util.List;
         throw new CannotUpdateLabelDetails(labelDetailsUpdateFailed);
     }
 
-    static void throwCannotUpdateTooShortDescriptionFailure(TaskId taskId)
+    /**
+     * Constructs and throws the {@link CannotUpdateTaskWithInappropriateDescription} failure
+     * according to the passed parameters.
+     *
+     * @param taskId the ID of the task
+     * @throws CannotUpdateTaskWithInappropriateDescription
+     * the {@code CannotUpdateTaskWithInappropriateDescription} failure
+     */
+    /* package */ static void throwCannotUpdateTooShortDescriptionFailure(TaskId taskId)
             throws CannotUpdateTaskWithInappropriateDescription {
         final UnsuccessfulTaskCommand commandFailed =
                 UnsuccessfulTaskCommand.newBuilder()
@@ -287,7 +406,15 @@ import java.util.List;
         throw new CannotUpdateTaskWithInappropriateDescription(updateFailed);
     }
 
-    static void throwCannotCreateTaskWithInappropriateDescription(TaskId taskId)
+    /**
+     * Constructs and throws the {@link CannotCreateTaskWithInappropriateDescription} failure
+     * according to the passed parameters.
+     *
+     * @param taskId the ID of the task
+     * @throws CannotCreateTaskWithInappropriateDescription
+     * the {@code CannotCreateTaskWithInappropriateDescription} failure
+     */
+    /* package */ static void throwCannotCreateTaskWithInappropriateDescription(TaskId taskId)
             throws CannotCreateTaskWithInappropriateDescription {
         final UnsuccessfulTaskCommand commandFailed =
                 UnsuccessfulTaskCommand.newBuilder()
