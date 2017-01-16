@@ -87,7 +87,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
 
         if (!isEquals) {
             final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
-            final ValueMismatch mismatch = MismatchHelper.of(expectedLabelDetails, actualLabelDetails, newLabelDetails, getVersion());
+            final ValueMismatch mismatch = of(expectedLabelDetails, actualLabelDetails, newLabelDetails, getVersion());
             FailureHelper.throwCannotUpdateLabelDetailsFailure(labelId, mismatch);
         }
 

@@ -81,9 +81,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotAssignLabelToTaskFailure;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCompleteTaskFailure;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCreateDraftFailure;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCreateTaskWithInappropriateDescription;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotDeleteTask;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotFinalizeDraftFailure;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotRemoveLabelFromTaskFailure;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotReopenTaskFailure;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotRestoreDeletedTaskFailure;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTaskDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTaskDueDateFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTaskPriorityFailure;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTooShortDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregates.MismatchHelper.of;
 
 /**
@@ -140,8 +152,8 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
         if (!isEquals) {
             final String newDescription = change.getNewValue();
-            final ValueMismatch mismatch = MismatchHelper.of(expectedDescription, actualDescription, newDescription, getVersion());
-            FailureHelper.throwCannotUpdateDescriptionFailure(taskId, mismatch);
+            final ValueMismatch mismatch = of(expectedDescription, actualDescription, newDescription, getVersion());
+            throwCannotUpdateDescriptionFailure(taskId, mismatch);
         }
 
         final TaskDescriptionUpdated taskDescriptionUpdated = TaskDescriptionUpdated.newBuilder()
@@ -161,7 +173,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            FailureHelper.throwCannotUpdateTaskDueDateFailure(taskId);
+            throwCannotUpdateTaskDueDateFailure(taskId);
         }
 
         final TimestampChange change = cmd.getDueDateChange();
@@ -172,8 +184,8 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
         if (!isEquals) {
             final Timestamp newDueDate = change.getNewValue();
-            final ValueMismatch mismatch = MismatchHelper.of(expectedDueDate, actualDueDate, newDueDate, getVersion());
-            FailureHelper.throwCannotUpdateTaskDueDateFailure(taskId, mismatch);
+            final ValueMismatch mismatch = of(expectedDueDate, actualDueDate, newDueDate, getVersion());
+            throwCannotUpdateTaskDueDateFailure(taskId, mismatch);
         }
 
         final TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated.newBuilder()
@@ -192,7 +204,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            FailureHelper.throwCannotUpdateTaskPriorityFailure(taskId);
+            throwCannotUpdateTaskPriorityFailure(taskId);
         }
 
         final PriorityChange priorityChange = cmd.getPriorityChange();
@@ -203,8 +215,8 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
         if (!isEquals) {
             final TaskPriority newPriority = priorityChange.getNewValue();
-            final ValueMismatch mismatch = MismatchHelper.of(expectedPriority, actualPriority, newPriority, getVersion());
-            FailureHelper.throwCannotUpdateTaskPriorityFailure(taskId, mismatch);
+            final ValueMismatch mismatch = of(expectedPriority, actualPriority, newPriority, getVersion());
+            throwCannotUpdateTaskPriorityFailure(taskId, mismatch);
         }
 
         final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
@@ -225,7 +237,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
-            FailureHelper.throwCannotReopenTaskFailure(taskId, message);
+            throwCannotReopenTaskFailure(taskId, message);
         }
 
         final TaskReopened taskReopened = TaskReopened.newBuilder()
@@ -245,7 +257,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
-            FailureHelper.throwCannotDeleteTask(taskId, message);
+            throwCannotDeleteTask(taskId, message);
         }
 
         final TaskDeleted taskDeleted = TaskDeleted.newBuilder()
@@ -265,7 +277,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
-            FailureHelper.throwCannotRestoreDeletedTaskFailure(taskId, message);
+            throwCannotRestoreDeletedTaskFailure(taskId, message);
         }
 
         final DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored.newBuilder()
@@ -293,7 +305,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
-            FailureHelper.throwCannotCompleteTaskFailure(taskId, message);
+            throwCannotCompleteTaskFailure(taskId, message);
         }
 
         final TaskCompleted taskCompleted = TaskCompleted.newBuilder()
@@ -309,7 +321,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final boolean isValid = TaskFlowValidator.isValidCreateDraftCommand(getState().getTaskStatus());
 
         if (!isValid) {
-            FailureHelper.throwCannotCreateDraftFailure(taskId);
+            throwCannotCreateDraftFailure(taskId);
         }
 
         final TaskDraftCreated draftCreated = TaskDraftCreated.newBuilder()
@@ -329,7 +341,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
-            FailureHelper.throwCannotFinalizeDraftFailure(taskId, message);
+            throwCannotFinalizeDraftFailure(taskId, message);
         }
 
         final TaskDraftFinalized taskDraftFinalized = TaskDraftFinalized.newBuilder()
@@ -346,7 +358,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final boolean isValid = TaskFlowValidator.isValidRemoveLabelFromTaskCommand(getState().getTaskStatus());
 
         if (!isValid) {
-            FailureHelper.throwCannotRemoveLabelFromTaskFailure(labelId, taskId);
+            throwCannotRemoveLabelFromTaskFailure(labelId, taskId);
         }
 
         final LabelRemovedFromTask labelRemoved = LabelRemovedFromTask.newBuilder()
@@ -364,7 +376,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final boolean isValid = TaskFlowValidator.isValidAssignLabelToTaskCommand(getState().getTaskStatus());
 
         if (!isValid) {
-            FailureHelper.throwCannotAssignLabelToTaskFailure(taskId, labelId);
+            throwCannotAssignLabelToTaskFailure(taskId, labelId);
         }
 
         final LabelAssignedToTask labelAssigned = LabelAssignedToTask.newBuilder()
@@ -476,7 +488,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final String description = cmd.getDescription();
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
             final TaskId taskId = cmd.getId();
-            FailureHelper.throwCannotCreateTaskWithInappropriateDescription(taskId);
+            throwCannotCreateTaskWithInappropriateDescription(taskId);
         }
     }
 
@@ -488,13 +500,13 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final TaskId taskId = cmd.getId();
 
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
-            FailureHelper.throwCannotUpdateTooShortDescriptionFailure(taskId);
+            throwCannotUpdateTooShortDescriptionFailure(taskId);
         }
 
         boolean isValid = TaskFlowValidator.ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
 
         if (!isValid) {
-            FailureHelper.throwCannotUpdateTaskDescriptionFailure(taskId, FailureHelper.TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE);
+            throwCannotUpdateTaskDescriptionFailure(taskId, TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE);
         }
     }
 
