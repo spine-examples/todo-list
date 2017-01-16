@@ -27,7 +27,7 @@ import org.spine3.examples.todolist.TaskStatus;
  *
  * @author Illia Shepilov
  */
-/* package */ enum TaskStatusTransition {
+enum TaskStatusTransition {
 
     /**
      * Finalize a task draft.
@@ -69,7 +69,7 @@ import org.spine3.examples.todolist.TaskStatus;
      */
     private final TaskStatus newStatus;
 
-    /* package */ TaskStatusTransition(TaskStatus currentStatus, TaskStatus newStatus) {
+    TaskStatusTransition(TaskStatus currentStatus, TaskStatus newStatus) {
         this.currentStatus = currentStatus;
         this.newStatus = newStatus;
     }
@@ -96,7 +96,7 @@ import org.spine3.examples.todolist.TaskStatus;
      * @param newStatus     suggested new status of the task
      * @return {@code true} if passed statuses satisfy one of the transitions, {@code false} otherwise
      */
-    /* package */ static boolean isValid(TaskStatus currentStatus, TaskStatus newStatus) {
+    static boolean isValid(TaskStatus currentStatus, TaskStatus newStatus) {
         for (TaskStatusTransition transition : TaskStatusTransition.values()) {
             if (transition.matches(currentStatus, newStatus)) {
                 return true;
