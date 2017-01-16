@@ -86,7 +86,7 @@ import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCanno
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCompleteTaskFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCreateDraftFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCreateTaskWithInappropriateDescription;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotDeleteTask;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotDeleteTaskFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotFinalizeDraftFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotRemoveLabelFromTaskFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotReopenTaskFailure;
@@ -257,7 +257,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
-            throwCannotDeleteTask(taskId, message);
+            throwCannotDeleteTaskFailure(taskId, message);
         }
 
         final TaskDeleted taskDeleted = TaskDeleted.newBuilder()
