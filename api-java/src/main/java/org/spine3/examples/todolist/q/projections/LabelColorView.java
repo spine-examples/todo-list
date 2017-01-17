@@ -25,7 +25,7 @@ import org.spine3.examples.todolist.LabelColor;
 /**
  * Supplies {@link LabelColor} with hexadecimal representation of color.
  */
-/* package */ enum LabelColorView {
+enum LabelColorView {
     RED_COLOR(LabelColor.RED, "#ff0000"),
     BLUE_COLOR(LabelColor.BLUE, "#0000ff"),
     GREEN_COLOR(LabelColor.GREEN, "#008000"),
@@ -41,7 +41,7 @@ import org.spine3.examples.todolist.LabelColor;
         this.hexColor = hexColor;
     }
 
-    /* package */ static String valueOf(LabelColor labelColor) {
+    static String valueOf(LabelColor labelColor) {
         for (LabelColorView colorView : values()) {
             if (colorView.labelColor == labelColor) {
                 return colorView.hexColor;

@@ -21,13 +21,13 @@
 package org.spine3.examples.todolist.repositories;
 
 import com.google.protobuf.Message;
+import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
 import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
 import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
 import org.spine3.examples.todolist.c.events.TaskDeleted;
 import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
 import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
-import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
 import org.spine3.server.entity.Entity;
 import org.spine3.server.entity.EventDispatchingRepository;
@@ -40,7 +40,7 @@ import java.util.Collections;
  *
  * @author Illia Shepilov
  */
-/* package */ class RepositoryHelper {
+class RepositoryHelper {
 
     private RepositoryHelper() {
     }
@@ -51,7 +51,7 @@ import java.util.Collections;
      * @param repository the {@link EventDispatchingRepository}
      * @param id         the {@link TaskListId}
      */
-    /* package */ static <M extends Message, P extends Entity<TaskListId, M>> void
+    static <M extends Message, P extends Entity<TaskListId, M>> void
     addCommonIdSetFunctions(EventDispatchingRepository<TaskListId, P, M> repository, TaskListId id) {
         final IdSetEventFunction<TaskListId, TaskDeleted> taskDeletedFn =
                 (message, context) -> Collections.singleton(id);

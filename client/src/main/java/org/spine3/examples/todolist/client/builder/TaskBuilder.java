@@ -20,9 +20,9 @@
 
 package org.spine3.examples.todolist.client.builder;
 
+import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
-import org.spine3.examples.todolist.TaskId;
 
 import static org.spine3.base.Identifiers.newUuid;
 
@@ -36,7 +36,7 @@ public final class TaskBuilder {
     private TaskBuilder() {
     }
 
-    /* package */ static TaskBuilder getInstance() {
+    static TaskBuilder getInstance() {
         return new TaskBuilder();
     }
 

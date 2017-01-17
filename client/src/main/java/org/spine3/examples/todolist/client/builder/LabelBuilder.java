@@ -20,8 +20,8 @@
 
 package org.spine3.examples.todolist.client.builder;
 
-import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 
 import static org.spine3.base.Identifiers.newUuid;
 
@@ -35,12 +35,13 @@ public final class LabelBuilder {
     private LabelBuilder() {
     }
 
-    /* package */ static LabelBuilder getInstance() {
+    static LabelBuilder getInstance() {
         return new LabelBuilder();
     }
 
     /**
      * Provides builder for the {@link CreateBasicLabel} command.
+     *
      * @return the {@link CreateBasicLabelBuilder} onstance
      */
     public CreateBasicLabelBuilder createLabel() {
