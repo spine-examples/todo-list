@@ -20,6 +20,15 @@
 
 package org.spine3.examples.todolist.server;
 
+import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelIdList;
+import org.spine3.examples.todolist.Task;
+import org.spine3.examples.todolist.TaskDetails;
+import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.TaskLabel;
+import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.c.aggregates.TaskAggregate;
+import org.spine3.examples.todolist.c.aggregates.TaskLabelAggregate;
 import org.spine3.examples.todolist.repositories.DraftTasksViewRepository;
 import org.spine3.examples.todolist.repositories.LabelledTasksViewRepository;
 import org.spine3.examples.todolist.repositories.MyListViewRepository;
@@ -34,6 +43,8 @@ import org.spine3.server.storage.StorageFactory;
 import org.spine3.server.transport.GrpcContainer;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.function.Function;
 
 import static org.spine3.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static org.spine3.server.event.EventStore.log;
@@ -47,6 +58,10 @@ public class Server {
 
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
+    private Function<TaskLabelId, LabelDetails> taskLabelIdToLabelDetails;
+    private Function<TaskId, TaskDetails> taskIdToTaskDetails;
+    private Function<TaskId, LabelIdList> taskIdToLabelList;
+    private Function<TaskId, Task> taskIdToTask;
     private TaskAggregateRepository taskAggregateRepository;
     private TaskLabelAggregateRepository taskLabelAggregateRepository;
     private MyListViewRepository myListViewRepository;
@@ -54,15 +69,93 @@ public class Server {
     private DraftTasksViewRepository draftTasksViewRepository;
 
     public Server(StorageFactory storageFactory) {
-        TodoListEnrichments enrichments = new TodoListEnrichments(taskAggregateRepository, taskLabelAggregateRepository);
-        final EventEnricher eventEnricher = enrichments.getEventEnricher();
-        this.boundedContext = initBoundedContext(storageFactory, eventEnricher);
+        final TodoListEnrichments todoListEnrichments = new TodoListEnrichments();
+        this.boundedContext = initBoundedContext(storageFactory, todoListEnrichments.getEventEnricher());
         initRepositories(storageFactory);
         registerRepositories();
+        todoListEnrichments.setRepositories(taskAggregateRepository, taskLabelAggregateRepository);
         final CommandService commandService = initCommandService();
         final QueryService queryService = initQueryService();
         final SubscriptionService subscriptionService = initSubscriptionService();
         this.grpcContainer = initGrpcContainer(commandService, subscriptionService, queryService);
+    }
+
+    private void initEnricherFunctions() {
+        initLabelIdToDetailsFunction();
+        initTaskIdToDetailsFunction();
+        initTaskIdToLabelListFunction();
+        initTaskIdToTaskFunction();
+    }
+
+    private void initTaskIdToTaskFunction() {
+        taskIdToTask = taskId -> {
+            if (taskId == null) {
+                return Task.getDefaultInstance();
+            }
+            final TaskAggregate taskAggregate = taskAggregateRepository.load(taskId);
+            final Task task = taskAggregate.getState();
+            return task;
+        };
+    }
+
+    private void initLabelIdToDetailsFunction() {
+        taskLabelIdToLabelDetails = labelId -> {
+            if (labelId == null) {
+                return LabelDetails.getDefaultInstance();
+            }
+            final TaskLabelAggregate aggregate = taskLabelAggregateRepository.load(labelId);
+            final TaskLabel state = aggregate.getState();
+            final LabelDetails details = LabelDetails.newBuilder()
+                                                     .setColor(state.getColor())
+                                                     .setTitle(state.getTitle())
+                                                     .build();
+            return details;
+        };
+    }
+
+    private void initTaskIdToDetailsFunction() {
+        taskIdToTaskDetails = taskId -> {
+            if (taskId == null) {
+                return TaskDetails.getDefaultInstance();
+            }
+            final TaskAggregate aggregate = taskAggregateRepository.load(taskId);
+            final Task state = aggregate.getState();
+            final TaskDetails details = TaskDetails.newBuilder()
+                                                   .setDescription(state.getDescription())
+                                                   .setPriority(state.getPriority())
+                                                   .build();
+            return details;
+        };
+    }
+
+    private void initTaskIdToLabelListFunction() {
+        taskIdToLabelList = taskId -> {
+            final TaskAggregate aggregate = taskAggregateRepository.load(taskId);
+            final List<TaskLabelId> labelIdsList = aggregate.getState()
+                                                            .getLabelIdsList();
+            final LabelIdList result = LabelIdList.newBuilder()
+                                                  .addAllLabelId(labelIdsList)
+                                                  .build();
+            return result;
+        };
+    }
+
+    private EventEnricher initEventEnricher() {
+        final EventEnricher result = EventEnricher.newBuilder()
+                                                  .addFieldEnrichment(TaskLabelId.class,
+                                                                      LabelDetails.class,
+                                                                      taskLabelIdToLabelDetails::apply)
+                                                  .addFieldEnrichment(TaskId.class,
+                                                                      TaskDetails.class,
+                                                                      taskIdToTaskDetails::apply)
+                                                  .addFieldEnrichment(TaskId.class,
+                                                                      LabelIdList.class,
+                                                                      taskIdToLabelList::apply)
+                                                  .addFieldEnrichment(TaskId.class,
+                                                                      Task.class,
+                                                                      taskIdToTask::apply)
+                                                  .build();
+        return result;
     }
 
     private QueryService initQueryService() {

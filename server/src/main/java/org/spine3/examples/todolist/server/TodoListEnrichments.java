@@ -51,10 +51,7 @@ class TodoListEnrichments {
     private AggregateRepository<TaskLabelId, TaskLabelAggregate> taskLabelAggregateRepository;
     private EventEnricher eventEnricher;
 
-    TodoListEnrichments(AggregateRepository<TaskId, TaskAggregate> taskAggregateRepository,
-                        AggregateRepository<TaskLabelId, TaskLabelAggregate> taskLabelAggregateRepository) {
-        this.taskAggregateRepository = taskAggregateRepository;
-        this.taskLabelAggregateRepository = taskLabelAggregateRepository;
+    TodoListEnrichments() {
         initEnricherFunctions();
         this.eventEnricher = initEventEnricher();
     }
@@ -67,6 +64,7 @@ class TodoListEnrichments {
     }
 
     private EventEnricher initEventEnricher() {
+
         final EventEnricher result = EventEnricher.newBuilder()
                                                   .addFieldEnrichment(TaskLabelId.class,
                                                                       LabelDetails.class,
@@ -144,5 +142,17 @@ class TodoListEnrichments {
      */
     EventEnricher getEventEnricher() {
         return eventEnricher;
+    }
+
+    /**
+     * Sets the {@link AggregateRepository}.
+     *
+     * @param taskRepository  the task aggregate repository
+     * @param labelRepository the task label aggregate repository
+     */
+    void setRepositories(AggregateRepository<TaskId, TaskAggregate> taskRepository,
+                         AggregateRepository<TaskLabelId, TaskLabelAggregate> labelRepository) {
+        this.taskAggregateRepository = taskRepository;
+        this.taskLabelAggregateRepository = labelRepository;
     }
 }
