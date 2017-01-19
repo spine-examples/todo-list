@@ -70,7 +70,6 @@ class CommandLineTodoClientShould {
         final Thread serverThread = new Thread(() -> {
             try {
                 server.start();
-                server.awaitTermination();
                 serverStartLatch.countDown();
             } catch (IOException e) {
                 throw Exceptions.wrappedCause(e);
