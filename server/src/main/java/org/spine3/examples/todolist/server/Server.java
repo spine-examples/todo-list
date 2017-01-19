@@ -61,6 +61,7 @@ public class Server {
     private Function<TaskLabelId, LabelDetails> taskLabelIdToLabelDetails;
     private Function<TaskId, TaskDetails> taskIdToTaskDetails;
     private Function<TaskId, LabelIdList> taskIdToLabelList;
+    private Function<TaskId, Task> taskIdToTask;
     private TaskAggregateRepository taskAggregateRepository;
     private TaskLabelAggregateRepository taskLabelAggregateRepository;
     private MyListViewRepository myListViewRepository;
@@ -83,6 +84,18 @@ public class Server {
         initLabelIdToDetailsFunction();
         initTaskIdToDetailsFunction();
         initTaskIdToLabelListFunction();
+        initTaskIdToTaskFunction();
+    }
+
+    private void initTaskIdToTaskFunction() {
+        taskIdToTask = taskId -> {
+            if (taskId == null) {
+                return Task.getDefaultInstance();
+            }
+            final TaskAggregate taskAggregate = taskAggregateRepository.load(taskId);
+            final Task task = taskAggregate.getState();
+            return task;
+        };
     }
 
     private void initLabelIdToDetailsFunction() {
@@ -138,6 +151,9 @@ public class Server {
                                                   .addFieldEnrichment(TaskId.class,
                                                                       LabelIdList.class,
                                                                       taskIdToLabelList::apply)
+                                                  .addFieldEnrichment(TaskId.class,
+                                                                      Task.class,
+                                                                      taskIdToTask::apply)
                                                   .build();
         return result;
     }
@@ -227,7 +243,7 @@ public class Server {
     /**
      * Waits for the service to become terminated.
      */
-    public void awaitTermination() {
+    private void awaitTermination() {
         grpcContainer.awaitTermination();
     }
 
