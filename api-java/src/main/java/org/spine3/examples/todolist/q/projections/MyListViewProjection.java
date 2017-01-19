@@ -20,8 +20,12 @@
 
 package org.spine3.examples.todolist.q.projections;
 
+import org.spine3.base.EventContext;
+import org.spine3.examples.todolist.Task;
 import org.spine3.examples.todolist.TaskDetails;
+import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskListId;
+import org.spine3.examples.todolist.c.enrichments.TaskEnrichment;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
 import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
 import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
@@ -29,6 +33,7 @@ import org.spine3.examples.todolist.c.events.TaskCompleted;
 import org.spine3.examples.todolist.c.events.TaskCreated;
 import org.spine3.examples.todolist.c.events.TaskDeleted;
 import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
+import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
 import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
 import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
 import org.spine3.examples.todolist.c.events.TaskReopened;
@@ -39,6 +44,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.spine3.base.Identifiers.newUuid;
+import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
 import static org.spine3.examples.todolist.q.projections.ProjectionHelper.removeViewByTaskId;
 import static org.spine3.examples.todolist.q.projections.ProjectionHelper.updateTaskViewList;
 
@@ -93,7 +99,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
-        final TaskListView taskListView = removeViewByTaskId(views, event.getId());
+        final TaskListView taskListView = removeViewByTaskId(views, event.getTaskId());
         final MyListView state = getState().newBuilderForType()
                                            .setMyList(taskListView)
                                            .build();
@@ -169,6 +175,26 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
         final MyListView state = constructMyListViewState(updatedList);
+        incrementState(state);
+    }
+
+    @Subscribe
+    public void on(TaskDraftFinalized event, EventContext context) {
+        final TaskId taskId = event.getTaskId();
+        final TaskEnrichment enrichment = getEnrichment(TaskEnrichment.class, context);
+        final Task task = enrichment.getTask();
+        final TaskView view = TaskView.newBuilder()
+                                      .setId(taskId)
+                                      .setDescription(task.getDescription())
+                                      .setDueDate(task.getDueDate())
+                                      .setPriority(task.getPriority())
+                                      .build();
+        final List<TaskView> views = getState().getMyList()
+                                               .getItemsList()
+                                               .stream()
+                                               .collect(Collectors.toList());
+        views.add(view);
+        final MyListView state = constructMyListViewState(views);
         incrementState(state);
     }
 
