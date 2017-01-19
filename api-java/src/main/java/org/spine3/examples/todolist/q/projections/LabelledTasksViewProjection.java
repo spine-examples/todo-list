@@ -116,7 +116,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
-        final TaskListView taskListView = removeViewByTaskId(views, event.getId());
+        final TaskListView taskListView = removeViewByTaskId(views, event.getTaskId());
         final LabelledTasksView labelledTasksView = getState();
         final LabelledTasksView state = getState().newBuilderForType()
                                                   .setLabelledTasks(taskListView)

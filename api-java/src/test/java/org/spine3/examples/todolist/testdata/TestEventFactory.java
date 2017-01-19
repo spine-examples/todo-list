@@ -166,7 +166,7 @@ public class TestEventFactory {
                                                            .setNewValue(description)
                                                            .build();
         final TaskDescriptionUpdated result = TaskDescriptionUpdated.newBuilder()
-                                                                    .setId(id)
+                                                                    .setTaskId(id)
                                                                     .setDescriptionChange(descriptionChange)
                                                                     .build();
         return result;
@@ -192,7 +192,7 @@ public class TestEventFactory {
                                                                 .setNewValue(priority)
                                                                 .build();
         final TaskPriorityUpdated result = TaskPriorityUpdated.newBuilder()
-                                                              .setId(id)
+                                                              .setTaskId(id)
                                                               .setPriorityChange(taskPriorityChange)
                                                               .build();
         return result;
@@ -218,7 +218,7 @@ public class TestEventFactory {
                                                              .setNewValue(dueDate)
                                                              .build();
         final TaskDueDateUpdated result = TaskDueDateUpdated.newBuilder()
-                                                            .setId(id)
+                                                            .setTaskId(id)
                                                             .setDueDateChange(dueDateChange)
                                                             .build();
         return result;
@@ -231,7 +231,7 @@ public class TestEventFactory {
      */
     public static TaskDraftFinalized taskDraftFinalizedInstance() {
         final TaskDraftFinalized result = TaskDraftFinalized.newBuilder()
-                                                            .setId(TASK_ID)
+                                                            .setTaskId(TASK_ID)
                                                             .build();
         return result;
     }
@@ -252,7 +252,7 @@ public class TestEventFactory {
      */
     public static TaskCompleted taskCompletedInstance(TaskId id) {
         final TaskCompleted result = TaskCompleted.newBuilder()
-                                                  .setId(id)
+                                                  .setTaskId(id)
                                                   .build();
         return result;
     }
@@ -273,7 +273,7 @@ public class TestEventFactory {
      */
     public static TaskReopened taskReopenedInstance(TaskId id) {
         final TaskReopened result = TaskReopened.newBuilder()
-                                                .setId(id)
+                                                .setTaskId(id)
                                                 .build();
         return result;
     }
@@ -285,7 +285,7 @@ public class TestEventFactory {
      */
     public static TaskDeleted taskDeletedInstance() {
         final TaskDeleted result = TaskDeleted.newBuilder()
-                                              .setId(TASK_ID)
+                                              .setTaskId(TASK_ID)
                                               .build();
         return result;
     }
@@ -310,7 +310,7 @@ public class TestEventFactory {
      */
     public static DeletedTaskRestored deletedTaskRestoredInstance() {
         final DeletedTaskRestored result = DeletedTaskRestored.newBuilder()
-                                                              .setId(TASK_ID)
+                                                              .setTaskId(TASK_ID)
                                                               .build();
         return result;
     }
@@ -345,7 +345,7 @@ public class TestEventFactory {
      */
     public static LabelRemovedFromTask labelRemovedFromTaskInstance() {
         final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
-                                                                .setId(TASK_ID)
+                                                                .setTaskId(TASK_ID)
                                                                 .setLabelId(LABEL_ID)
                                                                 .build();
         return result;

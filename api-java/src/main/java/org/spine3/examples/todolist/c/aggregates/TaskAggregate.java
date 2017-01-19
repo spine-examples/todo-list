@@ -157,7 +157,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         }
 
         final TaskDescriptionUpdated taskDescriptionUpdated = TaskDescriptionUpdated.newBuilder()
-                                                                                    .setId(taskId)
+                                                                                    .setTaskId(taskId)
                                                                                     .setDescriptionChange(change)
                                                                                     .build();
         final List<? extends Message> result = Collections.singletonList(taskDescriptionUpdated);
@@ -189,7 +189,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         }
 
         final TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated.newBuilder()
-                                                                        .setId(taskId)
+                                                                        .setTaskId(taskId)
                                                                         .setDueDateChange(cmd.getDueDateChange())
                                                                         .build();
         final List<? extends Message> result = Collections.singletonList(taskDueDateUpdated);
@@ -220,7 +220,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         }
 
         final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
-                                                                           .setId(taskId)
+                                                                           .setTaskId(taskId)
                                                                            .setPriorityChange(priorityChange)
                                                                            .build();
         final List<? extends Message> result = Collections.singletonList(taskPriorityUpdated);
@@ -241,7 +241,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         }
 
         final TaskReopened taskReopened = TaskReopened.newBuilder()
-                                                      .setId(taskId)
+                                                      .setTaskId(taskId)
                                                       .build();
         final List<TaskReopened> result = Collections.singletonList(taskReopened);
         return result;
@@ -261,7 +261,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         }
 
         final TaskDeleted taskDeleted = TaskDeleted.newBuilder()
-                                                   .setId(taskId)
+                                                   .setTaskId(taskId)
                                                    .build();
         final List<TaskDeleted> result = Collections.singletonList(taskDeleted);
         return result;
@@ -281,7 +281,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         }
 
         final DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored.newBuilder()
-                                                                           .setId(taskId)
+                                                                           .setTaskId(taskId)
                                                                            .build();
         final List<Message> result = newLinkedList();
         result.add(deletedTaskRestored);
@@ -309,7 +309,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         }
 
         final TaskCompleted taskCompleted = TaskCompleted.newBuilder()
-                                                         .setId(taskId)
+                                                         .setTaskId(taskId)
                                                          .build();
         final List<TaskCompleted> result = Collections.singletonList(taskCompleted);
         return result;
@@ -345,7 +345,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         }
 
         final TaskDraftFinalized taskDraftFinalized = TaskDraftFinalized.newBuilder()
-                                                                        .setId(taskId)
+                                                                        .setTaskId(taskId)
                                                                         .build();
         final List<TaskDraftFinalized> result = Collections.singletonList(taskDraftFinalized);
         return result;
@@ -362,7 +362,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         }
 
         final LabelRemovedFromTask labelRemoved = LabelRemovedFromTask.newBuilder()
-                                                                      .setId(taskId)
+                                                                      .setTaskId(taskId)
                                                                       .setLabelId(labelId)
                                                                       .build();
         final List<LabelRemovedFromTask> result = Collections.singletonList(labelRemoved);
