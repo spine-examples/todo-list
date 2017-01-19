@@ -23,9 +23,10 @@ package org.spine3.examples.todolist.repositories;
 import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.c.events.TaskCompleted;
 import org.spine3.examples.todolist.c.events.TaskCreated;
+import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
 import org.spine3.examples.todolist.c.events.TaskReopened;
-import org.spine3.examples.todolist.q.projections.MyListViewProjection;
 import org.spine3.examples.todolist.q.projections.MyListView;
+import org.spine3.examples.todolist.q.projections.MyListViewProjection;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.entity.IdSetEventFunction;
 import org.spine3.server.projection.ProjectionRepository;
@@ -65,6 +66,10 @@ public class MyListViewRepository extends ProjectionRepository<TaskListId, MyLis
         final IdSetEventFunction<TaskListId, TaskReopened> taskReopenedFn =
                 (message, context) -> Collections.singleton(ID);
         addIdSetFunction(TaskReopened.class, taskReopenedFn);
+
+        final IdSetEventFunction<TaskListId, TaskDraftFinalized> draftFinalized =
+                (message, context) -> Collections.singleton(ID);
+        addIdSetFunction(TaskDraftFinalized.class, draftFinalized);
 
         addCommonIdSetFunctions(this, ID);
     }
