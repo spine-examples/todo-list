@@ -96,7 +96,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
-        final TaskListView taskListView = removeViewByTaskId(views, event.getId());
+        final TaskListView taskListView = removeViewByTaskId(views, event.getTaskId());
         final DraftTasksView state = getState().newBuilderForType()
                                                .setDraftTasks(taskListView)
                                                .build();
@@ -109,7 +109,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
-        final TaskListView taskListView = removeViewByTaskId(views, event.getId());
+        final TaskListView taskListView = removeViewByTaskId(views, event.getTaskId());
         final DraftTasksView state = getState().newBuilderForType()
                                                .setDraftTasks(taskListView)
                                                .build();
