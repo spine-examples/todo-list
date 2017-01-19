@@ -33,6 +33,7 @@ import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
+import org.spine3.examples.todolist.c.commands.FinalizeDraft;
 import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
 import org.spine3.examples.todolist.c.commands.ReopenTask;
 import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
@@ -53,6 +54,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCR
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.finalizeDraftInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.removeLabelFromTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
@@ -253,6 +255,31 @@ public class MyListViewClientShould extends CommandLineTodoClientShould {
                                                .getMyList()
                                                .getItemsList();
         assertTrue(taskViews.isEmpty());
+    }
+
+    @Test
+    public void obtain_task_view_when_handled_command_finalize_draft() {
+        final CreateDraft createDraft = createDraft();
+        client.create(createDraft);
+
+        List<TaskView> views = client.getMyListView()
+                                     .getMyList()
+                                     .getItemsList();
+        int expectedListSize = 0;
+        assertEquals(expectedListSize, views.size());
+
+        final TaskId taskId = createDraft.getId();
+        final FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId);
+        client.finalize(finalizeDraft);
+
+        expectedListSize = 1;
+        views = client.getMyListView()
+                      .getMyList()
+                      .getItemsList();
+        assertEquals(expectedListSize, views.size());
+
+        final TaskView view = views.get(0);
+        assertEquals(taskId, view.getId());
     }
 
     private List<TaskView> obtainTaskViewListWhenHandledDeleteTask(TaskId idOfCreatedTask, boolean isCorrectId) {
