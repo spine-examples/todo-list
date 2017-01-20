@@ -50,7 +50,16 @@ class TodoListEventEnricher {
     private static final String REPOSITORY_IS_NOT_INITIALIZED = "Repository is not initialized.";
     private TodoListRepositoryWrapper wrapper;
 
-    private EventEnricher getInstance() {
+    private TodoListEventEnricher(Builder builder) {
+        this.wrapper = builder.wrapper;
+    }
+
+    /**
+     * Returns the initialized {@link EventEnricher}.
+     *
+     * @return the {@code EventEnricher} instance
+     */
+    EventEnricher getEventEnricher() {
         final Function<TaskLabelId, LabelDetails> taskLabelIdToLabelDetails = initLabelIdToDetailsFunction();
         final Function<TaskId, Task> taskIdToTask = initTaskIdToTaskFunction();
         final Function<TaskId, TaskDetails> taskIdToTaskDetails = initTaskIdToDetailsFunction();
@@ -147,44 +156,48 @@ class TodoListEventEnricher {
         return result;
     }
 
-    private void setRepositoryWrapper(TodoListRepositoryWrapper wrapper) {
-        this.wrapper = wrapper;
+    /**
+     * Creates a new builder for (@code TodoListEventEnricher).
+     *
+     * @return new builder instance
+     */
+    static Builder newBuilder() {
+        return new Builder();
     }
 
-    static TodoListEventEnricherBuilder newBuilder() {
-        return new TodoListEventEnricherBuilder();
-    }
+    /**
+     * A builder for producing {@code TodoListEventEnricher} instances.
+     */
+    static class Builder {
 
-    static class TodoListEventEnricherBuilder {
         private TodoListRepositoryWrapper wrapper;
 
         /**
-         * Injects the {@link TodoListRepositoryWrapper}.
+         * Sets the {@link TodoListRepositoryWrapper}.
          *
          * <p> We cannot use the constructor of the {@link TodoListEventEnricher} class
-         * <p> for the repositories initialization.
-         * <p> Because in time, when we need the {@link EventEnricher} instance, repositories are not initialized yet.
+         * for the repositories initialization. Because in time, when we need the {@link EventEnricher} instance,
+         * repositories are not initialized yet.
+         *
          * <p> For initialize the {@link BoundedContext} we need the {@code EventEnricher},
-         * <p> for initialize the repositories
-         * <p> we need the {@code BoundedContext} and for the {@code EventEnricher} initialization
-         * <p> we need the repositories.
+         * for initialize the repositories we need the {@code BoundedContext}
+         * and for the {@code EventEnricher} initialization we need the repositories.
          *
          * @param wrapper the task aggregate repository
          */
-        TodoListEventEnricherBuilder setRepositoryWrapper(TodoListRepositoryWrapper wrapper) {
+        Builder setRepositoryWrapper(TodoListRepositoryWrapper wrapper) {
             this.wrapper = wrapper;
             return this;
         }
 
         /**
-         * Returns the constructed {@link EventEnricher}.
+         * Returns the constructed {@link TodoListEventEnricher}.
          *
-         * @return the {@code EventEnricher} instance
+         * @return the {@code TodoListEventEnricher} instance
          */
-        EventEnricher build() {
-            final TodoListEventEnricher enricher = new TodoListEventEnricher();
-            enricher.setRepositoryWrapper(wrapper);
-            return enricher.getInstance();
+        TodoListEventEnricher build() {
+            final TodoListEventEnricher result = new TodoListEventEnricher(this);
+            return result;
         }
     }
 }

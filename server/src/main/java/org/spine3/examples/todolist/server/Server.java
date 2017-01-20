@@ -55,9 +55,10 @@ public class Server {
 
     public Server(StorageFactory storageFactory) {
         final TodoListRepositoryWrapper wrapper = new TodoListRepositoryWrapper();
-        final EventEnricher eventEnricher = TodoListEventEnricher.newBuilder()
-                                                                 .setRepositoryWrapper(wrapper)
-                                                                 .build();
+        final TodoListEventEnricher todoListEventEnricher = TodoListEventEnricher.newBuilder()
+                                                                                 .setRepositoryWrapper(wrapper)
+                                                                                 .build();
+        final EventEnricher eventEnricher = todoListEventEnricher.getEventEnricher();
         this.boundedContext = initBoundedContext(storageFactory, eventEnricher);
         initRepositories(storageFactory);
         registerRepositories();
