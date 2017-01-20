@@ -23,14 +23,20 @@ package org.spine3.examples.todolist.server;
 import org.spine3.examples.todolist.repositories.TaskAggregateRepository;
 import org.spine3.examples.todolist.repositories.TaskLabelAggregateRepository;
 
+import javax.annotation.Nullable;
+import java.util.Optional;
+
 /**
- * Wrapper for the repositories, which is used in the {@link org.spine3.server.event.enrich.EventEnricher}.
+ * Provides the wrapped repositories in the {@link Optional} for constructing
+ * the {@link org.spine3.server.event.enrich.EventEnricher}.
  *
  * @author Illia Shepilov
  */
-class TodoListRepositoryWrapper {
+class TodoListRepositoryProvider {
 
+    @Nullable
     private TaskAggregateRepository taskAggregateRepository;
+    @Nullable
     private TaskLabelAggregateRepository labelAggregateRepository;
 
     void setTaskAggregateRepository(TaskAggregateRepository taskAggregateRepository) {
@@ -41,11 +47,13 @@ class TodoListRepositoryWrapper {
         this.labelAggregateRepository = labelAggregateRepository;
     }
 
-    TaskAggregateRepository getTaskAggregateRepository() {
-        return taskAggregateRepository;
+    Optional<TaskAggregateRepository> getTaskAggregateRepository() {
+        final Optional<TaskAggregateRepository> result = Optional.ofNullable(this.taskAggregateRepository);
+        return result;
     }
 
-    TaskLabelAggregateRepository getLabelAggregateRepository() {
-        return labelAggregateRepository;
+    Optional<TaskLabelAggregateRepository> getLabelAggregateRepository() {
+        final Optional<TaskLabelAggregateRepository> result = Optional.ofNullable(this.labelAggregateRepository);
+        return result;
     }
 }
