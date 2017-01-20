@@ -29,6 +29,7 @@ import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.c.aggregates.TaskAggregate;
 import org.spine3.examples.todolist.c.aggregates.TaskLabelAggregate;
+import org.spine3.server.BoundedContext;
 import org.spine3.server.aggregate.AggregateRepository;
 import org.spine3.server.event.enrich.EventEnricher;
 
@@ -36,35 +37,44 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * This class performs all necessary initializations
- * and constructions to provide ready to use the {@link EventEnricher}.
+ * Performs all necessary initializations to provide the ready-to-use {@link EventEnricher}.
+ *
+ * <p> This class provides the method to obtain the constructed {@link EventEnricher} instance.
  *
  * @author Illia Shepilov
  */
-class TodoListEnrichments {
+class EventEnricherFactory {
 
-    private Function<TaskLabelId, LabelDetails> taskLabelIdToLabelDetails;
-    private Function<TaskId, TaskDetails> taskIdToTaskDetails;
-    private Function<TaskId, LabelIdList> taskIdToLabelList;
-    private Function<TaskId, Task> taskIdToTask;
     private AggregateRepository<TaskId, TaskAggregate> taskAggregateRepository;
     private AggregateRepository<TaskLabelId, TaskLabelAggregate> taskLabelAggregateRepository;
-    private EventEnricher eventEnricher;
 
-    TodoListEnrichments() {
-        initEnricherFunctions();
-        this.eventEnricher = initEventEnricher();
+    /**
+     * Injects the {@link AggregateRepository}.
+     *
+     * <p> We cannot use the constructor for the repositories initialization.
+     * <p> Because in time, when we need the {@link EventEnricher} instance, repositories are not initialized yet.
+     * <p> For initialize the {@link BoundedContext} we need the {@code EventEnricher}, for initialize the repositories
+     * <p> we need the {@code BoundedContext} and for the {@code EventEnricher} initialization we need the repositories.
+     *
+     * @param taskRepository  the task aggregate repository
+     * @param labelRepository the task label aggregate repository
+     */
+    void injectRepositories(AggregateRepository<TaskId, TaskAggregate> taskRepository,
+                            AggregateRepository<TaskLabelId, TaskLabelAggregate> labelRepository) {
+        this.taskAggregateRepository = taskRepository;
+        this.taskLabelAggregateRepository = labelRepository;
     }
 
-    private void initEnricherFunctions() {
-        initLabelIdToDetailsFunction();
-        initTaskIdToDetailsFunction();
-        initTaskIdToLabelListFunction();
-        initTaskIdToTaskFunction();
-    }
-
-    private EventEnricher initEventEnricher() {
-
+    /**
+     * Returns the constructed {@link EventEnricher}.
+     *
+     * @return the {@code EventEnricher} instance
+     */
+    EventEnricher getInstance() {
+        final Function<TaskLabelId, LabelDetails> taskLabelIdToLabelDetails = initLabelIdToDetailsFunction();
+        final Function<TaskId, Task> taskIdToTask = initTaskIdToTaskFunction();
+        final Function<TaskId, TaskDetails> taskIdToTaskDetails = initTaskIdToDetailsFunction();
+        final Function<TaskId, LabelIdList> taskIdToLabelList = initTaskIdToLabelListFunction();
         final EventEnricher result = EventEnricher.newBuilder()
                                                   .addFieldEnrichment(TaskLabelId.class,
                                                                       LabelDetails.class,
@@ -82,8 +92,8 @@ class TodoListEnrichments {
         return result;
     }
 
-    private void initTaskIdToTaskFunction() {
-        taskIdToTask = taskId -> {
+    private Function<TaskId, Task> initTaskIdToTaskFunction() {
+        final Function<TaskId, Task> result = taskId -> {
             if (taskId == null) {
                 return Task.getDefaultInstance();
             }
@@ -91,10 +101,11 @@ class TodoListEnrichments {
             final Task task = taskAggregate.getState();
             return task;
         };
+        return result;
     }
 
-    private void initLabelIdToDetailsFunction() {
-        taskLabelIdToLabelDetails = labelId -> {
+    private Function<TaskLabelId, LabelDetails> initLabelIdToDetailsFunction() {
+        final Function<TaskLabelId, LabelDetails> result = labelId -> {
             if (labelId == null) {
                 return LabelDetails.getDefaultInstance();
             }
@@ -106,10 +117,12 @@ class TodoListEnrichments {
                                                      .build();
             return details;
         };
+
+        return result;
     }
 
-    private void initTaskIdToDetailsFunction() {
-        taskIdToTaskDetails = taskId -> {
+    private Function<TaskId, TaskDetails> initTaskIdToDetailsFunction() {
+        final Function<TaskId, TaskDetails> result = taskId -> {
             if (taskId == null) {
                 return TaskDetails.getDefaultInstance();
             }
@@ -121,38 +134,20 @@ class TodoListEnrichments {
                                                    .build();
             return details;
         };
+
+        return result;
     }
 
-    private void initTaskIdToLabelListFunction() {
-        taskIdToLabelList = taskId -> {
+    private Function<TaskId, LabelIdList> initTaskIdToLabelListFunction() {
+        final Function<TaskId, LabelIdList> result = taskId -> {
             final TaskAggregate aggregate = taskAggregateRepository.load(taskId);
             final List<TaskLabelId> labelIdsList = aggregate.getState()
                                                             .getLabelIdsList();
-            final LabelIdList result = LabelIdList.newBuilder()
-                                                  .addAllLabelId(labelIdsList)
-                                                  .build();
-            return result;
+            final LabelIdList labelIdList = LabelIdList.newBuilder()
+                                                       .addAllLabelId(labelIdsList)
+                                                       .build();
+            return labelIdList;
         };
-    }
-
-    /**
-     * Returns constructed the {@link EventEnricher}.
-     *
-     * @return the {@code EventEnricher} instance
-     */
-    EventEnricher getEventEnricher() {
-        return eventEnricher;
-    }
-
-    /**
-     * Sets the {@link AggregateRepository}.
-     *
-     * @param taskRepository  the task aggregate repository
-     * @param labelRepository the task label aggregate repository
-     */
-    void setRepositories(AggregateRepository<TaskId, TaskAggregate> taskRepository,
-                         AggregateRepository<TaskLabelId, TaskLabelAggregate> labelRepository) {
-        this.taskAggregateRepository = taskRepository;
-        this.taskLabelAggregateRepository = labelRepository;
+        return result;
     }
 }

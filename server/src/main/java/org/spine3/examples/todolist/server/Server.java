@@ -54,11 +54,11 @@ public class Server {
     private DraftTasksViewRepository draftTasksViewRepository;
 
     public Server(StorageFactory storageFactory) {
-        final TodoListEnrichments todoListEnrichments = new TodoListEnrichments();
-        this.boundedContext = initBoundedContext(storageFactory, todoListEnrichments.getEventEnricher());
+        final EventEnricherFactory eventEnricherFactory = new EventEnricherFactory();
+        this.boundedContext = initBoundedContext(storageFactory, eventEnricherFactory.getInstance());
         initRepositories(storageFactory);
         registerRepositories();
-        todoListEnrichments.setRepositories(taskAggregateRepository, taskLabelAggregateRepository);
+        eventEnricherFactory.injectRepositories(taskAggregateRepository, taskLabelAggregateRepository);
         final CommandService commandService = initCommandService();
         final QueryService queryService = initQueryService();
         final SubscriptionService subscriptionService = initSubscriptionService();
