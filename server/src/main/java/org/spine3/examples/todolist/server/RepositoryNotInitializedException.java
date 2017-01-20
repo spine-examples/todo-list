@@ -25,9 +25,9 @@ package org.spine3.examples.todolist.server;
  *
  * @author Illia Shepilov
  */
-class RepositoryInitializationException extends RuntimeException {
+class RepositoryNotInitializedException extends RuntimeException {
 
-    RepositoryInitializationException(String message) {
+    RepositoryNotInitializedException(String message) {
         super(message);
     }
 }

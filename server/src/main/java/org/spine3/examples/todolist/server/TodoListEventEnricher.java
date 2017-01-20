@@ -80,7 +80,7 @@ class TodoListEventEnricher {
             final TaskAggregateRepository taskAggregateRepository = wrapper.getTaskAggregateRepository();
             final TaskAggregate taskAggregate =
                     Optional.of(taskAggregateRepository)
-                            .orElseThrow(() -> new RepositoryInitializationException(REPOSITORY_IS_NOT_INITIALIZED))
+                            .orElseThrow(() -> new RepositoryNotInitializedException(REPOSITORY_IS_NOT_INITIALIZED))
                             .load(taskId);
             final Task task = taskAggregate.getState();
             return task;
@@ -96,7 +96,7 @@ class TodoListEventEnricher {
             final TaskLabelAggregateRepository labelAggregateRepository = wrapper.getLabelAggregateRepository();
             final TaskLabelAggregate aggregate =
                     Optional.of(labelAggregateRepository)
-                            .orElseThrow(() -> new RepositoryInitializationException(REPOSITORY_IS_NOT_INITIALIZED))
+                            .orElseThrow(() -> new RepositoryNotInitializedException(REPOSITORY_IS_NOT_INITIALIZED))
                             .load(labelId);
             final TaskLabel state = aggregate.getState();
             final LabelDetails details = LabelDetails.newBuilder()
@@ -117,7 +117,7 @@ class TodoListEventEnricher {
             final TaskAggregateRepository taskAggregateRepository = wrapper.getTaskAggregateRepository();
             final TaskAggregate aggregate =
                     Optional.of(taskAggregateRepository)
-                            .orElseThrow(() -> new RepositoryInitializationException(REPOSITORY_IS_NOT_INITIALIZED))
+                            .orElseThrow(() -> new RepositoryNotInitializedException(REPOSITORY_IS_NOT_INITIALIZED))
                             .load(taskId);
             final Task state = aggregate.getState();
             final TaskDetails details = TaskDetails.newBuilder()
@@ -135,7 +135,7 @@ class TodoListEventEnricher {
 
             final TaskAggregate aggregate =
                     Optional.of(wrapper.getTaskAggregateRepository())
-                            .orElseThrow(() -> new RepositoryInitializationException(REPOSITORY_IS_NOT_INITIALIZED))
+                            .orElseThrow(() -> new RepositoryNotInitializedException(REPOSITORY_IS_NOT_INITIALIZED))
                             .load(taskId);
             final List<TaskLabelId> labelIdsList = aggregate.getState()
                                                             .getLabelIdsList();
