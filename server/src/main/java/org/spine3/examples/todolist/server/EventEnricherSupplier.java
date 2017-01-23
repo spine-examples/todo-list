@@ -168,15 +168,18 @@ class EventEnricherSupplier implements Supplier<EventEnricher> {
         /**
          * Sets the {@link TodoListRepositoryProvider}.
          *
-         * <p> We cannot use the constructor of the {@link EventEnricherSupplier} class
-         * for the repositories initialization. Because in time, when we need the {@link EventEnricher} instance,
-         * repositories are not initialized yet.
+         * <p> It is not possible to pass the initialized repositories to the {@link EventEnricherSupplier} constructor,
+         * because at the time of {@code enricher} initialization, the repositories are not initialized yet.
          *
-         * <p> For initialize the {@link BoundedContext} we need the {@code EventEnricher},
-         * for initialize the repositories we need the {@code BoundedContext}
-         * and for the {@code EventEnricher} initialization we need the repositories.
+         * <p> To initialize the {@link BoundedContext}, the instance of the {@code EventEnrciher} is required.
+         * And to initialize the {@code repository} instances, the {@code BoundedContext} instance is required.
+         *
+         * <p> The {@code TodoListRepositoryProvider} is intended to break the cyclic dependency
+         * by providing the {@code repository} instances in a “lazy” mode.
          *
          * @param repositoryProvider the task aggregate repository
+         * @return the {@code Builder}
+         * @see TodoListRepositoryProvider
          */
         Builder setRepositoryProvider(TodoListRepositoryProvider repositoryProvider) {
             this.repositoryProvider = repositoryProvider;
