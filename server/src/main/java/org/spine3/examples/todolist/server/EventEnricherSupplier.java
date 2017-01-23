@@ -82,7 +82,8 @@ class EventEnricherSupplier implements Supplier<EventEnricher> {
             }
             final TaskAggregateRepository taskAggregateRepository =
                     repositoryProvider.getTaskAggregateRepository()
-                                      .orElseThrow(() -> new RepositoryNotInitializedException(REPOSITORY_IS_NOT_INITIALIZED));
+                                      .orElseThrow(() -> new RepositoryNotInitializedException(
+                                              REPOSITORY_IS_NOT_INITIALIZED));
             final TaskAggregate taskAggregate = taskAggregateRepository.load(taskId);
             final Task task = taskAggregate.getState();
             return task;
@@ -97,7 +98,8 @@ class EventEnricherSupplier implements Supplier<EventEnricher> {
             }
             final TaskLabelAggregateRepository labelAggregateRepository =
                     repositoryProvider.getLabelAggregateRepository()
-                                      .orElseThrow(() -> new RepositoryNotInitializedException(REPOSITORY_IS_NOT_INITIALIZED));
+                                      .orElseThrow(() -> new RepositoryNotInitializedException(
+                                              REPOSITORY_IS_NOT_INITIALIZED));
             final TaskLabelAggregate aggregate = labelAggregateRepository.load(labelId);
             final TaskLabel state = aggregate.getState();
             final LabelDetails details = LabelDetails.newBuilder()
@@ -117,7 +119,8 @@ class EventEnricherSupplier implements Supplier<EventEnricher> {
             }
             final TaskAggregateRepository taskAggregateRepository =
                     repositoryProvider.getTaskAggregateRepository()
-                                      .orElseThrow(() -> new RepositoryNotInitializedException(REPOSITORY_IS_NOT_INITIALIZED));
+                                      .orElseThrow(() -> new RepositoryNotInitializedException(
+                                              REPOSITORY_IS_NOT_INITIALIZED));
             final TaskAggregate aggregate = taskAggregateRepository.load(taskId);
             final Task state = aggregate.getState();
             final TaskDetails details = TaskDetails.newBuilder()
@@ -134,7 +137,8 @@ class EventEnricherSupplier implements Supplier<EventEnricher> {
         final Function<TaskId, LabelIdList> result = taskId -> {
             final TaskAggregateRepository taskAggregateRepository =
                     repositoryProvider.getTaskAggregateRepository()
-                                      .orElseThrow(() -> new RepositoryNotInitializedException(REPOSITORY_IS_NOT_INITIALIZED));
+                                      .orElseThrow(() -> new RepositoryNotInitializedException(
+                                              REPOSITORY_IS_NOT_INITIALIZED));
             final TaskAggregate aggregate = taskAggregateRepository.load(taskId);
             final List<TaskLabelId> labelIdsList = aggregate.getState()
                                                             .getLabelIdsList();
