@@ -144,7 +144,7 @@ public class TaskAggregateShould {
                                                               .getClass());
         final TaskDescriptionUpdated taskDescriptionUpdated = (TaskDescriptionUpdated) messageList.get(0);
 
-        assertEquals(TASK_ID, taskDescriptionUpdated.getId());
+        assertEquals(TASK_ID, taskDescriptionUpdated.getTaskId());
         final String newDescription = taskDescriptionUpdated.getDescriptionChange()
                                                             .getNewValue();
         assertEquals(DESCRIPTION, newDescription);
@@ -183,7 +183,7 @@ public class TaskAggregateShould {
                                                             .getClass());
         final LabelRemovedFromTask labelRemovedFromTask = (LabelRemovedFromTask) messageList.get(0);
 
-        assertEquals(TASK_ID, labelRemovedFromTask.getId());
+        assertEquals(TASK_ID, labelRemovedFromTask.getTaskId());
         assertEquals(LABEL_ID, labelRemovedFromTask.getLabelId());
     }
 
@@ -335,7 +335,7 @@ public class TaskAggregateShould {
                                                           .getClass());
         final TaskDueDateUpdated taskDueDateUpdated = (TaskDueDateUpdated) messageList.get(0);
 
-        assertEquals(TASK_ID, taskDueDateUpdated.getId());
+        assertEquals(TASK_ID, taskDueDateUpdated.getTaskId());
         final Timestamp newDueDate = taskDueDateUpdated.getDueDateChange()
                                                        .getNewValue();
         assertEquals(DUE_DATE, newDueDate);
@@ -356,7 +356,7 @@ public class TaskAggregateShould {
                                                            .getClass());
         final TaskPriorityUpdated taskPriorityUpdated = (TaskPriorityUpdated) messageList.get(0);
 
-        assertEquals(TASK_ID, taskPriorityUpdated.getId());
+        assertEquals(TASK_ID, taskPriorityUpdated.getTaskId());
         final TaskPriority newPriority = taskPriorityUpdated.getPriorityChange()
                                                             .getNewValue();
         assertEquals(TaskPriority.HIGH, newPriority);
@@ -377,7 +377,7 @@ public class TaskAggregateShould {
                                                      .getClass());
         final TaskCompleted taskCompleted = (TaskCompleted) messageList.get(0);
 
-        assertEquals(TASK_ID, taskCompleted.getId());
+        assertEquals(TASK_ID, taskCompleted.getTaskId());
     }
 
     @Test
@@ -866,7 +866,7 @@ public class TaskAggregateShould {
                                                    .getClass());
         final TaskDeleted taskDeleted = (TaskDeleted) messageList.get(0);
 
-        assertEquals(TASK_ID, taskDeleted.getId());
+        assertEquals(TASK_ID, taskDeleted.getTaskId());
     }
 
     @Test

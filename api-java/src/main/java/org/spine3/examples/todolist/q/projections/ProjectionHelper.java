@@ -133,7 +133,7 @@ class ProjectionHelper {
      * @return the list of the {@link TaskView} which does not contains specified label
      */
     static List<TaskView> updateTaskViewList(List<TaskView> views, LabelRemovedFromTask event) {
-        final TaskId targetTaskId = event.getId();
+        final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> builder.setLabelId(TaskLabelId.getDefaultInstance());
         final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
@@ -163,7 +163,7 @@ class ProjectionHelper {
      * @return the list of the {@link TaskView}
      */
     static List<TaskView> updateTaskViewList(List<TaskView> views, TaskReopened event) {
-        final TaskId targetTaskId = event.getId();
+        final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> builder.setCompleted(false);
         final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
@@ -178,7 +178,7 @@ class ProjectionHelper {
      * @return the list of the {@link TaskView}
      */
     static List<TaskView> updateTaskViewList(List<TaskView> views, TaskCompleted event) {
-        final TaskId targetTaskId = event.getId();
+        final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> builder.setCompleted(true);
         final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
@@ -193,7 +193,7 @@ class ProjectionHelper {
      * @return the list of the {@link TaskView} with updated task due date
      */
     static List<TaskView> updateTaskViewList(List<TaskView> views, TaskDueDateUpdated event) {
-        final TaskId targetTaskId = event.getId();
+        final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> {
             final Timestamp newDueDate = event.getDueDateChange()
@@ -213,7 +213,7 @@ class ProjectionHelper {
      * @return the list of the {@link TaskView} with updated task priority
      */
     static List<TaskView> updateTaskViewList(List<TaskView> views, TaskPriorityUpdated event) {
-        final TaskId targetTaskId = event.getId();
+        final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> {
             final TaskPriority newPriority = event.getPriorityChange()
@@ -233,7 +233,7 @@ class ProjectionHelper {
      * @return the list of the {@link TaskView} with updated task description
      */
     static List<TaskView> updateTaskViewList(List<TaskView> views, TaskDescriptionUpdated event) {
-        final TaskId targetTaskId = event.getId();
+        final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> {
             final String newDescription = event.getDescriptionChange()

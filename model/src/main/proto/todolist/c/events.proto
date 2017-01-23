@@ -89,7 +89,7 @@ message TaskDraftCreated {
 message TaskDescriptionUpdated {
 
     // An identifier of the updated task.
-    TaskId id = 1;
+    TaskId task_id = 1;
 
     // The change of the task description.
     change.StringChange description_change = 2 [(required) = true];
@@ -107,7 +107,7 @@ message TaskDescriptionUpdated {
 message TaskPriorityUpdated {
 
     // An identifier of the updated task.
-    TaskId id = 1;
+    TaskId task_id = 1;
 
     // The change of the task priority.
     PriorityChange priority_change = 2 [(required) = true];
@@ -125,7 +125,7 @@ message TaskPriorityUpdated {
 message TaskDueDateUpdated {
 
     // An identifier of the updated task.
-    TaskId id = 1;
+    TaskId task_id = 1;
 
     // The task due date change.
     change.TimestampChange due_date_change = 2 [(required) = true];
@@ -141,7 +141,7 @@ message TaskDueDateUpdated {
 message TaskDraftFinalized {
 
     // An identifier of the task draft finalized.
-    TaskId id = 1;
+    TaskId task_id = 1;
 
     // Reserved for future extension.
     reserved 2 to 10;
@@ -154,7 +154,7 @@ message TaskDraftFinalized {
 message TaskCompleted {
 
     // An identifier of the completed task.
-    TaskId id = 1;
+    TaskId task_id = 1;
 
     // Reserved for future extension.
     reserved 2 to 10;
@@ -167,7 +167,7 @@ message TaskCompleted {
 message TaskReopened {
 
     // An identifier of the reopened task.
-    TaskId id = 1;
+    TaskId task_id = 1;
 
     // Reserved for future extension.
     reserved 2 to 10;
@@ -180,7 +180,7 @@ message TaskReopened {
 message TaskDeleted {
 
     // An identifier of the deleted task.
-    TaskId id = 1;
+    TaskId task_id = 1;
 
     // Reserved for future extension.
     reserved 2 to 10;
@@ -205,7 +205,7 @@ message LabelAssignedToTask {
 message LabelRemovedFromTask {
 
     // An identifier of the target task.
-    TaskId id = 1;
+    TaskId task_id = 1;
 
     // An identifier of the label to remove from the target task.
     TaskLabelId label_id = 2 [(required) = true];
@@ -221,7 +221,7 @@ message LabelRemovedFromTask {
 message DeletedTaskRestored {
 
     // An identifier of the restored task.
-    TaskId id = 1;
+    TaskId task_id = 1;
 
     // Reserved for future extension.
     reserved 2 to 10;

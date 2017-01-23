@@ -31,6 +31,7 @@ option java_generate_equals_and_hash = true;
 import "spine/annotations.proto";
 import "spine/enrichment_annotations.proto";
 import "todolist/values.proto";
+import "todolist/model.proto";
 
 // Enrichment for task and label details.
 //
@@ -50,14 +51,23 @@ message DetailsEnrichment {
 //
 message LabelListEnrichment {
 
-    option (enrichment_for) = "spine.examples.todolist.RestoreDeletedTask,"
-                              "spine.examples.todolist.TaskDescriptionUpdated,"
+    option (enrichment_for) = "spine.examples.todolist.TaskDescriptionUpdated,"
                               "spine.examples.todolist.TaskPriorityUpdated,"
                               "spine.examples.todolist.TaskDueDateUpdated,"
                               "spine.examples.todolist.TaskCompleted,"
                               "spine.examples.todolist.TaskReopened,"
-                              "spine.examples.todolist.TaskDeleted";
+                              "spine.examples.todolist.TaskDeleted,"
+                              "spine.examples.todolist.TaskDraftFinalized";
 
     // A label ID list.
-    LabelIdList label_id_list = 1 [(by) = "id"];
+    LabelIdList label_id_list = 1 [(by) = "task_id"];
+}
+
+// Enrichment for the task.
+//
+message TaskEnrichment {
+    option (enrichment_for) = "spine.examples.todolist.TaskDraftFinalized";
+
+    // A task.
+    Task task = 1 [(by) = "task_id"];
 }
