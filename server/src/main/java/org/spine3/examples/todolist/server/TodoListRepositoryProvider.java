@@ -22,13 +22,28 @@ package org.spine3.examples.todolist.server;
 
 import org.spine3.examples.todolist.repositories.TaskAggregateRepository;
 import org.spine3.examples.todolist.repositories.TaskLabelAggregateRepository;
+import org.spine3.server.BoundedContext;
+import org.spine3.server.event.enrich.EventEnricher;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
- * Provides the wrapped repositories in the {@link Optional} for constructing
- * the {@link org.spine3.server.event.enrich.EventEnricher}.
+ * Serves as a repository provider for all the application components
+ * that are initialized before the {@link BoundedContext}.
+ *
+ * <p> As long as the {@code Aggregate} and {@code Projection} repositories
+ * require the instance of the {@code BoundedContext} for their own initialization,
+ * they are all {@code null} before the {@code BoundedContext} is built.
+ *
+ * <p> However, some of the app components (such as {@link EventEnricher}) at the same time
+ * <ul>
+ *     <li> need repository instances for own operation, thus requiring them for instantiation,
+ *     <li> are involved into the {@code BoundedContext} initialization.
+ * </ul>
+ *
+ * <p>In order to break such a cyclic dependency,  the instances of {@code TodoListRepositoryProvider}
+ * serve as providers of the repository instances in "lazy" mode.
  *
  * @author Illia Shepilov
  */
@@ -47,11 +62,21 @@ class TodoListRepositoryProvider {
         this.labelAggregateRepository = labelAggregateRepository;
     }
 
+    /**
+     * Returns the wrapped {@link TaskAggregateRepository} in the {@code Optional}.
+     *
+     * @return the {@code Optional}
+     */
     Optional<TaskAggregateRepository> getTaskAggregateRepository() {
         final Optional<TaskAggregateRepository> result = Optional.ofNullable(this.taskAggregateRepository);
         return result;
     }
 
+    /**
+     * Returns the wrapped {@link TaskLabelAggregateRepository} in the {@code Optional}.
+     *
+     * @return the {@code Optional}
+     */
     Optional<TaskLabelAggregateRepository> getLabelAggregateRepository() {
         final Optional<TaskLabelAggregateRepository> result = Optional.ofNullable(this.labelAggregateRepository);
         return result;
