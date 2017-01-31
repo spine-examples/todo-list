@@ -81,6 +81,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static org.spine3.examples.todolist.c.aggregates.AggregateHelper.generateExceptionMessage;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotAssignLabelToTaskFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCompleteTaskFailure;
@@ -508,11 +509,5 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         if (!isValid) {
             throwCannotUpdateTaskDescriptionFailure(taskId, TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE);
         }
-    }
-
-    private static String generateExceptionMessage(TaskStatus currentStatus, TaskStatus newStatus) {
-        final String result = String.format("Cannot make transition from: %s to: %s state",
-                                            currentStatus, newStatus);
-        return result;
     }
 }
