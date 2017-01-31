@@ -60,6 +60,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 /**
  * @author Illia Shepilov
  */
+@SuppressWarnings({"OverlyCoupledClass", "ClassWithTooManyMethods"})
 public class DraftTasksViewClientShould extends CommandLineTodoClientShould {
 
     @Test

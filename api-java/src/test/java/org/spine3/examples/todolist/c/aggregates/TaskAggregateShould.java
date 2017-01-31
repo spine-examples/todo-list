@@ -106,9 +106,11 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 /**
  * @author Illia Shepilov
  */
+@SuppressWarnings({"OverlyCoupledClass", "ClassWithTooManyMethods"})
 public class TaskAggregateShould {
 
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
+    private static final String EXPECTED_DESCRIPTION = "description";
     private TaskAggregate aggregate;
 
     private static final TaskId ID = TaskId.newBuilder()
@@ -932,7 +934,7 @@ public class TaskAggregateShould {
         final CreateBasicTask createBasicTask = createTaskInstance();
         aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
 
-        final String expectedValue = "description";
+        final String expectedValue = EXPECTED_DESCRIPTION;
         final String newValue = "update description";
         final String actualValue = createBasicTask.getDescription();
 
@@ -946,9 +948,8 @@ public class TaskAggregateShould {
             assertTrue(cause instanceof CannotUpdateTaskDescription);
 
             @SuppressWarnings("ConstantConditions")
-            final Failures.CannotUpdateTaskDescription cannotUpdateTaskDescription =
-                    ((CannotUpdateTaskDescription) cause).getFailure();
-            final DescriptionUpdateFailed descriptionUpdateFailed = cannotUpdateTaskDescription.getUpdateFailed();
+            final Failures.CannotUpdateTaskDescription failure = ((CannotUpdateTaskDescription) cause).getFailure();
+            final DescriptionUpdateFailed descriptionUpdateFailed = failure.getUpdateFailed();
             final TaskId actualTaskId = descriptionUpdateFailed.getFailedCommand()
                                                                .getTaskId();
             assertEquals(TASK_ID, actualTaskId);

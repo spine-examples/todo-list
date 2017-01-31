@@ -75,6 +75,7 @@ import static org.spine3.examples.todolist.testdata.TestEventFactory.taskReopene
 /**
  * @author Illia Shepilov
  */
+@SuppressWarnings("OptionalGetWithoutIsPresent") // it is OK as we create all those objects.
 public class LabelledTasksViewProjectionShould {
 
     private EventBus eventBus;

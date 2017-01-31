@@ -67,6 +67,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 /**
  * @author Illia Shepilov
  */
+@SuppressWarnings({"OverlyCoupledClass", "ClassWithTooManyMethods"})
 public class LabelledTasksViewClientShould extends CommandLineTodoClientShould {
 
     @Test
