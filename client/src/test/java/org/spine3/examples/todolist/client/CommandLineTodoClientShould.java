@@ -29,7 +29,7 @@ import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.client.builder.CommandBuilder;
 import org.spine3.examples.todolist.server.Server;
-import org.spine3.server.storage.memory.InMemoryStorageFactory;
+import org.spine3.server.storage.StorageFactorySwitch;
 import org.spine3.util.Exceptions;
 
 import java.io.IOException;
@@ -53,8 +53,8 @@ class CommandLineTodoClientShould {
 
     @BeforeEach
     public void setUp() throws InterruptedException {
-        final InMemoryStorageFactory storageFactory = InMemoryStorageFactory.getInstance();
-        server = new Server(storageFactory);
+        final StorageFactorySwitch factorySwitch = StorageFactorySwitch.getInstance();
+        server = new Server(factorySwitch);
         startServer();
         client = new CommandLineTodoClient(HOST, DEFAULT_CLIENT_SERVICE_PORT);
     }

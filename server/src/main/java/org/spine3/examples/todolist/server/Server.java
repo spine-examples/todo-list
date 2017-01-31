@@ -29,8 +29,10 @@ import org.spine3.server.BoundedContext;
 import org.spine3.server.CommandService;
 import org.spine3.server.QueryService;
 import org.spine3.server.SubscriptionService;
+import org.spine3.server.event.EventBus;
 import org.spine3.server.event.enrich.EventEnricher;
 import org.spine3.server.storage.StorageFactory;
+import org.spine3.server.storage.StorageFactorySwitch;
 import org.spine3.server.transport.GrpcContainer;
 
 import java.io.IOException;
@@ -54,13 +56,19 @@ public class Server {
     private LabelledTasksViewRepository labelledViewRepository;
     private DraftTasksViewRepository draftTasksViewRepository;
 
-    public Server(StorageFactory storageFactory) {
+    public Server(StorageFactorySwitch storageFactorySwitch) {
         final TodoListRepositoryProvider repositoryProvider = new TodoListRepositoryProvider();
         final Supplier<EventEnricher> eventEnricherSupplier = EventEnricherSupplier.newBuilder()
                                                                                    .setRepositoryProvider(repositoryProvider)
                                                                                    .build();
+        final StorageFactory storageFactory = storageFactorySwitch.get();
         final EventEnricher eventEnricher = eventEnricherSupplier.get();
-        this.boundedContext = initBoundedContext(storageFactory, eventEnricher);
+        final EventBus eventBus = EventBus.newBuilder()
+                                          .setStorageFactory(storageFactory)
+                                          .setEnricher(eventEnricher)
+                                          .build();
+        this.boundedContext = initBoundedContext(storageFactorySwitch, eventBus);
+
         initRepositories(storageFactory);
         registerRepositories();
         repositoryProvider.setTaskAggregateRepository(taskAggregateRepository);
@@ -104,10 +112,10 @@ public class Server {
         return result;
     }
 
-    private static BoundedContext initBoundedContext(StorageFactory storageFactory, EventEnricher eventEnricher) {
+    private static BoundedContext initBoundedContext(StorageFactorySwitch storageFactorySwitch, EventBus eventBus) {
         final BoundedContext result = BoundedContext.newBuilder()
-                                                    .setStorageFactory(storageFactory)
-                                                    .setEventEnricher(eventEnricher)
+                                                    .setEventBus(eventBus)
+                                                    .setStorageFactorySupplier(storageFactorySwitch)
                                                     .build();
         return result;
     }

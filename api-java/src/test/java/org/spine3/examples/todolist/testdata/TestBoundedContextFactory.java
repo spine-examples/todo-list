@@ -21,7 +21,9 @@
 package org.spine3.examples.todolist.testdata;
 
 import org.spine3.server.BoundedContext;
+import org.spine3.server.event.EventBus;
 import org.spine3.server.event.enrich.EventEnricher;
+import org.spine3.server.storage.StorageFactorySwitch;
 import org.spine3.server.storage.memory.InMemoryStorageFactory;
 
 /**
@@ -36,17 +38,18 @@ public class TestBoundedContextFactory {
 
     /**
      * Provides a new {@link BoundedContext} instance
-     * built with the specified {@link EventEnricher} and {@link InMemoryStorageFactory}.
+     * built with the specified {@link EventBus} and {@link StorageFactorySwitch}.
      *
-     * @param eventEnricher {@link EventEnricher} instance
+     * @param eventBus {@link EventBus} instance
      * @return {@link BoundedContext} instance
      */
-    public static BoundedContext boundedContextInstance(EventEnricher eventEnricher,
-                                                        InMemoryStorageFactory storageFactory) {
+    public static BoundedContext boundedContextInstance(EventBus eventBus,
+                                                        StorageFactorySwitch storageFactory) {
         final BoundedContext result = BoundedContext.newBuilder()
-                                                    .setEventEnricher(eventEnricher)
-                                                    .setStorageFactory(storageFactory)
+                                                    .setEventBus(eventBus)
+                                                    .setStorageFactorySupplier(storageFactory)
                                                     .build();
+
         return result;
     }
 }

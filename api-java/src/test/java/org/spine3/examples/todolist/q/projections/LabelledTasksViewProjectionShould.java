@@ -42,7 +42,8 @@ import org.spine3.server.BoundedContext;
 import org.spine3.server.event.EventBus;
 import org.spine3.server.event.enrich.EventEnricher;
 import org.spine3.server.projection.ProjectionRepository;
-import org.spine3.server.storage.memory.InMemoryStorageFactory;
+import org.spine3.server.storage.StorageFactory;
+import org.spine3.server.storage.StorageFactorySwitch;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -51,6 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Events.createEvent;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
+import static org.spine3.examples.todolist.testdata.TestEventBusFactory.eventBusInstance;
 import static org.spine3.examples.todolist.testdata.TestEventContextFactory.eventContextInstance;
 import static org.spine3.examples.todolist.testdata.TestEventEnricherFactory.LABEL_TITLE;
 import static org.spine3.examples.todolist.testdata.TestEventEnricherFactory.eventEnricherInstance;
@@ -81,9 +83,11 @@ public class LabelledTasksViewProjectionShould {
 
     @BeforeEach
     public void setUp() {
-        final InMemoryStorageFactory storageFactory = InMemoryStorageFactory.getInstance();
+        final StorageFactorySwitch storageFactorySwitch = StorageFactorySwitch.getInstance();
+        final StorageFactory storageFactory = storageFactorySwitch.get();
         final EventEnricher eventEnricher = eventEnricherInstance();
-        final BoundedContext boundedContext = boundedContextInstance(eventEnricher, storageFactory);
+        eventBus = eventBusInstance(storageFactory, eventEnricher);
+        final BoundedContext boundedContext = boundedContextInstance(eventBus, storageFactorySwitch);
         repository = new LabelledTasksViewRepository(boundedContext);
         repository.initStorage(storageFactory);
         boundedContext.register(repository);
@@ -98,6 +102,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(labelAssignedToTaskEvent);
 
         LabelledTasksView labelledTaskView = repository.load(LABEL_ID)
+                                                       .get()
                                                        .getState();
         TaskListView listView = labelledTaskView.getLabelledTasks();
 
@@ -114,6 +119,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(labelAssignedToTaskEvent);
 
         labelledTaskView = repository.load(LABEL_ID)
+                                     .get()
                                      .getState();
         listView = labelledTaskView.getLabelledTasks();
         actualListSize = listView.getItemsCount();
@@ -140,6 +146,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(labelAssignedToTaskEvent);
 
         LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                        .get()
                                                         .getState();
         assertEquals(LABEL_ID, labelledTasksView.getLabelId());
 
@@ -148,6 +155,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(labelRemovedFromTaskEvent);
 
         labelledTasksView = repository.load(LABEL_ID)
+                                      .get()
                                       .getState();
         doesNotMatchValues(labelledTasksView);
 
@@ -173,6 +181,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(deletedTaskRestoredEvent);
 
         LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                        .get()
                                                         .getState();
         matchesExpectedValues(labelledTasksView);
 
@@ -189,11 +198,13 @@ public class LabelledTasksViewProjectionShould {
         assertEquals(TASK_ID, taskView.getId());
 
         labelledTasksView = repository.load(LABEL_ID)
+                                      .get()
                                       .getState();
 
         matchesExpectedValues(labelledTasksView);
 
         listView = repository.load(LABEL_ID)
+                             .get()
                              .getState()
                              .getLabelledTasks();
         actualListSize = listView.getItemsCount();
@@ -219,6 +230,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(deletedTaskEvent);
 
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .get()
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
 
@@ -236,6 +248,7 @@ public class LabelledTasksViewProjectionShould {
 
         expectedListSize = 0;
         listView = repository.load(LABEL_ID)
+                             .get()
                              .getState()
                              .getLabelledTasks();
         actualListSize = listView.getItemsCount();
@@ -257,6 +270,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(descriptionUpdatedEvent);
 
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .get()
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
 
@@ -283,6 +297,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(descriptionUpdatedEvent);
 
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .get()
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
@@ -307,6 +322,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(taskPriorityUpdatedEvent);
 
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .get()
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
@@ -332,6 +348,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(taskPriorityUpdatedEvent);
 
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .get()
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
@@ -356,6 +373,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(taskDueDateUpdatedEvent);
 
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .get()
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
@@ -381,6 +399,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(taskDueDateUpdatedEvent);
 
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .get()
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
@@ -405,6 +424,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(taskCompletedEvent);
 
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .get()
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
@@ -429,6 +449,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(taskCompletedEvent);
 
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .get()
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
@@ -457,6 +478,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(taskReopenedEvent);
 
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .get()
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
@@ -485,6 +507,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(taskReopenedEvent);
 
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .get()
                                                               .getState();
         matchesExpectedValues(labelledTasksView);
         final TaskListView listView = labelledTasksView.getLabelledTasks();
@@ -511,6 +534,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(labelDetailsUpdatedEvent);
 
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .get()
                                                               .getState();
         assertEquals(LABEL_ID, labelledTasksView.getLabelId());
         assertEquals(newTitle, labelledTasksView.getLabelTitle());
@@ -534,6 +558,7 @@ public class LabelledTasksViewProjectionShould {
         eventBus.post(labelDetailsUpdatedEvent);
 
         final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+                                                              .get()
                                                               .getState();
         assertEquals(LABEL_ID, labelledTasksView.getLabelId());
         assertNotEquals(newTitle, labelledTasksView.getLabelTitle());
