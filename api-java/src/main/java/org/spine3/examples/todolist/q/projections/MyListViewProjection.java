@@ -56,6 +56,7 @@ import static org.spine3.examples.todolist.q.projections.ProjectionHelper.update
  *
  * @author Illia Shepilov
  */
+@SuppressWarnings("OverlyCoupledClass")
 public class MyListViewProjection extends Projection<TaskListId, MyListView> {
 
     /**

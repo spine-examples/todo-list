@@ -100,10 +100,10 @@ public class LabelledTasksViewProjectionShould {
         final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
         final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
         eventBus.post(labelAssignedToTaskEvent);
-
         LabelledTasksView labelledTaskView = repository.load(LABEL_ID)
                                                        .get()
                                                        .getState();
+
         TaskListView listView = labelledTaskView.getLabelledTasks();
 
         matchesExpectedValues(labelledTaskView);

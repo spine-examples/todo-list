@@ -58,6 +58,7 @@ import org.spine3.examples.todolist.c.failures.CannotUpdateTaskWithInappropriate
  *
  * @author Illia Shepilov
  */
+@SuppressWarnings("OverlyCoupledClass")
 class FailureHelper {
 
     static final String TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE = "Command cannot be applied " +

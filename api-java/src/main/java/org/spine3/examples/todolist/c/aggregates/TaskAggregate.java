@@ -108,7 +108,7 @@ import static org.spine3.examples.todolist.c.aggregates.MismatchHelper.of;
 // However, it is unused in some cases due to the business rules.
 // E.g. {@code TaskRemoved} event is explicit enough by itself,
 // so it is not needed to use any of its field values. So the parameter left unused.
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "OverlyCoupledClass"})
 public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;
@@ -211,7 +211,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         final TaskPriority actualPriority = state.getPriority();
         final TaskPriority expectedPriority = priorityChange.getPreviousValue();
 
-        boolean isEquals = actualPriority.equals(expectedPriority);
+        boolean isEquals = actualPriority == expectedPriority;
 
         if (!isEquals) {
             final TaskPriority newPriority = priorityChange.getNewValue();
@@ -510,7 +510,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
         }
     }
 
-    private String generateExceptionMessage(TaskStatus currentStatus, TaskStatus newStatus) {
+    private static String generateExceptionMessage(TaskStatus currentStatus, TaskStatus newStatus) {
         final String result = String.format("Cannot make transition from: %s to: %s state",
                                             currentStatus, newStatus);
         return result;

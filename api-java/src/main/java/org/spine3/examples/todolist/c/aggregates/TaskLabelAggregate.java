@@ -47,7 +47,7 @@ import static org.spine3.examples.todolist.c.aggregates.MismatchHelper.of;
  * @author Illia Shepilov
  */
 
-@SuppressWarnings({"unused"}) // The methods annotated with {@link Assign} are declared {@code private} by design.
+@SuppressWarnings("unused") // The methods annotated with {@link Assign} are declared {@code private} by design.
 public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLabel.Builder> {
 
     /**
@@ -56,7 +56,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
      * @param id the ID for the new aggregates.
      * @throws IllegalArgumentException if the ID is not of one of the supported types.
      */
-    public TaskLabelAggregate(TaskLabelId id) {
+    TaskLabelAggregate(TaskLabelId id) {
         super(id);
     }
 

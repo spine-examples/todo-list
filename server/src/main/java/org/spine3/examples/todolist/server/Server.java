@@ -58,16 +58,17 @@ public class Server {
 
     public Server(StorageFactorySwitch storageFactorySwitch) {
         final TodoListRepositoryProvider repositoryProvider = new TodoListRepositoryProvider();
-        final Supplier<EventEnricher> eventEnricherSupplier = EventEnricherSupplier.newBuilder()
-                                                                                   .setRepositoryProvider(repositoryProvider)
-                                                                                   .build();
+        final Supplier<EventEnricher> eventEnricherSupplier =
+                EventEnricherSupplier.newBuilder()
+                                     .setRepositoryProvider(repositoryProvider)
+                                     .build();
         final StorageFactory storageFactory = storageFactorySwitch.get();
         final EventEnricher eventEnricher = eventEnricherSupplier.get();
         final EventBus eventBus = EventBus.newBuilder()
                                           .setStorageFactory(storageFactory)
                                           .setEnricher(eventEnricher)
                                           .build();
-        this.boundedContext = initBoundedContext(storageFactorySwitch, eventBus);
+        this.boundedContext = initBoundedContext(eventBus);
 
         initRepositories(storageFactory);
         registerRepositories();
@@ -112,10 +113,9 @@ public class Server {
         return result;
     }
 
-    private static BoundedContext initBoundedContext(StorageFactorySwitch storageFactorySwitch, EventBus eventBus) {
+    private static BoundedContext initBoundedContext(EventBus eventBus) {
         final BoundedContext result = BoundedContext.newBuilder()
                                                     .setEventBus(eventBus)
-                                                    .setStorageFactorySupplier(storageFactorySwitch)
                                                     .build();
         return result;
     }
