@@ -43,6 +43,7 @@ import org.spine3.server.command.Assign;
 import java.util.Collections;
 import java.util.List;
 
+import static org.spine3.examples.todolist.c.aggregates.AggregateHelper.generateExceptionMessage;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCreateDraftFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCreateTaskWithInappropriateDescription;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotFinalizeDraftFailure;
@@ -137,11 +138,5 @@ public class TaskCreationPart extends AggregatePart<TaskId, TaskCreation, TaskCr
             final TaskId taskId = cmd.getId();
             throwCannotCreateTaskWithInappropriateDescription(taskId);
         }
-    }
-
-    private static String generateExceptionMessage(TaskStatus currentStatus, TaskStatus newStatus) {
-        final String result = String.format("Cannot make transition from: %s to: %s state",
-                                            currentStatus, newStatus);
-        return result;
     }
 }
