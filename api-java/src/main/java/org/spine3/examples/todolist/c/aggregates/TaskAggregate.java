@@ -124,7 +124,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(CreateBasicTask cmd)
+    List<? extends Message> handle(CreateBasicTask cmd)
             throws CannotCreateBasicTask, CannotCreateTaskWithInappropriateDescription {
         validateCommand(cmd);
         final TaskId taskId = cmd.getId();
@@ -139,7 +139,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(UpdateTaskDescription cmd)
+    List<? extends Message> handle(UpdateTaskDescription cmd)
             throws CannotUpdateTaskDescription, CannotUpdateTaskWithInappropriateDescription {
         validateCommand(cmd);
         final Task state = getState();
@@ -165,7 +165,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(UpdateTaskDueDate cmd) throws CannotUpdateTaskDueDate {
+    List<? extends Message> handle(UpdateTaskDueDate cmd) throws CannotUpdateTaskDueDate {
         final Task state = getState();
         final TaskStatus taskStatus = state.getTaskStatus();
         final boolean isValid = TaskFlowValidator.isValidUpdateTaskDueDateCommand(taskStatus);
@@ -197,7 +197,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(UpdateTaskPriority cmd) throws CannotUpdateTaskPriority {
+    List<? extends Message> handle(UpdateTaskPriority cmd) throws CannotUpdateTaskPriority {
         final Task state = getState();
         final TaskStatus taskStatus = state.getTaskStatus();
         final boolean isValid = TaskFlowValidator.isValidUpdateTaskPriorityCommand(taskStatus);
@@ -228,7 +228,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(ReopenTask cmd) throws CannotReopenTask {
+    List<? extends Message> handle(ReopenTask cmd) throws CannotReopenTask {
         final Task state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.OPEN;
@@ -248,7 +248,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(DeleteTask cmd) throws CannotDeleteTask {
+    List<? extends Message> handle(DeleteTask cmd) throws CannotDeleteTask {
         final Task state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.DELETED;
@@ -268,7 +268,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(RestoreDeletedTask cmd) throws CannotRestoreDeletedTask {
+    List<? extends Message> handle(RestoreDeletedTask cmd) throws CannotRestoreDeletedTask {
         final Task state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.OPEN;
@@ -296,7 +296,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(CompleteTask cmd) throws CannotCompleteTask {
+    List<? extends Message> handle(CompleteTask cmd) throws CannotCompleteTask {
         final Task state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.COMPLETED;
@@ -316,7 +316,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(CreateDraft cmd) throws CannotCreateDraft {
+    List<? extends Message> handle(CreateDraft cmd) throws CannotCreateDraft {
         final TaskId taskId = cmd.getId();
         final boolean isValid = TaskFlowValidator.isValidCreateDraftCommand(getState().getTaskStatus());
 
@@ -333,7 +333,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(FinalizeDraft cmd) throws CannotFinalizeDraft {
+    List<? extends Message> handle(FinalizeDraft cmd) throws CannotFinalizeDraft {
         final TaskStatus currentStatus = getState().getTaskStatus();
         final TaskStatus newStatus = TaskStatus.FINALIZED;
         final TaskId taskId = cmd.getId();
@@ -352,7 +352,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(RemoveLabelFromTask cmd) throws CannotRemoveLabelFromTask {
+    List<? extends Message> handle(RemoveLabelFromTask cmd) throws CannotRemoveLabelFromTask {
         final TaskLabelId labelId = cmd.getLabelId();
         final TaskId taskId = cmd.getId();
         final boolean isValid = TaskFlowValidator.isValidRemoveLabelFromTaskCommand(getState().getTaskStatus());
@@ -370,7 +370,7 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
     }
 
     @Assign
-    public List<? extends Message> handle(AssignLabelToTask cmd) throws CannotAssignLabelToTask {
+    List<? extends Message> handle(AssignLabelToTask cmd) throws CannotAssignLabelToTask {
         final TaskId taskId = cmd.getId();
         final TaskLabelId labelId = cmd.getLabelId();
         final boolean isValid = TaskFlowValidator.isValidAssignLabelToTaskCommand(getState().getTaskStatus());

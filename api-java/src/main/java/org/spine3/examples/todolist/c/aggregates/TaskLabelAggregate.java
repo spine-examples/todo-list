@@ -61,7 +61,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     }
 
     @Assign
-    public List<? extends Message> handle(CreateBasicLabel cmd) {
+    List<? extends Message> handle(CreateBasicLabel cmd) {
         final LabelDetails.Builder labelDetails = LabelDetails.newBuilder()
                                                               .setColor(LabelColor.GRAY)
                                                               .setTitle(cmd.getLabelTitle());
@@ -73,7 +73,7 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     }
 
     @Assign
-    public List<? extends Message> handle(UpdateLabelDetails cmd) throws CannotUpdateLabelDetails {
+    List<? extends Message> handle(UpdateLabelDetails cmd) throws CannotUpdateLabelDetails {
         final TaskLabel state = getState();
         final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
                                                             .setColor(getState().getColor())
