@@ -76,21 +76,13 @@ public class Server {
         repositoryProvider.setLabelAggregateRepository(taskLabelAggregateRepository);
         final CommandService commandService = initCommandService();
         final QueryService queryService = initQueryService();
-        final SubscriptionService subscriptionService = initSubscriptionService();
-        this.grpcContainer = initGrpcContainer(commandService, subscriptionService, queryService);
+        this.grpcContainer = initGrpcContainer(commandService, queryService);
     }
 
     private QueryService initQueryService() {
         final QueryService result = QueryService.newBuilder()
                                                 .add(boundedContext)
                                                 .build();
-        return result;
-    }
-
-    private SubscriptionService initSubscriptionService() {
-        final SubscriptionService result = SubscriptionService.newBuilder()
-                                                              .add(boundedContext)
-                                                              .build();
         return result;
     }
 
@@ -102,11 +94,9 @@ public class Server {
     }
 
     private static GrpcContainer initGrpcContainer(CommandService commandService,
-                                                   SubscriptionService subscriptionService,
                                                    QueryService queryService) {
         final GrpcContainer result = GrpcContainer.newBuilder()
                                                   .addService(commandService)
-                                                  .addService(subscriptionService)
                                                   .addService(queryService)
                                                   .setPort(DEFAULT_CLIENT_SERVICE_PORT)
                                                   .build();
