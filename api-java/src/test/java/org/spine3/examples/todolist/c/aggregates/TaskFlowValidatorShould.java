@@ -23,7 +23,7 @@ package org.spine3.examples.todolist.c.aggregates;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.test.Tests.hasPrivateUtilityConstructor;
+import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
@@ -32,6 +32,6 @@ public class TaskFlowValidatorShould {
 
     @Test
     public void have_private_constructor() {
-        assertTrue(hasPrivateUtilityConstructor(TaskFlowValidator.class));
+        assertTrue(hasPrivateParameterlessCtor(TaskFlowValidator.class));
     }
 }

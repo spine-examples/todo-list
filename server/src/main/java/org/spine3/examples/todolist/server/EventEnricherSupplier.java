@@ -46,7 +46,7 @@ import java.util.function.Supplier;
 class EventEnricherSupplier implements Supplier<EventEnricher> {
 
     private static final String REPOSITORY_IS_NOT_INITIALIZED = "Repository is not initialized.";
-    private TodoListRepositoryProvider repositoryProvider;
+    private final TodoListRepositoryProvider repositoryProvider;
 
     private EventEnricherSupplier(Builder builder) {
         this.repositoryProvider = builder.repositoryProvider;
@@ -83,8 +83,9 @@ class EventEnricherSupplier implements Supplier<EventEnricher> {
             final TaskAggregateRepository taskAggregateRepository =
                     repositoryProvider.getTaskAggregateRepository()
                                       .orElseThrow(() -> new RepositoryNotInitializedException(REPOSITORY_IS_NOT_INITIALIZED));
-            final TaskAggregate taskAggregate = taskAggregateRepository.load(taskId);
-            final Task task = taskAggregate.getState();
+            final TaskAggregate aggregate = taskAggregateRepository.load(taskId)
+                                                                   .get();
+            final Task task = aggregate.getState();
             return task;
         };
         return result;
@@ -98,7 +99,8 @@ class EventEnricherSupplier implements Supplier<EventEnricher> {
             final TaskLabelAggregateRepository labelAggregateRepository =
                     repositoryProvider.getLabelAggregateRepository()
                                       .orElseThrow(() -> new RepositoryNotInitializedException(REPOSITORY_IS_NOT_INITIALIZED));
-            final TaskLabelAggregate aggregate = labelAggregateRepository.load(labelId);
+            final TaskLabelAggregate aggregate = labelAggregateRepository.load(labelId)
+                                                                         .get();
             final TaskLabel state = aggregate.getState();
             final LabelDetails details = LabelDetails.newBuilder()
                                                      .setColor(state.getColor())
@@ -118,7 +120,8 @@ class EventEnricherSupplier implements Supplier<EventEnricher> {
             final TaskAggregateRepository taskAggregateRepository =
                     repositoryProvider.getTaskAggregateRepository()
                                       .orElseThrow(() -> new RepositoryNotInitializedException(REPOSITORY_IS_NOT_INITIALIZED));
-            final TaskAggregate aggregate = taskAggregateRepository.load(taskId);
+            final TaskAggregate aggregate = taskAggregateRepository.load(taskId)
+                                                                   .get();
             final Task state = aggregate.getState();
             final TaskDetails details = TaskDetails.newBuilder()
                                                    .setDescription(state.getDescription())
@@ -135,7 +138,8 @@ class EventEnricherSupplier implements Supplier<EventEnricher> {
             final TaskAggregateRepository taskAggregateRepository =
                     repositoryProvider.getTaskAggregateRepository()
                                       .orElseThrow(() -> new RepositoryNotInitializedException(REPOSITORY_IS_NOT_INITIALIZED));
-            final TaskAggregate aggregate = taskAggregateRepository.load(taskId);
+            final TaskAggregate aggregate = taskAggregateRepository.load(taskId)
+                                                                   .get();
             final List<TaskLabelId> labelIdsList = aggregate.getState()
                                                             .getLabelIdsList();
             final LabelIdList labelIdList = LabelIdList.newBuilder()
