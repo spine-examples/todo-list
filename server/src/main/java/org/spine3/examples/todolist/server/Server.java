@@ -28,7 +28,6 @@ import org.spine3.examples.todolist.repositories.TaskLabelAggregateRepository;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.CommandService;
 import org.spine3.server.QueryService;
-import org.spine3.server.SubscriptionService;
 import org.spine3.server.event.EventBus;
 import org.spine3.server.event.enrich.EventEnricher;
 import org.spine3.server.storage.StorageFactory;
