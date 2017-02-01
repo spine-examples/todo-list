@@ -494,7 +494,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
     private void validateCommand(UpdateTaskDescription cmd)
             throws CannotUpdateTaskDescription, CannotUpdateTaskWithInappropriateDescription {
-        final ValueMismatch mismatch = ValueMismatch.getDefaultInstance();
         final String description = cmd.getDescriptionChange()
                                       .getNewValue();
         final TaskId taskId = cmd.getId();
