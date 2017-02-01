@@ -18,13 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregates;
+package org.spine3.examples.todolist.c.aggregates.task.creation;
 
 import com.google.protobuf.Message;
 import org.spine3.examples.todolist.TaskCreation;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskStatus;
+import org.spine3.examples.todolist.c.aggregates.TaskFlowValidator;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.events.TaskCreated;

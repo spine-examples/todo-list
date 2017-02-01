@@ -18,13 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregates;
+package org.spine3.examples.todolist.c.aggregates.task.restoring;
 
 import com.google.protobuf.Message;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskRestoring;
 import org.spine3.examples.todolist.TaskStatus;
+import org.spine3.examples.todolist.c.aggregates.TaskFlowValidator;
 import org.spine3.examples.todolist.c.commands.RestoreDeletedTask;
 import org.spine3.examples.todolist.c.events.DeletedTaskRestored;
 import org.spine3.examples.todolist.c.events.LabelledTaskRestored;

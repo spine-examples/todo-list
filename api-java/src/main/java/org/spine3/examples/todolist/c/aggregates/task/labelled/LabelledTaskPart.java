@@ -18,12 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregates;
+package org.spine3.examples.todolist.c.aggregates.task.labelled;
 
 import com.google.protobuf.Message;
 import org.spine3.examples.todolist.LabelledTask;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.c.aggregates.TaskFlowValidator;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
 import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;

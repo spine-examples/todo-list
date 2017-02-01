@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregates;
+package org.spine3.examples.todolist.c.aggregates.task.updating;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
@@ -30,6 +30,9 @@ import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.TaskUpdating;
+import org.spine3.examples.todolist.c.aggregates.FailureHelper;
+import org.spine3.examples.todolist.c.aggregates.MismatchHelper;
+import org.spine3.examples.todolist.c.aggregates.TaskFlowValidator;
 import org.spine3.examples.todolist.c.commands.UpdateTaskDescription;
 import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
 import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
@@ -50,9 +53,6 @@ import java.util.List;
 
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTaskDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTaskDueDateFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTaskPriorityFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTooShortDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregates.MismatchHelper.of;
 
@@ -107,7 +107,7 @@ public class TaskUpdatingPart extends AggregatePart<TaskId, TaskUpdating, TaskUp
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            throwCannotUpdateTaskDueDateFailure(taskId);
+            FailureHelper.throwCannotUpdateTaskDueDateFailure(taskId);
         }
 
         final TimestampChange change = cmd.getDueDateChange();
@@ -119,7 +119,7 @@ public class TaskUpdatingPart extends AggregatePart<TaskId, TaskUpdating, TaskUp
         if (!isEquals) {
             final Timestamp newDueDate = change.getNewValue();
             final ValueMismatch mismatch = of(expectedDueDate, actualDueDate, newDueDate, getVersion());
-            throwCannotUpdateTaskDueDateFailure(taskId, mismatch);
+            FailureHelper.throwCannotUpdateTaskDueDateFailure(taskId, mismatch);
         }
 
         final TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated.newBuilder()
@@ -138,7 +138,7 @@ public class TaskUpdatingPart extends AggregatePart<TaskId, TaskUpdating, TaskUp
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            throwCannotUpdateTaskPriorityFailure(taskId);
+            FailureHelper.throwCannotUpdateTaskPriorityFailure(taskId);
         }
 
         final PriorityChange priorityChange = cmd.getPriorityChange();
@@ -150,7 +150,7 @@ public class TaskUpdatingPart extends AggregatePart<TaskId, TaskUpdating, TaskUp
         if (!isEquals) {
             final TaskPriority newPriority = priorityChange.getNewValue();
             final ValueMismatch mismatch = of(expectedPriority, actualPriority, newPriority, getVersion());
-            throwCannotUpdateTaskPriorityFailure(taskId, mismatch);
+            FailureHelper.throwCannotUpdateTaskPriorityFailure(taskId, mismatch);
         }
 
         final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
@@ -184,7 +184,6 @@ public class TaskUpdatingPart extends AggregatePart<TaskId, TaskUpdating, TaskUp
 
     private void validateCommand(UpdateTaskDescription cmd)
             throws CannotUpdateTaskDescription, CannotUpdateTaskWithInappropriateDescription {
-        final ValueMismatch mismatch = ValueMismatch.getDefaultInstance();
         final String description = cmd.getDescriptionChange()
                                       .getNewValue();
         final TaskId taskId = cmd.getId();
@@ -196,7 +195,7 @@ public class TaskUpdatingPart extends AggregatePart<TaskId, TaskUpdating, TaskUp
         boolean isValid = TaskFlowValidator.ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
 
         if (!isValid) {
-            throwCannotUpdateTaskDescriptionFailure(taskId, TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE);
+            FailureHelper.throwCannotUpdateTaskDescriptionFailure(taskId, TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE);
         }
     }
 }
