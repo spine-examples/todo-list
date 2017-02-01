@@ -127,7 +127,7 @@ ext {
     // Take latest snapshot of Spine from the repo.
     // See: http://stackoverflow.com/questions/22372508/use-latest-snapshot-version-from-the-remote-repo
 //    spineVersion = 'latest.integration'
-    spineVersion = '0.7.24-SNAPSHOT'
+    spineVersion = '0.8.0'
 
 }
 
