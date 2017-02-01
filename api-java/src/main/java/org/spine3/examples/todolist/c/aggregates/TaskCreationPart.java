@@ -96,25 +96,6 @@ public class TaskCreationPart extends AggregatePart<TaskId, TaskCreation, TaskCr
         return result;
     }
 
-    @Assign
-    List<? extends Message> handle(FinalizeDraft cmd) throws CannotFinalizeDraft {
-        final TaskStatus currentStatus = getState().getTaskStatus();
-        final TaskStatus newStatus = TaskStatus.FINALIZED;
-        final TaskId taskId = cmd.getId();
-        final boolean isValid = TaskFlowValidator.isValidTransition(currentStatus, newStatus);
-
-        if (!isValid) {
-            final String message = generateExceptionMessage(currentStatus, newStatus);
-            throwCannotFinalizeDraftFailure(taskId, message);
-        }
-
-        final TaskDraftFinalized taskDraftFinalized = TaskDraftFinalized.newBuilder()
-                                                                        .setTaskId(taskId)
-                                                                        .build();
-        final List<TaskDraftFinalized> result = Collections.singletonList(taskDraftFinalized);
-        return result;
-    }
-
     @Apply
     private void taskCreated(TaskCreated event) {
         final TaskDetails taskDetails = event.getDetails();

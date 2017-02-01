@@ -26,14 +26,15 @@ import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.TaskStatusChanging;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
+import org.spine3.examples.todolist.c.commands.FinalizeDraft;
 import org.spine3.examples.todolist.c.commands.ReopenTask;
-import org.spine3.examples.todolist.c.events.DeletedTaskRestored;
-import org.spine3.examples.todolist.c.events.LabelledTaskRestored;
 import org.spine3.examples.todolist.c.events.TaskCompleted;
 import org.spine3.examples.todolist.c.events.TaskDeleted;
+import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
 import org.spine3.examples.todolist.c.events.TaskReopened;
 import org.spine3.examples.todolist.c.failures.CannotCompleteTask;
 import org.spine3.examples.todolist.c.failures.CannotDeleteTask;
+import org.spine3.examples.todolist.c.failures.CannotFinalizeDraft;
 import org.spine3.examples.todolist.c.failures.CannotReopenTask;
 import org.spine3.server.aggregate.AggregatePart;
 import org.spine3.server.aggregate.Apply;
@@ -45,6 +46,7 @@ import java.util.List;
 import static org.spine3.examples.todolist.c.aggregates.AggregateHelper.generateExceptionMessage;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCompleteTaskFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotDeleteTaskFailure;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotFinalizeDraftFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotReopenTaskFailure;
 
 /**
@@ -121,6 +123,25 @@ public class TaskStatusChangingPart extends AggregatePart<TaskId, TaskStatusChan
         return result;
     }
 
+    @Assign
+    List<? extends Message> handle(FinalizeDraft cmd) throws CannotFinalizeDraft {
+        final TaskStatus currentStatus = getState().getTaskStatus();
+        final TaskStatus newStatus = TaskStatus.FINALIZED;
+        final TaskId taskId = cmd.getId();
+        final boolean isValid = TaskFlowValidator.isValidTransition(currentStatus, newStatus);
+
+        if (!isValid) {
+            final String message = generateExceptionMessage(currentStatus, newStatus);
+            throwCannotFinalizeDraftFailure(taskId, message);
+        }
+
+        final TaskDraftFinalized taskDraftFinalized = TaskDraftFinalized.newBuilder()
+                                                                        .setTaskId(taskId)
+                                                                        .build();
+        final List<TaskDraftFinalized> result = Collections.singletonList(taskDraftFinalized);
+        return result;
+    }
+
     @Apply
     private void taskReopened(TaskReopened event) {
         getBuilder().setTaskStatus(TaskStatus.OPEN);
@@ -132,18 +153,12 @@ public class TaskStatusChangingPart extends AggregatePart<TaskId, TaskStatusChan
     }
 
     @Apply
-    private void deletedTaskRestored(DeletedTaskRestored event) {
-        getBuilder().setTaskStatus(TaskStatus.OPEN);
-    }
-
-    @Apply
-    private void labelledTaskRestored(LabelledTaskRestored event) {
-        getBuilder().setTaskStatus(TaskStatus.OPEN);
-    }
-
-    @Apply
     private void taskCompleted(TaskCompleted event) {
         getBuilder().setTaskStatus(TaskStatus.COMPLETED);
     }
 
+    @Apply
+    private void taskDraftFinalized(TaskDraftFinalized event) {
+        getBuilder().setTaskStatus(TaskStatus.FINALIZED);
+    }
 }
