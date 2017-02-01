@@ -22,8 +22,8 @@ package org.spine3.examples.todolist.c.aggregates;
 
 import com.google.protobuf.Message;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskState;
 import org.spine3.examples.todolist.TaskStatus;
+import org.spine3.examples.todolist.TaskStatusChanging;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
 import org.spine3.examples.todolist.c.commands.ReopenTask;
@@ -50,20 +50,20 @@ import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCanno
 /**
  * @author Illia Shepilov
  */
-public class TaskStatePart extends AggregatePart<TaskId, TaskState, TaskState.Builder> {
+public class TaskStatusChangingPart extends AggregatePart<TaskId, TaskStatusChanging, TaskStatusChanging.Builder> {
 
     /**
      * {@inheritDoc}
      *
      * @param id
      */
-    protected TaskStatePart(TaskId id) {
+    protected TaskStatusChangingPart(TaskId id) {
         super(id);
     }
 
     @Assign
     List<? extends Message> handle(ReopenTask cmd) throws CannotReopenTask {
-        final TaskState state = getState();
+        final TaskStatusChanging state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.OPEN;
         final boolean isValid = TaskFlowValidator.isValidTransition(currentStatus, newStatus);
@@ -83,7 +83,7 @@ public class TaskStatePart extends AggregatePart<TaskId, TaskState, TaskState.Bu
 
     @Assign
     List<? extends Message> handle(DeleteTask cmd) throws CannotDeleteTask {
-        final TaskState state = getState();
+        final TaskStatusChanging state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.DELETED;
         final TaskId taskId = cmd.getId();
@@ -103,7 +103,7 @@ public class TaskStatePart extends AggregatePart<TaskId, TaskState, TaskState.Bu
 
     @Assign
     List<? extends Message> handle(CompleteTask cmd) throws CannotCompleteTask {
-        final TaskState state = getState();
+        final TaskStatusChanging state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.COMPLETED;
         final TaskId taskId = cmd.getId();
