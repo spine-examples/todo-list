@@ -24,7 +24,7 @@ package spine.examples.todolist;
 
 option (type_url_prefix) = "type.spine.examples.todolist";
 option java_package = "org.spine3.examples.todolist";
-option java_outer_classname = "LabelledTaskProto";
+option java_outer_classname = "TaskStatusChangingProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
@@ -34,18 +34,16 @@ import "spine/validate.proto";
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
 
-message LabelledTask {
+message TaskStatusChanging {
 
     // Task identifier.
     TaskId task_id = 1;
 
-    repeated TaskLabelId label_ids = 2;
-
     // Task status.
     //
     // Optional. Defaults to the `TaskStatus.TS_UNDEFINED`.
-    TaskStatus task_status = 3;
+    TaskStatus task_status = 2;
 
     // Reserved fields for future extension.
-    reserved 4 to 20;
+    reserved 3 to 20;
 }

@@ -24,9 +24,11 @@ package spine.examples.todolist;
 
 option (type_url_prefix) = "type.spine.examples.todolist";
 option java_package = "org.spine3.examples.todolist";
-option java_outer_classname = "TaskCreationProto";
+option java_outer_classname = "TaskUpdatingProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
+
+import "google/protobuf/timestamp.proto";
 
 import "spine/annotations.proto";
 import "spine/validate.proto";
@@ -34,7 +36,7 @@ import "spine/validate.proto";
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
 
-message TaskCreation {
+message TaskUpdating {
 
     // Task identifier.
     TaskId task_id = 1;
@@ -44,11 +46,22 @@ message TaskCreation {
     // Cannot be empty; must contain at least 3 alphanumeric symbols.
     string description = 2 [(required) = true];
 
+    // Task priority.
+    //
+    // If a task is created in "Quick" mode, its priority is "NORMAL".
+    // If a task is created in scope of a wizard, the end-user is prompted to set the priority explicitly.
+    TaskPriority priority = 3;
+
+    // The due date for the task.
+    //
+    // Optional. Has no default value.
+    google.protobuf.Timestamp due_date = 4;
+
     // Task status.
     //
     // Optional. Defaults to the `TaskStatus.TS_UNDEFINED`.
-    TaskStatus task_status = 3;
+    TaskStatus task_status = 5;
 
     // Reserved fields for future extension.
-    reserved 4 to 20;
+    reserved 6 to 20;
 }
