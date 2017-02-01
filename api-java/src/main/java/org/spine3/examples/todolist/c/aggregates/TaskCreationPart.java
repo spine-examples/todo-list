@@ -27,14 +27,11 @@ import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
-import org.spine3.examples.todolist.c.commands.FinalizeDraft;
 import org.spine3.examples.todolist.c.events.TaskCreated;
 import org.spine3.examples.todolist.c.events.TaskDraftCreated;
-import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
 import org.spine3.examples.todolist.c.failures.CannotCreateBasicTask;
 import org.spine3.examples.todolist.c.failures.CannotCreateDraft;
 import org.spine3.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
-import org.spine3.examples.todolist.c.failures.CannotFinalizeDraft;
 import org.spine3.protobuf.Timestamps;
 import org.spine3.server.aggregate.AggregatePart;
 import org.spine3.server.aggregate.Apply;
@@ -43,10 +40,8 @@ import org.spine3.server.command.Assign;
 import java.util.Collections;
 import java.util.List;
 
-import static org.spine3.examples.todolist.c.aggregates.AggregateHelper.generateExceptionMessage;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCreateDraftFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCreateTaskWithInappropriateDescription;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotFinalizeDraftFailure;
 
 /**
  * @author Illia Shepilov
