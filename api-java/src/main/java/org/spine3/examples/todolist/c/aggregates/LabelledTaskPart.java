@@ -193,7 +193,7 @@ public class LabelledTaskPart extends AggregatePart<TaskId, LabelledTask, Labell
                                                            .filter(x -> x.getId()
                                                                          .equals(taskLabelId))
                                                            .findFirst();
-        final Integer result = firstWithId.map(commentList::indexOf)
+        final int result = firstWithId.map(commentList::indexOf)
                                           .orElse(NOT_FOUND);
         return result;
     }
