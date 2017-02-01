@@ -27,7 +27,7 @@ import org.spine3.examples.todolist.TaskStatus;
  *
  * @author Illia Shepilov
  */
-class TaskFlowValidator {
+public class TaskFlowValidator {
 
     private TaskFlowValidator() {
     }
@@ -38,32 +38,32 @@ class TaskFlowValidator {
      * @param currentStatus current task status
      * @param newStatus     new task status
      */
-    static boolean isValidTransition(TaskStatus currentStatus, TaskStatus newStatus) {
+    public static boolean isValidTransition(TaskStatus currentStatus, TaskStatus newStatus) {
         final boolean isValid = TaskStatusTransition.isValid(currentStatus, newStatus);
         return isValid;
     }
 
-    static boolean isValidUpdateTaskPriorityCommand(TaskStatus currentStatus) {
+    public static boolean isValidUpdateTaskPriorityCommand(TaskStatus currentStatus) {
         final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
         return isValid;
     }
 
-    static boolean isValidUpdateTaskDueDateCommand(TaskStatus currentStatus) {
+    public static boolean isValidUpdateTaskDueDateCommand(TaskStatus currentStatus) {
         final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
         return isValid;
     }
 
-    static boolean isValidRemoveLabelFromTaskCommand(TaskStatus currentStatus) {
+    public static boolean isValidRemoveLabelFromTaskCommand(TaskStatus currentStatus) {
         final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
         return isValid;
     }
 
-    static boolean isValidAssignLabelToTaskCommand(TaskStatus currentStatus) {
+    public static boolean isValidAssignLabelToTaskCommand(TaskStatus currentStatus) {
         final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
         return isValid;
     }
 
-    static boolean isValidCreateDraftCommand(TaskStatus currentStatus) {
+    public static boolean isValidCreateDraftCommand(TaskStatus currentStatus) {
         final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
         return isValid;
     }
@@ -77,7 +77,7 @@ class TaskFlowValidator {
      * @throws IllegalStateException if status, passed to the method,
      *                               {@code TaskStatus.COMPLETED} or {@code TaskStatus.DELETED}.
      */
-    static boolean ensureNeitherCompletedNorDeleted(TaskStatus currentStatus) {
+    public static boolean ensureNeitherCompletedNorDeleted(TaskStatus currentStatus) {
         boolean isDeleted = ensureNotDeleted(currentStatus);
         boolean isCompleted = ensureNotCompleted(currentStatus);
         final boolean result = !isDeleted && !isCompleted;

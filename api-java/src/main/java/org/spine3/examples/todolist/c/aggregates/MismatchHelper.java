@@ -35,7 +35,7 @@ import static com.google.protobuf.Any.pack;
  *
  * @author Illia Shepilov
  */
-class MismatchHelper {
+public class MismatchHelper {
 
     private MismatchHelper() {
     }
@@ -49,8 +49,8 @@ class MismatchHelper {
      * @param version          the version of the entity in which the mismatch is discovered
      * @return new {@code ValueMismatch} instance
      */
-    static ValueMismatch of(TaskPriority expectedPriority, TaskPriority actualPriority,
-                            TaskPriority newPriority, int version) {
+    public static ValueMismatch of(TaskPriority expectedPriority, TaskPriority actualPriority,
+                                   TaskPriority newPriority, int version) {
         final TaskPriorityValue actualPriorityValue = TaskPriorityValue.newBuilder()
                                                                        .setPriorityValue(actualPriority)
                                                                        .build();
@@ -78,7 +78,7 @@ class MismatchHelper {
      * @param version       the version of the entity in which the mismatch is discovered
      * @return new {@code ValueMismatch} instance
      */
-    static ValueMismatch of(String expectedValue, String actualValue, String newValue, int version) {
+    public static ValueMismatch of(String expectedValue, String actualValue, String newValue, int version) {
         final ValueMismatch result = StringMismatch.unexpectedValue(expectedValue,
                                                                     actualValue,
                                                                     newValue,
@@ -95,7 +95,7 @@ class MismatchHelper {
      * @param version      the version of the entity in which the mismatch is discovered
      * @return new {@code ValueMismatch} instance
      */
-    static ValueMismatch of(Timestamp expectedTime, Timestamp actualTime, Timestamp newTime, int version) {
+    public static ValueMismatch of(Timestamp expectedTime, Timestamp actualTime, Timestamp newTime, int version) {
         final ValueMismatch result = ValueMismatch.newBuilder()
                                                   .setExpected(AnyPacker.pack(expectedTime))
                                                   .setActual(AnyPacker.pack(actualTime))
@@ -114,8 +114,8 @@ class MismatchHelper {
      * @param version              the version of the entity in which the mismatch is discovered
      * @return new {@code ValueMismatch} instance
      */
-    static ValueMismatch of(LabelDetails expectedLabelDetails, LabelDetails actualLabelDetails,
-                            LabelDetails newLabelDetails, int version) {
+    public static ValueMismatch of(LabelDetails expectedLabelDetails, LabelDetails actualLabelDetails,
+                                   LabelDetails newLabelDetails, int version) {
         final ValueMismatch result = ValueMismatch.newBuilder()
                                                   .setActual(pack(actualLabelDetails))
                                                   .setExpected(pack(expectedLabelDetails))

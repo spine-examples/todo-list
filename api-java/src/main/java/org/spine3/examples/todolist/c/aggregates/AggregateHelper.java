@@ -30,7 +30,7 @@ public class AggregateHelper {
     private AggregateHelper() {
     }
 
-    static String generateExceptionMessage(TaskStatus currentStatus, TaskStatus newStatus) {
+    public static String generateExceptionMessage(TaskStatus currentStatus, TaskStatus newStatus) {
         final String result = String.format("Cannot make transition from: %s to: %s state",
                                             currentStatus, newStatus);
         return result;
