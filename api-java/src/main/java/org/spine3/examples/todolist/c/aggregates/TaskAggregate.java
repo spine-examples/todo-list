@@ -472,7 +472,6 @@ public class TaskAggregate extends Aggregate<TaskId, Task, Task.Builder> {
 
         getBuilder().clearLabelIds()
                     .addAllLabelIds(list);
-
     }
 
     @Apply
