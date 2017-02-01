@@ -22,13 +22,11 @@ package org.spine3.examples.todolist.c.aggregates;
 
 import com.google.protobuf.Message;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskState;
 import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
 import org.spine3.examples.todolist.c.commands.ReopenTask;
-import org.spine3.examples.todolist.c.commands.RestoreDeletedTask;
 import org.spine3.examples.todolist.c.events.DeletedTaskRestored;
 import org.spine3.examples.todolist.c.events.LabelledTaskRestored;
 import org.spine3.examples.todolist.c.events.TaskCompleted;
@@ -37,7 +35,6 @@ import org.spine3.examples.todolist.c.events.TaskReopened;
 import org.spine3.examples.todolist.c.failures.CannotCompleteTask;
 import org.spine3.examples.todolist.c.failures.CannotDeleteTask;
 import org.spine3.examples.todolist.c.failures.CannotReopenTask;
-import org.spine3.examples.todolist.c.failures.CannotRestoreDeletedTask;
 import org.spine3.server.aggregate.AggregatePart;
 import org.spine3.server.aggregate.Apply;
 import org.spine3.server.command.Assign;
@@ -45,12 +42,10 @@ import org.spine3.server.command.Assign;
 import java.util.Collections;
 import java.util.List;
 
-import static com.google.common.collect.Lists.newLinkedList;
 import static org.spine3.examples.todolist.c.aggregates.AggregateHelper.generateExceptionMessage;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCompleteTaskFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotDeleteTaskFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotReopenTaskFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotRestoreDeletedTaskFailure;
 
 /**
  * @author Illia Shepilov
