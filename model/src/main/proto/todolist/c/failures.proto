@@ -29,6 +29,7 @@ option java_generate_equals_and_hash = true;
 
 import "spine/annotations.proto";
 
+import "todolist/identifiers.proto";
 import "todolist/values.proto";
 
 // Fire the failure when cannot update task description.
@@ -141,4 +142,14 @@ message CannotCreateTaskWithInappropriateDescription{
 
     // Failed the task creation.
     CreateBasicTaskFailed create_task_failed = 1;
+}
+
+// A failure to find a label in a task.
+message LabelNotFound{
+
+    // A task which generated the failure.
+    TaskId task_id = 1;
+
+    // A label ID from the command, which wasn't found in the task.
+    TaskLabelId label_id = 2;
 }
