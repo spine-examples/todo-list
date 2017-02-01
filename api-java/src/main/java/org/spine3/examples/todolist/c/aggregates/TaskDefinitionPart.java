@@ -84,6 +84,10 @@ import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCanno
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTaskPriorityFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTooShortDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregates.MismatchHelper.of;
+import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidCreateDraftCommand;
+import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidTransition;
+import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
+import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidUpdateTaskPriorityCommand;
 
 /**
  * @author Illia Shepilov
@@ -147,7 +151,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     List<? extends Message> handle(UpdateTaskDueDate cmd) throws CannotUpdateTaskDueDate {
         final TaskDefinition state = getState();
         final TaskStatus taskStatus = state.getTaskStatus();
-        final boolean isValid = TaskFlowValidator.isValidUpdateTaskDueDateCommand(taskStatus);
+        final boolean isValid = isValidUpdateTaskDueDateCommand(taskStatus);
 
         final TaskId taskId = cmd.getId();
 
@@ -179,7 +183,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     List<? extends Message> handle(UpdateTaskPriority cmd) throws CannotUpdateTaskPriority {
         final TaskDefinition state = getState();
         final TaskStatus taskStatus = state.getTaskStatus();
-        final boolean isValid = TaskFlowValidator.isValidUpdateTaskPriorityCommand(taskStatus);
+        final boolean isValid = isValidUpdateTaskPriorityCommand(taskStatus);
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
@@ -211,7 +215,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final TaskDefinition state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.OPEN;
-        final boolean isValid = TaskFlowValidator.isValidTransition(currentStatus, newStatus);
+        final boolean isValid = isValidTransition(currentStatus, newStatus);
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
@@ -232,7 +236,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.DELETED;
         final TaskId taskId = cmd.getId();
-        final boolean isValid = TaskFlowValidator.isValidTransition(currentStatus, newStatus);
+        final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
@@ -252,7 +256,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.COMPLETED;
         final TaskId taskId = cmd.getId();
-        final boolean isValid = TaskFlowValidator.isValidTransition(currentStatus, newStatus);
+        final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
@@ -269,7 +273,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     @Assign
     List<? extends Message> handle(CreateDraft cmd) throws CannotCreateDraft {
         final TaskId taskId = cmd.getId();
-        final boolean isValid = TaskFlowValidator.isValidCreateDraftCommand(getState().getTaskStatus());
+        final boolean isValid = isValidCreateDraftCommand(getState().getTaskStatus());
 
         if (!isValid) {
             throwCannotCreateDraftFailure(taskId);
@@ -288,7 +292,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final TaskStatus currentStatus = getState().getTaskStatus();
         final TaskStatus newStatus = TaskStatus.FINALIZED;
         final TaskId taskId = cmd.getId();
-        final boolean isValid = TaskFlowValidator.isValidTransition(currentStatus, newStatus);
+        final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
