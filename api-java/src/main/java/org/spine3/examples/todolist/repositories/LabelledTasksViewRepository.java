@@ -45,6 +45,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
 
 /**
@@ -110,7 +111,7 @@ public class LabelledTasksViewRepository
     private Set<TaskLabelId> getLabelIdsSet(EventContext context) {
         final LabelListEnrichment enrichment = getEnrichment(LabelListEnrichment.class, context);
         final LabelIdList labelIdList = enrichment.getLabelIdList();
-        final HashSet<TaskLabelId> result = Sets.newHashSet(labelIdList.getLabelIdList());
+        final Set<TaskLabelId> result = newHashSet(labelIdList.getLabelIdList());
         return result;
     }
 }
