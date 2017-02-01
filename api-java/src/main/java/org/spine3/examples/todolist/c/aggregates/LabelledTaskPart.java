@@ -61,6 +61,9 @@ import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCanno
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotRemoveLabelFromTaskFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotRestoreDeletedTaskFailure;
 import static org.spine3.examples.todolist.c.aggregates.MismatchHelper.of;
+import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidAssignLabelToTaskCommand;
+import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidRemoveLabelFromTaskCommand;
+import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidTransition;
 
 /**
  * @author Illia Shepilov
@@ -124,7 +127,7 @@ public class LabelledTaskPart extends AggregatePart<TaskId, LabelledTask, Labell
         final TaskLabelId labelId = cmd.getLabelId();
         final TaskId taskId = cmd.getId();
         final LabelledTask state = getState();
-        final boolean isValid = TaskFlowValidator.isValidRemoveLabelFromTaskCommand(state.getTaskStatus());
+        final boolean isValid = isValidRemoveLabelFromTaskCommand(state.getTaskStatus());
 
         if (!isValid) {
             throwCannotRemoveLabelFromTaskFailure(labelId, taskId);
@@ -143,7 +146,7 @@ public class LabelledTaskPart extends AggregatePart<TaskId, LabelledTask, Labell
         final TaskId taskId = cmd.getId();
         final TaskLabelId labelId = cmd.getLabelId();
         final LabelledTask state = getState();
-        final boolean isValid = TaskFlowValidator.isValidAssignLabelToTaskCommand(state.getTaskStatus());
+        final boolean isValid = isValidAssignLabelToTaskCommand(state.getTaskStatus());
 
         if (!isValid) {
             throwCannotAssignLabelToTaskFailure(taskId, labelId);
@@ -163,7 +166,7 @@ public class LabelledTaskPart extends AggregatePart<TaskId, LabelledTask, Labell
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.OPEN;
         final TaskId taskId = cmd.getId();
-        final boolean isValid = TaskFlowValidator.isValidTransition(currentStatus, newStatus);
+        final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
             final String message = generateExceptionMessage(currentStatus, newStatus);
@@ -187,14 +190,14 @@ public class LabelledTaskPart extends AggregatePart<TaskId, LabelledTask, Labell
         return result;
     }
 
-    private int getLabelIndex(TaskLabelId taskLabelId) {
+    private int getLabelIndex(TaskLabelId labelId) {
         final List<TaskLabel> commentList = getState().getLabelsList();
         final Optional<TaskLabel> firstWithId = commentList.stream()
-                                                           .filter(x -> x.getId()
-                                                                         .equals(taskLabelId))
+                                                           .filter(label -> label.getId()
+                                                                                 .equals(labelId))
                                                            .findFirst();
         final int result = firstWithId.map(commentList::indexOf)
-                                          .orElse(NOT_FOUND);
+                                      .orElse(NOT_FOUND);
         return result;
     }
 
@@ -202,6 +205,7 @@ public class LabelledTaskPart extends AggregatePart<TaskId, LabelledTask, Labell
      * Makes sure the aggregate has a label with the passed ID.
      *
      * @return index of the label
+     * @throws LabelNotFound if the aggregate does not have a comment with the passed ID
      */
     private int ensureLabel(TaskLabelId labelId) throws LabelNotFound {
         final TaskId taskId = getId();
@@ -258,8 +262,8 @@ public class LabelledTaskPart extends AggregatePart<TaskId, LabelledTask, Labell
                                          .stream()
                                          .collect(Collectors.toList());
         list.stream()
-            .filter(t -> !t.getId()
-                           .equals(event.getLabelId()))
+            .filter(label -> !label.getId()
+                                   .equals(event.getLabelId()))
             .collect(Collectors.toList());
 
         getBuilder().clearLabels()
