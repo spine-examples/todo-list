@@ -54,12 +54,12 @@ class TodoListRepositoryProvider {
     @Nullable
     private TaskLabelAggregateRepository labelAggregateRepository;
 
-    void setTaskAggregateRepository(TaskAggregateRepository taskAggregateRepository) {
-        this.taskAggregateRepository = taskAggregateRepository;
+    void setTaskAggregateRepository(TaskAggregateRepository taskAggregateRepo) {
+        this.taskAggregateRepository = taskAggregateRepo;
     }
 
-    void setLabelAggregateRepository(TaskLabelAggregateRepository labelAggregateRepository) {
-        this.labelAggregateRepository = labelAggregateRepository;
+    void setLabelAggregateRepository(TaskLabelAggregateRepository labelAggregateRepo) {
+        this.labelAggregateRepository = labelAggregateRepo;
     }
 
     /**
