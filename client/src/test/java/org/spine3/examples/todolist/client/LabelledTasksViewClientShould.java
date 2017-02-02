@@ -422,7 +422,7 @@ public class LabelledTasksViewClientShould extends CommandLineTodoClientShould {
         assertTrue(labelledTasksView.isEmpty());
     }
 
-    private LabelledTasksView getLabelledTasksView(List<LabelledTasksView> tasksViewList) {
+    private static LabelledTasksView getLabelledTasksView(List<LabelledTasksView> tasksViewList) {
         LabelledTasksView result = LabelledTasksView.getDefaultInstance();
 
         for (LabelledTasksView labelledView : tasksViewList) {
@@ -452,7 +452,7 @@ public class LabelledTasksViewClientShould extends CommandLineTodoClientShould {
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
 
-        final LabelDetails previousLabelDetailsWhenIdOsCorrect = LabelDetails.newBuilder()
+        final LabelDetails detailsWithCorrectId = LabelDetails.newBuilder()
                                                                              .setColor(LabelColor.GRAY)
                                                                              .setTitle(createLabel.getLabelTitle())
                                                                              .build();
@@ -461,16 +461,16 @@ public class LabelledTasksViewClientShould extends CommandLineTodoClientShould {
                                                          .setTitle(updatedTitle)
                                                          .build();
         final LabelDetails previousLabelDetails =
-                isCorrectId ? previousLabelDetailsWhenIdOsCorrect : LabelDetails.getDefaultInstance();
+                isCorrectId ? detailsWithCorrectId : LabelDetails.getDefaultInstance();
         final TaskLabelId updatedLabelId = isCorrectId ? labelId : getWrongTaskLabelId();
         final UpdateLabelDetails updateLabelDetails =
                 updateLabelDetailsInstance(updatedLabelId, previousLabelDetails, newLabelDetails);
         client.update(updateLabelDetails);
 
         final List<LabelledTasksView> labelledTasksViewList = client.getLabelledTasksView();
-        final int expectedSizeWhenIdIsCorrect = 1;
-        final int expectedSizeWhenIdIsIncorrect = 2;
-        final int expectedListSize = isCorrectId ? expectedSizeWhenIdIsCorrect : expectedSizeWhenIdIsIncorrect;
+        final int correctIdExpectedSize = 1;
+        final int incorrectIdExpectedSize = 2;
+        final int expectedListSize = isCorrectId ? correctIdExpectedSize : incorrectIdExpectedSize;
         assertEquals(expectedListSize, labelledTasksViewList.size());
 
         final LabelledTasksView view = getLabelledTasksView(labelledTasksViewList);
