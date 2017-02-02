@@ -30,6 +30,7 @@ import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabel;
+import org.spine3.examples.todolist.TaskLabels;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
@@ -329,9 +330,9 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
                                                                            .build();
         final List<Message> result = newLinkedList();
         result.add(deletedTaskRestored);
-
-        for (TaskLabel label : new TaskLabelsPart(cmd.getId()).getState()
-                                                              .getLabelsList()) {
+        final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
+        final TaskLabels taskLabels = root.getTaskLabelsState();
+        for (TaskLabel label : taskLabels.getLabelsList()) {
             final LabelledTaskRestored labelledTaskRestored = LabelledTaskRestored.newBuilder()
                                                                                   .setTaskId(taskId)
                                                                                   .setLabelId(label.getId())

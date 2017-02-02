@@ -25,6 +25,7 @@ import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsChange;
+import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.TaskLabelId;
@@ -75,7 +76,6 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
     @Assign
     List<? extends Message> handle(CreateBasicLabel cmd) {
         final LabelDetails.Builder labelDetails = LabelDetails.newBuilder()
-                                                              .setColor(LabelColor.GRAY)
                                                               .setTitle(cmd.getLabelTitle());
         final LabelCreated result = LabelCreated.newBuilder()
                                                 .setId(cmd.getLabelId())
@@ -139,10 +139,9 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
     List<? extends Message> handle(AssignLabelToTask cmd) throws CannotAssignLabelToTask {
         final TaskId taskId = cmd.getId();
         final TaskLabelId labelId = cmd.getLabelId();
-        final TaskLabels state = getState();
-        final TaskDefinitionPart taskDefinitionPart = new TaskDefinitionPart(taskId);
-        final boolean isValid = isValidAssignLabelToTaskCommand(taskDefinitionPart.getState()
-                                                                                  .getTaskStatus());
+        final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
+        final TaskDefinition state = root.getTaskDefinitionState();
+        final boolean isValid = isValidAssignLabelToTaskCommand(state.getTaskStatus());
 
         if (!isValid) {
             throwCannotAssignLabelToTaskFailure(taskId, labelId);
@@ -204,8 +203,7 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
                                              .setColor(newDetails.getColor())
                                              .build();
         final int index = getLabelIndex(labelId);
-        getBuilder().getLabels(index)
-                    .toBuilder()
+        getBuilder().getLabelsBuilder(index)
                     .mergeFrom(taskLabel);
     }
 
