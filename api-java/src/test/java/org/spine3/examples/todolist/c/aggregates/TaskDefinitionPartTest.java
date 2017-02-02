@@ -141,6 +141,27 @@ public class TaskDefinitionPartTest {
             assertEquals(DESCRIPTION, taskCreated.getDetails()
                                                  .getDescription());
         }
+
+        @Test
+        public void record_modification_timestamp() throws InterruptedException {
+            CreateBasicTask createTaskCmd = createTaskInstance();
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+            TaskDefinition state = aggregate.getState();
+            final Timestamp firstStateCreationTime = state.getCreated();
+
+            assertEquals(TASK_ID, state.getId());
+
+            Thread.sleep(1000);
+
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+            state = aggregate.getState();
+            final Timestamp secondStateCreationTime = state.getCreated();
+
+            assertEquals(TASK_ID, state.getId());
+            assertTrue(Timestamps.isLaterThan(secondStateCreationTime, firstStateCreationTime));
+        }
     }
 
     @Nested
@@ -172,275 +193,289 @@ public class TaskDefinitionPartTest {
                                                                 .getNewValue();
             assertEquals(DESCRIPTION, newDescription);
         }
-    }
 
-    @Test
-    public void catch_exception_when_handle_update_task_description_when_description_contains_one_symbol() {
-        try {
-            final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, "", ".");
-            aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskWithInappropriateDescription);
+        @Test
+        @DisplayName("")
+        public void catch_exception_when_handle_update_task_description_when_description_contains_one_symbol() {
+            try {
+                final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, "", ".");
+                aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
+            } catch (Throwable e) {
+                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+                final Throwable cause = Throwables.getRootCause(e);
+                assertTrue(cause instanceof CannotUpdateTaskWithInappropriateDescription);
+            }
         }
-    }
 
-    @Test
-    public void catch_exception_when_handle_update_task_description_when_task_is_deleted() {
-        try {
-            final CreateBasicTask createTaskCmd = createTaskInstance();
-            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+        @Test
+        public void catch_exception_when_handle_update_task_description_when_task_is_deleted() {
+            try {
+                final CreateBasicTask createTaskCmd = createTaskInstance();
+                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
-            final DeleteTask deleteTaskCmd = deleteTaskInstance();
-            aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+                final DeleteTask deleteTaskCmd = deleteTaskInstance();
+                aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
 
-            final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance();
-            assertThrows(CannotUpdateTaskDescription.class, () -> aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT));
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskDescription);
+                final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance();
+                assertThrows(CannotUpdateTaskDescription.class, () -> aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT));
+            } catch (Throwable e) {
+                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+                final Throwable cause = Throwables.getRootCause(e);
+                assertTrue(cause instanceof CannotUpdateTaskDescription);
+            }
         }
-    }
 
-    @Test
-    public void catch_exception_handle_update_task_description_when_task_is_completed() {
-        try {
-            final CreateBasicTask createTaskCmd = createTaskInstance();
-            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+        @Test
+        public void catch_exception_handle_update_task_description_when_task_is_completed() {
+            try {
+                final CreateBasicTask createTaskCmd = createTaskInstance();
+                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
-            final CompleteTask completeTaskCmd = completeTaskInstance();
-            aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
-
-            final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance();
-            aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskDescription);
-        }
-    }
-
-    @Test
-    public void catch_exception_when_handle_update_task_due_date_when_task_is_completed() {
-        try {
-            final CreateBasicTask createTaskCmd = createTaskInstance();
-            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-            final CompleteTask completeTaskCmd = completeTaskInstance();
-            aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
-
-            final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance();
-            aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskDueDate);
-        }
-    }
-
-    @Test
-    public void catch_exception_when_handle_update_task_due_date_when_task_is_deleted() {
-        try {
-            final CreateBasicTask createTaskCmd = createTaskInstance();
-            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-            final DeleteTask deleteTaskCmd = deleteTaskInstance();
-            aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
-
-            final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance();
-            aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskDueDate);
-        }
-    }
-
-    @Test
-    public void catch_exception_handle_update_task_priority_when_task_is_deleted() {
-        try {
-            final CreateBasicTask createTaskCmd = createTaskInstance();
-            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-            final DeleteTask deleteTaskCmd = deleteTaskInstance();
-            aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
-
-            final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance();
-            aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskPriority);
-        }
-    }
-
-    @Test
-    public void catch_exception_handle_update_task_priority_when_task_is_completed() {
-        try {
-            final CreateBasicTask createTaskCmd = createTaskInstance();
-            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-            final CompleteTask completeTaskCmd = completeTaskInstance();
-            aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
-
-            final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance();
-            aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskPriority);
-        }
-    }
-
-    @Test
-    public void emit_task_due_date_updated_event_upon_update_task_due_date_command() {
-        final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance();
-        final List<? extends com.google.protobuf.Message> messageList =
-                aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
-
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, messageList.size());
-        assertEquals(TaskDueDateUpdated.class, messageList.get(0)
-                                                          .getClass());
-        final TaskDueDateUpdated taskDueDateUpdated = (TaskDueDateUpdated) messageList.get(0);
-
-        assertEquals(TASK_ID, taskDueDateUpdated.getTaskId());
-        final Timestamp newDueDate = taskDueDateUpdated.getDueDateChange()
-                                                       .getNewValue();
-        assertEquals(DUE_DATE, newDueDate);
-    }
-
-    @Test
-    public void emit_task_priority_updated_event_upon_update_task_priority_command() {
-        final CreateBasicTask createBasicTask = createTaskInstance();
-        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
-
-        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance();
-        final List<? extends com.google.protobuf.Message> messageList =
-                aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
-
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, messageList.size());
-        assertEquals(TaskPriorityUpdated.class, messageList.get(0)
-                                                           .getClass());
-        final TaskPriorityUpdated taskPriorityUpdated = (TaskPriorityUpdated) messageList.get(0);
-
-        assertEquals(TASK_ID, taskPriorityUpdated.getTaskId());
-        final TaskPriority newPriority = taskPriorityUpdated.getPriorityChange()
-                                                            .getNewValue();
-        assertEquals(TaskPriority.HIGH, newPriority);
-    }
-
-    @Test
-    public void emit_task_completed_event_upon_complete_task_command() {
-        final CreateBasicTask createTaskCmd = createTaskInstance();
-        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-        final CompleteTask completeTaskCmd = completeTaskInstance();
-        final List<? extends com.google.protobuf.Message> messageList =
+                final CompleteTask completeTaskCmd = completeTaskInstance();
                 aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
 
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, messageList.size());
-        assertEquals(TaskCompleted.class, messageList.get(0)
-                                                     .getClass());
-        final TaskCompleted taskCompleted = (TaskCompleted) messageList.get(0);
+                final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance();
+                aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
+            } catch (Throwable e) {
+                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+                final Throwable cause = Throwables.getRootCause(e);
+                assertTrue(cause instanceof CannotUpdateTaskDescription);
+            }
+        }
 
-        assertEquals(TASK_ID, taskCompleted.getTaskId());
+        @Test
+        public void update_current_state_task_description_after_dispatch_command() {
+            final String newDescription = "new description.";
+            final CreateBasicTask createBasicTask = createTaskInstance();
+            aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
+
+            final UpdateTaskDescription updateTaskDescriptionCmd =
+                    updateTaskDescriptionInstance(TASK_ID, DESCRIPTION, newDescription);
+            aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
+            final TaskDefinition state = aggregate.getState();
+
+            assertEquals(TASK_ID, state.getId());
+            assertEquals(newDescription, state.getDescription());
+        }
     }
 
-    @Test
-    public void update_current_state_task_description_after_dispatch_command() {
-        final String newDescription = "new description.";
-        final CreateBasicTask createBasicTask = createTaskInstance();
-        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
+    @Nested
+    class UpdateTaskDueDateCommand extends CommandTest<UpdateTaskDueDate> {
 
-        final UpdateTaskDescription updateTaskDescriptionCmd =
-                updateTaskDescriptionInstance(TASK_ID, DESCRIPTION, newDescription);
-        aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
-        final TaskDefinition state = aggregate.getState();
+        @Override
+        protected void setUp() {
 
-        assertEquals(TASK_ID, state.getId());
-        assertEquals(newDescription, state.getDescription());
+        }
+
+        @Test
+        public void catch_exception_when_handle_update_task_due_date_when_task_is_completed() {
+            try {
+                final CreateBasicTask createTaskCmd = createTaskInstance();
+                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+                final CompleteTask completeTaskCmd = completeTaskInstance();
+                aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+
+                final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance();
+                aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
+            } catch (Throwable e) {
+                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+                final Throwable cause = Throwables.getRootCause(e);
+                assertTrue(cause instanceof CannotUpdateTaskDueDate);
+            }
+        }
+
+        @Test
+        public void catch_exception_when_handle_update_task_due_date_when_task_is_deleted() {
+            try {
+                final CreateBasicTask createTaskCmd = createTaskInstance();
+                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+                final DeleteTask deleteTaskCmd = deleteTaskInstance();
+                aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+
+                final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance();
+                aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
+            } catch (Throwable e) {
+                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+                final Throwable cause = Throwables.getRootCause(e);
+                assertTrue(cause instanceof CannotUpdateTaskDueDate);
+            }
+        }
+
+        @Test
+        public void emit_task_due_date_updated_event_upon_update_task_due_date_command() {
+            final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance();
+            final List<? extends com.google.protobuf.Message> messageList =
+                    aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
+
+            final int expectedListSize = 1;
+            assertEquals(expectedListSize, messageList.size());
+            assertEquals(TaskDueDateUpdated.class, messageList.get(0)
+                                                              .getClass());
+            final TaskDueDateUpdated taskDueDateUpdated = (TaskDueDateUpdated) messageList.get(0);
+
+            assertEquals(TASK_ID, taskDueDateUpdated.getTaskId());
+            final Timestamp newDueDate = taskDueDateUpdated.getDueDateChange()
+                                                           .getNewValue();
+            assertEquals(DUE_DATE, newDueDate);
+        }
+
+        @Test
+        public void update_current_state_task_due_date_after_dispatch_command() {
+            final Timestamp updatedDueDate = Timestamps.getCurrentTime();
+            final CreateBasicTask createBasicTask = createTaskInstance();
+            aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
+
+            final UpdateTaskDueDate updateTaskDueDateCmd =
+                    updateTaskDueDateInstance(TASK_ID, Timestamp.getDefaultInstance(), updatedDueDate);
+            aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
+            final TaskDefinition state = aggregate.getState();
+
+            assertEquals(TASK_ID, state.getId());
+            assertEquals(updatedDueDate, state.getDueDate());
+        }
     }
 
-    @Test
-    public void update_current_state_task_due_date_after_dispatch_command() {
-        final Timestamp updatedDueDate = Timestamps.getCurrentTime();
-        final CreateBasicTask createBasicTask = createTaskInstance();
-        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
+    @Nested
+    class UpdateTaskPriorityCommand extends CommandTest<UpdateTaskPriority> {
 
-        final UpdateTaskDueDate updateTaskDueDateCmd =
-                updateTaskDueDateInstance(TASK_ID, Timestamp.getDefaultInstance(), updatedDueDate);
-        aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
-        final TaskDefinition state = aggregate.getState();
+        @Override
+        protected void setUp() {
 
-        assertEquals(TASK_ID, state.getId());
-        assertEquals(updatedDueDate, state.getDueDate());
+        }
+
+        @Test
+        public void catch_exception_handle_update_task_priority_when_task_is_deleted() {
+            try {
+                final CreateBasicTask createTaskCmd = createTaskInstance();
+                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+                final DeleteTask deleteTaskCmd = deleteTaskInstance();
+                aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+
+                final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance();
+                aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
+            } catch (Throwable e) {
+                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+                final Throwable cause = Throwables.getRootCause(e);
+                assertTrue(cause instanceof CannotUpdateTaskPriority);
+            }
+        }
+
+        @Test
+        public void catch_exception_handle_update_task_priority_when_task_is_completed() {
+            try {
+                final CreateBasicTask createTaskCmd = createTaskInstance();
+                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+                final CompleteTask completeTaskCmd = completeTaskInstance();
+                aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+
+                final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance();
+                aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
+            } catch (Throwable e) {
+                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+                final Throwable cause = Throwables.getRootCause(e);
+                assertTrue(cause instanceof CannotUpdateTaskPriority);
+            }
+        }
+
+        @Test
+        public void emit_task_priority_updated_event_upon_update_task_priority_command() {
+            final CreateBasicTask createBasicTask = createTaskInstance();
+            aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
+
+            final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance();
+            final List<? extends com.google.protobuf.Message> messageList =
+                    aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
+
+            final int expectedListSize = 1;
+            assertEquals(expectedListSize, messageList.size());
+            assertEquals(TaskPriorityUpdated.class, messageList.get(0)
+                                                               .getClass());
+            final TaskPriorityUpdated taskPriorityUpdated = (TaskPriorityUpdated) messageList.get(0);
+
+            assertEquals(TASK_ID, taskPriorityUpdated.getTaskId());
+            final TaskPriority newPriority = taskPriorityUpdated.getPriorityChange()
+                                                                .getNewValue();
+            assertEquals(TaskPriority.HIGH, newPriority);
+        }
+
+        @Test
+        public void update_current_state_task_priority_after_dispatch_command() {
+            final TaskPriority updatedPriority = TaskPriority.HIGH;
+            final CreateBasicTask createBasicTask = createTaskInstance();
+            aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
+
+            final UpdateTaskPriority updateTaskPriorityCmd =
+                    updateTaskPriorityInstance(TASK_ID, TaskPriority.TP_UNDEFINED, updatedPriority);
+            aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
+            final TaskDefinition state = aggregate.getState();
+
+            assertEquals(TASK_ID, state.getId());
+            assertEquals(updatedPriority, state.getPriority());
+        }
     }
 
-    @Test
-    public void update_current_state_task_priority_after_dispatch_command() {
-        final TaskPriority updatedPriority = TaskPriority.HIGH;
-        final CreateBasicTask createBasicTask = createTaskInstance();
-        aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
+    class CompleteTaskCommand extends CommandTest<CompleteTask> {
 
-        final UpdateTaskPriority updateTaskPriorityCmd =
-                updateTaskPriorityInstance(TASK_ID, TaskPriority.TP_UNDEFINED, updatedPriority);
-        aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
-        final TaskDefinition state = aggregate.getState();
+        @Override
+        protected void setUp() {
 
-        assertEquals(TASK_ID, state.getId());
-        assertEquals(updatedPriority, state.getPriority());
+        }
+
+        @Test
+        public void emit_task_completed_event_upon_complete_task_command() {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+            final CompleteTask completeTaskCmd = completeTaskInstance();
+            final List<? extends com.google.protobuf.Message> messageList =
+                    aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+
+            final int expectedListSize = 1;
+            assertEquals(expectedListSize, messageList.size());
+            assertEquals(TaskCompleted.class, messageList.get(0)
+                                                         .getClass());
+            final TaskCompleted taskCompleted = (TaskCompleted) messageList.get(0);
+
+            assertEquals(TASK_ID, taskCompleted.getTaskId());
+        }
+
+        @Test
+        public void change_task_status_state_when_task_is_completed() {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+            final CompleteTask completeTaskCmd = completeTaskInstance();
+            aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+            final TaskDefinition state = aggregate.getState();
+
+            assertEquals(TASK_ID, state.getId());
+            assertEquals(COMPLETED, state.getTaskStatus());
+        }
     }
 
-    @Test
-    public void change_task_status_state_when_task_is_completed() {
-        final CreateBasicTask createTaskCmd = createTaskInstance();
-        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+    class DeleteTaskCommand extends CommandTest<DeleteTask> {
 
-        final CompleteTask completeTaskCmd = completeTaskInstance();
-        aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
-        final TaskDefinition state = aggregate.getState();
+        @Override
+        protected void setUp() {
 
-        assertEquals(TASK_ID, state.getId());
-        assertEquals(COMPLETED, state.getTaskStatus());
-    }
+        }
 
-    @Test
-    public void change_task_status_state_when_task_is_deleted() {
-        final CreateBasicTask createTaskCmd = createTaskInstance();
-        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+        @Test
+        public void change_task_status_state_when_task_is_deleted() {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance();
-        aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
-        final TaskDefinition state = aggregate.getState();
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
+            aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+            final TaskDefinition state = aggregate.getState();
 
-        assertEquals(TASK_ID, state.getId());
-        assertEquals(DELETED, state.getTaskStatus());
-    }
-
-    @Test
-    public void record_modification_timestamp() throws InterruptedException {
-        CreateBasicTask createTaskCmd = createTaskInstance();
-        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-        TaskDefinition state = aggregate.getState();
-        final Timestamp firstStateCreationTime = state.getCreated();
-
-        assertEquals(TASK_ID, state.getId());
-
-        Thread.sleep(1000);
-
-        aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-        state = aggregate.getState();
-        final Timestamp secondStateCreationTime = state.getCreated();
-
-        assertEquals(TASK_ID, state.getId());
-        assertTrue(Timestamps.isLaterThan(secondStateCreationTime, firstStateCreationTime));
+            assertEquals(TASK_ID, state.getId());
+            assertEquals(DELETED, state.getTaskStatus());
+        }
     }
 
     @Test
