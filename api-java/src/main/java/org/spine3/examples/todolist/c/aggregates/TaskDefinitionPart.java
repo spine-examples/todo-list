@@ -29,6 +29,7 @@ import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
@@ -37,6 +38,7 @@ import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
 import org.spine3.examples.todolist.c.commands.FinalizeDraft;
 import org.spine3.examples.todolist.c.commands.ReopenTask;
+import org.spine3.examples.todolist.c.commands.RestoreDeletedTask;
 import org.spine3.examples.todolist.c.commands.UpdateTaskDescription;
 import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
 import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
@@ -58,6 +60,7 @@ import org.spine3.examples.todolist.c.failures.CannotCreateTaskWithInappropriate
 import org.spine3.examples.todolist.c.failures.CannotDeleteTask;
 import org.spine3.examples.todolist.c.failures.CannotFinalizeDraft;
 import org.spine3.examples.todolist.c.failures.CannotReopenTask;
+import org.spine3.examples.todolist.c.failures.CannotRestoreDeletedTask;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDescription;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDueDate;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskPriority;
@@ -70,6 +73,7 @@ import org.spine3.server.command.Assign;
 import java.util.Collections;
 import java.util.List;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static org.spine3.examples.todolist.c.aggregates.AggregateHelper.generateExceptionMessage;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCompleteTaskFailure;
@@ -78,6 +82,7 @@ import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCanno
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotDeleteTaskFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotFinalizeDraftFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotReopenTaskFailure;
+import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotRestoreDeletedTaskFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTaskDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTaskDueDateFailure;
@@ -306,6 +311,36 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         return result;
     }
 
+    //TODO
+    @Assign
+    List<? extends Message> handle(RestoreDeletedTask cmd) throws CannotRestoreDeletedTask {
+        final TaskStatus currentStatus = getState().getTaskStatus();
+        final TaskStatus newStatus = TaskStatus.OPEN;
+        final TaskId taskId = cmd.getId();
+        final boolean isValid = isValidTransition(currentStatus, newStatus);
+
+        if (!isValid) {
+            final String message = generateExceptionMessage(currentStatus, newStatus);
+            throwCannotRestoreDeletedTaskFailure(taskId, message);
+        }
+
+        final DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored.newBuilder()
+                                                                           .setTaskId(taskId)
+                                                                           .build();
+        final List<Message> result = newLinkedList();
+        result.add(deletedTaskRestored);
+
+        for (TaskLabel label : new TaskLabelsPart(cmd.getId()).getState()
+                                                              .getLabelsList()) {
+            final LabelledTaskRestored labelledTaskRestored = LabelledTaskRestored.newBuilder()
+                                                                                  .setTaskId(taskId)
+                                                                                  .setLabelId(label.getId())
+                                                                                  .build();
+            result.add(labelledTaskRestored);
+        }
+        return result;
+    }
+
     /*
      * Event appliers
      *****************/
@@ -351,11 +386,13 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         getBuilder().setTaskStatus(TaskStatus.DELETED);
     }
 
+    //TODO
     @Apply
     private void deletedTaskRestored(DeletedTaskRestored event) {
         getBuilder().setTaskStatus(TaskStatus.OPEN);
     }
 
+    //TODO
     @Apply
     private void labelledTaskRestored(LabelledTaskRestored event) {
         getBuilder().setTaskStatus(TaskStatus.OPEN);

@@ -29,21 +29,16 @@ import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskLabels;
-import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
-import org.spine3.examples.todolist.c.commands.RestoreDeletedTask;
 import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
-import org.spine3.examples.todolist.c.events.DeletedTaskRestored;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
 import org.spine3.examples.todolist.c.events.LabelCreated;
 import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
 import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
-import org.spine3.examples.todolist.c.events.LabelledTaskRestored;
 import org.spine3.examples.todolist.c.failures.CannotAssignLabelToTask;
 import org.spine3.examples.todolist.c.failures.CannotRemoveLabelFromTask;
-import org.spine3.examples.todolist.c.failures.CannotRestoreDeletedTask;
 import org.spine3.examples.todolist.c.failures.CannotUpdateLabelDetails;
 import org.spine3.examples.todolist.c.failures.LabelNotFound;
 import org.spine3.server.aggregate.AggregatePart;
@@ -55,15 +50,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.google.common.collect.Lists.newLinkedList;
-import static org.spine3.examples.todolist.c.aggregates.AggregateHelper.generateExceptionMessage;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotAssignLabelToTaskFailure;
 import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotRemoveLabelFromTaskFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotRestoreDeletedTaskFailure;
 import static org.spine3.examples.todolist.c.aggregates.MismatchHelper.of;
 import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidAssignLabelToTaskCommand;
 import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidRemoveLabelFromTaskCommand;
-import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidTransition;
 
 /**
  * @author Illia Shepilov
@@ -122,12 +113,14 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
         return result;
     }
 
+    //TODO
     @Assign
     List<? extends Message> handle(RemoveLabelFromTask cmd) throws CannotRemoveLabelFromTask {
         final TaskLabelId labelId = cmd.getLabelId();
         final TaskId taskId = cmd.getId();
         final TaskLabels state = getState();
-        final boolean isValid = isValidRemoveLabelFromTaskCommand(state.getTaskStatus());
+        final boolean isValid = isValidRemoveLabelFromTaskCommand(new TaskDefinitionPart(taskId).getState()
+                                                                                                .getTaskStatus());
 
         if (!isValid) {
             throwCannotRemoveLabelFromTaskFailure(labelId, taskId);
@@ -141,12 +134,15 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
         return result;
     }
 
+    //TODO
     @Assign
     List<? extends Message> handle(AssignLabelToTask cmd) throws CannotAssignLabelToTask {
         final TaskId taskId = cmd.getId();
         final TaskLabelId labelId = cmd.getLabelId();
         final TaskLabels state = getState();
-        final boolean isValid = isValidAssignLabelToTaskCommand(state.getTaskStatus());
+        final TaskDefinitionPart taskDefinitionPart = new TaskDefinitionPart(taskId);
+        final boolean isValid = isValidAssignLabelToTaskCommand(taskDefinitionPart.getState()
+                                                                                  .getTaskStatus());
 
         if (!isValid) {
             throwCannotAssignLabelToTaskFailure(taskId, labelId);
@@ -157,36 +153,6 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
                                                                      .setLabelId(labelId)
                                                                      .build();
         final List<LabelAssignedToTask> result = Collections.singletonList(labelAssigned);
-        return result;
-    }
-
-    @Assign
-    List<? extends Message> handle(RestoreDeletedTask cmd) throws CannotRestoreDeletedTask {
-        final TaskLabels state = getState();
-        final TaskStatus currentStatus = state.getTaskStatus();
-        final TaskStatus newStatus = TaskStatus.OPEN;
-        final TaskId taskId = cmd.getId();
-        final boolean isValid = isValidTransition(currentStatus, newStatus);
-
-        if (!isValid) {
-            final String message = generateExceptionMessage(currentStatus, newStatus);
-            throwCannotRestoreDeletedTaskFailure(taskId, message);
-        }
-
-        final DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored.newBuilder()
-                                                                           .setTaskId(taskId)
-                                                                           .build();
-        final List<Message> result = newLinkedList();
-        result.add(deletedTaskRestored);
-
-        for (TaskLabel label : state.getLabelsList()) {
-
-            final LabelledTaskRestored labelledTaskRestored = LabelledTaskRestored.newBuilder()
-                                                                                  .setTaskId(taskId)
-                                                                                  .setLabelId(label.getId())
-                                                                                  .build();
-            result.add(labelledTaskRestored);
-        }
         return result;
     }
 
@@ -243,6 +209,7 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
                     .mergeFrom(taskLabel);
     }
 
+    //TODO
     @Apply
     private void labelAssignedToTask(LabelAssignedToTask event) {
         List<TaskLabel> list = getState().getLabelsList()
@@ -256,6 +223,7 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
                     .addAllLabels(list);
     }
 
+    //TODO
     @Apply
     private void labelRemovedFromTask(LabelRemovedFromTask event) {
         List<TaskLabel> list = getState().getLabelsList()
