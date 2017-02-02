@@ -49,7 +49,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.resto
 public class RestoreDeletedTaskTest {
 
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
-    private LabelledTaskPart labelledTaskPart;
+    private TaskLabelsPart taskLabelsPart;
     private TaskDefinitionPart taskDefinitionPart;
 
     private static final TaskId ID = TaskId.newBuilder()
@@ -58,7 +58,7 @@ public class RestoreDeletedTaskTest {
 
     @BeforeEach
     public void setUp() {
-        labelledTaskPart = new LabelledTaskPart(ID);
+        taskLabelsPart = new TaskLabelsPart(ID);
         taskDefinitionPart = new TaskDefinitionPart(ID);
     }
 
@@ -68,14 +68,14 @@ public class RestoreDeletedTaskTest {
         taskDefinitionPart.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
         final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance();
-        labelledTaskPart.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
+        taskLabelsPart.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance();
         taskDefinitionPart.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
 
         final RestoreDeletedTask restoreDeletedTaskCmd = restoreDeletedTaskInstance();
         final List<? extends Message> messageList =
-                labelledTaskPart.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
+                taskLabelsPart.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
 
         final int expectedListSize = 2;
         assertEquals(expectedListSize, messageList.size());

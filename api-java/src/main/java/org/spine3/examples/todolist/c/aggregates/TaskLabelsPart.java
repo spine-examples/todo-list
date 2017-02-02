@@ -25,10 +25,10 @@ import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsChange;
-import org.spine3.examples.todolist.LabelledTask;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.TaskLabels;
 import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
@@ -68,7 +68,7 @@ import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isVali
 /**
  * @author Illia Shepilov
  */
-public class LabelledTaskPart extends AggregatePart<TaskId, LabelledTask, LabelledTask.Builder> {
+public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels.Builder> {
 
     private static final int NOT_FOUND = -1;
 
@@ -77,7 +77,7 @@ public class LabelledTaskPart extends AggregatePart<TaskId, LabelledTask, Labell
      *
      * @param id
      */
-    protected LabelledTaskPart(TaskId id) {
+    protected TaskLabelsPart(TaskId id) {
         super(id);
     }
 
@@ -95,7 +95,7 @@ public class LabelledTaskPart extends AggregatePart<TaskId, LabelledTask, Labell
 
     @Assign
     List<? extends Message> handle(UpdateLabelDetails cmd) throws CannotUpdateLabelDetails, LabelNotFound {
-        final LabelledTask state = getState();
+        final TaskLabels state = getState();
         final TaskLabelId labelId = cmd.getId();
         final int index = ensureLabel(labelId);
         final TaskLabel taskLabel = state.getLabels(index);
@@ -126,7 +126,7 @@ public class LabelledTaskPart extends AggregatePart<TaskId, LabelledTask, Labell
     List<? extends Message> handle(RemoveLabelFromTask cmd) throws CannotRemoveLabelFromTask {
         final TaskLabelId labelId = cmd.getLabelId();
         final TaskId taskId = cmd.getId();
-        final LabelledTask state = getState();
+        final TaskLabels state = getState();
         final boolean isValid = isValidRemoveLabelFromTaskCommand(state.getTaskStatus());
 
         if (!isValid) {
@@ -145,7 +145,7 @@ public class LabelledTaskPart extends AggregatePart<TaskId, LabelledTask, Labell
     List<? extends Message> handle(AssignLabelToTask cmd) throws CannotAssignLabelToTask {
         final TaskId taskId = cmd.getId();
         final TaskLabelId labelId = cmd.getLabelId();
-        final LabelledTask state = getState();
+        final TaskLabels state = getState();
         final boolean isValid = isValidAssignLabelToTaskCommand(state.getTaskStatus());
 
         if (!isValid) {
@@ -162,7 +162,7 @@ public class LabelledTaskPart extends AggregatePart<TaskId, LabelledTask, Labell
 
     @Assign
     List<? extends Message> handle(RestoreDeletedTask cmd) throws CannotRestoreDeletedTask {
-        final LabelledTask state = getState();
+        final TaskLabels state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.OPEN;
         final TaskId taskId = cmd.getId();

@@ -24,7 +24,7 @@ package spine.examples.todolist;
 
 option (type_url_prefix) = "type.spine.examples.todolist";
 option java_package = "org.spine3.examples.todolist";
-option java_outer_classname = "LabelledTaskProto";
+option java_outer_classname = "TaskLabelsProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
@@ -35,7 +35,7 @@ import "todolist/attributes.proto";
 import "todolist/identifiers.proto";
 import "todolist/model.proto";
 
-message LabelledTask {
+message TaskLabels {
 
     // Task identifier.
     TaskId task_id = 1;
