@@ -54,7 +54,6 @@ import org.spine3.examples.todolist.c.failures.CannotUpdateLabelDetails;
 import org.spine3.examples.todolist.c.failures.Failures;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.examples.todolist.testdata.TestResponseObserver;
-import org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory;
 import org.spine3.server.command.CommandBus;
 import org.spine3.test.CommandTest;
 
@@ -67,8 +66,6 @@ import static org.spine3.base.Commands.create;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.LABEL_ID;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
@@ -86,15 +83,25 @@ public class TaskLabelsPartTest {
 
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
 
+    private TaskLabelId labelId;
     private TestResponseObserver responseObserver;
     private CommandBus commandBus;
     private TaskLabelsPart taskLabelsPart;
 
     @BeforeEach
     public void setUp() {
+        TaskId taskId = createTaskId();
+        labelId = createLabelId();
         commandBus = TodoListBoundedContext.getCommandBus();
         responseObserver = new TestResponseObserver();
-        taskLabelsPart = createTaskLabelsPart(TASK_ID);
+        taskLabelsPart = createTaskLabelsPart(taskId);
+    }
+
+    private static TaskLabelId createLabelId() {
+        final TaskLabelId result = TaskLabelId.newBuilder()
+                                              .setValue(newUuid())
+                                              .build();
+        return result;
     }
 
     private static TaskId createTaskId() {
@@ -120,7 +127,7 @@ public class TaskLabelsPartTest {
         @Test
         @DisplayName("produces LabelCreated event")
         public void producesLabel() {
-            final CreateBasicLabel createLabelCmd = createLabelInstance();
+            final CreateBasicLabel createLabelCmd = createLabelInstance(labelId);
             final List<? extends Message> messageList =
                     taskLabelsPart.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
 
@@ -131,7 +138,7 @@ public class TaskLabelsPartTest {
 
             final LabelCreated labelCreated = (LabelCreated) messageList.get(0);
 
-            assertEquals(TestTaskLabelCommandFactory.LABEL_ID, labelCreated.getId());
+            assertEquals(labelId, labelCreated.getId());
             assertEquals(LABEL_TITLE, labelCreated.getDetails()
                                                   .getTitle());
         }
@@ -139,7 +146,7 @@ public class TaskLabelsPartTest {
         @Test
         @DisplayName("creates the basic label")
         public void createsLabel() {
-            final CreateBasicLabel createLabelCmd = createLabelInstance();
+            final CreateBasicLabel createLabelCmd = createLabelInstance(labelId);
             taskLabelsPart.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
 
             final TaskLabels state = taskLabelsPart.getState();
@@ -147,7 +154,7 @@ public class TaskLabelsPartTest {
             assertEquals(1, labels.size());
 
             final TaskLabel label = labels.get(0);
-            assertEquals(TestTaskLabelCommandFactory.LABEL_ID, label.getId());
+            assertEquals(labelId, label.getId());
             assertEquals(LabelColor.GRAY, label.getColor());
             assertEquals(LABEL_TITLE, label.getTitle());
         }
@@ -171,7 +178,7 @@ public class TaskLabelsPartTest {
         @Test
         @DisplayName("produces LabelAssignedToTask event")
         public void producesEvent() {
-            final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance(taskId, LABEL_ID);
+            final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance(taskId, labelId);
             final List<? extends Message> messageList =
                     taskLabelsPart.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
 
@@ -182,7 +189,7 @@ public class TaskLabelsPartTest {
             final LabelAssignedToTask labelAssignedToTask = (LabelAssignedToTask) messageList.get(0);
 
             assertEquals(taskId, labelAssignedToTask.getTaskId());
-            assertEquals(LABEL_ID, labelAssignedToTask.getLabelId());
+            assertEquals(labelId, labelAssignedToTask.getLabelId());
         }
 
         @Test
@@ -197,7 +204,7 @@ public class TaskLabelsPartTest {
                 final Command deleteTaskCmd = create(deleteTask, COMMAND_CONTEXT);
                 commandBus.post(deleteTaskCmd, responseObserver);
 
-                final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, LABEL_ID);
+                final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
                 final Command assignLabelToTaskCmd = create(assignLabelToTask, COMMAND_CONTEXT);
                 commandBus.post(assignLabelToTaskCmd, responseObserver);
             } catch (Throwable e) {
@@ -219,7 +226,7 @@ public class TaskLabelsPartTest {
                 final Command completeTaskCmd = create(completeTask, COMMAND_CONTEXT);
                 commandBus.post(completeTaskCmd, responseObserver);
 
-                final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, LABEL_ID);
+                final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
                 final Command assignLabelToTaskCmd = Commands.create(assignLabelToTask, COMMAND_CONTEXT);
                 commandBus.post(assignLabelToTaskCmd, responseObserver);
             } catch (Throwable e) {
@@ -248,7 +255,7 @@ public class TaskLabelsPartTest {
         @Test
         @DisplayName("produces LabelRemovedFromTask event")
         public void producesEvent() {
-            final RemoveLabelFromTask removeLabelFromTaskCmd = removeLabelFromTaskInstance();
+            final RemoveLabelFromTask removeLabelFromTaskCmd = removeLabelFromTaskInstance(taskId, labelId);
             final List<? extends Message> messageList =
                     taskLabelsPart.dispatchForTest(removeLabelFromTaskCmd, COMMAND_CONTEXT);
 
@@ -258,23 +265,23 @@ public class TaskLabelsPartTest {
                                                                 .getClass());
             final LabelRemovedFromTask labelRemovedFromTask = (LabelRemovedFromTask) messageList.get(0);
 
-            assertEquals(TASK_ID, labelRemovedFromTask.getTaskId());
-            assertEquals(LABEL_ID, labelRemovedFromTask.getLabelId());
+            assertEquals(taskId, labelRemovedFromTask.getTaskId());
+            assertEquals(labelId, labelRemovedFromTask.getLabelId());
         }
 
         @Test
         @DisplayName("cannot remove label from completed task")
         public void cannotRemoveLabelFromCompletedTask() {
             try {
-                final CreateBasicTask createTask = createTaskInstance();
+                final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
                 final Command createTaskCmd = create(createTask, COMMAND_CONTEXT);
                 commandBus.post(createTaskCmd, responseObserver);
 
-                final CompleteTask completeTask = completeTaskInstance();
+                final CompleteTask completeTask = completeTaskInstance(taskId);
                 final Command completeTaskCmd = create(completeTask, COMMAND_CONTEXT);
                 commandBus.post(completeTaskCmd, responseObserver);
 
-                final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance();
+                final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId, labelId);
                 final Command removeLabelFromTaskCmd = create(removeLabelFromTask, COMMAND_CONTEXT);
                 commandBus.post(removeLabelFromTaskCmd, responseObserver);
             } catch (Throwable e) {
@@ -288,15 +295,15 @@ public class TaskLabelsPartTest {
         @DisplayName("cannot remove label from deleted task")
         public void cannotRemoveLabelFromDeletedTask() {
             try {
-                final CreateBasicTask createTask = createTaskInstance();
+                final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
                 final Command createTaskCmd = create(createTask, COMMAND_CONTEXT);
                 commandBus.post(createTaskCmd, responseObserver);
 
-                final DeleteTask deleteTask = deleteTaskInstance();
+                final DeleteTask deleteTask = deleteTaskInstance(taskId);
                 final Command deleteTaskCmd = create(deleteTask, COMMAND_CONTEXT);
                 commandBus.post(deleteTaskCmd, responseObserver);
 
-                final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance();
+                final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId, labelId);
                 final Command removeLabelFromTaskCmd = create(removeLabelFromTask, COMMAND_CONTEXT);
                 commandBus.post(removeLabelFromTaskCmd, responseObserver);
             } catch (Throwable e) {
@@ -319,10 +326,10 @@ public class TaskLabelsPartTest {
         @Test
         @DisplayName("produces LabelDetailsUpdated event")
         public void producesEvent() {
-            final CreateBasicLabel createBasicLabel = createLabelInstance();
+            final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
             taskLabelsPart.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
 
-            final UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance();
+            final UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance(labelId);
             final List<? extends Message> messageList =
                     taskLabelsPart.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
 
@@ -334,7 +341,7 @@ public class TaskLabelsPartTest {
             final LabelDetailsUpdated labelDetailsUpdated = (LabelDetailsUpdated) messageList.get(0);
             final LabelDetails details = labelDetailsUpdated.getLabelDetailsChange()
                                                             .getNewDetails();
-            assertEquals(LABEL_ID, labelDetailsUpdated.getLabelId());
+            assertEquals(labelId, labelDetailsUpdated.getLabelId());
             assertEquals(LabelColor.GREEN, details.getColor());
             assertEquals(UPDATED_LABEL_TITLE, details.getTitle());
         }
@@ -342,10 +349,10 @@ public class TaskLabelsPartTest {
         @Test
         @DisplayName("updates label details twice")
         public void updatesLabelDetailsTwice() {
-            final CreateBasicLabel createBasicLabel = createLabelInstance();
+            final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
             taskLabelsPart.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
 
-            UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance();
+            UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance(labelId);
             taskLabelsPart.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
 
             TaskLabels state = taskLabelsPart.getState();
@@ -353,7 +360,7 @@ public class TaskLabelsPartTest {
             assertEquals(1, labels.size());
 
             TaskLabel label = labels.get(0);
-            assertEquals(TestTaskLabelCommandFactory.LABEL_ID, label.getId());
+            assertEquals(labelId, label.getId());
             assertEquals(LabelColor.GREEN, label.getColor());
             assertEquals(UPDATED_LABEL_TITLE, label.getTitle());
 
@@ -368,7 +375,7 @@ public class TaskLabelsPartTest {
                                                              .setColor(updatedLabelColor)
                                                              .setTitle(updatedTitle)
                                                              .build();
-            updateLabelDetailsCmd = updateLabelDetailsInstance(LABEL_ID, previousLabelDetails, newLabelDetails);
+            updateLabelDetailsCmd = updateLabelDetailsInstance(labelId, previousLabelDetails, newLabelDetails);
             taskLabelsPart.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
 
             state = taskLabelsPart.getState();
@@ -376,7 +383,7 @@ public class TaskLabelsPartTest {
             assertEquals(1, labels.size());
 
             label = labels.get(0);
-            assertEquals(TestTaskLabelCommandFactory.LABEL_ID, label.getId());
+            assertEquals(labelId, label.getId());
             assertEquals(updatedLabelColor, label.getColor());
             assertEquals(updatedTitle, label.getTitle());
         }
@@ -384,7 +391,7 @@ public class TaskLabelsPartTest {
         @Test
         @DisplayName("cannot update label details when label details does not match expected")
         public void cannotUpdateLabelDetails() {
-            final CreateBasicLabel createBasicLabel = createLabelInstance();
+            final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
             taskLabelsPart.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
 
             final LabelDetails expectedLabelDetails = LabelDetails.newBuilder()
@@ -397,7 +404,7 @@ public class TaskLabelsPartTest {
                                                              .build();
             try {
                 final UpdateLabelDetails updateLabelDetailsCmd =
-                        updateLabelDetailsInstance(LABEL_ID, expectedLabelDetails, newLabelDetails);
+                        updateLabelDetailsInstance(labelId, expectedLabelDetails, newLabelDetails);
                 taskLabelsPart.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
                 @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
@@ -410,7 +417,7 @@ public class TaskLabelsPartTest {
                 final LabelDetailsUpdateFailed labelDetailsUpdateFailed = cannotUpdateLabelDetails.getUpdateFailed();
                 final TaskLabelId actualLabelId = labelDetailsUpdateFailed.getFailedCommand()
                                                                           .getLabelId();
-                assertEquals(TestTaskLabelCommandFactory.LABEL_ID, actualLabelId);
+                assertEquals(labelId, actualLabelId);
 
                 final ValueMismatch mismatch = labelDetailsUpdateFailed.getLabelDetailsMismatch();
                 assertEquals(pack(expectedLabelDetails), mismatch.getExpected());
