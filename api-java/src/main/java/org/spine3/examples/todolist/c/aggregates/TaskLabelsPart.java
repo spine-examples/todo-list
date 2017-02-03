@@ -113,14 +113,14 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
         return result;
     }
 
-    //TODO
     @Assign
     List<? extends Message> handle(RemoveLabelFromTask cmd) throws CannotRemoveLabelFromTask {
         final TaskLabelId labelId = cmd.getLabelId();
         final TaskId taskId = cmd.getId();
-        final TaskLabels state = getState();
-        final boolean isValid = isValidRemoveLabelFromTaskCommand(new TaskDefinitionPart(taskId).getState()
-                                                                                                .getTaskStatus());
+
+        final TaskAggregateRoot root = new TaskAggregateRoot(taskId);
+        final TaskDefinition taskDefinitionState = root.getTaskDefinitionState();
+        final boolean isValid = isValidRemoveLabelFromTaskCommand(taskDefinitionState.getTaskStatus());
 
         if (!isValid) {
             throwCannotRemoveLabelFromTaskFailure(labelId, taskId);
@@ -134,11 +134,11 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
         return result;
     }
 
-    //TODO
     @Assign
     List<? extends Message> handle(AssignLabelToTask cmd) throws CannotAssignLabelToTask {
         final TaskId taskId = cmd.getId();
         final TaskLabelId labelId = cmd.getLabelId();
+
         final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
         final TaskDefinition state = root.getTaskDefinitionState();
         final boolean isValid = isValidAssignLabelToTaskCommand(state.getTaskStatus());
