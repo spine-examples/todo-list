@@ -21,9 +21,7 @@
 package org.spine3.examples.todolist.c.aggregates;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 import com.google.protobuf.Message;
-import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.spine3.base.Command;
 import org.spine3.base.CommandContext;
 import org.spine3.base.Commands;
-import org.spine3.base.Response;
 import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
@@ -56,18 +53,20 @@ import org.spine3.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 import org.spine3.examples.todolist.c.failures.CannotUpdateLabelDetails;
 import org.spine3.examples.todolist.c.failures.Failures;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
+import org.spine3.examples.todolist.testdata.TestResponseObserver;
 import org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory;
 import org.spine3.server.command.CommandBus;
 import org.spine3.test.CommandTest;
 
 import java.util.List;
 
-import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.protobuf.Any.pack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.spine3.base.Commands.create;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.LABEL_ID;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assignLabelToTaskInstance;
@@ -89,14 +88,12 @@ public class TaskLabelsPartTest {
 
     private TestResponseObserver responseObserver;
     private CommandBus commandBus;
-    private TaskDefinitionPart taskDefinitionPart;
     private TaskLabelsPart taskLabelsPart;
 
     @BeforeEach
     public void setUp() {
         commandBus = TodoListBoundedContext.getCommandBus();
         responseObserver = new TestResponseObserver();
-        taskDefinitionPart = createTaskDefinitionPart(TASK_ID);
         taskLabelsPart = createTaskLabelsPart(TASK_ID);
     }
 
@@ -119,16 +116,22 @@ public class TaskLabelsPartTest {
     @DisplayName("AssignLabelToTask command")
     class AssignLabelToTaskCommand extends CommandTest<AssignLabelToTask> {
 
-        @Override
-        protected void setUp() {
+        private TaskId taskId;
 
+        @BeforeEach
+        @Override
+        public void setUp() {
+            taskId = createTaskId();
+            commandBus = TodoListBoundedContext.getCommandBus();
+            responseObserver = new TestResponseObserver();
+            taskLabelsPart = createTaskLabelsPart(taskId);
         }
 
         @Test
         @DisplayName("produces LabelAssignedToTask event")
         public void producesEvent() {
-            final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance();
-            final List<? extends com.google.protobuf.Message> messageList =
+            final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance(taskId, LABEL_ID);
+            final List<? extends Message> messageList =
                     taskLabelsPart.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
 
             final int expectedListSize = 1;
@@ -137,7 +140,7 @@ public class TaskLabelsPartTest {
                                                                .getClass());
             final LabelAssignedToTask labelAssignedToTask = (LabelAssignedToTask) messageList.get(0);
 
-            assertEquals(TASK_ID, labelAssignedToTask.getTaskId());
+            assertEquals(taskId, labelAssignedToTask.getTaskId());
             assertEquals(LABEL_ID, labelAssignedToTask.getLabelId());
         }
 
@@ -145,16 +148,16 @@ public class TaskLabelsPartTest {
         @DisplayName("cannot assign label to deleted task")
         public void cannotAssignLabelToDeletedTask() {
             try {
-                final CreateBasicTask createTask = createTaskInstance();
-                final Command createTaskCmd = Commands.create(createTask, COMMAND_CONTEXT);
+                final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
+                final Command createTaskCmd = create(createTask, COMMAND_CONTEXT);
                 commandBus.post(createTaskCmd, responseObserver);
 
-                final DeleteTask deleteTask = deleteTaskInstance();
-                final Command deleteTaskCmd = Commands.create(deleteTask, COMMAND_CONTEXT);
+                final DeleteTask deleteTask = deleteTaskInstance(taskId);
+                final Command deleteTaskCmd = create(deleteTask, COMMAND_CONTEXT);
                 commandBus.post(deleteTaskCmd, responseObserver);
 
-                final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance();
-                final Command assignLabelToTaskCmd = Commands.create(assignLabelToTask, COMMAND_CONTEXT);
+                final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, LABEL_ID);
+                final Command assignLabelToTaskCmd = create(assignLabelToTask, COMMAND_CONTEXT);
                 commandBus.post(assignLabelToTaskCmd, responseObserver);
             } catch (Throwable e) {
                 @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
@@ -167,14 +170,17 @@ public class TaskLabelsPartTest {
         @DisplayName("cannot assign label to completed task")
         public void cannotAssignLabelToCompletedTask() {
             try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                taskDefinitionPart.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+                final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
+                final Command createTaskCmd = create(createTask, COMMAND_CONTEXT);
+                commandBus.post(createTaskCmd, responseObserver);
 
-                final CompleteTask completeTaskCmd = completeTaskInstance();
-                taskDefinitionPart.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+                final CompleteTask completeTask = completeTaskInstance(taskId);
+                final Command completeTaskCmd = create(completeTask, COMMAND_CONTEXT);
+                commandBus.post(completeTaskCmd, responseObserver);
 
-                final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance();
-                taskLabelsPart.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
+                final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, LABEL_ID);
+                final Command assignLabelToTaskCmd = Commands.create(assignLabelToTask, COMMAND_CONTEXT);
+                commandBus.post(assignLabelToTaskCmd, responseObserver);
             } catch (Throwable e) {
                 @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
                 final Throwable cause = Throwables.getRootCause(e);
@@ -187,63 +193,15 @@ public class TaskLabelsPartTest {
     @DisplayName("RemoveLabelFromTask command")
     class RemoveLabelFromTaskCommand extends CommandTest<RemoveLabelFromTask> {
 
+        private TaskId taskId;
+
+        @BeforeEach
         @Override
-        protected void setUp() {
-
-        }
-
-        @Test
-        public void emit_label_removed_from_task_event_upon_remove_label_from_task_command() {
-            final RemoveLabelFromTask removeLabelFromTaskCmd = removeLabelFromTaskInstance();
-            final List<? extends com.google.protobuf.Message> messageList =
-                    taskLabelsPart.dispatchForTest(removeLabelFromTaskCmd, COMMAND_CONTEXT);
-
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, messageList.size());
-            assertEquals(LabelRemovedFromTask.class, messageList.get(0)
-                                                                .getClass());
-            final LabelRemovedFromTask labelRemovedFromTask = (LabelRemovedFromTask) messageList.get(0);
-
-            assertEquals(TASK_ID, labelRemovedFromTask.getTaskId());
-            assertEquals(LABEL_ID, labelRemovedFromTask.getLabelId());
-        }
-
-        @Test
-        @DisplayName("cannot remove label from completed task")
-        public void cannotRemoveLabelFromCompletedTask() {
-            try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                taskDefinitionPart.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-                final CompleteTask completeTaskCmd = completeTaskInstance();
-                taskDefinitionPart.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
-
-                final RemoveLabelFromTask removeLabelFromTaskCmd = removeLabelFromTaskInstance();
-                taskLabelsPart.dispatchForTest(removeLabelFromTaskCmd, COMMAND_CONTEXT);
-            } catch (Throwable e) {
-                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
-                final Throwable cause = Throwables.getRootCause(e);
-                assertTrue(cause instanceof CannotRemoveLabelFromTask);
-            }
-        }
-
-        @Test
-        @DisplayName("cannot remove label from deleted task")
-        public void cannotRemoveLabelFromDeletedTask() {
-            try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                taskDefinitionPart.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-                final DeleteTask deleteTaskCmd = deleteTaskInstance();
-                taskDefinitionPart.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
-
-                final RemoveLabelFromTask removeLabelFromTaskCmd = removeLabelFromTaskInstance();
-                taskLabelsPart.dispatchForTest(removeLabelFromTaskCmd, COMMAND_CONTEXT);
-            } catch (Throwable e) {
-                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
-                final Throwable cause = Throwables.getRootCause(e);
-                assertTrue(cause instanceof CannotRemoveLabelFromTask);
-            }
+        public void setUp() {
+            taskId = createTaskId();
+            commandBus = TodoListBoundedContext.getCommandBus();
+            responseObserver = new TestResponseObserver();
+            taskLabelsPart = createTaskLabelsPart(taskId);
         }
 
         @Test
@@ -262,6 +220,50 @@ public class TaskLabelsPartTest {
             assertEquals(TASK_ID, labelRemovedFromTask.getTaskId());
             assertEquals(LABEL_ID, labelRemovedFromTask.getLabelId());
         }
+
+        @Test
+        @DisplayName("cannot remove label from completed task")
+        public void cannotRemoveLabelFromCompletedTask() {
+            try {
+                final CreateBasicTask createTask = createTaskInstance();
+                final Command createTaskCmd = create(createTask, COMMAND_CONTEXT);
+                commandBus.post(createTaskCmd, responseObserver);
+
+                final CompleteTask completeTask = completeTaskInstance();
+                final Command completeTaskCmd = create(completeTask, COMMAND_CONTEXT);
+                commandBus.post(completeTaskCmd, responseObserver);
+
+                final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance();
+                final Command removeLabelFromTaskCmd = create(removeLabelFromTask, COMMAND_CONTEXT);
+                commandBus.post(removeLabelFromTaskCmd, responseObserver);
+            } catch (Throwable e) {
+                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+                final Throwable cause = Throwables.getRootCause(e);
+                assertTrue(cause instanceof CannotRemoveLabelFromTask);
+            }
+        }
+
+        @Test
+        @DisplayName("cannot remove label from deleted task")
+        public void cannotRemoveLabelFromDeletedTask() {
+            try {
+                final CreateBasicTask createTask = createTaskInstance();
+                final Command createTaskCmd = create(createTask, COMMAND_CONTEXT);
+                commandBus.post(createTaskCmd, responseObserver);
+
+                final DeleteTask deleteTask = deleteTaskInstance();
+                final Command deleteTaskCmd = create(deleteTask, COMMAND_CONTEXT);
+                commandBus.post(deleteTaskCmd, responseObserver);
+
+                final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance();
+                final Command removeLabelFromTaskCmd = create(removeLabelFromTask, COMMAND_CONTEXT);
+                commandBus.post(removeLabelFromTaskCmd, responseObserver);
+            } catch (Throwable e) {
+                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+                final Throwable cause = Throwables.getRootCause(e);
+                assertTrue(cause instanceof CannotRemoveLabelFromTask);
+            }
+        }
     }
 
     @Nested
@@ -277,7 +279,7 @@ public class TaskLabelsPartTest {
         @DisplayName("produces LabelCreated event")
         public void producesLabel() {
             final CreateBasicLabel createLabelCmd = createLabelInstance();
-            final List<? extends com.google.protobuf.Message> messageList =
+            final List<? extends Message> messageList =
                     taskLabelsPart.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
 
             final int expectedListSize = 1;
@@ -325,17 +327,17 @@ public class TaskLabelsPartTest {
             taskLabelsPart.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
 
             final UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance();
-            final List<? extends com.google.protobuf.Message> messageList =
+            final List<? extends Message> messageList =
                     taskLabelsPart.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
 
             final int expectedListSize = 1;
             assertEquals(expectedListSize, messageList.size());
             assertEquals(LabelDetailsUpdated.class, messageList.get(0)
                                                                .getClass());
+
             final LabelDetailsUpdated labelDetailsUpdated = (LabelDetailsUpdated) messageList.get(0);
             final LabelDetails details = labelDetailsUpdated.getLabelDetailsChange()
                                                             .getNewDetails();
-
             assertEquals(TestTaskLabelCommandFactory.LABEL_ID, labelDetailsUpdated.getLabelId());
             assertEquals(LabelColor.GREEN, details.getColor());
             assertEquals(UPDATED_LABEL_TITLE, details.getTitle());
@@ -351,12 +353,10 @@ public class TaskLabelsPartTest {
             taskLabelsPart.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
 
             TaskLabels state = taskLabelsPart.getState();
-
             List<TaskLabel> labels = state.getLabelsList();
-
             assertEquals(1, labels.size());
-            TaskLabel label = labels.get(0);
 
+            TaskLabel label = labels.get(0);
             assertEquals(TestTaskLabelCommandFactory.LABEL_ID, label.getId());
             assertEquals(LabelColor.GREEN, label.getColor());
             assertEquals(UPDATED_LABEL_TITLE, label.getTitle());
@@ -366,24 +366,22 @@ public class TaskLabelsPartTest {
                                                                   .setTitle(UPDATED_LABEL_TITLE)
                                                                   .setColor(previousLabelColor)
                                                                   .build();
-
             final LabelColor updatedLabelColor = LabelColor.BLUE;
             final String updatedTitle = "updated title";
             final LabelDetails newLabelDetails = LabelDetails.newBuilder()
                                                              .setColor(updatedLabelColor)
                                                              .setTitle(updatedTitle)
                                                              .build();
-
-            updateLabelDetailsCmd = updateLabelDetailsInstance(TestTaskLabelCommandFactory.LABEL_ID, previousLabelDetails, newLabelDetails);
+            updateLabelDetailsCmd = updateLabelDetailsInstance(TestTaskLabelCommandFactory.LABEL_ID,
+                                                               previousLabelDetails,
+                                                               newLabelDetails);
             taskLabelsPart.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
 
             state = taskLabelsPart.getState();
-
             labels = state.getLabelsList();
-
             assertEquals(1, labels.size());
-            label = labels.get(0);
 
+            label = labels.get(0);
             assertEquals(TestTaskLabelCommandFactory.LABEL_ID, label.getId());
             assertEquals(updatedLabelColor, label.getColor());
             assertEquals(updatedTitle, label.getTitle());
@@ -430,40 +428,6 @@ public class TaskLabelsPartTest {
                                                                     .build();
                 assertEquals(pack(actualLabelDetails), mismatch.getActual());
             }
-        }
-    }
-
-    private static class TestResponseObserver implements StreamObserver<Response> {
-
-        private final List<Response> responses = newLinkedList();
-        private Throwable throwable;
-        private boolean completed = false;
-
-        @Override
-        public void onNext(Response response) {
-            responses.add(response);
-        }
-
-        @Override
-        public void onError(Throwable throwable) {
-            this.throwable = throwable;
-        }
-
-        @Override
-        public void onCompleted() {
-            this.completed = true;
-        }
-
-        List<Response> getResponses() {
-            return ImmutableList.copyOf(responses);
-        }
-
-        Throwable getThrowable() {
-            return throwable;
-        }
-
-        boolean isCompleted() {
-            return this.completed;
         }
     }
 }
