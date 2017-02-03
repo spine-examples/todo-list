@@ -24,6 +24,7 @@ import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
 import com.google.protobuf.StringValue;
 import com.google.protobuf.Timestamp;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,6 @@ import org.spine3.test.CommandTest;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -99,6 +99,11 @@ public class TaskDefinitionPartTest {
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
     private TaskDefinitionPart aggregate;
     private static final String EXPECTED_DESCRIPTION = "description";
+
+    @BeforeEach
+    public void setUp() {
+        aggregate = new TaskDefinitionPart(TASK_ID);
+    }
 
     @Nested
     @DisplayName("CreateBasicTask command")
@@ -132,6 +137,7 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
+        @DisplayName("")
         public void record_modification_timestamp() throws InterruptedException {
             CreateBasicTask createTaskCmd = createTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
@@ -184,8 +190,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        @DisplayName("")
-        public void catch_exception_when_handle_update_task_description_when_description_contains_one_symbol() {
+        @DisplayName("cannot update task with inappropriate description")
+        public void cannotUpdateTaskDescription() {
             try {
                 final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(TASK_ID, "", ".");
                 aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
@@ -197,16 +203,18 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void catch_exception_when_handle_update_task_description_when_task_is_deleted() {
+        @DisplayName("cannot update description for deleted task")
+        public void cannotUpdateDeletedTaskDescription() {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
+            aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+
             try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-                final DeleteTask deleteTaskCmd = deleteTaskInstance();
-                aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
-
                 final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance();
-                assertThrows(CannotUpdateTaskDescription.class, () -> aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT));
+                assertThrows(CannotUpdateTaskDescription.class, () ->
+                        aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT));
             } catch (Throwable e) {
                 @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
                 final Throwable cause = Throwables.getRootCause(e);
@@ -215,14 +223,15 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void catch_exception_handle_update_task_description_when_task_is_completed() {
+        @DisplayName("cannot update description for the completed task")
+        public void cannotUpdateCompletedTaskDescription() {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+            final CompleteTask completeTaskCmd = completeTaskInstance();
+            aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+
             try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-                final CompleteTask completeTaskCmd = completeTaskInstance();
-                aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
-
                 final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance();
                 aggregate.dispatchForTest(updateTaskDescriptionCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
@@ -233,7 +242,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void update_current_state_task_description_after_dispatch_command() {
+        @DisplayName("updates task description")
+        public void updatesDescription() {
             final String newDescription = "new description.";
             final CreateBasicTask createBasicTask = createTaskInstance();
             aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
@@ -248,7 +258,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void emit_cannot_update_task_description_failure_upon_update_task_description_command() {
+        @DisplayName("produces throwing CannotUpdateTaskDescription failure")
+        public void producesFailure() {
             final CreateBasicTask createBasicTask = createTaskInstance();
             aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
 
@@ -291,6 +302,7 @@ public class TaskDefinitionPartTest {
     }
 
     @Nested
+    @DisplayName("UpdateTaskDueDate commamnd")
     class UpdateTaskDueDateCommand extends CommandTest<UpdateTaskDueDate> {
 
         @Override
@@ -299,14 +311,15 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void catch_exception_when_handle_update_task_due_date_when_task_is_completed() {
+        @DisplayName("cannot update due date for the completed task")
+        public void cannotUpdateCompletedTaskDueDate() {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+            final CompleteTask completeTaskCmd = completeTaskInstance();
+            aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+
             try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-                final CompleteTask completeTaskCmd = completeTaskInstance();
-                aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
-
                 final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance();
                 aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
@@ -317,14 +330,15 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void catch_exception_when_handle_update_task_due_date_when_task_is_deleted() {
+        @DisplayName("cannot update due date for the deleted task")
+        public void cannotUpdateDeletedTaskDueDate() {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
+            aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+
             try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-                final DeleteTask deleteTaskCmd = deleteTaskInstance();
-                aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
-
                 final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance();
                 aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
@@ -335,7 +349,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void emit_task_due_date_updated_event_upon_update_task_due_date_command() {
+        @DisplayName("produces TaskDueDateUpdated event")
+        public void producesEvent() {
             final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance();
             final List<? extends com.google.protobuf.Message> messageList =
                     aggregate.dispatchForTest(updateTaskDueDateCmd, COMMAND_CONTEXT);
@@ -353,7 +368,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void update_current_state_task_due_date_after_dispatch_command() {
+        @DisplayName("updates task due date")
+        public void updatesDueDate() {
             final Timestamp updatedDueDate = Timestamps.getCurrentTime();
             final CreateBasicTask createBasicTask = createTaskInstance();
             aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
@@ -368,12 +384,14 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void emit_cannot_update_task_due_date_failure_upon_update_task_due_date_command() {
+        @DisplayName("produces throwing CannotUpdateTaskDueDate failure")
+        public void producesFailure() {
             final CreateBasicTask createBasicTask = createTaskInstance();
             aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
 
             final Timestamp expectedDueDate = Timestamps.getCurrentTime();
             final Timestamp newDueDate = Timestamps.getCurrentTime();
+
             try {
                 final UpdateTaskDueDate updateTaskDueDate =
                         updateTaskDueDateInstance(TASK_ID, expectedDueDate, newDueDate);
@@ -417,14 +435,15 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void catch_exception_handle_update_task_priority_when_task_is_deleted() {
+        @DisplayName("cannot update priority for the deleted task")
+        public void cannotUpdateDeletedTaskPriority() {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
+            aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+
             try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-                final DeleteTask deleteTaskCmd = deleteTaskInstance();
-                aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
-
                 final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance();
                 aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
@@ -435,14 +454,15 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void catch_exception_handle_update_task_priority_when_task_is_completed() {
+        @DisplayName("cannot update priority for the completed task")
+        public void cannotUpdateCompletedTaskPriority() {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+            final CompleteTask completeTaskCmd = completeTaskInstance();
+            aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
+
             try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-                final CompleteTask completeTaskCmd = completeTaskInstance();
-                aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
-
                 final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance();
                 aggregate.dispatchForTest(updateTaskPriorityCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
@@ -453,7 +473,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void emit_task_priority_updated_event_upon_update_task_priority_command() {
+        @DisplayName("produces TaskPriorityUpdated event")
+        public void producesEvent() {
             final CreateBasicTask createBasicTask = createTaskInstance();
             aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
 
@@ -474,7 +495,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void update_current_state_task_priority_after_dispatch_command() {
+        @DisplayName("updates task priority")
+        public void updatesPriority() {
             final TaskPriority updatedPriority = TaskPriority.HIGH;
             final CreateBasicTask createBasicTask = createTaskInstance();
             aggregate.dispatchForTest(createBasicTask, COMMAND_CONTEXT);
@@ -489,7 +511,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void emit_cannot_update_task_priority_failure_upon_update_task_priority_command() {
+        @DisplayName("produces throwing CannotUpdateTaskPriority failure")
+        public void producesFailure() {
             try {
                 final UpdateTaskPriority updateTaskPriority =
                         updateTaskPriorityInstance(TASK_ID, TaskPriority.LOW, TaskPriority.HIGH);
@@ -534,7 +557,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void emit_task_completed_event_upon_complete_task_command() {
+        @DisplayName("produces TaskCompleted event")
+        public void producesEvent() {
             final CreateBasicTask createTaskCmd = createTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
@@ -552,7 +576,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void change_task_status_state_when_task_is_completed() {
+        @DisplayName("completes the task")
+        public void completesTheTask() {
             final CreateBasicTask createTaskCmd = createTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
@@ -565,14 +590,15 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void catch_exception_when_handle_complete_task_command_when_task_is_deleted() {
+        @DisplayName("cannot complete deleted task")
+        public void cannotCompleteDeletedTask() {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
+            aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+
             try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-                final DeleteTask deleteTaskCmd = deleteTaskInstance();
-                aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
-
                 final CompleteTask completeTaskCmd = completeTaskInstance();
                 aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
@@ -583,11 +609,12 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void catch_exception_when_handle_complete_task_command_when_task_in_draft_state() {
-            try {
-                final CreateDraft createDraftCmd = createDraftInstance();
-                aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
+        @DisplayName("cannot complete task in draft state")
+        public void cannotCompleteDraft() {
+            final CreateDraft createDraftCmd = createDraftInstance();
+            aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
 
+            try {
                 final CompleteTask completeTaskCmd = completeTaskInstance();
                 aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
@@ -608,7 +635,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void change_task_status_state_when_task_is_deleted() {
+        @DisplayName("deletes task")
+        public void deletesTask() {
             final CreateBasicTask createTaskCmd = createTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
@@ -621,28 +649,15 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void emit_task_created_and_task_deleted_events_upon_create_basic_task_and_delete_task_commands() {
+        @DisplayName("cannot delete already deleted task")
+        public void cannotDeleteAlreadyDeletedTask() {
             final CreateBasicTask createTaskCmd = createTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-            assertNotEquals(DELETED, aggregate.getState()
-                                              .getTaskStatus());
 
             final DeleteTask deleteTaskCmd = deleteTaskInstance();
             aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
 
-            assertEquals(DELETED, aggregate.getState()
-                                           .getTaskStatus());
-        }
-
-        @Test
-        public void catch_exception_when_handle_delete_task_command_when_task_is_already_deleted() {
             try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-                final DeleteTask deleteTaskCmd = deleteTaskInstance();
-                aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
                 aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
                 @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
@@ -652,7 +667,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void emit_task_deleted_event_upon_delete_task_command() {
+        @DisplayName("produces TaskDeleted event")
+        public void producesEvent() {
             final CreateBasicTask createTaskCmd = createTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
@@ -680,7 +696,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void emit_task_draft_finalized_event_upon_finalize_draft_command() {
+        @DisplayName("finalizes task")
+        public void finalizesTask() {
             final CreateDraft createDraftCmd = createDraftInstance();
             aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
 
@@ -698,14 +715,15 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void catch_exception_when_handle_finalized_draft_command_when_task_is_deleted() {
+        @DisplayName("cannot finalize deleted task")
+        public void cannotFinalizeDeletedTask() {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+
+            final DeleteTask deleteTaskCmd = deleteTaskInstance();
+            aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
+
             try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-                final DeleteTask deleteTaskCmd = deleteTaskInstance();
-                aggregate.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
-
                 final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance();
                 aggregate.dispatchForTest(finalizeDraftCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
@@ -716,7 +734,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void catch_exception_when_handle_finalized_draft_command_when_task_not_in_the_draft_state() {
+        @DisplayName("cannot finalize task when task state is not draft")
+        public void cannotFinalizeNotDraftTask() {
             try {
                 final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance();
                 aggregate.dispatchForTest(finalizeDraftCmd, COMMAND_CONTEXT);
@@ -738,7 +757,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void emit_task_draft_created_event_upon_create_draft_task_command() {
+        @DisplayName("produces TaskDraftCreated event")
+        public void producesEvent() {
             final CreateDraft createDraftCmd = createDraftInstance();
             final List<? extends com.google.protobuf.Message> messageList =
                     aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
@@ -753,7 +773,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void emit_task_draft_created_event_upon_create_task_draft_command() {
+        @DisplayName("creates draft")
+        public void createsDraft() {
             final CreateDraft createDraftCmd = createDraftInstance();
             aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
             final TaskDefinition state = aggregate.getState();
@@ -773,11 +794,12 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void catch_exception_when_handle_reopen_task_command_when_task_created() {
-            try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
+        @DisplayName("cannot reopen not completed task")
+        public void cannotReopenNotCompletedTask() {
+            final CreateBasicTask createTaskCmd = createTaskInstance();
+            aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
+            try {
                 final ReopenTask reopenTaskCmd = reopenTaskInstance();
                 aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
@@ -788,7 +810,8 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void emit_task_completed_and_task_reopened_events_upon_complete_and_reopen_task_command() {
+        @DisplayName("reopens completed task")
+        public void reopensTask() {
             final CreateBasicTask createTaskCmd = createTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
@@ -796,35 +819,20 @@ public class TaskDefinitionPartTest {
             aggregate.dispatchForTest(completeTaskCmd, COMMAND_CONTEXT);
 
             TaskDefinition state = aggregate.getState();
-
             assertEquals(TASK_ID, state.getId());
             assertEquals(COMPLETED, state.getTaskStatus());
 
             final ReopenTask reopenTaskCmd = reopenTaskInstance();
             aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
-            state = aggregate.getState();
 
+            state = aggregate.getState();
             assertEquals(TASK_ID, state.getId());
             assertEquals(OPEN, state.getTaskStatus());
         }
 
         @Test
-        public void catch_exception_when_handle_reopen_task_command_when_task_is_created() {
-            try {
-                final CreateBasicTask createTaskCmd = createTaskInstance();
-                aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
-
-                final ReopenTask reopenTaskCmd = reopenTaskInstance();
-                aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
-            } catch (Throwable e) {
-                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
-                final Throwable cause = Throwables.getRootCause(e);
-                assertTrue(cause instanceof CannotReopenTask);
-            }
-        }
-
-        @Test
-        public void emit_task_reopened_event_when_handle_reopen_task_command_when_task_is_deleted() {
+        @DisplayName("cannot reopen deleted task")
+        public void cannotReopenDeletedTask() {
             final CreateBasicTask createTaskCmd = createTaskInstance();
             aggregate.dispatchForTest(createTaskCmd, COMMAND_CONTEXT);
 
@@ -841,11 +849,12 @@ public class TaskDefinitionPartTest {
         }
 
         @Test
-        public void catch_exception_when_handle_reopen_task_command_when_task_in_draft_state() {
-            try {
-                final CreateDraft createDraftCmd = createDraftInstance();
-                aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
+        @DisplayName("cannot reopen task in draft state")
+        public void cannotReopenDraft() {
+            final CreateDraft createDraftCmd = createDraftInstance();
+            aggregate.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
 
+            try {
                 final ReopenTask reopenTaskCmd = reopenTaskInstance();
                 aggregate.dispatchForTest(reopenTaskCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
