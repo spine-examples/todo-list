@@ -242,7 +242,7 @@ subprojects {
         }
 
         filters {
-            includeClassNamePatterns '.*Should'
+            includeClassNamePatterns '.*Test'
         }
     }
 
