@@ -312,7 +312,6 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         return result;
     }
 
-    //TODO
     @Assign
     List<? extends Message> handle(RestoreDeletedTask cmd) throws CannotRestoreDeletedTask {
         final TaskStatus currentStatus = getState().getTaskStatus();
@@ -388,13 +387,11 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         getBuilder().setTaskStatus(TaskStatus.DELETED);
     }
 
-    //TODO
     @Apply
     private void deletedTaskRestored(DeletedTaskRestored event) {
         getBuilder().setTaskStatus(TaskStatus.OPEN);
     }
 
-    //TODO
     @Apply
     private void labelledTaskRestored(LabelledTaskRestored event) {
         getBuilder().setTaskStatus(TaskStatus.OPEN);

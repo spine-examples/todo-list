@@ -207,7 +207,6 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
                     .mergeFrom(taskLabel);
     }
 
-    //TODO
     @Apply
     private void labelAssignedToTask(LabelAssignedToTask event) {
         List<TaskLabel> list = getState().getLabelsList()
@@ -221,7 +220,6 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
                     .addAllLabels(list);
     }
 
-    //TODO
     @Apply
     private void labelRemovedFromTask(LabelRemovedFromTask event) {
         List<TaskLabel> list = getState().getLabelsList()
