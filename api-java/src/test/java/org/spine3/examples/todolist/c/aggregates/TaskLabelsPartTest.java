@@ -397,7 +397,7 @@ public class TaskLabelsPartTest {
                                                              .build();
             try {
                 final UpdateLabelDetails updateLabelDetailsCmd =
-                        updateLabelDetailsInstance(TestTaskLabelCommandFactory.LABEL_ID, expectedLabelDetails, newLabelDetails);
+                        updateLabelDetailsInstance(LABEL_ID, expectedLabelDetails, newLabelDetails);
                 taskLabelsPart.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
                 @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
