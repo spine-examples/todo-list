@@ -37,7 +37,7 @@ import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
 /**
  * @author Illia Shepilov
  */
-public class ProjectionHelperShould {
+public class ProjectionHelperTest {
 
     private static final TaskId TASK_ID = TaskId.newBuilder()
                                                 .setValue(newUuid())

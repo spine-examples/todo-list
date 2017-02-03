@@ -28,7 +28,7 @@ import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
 /**
  * @author Illia Shepilov
  */
-public class TaskFlowValidatorShould {
+public class TaskFlowValidatorTest {
 
     @Test
     public void have_private_constructor() {
