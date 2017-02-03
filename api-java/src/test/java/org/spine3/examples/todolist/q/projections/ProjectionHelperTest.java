@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.q.projections;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
@@ -37,6 +38,7 @@ import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
 /**
  * @author Illia Shepilov
  */
+@DisplayName("ProjectionHelper should")
 public class ProjectionHelperTest {
 
     private static final TaskId TASK_ID = TaskId.newBuilder()
@@ -55,12 +57,14 @@ public class ProjectionHelperTest {
     }
 
     @Test
-    public void have_private_constructor() {
+    @DisplayName("have the private constructor")
+    public void havePrivateConstructor() {
         assertTrue(hasPrivateParameterlessCtor(ProjectionHelper.class));
     }
 
     @Test
-    public void remove_task_view_from_state_by_label_id() {
+    @DisplayName("remove TaskView form state by label id")
+    public void removeView() {
         final int expectedListSize = 1;
         final TaskListView view = ProjectionHelper.removeViewByLabelId(viewList, LABEL_ID);
 
@@ -69,7 +73,8 @@ public class ProjectionHelperTest {
     }
 
     @Test
-    public void not_remove_task_view_from_state_by_wrong_label_id() {
+    @DisplayName("not remove TaskView from state by wrong label id")
+    public void notRemoveViewByLabelId() {
         final int expectedListSize = 2;
         final TaskLabelId wrongLabelId = TaskLabelId.newBuilder()
                                                     .setValue(newUuid())
@@ -81,7 +86,8 @@ public class ProjectionHelperTest {
     }
 
     @Test
-    public void remove_task_view_from_state_by_task_id() {
+    @DisplayName("remove TaskView from state by task id")
+    public void removeViewByTaskId() {
         final int expectedListSize = 1;
         final TaskListView view = ProjectionHelper.removeViewByTaskId(viewList, TASK_ID);
 
@@ -90,7 +96,8 @@ public class ProjectionHelperTest {
     }
 
     @Test
-    public void not_remove_task_view_from_state_by_wrong_task_id() {
+    @DisplayName("not remove TaskView from state by wrong task id")
+    public void notRemoveTaskViewByTaskId() {
         final int expectedListSize = 2;
         final TaskId wrongTaskId = TaskId.newBuilder()
                                          .setValue(newUuid())
