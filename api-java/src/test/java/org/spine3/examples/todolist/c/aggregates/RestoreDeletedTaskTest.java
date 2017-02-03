@@ -21,15 +21,12 @@
 package org.spine3.examples.todolist.c.aggregates;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
-import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.Command;
 import org.spine3.base.CommandContext;
 import org.spine3.base.Commands;
-import org.spine3.base.Response;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
@@ -40,14 +37,13 @@ import org.spine3.examples.todolist.c.commands.DeleteTask;
 import org.spine3.examples.todolist.c.commands.RestoreDeletedTask;
 import org.spine3.examples.todolist.c.failures.CannotRestoreDeletedTask;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
+import org.spine3.examples.todolist.testdata.TestResponseObserver;
 import org.spine3.server.command.CommandBus;
 
-import java.util.List;
-
-import static com.google.common.collect.Lists.newLinkedList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Identifiers.newUuid;
+import static org.spine3.examples.todolist.TaskStatus.DELETED;
 import static org.spine3.examples.todolist.TaskStatus.OPEN;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
@@ -186,37 +182,25 @@ public class RestoreDeletedTaskTest {
         }
     }
 
-    private static class TestResponseObserver implements StreamObserver<Response> {
+    @Test
+    public void emit_task_deleted_and_deleted_task_restored_event_upon_delete_and_restore_task_command() {
+        final CreateDraft createDraftCmd = createDraftInstance();
+        taskDefinitionPart.dispatchForTest(createDraftCmd, COMMAND_CONTEXT);
 
-        private final List<Response> responses = newLinkedList();
-        private Throwable throwable;
-        private boolean completed = false;
+        final DeleteTask deleteTaskCmd = deleteTaskInstance();
+        taskDefinitionPart.dispatchForTest(deleteTaskCmd, COMMAND_CONTEXT);
 
-        @Override
-        public void onNext(Response response) {
-            responses.add(response);
-        }
+        TaskDefinition state = taskDefinitionPart.getState();
 
-        @Override
-        public void onError(Throwable throwable) {
-            this.throwable = throwable;
-        }
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(DELETED, state.getTaskStatus());
 
-        @Override
-        public void onCompleted() {
-            this.completed = true;
-        }
+        final RestoreDeletedTask restoreDeletedTaskCmd = restoreDeletedTaskInstance();
+        taskDefinitionPart.dispatchForTest(restoreDeletedTaskCmd, COMMAND_CONTEXT);
 
-        List<Response> getResponses() {
-            return ImmutableList.copyOf(responses);
-        }
+        state = taskDefinitionPart.getState();
 
-        Throwable getThrowable() {
-            return throwable;
-        }
-
-        boolean isCompleted() {
-            return this.completed;
-        }
+        assertEquals(TASK_ID, state.getId());
+        assertEquals(OPEN, state.getTaskStatus());
     }
 }
