@@ -52,11 +52,38 @@ public class TestTaskLabelCommandFactory {
      * @return {@link CreateBasicLabel} instance
      */
     public static CreateBasicLabel createLabelInstance() {
+        final CreateBasicLabel result = createLabelInstance(LABEL_ID);
+        return result;
+    }
+
+    /**
+     * Provides default {@link CreateBasicLabel} event instance.
+     *
+     * @return {@link CreateBasicLabel} instance
+     */
+    public static CreateBasicLabel createLabelInstance(TaskLabelId labelId) {
         final CreateBasicLabel result = CreateBasicLabel.newBuilder()
-                                                        .setLabelId(LABEL_ID)
+                                                        .setLabelId(labelId)
                                                         .setLabelTitle(LABEL_TITLE)
                                                         .build();
         return result;
+    }
+
+    /**
+     * Provides a pre-configured {@link UpdateLabelDetails} command instance.
+     *
+     * @return {@link UpdateLabelDetails} instance.
+     */
+    public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId labelId) {
+        final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
+                                                              .setTitle(LABEL_TITLE)
+                                                              .setColor(LabelColor.GRAY)
+                                                              .build();
+        final LabelDetails newLabelDetails = LabelDetails.newBuilder()
+                                                         .setTitle(UPDATED_LABEL_TITLE)
+                                                         .setColor(LabelColor.GREEN)
+                                                         .build();
+        return updateLabelDetailsInstance(labelId, previousLabelDetails, newLabelDetails);
     }
 
     /**

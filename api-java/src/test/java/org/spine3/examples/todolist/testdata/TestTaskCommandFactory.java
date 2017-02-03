@@ -299,8 +299,18 @@ public class TestTaskCommandFactory {
      * @return {@link CreateDraft} instance
      */
     public static CreateDraft createDraftInstance() {
+        final CreateDraft result = createDraftInstance(TASK_ID);
+        return result;
+    }
+
+    /**
+     * Provides a pre-configured {@link CreateDraft} command instance.
+     *
+     * @return {@link CreateDraft} instance
+     */
+    public static CreateDraft createDraftInstance(TaskId taskId) {
         final CreateDraft result = CreateDraft.newBuilder()
-                                              .setId(TASK_ID)
+                                              .setId(taskId)
                                               .build();
         return result;
     }
