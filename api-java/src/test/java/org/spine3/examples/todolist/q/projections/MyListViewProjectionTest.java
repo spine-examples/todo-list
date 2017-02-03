@@ -66,7 +66,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
  * @author Illia Shepilov
  */
 @SuppressWarnings("OverlyCoupledClass")
-public class MyListViewProjectionShould {
+public class MyListViewProjectionTest {
 
     private static final TaskListId ID = TaskListId.newBuilder()
                                                    .setValue(newUuid())
