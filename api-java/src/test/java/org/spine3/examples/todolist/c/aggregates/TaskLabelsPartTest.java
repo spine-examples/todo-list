@@ -104,12 +104,53 @@ public class TaskLabelsPartTest {
         return result;
     }
 
-    private static TaskDefinitionPart createTaskDefinitionPart(TaskId taskId) {
-        return new TaskDefinitionPart(taskId);
-    }
-
     private static TaskLabelsPart createTaskLabelsPart(TaskId taskId) {
         return new TaskLabelsPart(taskId);
+    }
+
+    @Nested
+    @DisplayName("CreateBasicLabel command")
+    class CreateBasicLabelCommand extends CommandTest<CreateBasicLabel> {
+
+        @Override
+        protected void setUp() {
+
+        }
+
+        @Test
+        @DisplayName("produces LabelCreated event")
+        public void producesLabel() {
+            final CreateBasicLabel createLabelCmd = createLabelInstance();
+            final List<? extends Message> messageList =
+                    taskLabelsPart.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
+
+            final int expectedListSize = 1;
+            assertEquals(expectedListSize, messageList.size());
+            assertEquals(LabelCreated.class, messageList.get(0)
+                                                        .getClass());
+
+            final LabelCreated labelCreated = (LabelCreated) messageList.get(0);
+
+            assertEquals(TestTaskLabelCommandFactory.LABEL_ID, labelCreated.getId());
+            assertEquals(LABEL_TITLE, labelCreated.getDetails()
+                                                  .getTitle());
+        }
+
+        @Test
+        @DisplayName("creates the basic label")
+        public void createsLabel() {
+            final CreateBasicLabel createLabelCmd = createLabelInstance();
+            taskLabelsPart.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
+
+            final TaskLabels state = taskLabelsPart.getState();
+            final List<TaskLabel> labels = state.getLabelsList();
+            assertEquals(1, labels.size());
+
+            final TaskLabel label = labels.get(0);
+            assertEquals(TestTaskLabelCommandFactory.LABEL_ID, label.getId());
+            assertEquals(LabelColor.GRAY, label.getColor());
+            assertEquals(LABEL_TITLE, label.getTitle());
+        }
     }
 
     @Nested
@@ -267,51 +308,6 @@ public class TaskLabelsPartTest {
     }
 
     @Nested
-    @DisplayName("CreateBasicLabel command")
-    class CreateBasicLabelCommand extends CommandTest<CreateBasicLabel> {
-
-        @Override
-        protected void setUp() {
-
-        }
-
-        @Test
-        @DisplayName("produces LabelCreated event")
-        public void producesLabel() {
-            final CreateBasicLabel createLabelCmd = createLabelInstance();
-            final List<? extends Message> messageList =
-                    taskLabelsPart.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
-
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, messageList.size());
-            assertEquals(LabelCreated.class, messageList.get(0)
-                                                        .getClass());
-
-            final LabelCreated labelCreated = (LabelCreated) messageList.get(0);
-
-            assertEquals(TestTaskLabelCommandFactory.LABEL_ID, labelCreated.getId());
-            assertEquals(LABEL_TITLE, labelCreated.getDetails()
-                                                  .getTitle());
-        }
-
-        @Test
-        @DisplayName("creates the basic label")
-        public void createsLabel() {
-            final CreateBasicLabel createLabelCmd = createLabelInstance();
-            taskLabelsPart.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
-
-            final TaskLabels state = taskLabelsPart.getState();
-            final List<TaskLabel> labels = state.getLabelsList();
-            assertEquals(1, labels.size());
-
-            final TaskLabel label = labels.get(0);
-            assertEquals(TestTaskLabelCommandFactory.LABEL_ID, label.getId());
-            assertEquals(LabelColor.GRAY, label.getColor());
-            assertEquals(LABEL_TITLE, label.getTitle());
-        }
-    }
-
-    @Nested
     @DisplayName("UpdateLabelDetails command")
     class UpdateLabelDetailsCommand extends CommandTest<UpdateLabelDetails> {
 
@@ -338,7 +334,7 @@ public class TaskLabelsPartTest {
             final LabelDetailsUpdated labelDetailsUpdated = (LabelDetailsUpdated) messageList.get(0);
             final LabelDetails details = labelDetailsUpdated.getLabelDetailsChange()
                                                             .getNewDetails();
-            assertEquals(TestTaskLabelCommandFactory.LABEL_ID, labelDetailsUpdated.getLabelId());
+            assertEquals(LABEL_ID, labelDetailsUpdated.getLabelId());
             assertEquals(LabelColor.GREEN, details.getColor());
             assertEquals(UPDATED_LABEL_TITLE, details.getTitle());
         }
@@ -372,9 +368,7 @@ public class TaskLabelsPartTest {
                                                              .setColor(updatedLabelColor)
                                                              .setTitle(updatedTitle)
                                                              .build();
-            updateLabelDetailsCmd = updateLabelDetailsInstance(TestTaskLabelCommandFactory.LABEL_ID,
-                                                               previousLabelDetails,
-                                                               newLabelDetails);
+            updateLabelDetailsCmd = updateLabelDetailsInstance(LABEL_ID, previousLabelDetails, newLabelDetails);
             taskLabelsPart.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
 
             state = taskLabelsPart.getState();
