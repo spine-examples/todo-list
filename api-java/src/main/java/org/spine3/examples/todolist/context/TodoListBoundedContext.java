@@ -82,7 +82,8 @@ public class TodoListBoundedContext {
 
     @VisibleForTesting
     public static CommandBus getCommandBus() {
-        return getInstance().getCommandBus();
+        final CommandBus result = getInstance().getCommandBus();
+        return result;
     }
 
     /** The holder for the singleton reference. */
