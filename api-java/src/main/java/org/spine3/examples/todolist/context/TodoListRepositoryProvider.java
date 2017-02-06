@@ -20,8 +20,8 @@
 
 package org.spine3.examples.todolist.context;
 
-import org.spine3.examples.todolist.repositories.TaskAggregateRepository;
-import org.spine3.examples.todolist.repositories.TaskLabelAggregateRepository;
+import org.spine3.examples.todolist.repositories.TaskDefinitionRepository;
+import org.spine3.examples.todolist.repositories.TaskLabelsRepository;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.event.enrich.EventEnricher;
 
@@ -47,38 +47,39 @@ import java.util.Optional;
  *
  * @author Illia Shepilov
  */
+//TODO:2017-02-06:illiashepilov: is it still needed?
 class TodoListRepositoryProvider {
 
     @Nullable
-    private TaskAggregateRepository taskAggregateRepository;
+    private TaskLabelsRepository taskLabelsRepo;
     @Nullable
-    private TaskLabelAggregateRepository labelAggregateRepository;
+    private TaskDefinitionRepository taskDefinitionRepo;
 
-    void setTaskAggregateRepository(TaskAggregateRepository taskAggregateRepo) {
-        this.taskAggregateRepository = taskAggregateRepo;
+    void setTaskLabelsRepository(TaskLabelsRepository taskLabelsRepo) {
+        this.taskLabelsRepo = taskLabelsRepo;
     }
 
-    void setLabelAggregateRepository(TaskLabelAggregateRepository labelAggregateRepo) {
-        this.labelAggregateRepository = labelAggregateRepo;
+    void setTaskDefinitionRepository(TaskDefinitionRepository labelAggregateRepo) {
+        this.taskDefinitionRepo = labelAggregateRepo;
     }
 
     /**
-     * Returns the wrapped {@link TaskAggregateRepository} in the {@code Optional}.
+     * Returns the wrapped {@link TaskLabelsRepository} in the {@code Optional}.
      *
      * @return the {@code Optional}
      */
-    Optional<TaskAggregateRepository> getTaskAggregateRepository() {
-        final Optional<TaskAggregateRepository> result = Optional.ofNullable(this.taskAggregateRepository);
+    Optional<TaskLabelsRepository> getTaskLabelsRepo() {
+        final Optional<TaskLabelsRepository> result = Optional.ofNullable(this.taskLabelsRepo);
         return result;
     }
 
     /**
-     * Returns the wrapped {@link TaskLabelAggregateRepository} in the {@code Optional}.
+     * Returns the wrapped {@link TaskDefinitionRepository} in the {@code Optional}.
      *
      * @return the {@code Optional}
      */
-    Optional<TaskLabelAggregateRepository> getLabelAggregateRepository() {
-        final Optional<TaskLabelAggregateRepository> result = Optional.ofNullable(this.labelAggregateRepository);
+    Optional<TaskDefinitionRepository> getTaskDefinitionRepo() {
+        final Optional<TaskDefinitionRepository> result = Optional.ofNullable(this.taskDefinitionRepo);
         return result;
     }
 }
