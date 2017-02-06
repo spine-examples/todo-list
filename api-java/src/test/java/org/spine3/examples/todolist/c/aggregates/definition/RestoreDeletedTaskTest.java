@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregates;
+package org.spine3.examples.todolist.c.aggregates.definition;
 
 import com.google.common.base.Throwables;
 import io.grpc.stub.StreamObserver;
@@ -32,6 +32,7 @@ import org.spine3.base.CommandContext;
 import org.spine3.base.Event;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.c.aggregates.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
@@ -54,10 +55,8 @@ import static com.google.common.collect.Sets.newHashSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Commands.create;
-import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.TaskStatus.DELETED;
 import static org.spine3.examples.todolist.TaskStatus.OPEN;
-import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.LABEL_ID;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assignLabelToTaskInstance;
@@ -71,36 +70,22 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.resto
  * @author Illia Shepilov
  */
 @DisplayName("RestoreDeletedTask command")
-public class RestoreDeletedTaskTest {
+public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDeletedTask> {
 
-    private static final CommandContext COMMAND_CONTEXT = createCommandContext();
+    private final CommandContext commandContext = getCommandContext();
     private TestResponseObserver responseObserver;
     private CommandBus commandBus;
     private TaskDefinitionPart taskDefinitionPart;
-
     private TaskId taskId;
 
-    private static TaskId createTaskId() {
-        final TaskId result = TaskId.newBuilder()
-                                    .setValue(newUuid())
-                                    .build();
-        return result;
-    }
-
+    @Override
     @BeforeEach
     public void setUp() {
-        taskId = createTaskId();
+        taskId = getTaskId();
         commandBus = TodoListBoundedContext.getCommandBus();
         responseObserver = new TestResponseObserver();
-        taskDefinitionPart = createTaskDefinitionPart(taskId);
-    }
-
-    private static TaskDefinitionPart createTaskDefinitionPart(TaskId taskId) {
-        return new TaskDefinitionPart(taskId);
-    }
-
-    private static TaskLabelsPart createTaskLabelsPart(TaskId taskId) {
-        return new TaskLabelsPart(taskId);
+        taskDefinitionPart = getAggregate();
+        taskId = getTaskId();
     }
 
     @Test
@@ -108,19 +93,19 @@ public class RestoreDeletedTaskTest {
     public void producesEvent() {
 
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        final Command createTaskCmd = create(createTask, COMMAND_CONTEXT);
+        final Command createTaskCmd = create(createTask, commandContext);
         commandBus.post(createTaskCmd, responseObserver);
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, LABEL_ID);
-        final Command assignLabelToTaskCmd = create(assignLabelToTask, COMMAND_CONTEXT);
+        final Command assignLabelToTaskCmd = create(assignLabelToTask, commandContext);
         commandBus.post(assignLabelToTaskCmd, responseObserver);
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        final Command deleteTaskCmd = create(deleteTask, COMMAND_CONTEXT);
+        final Command deleteTaskCmd = create(deleteTask, commandContext);
         commandBus.post(deleteTaskCmd, responseObserver);
 
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-        final Command restoreDeletedTaskCmd = create(restoreDeletedTask, COMMAND_CONTEXT);
+        final Command restoreDeletedTaskCmd = create(restoreDeletedTask, commandContext);
         commandBus.post(restoreDeletedTaskCmd, responseObserver);
 
         final int expectedSetSize = 1;
@@ -153,13 +138,13 @@ public class RestoreDeletedTaskTest {
     @DisplayName("restores deleted task")
     public void restoresTask() {
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        taskDefinitionPart.dispatchForTest(createTask, COMMAND_CONTEXT);
+        taskDefinitionPart.dispatchForTest(createTask, commandContext);
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        taskDefinitionPart.dispatchForTest(deleteTask, COMMAND_CONTEXT);
+        taskDefinitionPart.dispatchForTest(deleteTask, commandContext);
 
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-        taskDefinitionPart.dispatchForTest(restoreDeletedTask, COMMAND_CONTEXT);
+        taskDefinitionPart.dispatchForTest(restoreDeletedTask, commandContext);
 
         final TaskDefinition state = taskDefinitionPart.getState();
         assertEquals(taskId, state.getId());
@@ -170,17 +155,17 @@ public class RestoreDeletedTaskTest {
     @DisplayName("restores deleted task draft")
     public void restoresDraft() {
         final CreateDraft createDraft = createDraftInstance(taskId);
-        taskDefinitionPart.dispatchForTest(createDraft, COMMAND_CONTEXT);
+        taskDefinitionPart.dispatchForTest(createDraft, commandContext);
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        taskDefinitionPart.dispatchForTest(deleteTask, COMMAND_CONTEXT);
+        taskDefinitionPart.dispatchForTest(deleteTask, commandContext);
 
         TaskDefinition state = taskDefinitionPart.getState();
         assertEquals(taskId, state.getId());
         assertEquals(DELETED, state.getTaskStatus());
 
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-        taskDefinitionPart.dispatchForTest(restoreDeletedTask, COMMAND_CONTEXT);
+        taskDefinitionPart.dispatchForTest(restoreDeletedTask, commandContext);
 
         state = taskDefinitionPart.getState();
         assertEquals(taskId, state.getId());
@@ -191,14 +176,14 @@ public class RestoreDeletedTaskTest {
     @DisplayName("cannot restore task when task is completed")
     public void cannotRestoreCompletedTask() {
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        taskDefinitionPart.dispatchForTest(createTask, COMMAND_CONTEXT);
+        taskDefinitionPart.dispatchForTest(createTask, commandContext);
 
         final CompleteTask completeTask = completeTaskInstance(taskId);
-        taskDefinitionPart.dispatchForTest(completeTask, COMMAND_CONTEXT);
+        taskDefinitionPart.dispatchForTest(completeTask, commandContext);
 
         try {
             final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-            taskDefinitionPart.dispatchForTest(restoreDeletedTask, COMMAND_CONTEXT);
+            taskDefinitionPart.dispatchForTest(restoreDeletedTask, commandContext);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
@@ -210,12 +195,12 @@ public class RestoreDeletedTaskTest {
     @DisplayName("cannot restore task when task is finalized")
     public void cannotRestoreFinalizedTask() {
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        final Command createTaskCmd = create(createTask, COMMAND_CONTEXT);
+        final Command createTaskCmd = create(createTask, commandContext);
         commandBus.post(createTaskCmd, responseObserver);
 
         try {
             final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-            final Command restoreDeletedTaskCmd = create(restoreDeletedTask, COMMAND_CONTEXT);
+            final Command restoreDeletedTaskCmd = create(restoreDeletedTask, commandContext);
             commandBus.post(restoreDeletedTaskCmd, responseObserver);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
@@ -228,11 +213,11 @@ public class RestoreDeletedTaskTest {
     @DisplayName("cannot restore task when task in draft state")
     public void cannotRestoreDraft() {
         final CreateDraft createDraft = createDraftInstance(taskId);
-        taskDefinitionPart.dispatchForTest(createDraft, COMMAND_CONTEXT);
+        taskDefinitionPart.dispatchForTest(createDraft, commandContext);
 
         try {
             final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-            taskDefinitionPart.dispatchForTest(restoreDeletedTask, COMMAND_CONTEXT);
+            taskDefinitionPart.dispatchForTest(restoreDeletedTask, commandContext);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
