@@ -22,9 +22,7 @@ package org.spine3.examples.todolist.testdata;
 
 import org.spine3.server.BoundedContext;
 import org.spine3.server.event.EventBus;
-import org.spine3.server.event.enrich.EventEnricher;
 import org.spine3.server.storage.StorageFactorySwitch;
-import org.spine3.server.storage.memory.InMemoryStorageFactory;
 
 /**
  * Provides bounded context for test needs.
