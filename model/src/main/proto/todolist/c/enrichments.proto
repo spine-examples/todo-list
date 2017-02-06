@@ -32,24 +32,22 @@ import "spine/annotations.proto";
 import "spine/enrichment_annotations.proto";
 import "todolist/values.proto";
 import "todolist/model.proto";
+import "todolist/task_definition.proto";
 
-// Enrichment for task and label details.
+// Enrichment for the task details.
 //
 message DetailsEnrichment {
 
     option (enrichment_for) = "spine.examples.todolist.LabelledTaskRestored,"
-                              "spine.examples.todolist.LabelAssignedToTask";
-
-    // A label details.
-    LabelDetails label_details = 1 [(by) = "label_id"];
+                                "spine.examples.todolist.LabelAssignedToTask";
 
     // A task details.
-    TaskDetails task_details = 2 [(by) = "task_id"];
+    TaskDetails task_details = 1 [(by) = "task_id"];
 }
 
-// Enrichment for the label list.
+// Enrichment for the labels list.
 //
-message LabelListEnrichment {
+message LabelsListEnrichment {
 
     option (enrichment_for) = "spine.examples.todolist.TaskDescriptionUpdated,"
                               "spine.examples.todolist.TaskPriorityUpdated,"
@@ -57,10 +55,12 @@ message LabelListEnrichment {
                               "spine.examples.todolist.TaskCompleted,"
                               "spine.examples.todolist.TaskReopened,"
                               "spine.examples.todolist.TaskDeleted,"
-                              "spine.examples.todolist.TaskDraftFinalized";
+                              "spine.examples.todolist.TaskDraftFinalized,"
+                              "spine.examples.todolist.LabelledTaskRestored,"
+                              "spine.examples.todolist.LabelAssignedToTask";
 
-    // A label ID list.
-    LabelIdList label_id_list = 1 [(by) = "task_id"];
+    // Labels list.
+    LabelsList labels_list = 1 [(by) = "task_id"];
 }
 
 // Enrichment for the task.
@@ -69,5 +69,5 @@ message TaskEnrichment {
     option (enrichment_for) = "spine.examples.todolist.TaskDraftFinalized";
 
     // A task.
-    Task task = 1 [(by) = "task_id"];
+    TaskDefinition task_definition = 1 [(by) = "task_id"];
 }
