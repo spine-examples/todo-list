@@ -46,7 +46,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
@@ -60,7 +59,6 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 @DisplayName("UpdateTaskDescription command")
 public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateTaskDescription> {
 
-    private static final String EXPECTED_DESCRIPTION = "description";
     private final CommandContext commandContext = getCommandContext();
     private TaskDefinitionPart aggregate;
     private TaskId taskId;
@@ -167,7 +165,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
         aggregate.dispatchForTest(createBasicTask, commandContext);
 
-        final String expectedValue = EXPECTED_DESCRIPTION;
+        final String expectedValue = "expected description";
         final String newValue = "update description";
         final String actualValue = createBasicTask.getDescription();
 
