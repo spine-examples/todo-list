@@ -56,7 +56,7 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("UpdateTaskDueDate commamnd")
+@DisplayName("UpdateTaskDueDate command")
 public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskDueDate> {
 
     private TaskDefinitionPart aggregate;
