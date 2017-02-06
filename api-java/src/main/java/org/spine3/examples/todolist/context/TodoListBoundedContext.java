@@ -21,12 +21,19 @@
 package org.spine3.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
+import org.spine3.examples.todolist.repositories.DraftTasksViewRepository;
+import org.spine3.examples.todolist.repositories.LabelledTasksViewRepository;
+import org.spine3.examples.todolist.repositories.MyListViewRepository;
 import org.spine3.examples.todolist.repositories.TaskDefinitionRepository;
 import org.spine3.examples.todolist.repositories.TaskLabelsRepository;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.command.CommandBus;
+import org.spine3.server.event.EventBus;
+import org.spine3.server.event.enrich.EventEnricher;
 import org.spine3.server.storage.StorageFactory;
 import org.spine3.server.storage.StorageFactorySwitch;
+
+import java.util.function.Supplier;
 
 /**
  * @author Illia Shepilov
@@ -51,19 +58,50 @@ public class TodoListBoundedContext {
      * Creates new instance of the Tasks Bounded Context.
      */
     private static BoundedContext create() {
-        final BoundedContext boundedContext = initBoundedContext();
         final StorageFactorySwitch factorySwitch = StorageFactorySwitch.getInstance();
         final StorageFactory storageFactory = factorySwitch.get();
-        boundedContext.register(getTaskDefinitionRepository(boundedContext, storageFactory));
-        boundedContext.register(getTaskLabelsRepository(boundedContext, storageFactory));
+        final TodoListRepositoryProvider repositoryProvider = new TodoListRepositoryProvider();
+        final EventEnricher eventEnricher = initEventEnricher(repositoryProvider);
+        final EventBus eventBus = initEventBus(storageFactory, eventEnricher);
+        final BoundedContext boundedContext = initBoundedContext(eventBus);
+
+        final TaskDefinitionRepository taskDefinitionRepository =
+                getTaskDefinitionRepository(boundedContext, storageFactory);
+        boundedContext.register(taskDefinitionRepository);
+        final TaskLabelsRepository taskLabelsRepository = getTaskLabelsRepository(boundedContext, storageFactory);
+        boundedContext.register(taskLabelsRepository);
+        boundedContext.register(getMyListViewRepository(boundedContext, storageFactory));
+        boundedContext.register(getLabelledTasksViewRepository(boundedContext, storageFactory));
+        boundedContext.register(getDraftTasksViewRepository(boundedContext, storageFactory));
+        repositoryProvider.setTaskDefinitionRepository(taskDefinitionRepository);
+        repositoryProvider.setTaskLabelsRepository(taskLabelsRepository);
         return boundedContext;
     }
 
-    private static BoundedContext initBoundedContext() {
-        final BoundedContext boundedContext = BoundedContext.newBuilder()
-                                                            .setName(NAME)
-                                                            .build();
-        return boundedContext;
+    private static EventEnricher initEventEnricher(TodoListRepositoryProvider repositoryProvider) {
+        final Supplier<EventEnricher> eventEnricherSupplier =
+                EventEnricherSupplier.newBuilder()
+                                     .setRepositoryProvider(repositoryProvider)
+                                     .build();
+
+        final EventEnricher result = eventEnricherSupplier.get();
+        return result;
+    }
+
+    private static EventBus initEventBus(StorageFactory storageFactory, EventEnricher eventEnricher) {
+        final EventBus result = EventBus.newBuilder()
+                                        .setStorageFactory(storageFactory)
+                                        .setEnricher(eventEnricher)
+                                        .build();
+        return result;
+    }
+
+    private static BoundedContext initBoundedContext(EventBus eventBus) {
+        final BoundedContext result = BoundedContext.newBuilder()
+                                                    .setName(NAME)
+                                                    .setEventBus(eventBus)
+                                                    .build();
+        return result;
     }
 
     private static TaskDefinitionRepository getTaskDefinitionRepository(BoundedContext boundedContext,
@@ -78,6 +116,27 @@ public class TodoListBoundedContext {
         final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository(boundedContext);
         taskLabelsRepo.initStorage(storageFactory);
         return taskLabelsRepo;
+    }
+
+    private static MyListViewRepository getMyListViewRepository(BoundedContext boundedContext,
+                                                                StorageFactory storageFactory) {
+        final MyListViewRepository myListViewRepo = new MyListViewRepository(boundedContext);
+        myListViewRepo.initStorage(storageFactory);
+        return myListViewRepo;
+    }
+
+    private static LabelledTasksViewRepository getLabelledTasksViewRepository(BoundedContext boundedContext,
+                                                                              StorageFactory storageFactory) {
+        final LabelledTasksViewRepository labelledTasksViewRepo = new LabelledTasksViewRepository(boundedContext);
+        labelledTasksViewRepo.initStorage(storageFactory);
+        return labelledTasksViewRepo;
+    }
+
+    private static DraftTasksViewRepository getDraftTasksViewRepository(BoundedContext boundedContext,
+                                                                        StorageFactory storageFactory) {
+        final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository(boundedContext);
+        draftTasksViewRepo.initStorage(storageFactory);
+        return draftTasksViewRepo;
     }
 
     @VisibleForTesting
