@@ -195,8 +195,8 @@ public class DraftTasksViewProjectionTest {
     }
 
     @Nested
-    @DisplayName("UpdateTaskDueDate event")
-    class UpdateTaskDueDate {
+    @DisplayName("TaskDueDateUpdated event")
+    class DueDateUpdatedEvent {
 
         @Test
         @DisplayName("updates task due date")
@@ -246,8 +246,8 @@ public class DraftTasksViewProjectionTest {
     }
 
     @Nested
-    @DisplayName("UpdateTaskPriority event")
-    class UpdateTaskPriorityEvent {
+    @DisplayName("TaskPriorityUpdated event")
+    class TaskPriorityUpdatedEvent {
 
         @Test
         @DisplayName("updates the task priority")
@@ -298,8 +298,8 @@ public class DraftTasksViewProjectionTest {
     }
 
     @Nested
-    @DisplayName("UpdateLabelDetails event")
-    class UpdateLabelDetailsEvent {
+    @DisplayName("LabelDetailsUpdated event")
+    class LabelDetailsUpdatedEvent {
 
         @Test
         @DisplayName("updates label details")
@@ -360,8 +360,8 @@ public class DraftTasksViewProjectionTest {
     }
 
     @Nested
-    @DisplayName("RemoveLabelFromTask event")
-    class RemoveLabelFromTaskEvent {
+    @DisplayName("LabelRemovedFromTask event")
+    class LabelRemovedFromTaskEvent {
 
         @Test
         @DisplayName("removes TaskView from state")
