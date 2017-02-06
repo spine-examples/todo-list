@@ -20,22 +20,14 @@
 
 package org.spine3.examples.todolist.server;
 
-import org.spine3.examples.todolist.repositories.DraftTasksViewRepository;
-import org.spine3.examples.todolist.repositories.LabelledTasksViewRepository;
-import org.spine3.examples.todolist.repositories.MyListViewRepository;
-import org.spine3.examples.todolist.repositories.TaskAggregateRepository;
-import org.spine3.examples.todolist.repositories.TaskLabelAggregateRepository;
+import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.CommandService;
 import org.spine3.server.QueryService;
-import org.spine3.server.event.EventBus;
-import org.spine3.server.event.enrich.EventEnricher;
-import org.spine3.server.storage.StorageFactory;
 import org.spine3.server.storage.StorageFactorySwitch;
 import org.spine3.server.transport.GrpcContainer;
 
 import java.io.IOException;
-import java.util.function.Supplier;
 
 import static org.spine3.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static org.spine3.server.event.EventStore.log;
@@ -49,30 +41,11 @@ public class Server {
 
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
-    private TaskAggregateRepository taskAggregateRepository;
-    private TaskLabelAggregateRepository taskLabelAggregateRepository;
-    private MyListViewRepository myListViewRepository;
-    private LabelledTasksViewRepository labelledViewRepository;
-    private DraftTasksViewRepository draftTasksViewRepository;
 
+    //TODO:2017-02-06:illiashepilov: think about that parameter
     public Server(StorageFactorySwitch storageFactorySwitch) {
-        final TodoListRepositoryProvider repositoryProvider = new TodoListRepositoryProvider();
-        final Supplier<EventEnricher> eventEnricherSupplier =
-                EventEnricherSupplier.newBuilder()
-                                     .setRepositoryProvider(repositoryProvider)
-                                     .build();
-        final StorageFactory storageFactory = storageFactorySwitch.get();
-        final EventEnricher eventEnricher = eventEnricherSupplier.get();
-        final EventBus eventBus = EventBus.newBuilder()
-                                          .setStorageFactory(storageFactory)
-                                          .setEnricher(eventEnricher)
-                                          .build();
-        this.boundedContext = initBoundedContext(eventBus);
+        this.boundedContext = TodoListBoundedContext.getInstance();
 
-        initRepositories(storageFactory);
-        registerRepositories();
-        repositoryProvider.setTaskAggregateRepository(taskAggregateRepository);
-        repositoryProvider.setLabelAggregateRepository(taskLabelAggregateRepository);
         final CommandService commandService = initCommandService();
         final QueryService queryService = initQueryService();
         this.grpcContainer = initGrpcContainer(commandService, queryService);
@@ -100,38 +73,6 @@ public class Server {
                                                   .setPort(DEFAULT_CLIENT_SERVICE_PORT)
                                                   .build();
         return result;
-    }
-
-    private static BoundedContext initBoundedContext(EventBus eventBus) {
-        final BoundedContext result = BoundedContext.newBuilder()
-                                                    .setEventBus(eventBus)
-                                                    .build();
-        return result;
-    }
-
-    private void initRepositories(StorageFactory storageFactory) {
-        taskAggregateRepository = new TaskAggregateRepository(boundedContext);
-        taskAggregateRepository.initStorage(storageFactory);
-
-        taskLabelAggregateRepository = new TaskLabelAggregateRepository(boundedContext);
-        taskLabelAggregateRepository.initStorage(storageFactory);
-
-        myListViewRepository = new MyListViewRepository(boundedContext);
-        myListViewRepository.initStorage(storageFactory);
-
-        labelledViewRepository = new LabelledTasksViewRepository(boundedContext);
-        labelledViewRepository.initStorage(storageFactory);
-
-        draftTasksViewRepository = new DraftTasksViewRepository(boundedContext);
-        draftTasksViewRepository.initStorage(storageFactory);
-    }
-
-    private void registerRepositories() {
-        boundedContext.register(taskAggregateRepository);
-        boundedContext.register(taskLabelAggregateRepository);
-        boundedContext.register(myListViewRepository);
-        boundedContext.register(labelledViewRepository);
-        boundedContext.register(draftTasksViewRepository);
     }
 
     /**
