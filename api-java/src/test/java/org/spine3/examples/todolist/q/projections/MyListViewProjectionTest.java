@@ -22,6 +22,8 @@ package org.spine3.examples.todolist.q.projections;
 
 import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.TaskId;
@@ -78,314 +80,368 @@ public class MyListViewProjectionTest {
         projection = new MyListViewProjection(ID);
     }
 
-    @Test
-    public void add_task_view_to_state_when_task_is_created() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        final int expectedSize = 1;
-        projection.on(taskCreatedEvent);
+    @Nested
+    @DisplayName("TaskCreated event")
+    class TaskCreatedEvent {
 
-        final List<TaskView> views = projection.getState()
-                                               .getMyList()
-                                               .getItemsList();
+        @Test
+        @DisplayName("adds TaskView to state")
+        public void addsView() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            final int expectedSize = 1;
+            projection.on(taskCreatedEvent);
 
-        assertEquals(expectedSize, views.size());
+            final List<TaskView> views = projection.getState()
+                                                   .getMyList()
+                                                   .getItemsList();
 
-        final TaskView view = views.get(0);
+            assertEquals(expectedSize, views.size());
 
-        assertEquals(TASK_PRIORITY, view.getPriority());
-        assertEquals(DESCRIPTION, view.getDescription());
+            final TaskView view = views.get(0);
+
+            assertEquals(TASK_PRIORITY, view.getPriority());
+            assertEquals(DESCRIPTION, view.getDescription());
+        }
     }
 
-    @Test
-    public void remove_task_view_from_state_when_task_is_deleted() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        projection.on(taskCreatedEvent);
-        projection.on(taskCreatedEvent);
+    @Nested
+    @DisplayName("TaskDeleted event")
+    class TaskDeletedEvent {
 
-        final TaskDeleted taskDeletedEvent = taskDeletedInstance();
-        projection.on(taskDeletedEvent);
+        @Test
+        @DisplayName("removes TaskView from state")
+        public void removesView() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            projection.on(taskCreatedEvent);
+            projection.on(taskCreatedEvent);
 
-        List<TaskView> views = projection.getState()
-                                         .getMyList()
-                                         .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, views.size());
+            final TaskDeleted taskDeletedEvent = taskDeletedInstance();
+            projection.on(taskDeletedEvent);
 
-        projection.on(taskDeletedEvent);
-        views = projection.getState()
-                          .getMyList()
-                          .getItemsList();
-        assertTrue(views.isEmpty());
+            List<TaskView> views = projection.getState()
+                                             .getMyList()
+                                             .getItemsList();
+            final int expectedListSize = 1;
+            assertEquals(expectedListSize, views.size());
+
+            projection.on(taskDeletedEvent);
+            views = projection.getState()
+                              .getMyList()
+                              .getItemsList();
+            assertTrue(views.isEmpty());
+        }
     }
 
-    @Test
-    public void update_task_description_when_handled_event_task_description_updated() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        projection.on(taskCreatedEvent);
+    @Nested
+    @DisplayName("UpdateTaskDescription event")
+    class TaskDescriptionUpdatedEvent {
 
-        final String updatedDescription = UPDATED_DESCRIPTION;
-        final TaskId expectedTaskId = taskCreatedEvent.getId();
+        @Test
+        @DisplayName("updates task description")
+        public void updatesDescription() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            projection.on(taskCreatedEvent);
 
-        final TaskDescriptionUpdated descriptionUpdatedEvent =
-                taskDescriptionUpdatedInstance(expectedTaskId, updatedDescription);
-        projection.on(descriptionUpdatedEvent);
+            final String updatedDescription = UPDATED_DESCRIPTION;
+            final TaskId expectedTaskId = taskCreatedEvent.getId();
 
-        final TaskListView taskListView = projection.getState()
-                                                    .getMyList();
+            final TaskDescriptionUpdated descriptionUpdatedEvent =
+                    taskDescriptionUpdatedInstance(expectedTaskId, updatedDescription);
+            projection.on(descriptionUpdatedEvent);
 
-        final int expectedViewSize = 1;
-        assertEquals(expectedViewSize, taskListView.getItemsCount());
+            final TaskListView taskListView = projection.getState()
+                                                        .getMyList();
 
-        final TaskView view = taskListView.getItemsList()
-                                          .get(0);
-        assertEquals(expectedTaskId, view.getId());
-        assertEquals(updatedDescription, view.getDescription());
-    }
+            final int expectedViewSize = 1;
+            assertEquals(expectedViewSize, taskListView.getItemsCount());
 
-    @Test
-    public void not_update_task_description_when_handled_event_task_description_updated_with_wrong_task_id() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        projection.on(taskCreatedEvent);
-
-        final String updatedDescription = UPDATED_DESCRIPTION;
-
-        final TaskDescriptionUpdated descriptionUpdatedEvent =
-                taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), updatedDescription);
-        projection.on(descriptionUpdatedEvent);
-
-        final TaskListView taskListView = projection.getState()
-                                                    .getMyList();
-        final int expectedViewListSize = 1;
-        assertEquals(expectedViewListSize, taskListView.getItemsCount());
-
-        final TaskView view = taskListView.getItemsList()
-                                          .get(0);
-        assertEquals(TASK_ID, view.getId());
-        assertNotEquals(updatedDescription, view.getDescription());
-    }
-
-    @Test
-    public void update_task_due_date_when_handled_event_task_due_date_updated() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        projection.on(taskCreatedEvent);
-
-        final Timestamp updatedDueDate = Timestamps.getCurrentTime();
-        final TaskId expectedTaskId = taskCreatedEvent.getId();
-
-        final TaskDueDateUpdated taskDueDateUpdatedEvent = taskDueDateUpdatedInstance(expectedTaskId, updatedDueDate);
-        projection.on(taskDueDateUpdatedEvent);
-
-        final TaskListView taskListView = projection.getState()
-                                                    .getMyList();
-        final int expectedViewListSize = 1;
-        assertEquals(expectedViewListSize, taskListView.getItemsCount());
-
-        final TaskView taskView = taskListView.getItemsList()
+            final TaskView view = taskListView.getItemsList()
                                               .get(0);
-        assertEquals(expectedTaskId, taskView.getId());
-        assertEquals(updatedDueDate, taskView.getDueDate());
+            assertEquals(expectedTaskId, view.getId());
+            assertEquals(updatedDescription, view.getDescription());
+        }
+
+        @Test
+        @DisplayName("does not update description by wrong id")
+        public void doesNotUpdateDescription() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            projection.on(taskCreatedEvent);
+
+            final String updatedDescription = UPDATED_DESCRIPTION;
+
+            final TaskDescriptionUpdated descriptionUpdatedEvent =
+                    taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), updatedDescription);
+            projection.on(descriptionUpdatedEvent);
+
+            final TaskListView taskListView = projection.getState()
+                                                        .getMyList();
+            final int expectedViewListSize = 1;
+            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+
+            final TaskView view = taskListView.getItemsList()
+                                              .get(0);
+            assertEquals(TASK_ID, view.getId());
+            assertNotEquals(updatedDescription, view.getDescription());
+        }
     }
 
-    @Test
-    public void not_update_task_due_date_when_handled_event_task_due_date_updated_with_wrong_task_id() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        projection.on(taskCreatedEvent);
+    @Nested
+    @DisplayName("UpdateTaskDueDate event")
+    class TaskDueDateUpdatedEvent {
 
-        final Timestamp updatedDueDate = Timestamps.getCurrentTime();
+        @Test
+        @DisplayName("updates task due date")
+        public void updatesDueDate() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            projection.on(taskCreatedEvent);
 
-        final TaskDueDateUpdated taskDueDateUpdatedEvent =
-                taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), updatedDueDate);
-        projection.on(taskDueDateUpdatedEvent);
+            final Timestamp updatedDueDate = Timestamps.getCurrentTime();
+            final TaskId expectedTaskId = taskCreatedEvent.getId();
 
-        final TaskListView taskListView = projection.getState()
-                                                    .getMyList();
-        final int expectedViewListSize = 1;
-        assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            final TaskDueDateUpdated taskDueDateUpdatedEvent = taskDueDateUpdatedInstance(expectedTaskId, updatedDueDate);
+            projection.on(taskDueDateUpdatedEvent);
 
-        final TaskView taskView = taskListView.getItemsList()
-                                              .get(0);
-        assertNotEquals(updatedDueDate, taskView.getDueDate());
+            final TaskListView taskListView = projection.getState()
+                                                        .getMyList();
+            final int expectedViewListSize = 1;
+            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+
+            final TaskView taskView = taskListView.getItemsList()
+                                                  .get(0);
+            assertEquals(expectedTaskId, taskView.getId());
+            assertEquals(updatedDueDate, taskView.getDueDate());
+        }
+
+        @Test
+        @DisplayName("does not update task due date")
+        public void doeNotUpdateDueDate() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            projection.on(taskCreatedEvent);
+
+            final Timestamp updatedDueDate = Timestamps.getCurrentTime();
+
+            final TaskDueDateUpdated taskDueDateUpdatedEvent =
+                    taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), updatedDueDate);
+            projection.on(taskDueDateUpdatedEvent);
+
+            final TaskListView taskListView = projection.getState()
+                                                        .getMyList();
+            final int expectedViewListSize = 1;
+            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+
+            final TaskView taskView = taskListView.getItemsList()
+                                                  .get(0);
+            assertNotEquals(updatedDueDate, taskView.getDueDate());
+        }
     }
 
-    @Test
-    public void update_task_priority_when_handled_event_task_priority_updated() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        projection.on(taskCreatedEvent);
+    @Nested
+    @DisplayName("TaskPriorityUpdated event")
+    class TaskPriorityUpdatedEvent{
 
-        final TaskPriority updatedTaskPriority = TaskPriority.LOW;
-        final TaskId expectedTaskId = taskCreatedEvent.getId();
+        @Test
+        @DisplayName("updates the task priority")
+        public void updatesPriority() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            projection.on(taskCreatedEvent);
 
-        final TaskPriorityUpdated taskPriorityUpdatedEvent =
-                taskPriorityUpdatedInstance(expectedTaskId, updatedTaskPriority);
-        projection.on(taskPriorityUpdatedEvent);
+            final TaskPriority updatedTaskPriority = TaskPriority.LOW;
+            final TaskId expectedTaskId = taskCreatedEvent.getId();
 
-        final TaskListView taskListView = projection.getState()
-                                                    .getMyList();
-        final int expectedViewListSize = 1;
-        assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            final TaskPriorityUpdated taskPriorityUpdatedEvent =
+                    taskPriorityUpdatedInstance(expectedTaskId, updatedTaskPriority);
+            projection.on(taskPriorityUpdatedEvent);
 
-        final TaskView taskView = taskListView.getItemsList()
-                                              .get(0);
-        assertEquals(expectedTaskId, taskView.getId());
-        assertEquals(updatedTaskPriority, taskView.getPriority());
+            final TaskListView taskListView = projection.getState()
+                                                        .getMyList();
+            final int expectedViewListSize = 1;
+            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+
+            final TaskView taskView = taskListView.getItemsList()
+                                                  .get(0);
+            assertEquals(expectedTaskId, taskView.getId());
+            assertEquals(updatedTaskPriority, taskView.getPriority());
+        }
+
+        @Test
+        @DisplayName("does not update the task priority")
+        public void doesNotUpdatePriority() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            projection.on(taskCreatedEvent);
+
+            final TaskPriority updatedTaskPriority = TaskPriority.LOW;
+
+            final TaskPriorityUpdated taskPriorityUpdatedEvent =
+                    taskPriorityUpdatedInstance(TaskId.getDefaultInstance(), updatedTaskPriority);
+            projection.on(taskPriorityUpdatedEvent);
+
+            final TaskListView taskListView = projection.getState()
+                                                        .getMyList();
+            final int expectedViewListSize = 1;
+            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+
+            final TaskView taskView = taskListView.getItemsList()
+                                                  .get(0);
+            assertEquals(TASK_ID, taskView.getId());
+            assertNotEquals(updatedTaskPriority, taskView.getPriority());
+        }
     }
 
-    @Test
-    public void not_update_task_priority_when_handled_event_task_priority_updated_with_wrong_task_id() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        projection.on(taskCreatedEvent);
+    @Nested
+    @DisplayName("LabelDetailsUpdated event")
+    class LabelDetailsUpdatedEvent{
 
-        final TaskPriority updatedTaskPriority = TaskPriority.LOW;
+        @Test
+        @DisplayName("updates label details")
+        public void updatesLabelDetails() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            projection.on(taskCreatedEvent);
 
-        final TaskPriorityUpdated taskPriorityUpdatedEvent =
-                taskPriorityUpdatedInstance(TaskId.getDefaultInstance(), updatedTaskPriority);
-        projection.on(taskPriorityUpdatedEvent);
+            final TaskId expectedTaskId = taskCreatedEvent.getId();
 
-        final TaskListView taskListView = projection.getState()
-                                                    .getMyList();
-        final int expectedViewListSize = 1;
-        assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            final LabelAssignedToTask labelAssignedToTaskEvent = labelAssignedToTaskInstance(expectedTaskId, LABEL_ID);
+            projection.on(labelAssignedToTaskEvent);
 
-        final TaskView taskView = taskListView.getItemsList()
-                                              .get(0);
-        assertEquals(TASK_ID, taskView.getId());
-        assertNotEquals(updatedTaskPriority, taskView.getPriority());
+            final LabelColor updatedColor = LabelColor.BLUE;
+
+            final LabelDetailsUpdated labelDetailsUpdatedEvent =
+                    labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
+            projection.on(labelDetailsUpdatedEvent);
+
+            final TaskListView taskListView = projection.getState()
+                                                        .getMyList();
+            final int expectedViewListSize = 1;
+            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+
+            final TaskView taskView = taskListView.getItemsList()
+                                                  .get(0);
+            assertEquals(LABEL_ID, taskView.getLabelId());
+            assertEquals(updatedColor, taskView.getLabelColor());
+        }
+
+        @Test
+        @DisplayName("does not update label details")
+        public void doesNotUpdateLabelDetails() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            projection.on(taskCreatedEvent);
+
+            final TaskId expectedTaskId = taskCreatedEvent.getId();
+
+            final LabelAssignedToTask labelAssignedToTaskEvent =
+                    labelAssignedToTaskInstance(expectedTaskId, TaskLabelId.getDefaultInstance());
+            projection.on(labelAssignedToTaskEvent);
+
+            final LabelColor updatedColor = LabelColor.BLUE;
+
+            final LabelDetailsUpdated labelDetailsUpdatedEvent =
+                    labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
+            projection.on(labelDetailsUpdatedEvent);
+
+            final TaskListView taskListView = projection.getState()
+                                                        .getMyList();
+            final int expectedViewListSize = 1;
+            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+
+            final TaskView taskView = taskListView.getItemsList()
+                                                  .get(0);
+            assertEquals(expectedTaskId, taskView.getId());
+            assertNotEquals(updatedColor, taskView.getLabelColor());
+        }
     }
 
-    @Test
-    public void update_label_details_when_handled_event_label_details_updated() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        projection.on(taskCreatedEvent);
+    @Nested
+    @DisplayName("TaskCompleted event")
+    class TaskCompletedEvent{
 
-        final TaskId expectedTaskId = taskCreatedEvent.getId();
+        @Test
+        @DisplayName("completes task")
+        public void completesTask() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            projection.on(taskCreatedEvent);
 
-        final LabelAssignedToTask labelAssignedToTaskEvent = labelAssignedToTaskInstance(expectedTaskId, LABEL_ID);
-        projection.on(labelAssignedToTaskEvent);
+            final TaskCompleted taskCompletedEvent = taskCompletedInstance();
+            projection.on(taskCompletedEvent);
 
-        final LabelColor updatedColor = LabelColor.BLUE;
+            final TaskListView taskListView = projection.getState()
+                                                        .getMyList();
+            final int expectedViewListSize = 1;
+            assertEquals(expectedViewListSize, taskListView.getItemsCount());
 
-        final LabelDetailsUpdated labelDetailsUpdatedEvent =
-                labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
-        projection.on(labelDetailsUpdatedEvent);
+            final TaskView taskView = taskListView.getItemsList()
+                                                  .get(0);
+            assertEquals(TASK_ID, taskView.getId());
+            assertTrue(taskView.getCompleted());
+        }
 
-        final TaskListView taskListView = projection.getState()
-                                                    .getMyList();
-        final int expectedViewListSize = 1;
-        assertEquals(expectedViewListSize, taskListView.getItemsCount());
+        @Test
+        @DisplayName("does not complete task by wrong task id ")
+        public void doesNotComplete() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            projection.on(taskCreatedEvent);
 
-        final TaskView taskView = taskListView.getItemsList()
-                                              .get(0);
-        assertEquals(LABEL_ID, taskView.getLabelId());
-        assertEquals(updatedColor, taskView.getLabelColor());
+            final TaskCompleted taskCompletedEvent = taskCompletedInstance(TaskId.getDefaultInstance());
+            projection.on(taskCompletedEvent);
+
+            final TaskListView taskListView = projection.getState()
+                                                        .getMyList();
+            final int expectedViewListSize = 1;
+            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+
+            final TaskView taskView = taskListView.getItemsList()
+                                                  .get(0);
+            assertEquals(TASK_ID, taskView.getId());
+            assertFalse(taskView.getCompleted());
+        }
     }
 
-    @Test
-    public void not_update_label_details_when_handled_event_label_details_updated_with_wrong_label_id() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        projection.on(taskCreatedEvent);
+    @Nested
+    @DisplayName("TaskReopened event")
+    class TaskReopenedEvent{
 
-        final TaskId expectedTaskId = taskCreatedEvent.getId();
+        @Test
+        @DisplayName("reopens task")
+        public void reopensTask() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            projection.on(taskCreatedEvent);
 
-        final LabelAssignedToTask labelAssignedToTaskEvent =
-                labelAssignedToTaskInstance(expectedTaskId, TaskLabelId.getDefaultInstance());
-        projection.on(labelAssignedToTaskEvent);
+            final TaskCompleted taskCompletedEvent = taskCompletedInstance();
+            projection.on(taskCompletedEvent);
 
-        final LabelColor updatedColor = LabelColor.BLUE;
+            final TaskReopened taskReopenedEvent = taskReopenedInstance();
+            projection.on(taskReopenedEvent);
 
-        final LabelDetailsUpdated labelDetailsUpdatedEvent =
-                labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
-        projection.on(labelDetailsUpdatedEvent);
+            final TaskListView taskListView = projection.getState()
+                                                        .getMyList();
+            final int expectedViewListSize = 1;
+            assertEquals(expectedViewListSize, taskListView.getItemsCount());
 
-        final TaskListView taskListView = projection.getState()
-                                                    .getMyList();
-        final int expectedViewListSize = 1;
-        assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            final TaskView taskView = taskListView.getItemsList()
+                                                  .get(0);
+            assertEquals(TASK_ID, taskView.getId());
+            assertFalse(taskView.getCompleted());
+        }
 
-        final TaskView taskView = taskListView.getItemsList()
-                                              .get(0);
-        assertEquals(expectedTaskId, taskView.getId());
-        assertNotEquals(updatedColor, taskView.getLabelColor());
-    }
+        @Test
+        @DisplayName("does not reopen task by wrong task id")
+        public void doesNotReopenTask() {
+            final TaskCreated taskCreatedEvent = taskCreatedInstance();
+            projection.on(taskCreatedEvent);
 
-    @Test
-    public void update_completed_when_handled_event_task_completed() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        projection.on(taskCreatedEvent);
+            final TaskCompleted taskCompletedEvent = taskCompletedInstance();
+            projection.on(taskCompletedEvent);
 
-        final TaskCompleted taskCompletedEvent = taskCompletedInstance();
-        projection.on(taskCompletedEvent);
+            final TaskReopened taskReopenedEvent = taskReopenedInstance(TaskId.getDefaultInstance());
+            projection.on(taskReopenedEvent);
 
-        final TaskListView taskListView = projection.getState()
-                                                    .getMyList();
-        final int expectedViewListSize = 1;
-        assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            final TaskListView taskListView = projection.getState()
+                                                        .getMyList();
+            final int expectedViewListSize = 1;
+            assertEquals(expectedViewListSize, taskListView.getItemsCount());
 
-        final TaskView taskView = taskListView.getItemsList()
-                                              .get(0);
-        assertEquals(TASK_ID, taskView.getId());
-        assertTrue(taskView.getCompleted());
-    }
-
-    @Test
-    public void not_update_completed_when_handled_event_task_completed_with_wrong_task_id() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        projection.on(taskCreatedEvent);
-
-        final TaskCompleted taskCompletedEvent = taskCompletedInstance(TaskId.getDefaultInstance());
-        projection.on(taskCompletedEvent);
-
-        final TaskListView taskListView = projection.getState()
-                                                    .getMyList();
-        final int expectedViewListSize = 1;
-        assertEquals(expectedViewListSize, taskListView.getItemsCount());
-
-        final TaskView taskView = taskListView.getItemsList()
-                                              .get(0);
-        assertEquals(TASK_ID, taskView.getId());
-        assertFalse(taskView.getCompleted());
-    }
-
-    @Test
-    public void update_completed_when_handled_event_task_reopened() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        projection.on(taskCreatedEvent);
-
-        final TaskCompleted taskCompletedEvent = taskCompletedInstance();
-        projection.on(taskCompletedEvent);
-
-        final TaskReopened taskReopenedEvent = taskReopenedInstance();
-        projection.on(taskReopenedEvent);
-
-        final TaskListView taskListView = projection.getState()
-                                                    .getMyList();
-        final int expectedViewListSize = 1;
-        assertEquals(expectedViewListSize, taskListView.getItemsCount());
-
-        final TaskView taskView = taskListView.getItemsList()
-                                              .get(0);
-        assertEquals(TASK_ID, taskView.getId());
-        assertFalse(taskView.getCompleted());
-    }
-
-    @Test
-    public void not_update_completed_when_handled_event_task_reopened_with_wrong_task_id() {
-        final TaskCreated taskCreatedEvent = taskCreatedInstance();
-        projection.on(taskCreatedEvent);
-
-        final TaskCompleted taskCompletedEvent = taskCompletedInstance();
-        projection.on(taskCompletedEvent);
-
-        final TaskReopened taskReopenedEvent = taskReopenedInstance(TaskId.getDefaultInstance());
-        projection.on(taskReopenedEvent);
-
-        final TaskListView taskListView = projection.getState()
-                                                    .getMyList();
-        final int expectedViewListSize = 1;
-        assertEquals(expectedViewListSize, taskListView.getItemsCount());
-
-        final TaskView taskView = taskListView.getItemsList()
-                                              .get(0);
-        assertEquals(TASK_ID, taskView.getId());
-        assertTrue(taskView.getCompleted());
+            final TaskView taskView = taskListView.getItemsList()
+                                                  .get(0);
+            assertEquals(TASK_ID, taskView.getId());
+            assertTrue(taskView.getCompleted());
+        }
     }
 }
