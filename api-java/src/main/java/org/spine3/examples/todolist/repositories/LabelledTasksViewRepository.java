@@ -20,11 +20,11 @@
 
 package org.spine3.examples.todolist.repositories;
 
-import com.google.common.collect.Sets;
 import org.spine3.base.EventContext;
-import org.spine3.examples.todolist.LabelIdList;
+import org.spine3.examples.todolist.LabelsList;
+import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.TaskLabelId;
-import org.spine3.examples.todolist.c.enrichments.LabelListEnrichment;
+import org.spine3.examples.todolist.c.enrichments.LabelsListEnrichment;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
 import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
 import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
@@ -42,10 +42,9 @@ import org.spine3.server.entity.IdSetEventFunction;
 import org.spine3.server.projection.ProjectionRepository;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static com.google.common.collect.Sets.newHashSet;
 import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
 
 /**
@@ -108,10 +107,13 @@ public class LabelledTasksViewRepository
         addIdSetFunction(TaskDueDateUpdated.class, taskDueDateUpdatedFn);
     }
 
-    private Set<TaskLabelId> getLabelIdsSet(EventContext context) {
-        final LabelListEnrichment enrichment = getEnrichment(LabelListEnrichment.class, context);
-        final LabelIdList labelIdList = enrichment.getLabelIdList();
-        final Set<TaskLabelId> result = newHashSet(labelIdList.getLabelIdList());
+    private static Set<TaskLabelId> getLabelIdsSet(EventContext context) {
+        final LabelsListEnrichment enrichment = getEnrichment(LabelsListEnrichment.class, context);
+        final LabelsList labelsList = enrichment.getLabelsList();
+        final Set<TaskLabelId> result = labelsList.getLabelsList()
+                                                  .stream()
+                                                  .map(TaskLabel::getId)
+                                                  .collect(Collectors.toSet());
         return result;
     }
 }

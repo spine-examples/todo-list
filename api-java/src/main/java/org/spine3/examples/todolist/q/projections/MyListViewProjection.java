@@ -21,7 +21,7 @@
 package org.spine3.examples.todolist.q.projections;
 
 import org.spine3.base.EventContext;
-import org.spine3.examples.todolist.Task;
+import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskListId;
@@ -183,12 +183,12 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
     public void on(TaskDraftFinalized event, EventContext context) {
         final TaskId taskId = event.getTaskId();
         final TaskEnrichment enrichment = getEnrichment(TaskEnrichment.class, context);
-        final Task task = enrichment.getTask();
+        final TaskDefinition taskDefinition = enrichment.getTaskDefinition();
         final TaskView view = TaskView.newBuilder()
                                       .setId(taskId)
-                                      .setDescription(task.getDescription())
-                                      .setDueDate(task.getDueDate())
-                                      .setPriority(task.getPriority())
+                                      .setDescription(taskDefinition.getDescription())
+                                      .setDueDate(taskDefinition.getDueDate())
+                                      .setPriority(taskDefinition.getPriority())
                                       .build();
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList()
