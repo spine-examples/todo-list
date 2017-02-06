@@ -44,6 +44,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.creat
 /**
  * @author Illia Shepilov
  */
+@DisplayName("CreateBasicTask command")
 public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTask> {
 
     private final CommandContext commandContext = getCommandContext();
