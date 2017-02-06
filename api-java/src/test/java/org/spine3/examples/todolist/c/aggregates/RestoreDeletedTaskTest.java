@@ -21,11 +21,15 @@
 package org.spine3.examples.todolist.c.aggregates;
 
 import com.google.common.base.Throwables;
+import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spine3.base.Command;
 import org.spine3.base.CommandContext;
+import org.spine3.base.Event;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
@@ -34,11 +38,19 @@ import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
 import org.spine3.examples.todolist.c.commands.RestoreDeletedTask;
+import org.spine3.examples.todolist.c.events.LabelledTaskRestored;
 import org.spine3.examples.todolist.c.failures.CannotRestoreDeletedTask;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.examples.todolist.testdata.TestResponseObserver;
+import org.spine3.protobuf.AnyPacker;
+import org.spine3.protobuf.TypeName;
 import org.spine3.server.command.CommandBus;
+import org.spine3.server.event.EventFilter;
+import org.spine3.server.event.EventStreamQuery;
 
+import java.util.Set;
+
+import static com.google.common.collect.Sets.newHashSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Commands.create;
@@ -94,6 +106,7 @@ public class RestoreDeletedTaskTest {
     @Test
     @DisplayName("produces LabelledTaskRestored event")
     public void producesEvent() {
+
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
         final Command createTaskCmd = create(createTask, COMMAND_CONTEXT);
         commandBus.post(createTaskCmd, responseObserver);
@@ -110,13 +123,30 @@ public class RestoreDeletedTaskTest {
         final Command restoreDeletedTaskCmd = create(restoreDeletedTask, COMMAND_CONTEXT);
         commandBus.post(restoreDeletedTaskCmd, responseObserver);
 
-        //TODO:2017-02-03:illiashepilov:
-        final int expectedListSize = 2;
-        //assertEquals(expectedListSize, messageList.size());
-        //
-        //final LabelledTaskRestored labelledTaskRestored = (LabelledTaskRestored) messageList.get(1);
-        //assertEquals(TASK_ID, labelledTaskRestored.getTaskId());
-        //assertEquals(LABEL_ID, labelledTaskRestored.getLabelId());
+        final int expectedSetSize = 1;
+
+        final String typeName = TypeName.of(LabelledTaskRestored.class);
+        final EventFilter eventFilter = EventFilter.newBuilder()
+                                                   .setEventType(typeName)
+                                                   .build();
+        final EventStreamQuery query = EventStreamQuery.newBuilder()
+                                                       .addFilter(eventFilter)
+                                                       .build();
+        final EventStreamObserver eventStreamObserver = new EventStreamObserver();
+
+        TodoListBoundedContext.getInstance()
+                              .getEventBus()
+                              .getEventStore()
+                              .read(query, eventStreamObserver);
+
+        final Set<Event> events = eventStreamObserver.eventSet;
+
+        assertEquals(expectedSetSize, events.size());
+        final LabelledTaskRestored labelledTaskRestored = AnyPacker.unpack(events.iterator()
+                                                                                 .next()
+                                                                                 .getMessage());
+        assertEquals(taskId, labelledTaskRestored.getTaskId());
+        assertEquals(LABEL_ID, labelledTaskRestored.getLabelId());
     }
 
     @Test
@@ -207,6 +237,37 @@ public class RestoreDeletedTaskTest {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotRestoreDeletedTask);
+        }
+    }
+
+    private static class EventStreamObserver implements StreamObserver<Event> {
+
+        private final Set<Event> eventSet = newHashSet();
+
+        @Override
+        public void onNext(Event value) {
+            eventSet.add(value);
+        }
+
+        @Override
+        public void onError(Throwable t) {
+            log().error("Occurred exception", t);
+        }
+
+        @Override
+        public void onCompleted() {
+            log().info("completed");
+        }
+
+        private enum LogSingleton {
+            INSTANCE;
+
+            @SuppressWarnings("NonSerializableFieldInSerializableClass")
+            private final Logger value = LoggerFactory.getLogger(EventStreamObserver.class);
+        }
+
+        private static Logger log() {
+            return LogSingleton.INSTANCE.value;
         }
     }
 }
