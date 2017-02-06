@@ -32,7 +32,7 @@ import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.cr
 /**
  * @author Illia Shepilov
  */
-public abstract class TaskDefinitionCommandTest<C extends Message> extends CommandTest<C> {
+abstract class TaskDefinitionCommandTest<C extends Message> extends CommandTest<C> {
 
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
     private final TaskId taskId = createTaskId();
