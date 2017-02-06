@@ -152,11 +152,9 @@ public class DraftTasksViewProjectionTest {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
             projection.on(taskDraftCreatedEvent);
 
-            final String updatedDescription = UPDATED_DESCRIPTION;
             final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
-
             final TaskDescriptionUpdated descriptionUpdatedEvent =
-                    taskDescriptionUpdatedInstance(expectedTaskId, updatedDescription);
+                    taskDescriptionUpdatedInstance(expectedTaskId, UPDATED_DESCRIPTION);
             projection.on(descriptionUpdatedEvent);
 
             final TaskListView taskListView = projection.getState()
@@ -167,12 +165,12 @@ public class DraftTasksViewProjectionTest {
             final TaskView view = taskListView.getItemsList()
                                               .get(0);
             assertEquals(expectedTaskId, view.getId());
-            assertEquals(updatedDescription, view.getDescription());
+            assertEquals(UPDATED_DESCRIPTION, view.getDescription());
         }
 
         @Test
         @DisplayName("does not update task description by wrong task id")
-        public void doesNotUpdate() {
+        public void doesNotUpdateDescription() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
             projection.on(taskDraftCreatedEvent);
 

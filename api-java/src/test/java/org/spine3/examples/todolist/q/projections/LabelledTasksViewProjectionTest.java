@@ -80,9 +80,9 @@ import static org.spine3.examples.todolist.testdata.TestEventFactory.taskReopene
 @SuppressWarnings("OptionalGetWithoutIsPresent") // it is OK as we create all those objects.
 public class LabelledTasksViewProjectionTest {
 
-    private EventBus eventBus;
-    private EventContext eventContext = eventContextInstance();
+    private final EventContext eventContext = eventContextInstance();
     private ProjectionRepository<TaskLabelId, LabelledTasksViewProjection, LabelledTasksView> repository;
+    private EventBus eventBus;
 
     @BeforeEach
     public void setUp() {
@@ -94,8 +94,6 @@ public class LabelledTasksViewProjectionTest {
         repository = new LabelledTasksViewRepository(boundedContext);
         repository.initStorage(storageFactory);
         boundedContext.register(repository);
-        eventBus = boundedContext.getEventBus();
-        eventContext = eventContextInstance();
     }
 
     @Nested
@@ -307,7 +305,6 @@ public class LabelledTasksViewProjectionTest {
             assertEquals(expectedListSize, actualListSize);
 
             final TaskView taskView = listView.getItems(0);
-
             assertEquals(UPDATED_DESCRIPTION, taskView.getDescription());
         }
 

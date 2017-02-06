@@ -133,7 +133,7 @@ public class MyListViewProjectionTest {
     }
 
     @Nested
-    @DisplayName("UpdateTaskDescription event")
+    @DisplayName("TaskDescriptionUpdated event")
     class TaskDescriptionUpdatedEvent {
 
         @Test
@@ -142,11 +142,9 @@ public class MyListViewProjectionTest {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
-            final String updatedDescription = UPDATED_DESCRIPTION;
             final TaskId expectedTaskId = taskCreatedEvent.getId();
-
             final TaskDescriptionUpdated descriptionUpdatedEvent =
-                    taskDescriptionUpdatedInstance(expectedTaskId, updatedDescription);
+                    taskDescriptionUpdatedInstance(expectedTaskId, UPDATED_DESCRIPTION);
             projection.on(descriptionUpdatedEvent);
 
             final TaskListView taskListView = projection.getState()
@@ -158,11 +156,11 @@ public class MyListViewProjectionTest {
             final TaskView view = taskListView.getItemsList()
                                               .get(0);
             assertEquals(expectedTaskId, view.getId());
-            assertEquals(updatedDescription, view.getDescription());
+            assertEquals(UPDATED_DESCRIPTION, view.getDescription());
         }
 
         @Test
-        @DisplayName("does not update description by wrong id")
+        @DisplayName("does not update task description by wrong task id")
         public void doesNotUpdateDescription() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -186,7 +184,7 @@ public class MyListViewProjectionTest {
     }
 
     @Nested
-    @DisplayName("UpdateTaskDueDate event")
+    @DisplayName("TaskDueDateUpdated event")
     class TaskDueDateUpdatedEvent {
 
         @Test
