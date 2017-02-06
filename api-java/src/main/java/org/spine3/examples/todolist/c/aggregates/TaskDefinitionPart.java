@@ -108,7 +108,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
      *
      * @param id
      */
-    protected TaskDefinitionPart(TaskId id) {
+    public TaskDefinitionPart(TaskId id) {
         super(id);
     }
 

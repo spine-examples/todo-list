@@ -69,7 +69,7 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
      *
      * @param id
      */
-    protected TaskLabelsPart(TaskId id) {
+    public TaskLabelsPart(TaskId id) {
         super(id);
     }
 
