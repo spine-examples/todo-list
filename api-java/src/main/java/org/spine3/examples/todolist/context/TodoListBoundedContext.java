@@ -22,6 +22,7 @@ package org.spine3.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.spine3.examples.todolist.repositories.DraftTasksViewRepository;
+import org.spine3.examples.todolist.repositories.LabelAggregateRepository;
 import org.spine3.examples.todolist.repositories.LabelledTasksViewRepository;
 import org.spine3.examples.todolist.repositories.MyListViewRepository;
 import org.spine3.examples.todolist.repositories.TaskDefinitionRepository;
@@ -42,37 +43,55 @@ public class TodoListBoundedContext {
 
     /** The name of the Bounded Context. */
     private static final String NAME = "Tasks";
+    private static BoundedContext boundedContext = Singleton.INSTANCE.value;
+    private StorageFactorySwitch storageFactorySwitch;
+
+    private boolean createNew;
 
     /**
      * Obtains the reference to the Tasks Bounded Context.
      */
-    public static BoundedContext getInstance() {
-        return Singleton.INSTANCE.value;
+    public BoundedContext getInstance() {
+        if (createNew) {
+            boundedContext = create();
+        }
+        else{
+            boundedContext = Singleton.INSTANCE.value;
+        }
+        return boundedContext;
     }
 
-    private TodoListBoundedContext() {
+    public TodoListBoundedContext() {
         // Disable instantiation from outside.
     }
 
     /**
      * Creates new instance of the Tasks Bounded Context.
      */
-    private static BoundedContext create() {
-        final StorageFactorySwitch factorySwitch = StorageFactorySwitch.getInstance();
-        final StorageFactory storageFactory = factorySwitch.get();
+    private BoundedContext create() {
+        if (storageFactorySwitch == null) {
+            storageFactorySwitch = StorageFactorySwitch.getInstance();
+        }
+        final StorageFactory storageFactory = storageFactorySwitch.get();
         final TodoListRepositoryProvider repositoryProvider = new TodoListRepositoryProvider();
         final EventEnricher eventEnricher = initEventEnricher(repositoryProvider);
         final EventBus eventBus = initEventBus(storageFactory, eventEnricher);
-        final BoundedContext boundedContext = initBoundedContext(eventBus);
+        final BoundedContext boundedContext = initBoundedContext(storageFactorySwitch, eventBus);
 
         final TaskDefinitionRepository taskDefinitionRepository =
                 getTaskDefinitionRepository(boundedContext, storageFactory);
         boundedContext.register(taskDefinitionRepository);
         final TaskLabelsRepository taskLabelsRepository = getTaskLabelsRepository(boundedContext, storageFactory);
         boundedContext.register(taskLabelsRepository);
+
+        final LabelAggregateRepository labelRepository = getLabelRepository(boundedContext, storageFactory);
+        boundedContext.register(labelRepository);
+
         boundedContext.register(getMyListViewRepository(boundedContext, storageFactory));
         boundedContext.register(getLabelledTasksViewRepository(boundedContext, storageFactory));
         boundedContext.register(getDraftTasksViewRepository(boundedContext, storageFactory));
+
+        repositoryProvider.setLabelRepository(labelRepository);
         repositoryProvider.setTaskDefinitionRepository(taskDefinitionRepository);
         repositoryProvider.setTaskLabelsRepository(taskLabelsRepository);
         return boundedContext;
@@ -96,9 +115,10 @@ public class TodoListBoundedContext {
         return result;
     }
 
-    private static BoundedContext initBoundedContext(EventBus eventBus) {
+    private static BoundedContext initBoundedContext(StorageFactorySwitch factorySwitch, EventBus eventBus) {
         final BoundedContext result = BoundedContext.newBuilder()
                                                     .setName(NAME)
+                                                    .setStorageFactorySupplier(factorySwitch)
                                                     .setEventBus(eventBus)
                                                     .build();
         return result;
@@ -109,6 +129,13 @@ public class TodoListBoundedContext {
         final TaskDefinitionRepository taskDefinitionRepo = new TaskDefinitionRepository(boundedContext);
         taskDefinitionRepo.initStorage(storageFactory);
         return taskDefinitionRepo;
+    }
+
+    private static LabelAggregateRepository getLabelRepository(BoundedContext boundedContext,
+                                                               StorageFactory storageFactory) {
+        final LabelAggregateRepository labelRepository = new LabelAggregateRepository(boundedContext);
+        labelRepository.initStorage(storageFactory);
+        return labelRepository;
     }
 
     private static TaskLabelsRepository getTaskLabelsRepository(BoundedContext boundedContext,
@@ -140,9 +167,34 @@ public class TodoListBoundedContext {
     }
 
     @VisibleForTesting
-    public static CommandBus getCommandBus() {
+    public void setCreateNew(boolean createNew) {
+        this.createNew = createNew;
+    }
+
+    @VisibleForTesting
+    public CommandBus getCommandBus() {
         final CommandBus result = getInstance().getCommandBus();
         return result;
+    }
+
+    @VisibleForTesting
+    public static BoundedContext getTestInstance() {
+        return new TodoListBoundedContext().create();
+    }
+
+    @VisibleForTesting
+    public BoundedContext getTestInstance(StorageFactorySwitch factorySwitch) {
+        this.storageFactorySwitch = factorySwitch;
+        return create();
+    }
+
+    @VisibleForTesting
+    public void setStorageFactorySwitch(StorageFactorySwitch factorySwitch) {
+        this.storageFactorySwitch = factorySwitch;
+    }
+
+    public BoundedContext getDefaultBoundedContext(){
+        return Singleton.INSTANCE.value;
     }
 
     /** The holder for the singleton reference. */
@@ -150,6 +202,6 @@ public class TodoListBoundedContext {
         INSTANCE;
 
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final BoundedContext value = create();
+        private final BoundedContext value = new TodoListBoundedContext().create();
     }
 }
