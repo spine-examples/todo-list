@@ -34,7 +34,6 @@ import "spine/validate.proto";
 
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
-import "todolist/model.proto";
 
 // A wrapper for a task priority.
 message TaskPriorityValue {
@@ -211,8 +210,8 @@ message UnsuccessfulLabelCommand {
 }
 
 // DTO for the list of the label IDs.
-message LabelsList {
+message LabelIdsList {
 
-    // A task labels.
-    repeated TaskLabel labels = 1;
+    // A task label IDs.
+    repeated TaskLabelId label_ids = 1;
 }

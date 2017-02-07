@@ -33,9 +33,9 @@ import "spine/validate.proto";
 
 import "todolist/attributes.proto";
 import "todolist/identifiers.proto";
-import "todolist/model.proto";
+import "todolist/values.proto";
 
-message TaskLabels {
+message TaskLabelIds {
 
     // Task identifier.
     TaskId task_id = 1;
@@ -44,7 +44,7 @@ message TaskLabels {
     //
     // Task can have any number of labels assigned, i.e. [0; +inf).
     // Optional. Empty by default.
-    repeated TaskLabel labels = 2;
+    LabelIdsList label_ids_list = 2;
 
     // Reserved fields for future extension.
     reserved 3 to 20;

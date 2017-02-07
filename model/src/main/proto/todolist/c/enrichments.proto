@@ -31,7 +31,6 @@ option java_generate_equals_and_hash = true;
 import "spine/annotations.proto";
 import "spine/enrichment_annotations.proto";
 import "todolist/values.proto";
-import "todolist/model.proto";
 import "todolist/task_definition.proto";
 
 // Enrichment for the task details.
@@ -43,6 +42,9 @@ message DetailsEnrichment {
 
     // A task details.
     TaskDetails task_details = 1 [(by) = "task_id"];
+
+    // A label details.
+    LabelDetails label_details = 2 [(by) = "label_id"];
 }
 
 // Enrichment for the labels list.
@@ -60,7 +62,7 @@ message LabelsListEnrichment {
                               "spine.examples.todolist.LabelAssignedToTask";
 
     // Labels list.
-    LabelsList labels_list = 1 [(by) = "task_id"];
+    LabelIdsList label_ids_list = 1 [(by) = "task_id"];
 }
 
 // Enrichment for the task.
