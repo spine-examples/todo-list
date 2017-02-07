@@ -21,22 +21,23 @@
 package org.spine3.examples.todolist.repositories;
 
 import org.spine3.examples.todolist.TaskLabelId;
-import org.spine3.examples.todolist.c.aggregates.TaskLabelAggregate;
+import org.spine3.examples.todolist.c.aggregates.LabelAggregate;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.aggregate.AggregateRepository;
 
 /**
- * Repository for the {@link TaskLabelAggregate}.
+ * Repository for the {@link LabelAggregate}.
  *
  * @author Illia Shepilov
  */
-public class TaskLabelAggregateRepository extends AggregateRepository<TaskLabelId, TaskLabelAggregate> {
+public class LabelAggregateRepository extends AggregateRepository<TaskLabelId, LabelAggregate> {
+
     /**
      * Creates a new repository instance.
      *
      * @param boundedContext the bounded context to which this repository belongs
      */
-    public TaskLabelAggregateRepository(BoundedContext boundedContext) {
+    public LabelAggregateRepository(BoundedContext boundedContext) {
         super(boundedContext);
     }
 }
