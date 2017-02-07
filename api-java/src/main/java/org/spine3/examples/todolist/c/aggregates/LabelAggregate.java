@@ -46,24 +46,21 @@ import static org.spine3.examples.todolist.c.aggregates.MismatchHelper.of;
  *
  * @author Illia Shepilov
  */
-
 @SuppressWarnings("unused") // The methods annotated with {@link Assign} are declared {@code private} by design.
-public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLabel.Builder> {
+public class LabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLabel.Builder> {
 
     /**
-     * Creates a new aggregates instance.
+     * {@inheritDoc}
      *
-     * @param id the ID for the new aggregates.
-     * @throws IllegalArgumentException if the ID is not of one of the supported types.
+     * @param id
      */
-    TaskLabelAggregate(TaskLabelId id) {
+    protected LabelAggregate(TaskLabelId id) {
         super(id);
     }
 
     @Assign
     List<? extends Message> handle(CreateBasicLabel cmd) {
         final LabelDetails.Builder labelDetails = LabelDetails.newBuilder()
-                                                              .setColor(LabelColor.GRAY)
                                                               .setTitle(cmd.getLabelTitle());
         final LabelCreated result = LabelCreated.newBuilder()
                                                 .setId(cmd.getLabelId())
@@ -76,8 +73,8 @@ public class TaskLabelAggregate extends Aggregate<TaskLabelId, TaskLabel, TaskLa
     List<? extends Message> handle(UpdateLabelDetails cmd) throws CannotUpdateLabelDetails {
         final TaskLabel state = getState();
         final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
-                                                            .setColor(getState().getColor())
-                                                            .setTitle(getState().getTitle())
+                                                            .setColor(state.getColor())
+                                                            .setTitle(state.getTitle())
                                                             .build();
         final LabelDetailsChange labelDetailsChange = cmd.getLabelDetailsChange();
         final LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
