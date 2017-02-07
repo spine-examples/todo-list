@@ -28,8 +28,9 @@ import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.client.builder.CommandBuilder;
+import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.examples.todolist.server.Server;
-import org.spine3.server.storage.StorageFactorySwitch;
+import org.spine3.server.BoundedContext;
 import org.spine3.util.Exceptions;
 
 import java.io.IOException;
@@ -44,17 +45,20 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 /**
  * @author Illia Shepilov
  */
-class CommandLineTodoClientShould {
+class CommandLineTodoClientTest {
 
-    private static final String HOST = "localhost";
-    private Server server;
+    static final String HOST = "localhost";
+    Server server;
     TodoClient client;
     static final String UPDATED_TASK_DESCRIPTION = "New task description.";
+    BoundedContext boundedContext;
+    final TodoListBoundedContext todoListBoundedContext = new TodoListBoundedContext();
 
     @BeforeEach
     public void setUp() throws InterruptedException {
-        final StorageFactorySwitch factorySwitch = StorageFactorySwitch.getInstance();
-        server = new Server(factorySwitch);
+        todoListBoundedContext.setCreateNew(true);
+        this.boundedContext = todoListBoundedContext.getInstance();
+        server = new Server(boundedContext);
         startServer();
         client = new CommandLineTodoClient(HOST, DEFAULT_CLIENT_SERVICE_PORT);
     }
@@ -65,7 +69,7 @@ class CommandLineTodoClientShould {
         client.shutdown();
     }
 
-    private void startServer() throws InterruptedException {
+    void startServer() throws InterruptedException {
         final CountDownLatch serverStartLatch = new CountDownLatch(1);
         final Thread serverThread = new Thread(() -> {
             try {

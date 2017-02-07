@@ -68,7 +68,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
  * @author Illia Shepilov
  */
 @SuppressWarnings({"ClassWithTooManyMethods", "OverlyCoupledClass"})
-public class MyListViewClientShould extends CommandLineTodoClientShould {
+public class MyListViewClientTest extends CommandLineTodoClientTest {
 
     @Test
     public void obtain_my_list_view_when_handled_create_task_command() {

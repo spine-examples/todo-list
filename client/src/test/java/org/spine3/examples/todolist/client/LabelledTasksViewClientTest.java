@@ -43,7 +43,10 @@ import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
 import org.spine3.examples.todolist.q.projections.LabelledTasksView;
 import org.spine3.examples.todolist.q.projections.TaskListView;
 import org.spine3.examples.todolist.q.projections.TaskView;
+import org.spine3.examples.todolist.server.Server;
 import org.spine3.protobuf.Timestamps;
+import org.spine3.server.BoundedContext;
+import org.spine3.server.storage.StorageFactorySwitch;
 
 import java.util.List;
 
@@ -68,10 +71,10 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
  * @author Illia Shepilov
  */
 @SuppressWarnings({"OverlyCoupledClass", "ClassWithTooManyMethods"})
-public class LabelledTasksViewClientShould extends CommandLineTodoClientShould {
+public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
 
     @Test
-    public void obtain_labelled_tasks_view_when_handled_command_deleted_task_restored() {
+    public void obtain_labelled_tasks_view_when_handled_command_deleted_task_restored() throws Exception {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 
@@ -453,9 +456,9 @@ public class LabelledTasksViewClientShould extends CommandLineTodoClientShould {
         client.assignLabel(assignLabelToTask);
 
         final LabelDetails detailsWithCorrectId = LabelDetails.newBuilder()
-                                                                             .setColor(LabelColor.GRAY)
-                                                                             .setTitle(createLabel.getLabelTitle())
-                                                                             .build();
+                                                              .setColor(LabelColor.GRAY)
+                                                              .setTitle(createLabel.getLabelTitle())
+                                                              .build();
         final LabelDetails newLabelDetails = LabelDetails.newBuilder()
                                                          .setColor(updatedColor)
                                                          .setTitle(updatedTitle)

@@ -61,7 +61,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
  * @author Illia Shepilov
  */
 @SuppressWarnings({"OverlyCoupledClass", "ClassWithTooManyMethods"})
-public class DraftTasksViewClientShould extends CommandLineTodoClientShould {
+public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
 
     @Test
     public void obtain_task_draft_when_handled_create_draft_command() {
@@ -198,7 +198,7 @@ public class DraftTasksViewClientShould extends CommandLineTodoClientShould {
     }
 
     @Test
-    public void obtain_task_view_with_label_when_handled_command_assign_label_to_task() {
+    public void obtain_task_view_with_label_when_handled_command_assign_label_to_task() throws Exception {
         final CreateBasicLabel createBasicLabel = createBasicLabel();
         client.create(createBasicLabel);
 
@@ -239,14 +239,20 @@ public class DraftTasksViewClientShould extends CommandLineTodoClientShould {
     }
 
     @Test
-    public void obtain_task_view_with_updated_color_when_handled_command_update_label_details() {
+    public void obtain_task_view_with_updated_color_when_handled_command_update_label_details() throws Exception {
+        final CreateBasicLabel createBasicLabel = createBasicLabel();
+        client.create(createBasicLabel);
+
         final LabelColor newLabelColor = LabelColor.RED;
         final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetails(newLabelColor, true);
         assertEquals(newLabelColor, view.getLabelColor());
     }
 
     @Test
-    public void obtain_task_view_without_updated_color_when_handled_command_update_label_details() {
+    public void obtain_task_view_without_updated_color_when_handled_command_update_label_details() throws Exception {
+        final CreateBasicLabel createBasicLabel = createBasicLabel();
+        client.create(createBasicLabel);
+
         final LabelColor newLabelColor = LabelColor.RED;
         final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetails(newLabelColor, false);
         assertNotEquals(newLabelColor, view.getLabelColor());
