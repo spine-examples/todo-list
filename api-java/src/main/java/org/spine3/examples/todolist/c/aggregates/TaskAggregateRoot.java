@@ -22,7 +22,7 @@ package org.spine3.examples.todolist.c.aggregates;
 
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabels;
+import org.spine3.examples.todolist.TaskLabelIds;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.server.aggregate.AggregateRoot;
 
@@ -37,7 +37,7 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
      * @param id the ID of the aggregate
      */
     protected TaskAggregateRoot(TaskId id) {
-        super(TodoListBoundedContext.getInstance(), id);
+        super(new TodoListBoundedContext().getInstance(), id);
     }
 
     public static TaskAggregateRoot get(TaskId id) {
@@ -49,8 +49,8 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
         return result;
     }
 
-    public TaskLabels getTaskLabelsState() {
-        final TaskLabels result = getPartState(TaskLabels.class);
+    public TaskLabelIds getTaskLabelIdsState() {
+        final TaskLabelIds result = getPartState(TaskLabelIds.class);
         return result;
     }
 }

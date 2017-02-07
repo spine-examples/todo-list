@@ -29,8 +29,8 @@ import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabel;
-import org.spine3.examples.todolist.TaskLabels;
+import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.TaskLabelIds;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
@@ -331,11 +331,13 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         result.add(deletedTaskRestored);
 
         final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
-        final TaskLabels taskLabels = root.getTaskLabelsState();
-        for (TaskLabel label : taskLabels.getLabelsList()) {
+        final TaskLabelIds taskLabels = root.getTaskLabelIdsState();
+        final List<TaskLabelId> labelIdsList = taskLabels.getLabelIdsList()
+                                                         .getLabelIdsList();
+        for (TaskLabelId labelId : labelIdsList) {
             final LabelledTaskRestored labelledTaskRestored = LabelledTaskRestored.newBuilder()
                                                                                   .setTaskId(taskId)
-                                                                                  .setLabelId(label.getId())
+                                                                                  .setLabelId(labelId)
                                                                                   .build();
             result.add(labelledTaskRestored);
         }
