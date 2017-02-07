@@ -21,8 +21,7 @@
 package org.spine3.examples.todolist.repositories;
 
 import org.spine3.base.EventContext;
-import org.spine3.examples.todolist.LabelsList;
-import org.spine3.examples.todolist.TaskLabel;
+import org.spine3.examples.todolist.LabelIdsList;
 import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.c.enrichments.LabelsListEnrichment;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
@@ -43,8 +42,8 @@ import org.spine3.server.projection.ProjectionRepository;
 
 import java.util.Collections;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import static com.google.common.collect.Sets.newHashSet;
 import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
 
 /**
@@ -109,11 +108,8 @@ public class LabelledTasksViewRepository
 
     private static Set<TaskLabelId> getLabelIdsSet(EventContext context) {
         final LabelsListEnrichment enrichment = getEnrichment(LabelsListEnrichment.class, context);
-        final LabelsList labelsList = enrichment.getLabelsList();
-        final Set<TaskLabelId> result = labelsList.getLabelsList()
-                                                  .stream()
-                                                  .map(TaskLabel::getId)
-                                                  .collect(Collectors.toSet());
+        final LabelIdsList labelsList = enrichment.getLabelIdsList();
+        final Set<TaskLabelId> result = newHashSet(labelsList.getLabelIdsList());
         return result;
     }
 }
