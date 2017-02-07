@@ -20,11 +20,9 @@
 
 package org.spine3.examples.todolist.server;
 
-import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.CommandService;
 import org.spine3.server.QueryService;
-import org.spine3.server.storage.StorageFactorySwitch;
 import org.spine3.server.transport.GrpcContainer;
 
 import java.io.IOException;
@@ -42,9 +40,8 @@ public class Server {
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
 
-    //TODO:2017-02-06:illiashepilov: think about that parameter
-    public Server(StorageFactorySwitch storageFactorySwitch) {
-        this.boundedContext = TodoListBoundedContext.getInstance();
+    public Server(BoundedContext boundedContext) {
+        this.boundedContext = boundedContext;
 
         final CommandService commandService = initCommandService();
         final QueryService queryService = initQueryService();
@@ -107,6 +104,5 @@ public class Server {
      */
     public void shutdown() throws Exception {
         grpcContainer.shutdown();
-        boundedContext.close();
     }
 }
