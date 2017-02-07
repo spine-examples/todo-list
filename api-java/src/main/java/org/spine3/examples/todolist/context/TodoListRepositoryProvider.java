@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.context;
 
+import org.spine3.examples.todolist.repositories.LabelAggregateRepository;
 import org.spine3.examples.todolist.repositories.TaskDefinitionRepository;
 import org.spine3.examples.todolist.repositories.TaskLabelsRepository;
 import org.spine3.server.BoundedContext;
@@ -54,6 +55,8 @@ class TodoListRepositoryProvider {
     private TaskLabelsRepository taskLabelsRepo;
     @Nullable
     private TaskDefinitionRepository taskDefinitionRepo;
+    @Nullable
+    private LabelAggregateRepository labelRepository;
 
     void setTaskLabelsRepository(TaskLabelsRepository taskLabelsRepo) {
         this.taskLabelsRepo = taskLabelsRepo;
@@ -61,6 +64,10 @@ class TodoListRepositoryProvider {
 
     void setTaskDefinitionRepository(TaskDefinitionRepository labelAggregateRepo) {
         this.taskDefinitionRepo = labelAggregateRepo;
+    }
+
+    void setLabelRepository(LabelAggregateRepository labelRepository) {
+        this.labelRepository = labelRepository;
     }
 
     /**
@@ -80,6 +87,11 @@ class TodoListRepositoryProvider {
      */
     Optional<TaskDefinitionRepository> getTaskDefinitionRepo() {
         final Optional<TaskDefinitionRepository> result = Optional.ofNullable(this.taskDefinitionRepo);
+        return result;
+    }
+
+    Optional<LabelAggregateRepository> getLabelRepository() {
+        final Optional<LabelAggregateRepository> result = Optional.ofNullable(this.labelRepository);
         return result;
     }
 }
