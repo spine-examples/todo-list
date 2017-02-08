@@ -42,6 +42,7 @@ import org.spine3.examples.todolist.c.failures.CannotAssignLabelToTask;
 import org.spine3.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.examples.todolist.testdata.TestResponseObserver;
+import org.spine3.server.BoundedContext;
 import org.spine3.server.command.CommandBus;
 import org.spine3.test.CommandTest;
 
@@ -73,10 +74,12 @@ public class TaskLabelsPartTest {
 
     @BeforeEach
     public void setUp() {
-        TaskId taskId = createTaskId();
-        labelId = createLabelId();
-        commandBus = new TodoListBoundedContext().getCommandBus();
+        final BoundedContext boundedContext = TodoListBoundedContext.getTestInstance();
+        TaskAggregateRoot.injectBoundedContext(boundedContext);
+        commandBus = boundedContext.getCommandBus();
         responseObserver = new TestResponseObserver();
+        labelId = createLabelId();
+        TaskId taskId = createTaskId();
         taskLabelsPart = createTaskLabelsPart(taskId);
     }
 
@@ -107,9 +110,11 @@ public class TaskLabelsPartTest {
         @BeforeEach
         @Override
         public void setUp() {
-            taskId = createTaskId();
-            commandBus = new TodoListBoundedContext().getCommandBus();
+            final BoundedContext boundedContext = TodoListBoundedContext.getTestInstance();
+            TaskAggregateRoot.injectBoundedContext(boundedContext);
+            commandBus = boundedContext.getCommandBus();
             responseObserver = new TestResponseObserver();
+            taskId = createTaskId();
             taskLabelsPart = createTaskLabelsPart(taskId);
         }
 
@@ -184,9 +189,11 @@ public class TaskLabelsPartTest {
         @BeforeEach
         @Override
         public void setUp() {
-            taskId = createTaskId();
-            commandBus = new TodoListBoundedContext().getCommandBus();
+            final BoundedContext boundedContext = TodoListBoundedContext.getTestInstance();
+            TaskAggregateRoot.injectBoundedContext(boundedContext);
+            commandBus = boundedContext.getCommandBus();
             responseObserver = new TestResponseObserver();
+            taskId = createTaskId();
             taskLabelsPart = createTaskLabelsPart(taskId);
         }
 

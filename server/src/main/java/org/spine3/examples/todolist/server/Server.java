@@ -62,8 +62,7 @@ public class Server {
         return result;
     }
 
-    private static GrpcContainer initGrpcContainer(CommandService commandService,
-                                                   QueryService queryService) {
+    private static GrpcContainer initGrpcContainer(CommandService commandService, QueryService queryService) {
         final GrpcContainer result = GrpcContainer.newBuilder()
                                                   .addService(commandService)
                                                   .addService(queryService)

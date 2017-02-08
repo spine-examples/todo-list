@@ -28,11 +28,11 @@ import org.spine3.examples.todolist.repositories.MyListViewRepository;
 import org.spine3.examples.todolist.repositories.TaskDefinitionRepository;
 import org.spine3.examples.todolist.repositories.TaskLabelsRepository;
 import org.spine3.server.BoundedContext;
-import org.spine3.server.command.CommandBus;
 import org.spine3.server.event.EventBus;
 import org.spine3.server.event.enrich.EventEnricher;
 import org.spine3.server.storage.StorageFactory;
 import org.spine3.server.storage.StorageFactorySwitch;
+import org.spine3.server.storage.memory.InMemoryStorageFactory;
 
 import java.util.function.Supplier;
 
@@ -43,35 +43,30 @@ public class TodoListBoundedContext {
 
     /** The name of the Bounded Context. */
     private static final String NAME = "Tasks";
-    private static BoundedContext boundedContext = Singleton.INSTANCE.value;
-    private StorageFactorySwitch storageFactorySwitch;
-
-    private boolean createNew;
 
     /**
      * Obtains the reference to the Tasks Bounded Context.
      */
-    public BoundedContext getInstance() {
-        if (createNew) {
-            boundedContext = create();
-        }
-        else{
-            boundedContext = Singleton.INSTANCE.value;
-        }
-        return boundedContext;
+    public static BoundedContext getInstance() {
+        return Singleton.INSTANCE.value;
     }
 
-    public TodoListBoundedContext() {
+    @VisibleForTesting
+    public static BoundedContext getTestInstance() {
+        final BoundedContext result = create();
+        return result;
+    }
+
+    private TodoListBoundedContext() {
         // Disable instantiation from outside.
     }
 
     /**
      * Creates new instance of the Tasks Bounded Context.
      */
-    private BoundedContext create() {
-        if (storageFactorySwitch == null) {
-            storageFactorySwitch = StorageFactorySwitch.getInstance();
-        }
+    private static BoundedContext create() {
+        final StorageFactorySwitch storageFactorySwitch = StorageFactorySwitch.init(InMemoryStorageFactory::getInstance,
+                                                                                    InMemoryStorageFactory::getInstance);
         final StorageFactory storageFactory = storageFactorySwitch.get();
         final TodoListRepositoryProvider repositoryProvider = new TodoListRepositoryProvider();
         final EventEnricher eventEnricher = initEventEnricher(repositoryProvider);
@@ -102,7 +97,6 @@ public class TodoListBoundedContext {
                 EventEnricherSupplier.newBuilder()
                                      .setRepositoryProvider(repositoryProvider)
                                      .build();
-
         final EventEnricher result = eventEnricherSupplier.get();
         return result;
     }
@@ -166,42 +160,11 @@ public class TodoListBoundedContext {
         return draftTasksViewRepo;
     }
 
-    @VisibleForTesting
-    public void setCreateNew(boolean createNew) {
-        this.createNew = createNew;
-    }
-
-    @VisibleForTesting
-    public CommandBus getCommandBus() {
-        final CommandBus result = getInstance().getCommandBus();
-        return result;
-    }
-
-    @VisibleForTesting
-    public static BoundedContext getTestInstance() {
-        return new TodoListBoundedContext().create();
-    }
-
-    @VisibleForTesting
-    public BoundedContext getTestInstance(StorageFactorySwitch factorySwitch) {
-        this.storageFactorySwitch = factorySwitch;
-        return create();
-    }
-
-    @VisibleForTesting
-    public void setStorageFactorySwitch(StorageFactorySwitch factorySwitch) {
-        this.storageFactorySwitch = factorySwitch;
-    }
-
-    public BoundedContext getDefaultBoundedContext(){
-        return Singleton.INSTANCE.value;
-    }
-
     /** The holder for the singleton reference. */
     private enum Singleton {
         INSTANCE;
 
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final BoundedContext value = new TodoListBoundedContext().create();
+        private final BoundedContext value = create();
     }
 }

@@ -32,6 +32,7 @@ import org.spine3.base.CommandContext;
 import org.spine3.base.Event;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.c.aggregates.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregates.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
@@ -45,6 +46,7 @@ import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.examples.todolist.testdata.TestResponseObserver;
 import org.spine3.protobuf.AnyPacker;
 import org.spine3.protobuf.TypeName;
+import org.spine3.server.BoundedContext;
 import org.spine3.server.command.CommandBus;
 import org.spine3.server.event.EventFilter;
 import org.spine3.server.event.EventStreamQuery;
@@ -74,24 +76,25 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
 
     private final CommandContext commandContext = getCommandContext();
     private TestResponseObserver responseObserver;
-    private CommandBus commandBus;
     private TaskDefinitionPart taskDefinitionPart;
+    private BoundedContext boundedContext;
+    private CommandBus commandBus;
     private TaskId taskId;
 
     @Override
     @BeforeEach
     public void setUp() {
-        taskId = getTaskId();
-        commandBus = TodoListBoundedContext.getCommandBus();
+        boundedContext = TodoListBoundedContext.getTestInstance();
+        TaskAggregateRoot.injectBoundedContext(boundedContext);
+        commandBus = boundedContext.getCommandBus();
         responseObserver = new TestResponseObserver();
-        taskDefinitionPart = getAggregate();
         taskId = getTaskId();
+        taskDefinitionPart = new TaskDefinitionPart(taskId);
     }
 
     @Test
     @DisplayName("produces LabelledTaskRestored event")
     public void producesEvent() {
-
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
         final Command createTaskCmd = create(createTask, commandContext);
         commandBus.post(createTaskCmd, responseObserver);
@@ -119,10 +122,9 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
                                                        .build();
         final EventStreamObserver eventStreamObserver = new EventStreamObserver();
 
-        TodoListBoundedContext.getInstance()
-                              .getEventBus()
-                              .getEventStore()
-                              .read(query, eventStreamObserver);
+        boundedContext.getEventBus()
+                      .getEventStore()
+                      .read(query, eventStreamObserver);
 
         final Set<Event> events = eventStreamObserver.eventSet;
 
@@ -137,8 +139,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     @Test
     @DisplayName("restores deleted task")
     public void restoresTask() {
-        final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        taskDefinitionPart.dispatchForTest(createTask, commandContext);
+        createBasicTask();
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
         taskDefinitionPart.dispatchForTest(deleteTask, commandContext);
@@ -175,8 +176,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     @Test
     @DisplayName("cannot restore task when task is completed")
     public void cannotRestoreCompletedTask() {
-        final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        taskDefinitionPart.dispatchForTest(createTask, commandContext);
+        createBasicTask();
 
         final CompleteTask completeTask = completeTaskInstance(taskId);
         taskDefinitionPart.dispatchForTest(completeTask, commandContext);
@@ -223,6 +223,11 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotRestoreDeletedTask);
         }
+    }
+
+    private void createBasicTask() {
+        final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
+        taskDefinitionPart.dispatchForTest(createTask, commandContext);
     }
 
     private static class EventStreamObserver implements StreamObserver<Event> {

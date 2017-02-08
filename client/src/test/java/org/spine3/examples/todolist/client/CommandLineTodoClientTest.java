@@ -24,6 +24,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.c.aggregates.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
@@ -48,16 +49,15 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 class CommandLineTodoClientTest {
 
     static final String HOST = "localhost";
-    Server server;
-    TodoClient client;
     static final String UPDATED_TASK_DESCRIPTION = "New task description.";
-    BoundedContext boundedContext;
-    final TodoListBoundedContext todoListBoundedContext = new TodoListBoundedContext();
+    private Server server;
+    TodoClient client;
 
     @BeforeEach
     public void setUp() throws InterruptedException {
-        todoListBoundedContext.setCreateNew(true);
-        this.boundedContext = todoListBoundedContext.getInstance();
+        final BoundedContext boundedContext = TodoListBoundedContext.getTestInstance();
+        TaskAggregateRoot.injectBoundedContext(boundedContext);
+
         server = new Server(boundedContext);
         startServer();
         client = new CommandLineTodoClient(HOST, DEFAULT_CLIENT_SERVICE_PORT);

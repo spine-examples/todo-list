@@ -20,10 +20,12 @@
 
 package org.spine3.examples.todolist.c.aggregates;
 
+import com.google.common.annotations.VisibleForTesting;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabelIds;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
+import org.spine3.server.BoundedContext;
 import org.spine3.server.aggregate.AggregateRoot;
 
 /**
@@ -31,13 +33,15 @@ import org.spine3.server.aggregate.AggregateRoot;
  */
 public class TaskAggregateRoot extends AggregateRoot<TaskId> {
 
+    private static BoundedContext boundedContext = TodoListBoundedContext.getInstance();
+
     /**
-     * Creates an new instance.
+     * Creates a new instance.
      *
      * @param id the ID of the aggregate
      */
     protected TaskAggregateRoot(TaskId id) {
-        super(new TodoListBoundedContext().getInstance(), id);
+        super(boundedContext, id);
     }
 
     public static TaskAggregateRoot get(TaskId id) {
@@ -52,5 +56,10 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
     public TaskLabelIds getTaskLabelIdsState() {
         final TaskLabelIds result = getPartState(TaskLabelIds.class);
         return result;
+    }
+
+    @VisibleForTesting
+    public static void injectBoundedContext(BoundedContext boundedContext) {
+        TaskAggregateRoot.boundedContext = boundedContext;
     }
 }
