@@ -91,7 +91,8 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
 
         final TaskView taskView = constructTaskView(taskDetails, labelId, taskId);
         final LabelDetails labelDetails = enrichment.getLabelDetails();
-        final LabelledTasksView state = addLabel(taskView, labelDetails).build();
+        final LabelledTasksView state = addLabel(taskView, labelDetails).setLabelId(labelId)
+                                                                        .build();
         incrementState(state);
     }
 
