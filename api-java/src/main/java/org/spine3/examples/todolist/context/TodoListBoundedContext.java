@@ -29,12 +29,6 @@ import org.spine3.examples.todolist.repositories.TaskDefinitionRepository;
 import org.spine3.examples.todolist.repositories.TaskLabelsRepository;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.event.EventBus;
-import org.spine3.server.event.enrich.EventEnricher;
-import org.spine3.server.storage.StorageFactory;
-import org.spine3.server.storage.StorageFactorySwitch;
-import org.spine3.server.storage.memory.InMemoryStorageFactory;
-
-import java.util.function.Supplier;
 
 /**
  * @author Illia Shepilov
@@ -52,7 +46,7 @@ public class TodoListBoundedContext {
     }
 
     @VisibleForTesting
-    public static BoundedContext getTestInstance() {
+    public static BoundedContext createTestInstance() {
         final BoundedContext result = create();
         return result;
     }
@@ -65,99 +59,48 @@ public class TodoListBoundedContext {
      * Creates new instance of the Tasks Bounded Context.
      */
     private static BoundedContext create() {
-        final StorageFactorySwitch storageFactorySwitch = StorageFactorySwitch.init(InMemoryStorageFactory::getInstance,
-                                                                                    InMemoryStorageFactory::getInstance);
-        final StorageFactory storageFactory = storageFactorySwitch.get();
-        final TodoListRepositoryProvider repositoryProvider = new TodoListRepositoryProvider();
-        final EventEnricher eventEnricher = initEventEnricher(repositoryProvider);
-        final EventBus eventBus = initEventBus(storageFactory, eventEnricher);
-        final BoundedContext boundedContext = initBoundedContext(storageFactorySwitch, eventBus);
+        final BoundedContext boundedContext = createBoundedContext();
 
-        final TaskDefinitionRepository taskDefinitionRepository =
-                getTaskDefinitionRepository(boundedContext, storageFactory);
+        final TaskDefinitionRepository taskDefinitionRepository = new TaskDefinitionRepository(boundedContext);
+        final LabelAggregateRepository labelAggregateRepository = new LabelAggregateRepository(boundedContext);
+        final TaskLabelsRepository taskLabelsRepository = new TaskLabelsRepository(boundedContext);
+
         boundedContext.register(taskDefinitionRepository);
-        final TaskLabelsRepository taskLabelsRepository = getTaskLabelsRepository(boundedContext, storageFactory);
         boundedContext.register(taskLabelsRepository);
+        boundedContext.register(labelAggregateRepository);
+        boundedContext.register(new MyListViewRepository(boundedContext));
+        boundedContext.register(new LabelledTasksViewRepository(boundedContext));
+        boundedContext.register(new DraftTasksViewRepository(boundedContext));
 
-        final LabelAggregateRepository labelRepository = getLabelRepository(boundedContext, storageFactory);
-        boundedContext.register(labelRepository);
-
-        boundedContext.register(getMyListViewRepository(boundedContext, storageFactory));
-        boundedContext.register(getLabelledTasksViewRepository(boundedContext, storageFactory));
-        boundedContext.register(getDraftTasksViewRepository(boundedContext, storageFactory));
-
-        repositoryProvider.setLabelRepository(labelRepository);
-        repositoryProvider.setTaskDefinitionRepository(taskDefinitionRepository);
-        repositoryProvider.setTaskLabelsRepository(taskLabelsRepository);
+        final TodoListRepositoryProvider repositoryProvider =
+                createRepositoryProvider(taskDefinitionRepository, taskLabelsRepository, labelAggregateRepository);
+        enrichEventBus(boundedContext.getEventBus(), repositoryProvider);
         return boundedContext;
     }
 
-    private static EventEnricher initEventEnricher(TodoListRepositoryProvider repositoryProvider) {
-        final Supplier<EventEnricher> eventEnricherSupplier =
-                EventEnricherSupplier.newBuilder()
-                                     .setRepositoryProvider(repositoryProvider)
-                                     .build();
-        final EventEnricher result = eventEnricherSupplier.get();
-        return result;
+    private static TodoListRepositoryProvider createRepositoryProvider(TaskDefinitionRepository taskDefinitionRepo,
+                                                                       TaskLabelsRepository taskLabelsRepo,
+                                                                       LabelAggregateRepository labelAggregateRepo) {
+        final TodoListRepositoryProvider repositoryProvider = new TodoListRepositoryProvider();
+        repositoryProvider.setLabelRepository(labelAggregateRepo);
+        repositoryProvider.setTaskLabelsRepository(taskLabelsRepo);
+        repositoryProvider.setTaskDefinitionRepository(taskDefinitionRepo);
+        return repositoryProvider;
     }
 
-    private static EventBus initEventBus(StorageFactory storageFactory, EventEnricher eventEnricher) {
-        final EventBus result = EventBus.newBuilder()
-                                        .setStorageFactory(storageFactory)
-                                        .setEnricher(eventEnricher)
-                                        .build();
-        return result;
+    private static void enrichEventBus(EventBus eventBus, TodoListRepositoryProvider repositoryProvider) {
+        EventBusEnricher.newBuilder()
+                        .setEventBus(eventBus)
+                        .setRepositoryProvider(repositoryProvider)
+                        .build()
+                        .enrich();
     }
 
-    private static BoundedContext initBoundedContext(StorageFactorySwitch factorySwitch, EventBus eventBus) {
+    private static BoundedContext createBoundedContext() {
         final BoundedContext result = BoundedContext.newBuilder()
                                                     .setName(NAME)
-                                                    .setStorageFactorySupplier(factorySwitch)
-                                                    .setEventBus(eventBus)
                                                     .build();
         return result;
-    }
-
-    private static TaskDefinitionRepository getTaskDefinitionRepository(BoundedContext boundedContext,
-                                                                        StorageFactory storageFactory) {
-        final TaskDefinitionRepository taskDefinitionRepo = new TaskDefinitionRepository(boundedContext);
-        taskDefinitionRepo.initStorage(storageFactory);
-        return taskDefinitionRepo;
-    }
-
-    private static LabelAggregateRepository getLabelRepository(BoundedContext boundedContext,
-                                                               StorageFactory storageFactory) {
-        final LabelAggregateRepository labelRepository = new LabelAggregateRepository(boundedContext);
-        labelRepository.initStorage(storageFactory);
-        return labelRepository;
-    }
-
-    private static TaskLabelsRepository getTaskLabelsRepository(BoundedContext boundedContext,
-                                                                StorageFactory storageFactory) {
-        final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository(boundedContext);
-        taskLabelsRepo.initStorage(storageFactory);
-        return taskLabelsRepo;
-    }
-
-    private static MyListViewRepository getMyListViewRepository(BoundedContext boundedContext,
-                                                                StorageFactory storageFactory) {
-        final MyListViewRepository myListViewRepo = new MyListViewRepository(boundedContext);
-        myListViewRepo.initStorage(storageFactory);
-        return myListViewRepo;
-    }
-
-    private static LabelledTasksViewRepository getLabelledTasksViewRepository(BoundedContext boundedContext,
-                                                                              StorageFactory storageFactory) {
-        final LabelledTasksViewRepository labelledTasksViewRepo = new LabelledTasksViewRepository(boundedContext);
-        labelledTasksViewRepo.initStorage(storageFactory);
-        return labelledTasksViewRepo;
-    }
-
-    private static DraftTasksViewRepository getDraftTasksViewRepository(BoundedContext boundedContext,
-                                                                        StorageFactory storageFactory) {
-        final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository(boundedContext);
-        draftTasksViewRepo.initStorage(storageFactory);
-        return draftTasksViewRepo;
     }
 
     /** The holder for the singleton reference. */
