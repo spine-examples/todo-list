@@ -24,36 +24,28 @@ import com.google.protobuf.Message;
 import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.c.aggregates.TaskDefinitionPart;
+import org.spine3.examples.todolist.testdata.TestCommandContextFactory;
 import org.spine3.test.CommandTest;
 
 import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 
 /**
  * @author Illia Shepilov
  */
 abstract class TaskDefinitionCommandTest<C extends Message> extends CommandTest<C> {
 
-    private static final CommandContext COMMAND_CONTEXT = createCommandContext();
-    private final TaskId taskId = createTaskId();
-    private final TaskDefinitionPart aggregate = new TaskDefinitionPart(taskId);
-
-    private static TaskId createTaskId() {
+    public static TaskId createTaskId() {
         final TaskId result = TaskId.newBuilder()
                                     .setValue(newUuid())
                                     .build();
         return result;
     }
 
-    CommandContext getCommandContext() {
-        return COMMAND_CONTEXT;
+    CommandContext createCommandContext() {
+        return TestCommandContextFactory.createCommandContext();
     }
 
-    TaskId getTaskId() {
-        return taskId;
-    }
-
-    TaskDefinitionPart getAggregate() {
-        return aggregate;
+    TaskDefinitionPart createTaskDefinitionPart(TaskId taskId) {
+        return new TaskDefinitionPart(taskId);
     }
 }

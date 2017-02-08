@@ -74,7 +74,7 @@ public class TaskLabelsPartTest {
 
     @BeforeEach
     public void setUp() {
-        final BoundedContext boundedContext = TodoListBoundedContext.getTestInstance();
+        final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
         TaskAggregateRoot.injectBoundedContext(boundedContext);
         commandBus = boundedContext.getCommandBus();
         responseObserver = new TestResponseObserver();
@@ -110,7 +110,7 @@ public class TaskLabelsPartTest {
         @BeforeEach
         @Override
         public void setUp() {
-            final BoundedContext boundedContext = TodoListBoundedContext.getTestInstance();
+            final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
             TaskAggregateRoot.injectBoundedContext(boundedContext);
             commandBus = boundedContext.getCommandBus();
             responseObserver = new TestResponseObserver();
@@ -189,7 +189,7 @@ public class TaskLabelsPartTest {
         @BeforeEach
         @Override
         public void setUp() {
-            final BoundedContext boundedContext = TodoListBoundedContext.getTestInstance();
+            final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
             TaskAggregateRoot.injectBoundedContext(boundedContext);
             commandBus = boundedContext.getCommandBus();
             responseObserver = new TestResponseObserver();

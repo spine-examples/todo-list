@@ -59,15 +59,15 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 @DisplayName("UpdateTaskDescription command")
 public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateTaskDescription> {
 
-    private final CommandContext commandContext = getCommandContext();
+    private final CommandContext commandContext = createCommandContext();
     private TaskDefinitionPart aggregate;
     private TaskId taskId;
 
     @Override
     @BeforeEach
     protected void setUp() {
-        aggregate = getAggregate();
-        taskId = getTaskId();
+        taskId = createTaskId();
+        aggregate = createTaskDefinitionPart(taskId);
     }
 
     @Test

@@ -50,15 +50,15 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.final
 @DisplayName("FinalizeDraft command")
 public class FinalizeTaskTest extends TaskDefinitionCommandTest<FinalizeDraft> {
 
-    private final CommandContext commandContext = getCommandContext();
+    private final CommandContext commandContext = createCommandContext();
     private TaskDefinitionPart aggregate;
     private TaskId taskId;
 
     @Override
     @BeforeEach
     protected void setUp() {
-        aggregate = getAggregate();
-        taskId = getTaskId();
+        taskId = createTaskId();
+        aggregate = createTaskDefinitionPart(taskId);
     }
 
     @Test

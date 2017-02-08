@@ -60,14 +60,14 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskDueDate> {
 
     private TaskDefinitionPart aggregate;
-    private final CommandContext commandContext = getCommandContext();
+    private final CommandContext commandContext = createCommandContext();
     private TaskId taskId;
 
     @Override
     @BeforeEach
     protected void setUp() {
-        aggregate = getAggregate();
-        taskId = getTaskId();
+        taskId = createTaskId();
+        aggregate = createTaskDefinitionPart(taskId);
     }
 
     @Test

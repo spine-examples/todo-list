@@ -51,9 +51,9 @@ import org.spine3.server.command.CommandBus;
 import org.spine3.server.event.EventFilter;
 import org.spine3.server.event.EventStreamQuery;
 
-import java.util.Set;
+import java.util.List;
 
-import static com.google.common.collect.Sets.newHashSet;
+import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Commands.create;
@@ -74,7 +74,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.resto
 @DisplayName("RestoreDeletedTask command")
 public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDeletedTask> {
 
-    private final CommandContext commandContext = getCommandContext();
+    private final CommandContext commandContext = createCommandContext();
     private TestResponseObserver responseObserver;
     private TaskDefinitionPart taskDefinitionPart;
     private BoundedContext boundedContext;
@@ -84,12 +84,12 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     @Override
     @BeforeEach
     public void setUp() {
-        boundedContext = TodoListBoundedContext.getTestInstance();
+        boundedContext = TodoListBoundedContext.createTestInstance();
         TaskAggregateRoot.injectBoundedContext(boundedContext);
         commandBus = boundedContext.getCommandBus();
         responseObserver = new TestResponseObserver();
-        taskId = getTaskId();
-        taskDefinitionPart = new TaskDefinitionPart(taskId);
+        taskId = createTaskId();
+        taskDefinitionPart = createTaskDefinitionPart(taskId);
     }
 
     @Test
@@ -111,27 +111,23 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         final Command restoreDeletedTaskCmd = create(restoreDeletedTask, commandContext);
         commandBus.post(restoreDeletedTaskCmd, responseObserver);
 
-        final int expectedSetSize = 1;
-
-        final String typeName = TypeName.of(LabelledTaskRestored.class);
-        final EventFilter eventFilter = EventFilter.newBuilder()
-                                                   .setEventType(typeName)
-                                                   .build();
         final EventStreamQuery query = EventStreamQuery.newBuilder()
-                                                       .addFilter(eventFilter)
                                                        .build();
         final EventStreamObserver eventStreamObserver = new EventStreamObserver();
 
         boundedContext.getEventBus()
                       .getEventStore()
                       .read(query, eventStreamObserver);
-
-        final Set<Event> events = eventStreamObserver.eventSet;
-
-        assertEquals(expectedSetSize, events.size());
-        final LabelledTaskRestored labelledTaskRestored = AnyPacker.unpack(events.iterator()
-                                                                                 .next()
-                                                                                 .getMessage());
+        final List<Event> events = eventStreamObserver.events;
+        final LabelledTaskRestored labelledTaskRestored =
+                events.stream()
+                      .filter(event -> AnyPacker.unpack(event.getMessage())
+                                                .getClass()
+                                                .isAssignableFrom(LabelledTaskRestored.class))
+                      .findFirst()
+                      .map(event -> AnyPacker.unpack(event.getMessage()))
+                      .map(LabelledTaskRestored.class::cast)
+                      .orElse(LabelledTaskRestored.getDefaultInstance());
         assertEquals(taskId, labelledTaskRestored.getTaskId());
         assertEquals(LABEL_ID, labelledTaskRestored.getLabelId());
     }
@@ -232,11 +228,11 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
 
     private static class EventStreamObserver implements StreamObserver<Event> {
 
-        private final Set<Event> eventSet = newHashSet();
+        private final List<Event> events = newArrayList();
 
         @Override
         public void onNext(Event value) {
-            eventSet.add(value);
+            events.add(value);
         }
 
         @Override
