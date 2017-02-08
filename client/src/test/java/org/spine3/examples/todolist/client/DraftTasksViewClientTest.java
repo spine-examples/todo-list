@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.client;
 
 import com.google.protobuf.Timestamp;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
@@ -61,10 +62,27 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
  * @author Illia Shepilov
  */
 @SuppressWarnings({"OverlyCoupledClass", "ClassWithTooManyMethods"})
+@DisplayName("Client should")
 public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
 
     @Test
-    public void obtain_task_draft_when_handled_create_draft_command() {
+    @DisplayName("obtain empty view list when task draft is deleted")
+    public void emptyViewsWhenDraftIsDeleted() {
+        final CreateDraft createDraft = createDraft();
+        client.create(createDraft);
+
+        final DeleteTask deleteTask = deleteTaskInstance(createDraft.getId());
+        client.delete(deleteTask);
+
+        final List<TaskView> taskViews = client.getDraftTasksView()
+                                               .getDraftTasks()
+                                               .getItemsList();
+        assertTrue(taskViews.isEmpty());
+    }
+
+    @Test
+    @DisplayName("obtain created task draft")
+    public void obtainView() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 
@@ -79,21 +97,8 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_empty_tasks_draft_view_when_handled_command_delete_task() {
-        final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
-
-        final DeleteTask deleteTask = deleteTaskInstance(createDraft.getId());
-        client.delete(deleteTask);
-
-        final List<TaskView> taskViews = client.getDraftTasksView()
-                                               .getDraftTasks()
-                                               .getItemsList();
-        assertTrue(taskViews.isEmpty());
-    }
-
-    @Test
-    public void obtain_tasks_draft_view_when_handled_command_delete_task_with_wrong_task_id() {
+    @DisplayName("obtain created task draft when send DeleteTask command with wrong id")
+    public void obtainViewWhenDeletedWrongDraft() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 
@@ -112,7 +117,8 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_empty_tasks_draft_view_when_handled_command_finalize_draft() {
+    @DisplayName("obtain empty view list when draft is finalized")
+    public void obtainEmptyViewsWhenDraftIsFinalized() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 
@@ -135,7 +141,8 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_not_empty_draft_tasks_view_when_handled_command_finalize_draft_with_wrong_task_id() {
+    @DisplayName("obtain view when draft is finalized by wrong task id")
+    public void obtainViewWhenFinalizedWrongDraft() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
         final TaskId taskId = createDraft.getId();
@@ -154,15 +161,15 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_updated_task_view_when_handled_command_update_task_view_description() {
-        final TaskView view = obtainViewWhenHandledUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, true);
-        assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
-    }
-
-    @Test
     public void obtain_updated_task_view_when_handled_command_update_task_view_description_with_wrong_task_id() {
         final TaskView view = obtainViewWhenHandledUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, false);
         assertNotEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
+    }
+
+    @Test
+    public void obtain_updated_task_view_when_handled_command_update_task_view_description() {
+        final TaskView view = obtainViewWhenHandledUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, true);
+        assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
     }
 
     @Test

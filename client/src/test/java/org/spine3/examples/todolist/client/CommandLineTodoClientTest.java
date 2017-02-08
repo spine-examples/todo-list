@@ -46,7 +46,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 /**
  * @author Illia Shepilov
  */
-class CommandLineTodoClientTest {
+abstract class CommandLineTodoClientTest {
 
     static final String HOST = "localhost";
     static final String UPDATED_TASK_DESCRIPTION = "New task description.";
@@ -55,12 +55,12 @@ class CommandLineTodoClientTest {
 
     @BeforeEach
     public void setUp() throws InterruptedException {
-        final BoundedContext boundedContext = TodoListBoundedContext.getTestInstance();
+        final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
         TaskAggregateRoot.injectBoundedContext(boundedContext);
 
         server = new Server(boundedContext);
         startServer();
-        client = new CommandLineTodoClient(HOST, DEFAULT_CLIENT_SERVICE_PORT);
+        client = new CommandLineTodoClient(HOST, DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
     }
 
     @AfterEach
