@@ -43,10 +43,7 @@ import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
 import org.spine3.examples.todolist.q.projections.LabelledTasksView;
 import org.spine3.examples.todolist.q.projections.TaskListView;
 import org.spine3.examples.todolist.q.projections.TaskView;
-import org.spine3.examples.todolist.server.Server;
 import org.spine3.protobuf.Timestamps;
-import org.spine3.server.BoundedContext;
-import org.spine3.server.storage.StorageFactorySwitch;
 
 import java.util.List;
 
