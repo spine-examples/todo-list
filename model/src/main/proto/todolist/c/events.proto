@@ -194,7 +194,7 @@ message LabelAssignedToTask {
     TaskId task_id = 1;
 
     // An identifier of the label to assign to the target task.
-    TaskLabelId label_id = 2 [(required) = true];
+    LabelId label_id = 2 [(required) = true];
 
     // Reserved for future extension.
     reserved 3 to 10;
@@ -208,7 +208,7 @@ message LabelRemovedFromTask {
     TaskId task_id = 1;
 
     // An identifier of the label to remove from the target task.
-    TaskLabelId label_id = 2 [(required) = true];
+    LabelId label_id = 2 [(required) = true];
 
     // Reserved for future extension.
     reserved 3 to 10;
@@ -232,7 +232,7 @@ message DeletedTaskRestored {
 message LabelCreated {
 
     // An identifier of the created label.
-    TaskLabelId id = 1;
+    LabelId id = 1;
 
     // The details of the label created.
     LabelDetails details = 2 [(required) = true];
@@ -243,7 +243,7 @@ message LabelCreated {
 message LabelDetailsUpdated {
 
     // An identifier of the updated label.
-    TaskLabelId label_id = 1;
+    LabelId label_id = 1;
 
     // The label details change.
     LabelDetailsChange label_details_change = 2 [(required) = true];
@@ -252,7 +252,7 @@ message LabelDetailsUpdated {
 message LabelledTaskRestored {
 
     // A label idenifier.
-    TaskLabelId label_id = 1;
+    LabelId label_id = 1;
 
     // A task idenifier.
     TaskId task_id = 2;

@@ -24,8 +24,8 @@ import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
@@ -127,7 +127,7 @@ public class MyListViewClientTest extends CommandLineTodoClientTest {
     public void obtain_my_list_view_when_handled_remove_label_from_task_command() {
         final CreateBasicLabel createLabel = createBasicLabel();
         client.create(createLabel);
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
 
         final TaskView view = obtainTaskViewWhenHandledRemoveLabelFromTask(labelId, true);
         assertNotEquals(labelId, view.getLabelId());
@@ -137,7 +137,7 @@ public class MyListViewClientTest extends CommandLineTodoClientTest {
     public void obtain_my_list_view_when_handled_command_remove_label_from_task_with_wrong_task_id() {
         final CreateBasicLabel createLabel = createBasicLabel();
         client.create(createLabel);
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
 
         final TaskView view = obtainTaskViewWhenHandledRemoveLabelFromTask(labelId, false);
         assertEquals(labelId, view.getLabelId());
@@ -148,7 +148,7 @@ public class MyListViewClientTest extends CommandLineTodoClientTest {
         final CreateBasicLabel createLabel = createBasicLabel();
         client.create(createLabel);
 
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
         final TaskView view = obtainTaskViewWhenHandledAssignLabelToTask(labelId, true);
 
         assertEquals(labelId, view.getLabelId());
@@ -159,7 +159,7 @@ public class MyListViewClientTest extends CommandLineTodoClientTest {
         final CreateBasicLabel createLabel = createBasicLabel();
         client.create(createLabel);
 
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
         final TaskView view = obtainTaskViewWhenHandledAssignLabelToTask(labelId, false);
 
         assertNotEquals(labelId, view.getLabelId());
@@ -328,12 +328,12 @@ public class MyListViewClientTest extends CommandLineTodoClientTest {
         client.create(createLabel);
 
         final TaskId idOfCreatedTask = createTask.getId();
-        final TaskLabelId idOfCreatedLabel = createLabel.getLabelId();
+        final LabelId idOfCreatedLabel = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfCreatedTask, idOfCreatedLabel);
         client.assignLabel(assignLabelToTask);
 
-        final TaskLabelId idOfUpdatedLabel = isCorrectId ? idOfCreatedLabel : getWrongTaskLabelId();
+        final LabelId idOfUpdatedLabel = isCorrectId ? idOfCreatedLabel : getWrongTaskLabelId();
 
         final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
                                                               .setColor(LabelColor.GRAY)
@@ -409,7 +409,7 @@ public class MyListViewClientTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private TaskView obtainTaskViewWhenHandledAssignLabelToTask(TaskLabelId labelId, boolean isCorrectId) {
+    private TaskView obtainTaskViewWhenHandledAssignLabelToTask(LabelId labelId, boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 
@@ -431,7 +431,7 @@ public class MyListViewClientTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private TaskView obtainTaskViewWhenHandledRemoveLabelFromTask(TaskLabelId labelId, boolean isCorrectId) {
+    private TaskView obtainTaskViewWhenHandledRemoveLabelFromTask(LabelId labelId, boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 

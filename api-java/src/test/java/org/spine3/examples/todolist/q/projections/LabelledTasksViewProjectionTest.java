@@ -27,8 +27,8 @@ import org.junit.jupiter.api.Test;
 import org.spine3.base.Event;
 import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.LabelColor;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
 import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
 import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
@@ -81,7 +81,7 @@ import static org.spine3.examples.todolist.testdata.TestEventFactory.taskReopene
 public class LabelledTasksViewProjectionTest {
 
     private final EventContext eventContext = eventContextInstance();
-    private ProjectionRepository<TaskLabelId, LabelledTasksViewProjection, LabelledTasksView> repository;
+    private ProjectionRepository<LabelId, LabelledTasksViewProjection, LabelledTasksView> repository;
     private EventBus eventBus;
 
     @BeforeEach
@@ -608,9 +608,9 @@ public class LabelledTasksViewProjectionTest {
             eventBus.post(labelAssignedToTaskEvent);
 
             final String newTitle = "Updated label title.";
-            final TaskLabelId wrongLabelId = TaskLabelId.newBuilder()
-                                                        .setValue(newUuid())
-                                                        .build();
+            final LabelId wrongLabelId = LabelId.newBuilder()
+                                                .setValue(newUuid())
+                                                .build();
 
             final LabelDetailsUpdated labelDetailsUpdated =
                     labelDetailsUpdatedInstance(wrongLabelId, LabelColor.RED, newTitle);

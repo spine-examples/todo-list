@@ -134,7 +134,7 @@ message AssignLabelToTaskFailed {
     UnsuccessfulTaskCommand assign_label_failed = 1;
 
     // An identifier of the label.
-    TaskLabelId label_id = 2;
+    LabelId label_id = 2;
 }
 
 // DTO for the failed remove label from task command.
@@ -144,7 +144,7 @@ message RemoveLabelFromTaskFailed {
     UnsuccessfulTaskCommand failed_command = 1;
 
     // An identifier of the label.
-    TaskLabelId label_id = 2;
+    LabelId label_id = 2;
 }
 
 // DTO for the failed reopen task command.
@@ -203,7 +203,7 @@ message UnsuccessfulTaskCommand {
 message UnsuccessfulLabelCommand {
 
     // A task label identifier.
-    TaskLabelId label_id = 1;
+    LabelId label_id = 1;
 
     // A failure message.
     string message = 2;
@@ -213,5 +213,5 @@ message UnsuccessfulLabelCommand {
 message LabelIdsList {
 
     // A task label IDs.
-    repeated TaskLabelId label_ids = 1;
+    repeated LabelId label_ids = 1;
 }

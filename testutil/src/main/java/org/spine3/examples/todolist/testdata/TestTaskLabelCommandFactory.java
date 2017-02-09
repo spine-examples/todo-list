@@ -23,7 +23,7 @@ package org.spine3.examples.todolist.testdata;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsChange;
-import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
 import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
@@ -39,9 +39,9 @@ public class TestTaskLabelCommandFactory {
 
     public static final String LABEL_TITLE = "label title";
     public static final String UPDATED_LABEL_TITLE = "updated label title";
-    public static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
-                                                          .setValue(newUuid())
-                                                          .build();
+    public static final LabelId LABEL_ID = LabelId.newBuilder()
+                                                  .setValue(newUuid())
+                                                  .build();
 
     private TestTaskLabelCommandFactory() {
     }
@@ -61,7 +61,7 @@ public class TestTaskLabelCommandFactory {
      *
      * @return {@link CreateBasicLabel} instance
      */
-    public static CreateBasicLabel createLabelInstance(TaskLabelId labelId) {
+    public static CreateBasicLabel createLabelInstance(LabelId labelId) {
         final CreateBasicLabel result = CreateBasicLabel.newBuilder()
                                                         .setLabelId(labelId)
                                                         .setLabelTitle(LABEL_TITLE)
@@ -74,7 +74,7 @@ public class TestTaskLabelCommandFactory {
      *
      * @return {@link UpdateLabelDetails} instance.
      */
-    public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId labelId) {
+    public static UpdateLabelDetails updateLabelDetailsInstance(LabelId labelId) {
         final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
                                                               .setTitle(LABEL_TITLE)
                                                               .setColor(LabelColor.GRAY)
@@ -110,7 +110,7 @@ public class TestTaskLabelCommandFactory {
      * @param newLabelDetails      the new label details
      * @return {@link UpdateLabelDetails} instance.
      */
-    public static UpdateLabelDetails updateLabelDetailsInstance(TaskLabelId id,
+    public static UpdateLabelDetails updateLabelDetailsInstance(LabelId id,
                                                                 LabelDetails previousLabelDetails,
                                                                 LabelDetails newLabelDetails) {
         final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()

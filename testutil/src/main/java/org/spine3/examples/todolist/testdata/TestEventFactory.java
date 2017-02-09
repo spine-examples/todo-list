@@ -26,10 +26,10 @@ import org.spine3.change.TimestampChange;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsChange;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.c.events.DeletedTaskRestored;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
@@ -63,9 +63,9 @@ public class TestEventFactory {
     public static final TaskPriority TASK_PRIORITY = TaskPriority.NORMAL;
     public static final TaskPriority UPDATED_TASK_PRIORITY = TaskPriority.NORMAL;
     public static final Timestamp UPDATED_TASK_DUE_DATE = Timestamps.getCurrentTime();
-    public static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
-                                                          .setValue(newUuid())
-                                                          .build();
+    public static final LabelId LABEL_ID = LabelId.newBuilder()
+                                                  .setValue(newUuid())
+                                                  .build();
     public static final TaskId TASK_ID = TaskId.newBuilder()
                                                .setValue(newUuid())
                                                .build();
@@ -330,7 +330,7 @@ public class TestEventFactory {
      * @param labelId the ID of the assigned label
      * @return {@link LabelAssignedToTask} instance
      */
-    public static LabelAssignedToTask labelAssignedToTaskInstance(TaskId taskId, TaskLabelId labelId) {
+    public static LabelAssignedToTask labelAssignedToTaskInstance(TaskId taskId, LabelId labelId) {
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
                                                               .setTaskId(taskId)
                                                               .setLabelId(labelId)
@@ -393,7 +393,7 @@ public class TestEventFactory {
      * @param title the title of the updated label details
      * @return {@link LabelDetailsUpdated} instance
      */
-    public static LabelDetailsUpdated labelDetailsUpdatedInstance(TaskLabelId labelId, LabelColor color, String title) {
+    public static LabelDetailsUpdated labelDetailsUpdatedInstance(LabelId labelId, LabelColor color, String title) {
         final LabelDetails.Builder labelDetailsBuilder = LabelDetails.newBuilder()
                                                                      .setColor(color)
                                                                      .setTitle(title);

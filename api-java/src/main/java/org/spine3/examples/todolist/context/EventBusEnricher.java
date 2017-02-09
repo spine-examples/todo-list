@@ -22,12 +22,12 @@ package org.spine3.examples.todolist.context;
 
 import com.google.common.base.Function;
 import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.LabelIdsList;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskLabel;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.c.aggregates.LabelAggregate;
 import org.spine3.examples.todolist.c.aggregates.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.aggregates.TaskLabelsPart;
@@ -52,7 +52,7 @@ public class EventBusEnricher {
     }
 
     void enrich() {
-        eventBus.addFieldEnrichment(TaskLabelId.class, LabelDetails.class, labelIdToLabelDetails());
+        eventBus.addFieldEnrichment(LabelId.class, LabelDetails.class, labelIdToLabelDetails());
         eventBus.addFieldEnrichment(TaskId.class, TaskDetails.class, taskIdToTaskDetails());
         eventBus.addFieldEnrichment(TaskId.class, LabelIdsList.class, taskIdToLabelList());
         eventBus.addFieldEnrichment(TaskId.class, TaskDefinition.class, taskIdToTaskDefinition());
@@ -115,8 +115,8 @@ public class EventBusEnricher {
         return result;
     }
 
-    private Function<TaskLabelId, LabelDetails> labelIdToLabelDetails() {
-        final Function<TaskLabelId, LabelDetails> result = labelId -> {
+    private Function<LabelId, LabelDetails> labelIdToLabelDetails() {
+        final Function<LabelId, LabelDetails> result = labelId -> {
             if (labelId == null) {
                 return LabelDetails.getDefaultInstance();
             }

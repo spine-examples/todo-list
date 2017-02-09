@@ -29,13 +29,13 @@ import org.spine3.examples.todolist.DeleteTaskFailed;
 import org.spine3.examples.todolist.DescriptionUpdateFailed;
 import org.spine3.examples.todolist.FinalizeDraftFailed;
 import org.spine3.examples.todolist.LabelDetailsUpdateFailed;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.PriorityUpdateFailed;
 import org.spine3.examples.todolist.RemoveLabelFromTaskFailed;
 import org.spine3.examples.todolist.ReopenTaskFailed;
 import org.spine3.examples.todolist.RestoreDeletedTaskFailed;
 import org.spine3.examples.todolist.TaskDueDateUpdateFailed;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.UnsuccessfulLabelCommand;
 import org.spine3.examples.todolist.UnsuccessfulTaskCommand;
 import org.spine3.examples.todolist.c.failures.CannotAssignLabelToTask;
@@ -147,7 +147,7 @@ class FailureHelper {
      * @param taskId the ID of the task
      * @throws CannotRemoveLabelFromTask the {@code CannotRemoveLabelFromTask} failure
      */
-    static void throwCannotRemoveLabelFromTaskFailure(TaskLabelId labelId, TaskId taskId)
+    static void throwCannotRemoveLabelFromTaskFailure(LabelId labelId, TaskId taskId)
             throws CannotRemoveLabelFromTask {
         final UnsuccessfulTaskCommand commandFailed =
                 UnsuccessfulTaskCommand.newBuilder()
@@ -267,7 +267,7 @@ class FailureHelper {
      * @param labelId the ID of the label
      * @throws CannotAssignLabelToTask the {@code CannotAssignLabelToTask} failure
      */
-    static void throwCannotAssignLabelToTaskFailure(TaskId taskId, TaskLabelId labelId) throws CannotAssignLabelToTask {
+    static void throwCannotAssignLabelToTaskFailure(TaskId taskId, LabelId labelId) throws CannotAssignLabelToTask {
         final UnsuccessfulTaskCommand commandFailed =
                 UnsuccessfulTaskCommand.newBuilder()
                                        .setTaskId(taskId)
@@ -365,7 +365,7 @@ class FailureHelper {
      * @param mismatch the {@link ValueMismatch}
      * @throws CannotUpdateLabelDetails the {@code CannotUpdateLabelDetails} failure
      */
-    static void throwCannotUpdateLabelDetailsFailure(TaskLabelId labelId, ValueMismatch mismatch)
+    static void throwCannotUpdateLabelDetailsFailure(LabelId labelId, ValueMismatch mismatch)
             throws CannotUpdateLabelDetails {
         final UnsuccessfulLabelCommand labelCommandFailed = UnsuccessfulLabelCommand.newBuilder()
                                                                                     .setLabelId(labelId)
@@ -383,8 +383,7 @@ class FailureHelper {
      * according to the passed parameters.
      *
      * @param taskId the ID of the task
-     * @throws CannotUpdateTaskWithInappropriateDescription
-     * the {@code CannotUpdateTaskWithInappropriateDescription} failure
+     * @throws CannotUpdateTaskWithInappropriateDescription the {@code CannotUpdateTaskWithInappropriateDescription} failure
      */
     static void throwCannotUpdateTooShortDescriptionFailure(TaskId taskId)
             throws CannotUpdateTaskWithInappropriateDescription {
@@ -404,8 +403,7 @@ class FailureHelper {
      * according to the passed parameters.
      *
      * @param taskId the ID of the task
-     * @throws CannotCreateTaskWithInappropriateDescription
-     * the {@code CannotCreateTaskWithInappropriateDescription} failure
+     * @throws CannotCreateTaskWithInappropriateDescription the {@code CannotCreateTaskWithInappropriateDescription} failure
      */
     static void throwCannotCreateTaskWithInappropriateDescription(TaskId taskId)
             throws CannotCreateTaskWithInappropriateDescription {

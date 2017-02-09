@@ -25,8 +25,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
@@ -81,7 +81,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
         final CreateBasicLabel createLabel = createBasicLabel();
         client.create(createLabel);
 
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
         final TaskId taskId = createTask.getId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
@@ -116,7 +116,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
         final CreateBasicLabel createLabel = createBasicLabel();
         client.create(createLabel);
 
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
         final TaskId taskId = createTask.getId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
@@ -148,7 +148,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
         client.create(createLabel);
 
         final TaskId taskId = createTask.getId();
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
@@ -179,7 +179,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
         final CreateBasicLabel createLabel = createBasicLabel();
         client.create(createLabel);
 
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
         final TaskId firstTaskId = firstTask.getId();
         final TaskId secondTaskId = secondTask.getId();
 
@@ -253,7 +253,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
         client.create(createLabel);
 
         final TaskId taskId = createTask.getId();
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
@@ -280,7 +280,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
         client.create(createLabel);
 
         final TaskId taskId = createTask.getId();
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
@@ -312,7 +312,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
         final CreateBasicLabel createLabel = createBasicLabel();
         client.create(createLabel);
 
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
         final TaskId taskId = createTask.getId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
@@ -339,7 +339,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
         final CreateBasicLabel createLabel = createBasicLabel();
         client.create(createLabel);
 
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
         final TaskId taskId = createTask.getId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
@@ -450,7 +450,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
         client.create(createLabel);
 
         final TaskId taskId = createTask.getId();
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
@@ -465,7 +465,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
                                                          .build();
         final LabelDetails previousLabelDetails =
                 isCorrectId ? detailsWithCorrectId : LabelDetails.getDefaultInstance();
-        final TaskLabelId updatedLabelId = isCorrectId ? labelId : getWrongTaskLabelId();
+        final LabelId updatedLabelId = isCorrectId ? labelId : getWrongTaskLabelId();
         final UpdateLabelDetails updateLabelDetails =
                 updateLabelDetailsInstance(updatedLabelId, previousLabelDetails, newLabelDetails);
         client.update(updateLabelDetails);
@@ -491,7 +491,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
         client.create(createLabel);
 
         final TaskId taskId = createTask.getId();
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
@@ -527,7 +527,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
         client.create(createLabel);
 
         final TaskId taskId = createTask.getId();
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
@@ -560,7 +560,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
         client.create(createLabel);
 
         final TaskId taskId = createTask.getId();
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
@@ -626,7 +626,7 @@ public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
         client.create(createLabel);
 
         final TaskId taskId = createTask.getId();
-        final TaskLabelId labelId = createLabel.getLabelId();
+        final LabelId labelId = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);

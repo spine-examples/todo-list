@@ -31,8 +31,8 @@ import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsUpdateFailed;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskLabel;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
 import org.spine3.examples.todolist.c.events.LabelCreated;
@@ -60,7 +60,7 @@ public class LabelAggregateTest {
 
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
 
-    private TaskLabelId labelId;
+    private LabelId labelId;
     private LabelAggregate aggregate;
 
     @BeforeEach
@@ -69,10 +69,10 @@ public class LabelAggregateTest {
         aggregate = new LabelAggregate(labelId);
     }
 
-    private static TaskLabelId createLabelId() {
-        final TaskLabelId result = TaskLabelId.newBuilder()
-                                              .setValue(newUuid())
-                                              .build();
+    private static LabelId createLabelId() {
+        final LabelId result = LabelId.newBuilder()
+                                      .setValue(newUuid())
+                                      .build();
         return result;
     }
 
@@ -211,8 +211,8 @@ public class LabelAggregateTest {
                 final Failures.CannotUpdateLabelDetails cannotUpdateLabelDetails =
                         ((CannotUpdateLabelDetails) cause).getFailure();
                 final LabelDetailsUpdateFailed labelDetailsUpdateFailed = cannotUpdateLabelDetails.getUpdateFailed();
-                final TaskLabelId actualLabelId = labelDetailsUpdateFailed.getFailedCommand()
-                                                                          .getLabelId();
+                final LabelId actualLabelId = labelDetailsUpdateFailed.getFailedCommand()
+                                                                      .getLabelId();
                 assertEquals(labelId, actualLabelId);
 
                 final ValueMismatch mismatch = labelDetailsUpdateFailed.getLabelDetailsMismatch();

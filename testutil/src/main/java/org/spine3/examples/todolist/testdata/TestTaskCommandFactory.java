@@ -23,9 +23,9 @@ package org.spine3.examples.todolist.testdata;
 import com.google.protobuf.Timestamp;
 import org.spine3.change.StringChange;
 import org.spine3.change.TimestampChange;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
@@ -53,9 +53,9 @@ public class TestTaskCommandFactory {
     public static final TaskId TASK_ID = TaskId.newBuilder()
                                                .setValue(newUuid())
                                                .build();
-    public static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
-                                                          .setValue(newUuid())
-                                                          .build();
+    public static final LabelId LABEL_ID = LabelId.newBuilder()
+                                                  .setValue(newUuid())
+                                                  .build();
     public static final String DESCRIPTION = "Create command description.";
     public static final Timestamp DUE_DATE = Timestamps.getCurrentTime();
     public static final String UPDATED_LABEL_TITLE = "labelTitle";
@@ -359,7 +359,7 @@ public class TestTaskCommandFactory {
      *
      * @return {@link AssignLabelToTask} instance
      */
-    public static AssignLabelToTask assignLabelToTaskInstance(TaskId taskId, TaskLabelId labelId) {
+    public static AssignLabelToTask assignLabelToTaskInstance(TaskId taskId, LabelId labelId) {
         final AssignLabelToTask result = AssignLabelToTask.newBuilder()
                                                           .setId(taskId)
                                                           .setLabelId(labelId)
@@ -392,7 +392,7 @@ public class TestTaskCommandFactory {
      *
      * @return {@link RemoveLabelFromTask} instance
      */
-    public static RemoveLabelFromTask removeLabelFromTaskInstance(TaskId taskId, TaskLabelId labelId) {
+    public static RemoveLabelFromTask removeLabelFromTaskInstance(TaskId taskId, LabelId labelId) {
         final RemoveLabelFromTask result = RemoveLabelFromTask.newBuilder()
                                                               .setId(taskId)
                                                               .setLabelId(labelId)

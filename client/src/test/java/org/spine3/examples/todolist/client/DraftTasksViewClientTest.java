@@ -25,8 +25,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
@@ -216,7 +216,7 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
         final CreateBasicLabel createBasicLabel = createBasicLabel();
         client.create(createBasicLabel);
 
-        final TaskLabelId labelId = createBasicLabel.getLabelId();
+        final LabelId labelId = createBasicLabel.getLabelId();
         final TaskView view = obtainViewWhenHandledAssignLabelToTask(labelId, true);
 
         assertEquals(labelId, view.getLabelId());
@@ -227,7 +227,7 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     public void obtainViewWithoutLabelsWhenTaskIdIsWrong() {
         final CreateBasicLabel createBasicLabel = createBasicLabel();
         client.create(createBasicLabel);
-        final TaskLabelId labelId = createBasicLabel.getLabelId();
+        final LabelId labelId = createBasicLabel.getLabelId();
 
         final TaskView view = obtainViewWhenHandledAssignLabelToTask(labelId, false);
         assertNotEquals(labelId, view.getLabelId());
@@ -238,7 +238,7 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     public void obtainViewWithoutLabels() {
         final CreateBasicLabel createBasicLabel = createBasicLabel();
         client.create(createBasicLabel);
-        final TaskLabelId labelId = createBasicLabel.getLabelId();
+        final LabelId labelId = createBasicLabel.getLabelId();
 
         final TaskView view = obtainTaskViewWhenHandledRemoveLabeledFromTask(labelId, true);
         assertNotEquals(labelId, view.getLabelId());
@@ -249,7 +249,7 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     public void obtainLabelledViewWhenTaskIdIsWrong() {
         final CreateBasicLabel createBasicLabel = createBasicLabel();
         client.create(createBasicLabel);
-        final TaskLabelId labelId = createBasicLabel.getLabelId();
+        final LabelId labelId = createBasicLabel.getLabelId();
 
         final TaskView view = obtainTaskViewWhenHandledRemoveLabeledFromTask(labelId, false);
         assertEquals(labelId, view.getLabelId());
@@ -297,12 +297,12 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
         client.create(createBasicLabel);
 
         final TaskId taskId = createDraft.getId();
-        final TaskLabelId labelId = createBasicLabel.getLabelId();
+        final LabelId labelId = createBasicLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
 
-        final TaskLabelId updatedLabelId = isCorrectId ? labelId : getWrongTaskLabelId();
+        final LabelId updatedLabelId = isCorrectId ? labelId : getWrongTaskLabelId();
 
         final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
                                                               .setTitle(createBasicLabel.getLabelTitle())
@@ -329,7 +329,7 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private TaskView obtainTaskViewWhenHandledRemoveLabeledFromTask(TaskLabelId labelId, boolean isCorrectId) {
+    private TaskView obtainTaskViewWhenHandledRemoveLabeledFromTask(LabelId labelId, boolean isCorrectId) {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 
@@ -354,7 +354,7 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private TaskView obtainViewWhenHandledAssignLabelToTask(TaskLabelId labelId, boolean isCorrectId) {
+    private TaskView obtainViewWhenHandledAssignLabelToTask(LabelId labelId, boolean isCorrectId) {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 

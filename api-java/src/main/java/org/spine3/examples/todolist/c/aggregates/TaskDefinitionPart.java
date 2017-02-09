@@ -25,11 +25,11 @@ import com.google.protobuf.Timestamp;
 import org.spine3.change.StringChange;
 import org.spine3.change.TimestampChange;
 import org.spine3.change.ValueMismatch;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskLabelIds;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskStatus;
@@ -332,9 +332,9 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
 
         final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
         final TaskLabelIds taskLabels = root.getTaskLabelIdsState();
-        final List<TaskLabelId> labelIdsList = taskLabels.getLabelIdsList()
-                                                         .getLabelIdsList();
-        for (TaskLabelId labelId : labelIdsList) {
+        final List<LabelId> labelIdsList = taskLabels.getLabelIdsList()
+                                                     .getLabelIdsList();
+        for (LabelId labelId : labelIdsList) {
             final LabelledTaskRestored labelledTaskRestored = LabelledTaskRestored.newBuilder()
                                                                                   .setTaskId(taskId)
                                                                                   .setLabelId(labelId)

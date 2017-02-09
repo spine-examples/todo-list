@@ -21,10 +21,10 @@
 package org.spine3.examples.todolist.c.aggregates;
 
 import com.google.protobuf.Message;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.LabelIdsList;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskLabelIds;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
 import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
@@ -61,7 +61,7 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabelIds, TaskLabe
 
     @Assign
     List<? extends Message> handle(RemoveLabelFromTask cmd) throws CannotRemoveLabelFromTask {
-        final TaskLabelId labelId = cmd.getLabelId();
+        final LabelId labelId = cmd.getLabelId();
         final TaskId taskId = cmd.getId();
 
         final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
@@ -83,7 +83,7 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabelIds, TaskLabe
     @Assign
     List<? extends Message> handle(AssignLabelToTask cmd) throws CannotAssignLabelToTask {
         final TaskId taskId = cmd.getId();
-        final TaskLabelId labelId = cmd.getLabelId();
+        final LabelId labelId = cmd.getLabelId();
 
         final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
         final TaskDefinition state = root.getTaskDefinitionState();
@@ -103,10 +103,10 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabelIds, TaskLabe
 
     @Apply
     private void labelAssignedToTask(LabelAssignedToTask event) {
-        List<TaskLabelId> list = getState().getLabelIdsList()
-                                           .getLabelIdsList()
-                                           .stream()
-                                           .collect(Collectors.toList());
+        List<LabelId> list = getState().getLabelIdsList()
+                                       .getLabelIdsList()
+                                       .stream()
+                                       .collect(Collectors.toList());
 
         list.add(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
@@ -118,10 +118,10 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabelIds, TaskLabe
 
     @Apply
     private void labelRemovedFromTask(LabelRemovedFromTask event) {
-        List<TaskLabelId> list = getState().getLabelIdsList()
-                                           .getLabelIdsList()
-                                           .stream()
-                                           .collect(Collectors.toList());
+        List<LabelId> list = getState().getLabelIdsList()
+                                       .getLabelIdsList()
+                                       .stream()
+                                       .collect(Collectors.toList());
         list.remove(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
                                                       .addAllLabelIds(list)

@@ -26,8 +26,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelColor;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
@@ -235,7 +235,7 @@ public class MyListViewProjectionTest {
 
     @Nested
     @DisplayName("TaskPriorityUpdated event")
-    class TaskPriorityUpdatedEvent{
+    class TaskPriorityUpdatedEvent {
 
         @Test
         @DisplayName("updates the task priority")
@@ -287,7 +287,7 @@ public class MyListViewProjectionTest {
 
     @Nested
     @DisplayName("LabelDetailsUpdated event")
-    class LabelDetailsUpdatedEvent{
+    class LabelDetailsUpdatedEvent {
 
         @Test
         @DisplayName("updates label details")
@@ -326,7 +326,7 @@ public class MyListViewProjectionTest {
             final TaskId expectedTaskId = taskCreatedEvent.getId();
 
             final LabelAssignedToTask labelAssignedToTaskEvent =
-                    labelAssignedToTaskInstance(expectedTaskId, TaskLabelId.getDefaultInstance());
+                    labelAssignedToTaskInstance(expectedTaskId, LabelId.getDefaultInstance());
             projection.on(labelAssignedToTaskEvent);
 
             final LabelColor updatedColor = LabelColor.BLUE;
@@ -349,7 +349,7 @@ public class MyListViewProjectionTest {
 
     @Nested
     @DisplayName("TaskCompleted event")
-    class TaskCompletedEvent{
+    class TaskCompletedEvent {
 
         @Test
         @DisplayName("completes task")
@@ -394,7 +394,7 @@ public class MyListViewProjectionTest {
 
     @Nested
     @DisplayName("TaskReopened event")
-    class TaskReopenedEvent{
+    class TaskReopenedEvent {
 
         @Test
         @DisplayName("reopens task")

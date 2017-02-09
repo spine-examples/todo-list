@@ -22,8 +22,8 @@ package org.spine3.examples.todolist.q.projections;
 
 import com.google.protobuf.Timestamp;
 import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
 import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
@@ -75,7 +75,7 @@ class ProjectionHelper {
      * @param id    the label ID of the task view
      * @return {@link TaskListView} without deleted task view
      */
-    static TaskListView removeViewByLabelId(List<TaskView> views, TaskLabelId id) {
+    static TaskListView removeViewByLabelId(List<TaskView> views, LabelId id) {
         final TaskView taskView = views.stream()
                                        .filter(t -> t.getLabelId()
                                                      .equals(id))
@@ -135,7 +135,7 @@ class ProjectionHelper {
     static List<TaskView> updateTaskViewList(List<TaskView> views, LabelRemovedFromTask event) {
         final TaskId targetTaskId = event.getTaskId();
 
-        final TaskTransformation updateFn = builder -> builder.setLabelId(TaskLabelId.getDefaultInstance());
+        final TaskTransformation updateFn = builder -> builder.setLabelId(LabelId.getDefaultInstance());
         final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
         return result;
     }

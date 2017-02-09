@@ -22,11 +22,11 @@ package org.spine3.examples.todolist.testdata;
 
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.LabelIdsList;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.protobuf.Timestamps;
 import org.spine3.server.event.enrich.EventEnricher;
@@ -61,7 +61,7 @@ public class TestEventEnricherFactory {
     private TestEventEnricherFactory() {
     }
 
-    private static final Function<TaskLabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS = labelId -> LABEL_DETAILS;
+    private static final Function<LabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS = labelId -> LABEL_DETAILS;
 
     private static final Function<TaskId, LabelIdsList> TASK_ID_TO_LABEL_IDS_LIST = taskId -> {
 
@@ -82,7 +82,7 @@ public class TestEventEnricherFactory {
      */
     public static EventEnricher eventEnricherInstance() {
         final EventEnricher result = EventEnricher.newBuilder()
-                                                  .addFieldEnrichment(TaskLabelId.class,
+                                                  .addFieldEnrichment(LabelId.class,
                                                                       LabelDetails.class,
                                                                       LABEL_ID_TO_LABEL_DETAILS::apply)
                                                   .addFieldEnrichment(TaskId.class,

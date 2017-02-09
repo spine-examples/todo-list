@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Test;
 import org.spine3.base.Command;
 import org.spine3.base.CommandContext;
 import org.spine3.base.Commands;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
@@ -67,7 +67,7 @@ public class TaskLabelsPartTest {
 
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
 
-    private TaskLabelId labelId;
+    private LabelId labelId;
     private TestResponseObserver responseObserver;
     private CommandBus commandBus;
     private TaskLabelsPart taskLabelsPart;
@@ -83,10 +83,10 @@ public class TaskLabelsPartTest {
         taskLabelsPart = createTaskLabelsPart(taskId);
     }
 
-    private static TaskLabelId createLabelId() {
-        final TaskLabelId result = TaskLabelId.newBuilder()
-                                              .setValue(newUuid())
-                                              .build();
+    private static LabelId createLabelId() {
+        final LabelId result = LabelId.newBuilder()
+                                      .setValue(newUuid())
+                                      .build();
         return result;
     }
 

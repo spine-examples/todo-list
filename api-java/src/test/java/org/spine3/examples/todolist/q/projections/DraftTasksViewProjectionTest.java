@@ -26,8 +26,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelColor;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
@@ -336,7 +336,7 @@ public class DraftTasksViewProjectionTest {
             final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
 
             final LabelAssignedToTask labelAssignedToTaskEvent =
-                    labelAssignedToTaskInstance(expectedTaskId, TaskLabelId.getDefaultInstance());
+                    labelAssignedToTaskInstance(expectedTaskId, LabelId.getDefaultInstance());
             projection.on(labelAssignedToTaskEvent);
 
             final LabelColor updatedColor = LabelColor.BLUE;

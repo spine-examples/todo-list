@@ -23,8 +23,8 @@ package org.spine3.examples.todolist.q.projections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +44,9 @@ public class ProjectionHelperTest {
     private static final TaskId TASK_ID = TaskId.newBuilder()
                                                 .setValue(newUuid())
                                                 .build();
-    private static final TaskLabelId LABEL_ID = TaskLabelId.newBuilder()
-                                                           .setValue(newUuid())
-                                                           .build();
+    private static final LabelId LABEL_ID = LabelId.newBuilder()
+                                                   .setValue(newUuid())
+                                                   .build();
     private TaskView viewWithDefaultLabelId;
     private TaskView viewWithDefaultTaskId;
     private List<TaskView> viewList;
@@ -76,9 +76,9 @@ public class ProjectionHelperTest {
     @DisplayName("not remove TaskView from state by wrong label id")
     public void notRemoveViewByLabelId() {
         final int expectedListSize = 2;
-        final TaskLabelId wrongLabelId = TaskLabelId.newBuilder()
-                                                    .setValue(newUuid())
-                                                    .build();
+        final LabelId wrongLabelId = LabelId.newBuilder()
+                                            .setValue(newUuid())
+                                            .build();
         final TaskListView view = ProjectionHelper.removeViewByLabelId(viewList, wrongLabelId);
 
         assertEquals(expectedListSize, view.getItemsCount());
@@ -112,7 +112,7 @@ public class ProjectionHelperTest {
         final List<TaskView> viewList = new ArrayList<>();
         viewWithDefaultLabelId = TaskView.newBuilder()
                                          .setId(TASK_ID)
-                                         .setLabelId(TaskLabelId.getDefaultInstance())
+                                         .setLabelId(LabelId.getDefaultInstance())
                                          .build();
         viewWithDefaultTaskId = TaskView.newBuilder()
                                         .setLabelId(LABEL_ID)

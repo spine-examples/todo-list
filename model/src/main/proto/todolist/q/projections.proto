@@ -80,7 +80,7 @@ message DraftTasksView {
 //
 message LabelledTasksView {
 
-    TaskLabelId label_id = 1;
+    LabelId label_id = 1;
 
     string label_title = 2 [(required) = true];
 
@@ -114,7 +114,7 @@ message TaskView {
     TaskPriority priority = 3;
 
     // Task label identifier.
-    TaskLabelId label_id = 4;
+    LabelId label_id = 4;
 
     // A color of the label.
     LabelColor label_color = 5;

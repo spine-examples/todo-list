@@ -23,9 +23,9 @@ package org.spine3.examples.todolist.q.projections;
 import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.c.enrichments.DetailsEnrichment;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
 import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
@@ -56,7 +56,7 @@ import static org.spine3.examples.todolist.q.projections.ProjectionHelper.update
  * @author Illia Shepilov
  */
 @SuppressWarnings("OverlyCoupledClass")
-public class LabelledTasksViewProjection extends Projection<TaskLabelId, LabelledTasksView> {
+public class LabelledTasksViewProjection extends Projection<LabelId, LabelledTasksView> {
 
     /**
      * Creates a new instance.
@@ -64,7 +64,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
      * @param id the ID for the new instance
      * @throws IllegalArgumentException if the ID is not of one of the supported types
      */
-    public LabelledTasksViewProjection(TaskLabelId id) {
+    public LabelledTasksViewProjection(LabelId id) {
         super(id);
     }
 
@@ -72,7 +72,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     public void on(LabelAssignedToTask event, EventContext context) {
         final DetailsEnrichment enrichment = getEnrichment(DetailsEnrichment.class, context);
         final TaskDetails taskDetails = enrichment.getTaskDetails();
-        final TaskLabelId labelId = event.getLabelId();
+        final LabelId labelId = event.getLabelId();
         final TaskId taskId = event.getTaskId();
 
         final TaskView taskView = constructTaskView(taskDetails, labelId, taskId);
@@ -86,7 +86,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
     public void on(LabelledTaskRestored event, EventContext context) {
         final DetailsEnrichment enrichment = getEnrichment(DetailsEnrichment.class, context);
         final TaskDetails taskDetails = enrichment.getTaskDetails();
-        final TaskLabelId labelId = event.getLabelId();
+        final LabelId labelId = event.getLabelId();
         final TaskId taskId = event.getTaskId();
 
         final TaskView taskView = constructTaskView(taskDetails, labelId, taskId);
@@ -98,7 +98,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
 
     @Subscribe
     public void on(LabelRemovedFromTask event) {
-        final TaskLabelId labelId = event.getLabelId();
+        final LabelId labelId = event.getLabelId();
         final boolean isEquals = getState().getLabelId()
                                            .equals(labelId);
         if (isEquals) {
@@ -181,7 +181,7 @@ public class LabelledTasksViewProjection extends Projection<TaskLabelId, Labelle
         incrementState(state);
     }
 
-    private static TaskView constructTaskView(TaskDetails taskDetails, TaskLabelId labelId, TaskId taskId) {
+    private static TaskView constructTaskView(TaskDetails taskDetails, LabelId labelId, TaskId taskId) {
         final TaskView result = TaskView.newBuilder()
                                         .setId(taskId)
                                         .setLabelId(labelId)

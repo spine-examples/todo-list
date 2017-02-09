@@ -22,8 +22,8 @@ package org.spine3.examples.todolist.client;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelId;
 import org.spine3.examples.todolist.c.aggregates.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
@@ -114,10 +114,10 @@ abstract class CommandLineTodoClientTest {
         return result;
     }
 
-    static TaskLabelId getWrongTaskLabelId() {
-        final TaskLabelId result = TaskLabelId.newBuilder()
-                                              .setValue(newUuid())
-                                              .build();
+    static LabelId getWrongTaskLabelId() {
+        final LabelId result = LabelId.newBuilder()
+                                      .setValue(newUuid())
+                                      .build();
         return result;
     }
 }

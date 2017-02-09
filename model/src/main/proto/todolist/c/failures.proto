@@ -151,5 +151,5 @@ message LabelNotFound{
     TaskId task_id = 1;
 
     // A label ID from the command, which wasn't found in the task.
-    TaskLabelId label_id = 2;
+    LabelId label_id = 2;
 }

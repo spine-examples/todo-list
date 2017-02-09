@@ -20,7 +20,7 @@
 
 package org.spine3.examples.todolist.repositories;
 
-import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.c.aggregates.LabelAggregate;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.aggregate.AggregateRepository;
@@ -30,7 +30,7 @@ import org.spine3.server.aggregate.AggregateRepository;
  *
  * @author Illia Shepilov
  */
-public class LabelAggregateRepository extends AggregateRepository<TaskLabelId, LabelAggregate> {
+public class LabelAggregateRepository extends AggregateRepository<LabelId, LabelAggregate> {
 
     /**
      * Creates a new repository instance.
