@@ -67,6 +67,7 @@ import static org.spine3.base.Identifiers.newUuid;
  *
  * @author Illia Shepilov
  */
+@SuppressWarnings("OverlyCoupledClass")
 public class CommandLineTodoClient implements TodoClient {
 
     private static final int TIMEOUT = 10;
@@ -258,7 +259,6 @@ public class CommandLineTodoClient implements TodoClient {
         return result;
     }
 
-    //TODO:2017-02-08:illiashepilov: add implementation.
     private static class EventStreamObserver implements StreamObserver<QueryResponse> {
 
         private List<Any> queryResponses;
@@ -270,12 +270,12 @@ public class CommandLineTodoClient implements TodoClient {
 
         @Override
         public void onError(Throwable t) {
-
+            log().error("Exception is occurred during receiving a notifications.", t);
         }
 
         @Override
         public void onCompleted() {
-
+            log().info("Receiving notifications is completed.");
         }
 
         private enum LogSingleton {
