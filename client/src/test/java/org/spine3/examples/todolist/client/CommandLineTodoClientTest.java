@@ -30,11 +30,13 @@ import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.client.builder.CommandBuilder;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
+import org.spine3.examples.todolist.q.projections.LabelledTasksView;
 import org.spine3.examples.todolist.server.Server;
 import org.spine3.server.BoundedContext;
 import org.spine3.util.Exceptions;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -118,6 +120,21 @@ abstract class CommandLineTodoClientTest {
         final LabelId result = LabelId.newBuilder()
                                       .setValue(newUuid())
                                       .build();
+        return result;
+    }
+
+    static LabelledTasksView getLabelledTasksView(List<LabelledTasksView> tasksViewList) {
+        LabelledTasksView result = LabelledTasksView.getDefaultInstance();
+
+        for (LabelledTasksView labelledView : tasksViewList) {
+            final boolean isEmpty = labelledView.getLabelId()
+                                                .getValue()
+                                                .isEmpty();
+            if (!isEmpty) {
+                result = labelledView;
+            }
+        }
+
         return result;
     }
 }
