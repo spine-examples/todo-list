@@ -35,10 +35,9 @@ import "spine/validate.proto";
 
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
+import "todolist/values.proto";
 
-// Represents a single task.
-//
-message Task {
+message TaskDefinition {
 
     // Task identifier.
     TaskId id = 1;
@@ -62,20 +61,30 @@ message Task {
     // Optional. Has no default value.
     google.protobuf.Timestamp due_date = 5;
 
+    // Task status.
+    //
+    // Optional. Defaults to the `TaskStatus.TS_UNDEFINED`.
+    TaskStatus task_status = 6;
+
+    // Reserved fields for future extension.
+    reserved 7 to 20;
+}
+
+message TaskLabelIds {
+
+    // Task identifier.
+    TaskId task_id = 1;
+
     // Task labels.
     //
     // Task can have any number of labels assigned, i.e. [0; +inf).
     // Optional. Empty by default.
-    repeated TaskLabelId label_ids = 6;
-
-    // Task status.
-    //
-    // Optional. Defaults to the `TaskStatus.TS_UNDEFINED`.
-    TaskStatus task_status = 7;
+    LabelIdsList label_ids_list = 2;
 
     // Reserved fields for future extension.
-    reserved 8 to 20;
+    reserved 3 to 20;
 }
+
 
 // Text label set to one or more tasks.
 //
@@ -86,7 +95,7 @@ message Task {
 message TaskLabel {
 
     // Label identifier.
-    TaskLabelId id = 1;
+    LabelId id = 1;
 
     // Label title.
     //
