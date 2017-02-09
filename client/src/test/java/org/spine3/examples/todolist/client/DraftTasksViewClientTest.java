@@ -66,22 +66,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
 
     @Test
-    @DisplayName("obtain empty view list when task draft is deleted")
-    public void emptyViewsWhenDraftIsDeleted() {
-        final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
-
-        final DeleteTask deleteTask = deleteTaskInstance(createDraft.getId());
-        client.delete(deleteTask);
-
-        final List<TaskView> taskViews = client.getDraftTasksView()
-                                               .getDraftTasks()
-                                               .getItemsList();
-        assertTrue(taskViews.isEmpty());
-    }
-
-    @Test
-    @DisplayName("obtain created task draft")
+    @DisplayName("obtain task view according to the created draft when handled CreateDraft command")
     public void obtainView() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
@@ -97,7 +82,22 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    @DisplayName("obtain created task draft when send DeleteTask command with wrong id")
+    @DisplayName("obtain empty view list when handled DeleteTask command")
+    public void emptyViewsWhenDraftIsDeleted() {
+        final CreateDraft createDraft = createDraft();
+        client.create(createDraft);
+
+        final DeleteTask deleteTask = deleteTaskInstance(createDraft.getId());
+        client.delete(deleteTask);
+
+        final List<TaskView> taskViews = client.getDraftTasksView()
+                                               .getDraftTasks()
+                                               .getItemsList();
+        assertTrue(taskViews.isEmpty());
+    }
+
+    @Test
+    @DisplayName("obtain created task draft when handled DeleteTask command with wrong ID")
     public void obtainViewWhenDeletedWrongDraft() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
@@ -117,7 +117,7 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    @DisplayName("obtain empty view list when draft is finalized")
+    @DisplayName("obtain empty view list when handled FinalizeDraft command")
     public void obtainEmptyViewsWhenDraftIsFinalized() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
@@ -141,7 +141,7 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    @DisplayName("obtain view when draft is finalized by wrong task id")
+    @DisplayName("obtain view when handled FinalizeDraft command with wrong task ID")
     public void obtainViewWhenFinalizedWrongDraft() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
@@ -161,19 +161,22 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_updated_task_view_when_handled_command_update_task_view_description_with_wrong_task_id() {
+    @DisplayName("obtain task view with not updated description when handled UpdateTaskDescription command with wrong task ID")
+    public void obtainNotUpdatedDescription() {
         final TaskView view = obtainViewWhenHandledUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, false);
         assertNotEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
     }
 
     @Test
-    public void obtain_updated_task_view_when_handled_command_update_task_view_description() {
+    @DisplayName("obtain task view with updated description when handled UpdateTaskDescription")
+    public void obtainUpdatedDescription() {
         final TaskView view = obtainViewWhenHandledUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, true);
         assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
     }
 
     @Test
-    public void obtain_updated_task_view_when_handled_command_update_task_priority() {
+    @DisplayName("obtain task view with updated task priority when handled UpdateTaskPriority command")
+    public void obtainUpdatedPriority() {
         final TaskPriority newPriority = TaskPriority.HIGH;
         final TaskView view = obtainViewWhenHandledUpdateTaskPriority(newPriority, true);
 
@@ -181,7 +184,8 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_not_updated_task_view_when_handled_command_update_task_priority_with_wrong_task_id() {
+    @DisplayName("obtain task view with not updated priority when handled UpdateTaskPriority command with wrong task ID")
+    public void obtainNotUpdatedPriority() {
         final TaskPriority newPriority = TaskPriority.HIGH;
         final TaskView view = obtainViewWhenHandledUpdateTaskPriority(newPriority, false);
 
@@ -189,7 +193,8 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_updated_task_view_when_handled_command_update_task_due_date() {
+    @DisplayName("obtain task view with updated due date when handled UpdateTaskDueDate command")
+    public void obtainUpdatedDueDate() {
         final Timestamp newDueDate = Timestamps.getCurrentTime();
         final TaskView view = obtainViewWhenHandledUpdateTaskDueDate(newDueDate, true);
 
@@ -197,7 +202,8 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_not_updated_task_view_when_handled_command_update_task_due_date_with_wrong_task_id() {
+    @DisplayName("obtain task view with not updated due date when handled UpdateTaskDueDate command with wrong task ID")
+    public void obtainNotUpdatedDueDate() {
         final Timestamp newDueDate = Timestamps.getCurrentTime();
         final TaskView view = obtainViewWhenHandledUpdateTaskDueDate(newDueDate, false);
 
@@ -205,7 +211,8 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_task_view_with_label_when_handled_command_assign_label_to_task() throws Exception {
+    @DisplayName("obtain task view with labels when handled AssignLabelToTask command")
+    public void obtainLabelledView() {
         final CreateBasicLabel createBasicLabel = createBasicLabel();
         client.create(createBasicLabel);
 
@@ -216,7 +223,8 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_task_view_without_label_when_handled_command_assign_label_to_task_with_wrong_task_id() {
+    @DisplayName("obtain task view without labels when handled AssignLabelToTask command with wrong task ID")
+    public void obtainViewWithoutLabelsWhenTaskIdIsWrong() {
         final CreateBasicLabel createBasicLabel = createBasicLabel();
         client.create(createBasicLabel);
         final TaskLabelId labelId = createBasicLabel.getLabelId();
@@ -226,7 +234,8 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_task_view_without_label_when_handled_command_remove_label_from_task() {
+    @DisplayName("obtain task view without labels when RemoveLabelFromTask command handled")
+    public void obtainViewWithoutLabels() {
         final CreateBasicLabel createBasicLabel = createBasicLabel();
         client.create(createBasicLabel);
         final TaskLabelId labelId = createBasicLabel.getLabelId();
@@ -236,7 +245,8 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_task_view_with_label_when_handled_command_remove_label_from_task_with_wrong_task_id() {
+    @DisplayName("obtain task view with labels when handled RemoveLabelFromTask command handled by wrong task ID")
+    public void obtainLabelledViewWhenTaskIdIsWrong() {
         final CreateBasicLabel createBasicLabel = createBasicLabel();
         client.create(createBasicLabel);
         final TaskLabelId labelId = createBasicLabel.getLabelId();
@@ -246,7 +256,8 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_task_view_with_updated_color_when_handled_command_update_label_details() throws Exception {
+    @DisplayName("obtain task view with updated color when handled UpdateLabelDetails command")
+    public void obtainUpdatedColor() throws Exception {
         final CreateBasicLabel createBasicLabel = createBasicLabel();
         client.create(createBasicLabel);
 
@@ -256,7 +267,8 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_task_view_without_updated_color_when_handled_command_update_label_details() throws Exception {
+    @DisplayName("obtain task view without updated color when handled UpdateLabelDetails command with wrong task ID")
+    public void obtainNotUpdatedColor() throws Exception {
         final CreateBasicLabel createBasicLabel = createBasicLabel();
         client.create(createBasicLabel);
 
@@ -266,7 +278,8 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_empty_draft_tasks_view_when_handled_command_create_task() {
+    @DisplayName("obtain empty view list when handled CreateBasicTask command")
+    public void obtainEmptyViewList() {
         final CreateBasicTask createBasicTask = createBasicTask();
         client.create(createBasicTask);
 
