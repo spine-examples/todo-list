@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.client;
 
 import com.google.protobuf.Timestamp;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
@@ -68,10 +69,12 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
  * @author Illia Shepilov
  */
 @SuppressWarnings({"OverlyCoupledClass", "ClassWithTooManyMethods"})
+@DisplayName("LabelledTasksViewClient should")
 public class LabelledTasksViewClientTest extends CommandLineTodoClientTest {
 
     @Test
-    public void obtain_labelled_tasks_view_when_handled_command_deleted_task_restored() throws Exception {
+    @DisplayName("obtain labelled view when handled RestoreDeletedTask command")
+    public void obtainViewWhenTaskIsRestored() throws Exception {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 

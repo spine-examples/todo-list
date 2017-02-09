@@ -45,10 +45,8 @@ import org.spine3.examples.todolist.c.failures.CannotRestoreDeletedTask;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.examples.todolist.testdata.TestResponseObserver;
 import org.spine3.protobuf.AnyPacker;
-import org.spine3.protobuf.TypeName;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.command.CommandBus;
-import org.spine3.server.event.EventFilter;
 import org.spine3.server.event.EventStreamQuery;
 
 import java.util.List;
@@ -84,10 +82,11 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     @Override
     @BeforeEach
     public void setUp() {
-        boundedContext = TodoListBoundedContext.createTestInstance();
-        TaskAggregateRoot.injectBoundedContext(boundedContext);
-        commandBus = boundedContext.getCommandBus();
         responseObserver = new TestResponseObserver();
+        boundedContext = TodoListBoundedContext.getInstance();
+        TaskAggregateRoot.injectBoundedContext(boundedContext);
+
+        commandBus = boundedContext.getCommandBus();
         taskId = createTaskId();
         taskDefinitionPart = createTaskDefinitionPart(taskId);
     }

@@ -66,22 +66,6 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
 
     @Test
-    @DisplayName("obtain task view according to the created draft when handled CreateDraft command")
-    public void obtainView() {
-        final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
-
-        final DraftTasksView draftTasksView = client.getDraftTasksView();
-        final List<TaskView> taskViewList = draftTasksView.getDraftTasks()
-                                                          .getItemsList();
-        final int expectedListSize = 1;
-
-        assertEquals(expectedListSize, taskViewList.size());
-        assertEquals(createDraft.getId(), taskViewList.get(0)
-                                                      .getId());
-    }
-
-    @Test
     @DisplayName("obtain empty view list when handled DeleteTask command")
     public void emptyViewsWhenDraftIsDeleted() {
         final CreateDraft createDraft = createDraft();
@@ -114,6 +98,22 @@ public class DraftTasksViewClientTest extends CommandLineTodoClientTest {
 
         final TaskView view = taskViews.get(0);
         assertEquals(taskId, view.getId());
+    }
+
+    @Test
+    @DisplayName("obtain task view according to the created draft when handled CreateDraft command")
+    public void obtainView() {
+        final CreateDraft createDraft = createDraft();
+        client.create(createDraft);
+
+        final DraftTasksView draftTasksView = client.getDraftTasksView();
+        final List<TaskView> taskViewList = draftTasksView.getDraftTasks()
+                                                          .getItemsList();
+        final int expectedListSize = 1;
+
+        assertEquals(expectedListSize, taskViewList.size());
+        assertEquals(createDraft.getId(), taskViewList.get(0)
+                                                      .getId());
     }
 
     @Test
