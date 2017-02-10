@@ -46,7 +46,8 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 @DisplayName("After execution DeleteTask command")
 public class DeleteTaskTest extends CommandLineTodoClientTest {
 
-    static final String CONTAIN_TASK_VIEW_WHEN_COMMAND_HAS_WRONG_ID = "contain task view when command has wrong ID";
+    private static final String CONTAIN_TASK_VIEW_WHEN_COMMAND_HAS_WRONG_ID =
+            "contain task view when command has wrong ID";
 
     @Nested
     @DisplayName(LABELLED_TASK_VIEW_SHOULD)
