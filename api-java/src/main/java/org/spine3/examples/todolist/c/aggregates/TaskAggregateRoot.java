@@ -27,13 +27,26 @@ import org.spine3.examples.todolist.TaskLabelIds;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.aggregate.AggregateRoot;
+import org.spine3.util.Environment;
 
 /**
  * @author Illia Shepilov
  */
 public class TaskAggregateRoot extends AggregateRoot<TaskId> {
 
-    private static BoundedContext boundedContext = TodoListBoundedContext.getInstance();
+    private static BoundedContext boundedContext;
+
+    static {
+        initBoundedContextIfNeeded();
+    }
+
+    private static void initBoundedContextIfNeeded() {
+        final boolean testEnv = Environment.getInstance()
+                                           .isTests();
+        if (!testEnv) {
+            boundedContext = TodoListBoundedContext.getInstance();
+        }
+    }
 
     /**
      * Creates a new instance.
