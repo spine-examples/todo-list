@@ -21,23 +21,19 @@
 package org.spine3.examples.todolist.c.aggregates.definition;
 
 import com.google.protobuf.Message;
-import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.CommandContext;
-import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.c.aggregates.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.events.TaskCreated;
-import org.spine3.protobuf.Timestamps;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 
@@ -78,28 +74,5 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
         assertEquals(taskId, taskCreated.getId());
         assertEquals(DESCRIPTION, taskCreated.getDetails()
                                              .getDescription());
-    }
-
-    @Test
-    @DisplayName("")
-    //TODO:2017-02-06:illiashepilov:
-    public void record_modification_timestamp() throws InterruptedException {
-        CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
-
-        TaskDefinition state = aggregate.getState();
-        final Timestamp firstStateCreationTime = state.getCreated();
-
-        assertEquals(taskId, state.getId());
-
-        Thread.sleep(1000);
-
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
-
-        state = aggregate.getState();
-        final Timestamp secondStateCreationTime = state.getCreated();
-
-        assertEquals(taskId, state.getId());
-        assertTrue(Timestamps.isLaterThan(secondStateCreationTime, firstStateCreationTime));
     }
 }
