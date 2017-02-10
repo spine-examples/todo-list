@@ -30,7 +30,10 @@ import org.spine3.server.aggregate.AggregateRoot;
 import org.spine3.util.Environment;
 
 /**
+ * Aggregate root for the tasks.
+ *
  * @author Illia Shepilov
+ * @see AggregateRoot
  */
 public class TaskAggregateRoot extends AggregateRoot<TaskId> {
 
@@ -40,6 +43,14 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
         initBoundedContextIfNeeded();
     }
 
+    /**
+     * Obtains and sets the {@link BoundedContext} singleton instance.
+     *
+     * <p>If the {@link Environment} is not test environment,
+     * will be obtained and set the singleton {@link BoundedContext} instance.
+     *
+     * @see TodoListBoundedContext#getInstance()
+     */
     private static void initBoundedContextIfNeeded() {
         final boolean testEnv = Environment.getInstance()
                                            .isTests();
@@ -57,20 +68,45 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
         super(boundedContext, id);
     }
 
+    /**
+     * Returns {@link TaskAggregateRoot} instance according to the {@code TaskId}.
+     *
+     * @param id a task identifier
+     * @return the aggregate root for task
+     */
     public static TaskAggregateRoot get(TaskId id) {
         return new TaskAggregateRoot(id);
     }
 
+    /**
+     * Returns the {@link TaskDefinition}.
+     *
+     * <p>Obtains the state from the {@code boundedContext}.
+     *
+     * @return the state for the {@link TaskDefinitionPart}.
+     */
     public TaskDefinition getTaskDefinitionState() {
         final TaskDefinition result = getPartState(TaskDefinition.class);
         return result;
     }
 
+    /**
+     * Return the {@link TaskLabelIds}.
+     *
+     * <p>Obtains the state from the {@code boundedContext}.
+     *
+     * @return the state for the {@link TaskLabelsPart}
+     */
     public TaskLabelIds getTaskLabelIdsState() {
         final TaskLabelIds result = getPartState(TaskLabelIds.class);
         return result;
     }
 
+    /**
+     * Injects the {@link BoundedContext} instance.
+     *
+     * @param boundedContext instance to inject
+     */
     @VisibleForTesting
     public static void injectBoundedContext(BoundedContext boundedContext) {
         TaskAggregateRoot.boundedContext = boundedContext;

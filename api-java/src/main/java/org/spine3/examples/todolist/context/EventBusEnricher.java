@@ -37,6 +37,8 @@ import org.spine3.examples.todolist.repositories.TaskLabelsRepository;
 import org.spine3.server.event.EventBus;
 
 /**
+ * Performs all necessary initializations to create and add enricher fields for the {@link EventBus}.
+ *
  * @author Illia Shepilov
  */
 @SuppressWarnings("Guava") // as we use Guava Function until we migrate the whole framework to Java 8.
@@ -51,6 +53,9 @@ public class EventBusEnricher {
         this.eventBus = builder.eventBus;
     }
 
+    /**
+     * Provides enriched {@link EventBus}.
+     */
     void enrich() {
         eventBus.addFieldEnrichment(LabelId.class, LabelDetails.class, labelIdToLabelDetails());
         eventBus.addFieldEnrichment(TaskId.class, TaskDetails.class, taskIdToTaskDetails());
@@ -136,10 +141,18 @@ public class EventBusEnricher {
         return result;
     }
 
+    /**
+     * Creates a new builder for (@code EventBusEnricher).
+     *
+     * @return new builder instance
+     */
     public static Builder newBuilder() {
         return new Builder();
     }
 
+    /**
+     * A builder for producing {@code EventEnricherSupplier} instances.
+     */
     public static class Builder {
 
         private TodoListRepositoryProvider repositoryProvider;
@@ -148,6 +161,13 @@ public class EventBusEnricher {
         private Builder() {
         }
 
+        /**
+         * Sets the {@link TodoListRepositoryProvider} instead of setting each repository separately.
+         *
+         * @param repositoryProvider the task aggregate repository provider.
+         * @return the {@code Builder}
+         * @see TodoListRepositoryProvider
+         */
         public Builder setRepositoryProvider(TodoListRepositoryProvider repositoryProvider) {
             this.repositoryProvider = repositoryProvider;
             return this;

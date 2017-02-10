@@ -31,20 +31,29 @@ import org.spine3.server.BoundedContext;
 import org.spine3.server.event.EventBus;
 
 /**
+ * Serves for creation the {@link BoundedContext} instances.
+ *
  * @author Illia Shepilov
  */
 public class TodoListBoundedContext {
 
     /** The name of the Bounded Context. */
-    private static final String NAME = "Tasks";
+    private static final String NAME = "Todo";
 
     /**
-     * Obtains the reference to the Tasks Bounded Context.
+     * Obtains the reference to the singleton {@link BoundedContext}.
      */
     public static BoundedContext getInstance() {
         return Singleton.INSTANCE.value;
     }
 
+    /**
+     * Creates and returns the {@link BoundedContext} instance.
+     *
+     * <p>Serves only for test needs.
+     *
+     * @return the {@link BoundedContext} instance
+     */
     @VisibleForTesting
     public static BoundedContext createTestInstance() {
         final BoundedContext result = create();
@@ -56,7 +65,7 @@ public class TodoListBoundedContext {
     }
 
     /**
-     * Creates new instance of the Tasks Bounded Context.
+     * Creates a new instance of the Bounded Context.
      */
     private static BoundedContext create() {
         final BoundedContext boundedContext = createBoundedContext();
