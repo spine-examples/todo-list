@@ -37,10 +37,12 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCR
 /**
  * @author Illia Shepilov
  */
+@DisplayName("After execution CreateBasicTask command")
 public class CreateBasicTaskTest extends CommandLineTodoClientTest{
 
     @Test
-    public void obtain_empty_labelled_tasks_view_when_handled_command_create_task() {
+    @DisplayName("LabelledTaskView is empty")
+    public void obtainEmptyLabelledTaskView() {
         final CreateBasicTask createBasicTask = createBasicTask();
         client.create(createBasicTask);
 
@@ -49,8 +51,8 @@ public class CreateBasicTaskTest extends CommandLineTodoClientTest{
     }
 
     @Test
-    @DisplayName("obtain empty view list when handled CreateBasicTask command")
-    public void obtainEmptyViewList() {
+    @DisplayName("DraftTaskView is empty")
+    public void obtainEmptyDraftViewList() {
         final CreateBasicTask createBasicTask = createBasicTask();
         client.create(createBasicTask);
 
@@ -61,7 +63,8 @@ public class CreateBasicTaskTest extends CommandLineTodoClientTest{
     }
 
     @Test
-    public void obtain_my_list_view_when_handled_create_task_command() {
+    @DisplayName("MyListView contains created task")
+    public void obtainMyListView() {
         final CreateBasicTask createFirstTask = createBasicTask();
         client.create(createFirstTask);
 

@@ -44,11 +44,12 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.resto
 /**
  * @author Illia Shepilov
  */
+@DisplayName("After execution RestoreDeletedTask command")
 public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
 
     @Test
-    @DisplayName("obtain labelled view when handled RestoreDeletedTask command")
-    public void obtainViewWhenTaskIsRestored() throws Exception {
+    @DisplayName("LabelledTasksView contains restored task")
+    public void obtainView() {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 
@@ -83,7 +84,8 @@ public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    public void obtain_empty_labelled_tasks_view_when_handled_command_deleted_task_restored_with_wrong_task_id() {
+    @DisplayName("LabelledTasksView does not contain restored task when command has wrong task id")
+    public void obtainEmptyView() {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 

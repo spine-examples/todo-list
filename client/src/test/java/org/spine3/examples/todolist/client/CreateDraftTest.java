@@ -35,11 +35,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Illia Shepilov
  */
-public class CreateDraftTest extends CommandLineTodoClientTest{
+@DisplayName("After execution CreateDraft command")
+public class CreateDraftTest extends CommandLineTodoClientTest {
 
     @Test
-    @DisplayName("obtain task view according to the created draft when handled CreateDraft command")
-    public void obtainView() {
+    @DisplayName("DraftTasksView contains draft")
+    public void obtainDraftView() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 
@@ -54,7 +55,8 @@ public class CreateDraftTest extends CommandLineTodoClientTest{
     }
 
     @Test
-    public void obtain_empty_labelled_tasks_view_when_handled_command_create_draft() {
+    @DisplayName("LabelledTaskView does not contains views")
+    public void obtainLabelledView() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 
@@ -63,7 +65,8 @@ public class CreateDraftTest extends CommandLineTodoClientTest{
     }
 
     @Test
-    public void obtain_empty_my_list_view_when_handled_command_create_draft() {
+    @DisplayName("MyListView does not contains views")
+    public void ObtainMyListView() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 

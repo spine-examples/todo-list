@@ -20,6 +20,8 @@
 
 package org.spine3.examples.todolist.client;
 
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
@@ -43,18 +45,49 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.reope
 /**
  * @author Illia Shepilov
  */
+@DisplayName("After execution ReopenTask command")
 public class ReopenTaskTest extends CommandLineTodoClientTest {
 
-    @Test
-    public void obtain_labelled_tasks_view_when_handled_command_reopen_task() {
-        final TaskView view = obtainViewWhenHandledCommandReopenTask(true);
-        assertFalse(view.getCompleted());
+    public static final String CONTAIN_TASK_VIEW_WITH_UNCOMPLETED_TASK = "contain task view with uncompleted task";
+    public static final String CONTAIN_TASK_VIEW_WITH_COMPLETED_TASK = "contain task view with completed task " +
+            "when command has wrong id";
+
+    @Nested
+    @DisplayName("LabelledTasksView should")
+    class ReopenTaskFromLabelledTasksView {
+
+        @Test
+        @DisplayName(CONTAIN_TASK_VIEW_WITH_UNCOMPLETED_TASK)
+        public void obtainViewWithUncompletedTask() {
+            final TaskView view = obtainViewWhenHandledCommandReopenTask(true);
+            assertFalse(view.getCompleted());
+        }
+
+        @Test
+        @DisplayName(CONTAIN_TASK_VIEW_WITH_COMPLETED_TASK)
+        public void obtainViewWithCompletedTask() {
+            final TaskView view = obtainViewWhenHandledCommandReopenTask(false);
+            assertTrue(view.getCompleted());
+        }
     }
 
-    @Test
-    public void obtain_labelled_tasks_view_when_handled_command_reopen_task_with_wrong_task_id() {
-        final TaskView view = obtainViewWhenHandledCommandReopenTask(false);
-        assertTrue(view.getCompleted());
+    @Nested
+    @DisplayName("MyListView should")
+    class ReopenTaskFromMyListView {
+
+        @Test
+        @DisplayName(CONTAIN_TASK_VIEW_WITH_UNCOMPLETED_TASK)
+        public void obtain_my_list_view_with_uncompleted_task_view_when_handled_command_reopen_task() {
+            final TaskView view = obtainTaskViewWhenHandledReopenTask(true);
+            assertFalse(view.getCompleted());
+        }
+
+        @Test
+        @DisplayName(CONTAIN_TASK_VIEW_WITH_COMPLETED_TASK)
+        public void obtain_my_list_view_with_completed_task_view_when_handled_command_reopen_task_with_wrong_task_id() {
+            final TaskView view = obtainTaskViewWhenHandledReopenTask(false);
+            assertTrue(view.getCompleted());
+        }
     }
 
     private TaskView obtainViewWhenHandledCommandReopenTask(boolean isCorrectId) {
@@ -91,18 +124,6 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
         assertEquals(taskId, view.getId());
 
         return view;
-    }
-
-    @Test
-    public void obtain_my_list_view_with_uncompleted_task_view_when_handled_command_reopen_task() {
-        final TaskView view = obtainTaskViewWhenHandledReopenTask(true);
-        assertFalse(view.getCompleted());
-    }
-
-    @Test
-    public void obtain_my_list_view_with_completed_task_view_when_handled_command_reopen_task_with_wrong_task_id() {
-        final TaskView view = obtainTaskViewWhenHandledReopenTask(false);
-        assertTrue(view.getCompleted());
     }
 
     private TaskView obtainTaskViewWhenHandledReopenTask(boolean isCorrectId) {

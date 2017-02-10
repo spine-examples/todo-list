@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.client;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
@@ -42,126 +43,146 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 /**
  * @author Illia Shepilov
  */
+@DisplayName("After execution DeleteTask command")
 public class DeleteTaskTest extends CommandLineTodoClientTest {
 
-    @Test
-    @DisplayName("obtain empty view list when handled DeleteTask command")
-    public void emptyViewsWhenDraftIsDeleted() {
-        final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+    @Nested
+    @DisplayName("LabelledTasksView should")
+    class DeleteTaskFromLabelledTasksView {
 
-        final DeleteTask deleteTask = deleteTaskInstance(createDraft.getId());
-        client.delete(deleteTask);
+        @Test
+        @DisplayName("be empty")
+        public void obtainEmptyView() {
+            final CreateBasicTask createTask = createBasicTask();
+            client.create(createTask);
 
-        final List<TaskView> taskViews = client.getDraftTasksView()
-                                               .getDraftTasks()
-                                               .getItemsList();
-        assertTrue(taskViews.isEmpty());
+            final CreateBasicLabel createLabel = createBasicLabel();
+            client.create(createLabel);
+
+            final LabelId labelId = createLabel.getLabelId();
+            final TaskId taskId = createTask.getId();
+
+            final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            client.assignLabel(assignLabelToTask);
+
+            final DeleteTask deleteTask = deleteTaskInstance(taskId);
+            client.delete(deleteTask);
+
+            final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
+            final int expectedListSize = 1;
+            assertEquals(expectedListSize, labelledTasksView.size());
+
+            final List<TaskView> taskViews = labelledTasksView.get(0)
+                                                              .getLabelledTasks()
+                                                              .getItemsList();
+            assertTrue(taskViews.isEmpty());
+        }
+
+        @Test
+        @DisplayName("contain task view when command has wrong ID")
+        public void obtainView() {
+            final CreateBasicTask createTask = createBasicTask();
+            client.create(createTask);
+
+            final CreateBasicLabel createLabel = createBasicLabel();
+            client.create(createLabel);
+
+            final LabelId labelId = createLabel.getLabelId();
+            final TaskId taskId = createTask.getId();
+
+            final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            client.assignLabel(assignLabelToTask);
+
+            final DeleteTask deleteTask = deleteTaskInstance(getWrongTaskId());
+            client.delete(deleteTask);
+
+            final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
+            final int expectedListSize = 1;
+            assertEquals(expectedListSize, labelledTasksView.size());
+
+            final List<TaskView> taskViews = labelledTasksView.get(0)
+                                                              .getLabelledTasks()
+                                                              .getItemsList();
+            assertEquals(expectedListSize, taskViews.size());
+
+            final TaskView view = taskViews.get(0);
+            assertEquals(taskId, view.getId());
+        }
     }
 
-    @Test
-    @DisplayName("obtain created task draft when handled DeleteTask command with wrong ID")
-    public void obtainViewWhenDeletedWrongDraft() {
-        final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+    @Nested
+    @DisplayName("DraftTasksView should")
+    class DeleteTaskFromDraftTasksView {
 
-        final TaskId taskId = createDraft.getId();
-        final DeleteTask deleteTask = deleteTaskInstance(getWrongTaskId());
-        client.delete(deleteTask);
+        @Test
+        @DisplayName("be empty")
+        public void obtainEmptyView() {
+            final CreateDraft createDraft = createDraft();
+            client.create(createDraft);
 
-        final List<TaskView> taskViews = client.getDraftTasksView()
-                                               .getDraftTasks()
-                                               .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
+            final DeleteTask deleteTask = deleteTaskInstance(createDraft.getId());
+            client.delete(deleteTask);
 
-        final TaskView view = taskViews.get(0);
-        assertEquals(taskId, view.getId());
+            final List<TaskView> taskViews = client.getDraftTasksView()
+                                                   .getDraftTasks()
+                                                   .getItemsList();
+            assertTrue(taskViews.isEmpty());
+        }
+
+        @Test
+        @DisplayName("contain the task view when command has wrong task ID")
+        public void obtainView() {
+            final CreateDraft createDraft = createDraft();
+            client.create(createDraft);
+
+            final TaskId taskId = createDraft.getId();
+            final DeleteTask deleteTask = deleteTaskInstance(getWrongTaskId());
+            client.delete(deleteTask);
+
+            final List<TaskView> taskViews = client.getDraftTasksView()
+                                                   .getDraftTasks()
+                                                   .getItemsList();
+            final int expectedListSize = 1;
+            assertEquals(expectedListSize, taskViews.size());
+
+            final TaskView view = taskViews.get(0);
+            assertEquals(taskId, view.getId());
+        }
     }
 
-    @Test
-    public void obtain_empty_labelled_tasks_view_when_handled_command_delete_task() {
-        final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
+    @Nested
+    @DisplayName("MyListView should")
+    class DeleteTaskFromMyListView {
 
-        final CreateBasicLabel createLabel = createBasicLabel();
-        client.create(createLabel);
+        @Test
+        @DisplayName("be empty")
+        public void obtainEmptyView() {
+            final CreateBasicTask createTask = createBasicTask();
+            client.create(createTask);
 
-        final LabelId labelId = createLabel.getLabelId();
-        final TaskId taskId = createTask.getId();
+            final TaskId idOfCreatedTask = createTask.getId();
+            final List<TaskView> taskViews = obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, true);
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
+            assertTrue(taskViews.isEmpty());
+        }
 
-        final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        client.delete(deleteTask);
+        @Test
+        @DisplayName("contain task view when command has wrong ID")
+        public void obtainView() {
+            final CreateBasicTask createTask = createBasicTask();
+            client.create(createTask);
 
-        final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, labelledTasksView.size());
+            final TaskId idOfCreatedTask = createTask.getId();
+            final List<TaskView> taskViews = obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, false);
 
-        final List<TaskView> taskViews = labelledTasksView.get(0)
-                                                          .getLabelledTasks()
-                                                          .getItemsList();
-        assertTrue(taskViews.isEmpty());
-    }
+            final int expectedListSize = 1;
+            assertEquals(expectedListSize, taskViews.size());
 
-    @Test
-    public void obtain_labelled_tasks_view_when_handled_command_delete_task_with_wrong_task_id() {
-        final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
+            final TaskView view = taskViews.get(0);
 
-        final CreateBasicLabel createLabel = createBasicLabel();
-        client.create(createLabel);
-
-        final LabelId labelId = createLabel.getLabelId();
-        final TaskId taskId = createTask.getId();
-
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
-
-        final DeleteTask deleteTask = deleteTaskInstance(getWrongTaskId());
-        client.delete(deleteTask);
-
-        final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, labelledTasksView.size());
-
-        final List<TaskView> taskViews = labelledTasksView.get(0)
-                                                          .getLabelledTasks()
-                                                          .getItemsList();
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView view = taskViews.get(0);
-        assertEquals(taskId, view.getId());
-    }
-
-    @Test
-    public void obtain_empty_my_list_view_when_handled_command_delete_task() {
-        final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
-
-        final TaskId idOfCreatedTask = createTask.getId();
-        final List<TaskView> taskViews = obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, true);
-
-        assertTrue(taskViews.isEmpty());
-    }
-
-    @Test
-    public void obtain_not_empty_my_list_view_when_handled_command_delete_task_with_wrong_task_id() {
-        final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
-
-        final TaskId idOfCreatedTask = createTask.getId();
-        final List<TaskView> taskViews = obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, false);
-
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView view = taskViews.get(0);
-
-        final TaskId taskId = createTask.getId();
-        assertEquals(taskId, view.getId());
+            final TaskId taskId = createTask.getId();
+            assertEquals(taskId, view.getId());
+        }
     }
 
     private List<TaskView> obtainTaskViewListWhenHandledDeleteTask(TaskId idOfCreatedTask, boolean isCorrectId) {
