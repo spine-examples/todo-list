@@ -98,7 +98,7 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
 
     @Nested
     @DisplayName(MY_LIST_VIEW_SHOULD)
-    class UpdateTaskDueDateInDraftTAsksView {
+    class UpdateTaskDueDateInMyListView {
 
         @Test
         @DisplayName(CONTAIN_TASK_VIEW_WITH_UPDATED_DUE_DATE)
