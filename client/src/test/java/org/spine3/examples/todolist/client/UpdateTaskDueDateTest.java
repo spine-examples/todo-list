@@ -22,6 +22,7 @@ package org.spine3.examples.todolist.client;
 
 import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
@@ -44,52 +45,72 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updat
 /**
  * @author Illia Shepilov
  */
+@DisplayName("After execution UpdateTaskDueDate command")
 public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
 
-    @Test
-    @DisplayName("obtain task view with updated due date when handled UpdateTaskDueDate command")
-    public void obtainUpdatedDueDate() {
-        final Timestamp newDueDate = Timestamps.getCurrentTime();
-        final TaskView view = obtainViewWhenHandledUpdateTaskDueDate(newDueDate, true);
+    @Nested
+    @DisplayName("LabelledTaskView should")
+    class UpdateTaskDueDateInLabelledTasksView {
 
-        assertEquals(newDueDate, view.getDueDate());
+        @Test
+        @DisplayName("obtain task view with updated due date")
+        public void obtainUpdatedView() {
+            final Timestamp newDueDate = Timestamps.getCurrentTime();
+            final TaskView view = obtainViewWhenHandledCommandUpdateTaskDueDate(newDueDate, true);
+            assertEquals(newDueDate, view.getDueDate());
+        }
+
+        @Test
+        @DisplayName("obtain task view with not updated due date when command has wrong task ID")
+        public void obtainNotUpdatedView() {
+            final Timestamp newDueDate = Timestamps.getCurrentTime();
+            final TaskView view = obtainViewWhenHandledCommandUpdateTaskDueDate(newDueDate, false);
+            assertNotEquals(newDueDate, view.getDueDate());
+        }
     }
 
-    @Test
-    @DisplayName("obtain task view with not updated due date when handled UpdateTaskDueDate command with wrong task ID")
-    public void obtainNotUpdatedDueDate() {
-        final Timestamp newDueDate = Timestamps.getCurrentTime();
-        final TaskView view = obtainViewWhenHandledUpdateTaskDueDate(newDueDate, false);
+    @Nested
+    @DisplayName("DraftTasksView should")
+    class UpdateTaskDueDateInDraftTasksView {
 
-        assertNotEquals(newDueDate, view.getDueDate());
+        @Test
+        @DisplayName("obtain task view with updated due date")
+        public void obtainUpdatedView() {
+            final Timestamp newDueDate = Timestamps.getCurrentTime();
+            final TaskView view = obtainViewWhenHandledUpdateTaskDueDate(newDueDate, true);
+
+            assertEquals(newDueDate, view.getDueDate());
+        }
+
+        @Test
+        @DisplayName("obtain task view with not updated due date when command has wrong task ID")
+        public void obtainNotUpdatedView() {
+            final Timestamp newDueDate = Timestamps.getCurrentTime();
+            final TaskView view = obtainViewWhenHandledUpdateTaskDueDate(newDueDate, false);
+
+            assertNotEquals(newDueDate, view.getDueDate());
+        }
     }
 
-    @Test
-    public void obtain_updated_task_due_date_from_labelled_tasks_view_when_handled_command_update_task_due_date() {
-        final Timestamp newDueDate = Timestamps.getCurrentTime();
-        final TaskView view = obtainViewWhenHandledCommandUpdateTaskDueDate(newDueDate, true);
-        assertEquals(newDueDate, view.getDueDate());
-    }
+    @Nested
+    @DisplayName("MyListView should")
+    class UpdateTaskDueDateInDraftTAsksView {
 
-    @Test
-    public void obtain_labelled_tasks_view_when_handled_command_update_task_due_date_with_wrong_task_id() {
-        final Timestamp newDueDate = Timestamps.getCurrentTime();
-        final TaskView view = obtainViewWhenHandledCommandUpdateTaskDueDate(newDueDate, false);
-        assertNotEquals(newDueDate, view.getDueDate());
-    }
+        @Test
+        @DisplayName("obtain task view with updated due date")
+        public void obtainUpdatedView() {
+            final Timestamp newDueDate = Timestamps.getCurrentTime();
+            final TaskView view = obtainTaskViewWhenHandledUpdateTaskDueDate(newDueDate, true);
+            assertEquals(newDueDate, view.getDueDate());
+        }
 
-    @Test
-    public void obtain_updated_task_due_date_from_my_list_view_when_handled_command_update_task_due_date() {
-        final Timestamp newDueDate = Timestamps.getCurrentTime();
-        final TaskView view = obtainTaskViewWhenHandledUpdateTaskDueDate(newDueDate, true);
-        assertEquals(newDueDate, view.getDueDate());
-    }
-
-    @Test
-    public void obtain_empty_my_list_view_when_handled_command_update_task_due_date_with_wrong_task_id() {
-        final Timestamp newDueDate = Timestamps.getCurrentTime();
-        final TaskView view = obtainTaskViewWhenHandledUpdateTaskDueDate(newDueDate, false);
-        assertNotEquals(newDueDate, view.getDueDate());
+        @Test
+        @DisplayName("obtain task view with not updated due date when command has wrong task ID")
+        public void obtainNotUpdatedView() {
+            final Timestamp newDueDate = Timestamps.getCurrentTime();
+            final TaskView view = obtainTaskViewWhenHandledUpdateTaskDueDate(newDueDate, false);
+            assertNotEquals(newDueDate, view.getDueDate());
+        }
     }
 
     private TaskView obtainTaskViewWhenHandledUpdateTaskDueDate(Timestamp newDueDate, boolean isCorrectId) {

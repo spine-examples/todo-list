@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.client;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskPriority;
@@ -44,55 +45,71 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updat
  */
 public class UpdateTaskPriorityTest extends CommandLineTodoClientTest{
 
-    @Test
-    @DisplayName("obtain task view with updated task priority when handled UpdateTaskPriority command")
-    public void obtainUpdatedPriority() {
-        final TaskPriority newPriority = TaskPriority.HIGH;
-        final TaskView view = obtainTaskViewWhenHandledUpdateTaskPriority(newPriority, true);
+    @Nested
+    @DisplayName("LabelledTasksView should")
+    class UpdateTaskPriorityInLabelledTasksView{
 
-        assertEquals(newPriority, view.getPriority());
+        @Test
+        @DisplayName("obtain task view with updated task priority")
+        public void obtain_updated_task_priority_from_labelled_tasks_view_when_handled_command_update_task_priority() {
+            final TaskPriority newPriority = TaskPriority.HIGH;
+            final TaskView view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, true);
+            assertEquals(newPriority, view.getPriority());
+        }
+
+        @Test
+        @DisplayName("obtain task view with not updated task priority when command has wrong task ID")
+        public void obtain_labelled_tasks_view_when_handled_command_update_task_priority_with_wrong_task_id() {
+            final TaskPriority newPriority = TaskPriority.HIGH;
+            final TaskView view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, false);
+            assertNotEquals(newPriority, view.getPriority());
+        }
     }
 
-    @Test
-    @DisplayName("obtain task view with not updated priority when handled UpdateTaskPriority command with wrong task ID")
-    public void obtainNotUpdatedPriority() {
-        final TaskPriority newPriority = TaskPriority.HIGH;
-        final TaskView view = obtainTaskViewWhenHandledUpdateTaskPriority(newPriority, false);
+    @Nested
+    @DisplayName("DraftTasksView should")
+    class UpdateTaskPriorityInDraftTasksView{
 
-        assertNotEquals(newPriority, view.getPriority());
+        @Test
+        @DisplayName("obtain task view with updated task priority")
+        public void obtainUpdatedView() {
+            final TaskPriority newPriority = TaskPriority.HIGH;
+            final TaskView view = obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, true);
+
+            assertEquals(newPriority, view.getPriority());
+        }
+
+        @Test
+        @DisplayName("obtain task view with not updated task priority when command has wrong task ID")
+        public void obtainNotUpdatedView() {
+            final TaskPriority newPriority = TaskPriority.HIGH;
+            final TaskView view = obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, false);
+
+            assertNotEquals(newPriority, view.getPriority());
+        }
     }
 
-    @Test
-    @DisplayName("obtain task view with updated task priority when handled UpdateTaskPriority command")
-    public void obtainUpdatedPriority1() {
-        final TaskPriority newPriority = TaskPriority.HIGH;
-        final TaskView view = obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, true);
+    @Nested
+    @DisplayName("MyListView should")
+    class UpdateTaskPriorityInMyListView{
 
-        assertEquals(newPriority, view.getPriority());
-    }
+        @Test
+        @DisplayName("obtain task view with updated task priority")
+        public void obtainUpdatedView() {
+            final TaskPriority newPriority = TaskPriority.HIGH;
+            final TaskView view = obtainTaskViewWhenHandledUpdateTaskPriority(newPriority, true);
 
-    @Test
-    @DisplayName("obtain task view with not updated priority when handled UpdateTaskPriority command with wrong task ID")
-    public void obtainNotUpdatedPriority1() {
-        final TaskPriority newPriority = TaskPriority.HIGH;
-        final TaskView view = obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, false);
+            assertEquals(newPriority, view.getPriority());
+        }
 
-        assertNotEquals(newPriority, view.getPriority());
-    }
+        @Test
+        @DisplayName("obtain task view with not updated task priority when command has wrong task ID")
+        public void obtainNotUpdatedView() {
+            final TaskPriority newPriority = TaskPriority.HIGH;
+            final TaskView view = obtainTaskViewWhenHandledUpdateTaskPriority(newPriority, false);
 
-
-    @Test
-    public void obtain_updated_task_priority_from_labelled_tasks_view_when_handled_command_update_task_priority() {
-        final TaskPriority newPriority = TaskPriority.HIGH;
-        final TaskView view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, true);
-        assertEquals(newPriority, view.getPriority());
-    }
-
-    @Test
-    public void obtain_labelled_tasks_view_when_handled_command_update_task_priority_with_wrong_task_id() {
-        final TaskPriority newPriority = TaskPriority.HIGH;
-        final TaskView view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, false);
-        assertNotEquals(newPriority, view.getPriority());
+            assertNotEquals(newPriority, view.getPriority());
+        }
     }
 
     private TaskView obtainTaskViewWhenHandledUpdateTaskPriority(TaskPriority newPriority, boolean isCorrectId) {

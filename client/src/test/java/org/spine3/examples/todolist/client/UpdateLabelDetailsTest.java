@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.client;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
@@ -47,64 +48,84 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 /**
  * @author Illia Shepilov
  */
+@DisplayName("After execution UpdateLabelDetails command")
 public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
 
-    @Test
-    @DisplayName("obtain task view with updated color when handled UpdateLabelDetails command")
-    public void obtainUpdatedColor() throws Exception {
-        final CreateBasicLabel createBasicLabel = createBasicLabel();
-        client.create(createBasicLabel);
+    @Nested
+    @DisplayName("LabelledTasksView should")
+    class UpdateLabelDetailsInLabelledTasksView {
 
-        final LabelColor newLabelColor = LabelColor.RED;
-        final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetails(newLabelColor, true);
-        assertEquals(newLabelColor, view.getLabelColor());
+        @Test
+        @DisplayName("obtain task view with updated LabelDetails")
+        public void obtainUpdatedView() {
+            final LabelColor updatedColor = LabelColor.BLUE;
+            final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(updatedColor,
+                                                                                          UPDATED_LABEL_TITLE,
+                                                                                          true);
+            assertEquals(UPDATED_LABEL_TITLE, view.getLabelTitle());
+            final String expectedColor = "#0000ff";
+            assertEquals(expectedColor, view.getLabelColor());
+        }
+
+        @Test
+        @DisplayName("obtain task view with not updated LabelDetails when command has wrong task ID")
+        public void obtainNotUpdatedView() {
+            final LabelColor updatedColor = LabelColor.BLUE;
+            final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(updatedColor,
+                                                                                          UPDATED_LABEL_TITLE,
+                                                                                          false);
+            assertNotEquals(UPDATED_LABEL_TITLE, view.getLabelTitle());
+            final String expectedColor = "#0000ff";
+            assertNotEquals(expectedColor, view.getLabelColor());
+        }
     }
 
-    @Test
-    @DisplayName("obtain task view without updated color when handled UpdateLabelDetails command with wrong task ID")
-    public void obtainNotUpdatedColor() throws Exception {
-        final CreateBasicLabel createBasicLabel = createBasicLabel();
-        client.create(createBasicLabel);
+    @Nested
+    @DisplayName("MyListView should")
+    class UpdateLabelDetailsInMyListView {
 
-        final LabelColor newLabelColor = LabelColor.RED;
-        final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetails(newLabelColor, false);
-        assertNotEquals(newLabelColor, view.getLabelColor());
+        @Test
+        @DisplayName("obtain task view with updated LabelDetails")
+        public void obtainUpdatedView() {
+            final LabelColor newColor = LabelColor.BLUE;
+            final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor, true);
+            assertEquals(LabelColor.BLUE, view.getLabelColor());
+        }
+
+        @Test
+        @DisplayName("obtain task view with not updated LabelDetails when command has wrong task ID")
+        public void obtainNotUpdatedView() {
+            final LabelColor newColor = LabelColor.BLUE;
+            final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor, false);
+            assertNotEquals(newColor, view.getLabelColor());
+        }
     }
 
-    @Test
-    public void obtain_labelled_tasks_view_when_handled_command_update_label_details() {
-        final LabelColor updatedColor = LabelColor.BLUE;
-        final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(updatedColor,
-                                                                                      UPDATED_LABEL_TITLE,
-                                                                                      true);
-        assertEquals(UPDATED_LABEL_TITLE, view.getLabelTitle());
-        final String expectedColor = "#0000ff";
-        assertEquals(expectedColor, view.getLabelColor());
-    }
+    @Nested
+    @DisplayName("DraftTasksView")
+    class UpdateLabelDetailsInDraftTasksView {
 
-    @Test
-    public void obtain_labelled_tasks_view_when_handled_command_update_label_details_with_wrong_task_id() {
-        final LabelColor updatedColor = LabelColor.BLUE;
-        final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(updatedColor,
-                                                                                      UPDATED_LABEL_TITLE,
-                                                                                      false);
-        assertNotEquals(UPDATED_LABEL_TITLE, view.getLabelTitle());
-        final String expectedColor = "#0000ff";
-        assertNotEquals(expectedColor, view.getLabelColor());
-    }
+        @Test
+        @DisplayName("obtain task view with updated LabelDetails")
+        public void obtainUpdatedView() throws Exception {
+            final CreateBasicLabel createBasicLabel = createBasicLabel();
+            client.create(createBasicLabel);
 
-    @Test
-    public void obtain_updated_label_details_from_my_list_view_when_handled_command_update_label_details() {
-        final LabelColor newColor = LabelColor.BLUE;
-        final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor, true);
-        assertEquals(LabelColor.BLUE, view.getLabelColor());
-    }
+            final LabelColor newLabelColor = LabelColor.RED;
+            final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetails(newLabelColor, true);
+            assertEquals(newLabelColor, view.getLabelColor());
+        }
 
-    @Test
-    public void obtain_not_updated_label_details_from_my_list_view_when_handled_command_update_label_details_with_wrong_task_id() {
-        final LabelColor newColor = LabelColor.BLUE;
-        final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor, false);
-        assertNotEquals(newColor, view.getLabelColor());
+        @Test
+        @DisplayName("obtain task view with not updated LabelDetails when command has wrong task ID")
+        public void obtainNotUpdatedView() throws Exception {
+            final CreateBasicLabel createBasicLabel = createBasicLabel();
+            client.create(createBasicLabel);
+
+            final LabelColor newLabelColor = LabelColor.RED;
+            final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetails(newLabelColor, false);
+            assertNotEquals(newLabelColor, view.getLabelColor());
+        }
     }
 
     private TaskView obtainTaskViewWhenHandledUpdateLabelDetailsCommand(LabelColor newColor, boolean isCorrectId) {
