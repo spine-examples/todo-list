@@ -84,7 +84,7 @@ public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    @DisplayName("LabelledTasksView does not contain restored task when command has wrong task id")
+    @DisplayName("LabelledTasksView does not contain restored task when command has wrong task ID")
     public void obtainEmptyView() {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);

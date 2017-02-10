@@ -309,7 +309,7 @@ public class LabelledTasksViewProjectionTest {
         }
 
         @Test
-        @DisplayName("does not update task description by wrong task id")
+        @DisplayName("does not update task description by wrong task ID")
         public void doesNotUpdateDescription() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
@@ -368,7 +368,7 @@ public class LabelledTasksViewProjectionTest {
         }
 
         @Test
-        @DisplayName("does not update the task priority by wrong task id")
+        @DisplayName("does not update the task priority by wrong task ID")
         public void doesNotUpdatePriority() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
@@ -601,7 +601,7 @@ public class LabelledTasksViewProjectionTest {
         }
 
         @Test
-        @DisplayName("does not update LabelDetails by wrong task id")
+        @DisplayName("does not update LabelDetails by wrong task ID")
         public void doesNotUpdateLabelDetails() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);

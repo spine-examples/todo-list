@@ -81,7 +81,7 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view when command has wrong task id")
+        @DisplayName("contain task view when command has wrong task ID")
         public void obtainView() {
             final CreateBasicTask createTask = createBasicTask();
             client.create(createTask);

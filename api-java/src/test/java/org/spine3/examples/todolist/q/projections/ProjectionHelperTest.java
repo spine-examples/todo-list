@@ -63,7 +63,7 @@ public class ProjectionHelperTest {
     }
 
     @Test
-    @DisplayName("remove TaskView form state by label id")
+    @DisplayName("remove TaskView form state by label ID")
     public void removeView() {
         final int expectedListSize = 1;
         final TaskListView view = ProjectionHelper.removeViewByLabelId(viewList, LABEL_ID);
@@ -73,7 +73,7 @@ public class ProjectionHelperTest {
     }
 
     @Test
-    @DisplayName("not remove TaskView from state by wrong label id")
+    @DisplayName("not remove TaskView from state by wrong label ID")
     public void notRemoveViewByLabelId() {
         final int expectedListSize = 2;
         final LabelId wrongLabelId = LabelId.newBuilder()
@@ -86,7 +86,7 @@ public class ProjectionHelperTest {
     }
 
     @Test
-    @DisplayName("remove TaskView from state by task id")
+    @DisplayName("remove TaskView from state by task ID")
     public void removeViewByTaskId() {
         final int expectedListSize = 1;
         final TaskListView view = ProjectionHelper.removeViewByTaskId(viewList, TASK_ID);
@@ -96,7 +96,7 @@ public class ProjectionHelperTest {
     }
 
     @Test
-    @DisplayName("not remove TaskView from state by wrong task id")
+    @DisplayName("not remove TaskView from state by wrong task ID")
     public void notRemoveTaskViewByTaskId() {
         final int expectedListSize = 2;
         final TaskId wrongTaskId = TaskId.newBuilder()

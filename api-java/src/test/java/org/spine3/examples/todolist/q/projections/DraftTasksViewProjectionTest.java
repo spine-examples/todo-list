@@ -169,7 +169,7 @@ public class DraftTasksViewProjectionTest {
         }
 
         @Test
-        @DisplayName("does not update task description by wrong task id")
+        @DisplayName("does not update task description by wrong task ID")
         public void doesNotUpdateDescription() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
             projection.on(taskDraftCreatedEvent);
@@ -220,7 +220,7 @@ public class DraftTasksViewProjectionTest {
         }
 
         @Test
-        @DisplayName("does not update task due date by wrong task id")
+        @DisplayName("does not update task due date by wrong task ID")
         public void doesNotUpdate() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
             projection.on(taskDraftCreatedEvent);
@@ -272,7 +272,7 @@ public class DraftTasksViewProjectionTest {
         }
 
         @Test
-        @DisplayName("does not update the task priority by wrong task id")
+        @DisplayName("does not update the task priority by wrong task ID")
         public void doesNotUpdatePriority() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
             projection.on(taskDraftCreatedEvent);

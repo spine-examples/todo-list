@@ -67,7 +67,6 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 /**
  * @author Illia Shepilov
  */
-@SuppressWarnings("OverlyCoupledClass")
 public class MyListViewProjectionTest {
 
     private static final TaskListId ID = TaskListId.newBuilder()
@@ -160,7 +159,7 @@ public class MyListViewProjectionTest {
         }
 
         @Test
-        @DisplayName("does not update task description by wrong task id")
+        @DisplayName("does not update task description by wrong task ID")
         public void doesNotUpdateDescription() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -372,7 +371,7 @@ public class MyListViewProjectionTest {
         }
 
         @Test
-        @DisplayName("does not complete task by wrong task id ")
+        @DisplayName("does not complete task by wrong task ID")
         public void doesNotComplete() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -420,7 +419,7 @@ public class MyListViewProjectionTest {
         }
 
         @Test
-        @DisplayName("does not reopen task by wrong task id")
+        @DisplayName("does not reopen task by wrong task ID")
         public void doesNotReopenTask() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
