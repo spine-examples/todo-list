@@ -47,18 +47,25 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updat
 @DisplayName("After execution UpdateTaskDescription command")
 public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
 
+    private static final String CONTAIN_TASK_VIEW_WITH_UPDATED_TASK_DESCRIPTION =
+            "contain task view with updated task description";
+    private static final String CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_TASK_DESCRIPTION_WHEN_COMMAND_HAS_WRONG_ID =
+            "contain task view with not updated task description when command has wrong ID";
+
     @Nested
-    @DisplayName("LabelledTasksView should contain")
+    @DisplayName(LABELLED_TASK_VIEW_SHOULD)
     class UpdateTaskDescriptionInLabelledTasksView {
 
         @Test
-        public void obtain_updated_task_description_from_labelled_tasks_view_when_handled_command_update_task_description() {
+        @DisplayName(CONTAIN_TASK_VIEW_WITH_UPDATED_TASK_DESCRIPTION)
+        public void containUpdatedView() {
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, true);
             assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
         }
 
         @Test
-        public void obtain_labelled_tasks_view_when_handled_command_update_task_description_with_wrong_task_id() {
+        @DisplayName(CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_TASK_DESCRIPTION_WHEN_COMMAND_HAS_WRONG_ID)
+        public void containNotUpdatedView() {
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, false);
             final String actualDescription = view.getDescription();
             assertNotEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
@@ -67,39 +74,39 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName("DraftTasksView should contain")
+    @DisplayName(DRAFT_TASKS_VIEW_SHOULD)
     class UpdateTaskDescriptionInDraftTasksView {
 
         @Test
-        @DisplayName("task view with not updated task description when command has wrong task ID")
-        public void obtainNotUpdatedView() {
+        @DisplayName(CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_TASK_DESCRIPTION_WHEN_COMMAND_HAS_WRONG_ID)
+        public void containNotUpdatedView() {
             final TaskView view = obtainViewWhenHandledUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, false);
             assertNotEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
         }
 
         @Test
-        @DisplayName("task view with updated task description")
-        public void obtainUpdatedView() {
+        @DisplayName(CONTAIN_TASK_VIEW_WITH_UPDATED_TASK_DESCRIPTION)
+        public void containUpdatedView() {
             final TaskView view = obtainViewWhenHandledUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, true);
             assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
         }
     }
 
     @Nested
-    @DisplayName("MyListView should contain")
+    @DisplayName(MY_LIST_VIEW_SHOULD)
     class UpdateTaskDescriptionInMyListView {
 
         @Test
-        @DisplayName("task view with updated task description")
-        public void obtainUpdatedView() {
+        @DisplayName(CONTAIN_TASK_VIEW_WITH_UPDATED_TASK_DESCRIPTION)
+        public void containUpdatedView() {
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(UPDATED_TASK_DESCRIPTION, true);
             final String actualDescription = view.getDescription();
             assertEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
         }
 
         @Test
-        @DisplayName("task view with not updated task description when command has wrong task ID")
-        public void obtainNotUpdatedView() {
+        @DisplayName(CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_TASK_DESCRIPTION_WHEN_COMMAND_HAS_WRONG_ID)
+        public void containNotUpdatedView() {
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(UPDATED_TASK_DESCRIPTION, false);
             final String actualDescription = view.getDescription();
             assertEquals(DESCRIPTION, actualDescription);

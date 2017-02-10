@@ -49,7 +49,7 @@ public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
 
     @Test
     @DisplayName("LabelledTasksView contains restored task")
-    public void obtainView() {
+    public void containRestoredTask() {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 
@@ -85,7 +85,7 @@ public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
 
     @Test
     @DisplayName("LabelledTasksView does not contain restored task when command has wrong task ID")
-    public void obtainEmptyView() {
+    public void containEmptyView() {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 

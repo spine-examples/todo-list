@@ -47,11 +47,11 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.final
 public class FinalizeDraftTest extends CommandLineTodoClientTest {
 
     @Nested
-    @DisplayName("MyListView should")
+    @DisplayName(MY_LIST_VIEW_SHOULD)
     class FinalizeDraftFromMyListView {
 
         @Test
-        @DisplayName("contain task view")
+        @DisplayName(CONTAIN_TASK_VIEW)
         public void obtainView() {
             final CreateDraft createDraft = createDraft();
             client.create(createDraft);
@@ -78,11 +78,11 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName("LabelledTasksView should")
+    @DisplayName(LABELLED_TASK_VIEW_SHOULD)
     class FinalizeDraftFromLabelledTasksView {
 
         @Test
-        @DisplayName("contain task view")
+        @DisplayName(CONTAIN_TASK_VIEW)
         public void obtainView() {
             final CreateDraft createDraft = createDraft();
             client.create(createDraft);
@@ -113,11 +113,11 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName("DraftTasksView should")
+    @DisplayName(DRAFT_TASKS_VIEW_SHOULD)
     class FinalizeDraftFromDraftTasksView {
 
         @Test
-        @DisplayName("be empty")
+        @DisplayName(BE_EMPTY)
         public void obtainEmptyViewsWhenDraftIsFinalized() {
             final CreateDraft createDraft = createDraft();
             client.create(createDraft);
@@ -141,7 +141,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view when handled command with wrong task ID")
+        @DisplayName("be not empty when command has wrong task ID")
         public void obtainViewWhenFinalizedWrongDraft() {
             final CreateDraft createDraft = createDraft();
             client.create(createDraft);

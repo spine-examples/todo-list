@@ -47,7 +47,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.LABEL_ID;
 import static org.spine3.examples.todolist.testdata.TestEventFactory.TASK_ID;
@@ -67,16 +66,14 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 /**
  * @author Illia Shepilov
  */
-public class MyListViewProjectionTest {
+public class MyListViewProjectionTest extends ProjectionTest {
 
-    private static final TaskListId ID = TaskListId.newBuilder()
-                                                   .setValue(newUuid())
-                                                   .build();
     private MyListViewProjection projection;
 
     @BeforeEach
     void setUp() {
-        projection = new MyListViewProjection(ID);
+        final TaskListId taskListId = createTaskListId();
+        projection = new MyListViewProjection(taskListId);
     }
 
     @Nested
@@ -84,7 +81,7 @@ public class MyListViewProjectionTest {
     class TaskCreatedEvent {
 
         @Test
-        @DisplayName("adds TaskView to state")
+        @DisplayName(ADDS_TASK_VIEW_TO_STATE)
         public void addsView() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             final int expectedSize = 1;
@@ -104,11 +101,11 @@ public class MyListViewProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskDeleted event")
+    @DisplayName(TASK_DELETED_EVENT)
     class TaskDeletedEvent {
 
         @Test
-        @DisplayName("removes TaskView from state")
+        @DisplayName(REMOVES_TASK_VIEW_FORM_STATE)
         public void removesView() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -132,11 +129,11 @@ public class MyListViewProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskDescriptionUpdated event")
+    @DisplayName(TASK_DESCRIPTION_UPDATED_EVENT)
     class TaskDescriptionUpdatedEvent {
 
         @Test
-        @DisplayName("updates task description")
+        @DisplayName(UPDATES_TASK_DESCRIPTION)
         public void updatesDescription() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -159,7 +156,7 @@ public class MyListViewProjectionTest {
         }
 
         @Test
-        @DisplayName("does not update task description by wrong task ID")
+        @DisplayName(DOES_NOT_UPDATE_TASK_DESCRIPTION_BY_WRONG_TASK_ID)
         public void doesNotUpdateDescription() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -183,11 +180,11 @@ public class MyListViewProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskDueDateUpdated event")
+    @DisplayName(TASK_DUE_DATE_UPDATED_EVENT)
     class TaskDueDateUpdatedEvent {
 
         @Test
-        @DisplayName("updates task due date")
+        @DisplayName(UPDATES_TASK_DUE_DATE)
         public void updatesDueDate() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -210,7 +207,7 @@ public class MyListViewProjectionTest {
         }
 
         @Test
-        @DisplayName("does not update task due date")
+        @DisplayName(DOES_NOT_UPDATE_TASK_DUE_DATE)
         public void doeNotUpdateDueDate() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -233,11 +230,11 @@ public class MyListViewProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskPriorityUpdated event")
+    @DisplayName(TASK_PRIORITY_UPDATED_EVENT)
     class TaskPriorityUpdatedEvent {
 
         @Test
-        @DisplayName("updates the task priority")
+        @DisplayName(UPDATES_TASK_PRIORITY)
         public void updatesPriority() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -261,7 +258,7 @@ public class MyListViewProjectionTest {
         }
 
         @Test
-        @DisplayName("does not update the task priority")
+        @DisplayName(DOES_NOT_UPDATE_TASK_PRIORITY_BY_WRONG_TASK_ID)
         public void doesNotUpdatePriority() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -285,11 +282,11 @@ public class MyListViewProjectionTest {
     }
 
     @Nested
-    @DisplayName("LabelDetailsUpdated event")
+    @DisplayName(LABEL_DETAILS_UPDATED_EVENT)
     class LabelDetailsUpdatedEvent {
 
         @Test
-        @DisplayName("updates label details")
+        @DisplayName(UPDATES_LABEL_DETAILS)
         public void updatesLabelDetails() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -317,7 +314,7 @@ public class MyListViewProjectionTest {
         }
 
         @Test
-        @DisplayName("does not update label details")
+        @DisplayName(DOES_NOT_UPDATE_LABEL_DETAILS)
         public void doesNotUpdateLabelDetails() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -347,7 +344,7 @@ public class MyListViewProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskCompleted event")
+    @DisplayName(TASK_COMPLETED_EVENT)
     class TaskCompletedEvent {
 
         @Test
@@ -392,7 +389,7 @@ public class MyListViewProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskReopened event")
+    @DisplayName(TASK_REOPENED_EVENT)
     class TaskReopenedEvent {
 
         @Test

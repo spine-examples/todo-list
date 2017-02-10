@@ -48,13 +48,17 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.remov
 @DisplayName("After execution RemoveLabelFromTask command")
 public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
 
+    private static final String CONTAIN_TASK_VIEW_WITH_LABELS_WHEN_COMMAND_HAS_WRONG_TASK_ID =
+            "contain task view with labels when command has wrong task ID";
+    private static final String CONTAIN_TASK_VIEW_WITHOUT_LABEL = "contain task view without label";
+
     @Nested
-    @DisplayName("LabelledTasksView should")
+    @DisplayName(LABELLED_TASK_VIEW_SHOULD)
     class RemoveLabelFromTaskFromLabelledTasksView {
 
         @Test
-        @DisplayName("be empty")
-        public void obtainEmptyView() {
+        @DisplayName(BE_EMPTY)
+        public void containEmptyView() {
             final CreateBasicTask createTask = createBasicTask();
             client.create(createTask);
 
@@ -81,8 +85,8 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view when command has wrong task ID")
-        public void obtainView() {
+        @DisplayName(CONTAIN_TASK_VIEW)
+        public void containView() {
             final CreateBasicTask createTask = createBasicTask();
             client.create(createTask);
 
@@ -116,12 +120,12 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName("DraftTasksView should")
+    @DisplayName(DRAFT_TASKS_VIEW_SHOULD)
     class RemoveLabelFromTaskFromDraftTasksView {
 
         @Test
-        @DisplayName("obtain task view without labels when RemoveLabelFromTask command handled")
-        public void obtainViewWithoutLabels() {
+        @DisplayName(CONTAIN_TASK_VIEW_WITHOUT_LABEL)
+        public void containViewWithoutLabels() {
             final CreateBasicLabel createBasicLabel = createBasicLabel();
             client.create(createBasicLabel);
             final LabelId labelId = createBasicLabel.getLabelId();
@@ -131,8 +135,8 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("obtain task view with labels when handled RemoveLabelFromTask command handled by wrong task ID")
-        public void obtainLabelledViewWhenTaskIdIsWrong() {
+        @DisplayName(CONTAIN_TASK_VIEW_WITH_LABELS_WHEN_COMMAND_HAS_WRONG_TASK_ID)
+        public void containLabelledViewWhenTaskIdIsWrong() {
             final CreateBasicLabel createBasicLabel = createBasicLabel();
             client.create(createBasicLabel);
             final LabelId labelId = createBasicLabel.getLabelId();
@@ -143,12 +147,12 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName("MyListView should")
+    @DisplayName(MY_LIST_VIEW_SHOULD)
     class RemoveLabelFromTaskFromMyListView {
 
         @Test
-        @DisplayName("contain task views without labels")
-        public void obtainViewWithLabels() {
+        @DisplayName(CONTAIN_TASK_VIEW_WITHOUT_LABEL)
+        public void containViewWithLabels() {
             final CreateBasicLabel createLabel = createBasicLabel();
             client.create(createLabel);
             final LabelId labelId = createLabel.getLabelId();
@@ -158,8 +162,8 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task views with labels")
-        public void obtainViewsWithoutLabels() {
+        @DisplayName(CONTAIN_TASK_VIEW_WITH_LABELS_WHEN_COMMAND_HAS_WRONG_TASK_ID)
+        public void containViewsWithoutLabels() {
             final CreateBasicLabel createLabel = createBasicLabel();
             client.create(createLabel);
             final LabelId labelId = createLabel.getLabelId();

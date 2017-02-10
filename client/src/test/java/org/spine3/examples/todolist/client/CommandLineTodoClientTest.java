@@ -50,6 +50,11 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
  */
 abstract class CommandLineTodoClientTest {
 
+    static final String LABELLED_TASK_VIEW_SHOULD = "LabelledTaskView should";
+    static final String DRAFT_TASKS_VIEW_SHOULD = "DraftTasksView should";
+    static final String MY_LIST_VIEW_SHOULD = "MyListView should";
+    static final String BE_EMPTY = "be empty";
+    static final String CONTAIN_TASK_VIEW = "contain task view";
     static final String HOST = "localhost";
     static final String UPDATED_TASK_DESCRIPTION = "New task description.";
     private Server server;

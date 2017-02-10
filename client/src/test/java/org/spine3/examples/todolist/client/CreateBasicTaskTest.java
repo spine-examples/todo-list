@@ -38,7 +38,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCR
  * @author Illia Shepilov
  */
 @DisplayName("After execution CreateBasicTask command")
-public class CreateBasicTaskTest extends CommandLineTodoClientTest{
+public class CreateBasicTaskTest extends CommandLineTodoClientTest {
 
     @Test
     @DisplayName("LabelledTaskView is empty")
