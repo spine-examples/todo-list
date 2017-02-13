@@ -59,7 +59,7 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
     }
 
     /**
-     * Creates a new instance.
+     * Creates a new {@link TaskAggregateRoot} instance.
      *
      * @param id the ID of the aggregate
      */
