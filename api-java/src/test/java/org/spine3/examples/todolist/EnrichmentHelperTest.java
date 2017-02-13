@@ -22,8 +22,11 @@ package org.spine3.examples.todolist;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.spine3.examples.todolist.c.enrichments.TaskEnrichment;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.spine3.examples.todolist.testdata.TestEventContextFactory.eventContextInstance;
 import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
 
 /**
@@ -36,5 +39,12 @@ class EnrichmentHelperTest {
     @DisplayName("have the private constructor")
     public void havePrivateConstructor() {
         assertTrue(hasPrivateParameterlessCtor(EnrichmentHelper.class));
+    }
+
+    @Test
+    @DisplayName("throw EnrichmentNotFoundException when enricher is not present")
+    public void throwException() {
+        assertThrows(EnrichmentNotFoundException.class, () ->
+                EnrichmentHelper.getEnrichment(TaskEnrichment.class, eventContextInstance()));
     }
 }
