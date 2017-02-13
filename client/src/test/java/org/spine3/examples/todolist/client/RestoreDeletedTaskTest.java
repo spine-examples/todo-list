@@ -50,11 +50,8 @@ public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
     @Test
     @DisplayName("LabelledTasksView contains restored task")
     public void containRestoredTask() {
-        final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
-
-        final CreateBasicLabel createLabel = createBasicLabel();
-        client.create(createLabel);
+        final CreateBasicTask createTask = createTask();
+        final CreateBasicLabel createLabel = createLabel();
 
         final LabelId labelId = createLabel.getLabelId();
         final TaskId taskId = createTask.getId();
@@ -86,11 +83,8 @@ public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
     @Test
     @DisplayName("LabelledTasksView does not contain restored task when command has wrong task ID")
     public void containEmptyView() {
-        final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
-
-        final CreateBasicLabel createLabel = createBasicLabel();
-        client.create(createLabel);
+        final CreateBasicTask createTask = createTask();
+        final CreateBasicLabel createLabel = createLabel();
 
         final LabelId labelId = createLabel.getLabelId();
         final TaskId taskId = createTask.getId();

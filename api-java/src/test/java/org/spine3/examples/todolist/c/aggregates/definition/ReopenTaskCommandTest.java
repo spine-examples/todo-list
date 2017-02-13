@@ -66,9 +66,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     @Test
     @DisplayName("cannot reopen not completed task")
     public void cannotReopenNotCompletedTask() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
-
+        createTask();
         try {
             final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
             aggregate.dispatchForTest(reopenTaskCmd, commandContext);
@@ -82,9 +80,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     @Test
     @DisplayName("reopens completed task")
     public void reopensTask() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
-
+        createTask();
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
         aggregate.dispatchForTest(completeTaskCmd, commandContext);
 
@@ -103,9 +99,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     @Test
     @DisplayName("cannot reopen deleted task")
     public void cannotReopenDeletedTask() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
-
+        createTask();
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
@@ -132,5 +126,10 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotReopenTask);
         }
+    }
+
+    private void createTask() {
+        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        aggregate.dispatchForTest(createTaskCmd, commandContext);
     }
 }

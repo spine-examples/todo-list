@@ -67,8 +67,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
     @Test
     @DisplayName("produces TaskCompleted event")
     public void producesEvent() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        createTask();
 
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
         final List<? extends Message> messageList =
@@ -86,11 +85,9 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
     @Test
     @DisplayName("completes the task")
     public void completesTheTask() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        createTask();
 
-        final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-        aggregate.dispatchForTest(completeTaskCmd, commandContext);
+        completeTask();
         final TaskDefinition state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -100,15 +97,13 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
     @Test
     @DisplayName("cannot complete deleted task")
     public void cannotCompleteDeletedTask() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        createTask();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
         try {
-            final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-            aggregate.dispatchForTest(completeTaskCmd, commandContext);
+            completeTask();
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
@@ -123,12 +118,21 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
         aggregate.dispatchForTest(createDraftCmd, commandContext);
 
         try {
-            final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-            aggregate.dispatchForTest(completeTaskCmd, commandContext);
+            completeTask();
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotCompleteTask);
         }
+    }
+
+    private void createTask() {
+        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        aggregate.dispatchForTest(createTaskCmd, commandContext);
+    }
+
+    private void completeTask() {
+        final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
+        aggregate.dispatchForTest(completeTaskCmd, commandContext);
     }
 }

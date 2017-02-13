@@ -91,9 +91,8 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
     }
 
     private TaskView obtainViewWhenHandledCommandReopenTask(boolean isCorrectId) {
-        final CreateBasicTask createTask = createBasicTask();
+        final CreateBasicTask createTask = createTask();
         final TaskId createdTaskId = createTask.getId();
-        client.create(createTask);
 
         final CreateBasicLabel createLabel = createBasicLabel();
         client.create(createLabel);
@@ -104,12 +103,7 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
 
-        final CompleteTask completeTask = completeTaskInstance(createdTaskId);
-        client.complete(completeTask);
-
-        final TaskId reopenedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
-        final ReopenTask reopenTask = reopenTaskInstance(reopenedTaskId);
-        client.reopen(reopenTask);
+        completeAndReopenTask(isCorrectId, createdTaskId);
 
         final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
         final int expectedListSize = 1;
@@ -118,36 +112,37 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = labelledTasksView.get(0)
                                                           .getLabelledTasks()
                                                           .getItemsList();
-        assertEquals(expectedListSize, taskViews.size());
-
-        final TaskView view = taskViews.get(0);
-        assertEquals(taskId, view.getId());
-
+        final TaskView view = checkAndObtainView(taskId, taskViews);
         return view;
     }
 
     private TaskView obtainTaskViewWhenHandledReopenTask(boolean isCorrectId) {
-        final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
-
+        final CreateBasicTask createTask = createTask();
         final TaskId idOfCreatedTask = createTask.getId();
-        final TaskId idOfReopenedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
 
-        final CompleteTask completeTask = completeTaskInstance(idOfCreatedTask);
-        client.complete(completeTask);
-
-        final ReopenTask reopenTask = reopenTaskInstance(idOfReopenedTask);
-        client.reopen(reopenTask);
+        completeAndReopenTask(isCorrectId, idOfCreatedTask);
 
         final List<TaskView> taskViews = client.getMyListView()
                                                .getMyList()
                                                .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
+        final TaskView view = checkAndObtainView(idOfCreatedTask, taskViews);
+        return view;
+    }
+
+    private static TaskView checkAndObtainView(TaskId idOfCreatedTask, List<TaskView> taskViews) {
+        assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);
         assertEquals(idOfCreatedTask, view.getId());
-
         return view;
+    }
+
+    private void completeAndReopenTask(boolean isCorrectId, TaskId createdTaskId) {
+        final CompleteTask completeTask = completeTaskInstance(createdTaskId);
+        client.complete(completeTask);
+
+        final TaskId reopenedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
+        final ReopenTask reopenTask = reopenTaskInstance(reopenedTaskId);
+        client.reopen(reopenTask);
     }
 }

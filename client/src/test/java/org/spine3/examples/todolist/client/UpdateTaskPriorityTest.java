@@ -122,11 +122,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         client.create(createTask);
 
         final TaskId idOfCreatedTask = createTask.getId();
-        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
-
-        final UpdateTaskPriority updateTaskPriority =
-                updateTaskPriorityInstance(idOfUpdatedTask, TaskPriority.TP_UNDEFINED, newPriority);
-        client.update(updateTaskPriority);
+        updatePriority(newPriority, isCorrectId, idOfCreatedTask);
 
         final List<TaskView> taskViews = client.getMyListView()
                                                .getMyList()
@@ -154,10 +150,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(createdTaskId, createLabel.getLabelId());
         client.assignLabel(assignLabelToTask);
 
-        final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
-        final UpdateTaskPriority updateTaskPriority =
-                updateTaskPriorityInstance(updatedTaskId, TaskPriority.TP_UNDEFINED, priority);
-        client.update(updateTaskPriority);
+        updatePriority(priority, isCorrectId, createdTaskId);
 
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
         assertEquals(expectedListSize, tasksViewList.size());
@@ -181,10 +174,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         client.create(createDraft);
         final TaskId createdTaskId = createDraft.getId();
 
-        final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
-        final UpdateTaskPriority updateTaskPriority =
-                updateTaskPriorityInstance(updatedTaskId, TaskPriority.TP_UNDEFINED, newPriority);
-        client.update(updateTaskPriority);
+        updatePriority(newPriority, isCorrectId, createdTaskId);
 
         final List<TaskView> taskViews = client.getDraftTasksView()
                                                .getDraftTasks()
@@ -196,5 +186,12 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         assertEquals(createdTaskId, view.getId());
 
         return view;
+    }
+
+    private void updatePriority(TaskPriority newPriority, boolean isCorrectId, TaskId createdTaskId) {
+        final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
+        final UpdateTaskPriority updateTaskPriority =
+                updateTaskPriorityInstance(updatedTaskId, TaskPriority.TP_UNDEFINED, newPriority);
+        client.update(updateTaskPriority);
     }
 }

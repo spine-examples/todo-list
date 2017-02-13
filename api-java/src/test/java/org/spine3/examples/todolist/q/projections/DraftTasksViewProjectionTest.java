@@ -76,6 +76,11 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
         projection = new DraftTasksViewProjection(taskListId);
     }
 
+    private void taskDraftCreated() {
+        final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
+        projection.on(taskDraftCreatedEvent);
+    }
+
     @Nested
     @DisplayName("TaskDraftCreated event")
     class TaskDraftCreatedEvent {
@@ -83,8 +88,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName(ADDS_TASK_VIEW_TO_STATE)
         public void addsView() {
-            final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
-            projection.on(taskDraftCreatedEvent);
+            taskDraftCreated();
 
             final TaskListView listView = projection.getState()
                                                     .getDraftTasks();
@@ -106,8 +110,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName(REMOVES_TASK_VIEW_FORM_STATE)
         public void removesView() {
-            final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
-            projection.on(taskDraftCreatedEvent);
+            taskDraftCreated();
 
             final TaskDraftFinalized taskDraftFinalizedEvent = taskDraftFinalizedInstance();
             projection.on(taskDraftFinalizedEvent);
@@ -126,8 +129,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName(REMOVES_TASK_VIEW_FORM_STATE)
         public void removesView() {
-            final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
-            projection.on(taskDraftCreatedEvent);
+            taskDraftCreated();
 
             final TaskDeleted taskDeletedEvent = taskDeletedInstance();
             projection.on(taskDeletedEvent);
@@ -168,8 +170,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName(DOES_NOT_UPDATE_TASK_DESCRIPTION_BY_WRONG_TASK_ID)
         public void doesNotUpdateDescription() {
-            final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
-            projection.on(taskDraftCreatedEvent);
+            taskDraftCreated();
 
             final String updatedDescription = UPDATED_DESCRIPTION;
 
@@ -219,8 +220,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("does not update task due date by wrong task ID")
         public void doesNotUpdate() {
-            final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
-            projection.on(taskDraftCreatedEvent);
+            taskDraftCreated();
 
             final Timestamp updatedDueDate = Timestamps.getCurrentTime();
 
@@ -271,8 +271,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName(DOES_NOT_UPDATE_TASK_PRIORITY_BY_WRONG_TASK_ID)
         public void doesNotUpdatePriority() {
-            final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
-            projection.on(taskDraftCreatedEvent);
+            taskDraftCreated();
 
             final TaskPriority updatedTaskPriority = TaskPriority.LOW;
 
@@ -361,8 +360,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName(REMOVES_TASK_VIEW_FORM_STATE)
         public void removesView() {
-            final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
-            projection.on(taskDraftCreatedEvent);
+            taskDraftCreated();
 
             final LabelAssignedToTask labelAssignedToTaskEvent = labelAssignedToTaskInstance();
             projection.on(labelAssignedToTaskEvent);

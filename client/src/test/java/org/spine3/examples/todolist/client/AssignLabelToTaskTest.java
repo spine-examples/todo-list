@@ -58,11 +58,8 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain empty TaskView list")
         public void obtainEmptyView() {
-            final CreateBasicTask createTask = createBasicTask();
-            client.create(createTask);
-
-            final CreateBasicLabel createLabel = createBasicLabel();
-            client.create(createLabel);
+            createTask();
+            createLabel();
 
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
             assertTrue(tasksViewList.isEmpty());
@@ -71,11 +68,8 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName(CONTAIN_TASK_VIEW_WITH_LABEL)
         public void obtainViewsWithLabel() {
-            final CreateBasicTask createTask = createBasicTask();
-            client.create(createTask);
-
-            final CreateBasicLabel createLabel = createBasicLabel();
-            client.create(createLabel);
+            final CreateBasicTask createTask = createTask();
+            final CreateBasicLabel createLabel = createLabel();
 
             final TaskId taskId = createTask.getId();
             final LabelId labelId = createLabel.getLabelId();
@@ -101,13 +95,9 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain two task views with labels")
         public void obtainViewsWithLabels() {
-            final CreateBasicTask createTask = createBasicTask();
-            client.create(createTask);
-
-            final CreateBasicLabel createLabel = createBasicLabel();
-            client.create(createLabel);
-
-            final CreateBasicLabel createSecondLabel = createBasicLabel();
+            final CreateBasicTask createTask = createTask();
+            final CreateBasicLabel createLabel = createLabel();
+            final CreateBasicLabel createSecondLabel = createLabel();
 
             final LabelId firstLabelId = createLabel.getLabelId();
             final LabelId secondLabelId = createSecondLabel.getLabelId();
@@ -140,8 +130,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName(CONTAIN_TASK_VIEW_WITHOUT_LABEL_WHEN_COMMAND_HAS_WRONG_TASK_ID)
         public void obtainDraftViewWithoutLabels() {
-            final CreateBasicLabel createBasicLabel = createBasicLabel();
-            client.create(createBasicLabel);
+            final CreateBasicLabel createBasicLabel = createLabel();
             final LabelId labelId = createBasicLabel.getLabelId();
 
             final TaskView view = obtainViewWhenHandledAssignLabelToTask(labelId, false);
@@ -151,9 +140,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName(CONTAIN_TASK_VIEW_WITH_LABEL)
         public void obtainDraftViewWithLabels() {
-            final CreateBasicLabel createBasicLabel = createBasicLabel();
-            client.create(createBasicLabel);
-
+            final CreateBasicLabel createBasicLabel = createLabel();
             final LabelId labelId = createBasicLabel.getLabelId();
             final TaskView view = obtainViewWhenHandledAssignLabelToTask(labelId, true);
 
@@ -168,10 +155,9 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("task view with label")
         public void obtainMyListViewWithLabels() {
-            final CreateBasicLabel createLabel = createBasicLabel();
-            client.create(createLabel);
-
+            final CreateBasicLabel createLabel = createLabel();
             final LabelId labelId = createLabel.getLabelId();
+
             final TaskView view = obtainTaskViewWhenHandledAssignLabelToTask(labelId, true);
 
             assertEquals(labelId, view.getLabelId());
@@ -180,8 +166,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName(CONTAIN_TASK_VIEW_WITHOUT_LABEL_WHEN_COMMAND_HAS_WRONG_TASK_ID)
         public void obtainMyListViewWithoutLabels() {
-            final CreateBasicLabel createLabel = createBasicLabel();
-            client.create(createLabel);
+            final CreateBasicLabel createLabel = createLabel();
 
             final LabelId labelId = createLabel.getLabelId();
             final TaskView view = obtainTaskViewWhenHandledAssignLabelToTask(labelId, false);
@@ -191,8 +176,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
     }
 
     private TaskView obtainTaskViewWhenHandledAssignLabelToTask(LabelId labelId, boolean isCorrectId) {
-        final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
+        final CreateBasicTask createTask = createTask();
 
         final TaskId idOfCreatedTask = createTask.getId();
         final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();

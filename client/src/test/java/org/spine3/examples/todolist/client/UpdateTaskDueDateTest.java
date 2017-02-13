@@ -122,13 +122,8 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         client.create(createTask);
 
         final TaskId idOfCreatedTask = createTask.getId();
-        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
 
-        final Timestamp previousDueDate = Timestamp.getDefaultInstance();
-        final UpdateTaskDueDate updateTaskDueDate =
-                updateTaskDueDateInstance(idOfUpdatedTask, previousDueDate, newDueDate);
-
-        client.update(updateTaskDueDate);
+        updateDueDate(newDueDate, isCorrectId, idOfCreatedTask);
         final List<TaskView> taskViews = client.getMyListView()
                                                .getMyList()
                                                .getItemsList();
@@ -148,12 +143,8 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         client.create(createDraft);
 
         final TaskId createdTaskId = createDraft.getId();
-        final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
-        final Timestamp previousDueDate = Timestamp.getDefaultInstance();
 
-        final UpdateTaskDueDate updateTaskDueDate =
-                updateTaskDueDateInstance(updatedTaskId, previousDueDate, newDueDate);
-        client.update(updateTaskDueDate);
+        updateDueDate(newDueDate, isCorrectId, createdTaskId);
 
         final List<TaskView> taskViews = client.getDraftTasksView()
                                                .getDraftTasks()
@@ -181,12 +172,7 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
 
-        final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
-        final Timestamp previousDueDate = Timestamp.getDefaultInstance();
-
-        final UpdateTaskDueDate updateTaskDueDate =
-                updateTaskDueDateInstance(updatedTaskId, previousDueDate, newDueDate);
-        client.update(updateTaskDueDate);
+        updateDueDate(newDueDate, isCorrectId, createdTaskId);
 
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
         final int expectedListSize = 1;
@@ -204,5 +190,13 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         assertEquals(taskId, view.getId());
 
         return view;
+    }
+
+    private void updateDueDate(Timestamp newDueDate, boolean isCorrectId, TaskId idOfCreatedTask) {
+        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+        final Timestamp previousDueDate = Timestamp.getDefaultInstance();
+        final UpdateTaskDueDate updateTaskDueDate =
+                updateTaskDueDateInstance(idOfUpdatedTask, previousDueDate, newDueDate);
+        client.update(updateTaskDueDate);
     }
 }

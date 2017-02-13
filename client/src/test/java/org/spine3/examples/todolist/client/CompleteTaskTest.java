@@ -89,9 +89,8 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
     }
 
     private TaskView obtainViewWhenHandledCommandCompleteTask(boolean isCorrectId) {
-        final CreateBasicTask createTask = createBasicTask();
+        final CreateBasicTask createTask = createTask();
         final TaskId createdTaskId = createTask.getId();
-        client.create(createTask);
 
         final CreateBasicLabel createLabel = createBasicLabel();
         client.create(createLabel);
@@ -102,9 +101,7 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
 
-        final TaskId completedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
-        final CompleteTask completeTask = completeTaskInstance(completedTaskId);
-        client.complete(completeTask);
+        completeTask(isCorrectId, createdTaskId);
 
         final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
         final int expectedListSize = 1;
@@ -122,13 +119,10 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
     }
 
     private TaskView obtainTaskViewWhenHandledCompleteTask(boolean isCorrectId) {
-        final CreateBasicTask createTask = createBasicTask();
+        final CreateBasicTask createTask = createTask();
         final TaskId idOfCreatedTask = createTask.getId();
-        client.create(createTask);
 
-        final TaskId idOfCompletedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
-        final CompleteTask completeTask = completeTaskInstance(idOfCompletedTask);
-        client.complete(completeTask);
+        completeTask(isCorrectId, idOfCreatedTask);
 
         final List<TaskView> taskViews = client.getMyListView()
                                                .getMyList()
@@ -136,9 +130,15 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
         final int expectedListSize = 1;
         assertEquals(expectedListSize, taskViews.size());
 
-        final TaskView view = taskViews.get(0);
-        assertEquals(idOfCreatedTask, view.getId());
+        final TaskView result = taskViews.get(0);
+        assertEquals(idOfCreatedTask, result.getId());
 
-        return view;
+        return result;
+    }
+
+    private void completeTask(boolean isCorrectId, TaskId idOfCreatedTask) {
+        final TaskId idOfCompletedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+        final CompleteTask completeTask = completeTaskInstance(idOfCompletedTask);
+        client.complete(completeTask);
     }
 }

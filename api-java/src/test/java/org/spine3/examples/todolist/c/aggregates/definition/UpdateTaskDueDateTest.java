@@ -73,8 +73,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     @Test
     @DisplayName("cannot update due date for the completed task")
     public void cannotUpdateCompletedTaskDueDate() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        createTask();
 
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
         aggregate.dispatchForTest(completeTaskCmd, commandContext);
@@ -92,8 +91,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     @Test
     @DisplayName("cannot update due date for the deleted task")
     public void cannotUpdateDeletedTaskDueDate() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        createTask();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
@@ -131,8 +129,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     @DisplayName("updates task due date")
     public void updatesDueDate() {
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
-        final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createBasicTask, commandContext);
+        createTask();
 
         final UpdateTaskDueDate updateTaskDueDateCmd =
                 updateTaskDueDateInstance(taskId, Timestamp.getDefaultInstance(), updatedDueDate);
@@ -146,8 +143,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     @Test
     @DisplayName("produces throwing CannotUpdateTaskDueDate failure")
     public void producesFailure() {
-        final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createBasicTask, commandContext);
+        createTask();
 
         final Timestamp expectedDueDate = Timestamps.getCurrentTime();
         final Timestamp newDueDate = Timestamps.getCurrentTime();
@@ -182,5 +178,10 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
             final Timestamp actualDueDate = Timestamp.getDefaultInstance();
             assertEquals(actualDueDate, unpack(mismatch.getActual()));
         }
+    }
+
+    private void createTask() {
+        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        aggregate.dispatchForTest(createTaskCmd, commandContext);
     }
 }

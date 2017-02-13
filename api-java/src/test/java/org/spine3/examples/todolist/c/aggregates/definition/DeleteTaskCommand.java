@@ -63,8 +63,7 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
     @Test
     @DisplayName("deletes task")
     public void deletesTask() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        createTask();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
@@ -77,8 +76,7 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
     @Test
     @DisplayName("cannot delete already deleted task")
     public void cannotDeleteAlreadyDeletedTask() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        createTask();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
@@ -95,8 +93,7 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
     @Test
     @DisplayName("produces TaskDeleted event")
     public void producesEvent() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        createTask();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         final List<? extends Message> messageList =
@@ -109,5 +106,10 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
         final TaskDeleted taskDeleted = (TaskDeleted) messageList.get(0);
 
         assertEquals(taskId, taskDeleted.getTaskId());
+    }
+
+    private void createTask() {
+        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        aggregate.dispatchForTest(createTaskCmd, commandContext);
     }
 }

@@ -73,8 +73,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     @Test
     @DisplayName("produces TaskDescriptionUpdated event")
     public void producesEvent() {
-        final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createBasicTask, commandContext);
+        createTask();
         final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId);
         final List<? extends Message> messageList =
                 aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
@@ -107,8 +106,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     @Test
     @DisplayName("cannot update description for deleted task")
     public void cannotUpdateDeletedTaskDescription() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        createTask();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
@@ -127,8 +125,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     @Test
     @DisplayName("cannot update description for the completed task")
     public void cannotUpdateCompletedTaskDescription() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        createTask();
 
         final CompleteTask completeTaskCmd = completeTaskInstance();
         aggregate.dispatchForTest(completeTaskCmd, commandContext);
@@ -147,8 +144,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     @DisplayName("updates task description")
     public void updatesDescription() {
         final String newDescription = "new description.";
-        final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createBasicTask, commandContext);
+        createTask();
 
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId, DESCRIPTION, newDescription);
@@ -200,5 +196,10 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
             assertEquals(actualStringValue, unpack(mismatch.getActual()));
             assertEquals(newStringValue, unpack(mismatch.getNewValue()));
         }
+    }
+
+    private void createTask() {
+        final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
+        aggregate.dispatchForTest(createBasicTask, commandContext);
     }
 }

@@ -117,12 +117,8 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
     private TaskView obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(String newDescription, boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
-        final TaskId idOfCreatedTask = createTask.getId();
 
-        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
-        final UpdateTaskDescription updateTaskDescription =
-                updateTaskDescriptionInstance(idOfUpdatedTask, createTask.getDescription(), newDescription);
-        client.update(updateTaskDescription);
+        updateDescription(newDescription, isCorrectId, createTask);
 
         final List<TaskView> taskViews = client.getMyListView()
                                                .getMyList()
@@ -138,22 +134,18 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
 
     private TaskView obtainViewWhenHandledCommandUpdateTaskDescription(String newDescription, boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
-        final TaskId createdTaskId = createTask.getId();
         client.create(createTask);
 
         final CreateBasicLabel createLabel = createBasicLabel();
         client.create(createLabel);
-
-        final TaskId taskId = createTask.getId();
         final LabelId labelId = createLabel.getLabelId();
+        final TaskId taskId = createTask.getId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
 
-        final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
-        final UpdateTaskDescription updateTaskDescription =
-                updateTaskDescriptionInstance(updatedTaskId, createTask.getDescription(), newDescription);
-        client.update(updateTaskDescription);
+
+       updateDescription(newDescription, isCorrectId, createTask);
 
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
         final int expectedListSize = 1;
@@ -191,5 +183,13 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         assertEquals(createdTaskId, view.getId());
 
         return view;
+    }
+
+    private void updateDescription(String newDescription, boolean isCorrectId, CreateBasicTask createTask) {
+        final TaskId idOfCreatedTask = createTask.getId();
+        final TaskId updatedTaskId = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+        final UpdateTaskDescription updateTaskDescription =
+                updateTaskDescriptionInstance(updatedTaskId, createTask.getDescription(), newDescription);
+        client.update(updateTaskDescription);
     }
 }

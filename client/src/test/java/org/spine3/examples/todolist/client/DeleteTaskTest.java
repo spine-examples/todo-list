@@ -56,8 +56,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName(BE_EMPTY)
         public void obtainEmptyView() {
-            final CreateBasicTask createTask = createBasicTask();
-            client.create(createTask);
+            final CreateBasicTask createTask = createTask();
 
             final CreateBasicLabel createLabel = createBasicLabel();
             client.create(createLabel);
@@ -84,8 +83,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName(CONTAIN_TASK_VIEW_WHEN_COMMAND_HAS_WRONG_ID)
         public void obtainView() {
-            final CreateBasicTask createTask = createBasicTask();
-            client.create(createTask);
+            final CreateBasicTask createTask = createTask();
 
             final CreateBasicLabel createLabel = createBasicLabel();
             client.create(createLabel);
@@ -160,8 +158,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName(BE_EMPTY)
         public void obtainEmptyView() {
-            final CreateBasicTask createTask = createBasicTask();
-            client.create(createTask);
+            final CreateBasicTask createTask = createTask();
 
             final TaskId idOfCreatedTask = createTask.getId();
             final List<TaskView> taskViews = obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, true);
@@ -172,8 +169,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName(CONTAIN_TASK_VIEW_WHEN_COMMAND_HAS_WRONG_ID)
         public void obtainView() {
-            final CreateBasicTask createTask = createBasicTask();
-            client.create(createTask);
+            final CreateBasicTask createTask = createTask();
 
             final TaskId idOfCreatedTask = createTask.getId();
             final List<TaskView> taskViews = obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, false);
@@ -194,9 +190,9 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
         final DeleteTask deleteTask = deleteTaskInstance(idOfDeletedTask);
         client.delete(deleteTask);
 
-        final List<TaskView> taskViews = client.getMyListView()
+        final List<TaskView> result = client.getMyListView()
                                                .getMyList()
                                                .getItemsList();
-        return taskViews;
+        return result;
     }
 }

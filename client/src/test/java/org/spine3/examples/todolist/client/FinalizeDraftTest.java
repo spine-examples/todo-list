@@ -53,8 +53,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName(CONTAIN_TASK_VIEW)
         public void obtainView() {
-            final CreateDraft createDraft = createDraft();
-            client.create(createDraft);
+            final CreateDraft createDraft = createDraftTask();
 
             List<TaskView> views = client.getMyListView()
                                          .getMyList()
@@ -84,8 +83,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName(CONTAIN_TASK_VIEW)
         public void obtainView() {
-            final CreateDraft createDraft = createDraft();
-            client.create(createDraft);
+            final CreateDraft createDraft = createDraftTask();
 
             final CreateBasicLabel createBasicLabel = createBasicLabel();
             client.create(createBasicLabel);
@@ -119,8 +117,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName(BE_EMPTY)
         public void obtainEmptyViewsWhenDraftIsFinalized() {
-            final CreateDraft createDraft = createDraft();
-            client.create(createDraft);
+            final CreateDraft createDraft = createDraftTask();
 
             DraftTasksView draftTasksView = client.getDraftTasksView();
 
@@ -143,8 +140,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("be not empty when command has wrong task ID")
         public void obtainViewWhenFinalizedWrongDraft() {
-            final CreateDraft createDraft = createDraft();
-            client.create(createDraft);
+            final CreateDraft createDraft = createDraftTask();
             final TaskId taskId = createDraft.getId();
 
             final FinalizeDraft finalizeDraft = finalizeDraftInstance(getWrongTaskId());
@@ -159,5 +155,11 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
             final TaskView view = taskViews.get(0);
             assertEquals(taskId, view.getId());
         }
+    }
+
+    private CreateDraft createDraftTask() {
+        final CreateDraft createDraft = createDraft();
+        client.create(createDraft);
+        return createDraft;
     }
 }

@@ -142,4 +142,16 @@ abstract class CommandLineTodoClientTest {
 
         return result;
     }
+
+    CreateBasicTask createTask() {
+        final CreateBasicTask createTask = createBasicTask();
+        client.create(createTask);
+        return createTask;
+    }
+
+    CreateBasicLabel createLabel() {
+        final CreateBasicLabel createLabel = createBasicLabel();
+        client.create(createLabel);
+        return createLabel;
+    }
 }
