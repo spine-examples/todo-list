@@ -74,7 +74,7 @@ class FailureHelper {
      *
      * @param taskId  the ID of the task
      * @param message the exception message
-     * @throws CannotReopenTask the {@code CannotReopenTask} failure
+     * @throws CannotReopenTask the failure to throw
      */
     static void throwCannotReopenTaskFailure(TaskId taskId, String message) throws CannotReopenTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
@@ -92,7 +92,7 @@ class FailureHelper {
      *
      * @param taskId  the ID of the task
      * @param message the exception message
-     * @throws CannotFinalizeDraft the {@code CannotFinalizeDraft} failure
+     * @throws CannotFinalizeDraft the failure to throw
      */
     static void throwCannotFinalizeDraftFailure(TaskId taskId, String message) throws CannotFinalizeDraft {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
@@ -109,7 +109,7 @@ class FailureHelper {
      * Constructs and throws the {@link CannotCreateDraft} failure according to the passed parameters.
      *
      * @param taskId the ID of the task
-     * @throws CannotCreateDraft the {@code CannotCreateDraft} failure
+     * @throws CannotCreateDraft the failure to throw
      */
     static void throwCannotCreateDraftFailure(TaskId taskId) throws CannotCreateDraft {
         final UnsuccessfulTaskCommand commandFailed =
@@ -128,7 +128,7 @@ class FailureHelper {
      *
      * @param taskId  the ID of the task
      * @param message the exception message
-     * @throws CannotDeleteTask the {@code CannotDeleteTask} failure
+     * @throws CannotDeleteTask the failure to throw
      */
     static void throwCannotDeleteTaskFailure(TaskId taskId, String message) throws CannotDeleteTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
@@ -145,7 +145,7 @@ class FailureHelper {
      * Constructs and throws the {@link CannotRemoveLabelFromTask} failure according to the passed parameters.
      *
      * @param taskId the ID of the task
-     * @throws CannotRemoveLabelFromTask the {@code CannotRemoveLabelFromTask} failure
+     * @throws CannotRemoveLabelFromTask the failure to throw
      */
     static void throwCannotRemoveLabelFromTaskFailure(LabelId labelId, TaskId taskId)
             throws CannotRemoveLabelFromTask {
@@ -167,7 +167,7 @@ class FailureHelper {
      *
      * @param taskId  the ID of the task
      * @param message the exception message
-     * @throws CannotCompleteTask the {@code CannotCompleteTask} failure
+     * @throws CannotCompleteTask the failure to throw
      */
     static void throwCannotCompleteTaskFailure(TaskId taskId, String message) throws CannotCompleteTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
@@ -203,7 +203,7 @@ class FailureHelper {
      * Constructs and throws the {@link CannotUpdateTaskDueDate} failure according to the passed parameters.
      *
      * @param taskId the ID of the task
-     * @throws CannotUpdateTaskDueDate the {@code CannotUpdateTaskDueDate} failure
+     * @throws CannotUpdateTaskDueDate the failure to throw
      */
     static void throwCannotUpdateTaskDueDateFailure(TaskId taskId) throws CannotUpdateTaskDueDate {
         final UnsuccessfulTaskCommand commandFailed =
@@ -224,7 +224,7 @@ class FailureHelper {
      * @param taskId   the ID of the task
      * @param message  the exception message
      * @param mismatch the {@link ValueMismatch}
-     * @throws CannotUpdateTaskDescription the {@code CannotUpdateTaskDescription} failure
+     * @throws CannotUpdateTaskDescription the failure to throw
      */
     static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, String message, ValueMismatch mismatch)
             throws CannotUpdateTaskDescription {
@@ -245,7 +245,7 @@ class FailureHelper {
      *
      * @param taskId  the ID of the task
      * @param message the exception message
-     * @throws CannotUpdateTaskDescription the {@code CannotUpdateTaskDescription} failure
+     * @throws CannotUpdateTaskDescription the failure to throw
      */
     static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, String message)
             throws CannotUpdateTaskDescription {
@@ -265,7 +265,7 @@ class FailureHelper {
      *
      * @param taskId  the ID of the task
      * @param labelId the ID of the label
-     * @throws CannotAssignLabelToTask the {@code CannotAssignLabelToTask} failure
+     * @throws CannotAssignLabelToTask the failure to throw
      */
     static void throwCannotAssignLabelToTaskFailure(TaskId taskId, LabelId labelId) throws CannotAssignLabelToTask {
         final UnsuccessfulTaskCommand commandFailed =
@@ -286,7 +286,7 @@ class FailureHelper {
      *
      * @param taskId   the ID of the task
      * @param mismatch the {@link ValueMismatch}
-     * @throws CannotUpdateTaskDueDate the {@code CannotUpdateTaskDueDate} failure
+     * @throws CannotUpdateTaskDueDate the failure to throw
      */
     static void throwCannotUpdateTaskDueDateFailure(TaskId taskId, ValueMismatch mismatch)
             throws CannotUpdateTaskDueDate {
@@ -306,7 +306,7 @@ class FailureHelper {
      *
      * @param taskId   the ID of the task
      * @param mismatch the {@link ValueMismatch}
-     * @throws CannotUpdateTaskDescription the {@code CannotUpdateTaskDescription} failure
+     * @throws CannotUpdateTaskDescription the failure to throw
      */
     static void throwCannotUpdateDescriptionFailure(TaskId taskId, ValueMismatch mismatch)
             throws CannotUpdateTaskDescription {
@@ -326,7 +326,7 @@ class FailureHelper {
      *
      * @param taskId   the ID of the task
      * @param mismatch the {@link ValueMismatch}
-     * @throws CannotUpdateTaskPriority the {@code CannotUpdateTaskPriority} failure
+     * @throws CannotUpdateTaskPriority the failure to throw
      */
     static void throwCannotUpdateTaskPriorityFailure(TaskId taskId, ValueMismatch mismatch)
             throws CannotUpdateTaskPriority {
@@ -344,7 +344,7 @@ class FailureHelper {
      * Constructs and throws the {@link CannotUpdateTaskPriority} failure according to the passed parameters.
      *
      * @param taskId the ID of the task
-     * @throws CannotUpdateTaskPriority the {@code CannotUpdateTaskPriority} failure
+     * @throws CannotUpdateTaskPriority the failure to throw
      */
     static void throwCannotUpdateTaskPriorityFailure(TaskId taskId) throws CannotUpdateTaskPriority {
         final UnsuccessfulTaskCommand commandFailed =
@@ -363,7 +363,7 @@ class FailureHelper {
      *
      * @param labelId  the ID of the label
      * @param mismatch the {@link ValueMismatch}
-     * @throws CannotUpdateLabelDetails the {@code CannotUpdateLabelDetails} failure
+     * @throws CannotUpdateLabelDetails the failure to throw
      */
     static void throwCannotUpdateLabelDetailsFailure(LabelId labelId, ValueMismatch mismatch)
             throws CannotUpdateLabelDetails {
@@ -383,7 +383,7 @@ class FailureHelper {
      * according to the passed parameters.
      *
      * @param taskId the ID of the task
-     * @throws CannotUpdateTaskWithInappropriateDescription the {@code CannotUpdateTaskWithInappropriateDescription} failure
+     * @throws CannotUpdateTaskWithInappropriateDescription the failure to throw
      */
     static void throwCannotUpdateTooShortDescriptionFailure(TaskId taskId)
             throws CannotUpdateTaskWithInappropriateDescription {
@@ -403,7 +403,7 @@ class FailureHelper {
      * according to the passed parameters.
      *
      * @param taskId the ID of the task
-     * @throws CannotCreateTaskWithInappropriateDescription the {@code CannotCreateTaskWithInappropriateDescription} failure
+     * @throws CannotCreateTaskWithInappropriateDescription the failure to throw
      */
     static void throwCannotCreateTaskWithInappropriateDescription(TaskId taskId)
             throws CannotCreateTaskWithInappropriateDescription {

@@ -48,7 +48,7 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
 
     /**
      * Obtains and sets the {@link BoundedContext} singleton instance,
-     * if the {@link Environment} is not test environment.
+     * if the {@link Environment} is non-test environment.
      *
      * @see Environment#isTests()
      * @see TodoListBoundedContext#getInstance()
@@ -71,7 +71,7 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
     }
 
     /**
-     * Returns {@link TaskAggregateRoot} instance according to the {@code TaskId}.
+     * Creates the {@link TaskAggregateRoot} instance according to the {@code TaskId}.
      *
      * @param id a task identifier
      * @return the aggregate root for the task
