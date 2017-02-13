@@ -63,7 +63,7 @@ public class TestEventEnricherFactory {
     private static final Function<TaskId, LabelIdsList> TASK_ID_TO_LABEL_IDS_LIST = taskId -> {
 
         final LabelIdsList result = LabelIdsList.newBuilder()
-                                                .addLabelIds(LABEL_ID)
+                                                .addIds(LABEL_ID)
                                                 .build();
         return result;
     };

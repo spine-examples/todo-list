@@ -109,7 +109,7 @@ public class LabelledTasksViewRepository
     private static Set<LabelId> getLabelIdsSet(EventContext context) {
         final LabelsListEnrichment enrichment = getEnrichment(LabelsListEnrichment.class, context);
         final LabelIdsList labelsList = enrichment.getLabelIdsList();
-        final Set<LabelId> result = newHashSet(labelsList.getLabelIdsList());
+        final Set<LabelId> result = newHashSet(labelsList.getIdsList());
         return result;
     }
 }

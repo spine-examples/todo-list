@@ -23,7 +23,7 @@ package org.spine3.examples.todolist.c.aggregates;
 import com.google.common.annotations.VisibleForTesting;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelIds;
+import org.spine3.examples.todolist.TaskLabels;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.aggregate.AggregateRoot;
@@ -37,6 +37,9 @@ import org.spine3.util.Environment;
  */
 public class TaskAggregateRoot extends AggregateRoot<TaskId> {
 
+    // It must be initialized through {@code #injectBoundedContext(BoundedContext)} method
+    // during the tests, in other cases it will be initialized by default.
+    @SuppressWarnings("StaticVariableMayNotBeInitialized")
     private static BoundedContext boundedContext;
 
     static {
@@ -90,14 +93,14 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
     }
 
     /**
-     * Return the {@link TaskLabelIds}.
+     * Returns the {@link TaskLabels}.
      *
      * <p>Obtains the state from the {@code boundedContext}.
      *
      * @return the state for the {@link TaskLabelsPart}
      */
-    public TaskLabelIds getTaskLabelIdsState() {
-        final TaskLabelIds result = getPartState(TaskLabelIds.class);
+    public TaskLabels getTaskLabelIdsState() {
+        final TaskLabels result = getPartState(TaskLabels.class);
         return result;
     }
 

@@ -25,7 +25,7 @@ import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.LabelIdsList;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabelIds;
+import org.spine3.examples.todolist.TaskLabels;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
 import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
@@ -46,10 +46,12 @@ import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isVali
 import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidRemoveLabelFromTaskCommand;
 
 /**
+ * The aggregate managing the state of a {@link TaskLabels}.
+ *
  * @author Illia Shepilov
  */
 @SuppressWarnings("unused") // The methods annotated with {@link Assign} are declared {@code private} by design.
-public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabelIds, TaskLabelIds.Builder> {
+public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels.Builder> {
 
     /**
      * {@inheritDoc}
@@ -105,13 +107,13 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabelIds, TaskLabe
     @Apply
     private void labelAssignedToTask(LabelAssignedToTask event) {
         List<LabelId> list = getState().getLabelIdsList()
-                                       .getLabelIdsList()
+                                       .getIdsList()
                                        .stream()
                                        .collect(Collectors.toList());
 
         list.add(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
-                                                      .addAllLabelIds(list)
+                                                      .addAllIds(list)
                                                       .build();
         getBuilder().clearLabelIdsList()
                     .setLabelIdsList(labelIdsList);
@@ -120,12 +122,12 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabelIds, TaskLabe
     @Apply
     private void labelRemovedFromTask(LabelRemovedFromTask event) {
         List<LabelId> list = getState().getLabelIdsList()
-                                       .getLabelIdsList()
+                                       .getIdsList()
                                        .stream()
                                        .collect(Collectors.toList());
         list.remove(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
-                                                      .addAllLabelIds(list)
+                                                      .addAllIds(list)
                                                       .build();
         getBuilder().clearLabelIdsList()
                     .setLabelIdsList(labelIdsList);

@@ -70,7 +70,7 @@ message TaskDefinition {
     reserved 7 to 20;
 }
 
-message TaskLabelIds {
+message TaskLabels {
 
     // Task identifier.
     TaskId task_id = 1;

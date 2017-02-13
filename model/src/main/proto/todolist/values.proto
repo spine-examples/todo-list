@@ -213,5 +213,5 @@ message UnsuccessfulLabelCommand {
 message LabelIdsList {
 
     // Label IDs.
-    repeated LabelId label_ids = 1;
+    repeated LabelId ids = 1;
 }
