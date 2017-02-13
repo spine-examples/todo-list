@@ -42,7 +42,7 @@ class EnrichmentHelperTest {
     }
 
     @Test
-    @DisplayName("throw EnrichmentNotFoundException when enricher is not present")
+    @DisplayName("throw EnrichmentNotFoundException when enrichment is not present")
     public void throwException() {
         assertThrows(EnrichmentNotFoundException.class, () ->
                 EnrichmentHelper.getEnrichment(TaskEnrichment.class, eventContextInstance()));
