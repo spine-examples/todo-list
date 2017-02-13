@@ -9,6 +9,8 @@ coverage:
   ignore:
   - generated/*
   - test/*
+  - testutil/*
+
   status:
     patch: false
 
