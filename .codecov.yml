@@ -9,7 +9,7 @@ coverage:
   ignore:
   - generated/*
   - test/*
-  - testutil/*
+  - testdata/*
 
   status:
     patch: false
