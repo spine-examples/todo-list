@@ -71,7 +71,7 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
      * Returns {@link TaskAggregateRoot} instance according to the {@code TaskId}.
      *
      * @param id a task identifier
-     * @return the aggregate root for task
+     * @return the aggregate root for the task
      */
     public static TaskAggregateRoot get(TaskId id) {
         return new TaskAggregateRoot(id);
