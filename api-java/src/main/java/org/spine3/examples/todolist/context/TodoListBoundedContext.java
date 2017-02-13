@@ -28,7 +28,6 @@ import org.spine3.examples.todolist.repositories.MyListViewRepository;
 import org.spine3.examples.todolist.repositories.TaskDefinitionRepository;
 import org.spine3.examples.todolist.repositories.TaskLabelsRepository;
 import org.spine3.server.BoundedContext;
-import org.spine3.server.event.EventBus;
 
 /**
  * Serves for creation the {@link BoundedContext} instances.
@@ -38,7 +37,7 @@ import org.spine3.server.event.EventBus;
 public class TodoListBoundedContext {
 
     /** The name of the Bounded Context. */
-    private static final String NAME = "Todo";
+    private static final String NAME = "TodoListBoundedContext";
 
     /**
      * Obtains the reference to the singleton {@link BoundedContext}.
@@ -70,39 +69,25 @@ public class TodoListBoundedContext {
     private static BoundedContext create() {
         final BoundedContext boundedContext = createBoundedContext();
 
-        final TaskDefinitionRepository taskDefinitionRepository = new TaskDefinitionRepository(boundedContext);
-        final LabelAggregateRepository labelAggregateRepository = new LabelAggregateRepository(boundedContext);
-        final TaskLabelsRepository taskLabelsRepository = new TaskLabelsRepository(boundedContext);
+        final TaskDefinitionRepository taskDefinitionRepo = new TaskDefinitionRepository(boundedContext);
+        final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository(boundedContext);
+        final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository(boundedContext);
 
-        boundedContext.register(taskDefinitionRepository);
-        boundedContext.register(taskLabelsRepository);
-        boundedContext.register(labelAggregateRepository);
+        boundedContext.register(taskDefinitionRepo);
+        boundedContext.register(taskLabelsRepo);
+        boundedContext.register(labelAggregateRepo);
         boundedContext.register(new MyListViewRepository(boundedContext));
         boundedContext.register(new LabelledTasksViewRepository(boundedContext));
         boundedContext.register(new DraftTasksViewRepository(boundedContext));
 
-        final TodoListRepositoryProvider repositoryProvider =
-                createRepositoryProvider(taskDefinitionRepository, taskLabelsRepository, labelAggregateRepository);
-        enrichEventBus(boundedContext.getEventBus(), repositoryProvider);
-        return boundedContext;
-    }
-
-    private static TodoListRepositoryProvider createRepositoryProvider(TaskDefinitionRepository taskDefinitionRepo,
-                                                                       TaskLabelsRepository taskLabelsRepo,
-                                                                       LabelAggregateRepository labelAggregateRepo) {
-        final TodoListRepositoryProvider repositoryProvider = new TodoListRepositoryProvider();
-        repositoryProvider.setLabelRepository(labelAggregateRepo);
-        repositoryProvider.setTaskLabelsRepository(taskLabelsRepo);
-        repositoryProvider.setTaskDefinitionRepository(taskDefinitionRepo);
-        return repositoryProvider;
-    }
-
-    private static void enrichEventBus(EventBus eventBus, TodoListRepositoryProvider repositoryProvider) {
         EventBusEnricher.newBuilder()
-                        .setEventBus(eventBus)
-                        .setRepositoryProvider(repositoryProvider)
+                        .setEventBus(boundedContext.getEventBus())
+                        .setLabelRepository(labelAggregateRepo)
+                        .setTaskDefinitionRepository(taskDefinitionRepo)
+                        .setTaskLabelsRepository(taskLabelsRepo)
                         .build()
                         .enrich();
+        return boundedContext;
     }
 
     private static BoundedContext createBoundedContext() {

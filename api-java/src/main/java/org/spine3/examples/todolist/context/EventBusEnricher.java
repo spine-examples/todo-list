@@ -44,12 +44,15 @@ import org.spine3.server.event.EventBus;
 @SuppressWarnings("Guava") // as we use Guava Function until we migrate the whole framework to Java 8.
 public class EventBusEnricher {
 
-    private static final String REPOSITORY_IS_NOT_INITIALIZED = "Repository is not initialized.";
-    private final TodoListRepositoryProvider repositoryProvider;
+    private final TaskDefinitionRepository taskDefinitionRepo;
+    private final TaskLabelsRepository taskLabelsRepo;
+    private final LabelAggregateRepository labelRepository;
     private final EventBus eventBus;
 
     private EventBusEnricher(Builder builder) {
-        this.repositoryProvider = builder.repositoryProvider;
+        this.taskDefinitionRepo = builder.taskDefinitionRepo;
+        this.taskLabelsRepo = builder.taskLabelsRepo;
+        this.labelRepository = builder.labelRepository;
         this.eventBus = builder.eventBus;
     }
 
@@ -68,10 +71,6 @@ public class EventBusEnricher {
             if (taskId == null) {
                 return TaskDefinition.getDefaultInstance();
             }
-            final TaskDefinitionRepository taskDefinitionRepo =
-                    repositoryProvider.getTaskDefinitionRepo()
-                                      .orElseThrow(() -> new RepositoryNotInitializedException(
-                                              REPOSITORY_IS_NOT_INITIALIZED));
             final TaskDefinitionPart aggregate = taskDefinitionRepo.load(taskId)
                                                                    .get();
             final TaskDefinition taskDefinition = aggregate.getState();
@@ -85,10 +84,6 @@ public class EventBusEnricher {
             if (taskId == null) {
                 return TaskDetails.getDefaultInstance();
             }
-            final TaskDefinitionRepository taskDefinitionRepo =
-                    repositoryProvider.getTaskDefinitionRepo()
-                                      .orElseThrow(() -> new RepositoryNotInitializedException(
-                                              REPOSITORY_IS_NOT_INITIALIZED));
             final TaskDefinitionPart aggregate = taskDefinitionRepo.load(taskId)
                                                                    .get();
             final TaskDefinition state = aggregate.getState();
@@ -107,10 +102,6 @@ public class EventBusEnricher {
             if (taskId == null) {
                 return LabelIdsList.getDefaultInstance();
             }
-            final TaskLabelsRepository taskLabelsRepo =
-                    repositoryProvider.getTaskLabelsRepo()
-                                      .orElseThrow(() -> new RepositoryNotInitializedException(
-                                              REPOSITORY_IS_NOT_INITIALIZED));
             final TaskLabelsPart aggregate = taskLabelsRepo.load(taskId)
                                                            .get();
             final LabelIdsList state = aggregate.getState()
@@ -125,10 +116,6 @@ public class EventBusEnricher {
             if (labelId == null) {
                 return LabelDetails.getDefaultInstance();
             }
-            final LabelAggregateRepository labelRepository =
-                    repositoryProvider.getLabelRepository()
-                                      .orElseThrow(() -> new RepositoryNotInitializedException(
-                                              REPOSITORY_IS_NOT_INITIALIZED));
             final LabelAggregate aggregate = labelRepository.load(labelId)
                                                             .get();
             final TaskLabel state = aggregate.getState();
@@ -151,25 +138,30 @@ public class EventBusEnricher {
     }
 
     /**
-     * A builder for producing {@code EventEnricherSupplier} instances.
+     * A builder for {@code EventEnricherSupplier} instances.
      */
     public static class Builder {
 
-        private TodoListRepositoryProvider repositoryProvider;
+        private TaskDefinitionRepository taskDefinitionRepo;
+        private TaskLabelsRepository taskLabelsRepo;
+        private LabelAggregateRepository labelRepository;
         private EventBus eventBus;
 
         private Builder() {
         }
 
-        /**
-         * Sets the {@link TodoListRepositoryProvider} instead of setting each repository separately.
-         *
-         * @param repositoryProvider the task aggregate repository provider.
-         * @return the {@code Builder}
-         * @see TodoListRepositoryProvider
-         */
-        public Builder setRepositoryProvider(TodoListRepositoryProvider repositoryProvider) {
-            this.repositoryProvider = repositoryProvider;
+        public Builder setTaskDefinitionRepository(TaskDefinitionRepository definitionRepository) {
+            this.taskDefinitionRepo = definitionRepository;
+            return this;
+        }
+
+        public Builder setTaskLabelsRepository(TaskLabelsRepository taskLabelsRepository) {
+            this.taskLabelsRepo = taskLabelsRepository;
+            return this;
+        }
+
+        public Builder setLabelRepository(LabelAggregateRepository labelRepository) {
+            this.labelRepository = labelRepository;
             return this;
         }
 
