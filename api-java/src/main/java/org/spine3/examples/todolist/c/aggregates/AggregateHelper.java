@@ -25,7 +25,7 @@ import org.spine3.examples.todolist.TaskStatus;
 /**
  * @author Illia Shepilov
  */
-public class AggregateHelper {
+class AggregateHelper {
 
     private AggregateHelper() {
     }
