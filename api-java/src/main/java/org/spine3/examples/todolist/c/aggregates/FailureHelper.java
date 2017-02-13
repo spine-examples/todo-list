@@ -61,7 +61,7 @@ import org.spine3.examples.todolist.c.failures.CannotUpdateTaskWithInappropriate
 @SuppressWarnings("OverlyCoupledClass")
 class FailureHelper {
 
-    public static final String TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE = "Command cannot be applied " +
+    static final String TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE = "Command cannot be applied " +
             "to the deleted or completed task.";
     private static final String TOO_SHORT_TASK_DESCRIPTION_EXCEPTION_MESSAGE = "Description should contain " +
             "at least 3 alphanumeric symbols.";
