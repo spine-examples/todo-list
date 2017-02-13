@@ -275,7 +275,7 @@ class FailureHelper {
                                        .build();
         final AssignLabelToTaskFailed assignLabelToTaskFailed =
                 AssignLabelToTaskFailed.newBuilder()
-                                       .setAssignLabelFailed(commandFailed)
+                                       .setFailedCommand(commandFailed)
                                        .setLabelId(labelId)
                                        .build();
         throw new CannotAssignLabelToTask(assignLabelToTaskFailed);

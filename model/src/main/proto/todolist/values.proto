@@ -131,7 +131,7 @@ message CreateBasicLabelFailed {
 message AssignLabelToTaskFailed {
 
     // Unsuccessful task command.
-    UnsuccessfulTaskCommand assign_label_failed = 1;
+    UnsuccessfulTaskCommand failed_command = 1;
 
     // An identifier of the label.
     LabelId label_id = 2;
