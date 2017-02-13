@@ -56,11 +56,7 @@ public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
         final LabelId labelId = createLabel.getLabelId();
         final TaskId taskId = createTask.getId();
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
-
-        final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        client.delete(deleteTask);
+        assignAndDeleteTask(labelId, taskId);
 
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
         client.restore(restoreDeletedTask);
@@ -89,11 +85,7 @@ public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
         final LabelId labelId = createLabel.getLabelId();
         final TaskId taskId = createTask.getId();
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
-
-        final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        client.delete(deleteTask);
+        assignAndDeleteTask(labelId, taskId);
 
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(getWrongTaskId());
         client.restore(restoreDeletedTask);
@@ -107,5 +99,13 @@ public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = taskListView.getItemsList();
 
         assertTrue(taskViews.isEmpty());
+    }
+
+    private void assignAndDeleteTask(LabelId labelId, TaskId taskId) {
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        client.assignLabel(assignLabelToTask);
+
+        final DeleteTask deleteTask = deleteTaskInstance(taskId);
+        client.delete(deleteTask);
     }
 }
