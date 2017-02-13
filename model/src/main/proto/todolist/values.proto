@@ -212,6 +212,6 @@ message UnsuccessfulLabelCommand {
 // DTO for the list of the label IDs.
 message LabelIdsList {
 
-    // A task label IDs.
+    // Label IDs.
     repeated LabelId label_ids = 1;
 }
