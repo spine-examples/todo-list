@@ -270,7 +270,7 @@ public class CommandLineTodoClient implements TodoClient {
 
         @Override
         public void onError(Throwable t) {
-            log().error("Exception is occurred during receiving a notifications.", t);
+            log().error("Exception is occurred during receiving notifications.", t);
         }
 
         @Override
