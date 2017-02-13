@@ -68,12 +68,12 @@ public class TestEventEnricherFactory {
         return result;
     };
 
-    private TestEventEnricherFactory() {
-    }
-
     private static final Function<TaskId, TaskDetails> TASK_ID_TO_TASK_DETAILS = taskId -> TASK_DETAILS;
 
     private static final Function<TaskId, TaskDefinition> TASK_ID_TO_TASK_DEFINITION = taskId -> TASK_DEFINITION;
+
+    private TestEventEnricherFactory() {
+    }
 
     /**
      * Provides a pre-configured {@link EventEnricher} event instance.
