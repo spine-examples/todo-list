@@ -44,11 +44,10 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
     }
 
     /**
-     * Obtains and sets the {@link BoundedContext} singleton instance.
+     * Obtains and sets the {@link BoundedContext} singleton instance,
+     * if the {@link Environment} is not test environment.
      *
-     * <p>If the {@link Environment} is not test environment,
-     * will be obtained and set the singleton {@link BoundedContext} instance.
-     *
+     * @see Environment#isTests()
      * @see TodoListBoundedContext#getInstance()
      */
     private static void initBoundedContextIfNeeded() {
