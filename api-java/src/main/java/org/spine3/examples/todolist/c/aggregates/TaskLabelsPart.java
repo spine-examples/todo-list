@@ -48,6 +48,7 @@ import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isVali
 /**
  * @author Illia Shepilov
  */
+@SuppressWarnings("unused") // The methods annotated with {@link Assign} are declared {@code private} by design.
 public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabelIds, TaskLabelIds.Builder> {
 
     /**

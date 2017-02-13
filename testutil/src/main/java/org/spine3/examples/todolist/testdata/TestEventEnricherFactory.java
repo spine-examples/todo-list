@@ -58,9 +58,6 @@ public class TestEventEnricherFactory {
                                                                   .setTitle(LABEL_TITLE)
                                                                   .build();
 
-    private TestEventEnricherFactory() {
-    }
-
     private static final Function<LabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS = labelId -> LABEL_DETAILS;
 
     private static final Function<TaskId, LabelIdsList> TASK_ID_TO_LABEL_IDS_LIST = taskId -> {
@@ -70,6 +67,9 @@ public class TestEventEnricherFactory {
                                                 .build();
         return result;
     };
+
+    private TestEventEnricherFactory() {
+    }
 
     private static final Function<TaskId, TaskDetails> TASK_ID_TO_TASK_DETAILS = taskId -> TASK_DETAILS;
 
