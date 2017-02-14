@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.client;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelId;
@@ -46,6 +47,15 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.resto
  */
 @DisplayName("After execution RestoreDeletedTask command")
 public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
+
+    private TodoClient client;
+
+    @BeforeEach
+    @Override
+    public void setUp() throws InterruptedException {
+        super.setUp();
+        client = getClient();
+    }
 
     @Test
     @DisplayName("LabelledTasksView contains restored task")
@@ -87,7 +97,7 @@ public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
 
         assignAndDeleteTask(labelId, taskId);
 
-        final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(getWrongTaskId());
+        final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(createWrongTaskId());
         client.restore(restoreDeletedTask);
 
         final int expectedListSize = 1;

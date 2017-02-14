@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.client;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,15 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
     private static final String CONTAIN_TASK_VIEW_WITH_LABEL = "contain task view with label";
     private static final String CONTAIN_TASK_VIEW_WITHOUT_LABEL_WHEN_COMMAND_HAS_WRONG_TASK_ID =
             "contain task view without label when command has wrong task ID";
+
+    private TodoClient client;
+
+    @BeforeEach
+    @Override
+    public void setUp() throws InterruptedException {
+        super.setUp();
+        client = getClient();
+    }
 
     @Nested
     @DisplayName(LABELLED_TASK_VIEW_SHOULD)
@@ -179,7 +189,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         final CreateBasicTask createTask = createTask();
 
         final TaskId idOfCreatedTask = createTask.getId();
-        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfUpdatedTask, labelId);
         client.assignLabel(assignLabelToTask);
@@ -201,7 +211,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         client.create(createDraft);
 
         final TaskId createTaskId = createDraft.getId();
-        final TaskId taskIdToAssign = isCorrectId ? createTaskId : getWrongTaskId();
+        final TaskId taskIdToAssign = isCorrectId ? createTaskId : createWrongTaskId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskIdToAssign, labelId);
         client.assignLabel(assignLabelToTask);

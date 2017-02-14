@@ -55,10 +55,10 @@ abstract class CommandLineTodoClientTest {
     static final String MY_LIST_VIEW_SHOULD = "MyListView should";
     static final String BE_EMPTY = "be empty";
     static final String CONTAIN_TASK_VIEW = "contain task view";
-    static final String HOST = "localhost";
     static final String UPDATED_TASK_DESCRIPTION = "New task description.";
+    private static final String HOST = "localhost";
     private Server server;
-    TodoClient client;
+    private TodoClient client;
 
     @BeforeEach
     public void setUp() throws InterruptedException {
@@ -73,10 +73,10 @@ abstract class CommandLineTodoClientTest {
     @AfterEach
     public void tearDown() throws Exception {
         server.shutdown();
-        client.shutdown();
+        getClient().shutdown();
     }
 
-    void startServer() throws InterruptedException {
+    private void startServer() throws InterruptedException {
         final CountDownLatch serverStartLatch = new CountDownLatch(1);
         final Thread serverThread = new Thread(() -> {
             try {
@@ -114,14 +114,14 @@ abstract class CommandLineTodoClientTest {
         return result;
     }
 
-    static TaskId getWrongTaskId() {
+    static TaskId createWrongTaskId() {
         final TaskId result = TaskId.newBuilder()
                                     .setValue(newUuid())
                                     .build();
         return result;
     }
 
-    static LabelId getWrongTaskLabelId() {
+    static LabelId createWrongTaskLabelId() {
         final LabelId result = LabelId.newBuilder()
                                       .setValue(newUuid())
                                       .build();
@@ -145,13 +145,17 @@ abstract class CommandLineTodoClientTest {
 
     CreateBasicTask createTask() {
         final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
+        getClient().create(createTask);
         return createTask;
     }
 
     CreateBasicLabel createLabel() {
         final CreateBasicLabel createLabel = createBasicLabel();
-        client.create(createLabel);
+        getClient().create(createLabel);
         return createLabel;
+    }
+
+    public TodoClient getClient() {
+        return client;
     }
 }

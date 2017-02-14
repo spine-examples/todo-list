@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.client;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,15 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
     private static final String CONTAIN_TASK_VIEW_WITH_UNCOMPLETED_TASK = "contain task view with uncompleted task";
     private static final String CONTAIN_TASK_VIEW_WITH_COMPLETED_TASK = "contain task view with completed task " +
             "when command has wrong id";
+
+    private TodoClient client;
+
+    @BeforeEach
+    @Override
+    public void setUp() throws InterruptedException {
+        super.setUp();
+        client = getClient();
+    }
 
     @Nested
     @DisplayName(LABELLED_TASK_VIEW_SHOULD)
@@ -123,8 +133,8 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
         completeAndReopenTask(isCorrectId, idOfCreatedTask);
 
         final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+                                                    .getMyList()
+                                                    .getItemsList();
         final TaskView view = checkAndObtainView(idOfCreatedTask, taskViews);
         return view;
     }
@@ -141,7 +151,7 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
         final CompleteTask completeTask = completeTaskInstance(createdTaskId);
         client.complete(completeTask);
 
-        final TaskId reopenedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
+        final TaskId reopenedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
         final ReopenTask reopenTask = reopenTaskInstance(reopenedTaskId);
         client.reopen(reopenTask);
     }

@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.client;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,15 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
 
     private static final String CONTAIN_TASK_VIEW_WHEN_COMMAND_HAS_WRONG_ID =
             "contain task view when command has wrong ID";
+
+    private TodoClient client;
+
+    @BeforeEach
+    @Override
+    public void setUp() throws InterruptedException {
+        super.setUp();
+        client = getClient();
+    }
 
     @Nested
     @DisplayName(LABELLED_TASK_VIEW_SHOULD)
@@ -94,7 +104,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
             client.assignLabel(assignLabelToTask);
 
-            final DeleteTask deleteTask = deleteTaskInstance(getWrongTaskId());
+            final DeleteTask deleteTask = deleteTaskInstance(createWrongTaskId());
             client.delete(deleteTask);
 
             final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
@@ -137,7 +147,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
             client.create(createDraft);
 
             final TaskId taskId = createDraft.getId();
-            final DeleteTask deleteTask = deleteTaskInstance(getWrongTaskId());
+            final DeleteTask deleteTask = deleteTaskInstance(createWrongTaskId());
             client.delete(deleteTask);
 
             final List<TaskView> taskViews = client.getDraftTasksView()
@@ -185,14 +195,14 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
     }
 
     private List<TaskView> obtainTaskViewListWhenHandledDeleteTask(TaskId idOfCreatedTask, boolean isCorrectId) {
-        final TaskId idOfDeletedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+        final TaskId idOfDeletedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
 
         final DeleteTask deleteTask = deleteTaskInstance(idOfDeletedTask);
         client.delete(deleteTask);
 
         final List<TaskView> result = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+                                            .getMyList()
+                                            .getItemsList();
         return result;
     }
 }

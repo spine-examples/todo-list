@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.client;
 
 import com.google.protobuf.Timestamp;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,15 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
     private static final String CONTAIN_TASK_VIEW_WITH_UPDATED_DUE_DATE = "contain task view with updated due date";
     private static final String CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_DUE_DATE_WHEN_COMMAND_HAS_WRONG_TASK_ID =
             "contain task view with not updated due date when command has wrong task ID";
+
+    private TodoClient client;
+
+    @BeforeEach
+    @Override
+    public void setUp() throws InterruptedException {
+        super.setUp();
+        client = getClient();
+    }
 
     @Nested
     @DisplayName(LABELLED_TASK_VIEW_SHOULD)
@@ -125,8 +135,8 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
 
         updateDueDate(newDueDate, isCorrectId, idOfCreatedTask);
         final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+                                                    .getMyList()
+                                                    .getItemsList();
 
         final int expectedListSize = 1;
         assertEquals(expectedListSize, taskViews.size());
@@ -147,8 +157,8 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         updateDueDate(newDueDate, isCorrectId, createdTaskId);
 
         final List<TaskView> taskViews = client.getDraftTasksView()
-                                               .getDraftTasks()
-                                               .getItemsList();
+                                                    .getDraftTasks()
+                                                    .getItemsList();
         final int expectedListSize = 1;
         assertEquals(expectedListSize, taskViews.size());
 
@@ -193,7 +203,7 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
     }
 
     private void updateDueDate(Timestamp newDueDate, boolean isCorrectId, TaskId idOfCreatedTask) {
-        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
         final Timestamp previousDueDate = Timestamp.getDefaultInstance();
         final UpdateTaskDueDate updateTaskDueDate =
                 updateTaskDueDateInstance(idOfUpdatedTask, previousDueDate, newDueDate);

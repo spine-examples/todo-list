@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.client;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,15 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
             "contain task view with updated task priority";
     private static final String CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_TASK_PRIORITY_WHEN_COMMAND_HAS_WRONG_TASK_ID =
             "contain task view with not updated task priority when command has wrong task ID";
+
+    private TodoClient client;
+
+    @BeforeEach
+    @Override
+    public void setUp() throws InterruptedException {
+        super.setUp();
+        client = getClient();
+    }
 
     @Nested
     @DisplayName(LABELLED_TASK_VIEW_SHOULD)
@@ -125,8 +135,8 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         updatePriority(newPriority, isCorrectId, idOfCreatedTask);
 
         final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+                                                    .getMyList()
+                                                    .getItemsList();
 
         final int expectedListSize = 1;
         assertEquals(expectedListSize, taskViews.size());
@@ -177,8 +187,8 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         updatePriority(newPriority, isCorrectId, createdTaskId);
 
         final List<TaskView> taskViews = client.getDraftTasksView()
-                                               .getDraftTasks()
-                                               .getItemsList();
+                                                    .getDraftTasks()
+                                                    .getItemsList();
         final int expectedListSize = 1;
         assertEquals(expectedListSize, taskViews.size());
 
@@ -189,7 +199,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
     }
 
     private void updatePriority(TaskPriority newPriority, boolean isCorrectId, TaskId createdTaskId) {
-        final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
+        final TaskId updatedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
         final UpdateTaskPriority updateTaskPriority =
                 updateTaskPriorityInstance(updatedTaskId, TaskPriority.TP_UNDEFINED, newPriority);
         client.update(updateTaskPriority);

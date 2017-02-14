@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.client;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
@@ -37,6 +38,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @DisplayName("After execution CreateDraft command")
 public class CreateDraftTest extends CommandLineTodoClientTest {
+
+    private TodoClient client;
+
+    @BeforeEach
+    @Override
+    public void setUp() throws InterruptedException {
+        super.setUp();
+        client = getClient();
+    }
 
     @Test
     @DisplayName("DraftTasksView contains draft")
@@ -71,8 +81,8 @@ public class CreateDraftTest extends CommandLineTodoClientTest {
         client.create(createDraft);
 
         final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+                                                    .getMyList()
+                                                    .getItemsList();
         assertTrue(taskViews.isEmpty());
     }
 }

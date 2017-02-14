@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.client;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,15 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
             "contain task view with updated task description";
     private static final String CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_TASK_DESCRIPTION_WHEN_COMMAND_HAS_WRONG_ID =
             "contain task view with not updated task description when command has wrong ID";
+
+    private TodoClient client;
+
+    @BeforeEach
+    @Override
+    public void setUp() throws InterruptedException {
+        super.setUp();
+        client = getClient();
+    }
 
     @Nested
     @DisplayName(LABELLED_TASK_VIEW_SHOULD)
@@ -121,8 +131,8 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         updateDescription(newDescription, isCorrectId, createTask);
 
         final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+                                                    .getMyList()
+                                                    .getItemsList();
         final int expectedListSize = 1;
         assertEquals(expectedListSize, taskViews.size());
 
@@ -167,15 +177,15 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         client.create(createDraft);
         final TaskId createdTaskId = createDraft.getId();
 
-        final TaskId updatedTaskId = isCorrectId ? createdTaskId : getWrongTaskId();
+        final TaskId updatedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
         final String previousDescription = "";
         final UpdateTaskDescription updateTaskDescription =
                 updateTaskDescriptionInstance(updatedTaskId, previousDescription, newDescription);
         client.update(updateTaskDescription);
 
         final List<TaskView> taskViews = client.getDraftTasksView()
-                                               .getDraftTasks()
-                                               .getItemsList();
+                                                    .getDraftTasks()
+                                                    .getItemsList();
         final int expectedListSize = 1;
         assertEquals(expectedListSize, taskViews.size());
 
@@ -187,7 +197,7 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
 
     private void updateDescription(String newDescription, boolean isCorrectId, CreateBasicTask createTask) {
         final TaskId idOfCreatedTask = createTask.getId();
-        final TaskId updatedTaskId = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+        final TaskId updatedTaskId = isCorrectId ? idOfCreatedTask : createWrongTaskId();
         final UpdateTaskDescription updateTaskDescription =
                 updateTaskDescriptionInstance(updatedTaskId, createTask.getDescription(), newDescription);
         client.update(updateTaskDescription);

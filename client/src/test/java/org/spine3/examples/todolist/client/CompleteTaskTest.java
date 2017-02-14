@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.client;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -49,6 +50,15 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
     private static final String CONTAIN_TASK_VIEW_MARKED_AS_COMPLETED = "contain task view marked as completed";
     private static final String TASK_VIEW_WHICH_DOES_NOT_MARKED_AS_COMPLETED_WHEN_COMMAND_HAS_WRONG_TASK_ID =
             "task view which does not marked as completed when command has wrong task ID";
+
+    private TodoClient client;
+
+    @BeforeEach
+    @Override
+    public void setUp() throws InterruptedException {
+        super.setUp();
+        client = getClient();
+    }
 
     @Nested
     @DisplayName(LABELLED_TASK_VIEW_SHOULD)
@@ -137,7 +147,7 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
     }
 
     private void completeTask(boolean isCorrectId, TaskId idOfCreatedTask) {
-        final TaskId idOfCompletedTask = isCorrectId ? idOfCreatedTask : getWrongTaskId();
+        final TaskId idOfCompletedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
         final CompleteTask completeTask = completeTaskInstance(idOfCompletedTask);
         client.complete(completeTask);
     }

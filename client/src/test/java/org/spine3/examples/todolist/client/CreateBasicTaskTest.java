@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.client;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.TaskId;
@@ -40,6 +41,15 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCR
 @DisplayName("After execution CreateBasicTask command")
 public class CreateBasicTaskTest extends CommandLineTodoClientTest {
 
+    private TodoClient client;
+
+    @BeforeEach
+    @Override
+    public void setUp() throws InterruptedException {
+        super.setUp();
+        client = getClient();
+    }
+    
     @Test
     @DisplayName("LabelledTaskView is empty")
     public void obtainEmptyLabelledTaskView() {
@@ -57,8 +67,8 @@ public class CreateBasicTaskTest extends CommandLineTodoClientTest {
         client.create(createBasicTask);
 
         final List<TaskView> taskViews = client.getDraftTasksView()
-                                               .getDraftTasks()
-                                               .getItemsList();
+                                                    .getDraftTasks()
+                                                    .getItemsList();
         assertTrue(taskViews.isEmpty());
     }
 
@@ -72,8 +82,8 @@ public class CreateBasicTaskTest extends CommandLineTodoClientTest {
         client.create(createSecondTask);
 
         final List<TaskView> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+                                                    .getMyList()
+                                                    .getItemsList();
         final int expectedMessagesCount = 2;
         assertEquals(expectedMessagesCount, taskViews.size());
 

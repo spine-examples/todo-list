@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.client;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -46,6 +47,15 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.final
 @DisplayName("After execution FinalizeDraft command")
 public class FinalizeDraftTest extends CommandLineTodoClientTest {
 
+    private TodoClient client;
+
+    @BeforeEach
+    @Override
+    public void setUp() throws InterruptedException {
+        super.setUp();
+        client = getClient();
+    }
+
     @Nested
     @DisplayName(MY_LIST_VIEW_SHOULD)
     class FinalizeDraftFromMyListView {
@@ -56,8 +66,8 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
             final CreateDraft createDraft = createDraftTask();
 
             List<TaskView> views = client.getMyListView()
-                                         .getMyList()
-                                         .getItemsList();
+                                              .getMyList()
+                                              .getItemsList();
             int expectedListSize = 0;
             assertEquals(expectedListSize, views.size());
 
@@ -67,8 +77,8 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
 
             expectedListSize = 1;
             views = client.getMyListView()
-                          .getMyList()
-                          .getItemsList();
+                               .getMyList()
+                               .getItemsList();
             assertEquals(expectedListSize, views.size());
 
             final TaskView view = views.get(0);
@@ -143,12 +153,12 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
             final CreateDraft createDraft = createDraftTask();
             final TaskId taskId = createDraft.getId();
 
-            final FinalizeDraft finalizeDraft = finalizeDraftInstance(getWrongTaskId());
+            final FinalizeDraft finalizeDraft = finalizeDraftInstance(createWrongTaskId());
             client.finalize(finalizeDraft);
 
             final List<TaskView> taskViews = client.getDraftTasksView()
-                                                   .getDraftTasks()
-                                                   .getItemsList();
+                                                        .getDraftTasks()
+                                                        .getItemsList();
             final int expectedListSize = 1;
             assertEquals(expectedListSize, taskViews.size());
 
