@@ -23,7 +23,7 @@ package org.spine3.examples.todolist.c.aggregate;
 import org.spine3.examples.todolist.TaskStatus;
 
 /**
- * Serves as utility class for flexible generation exception message.
+ * Serves as utility class for the flexible generation of exception message.
  *
  * @author Illia Shepilov
  */
