@@ -75,7 +75,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static org.spine3.examples.todolist.c.aggregate.AggregateHelper.generateExceptionMessage;
+import static org.spine3.examples.todolist.c.aggregate.ExceptionMessages.create;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotCompleteTaskFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotCreateDraftFailure;
@@ -228,7 +228,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            final String message = generateExceptionMessage(currentStatus, newStatus);
+            final String message = create(currentStatus, newStatus);
             throwCannotReopenTaskFailure(taskId, message);
         }
 
@@ -248,7 +248,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            final String message = generateExceptionMessage(currentStatus, newStatus);
+            final String message = create(currentStatus, newStatus);
             throwCannotDeleteTaskFailure(taskId, message);
         }
 
@@ -268,7 +268,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            final String message = generateExceptionMessage(currentStatus, newStatus);
+            final String message = create(currentStatus, newStatus);
             throwCannotCompleteTaskFailure(taskId, message);
         }
 
@@ -304,7 +304,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            final String message = generateExceptionMessage(currentStatus, newStatus);
+            final String message = create(currentStatus, newStatus);
             throwCannotFinalizeDraftFailure(taskId, message);
         }
 
@@ -323,7 +323,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            final String message = generateExceptionMessage(currentStatus, newStatus);
+            final String message = create(currentStatus, newStatus);
             throwCannotRestoreDeletedTaskFailure(taskId, message);
         }
 
