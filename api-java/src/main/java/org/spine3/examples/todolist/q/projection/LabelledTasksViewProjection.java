@@ -75,7 +75,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId, LabelledTas
         final LabelId labelId = event.getLabelId();
         final TaskId taskId = event.getTaskId();
 
-        final TaskView taskView = constructTaskView(taskDetails, labelId, taskId);
+        final TaskView taskView = viewFor(taskDetails, labelId, taskId);
         final LabelDetails labelDetails = enrichment.getLabelDetails();
         final LabelledTasksView state = addLabel(taskView, labelDetails).setLabelId(labelId)
                                                                         .build();
@@ -89,7 +89,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId, LabelledTas
         final LabelId labelId = event.getLabelId();
         final TaskId taskId = event.getTaskId();
 
-        final TaskView taskView = constructTaskView(taskDetails, labelId, taskId);
+        final TaskView taskView = viewFor(taskDetails, labelId, taskId);
         final LabelDetails labelDetails = enrichment.getLabelDetails();
         final LabelledTasksView state = addLabel(taskView, labelDetails).setLabelId(labelId)
                                                                         .build();
@@ -181,7 +181,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId, LabelledTas
         incrementState(state);
     }
 
-    private static TaskView constructTaskView(TaskDetails taskDetails, LabelId labelId, TaskId taskId) {
+    private static TaskView viewFor(TaskDetails taskDetails, LabelId labelId, TaskId taskId) {
         final TaskView result = TaskView.newBuilder()
                                         .setId(taskId)
                                         .setLabelId(labelId)
