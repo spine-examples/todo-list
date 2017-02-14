@@ -23,14 +23,23 @@ package org.spine3.examples.todolist.c.aggregate;
 import org.spine3.examples.todolist.TaskStatus;
 
 /**
+ * Serves as utility class for flexible generation exception message.
+ *
  * @author Illia Shepilov
  */
-class AggregateHelper {
+class ExceptionMessages {
 
-    private AggregateHelper() {
+    private ExceptionMessages() {
     }
 
-    static String generateExceptionMessage(TaskStatus currentStatus, TaskStatus newStatus) {
+    /**
+     * Creates exception message according to the passed parameters.
+     *
+     * @param currentStatus the current status
+     * @param newStatus     the desirable new status
+     * @return created message
+     */
+    static String create(TaskStatus currentStatus, TaskStatus newStatus) {
         final String result = String.format("Cannot make transition from: %s to: %s state",
                                             currentStatus, newStatus);
         return result;

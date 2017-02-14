@@ -29,12 +29,12 @@ import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("AggregateHelper should")
-class AggregateHelperTest {
+@DisplayName("ExceptionMessages should")
+class ExceptionMessagesTest {
 
     @Test
     @DisplayName("have the private constructor")
     public void havePrivateConstructor() {
-        assertTrue(hasPrivateParameterlessCtor(AggregateHelper.class));
+        assertTrue(hasPrivateParameterlessCtor(ExceptionMessages.class));
     }
 }
