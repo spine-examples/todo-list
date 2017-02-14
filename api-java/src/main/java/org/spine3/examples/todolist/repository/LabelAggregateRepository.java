@@ -18,10 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package provides classes for working with aggregate and projection repositories.
- */
-@ParametersAreNonnullByDefault
-package org.spine3.examples.todolist.repositories;
+package org.spine3.examples.todolist.repository;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import org.spine3.examples.todolist.LabelId;
+import org.spine3.examples.todolist.c.aggregate.LabelAggregate;
+import org.spine3.server.BoundedContext;
+import org.spine3.server.aggregate.AggregateRepository;
+
+/**
+ * Repository for the {@link LabelAggregate}.
+ *
+ * @author Illia Shepilov
+ */
+public class LabelAggregateRepository extends AggregateRepository<LabelId, LabelAggregate> {
+
+    /**
+     * Creates a new repository instance.
+     *
+     * @param boundedContext the bounded context to which this repository belongs
+     */
+    public LabelAggregateRepository(BoundedContext boundedContext) {
+        super(boundedContext);
+    }
+}

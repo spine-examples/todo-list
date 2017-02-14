@@ -39,7 +39,7 @@ import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
 import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
 import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
 import org.spine3.examples.todolist.c.events.TaskReopened;
-import org.spine3.examples.todolist.repositories.LabelledTasksViewRepository;
+import org.spine3.examples.todolist.repository.LabelledTasksViewRepository;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.event.EventBus;
 import org.spine3.server.event.enrich.EventEnricher;

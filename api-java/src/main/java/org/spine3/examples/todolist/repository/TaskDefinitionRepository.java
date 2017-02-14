@@ -18,26 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.repositories;
+package org.spine3.examples.todolist.repository;
 
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.c.aggregate.LabelAggregate;
+import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.server.BoundedContext;
-import org.spine3.server.aggregate.AggregateRepository;
+import org.spine3.server.aggregate.AggregatePartRepository;
 
 /**
- * Repository for the {@link LabelAggregate}.
- *
  * @author Illia Shepilov
  */
-public class LabelAggregateRepository extends AggregateRepository<LabelId, LabelAggregate> {
-
+public class TaskDefinitionRepository extends AggregatePartRepository<TaskId, TaskDefinitionPart> {
     /**
-     * Creates a new repository instance.
+     * {@inheritDoc}
      *
-     * @param boundedContext the bounded context to which this repository belongs
+     * @param boundedContext
      */
-    public LabelAggregateRepository(BoundedContext boundedContext) {
+    public TaskDefinitionRepository(BoundedContext boundedContext) {
         super(boundedContext);
     }
 }

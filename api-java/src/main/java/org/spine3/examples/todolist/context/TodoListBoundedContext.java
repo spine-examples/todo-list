@@ -21,12 +21,12 @@
 package org.spine3.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.spine3.examples.todolist.repositories.DraftTasksViewRepository;
-import org.spine3.examples.todolist.repositories.LabelAggregateRepository;
-import org.spine3.examples.todolist.repositories.LabelledTasksViewRepository;
-import org.spine3.examples.todolist.repositories.MyListViewRepository;
-import org.spine3.examples.todolist.repositories.TaskDefinitionRepository;
-import org.spine3.examples.todolist.repositories.TaskLabelsRepository;
+import org.spine3.examples.todolist.repository.DraftTasksViewRepository;
+import org.spine3.examples.todolist.repository.LabelAggregateRepository;
+import org.spine3.examples.todolist.repository.LabelledTasksViewRepository;
+import org.spine3.examples.todolist.repository.MyListViewRepository;
+import org.spine3.examples.todolist.repository.TaskDefinitionRepository;
+import org.spine3.examples.todolist.repository.TaskLabelsRepository;
 import org.spine3.server.BoundedContext;
 
 /**

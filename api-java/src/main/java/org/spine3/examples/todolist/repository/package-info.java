@@ -18,23 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.repositories;
-
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
-import org.spine3.server.BoundedContext;
-import org.spine3.server.aggregate.AggregatePartRepository;
-
 /**
- * @author Illia Shepilov
+ * This package provides classes for working with aggregate and projection repositories.
  */
-public class TaskDefinitionRepository extends AggregatePartRepository<TaskId, TaskDefinitionPart> {
-    /**
-     * {@inheritDoc}
-     *
-     * @param boundedContext
-     */
-    public TaskDefinitionRepository(BoundedContext boundedContext) {
-        super(boundedContext);
-    }
-}
+@ParametersAreNonnullByDefault
+package org.spine3.examples.todolist.repository;
+
+import javax.annotation.ParametersAreNonnullByDefault;

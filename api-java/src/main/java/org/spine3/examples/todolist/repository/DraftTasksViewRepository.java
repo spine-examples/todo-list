@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.repositories;
+package org.spine3.examples.todolist.repository;
 
 import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.c.events.TaskDraftCreated;
@@ -32,7 +32,7 @@ import org.spine3.server.projection.ProjectionRepository;
 import java.util.Collections;
 
 import static org.spine3.examples.todolist.q.projections.DraftTasksViewProjection.ID;
-import static org.spine3.examples.todolist.repositories.RepositoryHelper.addCommonIdSetFunctions;
+import static org.spine3.examples.todolist.repository.RepositoryHelper.addCommonIdSetFunctions;
 
 /**
  * Repository for the {@link DraftTasksViewProjection}.

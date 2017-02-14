@@ -31,9 +31,9 @@ import org.spine3.examples.todolist.TaskLabel;
 import org.spine3.examples.todolist.c.aggregate.LabelAggregate;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.aggregate.TaskLabelsPart;
-import org.spine3.examples.todolist.repositories.LabelAggregateRepository;
-import org.spine3.examples.todolist.repositories.TaskDefinitionRepository;
-import org.spine3.examples.todolist.repositories.TaskLabelsRepository;
+import org.spine3.examples.todolist.repository.LabelAggregateRepository;
+import org.spine3.examples.todolist.repository.TaskDefinitionRepository;
+import org.spine3.examples.todolist.repository.TaskLabelsRepository;
 import org.spine3.server.event.EventBus;
 
 /**
