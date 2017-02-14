@@ -47,7 +47,7 @@ import static org.spine3.examples.todolist.c.aggregate.MismatchHelper.of;
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings("unused") // The methods annotated with {@link Assign} are declared {@code private} by design.
+@SuppressWarnings("unused") // The methods annotated with {@link Apply} are declared {@code private} by design.
 public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Builder> {
 
     /**
