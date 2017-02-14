@@ -18,37 +18,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregates.definition;
+package org.spine3.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
+import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.aggregates.TaskDefinitionPart;
+import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
+import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
-import org.spine3.examples.todolist.c.commands.FinalizeDraft;
-import org.spine3.examples.todolist.c.failures.CannotFinalizeDraft;
+import org.spine3.examples.todolist.c.events.TaskCompleted;
+import org.spine3.examples.todolist.c.failures.CannotCompleteTask;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.examples.todolist.TaskStatus.DRAFT;
-import static org.spine3.examples.todolist.TaskStatus.FINALIZED;
+import static org.spine3.examples.todolist.TaskStatus.COMPLETED;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.finalizeDraftInstance;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("FinalizeDraft command")
-public class FinalizeTaskTest extends TaskDefinitionCommandTest<FinalizeDraft> {
+@DisplayName("CompleteTask command")
+public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
     private final CommandContext commandContext = createCommandContext();
     private TaskDefinitionPart aggregate;
@@ -62,53 +65,74 @@ public class FinalizeTaskTest extends TaskDefinitionCommandTest<FinalizeDraft> {
     }
 
     @Test
-    @DisplayName("finalizes task")
-    public void finalizesTask() {
-        final CreateDraft createDraftCmd = createDraftInstance(taskId);
-        aggregate.dispatchForTest(createDraftCmd, commandContext);
+    @DisplayName("produces TaskCompleted event")
+    public void producesEvent() {
+        createTask();
 
-        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
-        TaskDefinition state = aggregate.getState();
+        final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
+        final List<? extends Message> messageList =
+                aggregate.dispatchForTest(completeTaskCmd, commandContext);
 
-        assertEquals(taskId, state.getId());
-        assertEquals(DRAFT, state.getTaskStatus());
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, messageList.size());
+        assertEquals(TaskCompleted.class, messageList.get(0)
+                                                     .getClass());
+        final TaskCompleted taskCompleted = (TaskCompleted) messageList.get(0);
 
-        aggregate.dispatchForTest(finalizeDraftCmd, commandContext);
-        state = aggregate.getState();
-
-        assertEquals(taskId, state.getId());
-        assertEquals(FINALIZED, state.getTaskStatus());
+        assertEquals(taskId, taskCompleted.getTaskId());
     }
 
     @Test
-    @DisplayName("cannot finalize deleted task")
-    public void cannotFinalizeDeletedTask() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+    @DisplayName("completes the task")
+    public void completesTheTask() {
+        createTask();
+
+        completeTask();
+        final TaskDefinition state = aggregate.getState();
+
+        assertEquals(taskId, state.getId());
+        assertEquals(COMPLETED, state.getTaskStatus());
+    }
+
+    @Test
+    @DisplayName("cannot complete deleted task")
+    public void cannotCompleteDeletedTask() {
+        createTask();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
         try {
-            final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
-            aggregate.dispatchForTest(finalizeDraftCmd, commandContext);
+            completeTask();
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotFinalizeDraft);
+            assertTrue(cause instanceof CannotCompleteTask);
         }
     }
 
     @Test
-    @DisplayName("cannot finalize task when task state is not draft")
-    public void cannotFinalizeNotDraftTask() {
+    @DisplayName("cannot complete task in draft state")
+    public void cannotCompleteDraft() {
+        final CreateDraft createDraftCmd = createDraftInstance(taskId);
+        aggregate.dispatchForTest(createDraftCmd, commandContext);
+
         try {
-            final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
-            aggregate.dispatchForTest(finalizeDraftCmd, commandContext);
+            completeTask();
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotFinalizeDraft);
+            assertTrue(cause instanceof CannotCompleteTask);
         }
+    }
+
+    private void createTask() {
+        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        aggregate.dispatchForTest(createTaskCmd, commandContext);
+    }
+
+    private void completeTask() {
+        final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
+        aggregate.dispatchForTest(completeTaskCmd, commandContext);
     }
 }

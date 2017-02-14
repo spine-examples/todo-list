@@ -18,23 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregates;
+package org.spine3.examples.todolist.c.aggregate;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
+import org.spine3.examples.todolist.TaskStatus;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("TaskFlowValidator should")
-public class TaskFlowValidatorTest {
+class AggregateHelper {
 
-    @Test
-    @DisplayName("have the private constructor")
-    public void havePrivateConstructor() {
-        assertTrue(hasPrivateParameterlessCtor(TaskFlowValidator.class));
+    private AggregateHelper() {
+    }
+
+    static String generateExceptionMessage(TaskStatus currentStatus, TaskStatus newStatus) {
+        final String result = String.format("Cannot make transition from: %s to: %s state",
+                                            currentStatus, newStatus);
+        return result;
     }
 }

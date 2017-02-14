@@ -21,7 +21,7 @@
 package org.spine3.examples.todolist.repositories;
 
 import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.c.aggregates.LabelAggregate;
+import org.spine3.examples.todolist.c.aggregate.LabelAggregate;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.aggregate.AggregateRepository;
 

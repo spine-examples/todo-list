@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregates;
+package org.spine3.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
 import org.spine3.change.ValueMismatch;
@@ -39,10 +39,10 @@ import org.spine3.server.command.Assign;
 import java.util.Collections;
 import java.util.List;
 
-import static org.spine3.examples.todolist.c.aggregates.MismatchHelper.of;
+import static org.spine3.examples.todolist.c.aggregate.MismatchHelper.of;
 
 /**
- * The aggregates managing the state of a {@link TaskLabel}.
+ * The aggregate managing the state of a {@link TaskLabel}.
  *
  * @author Illia Shepilov
  */

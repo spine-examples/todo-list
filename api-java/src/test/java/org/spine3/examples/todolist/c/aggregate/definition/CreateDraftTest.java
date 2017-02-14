@@ -18,30 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregates.definition;
+package org.spine3.examples.todolist.c.aggregate.definition;
 
 import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.CommandContext;
+import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.aggregates.TaskDefinitionPart;
-import org.spine3.examples.todolist.c.commands.CreateBasicTask;
-import org.spine3.examples.todolist.c.events.TaskCreated;
+import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
+import org.spine3.examples.todolist.c.commands.CreateDraft;
+import org.spine3.examples.todolist.c.events.TaskDraftCreated;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
+import static org.spine3.examples.todolist.TaskStatus.DRAFT;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CreateBasicTask command")
-public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTask> {
+@DisplayName("CreateDraft command")
+public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
 
     private final CommandContext commandContext = createCommandContext();
     private TaskDefinitionPart aggregate;
@@ -49,30 +49,35 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
 
     @Override
     @BeforeEach
-    public void setUp() {
+    protected void setUp() {
         taskId = createTaskId();
         aggregate = createTaskDefinitionPart(taskId);
     }
 
     @Test
-    @DisplayName("produces TaskCreated event")
+    @DisplayName("produces TaskDraftCreated event")
     public void producesEvent() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        final CreateDraft createDraftCmd = createDraftInstance(taskId);
         final List<? extends Message> messageList =
-                aggregate.dispatchForTest(createTaskCmd, commandContext);
-
-        assertNotNull(aggregate.getState()
-                               .getCreated());
-        assertNotNull(aggregate.getId());
+                aggregate.dispatchForTest(createDraftCmd, commandContext);
 
         final int expectedListSize = 1;
         assertEquals(expectedListSize, messageList.size());
-        assertEquals(TaskCreated.class, messageList.get(0)
-                                                   .getClass());
-        final TaskCreated taskCreated = (TaskCreated) messageList.get(0);
+        assertEquals(TaskDraftCreated.class, messageList.get(0)
+                                                        .getClass());
+        final TaskDraftCreated taskDraftCreated = (TaskDraftCreated) messageList.get(0);
 
-        assertEquals(taskId, taskCreated.getId());
-        assertEquals(DESCRIPTION, taskCreated.getDetails()
-                                             .getDescription());
+        assertEquals(taskId, taskDraftCreated.getId());
+    }
+
+    @Test
+    @DisplayName("creates draft")
+    public void createsDraft() {
+        final CreateDraft createDraftCmd = createDraftInstance(taskId);
+        aggregate.dispatchForTest(createDraftCmd, commandContext);
+        final TaskDefinition state = aggregate.getState();
+
+        assertEquals(taskId, state.getId());
+        assertEquals(DRAFT, state.getTaskStatus());
     }
 }

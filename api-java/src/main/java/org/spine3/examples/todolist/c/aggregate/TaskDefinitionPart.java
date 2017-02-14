@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregates;
+package org.spine3.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
@@ -75,32 +75,33 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static org.spine3.examples.todolist.c.aggregates.AggregateHelper.generateExceptionMessage;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCompleteTaskFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCreateDraftFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotCreateTaskWithInappropriateDescription;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotDeleteTaskFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotFinalizeDraftFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotReopenTaskFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotRestoreDeletedTaskFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTaskDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTaskDueDateFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTaskPriorityFailure;
-import static org.spine3.examples.todolist.c.aggregates.FailureHelper.throwCannotUpdateTooShortDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregates.MismatchHelper.of;
-import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidCreateDraftCommand;
-import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidTransition;
-import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
-import static org.spine3.examples.todolist.c.aggregates.TaskFlowValidator.isValidUpdateTaskPriorityCommand;
+import static org.spine3.examples.todolist.c.aggregate.AggregateHelper.generateExceptionMessage;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotCompleteTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotCreateDraftFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotCreateTaskWithInappropriateDescription;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotDeleteTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotFinalizeDraftFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotReopenTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotRestoreDeletedTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotUpdateDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotUpdateTaskDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotUpdateTaskDueDateFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotUpdateTaskPriorityFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotUpdateTooShortDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.MismatchHelper.of;
+import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidCreateDraftCommand;
+import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidTransition;
+import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
+import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskPriorityCommand;
 
 /**
  * The aggregate managing the state of a {@link TaskDefinition}.
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings({"OverlyCoupledClass", "ClassWithTooManyMethods"})
+@SuppressWarnings({"OverlyCoupledClass", // because according to the domain model class cannot be separated.
+        "ClassWithTooManyMethods"})
 public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, TaskDefinition.Builder> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;

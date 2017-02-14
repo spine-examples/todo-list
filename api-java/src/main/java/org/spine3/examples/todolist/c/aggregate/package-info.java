@@ -18,21 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregates;
-
-import org.spine3.examples.todolist.TaskStatus;
-
 /**
- * @author Illia Shepilov
+ * This package provides implementation for aggregate classes.
  */
-class AggregateHelper {
+@ParametersAreNonnullByDefault
+package org.spine3.examples.todolist.c.aggregate;
 
-    private AggregateHelper() {
-    }
-
-    static String generateExceptionMessage(TaskStatus currentStatus, TaskStatus newStatus) {
-        final String result = String.format("Cannot make transition from: %s to: %s state",
-                                            currentStatus, newStatus);
-        return result;
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

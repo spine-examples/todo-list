@@ -18,10 +18,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package provides implementation for aggregates classes.
- */
-@ParametersAreNonnullByDefault
-package org.spine3.examples.todolist.c.aggregates;
+package org.spine3.examples.todolist.c.aggregate.definition;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import com.google.protobuf.Message;
+import org.spine3.base.CommandContext;
+import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
+import org.spine3.examples.todolist.testdata.TestCommandContextFactory;
+import org.spine3.test.CommandTest;
+
+import static org.spine3.base.Identifiers.newUuid;
+
+/**
+ * @author Illia Shepilov
+ */
+abstract class TaskDefinitionCommandTest<C extends Message> extends CommandTest<C> {
+
+    public static TaskId createTaskId() {
+        final TaskId result = TaskId.newBuilder()
+                                    .setValue(newUuid())
+                                    .build();
+        return result;
+    }
+
+    CommandContext createCommandContext() {
+        return TestCommandContextFactory.createCommandContext();
+    }
+
+    TaskDefinitionPart createTaskDefinitionPart(TaskId taskId) {
+        return new TaskDefinitionPart(taskId);
+    }
+}

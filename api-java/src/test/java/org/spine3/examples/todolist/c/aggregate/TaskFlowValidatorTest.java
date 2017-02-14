@@ -18,34 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregates.definition;
+package org.spine3.examples.todolist.c.aggregate;
 
-import com.google.protobuf.Message;
-import org.spine3.base.CommandContext;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.aggregates.TaskDefinitionPart;
-import org.spine3.examples.todolist.testdata.TestCommandContextFactory;
-import org.spine3.test.CommandTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static org.spine3.base.Identifiers.newUuid;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
  */
-abstract class TaskDefinitionCommandTest<C extends Message> extends CommandTest<C> {
+@DisplayName("TaskFlowValidator should")
+public class TaskFlowValidatorTest {
 
-    public static TaskId createTaskId() {
-        final TaskId result = TaskId.newBuilder()
-                                    .setValue(newUuid())
-                                    .build();
-        return result;
-    }
-
-    CommandContext createCommandContext() {
-        return TestCommandContextFactory.createCommandContext();
-    }
-
-    TaskDefinitionPart createTaskDefinitionPart(TaskId taskId) {
-        return new TaskDefinitionPart(taskId);
+    @Test
+    @DisplayName("have the private constructor")
+    public void havePrivateConstructor() {
+        assertTrue(hasPrivateParameterlessCtor(TaskFlowValidator.class));
     }
 }
