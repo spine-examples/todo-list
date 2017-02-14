@@ -177,7 +177,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
             @SuppressWarnings("ConstantConditions")
             final Failures.CannotUpdateTaskDescription failure = ((CannotUpdateTaskDescription) cause).getFailure();
             final DescriptionUpdateFailed descriptionUpdateFailed = failure.getUpdateFailed();
-            final TaskId actualTaskId = descriptionUpdateFailed.getFailedCommand()
+            final TaskId actualTaskId = descriptionUpdateFailed.getFailureDetails()
                                                                .getTaskId();
             assertEquals(taskId, actualTaskId);
 

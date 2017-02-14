@@ -158,7 +158,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
             final Failures.CannotUpdateTaskPriority cannotUpdateTaskPriority =
                     ((CannotUpdateTaskPriority) cause).getFailure();
             final PriorityUpdateFailed priorityUpdateFailed = cannotUpdateTaskPriority.getUpdateFailed();
-            final TaskId actualTaskId = priorityUpdateFailed.getFailedCommand()
+            final TaskId actualTaskId = priorityUpdateFailed.getFailureDetails()
                                                             .getTaskId();
             assertEquals(taskId, actualTaskId);
 

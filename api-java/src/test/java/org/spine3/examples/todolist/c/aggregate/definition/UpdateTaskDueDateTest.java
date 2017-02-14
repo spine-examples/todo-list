@@ -166,7 +166,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
                     ((CannotUpdateTaskDueDate) cause).getFailure();
 
             final TaskDueDateUpdateFailed dueDateUpdateFailed = cannotUpdateTaskDueDate.getUpdateFailed();
-            final TaskId actualTaskId = dueDateUpdateFailed.getFailedCommand()
+            final TaskId actualTaskId = dueDateUpdateFailed.getFailureDetails()
                                                            .getTaskId();
             assertEquals(taskId, actualTaskId);
 

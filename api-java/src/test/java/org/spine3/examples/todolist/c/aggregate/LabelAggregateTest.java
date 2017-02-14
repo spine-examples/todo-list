@@ -200,7 +200,7 @@ public class LabelAggregateTest {
                 final Failures.CannotUpdateLabelDetails cannotUpdateLabelDetails =
                         ((CannotUpdateLabelDetails) cause).getFailure();
                 final LabelDetailsUpdateFailed labelDetailsUpdateFailed = cannotUpdateLabelDetails.getUpdateFailed();
-                final LabelId actualLabelId = labelDetailsUpdateFailed.getFailedCommand()
+                final LabelId actualLabelId = labelDetailsUpdateFailed.getFailureDetails()
                                                                       .getLabelId();
                 assertEquals(labelId, actualLabelId);
 

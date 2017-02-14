@@ -22,9 +22,9 @@ package org.spine3.examples.todolist.c.aggregate;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.spine3.examples.todolist.FailedTaskCommandDetails;
 import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.UnsuccessfulTaskCommand;
 import org.spine3.examples.todolist.c.failures.CannotAssignLabelToTask;
 import org.spine3.examples.todolist.c.failures.CannotCreateDraft;
 import org.spine3.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
@@ -63,7 +63,7 @@ class FailureHelperTest {
         } catch (CannotCreateDraft ex) {
             final TaskId actual = ex.getFailure()
                                     .getCreateDraftFailed()
-                                    .getFailedCommand()
+                                    .getFailureDetails()
                                     .getTaskId();
             assertEquals(taskId, actual);
         }
@@ -77,7 +77,7 @@ class FailureHelperTest {
         } catch (CannotRemoveLabelFromTask ex) {
             final TaskId actual = ex.getFailure()
                                     .getRemoveLabelFailed()
-                                    .getFailedCommand()
+                                    .getFailureDetails()
                                     .getTaskId();
             assertEquals(taskId, actual);
         }
@@ -86,13 +86,12 @@ class FailureHelperTest {
     @Test
     @DisplayName("throw CannotUpdateTaskDescription failure")
     public void throwCannotUpdateTaskDescription() {
-        final String message = "Description is wrong";
         try {
             throwCannotUpdateTaskDescriptionFailure(taskId);
         } catch (CannotUpdateTaskDescription ex) {
-            final UnsuccessfulTaskCommand failedCommand = ex.getFailure()
-                                                            .getUpdateFailed()
-                                                            .getFailedCommand();
+            final FailedTaskCommandDetails failedCommand = ex.getFailure()
+                                                             .getUpdateFailed()
+                                                             .getFailureDetails();
             final TaskId actualId = failedCommand.getTaskId();
             assertEquals(taskId, actualId);
         }
@@ -104,9 +103,9 @@ class FailureHelperTest {
         try {
             throwCannotAssignLabelToTaskFailure(taskId, labelId);
         } catch (CannotAssignLabelToTask ex) {
-            final UnsuccessfulTaskCommand failedCommand = ex.getFailure()
-                                                            .getAssignLabelFailed()
-                                                            .getFailedCommand();
+            final FailedTaskCommandDetails failedCommand = ex.getFailure()
+                                                             .getAssignLabelFailed()
+                                                             .getFailureDetails();
             final TaskId actualId = failedCommand.getTaskId();
             assertEquals(taskId, actualId);
         }
@@ -120,7 +119,7 @@ class FailureHelperTest {
         } catch (CannotCreateTaskWithInappropriateDescription ex) {
             final TaskId actual = ex.getFailure()
                                     .getCreateTaskFailed()
-                                    .getFailedCommand()
+                                    .getFailureDetails()
                                     .getTaskId();
             assertEquals(taskId, actual);
         }
