@@ -108,7 +108,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     class TaskDraftFinalizedEvent {
 
         @Test
-        @DisplayName(REMOVES_TASK_VIEW_FORM_STATE)
+        @DisplayName(REMOVES_TASK_VIEW_FROM_STATE)
         public void removesView() {
             taskDraftCreated();
 
@@ -127,7 +127,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     class TaskDeletedEvent {
 
         @Test
-        @DisplayName(REMOVES_TASK_VIEW_FORM_STATE)
+        @DisplayName(REMOVES_TASK_VIEW_FROM_STATE)
         public void removesView() {
             taskDraftCreated();
 
@@ -358,7 +358,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     class LabelRemovedFromTaskEvent {
 
         @Test
-        @DisplayName(REMOVES_TASK_VIEW_FORM_STATE)
+        @DisplayName(REMOVES_TASK_VIEW_FROM_STATE)
         public void removesView() {
             taskDraftCreated();
 

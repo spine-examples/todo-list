@@ -105,7 +105,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
     class TaskDeletedEvent {
 
         @Test
-        @DisplayName(REMOVES_TASK_VIEW_FORM_STATE)
+        @DisplayName(REMOVES_TASK_VIEW_FROM_STATE)
         public void removesView() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);

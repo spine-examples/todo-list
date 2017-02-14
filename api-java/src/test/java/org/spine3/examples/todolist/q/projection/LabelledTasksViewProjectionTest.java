@@ -152,7 +152,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     class LabelRemovedFromTaskEvent {
 
         @Test
-        @DisplayName(REMOVES_TASK_VIEW_FORM_STATE)
+        @DisplayName(REMOVES_TASK_VIEW_FROM_STATE)
         public void removesView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
@@ -238,7 +238,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     class TaskDeletedEvent {
 
         @Test
-        @DisplayName(REMOVES_TASK_VIEW_FORM_STATE)
+        @DisplayName(REMOVES_TASK_VIEW_FROM_STATE)
         public void removesView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);

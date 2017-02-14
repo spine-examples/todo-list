@@ -40,7 +40,7 @@ abstract class ProjectionTest {
     static final String TASK_DUE_DATE_UPDATED_EVENT = "TaskDueDateUpdated event";
     static final String TASK_DESCRIPTION_UPDATED_EVENT = "TaskDescriptionUpdated event";
     static final String TASK_DELETED_EVENT = "TaskDeleted event";
-    static final String REMOVES_TASK_VIEW_FORM_STATE = "removes TaskView form state";
+    static final String REMOVES_TASK_VIEW_FROM_STATE = "removes TaskView form state";
     static final String ADDS_TASK_VIEW_TO_STATE = "adds TaskView to state";
     static final String UPDATES_TASK_DUE_DATE = "updates task due date";
     static final String UPDATES_TASK_DESCRIPTION = "updates task description";
