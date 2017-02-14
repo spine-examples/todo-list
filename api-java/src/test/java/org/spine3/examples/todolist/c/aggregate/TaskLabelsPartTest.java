@@ -44,7 +44,6 @@ import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.examples.todolist.testdata.TestResponseObserver;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.command.CommandBus;
-import org.spine3.test.CommandTest;
 
 import java.util.List;
 
@@ -67,10 +66,11 @@ public class TaskLabelsPartTest {
 
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
 
-    private LabelId labelId;
     private TestResponseObserver responseObserver;
     private CommandBus commandBus;
     private TaskLabelsPart taskLabelsPart;
+    private TaskId taskId;
+    private LabelId labelId;
 
     @BeforeEach
     public void setUp() {
@@ -78,8 +78,8 @@ public class TaskLabelsPartTest {
         TaskAggregateRoot.injectBoundedContext(boundedContext);
         commandBus = boundedContext.getCommandBus();
         responseObserver = new TestResponseObserver();
+        taskId = createTaskId();
         labelId = createLabelId();
-        TaskId taskId = createTaskId();
         taskLabelsPart = createTaskLabelsPart(taskId);
     }
 
@@ -103,20 +103,7 @@ public class TaskLabelsPartTest {
 
     @Nested
     @DisplayName("AssignLabelToTask command")
-    class AssignLabelToTaskCommand extends CommandTest<AssignLabelToTask> {
-
-        private TaskId taskId;
-
-        @BeforeEach
-        @Override
-        public void setUp() {
-            final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
-            TaskAggregateRoot.injectBoundedContext(boundedContext);
-            commandBus = boundedContext.getCommandBus();
-            responseObserver = new TestResponseObserver();
-            taskId = createTaskId();
-            taskLabelsPart = createTaskLabelsPart(taskId);
-        }
+    class AssignLabelToTaskCommand {
 
         @Test
         @DisplayName("produces LabelAssignedToTask event")
@@ -182,20 +169,7 @@ public class TaskLabelsPartTest {
 
     @Nested
     @DisplayName("RemoveLabelFromTask command")
-    class RemoveLabelFromTaskCommand extends CommandTest<RemoveLabelFromTask> {
-
-        private TaskId taskId;
-
-        @BeforeEach
-        @Override
-        public void setUp() {
-            final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
-            TaskAggregateRoot.injectBoundedContext(boundedContext);
-            commandBus = boundedContext.getCommandBus();
-            responseObserver = new TestResponseObserver();
-            taskId = createTaskId();
-            taskLabelsPart = createTaskLabelsPart(taskId);
-        }
+    class RemoveLabelFromTaskCommand {
 
         @Test
         @DisplayName("produces LabelRemovedFromTask event")
