@@ -194,9 +194,6 @@ message UnsuccessfulTaskCommand {
 
     // A task identifier.
     TaskId task_id = 1;
-
-    // A failure message.
-    string message = 2;
 }
 
 // DTO for the unsuccessful label command.
@@ -204,9 +201,6 @@ message UnsuccessfulLabelCommand {
 
     // A task label identifier.
     LabelId label_id = 1;
-
-    // A failure message.
-    string message = 2;
 }
 
 // DTO for the list of the label IDs.

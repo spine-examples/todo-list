@@ -60,11 +60,6 @@ import org.spine3.examples.todolist.c.failures.CannotUpdateTaskWithInappropriate
  */
 class FailureHelper {
 
-    static final String TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE = "Command cannot be applied " +
-            "to the deleted or completed task.";
-    private static final String TOO_SHORT_TASK_DESCRIPTION_EXCEPTION_MESSAGE = "Description should contain " +
-            "at least 3 alphanumeric symbols.";
-
     private FailureHelper() {
     }
 
@@ -72,13 +67,11 @@ class FailureHelper {
      * Constructs and throws the {@link CannotReopenTask} failure according to the passed parameters.
      *
      * @param taskId  the ID of the task
-     * @param message the exception message
      * @throws CannotReopenTask the failure to throw
      */
-    static void throwCannotReopenTaskFailure(TaskId taskId, String message) throws CannotReopenTask {
+    static void throwCannotReopenTaskFailure(TaskId taskId) throws CannotReopenTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
-                                                                             .setMessage(message)
                                                                              .build();
         final ReopenTaskFailed reopenTaskFailed = ReopenTaskFailed.newBuilder()
                                                                   .setFailedCommand(commandFailed)
@@ -90,13 +83,11 @@ class FailureHelper {
      * Constructs and throws the {@link CannotFinalizeDraft} failure according to the passed parameters.
      *
      * @param taskId  the ID of the task
-     * @param message the exception message
      * @throws CannotFinalizeDraft the failure to throw
      */
-    static void throwCannotFinalizeDraftFailure(TaskId taskId, String message) throws CannotFinalizeDraft {
+    static void throwCannotFinalizeDraftFailure(TaskId taskId) throws CannotFinalizeDraft {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
-                                                                             .setMessage(message)
                                                                              .build();
         final FinalizeDraftFailed finalizeDraftFailed = FinalizeDraftFailed.newBuilder()
                                                                            .setFailedCommand(commandFailed)
@@ -108,13 +99,11 @@ class FailureHelper {
      * Constructs and throws the {@link CannotDeleteTask} failure according to the passed parameters.
      *
      * @param taskId  the ID of the task
-     * @param message the exception message
      * @throws CannotDeleteTask the failure to throw
      */
-    static void throwCannotDeleteTaskFailure(TaskId taskId, String message) throws CannotDeleteTask {
+    static void throwCannotDeleteTaskFailure(TaskId taskId) throws CannotDeleteTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
-                                                                             .setMessage(message)
                                                                              .build();
         final DeleteTaskFailed deleteTaskFailed = DeleteTaskFailed.newBuilder()
                                                                   .setFailedCommand(commandFailed)
@@ -126,13 +115,11 @@ class FailureHelper {
      * Constructs and throws the {@link CannotCompleteTask} failure according to the passed parameters.
      *
      * @param taskId  the ID of the task
-     * @param message the exception message
      * @throws CannotCompleteTask the failure to throw
      */
-    static void throwCannotCompleteTaskFailure(TaskId taskId, String message) throws CannotCompleteTask {
+    static void throwCannotCompleteTaskFailure(TaskId taskId) throws CannotCompleteTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
-                                                                             .setMessage(message)
                                                                              .build();
         final CompleteTaskFailed completeTaskFailed = CompleteTaskFailed.newBuilder()
                                                                         .setFailedCommand(commandFailed)
@@ -144,13 +131,11 @@ class FailureHelper {
      * Constructs and throws the {@link CannotRestoreDeletedTask} failure according to the passed parameters.
      *
      * @param taskId  the ID of the task
-     * @param message the exception message
      * @throws CannotRestoreDeletedTask the {@code CannotRestoreDeletedTask} failure
      */
-    static void throwCannotRestoreDeletedTaskFailure(TaskId taskId, String message) throws CannotRestoreDeletedTask {
+    static void throwCannotRestoreDeletedTaskFailure(TaskId taskId) throws CannotRestoreDeletedTask {
         final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                              .setTaskId(taskId)
-                                                                             .setMessage(message)
                                                                              .build();
         final RestoreDeletedTaskFailed restoreDeletedTaskFailed =
                 RestoreDeletedTaskFailed.newBuilder()
@@ -174,7 +159,6 @@ class FailureHelper {
             final UnsuccessfulTaskCommand commandFailed =
                     UnsuccessfulTaskCommand.newBuilder()
                                            .setTaskId(taskId)
-                                           .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
                                            .build();
             final TaskDueDateUpdateFailed dueDateUpdateFailed =
                     TaskDueDateUpdateFailed.newBuilder()
@@ -187,15 +171,13 @@ class FailureHelper {
          * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to the passed parameters.
          *
          * @param taskId   the ID of the task
-         * @param message  the exception message
          * @param mismatch the {@link ValueMismatch}
          * @throws CannotUpdateTaskDescription the failure to throw
          */
-        static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, String message, ValueMismatch mismatch)
+        static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, ValueMismatch mismatch)
                 throws CannotUpdateTaskDescription {
             final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                                  .setTaskId(taskId)
-                                                                                 .setMessage(message)
                                                                                  .build();
             final DescriptionUpdateFailed descriptionUpdateFailed =
                     DescriptionUpdateFailed.newBuilder()
@@ -209,14 +191,12 @@ class FailureHelper {
          * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to the passed parameters.
          *
          * @param taskId  the ID of the task
-         * @param message the exception message
          * @throws CannotUpdateTaskDescription the failure to throw
          */
-        static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, String message)
+        static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId)
                 throws CannotUpdateTaskDescription {
             final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
                                                                                  .setTaskId(taskId)
-                                                                                 .setMessage(message)
                                                                                  .build();
             final DescriptionUpdateFailed descriptionUpdateFailed =
                     DescriptionUpdateFailed.newBuilder()
@@ -294,7 +274,6 @@ class FailureHelper {
             final UnsuccessfulTaskCommand commandFailed =
                     UnsuccessfulTaskCommand.newBuilder()
                                            .setTaskId(taskId)
-                                           .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
                                            .build();
             final PriorityUpdateFailed priorityUpdateFailed = PriorityUpdateFailed.newBuilder()
                                                                                   .setFailedCommand(commandFailed)
@@ -333,7 +312,6 @@ class FailureHelper {
                 throws CannotUpdateTaskWithInappropriateDescription {
             final UnsuccessfulTaskCommand commandFailed =
                     UnsuccessfulTaskCommand.newBuilder()
-                                           .setMessage(TOO_SHORT_TASK_DESCRIPTION_EXCEPTION_MESSAGE)
                                            .setTaskId(taskId)
                                            .build();
             final DescriptionUpdateFailed updateFailed = DescriptionUpdateFailed.newBuilder()
@@ -359,7 +337,6 @@ class FailureHelper {
             final UnsuccessfulTaskCommand commandFailed =
                     UnsuccessfulTaskCommand.newBuilder()
                                            .setTaskId(taskId)
-                                           .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
                                            .build();
             final AssignLabelToTaskFailed assignLabelToTaskFailed =
                     AssignLabelToTaskFailed.newBuilder()
@@ -380,7 +357,6 @@ class FailureHelper {
             final UnsuccessfulTaskCommand commandFailed =
                     UnsuccessfulTaskCommand.newBuilder()
                                            .setTaskId(taskId)
-                                           .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
                                            .build();
             final RemoveLabelFromTaskFailed removeLabelFromTaskFailed =
                     RemoveLabelFromTaskFailed.newBuilder()
@@ -406,7 +382,6 @@ class FailureHelper {
             final UnsuccessfulTaskCommand commandFailed =
                     UnsuccessfulTaskCommand.newBuilder()
                                            .setTaskId(taskId)
-                                           .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
                                            .build();
             final CreateDraftFailed createDraftFailed = CreateDraftFailed.newBuilder()
                                                                          .setFailedCommand(commandFailed)
@@ -425,7 +400,6 @@ class FailureHelper {
                 throws CannotCreateTaskWithInappropriateDescription {
             final UnsuccessfulTaskCommand commandFailed =
                     UnsuccessfulTaskCommand.newBuilder()
-                                           .setMessage(TOO_SHORT_TASK_DESCRIPTION_EXCEPTION_MESSAGE)
                                            .setTaskId(taskId)
                                            .build();
             final CreateBasicTaskFailed createBasicTaskFailed = CreateBasicTaskFailed.newBuilder()

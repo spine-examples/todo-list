@@ -78,7 +78,6 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static org.spine3.examples.todolist.c.aggregate.ExceptionMessages.create;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskCreationFailures.throwCannotCreateDraftFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateTaskDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateTaskDueDateFailure;
@@ -234,7 +233,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
 
         if (!isValid) {
             final String message = create(currentStatus, newStatus);
-            throwCannotReopenTaskFailure(taskId, message);
+            throwCannotReopenTaskFailure(taskId);
         }
 
         final TaskReopened taskReopened = TaskReopened.newBuilder()
@@ -254,7 +253,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
 
         if (!isValid) {
             final String message = create(currentStatus, newStatus);
-            throwCannotDeleteTaskFailure(taskId, message);
+            throwCannotDeleteTaskFailure(taskId);
         }
 
         final TaskDeleted taskDeleted = TaskDeleted.newBuilder()
@@ -274,7 +273,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
 
         if (!isValid) {
             final String message = create(currentStatus, newStatus);
-            throwCannotCompleteTaskFailure(taskId, message);
+            throwCannotCompleteTaskFailure(taskId);
         }
 
         final TaskCompleted taskCompleted = TaskCompleted.newBuilder()
@@ -310,7 +309,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
 
         if (!isValid) {
             final String message = create(currentStatus, newStatus);
-            throwCannotFinalizeDraftFailure(taskId, message);
+            throwCannotFinalizeDraftFailure(taskId);
         }
 
         final TaskDraftFinalized taskDraftFinalized = TaskDraftFinalized.newBuilder()
@@ -329,7 +328,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
 
         if (!isValid) {
             final String message = create(currentStatus, newStatus);
-            throwCannotRestoreDeletedTaskFailure(taskId, message);
+            throwCannotRestoreDeletedTaskFailure(taskId);
         }
 
         final DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored.newBuilder()
@@ -448,7 +447,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         boolean isValid = TaskFlowValidator.ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
 
         if (!isValid) {
-            throwCannotUpdateTaskDescriptionFailure(taskId, TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE);
+            throwCannotUpdateTaskDescriptionFailure(taskId);
         }
     }
 }

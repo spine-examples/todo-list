@@ -88,14 +88,13 @@ class FailureHelperTest {
     public void throwCannotUpdateTaskDescription() {
         final String message = "Description is wrong";
         try {
-            throwCannotUpdateTaskDescriptionFailure(taskId, message);
+            throwCannotUpdateTaskDescriptionFailure(taskId);
         } catch (CannotUpdateTaskDescription ex) {
             final UnsuccessfulTaskCommand failedCommand = ex.getFailure()
                                                             .getUpdateFailed()
                                                             .getFailedCommand();
             final TaskId actualId = failedCommand.getTaskId();
             assertEquals(taskId, actualId);
-            assertEquals(message, failedCommand.getMessage());
         }
     }
 
