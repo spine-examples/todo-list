@@ -80,13 +80,13 @@ public class TodoListBoundedContext {
         boundedContext.register(new LabelledTasksViewRepository(boundedContext));
         boundedContext.register(new DraftTasksViewRepository(boundedContext));
 
-        EventBusEnricher.newBuilder()
-                        .setEventBus(boundedContext.getEventBus())
-                        .setLabelRepository(labelAggregateRepo)
-                        .setTaskDefinitionRepository(taskDefinitionRepo)
-                        .setTaskLabelsRepository(taskLabelsRepo)
-                        .build()
-                        .enrich();
+        TodoListEventEnricher.newBuilder()
+                             .setEventBus(boundedContext.getEventBus())
+                             .setLabelRepository(labelAggregateRepo)
+                             .setTaskDefinitionRepository(taskDefinitionRepo)
+                             .setTaskLabelsRepository(taskLabelsRepo)
+                             .build()
+                             .addEnrichmentFields();
         return boundedContext;
     }
 

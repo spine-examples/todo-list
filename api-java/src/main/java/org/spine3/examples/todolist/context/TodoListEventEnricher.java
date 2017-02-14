@@ -39,19 +39,19 @@ import org.spine3.server.event.EventBus;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Performs all necessary initializations to create and add enricher fields for the {@link EventBus}.
+ * Serves as class which adds enrichment fields to the {@link EventBus}.
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings("Guava") // because Guava Function is used until migration the whole framework to Java 8.
-public class EventBusEnricher {
+@SuppressWarnings("Guava") // because Guava Function is used until the migration of Spine to Java 8 is performed.
+public class TodoListEventEnricher {
 
     private final TaskDefinitionRepository taskDefinitionRepo;
     private final TaskLabelsRepository taskLabelsRepo;
     private final LabelAggregateRepository labelRepository;
     private final EventBus eventBus;
 
-    private EventBusEnricher(Builder builder) {
+    private TodoListEventEnricher(Builder builder) {
         this.taskDefinitionRepo = builder.taskDefinitionRepo;
         this.taskLabelsRepo = builder.taskLabelsRepo;
         this.labelRepository = builder.labelRepository;
@@ -59,9 +59,9 @@ public class EventBusEnricher {
     }
 
     /**
-     * Provides enriched {@link EventBus}.
+     * Adds enrichment fields to the {@link EventBus}.
      */
-    void enrich() {
+    void addEnrichmentFields() {
         eventBus.addFieldEnrichment(LabelId.class, LabelDetails.class, labelIdToLabelDetails());
         eventBus.addFieldEnrichment(TaskId.class, TaskDetails.class, taskIdToTaskDetails());
         eventBus.addFieldEnrichment(TaskId.class, LabelIdsList.class, taskIdToLabelList());
@@ -131,7 +131,7 @@ public class EventBusEnricher {
     }
 
     /**
-     * Creates a new builder for (@code EventBusEnricher).
+     * Creates a new builder for (@code TodoListEventEnricher).
      *
      * @return new builder instance
      */
@@ -176,8 +176,8 @@ public class EventBusEnricher {
             return this;
         }
 
-        public EventBusEnricher build() {
-            final EventBusEnricher result = new EventBusEnricher(this);
+        public TodoListEventEnricher build() {
+            final TodoListEventEnricher result = new TodoListEventEnricher(this);
             return result;
         }
     }
