@@ -68,6 +68,11 @@ class TaskFlowValidator {
         return isValid;
     }
 
+    static boolean ensureNotDeleted(TaskStatus currentStatus) {
+        final boolean isDeleted = currentStatus == TaskStatus.DELETED;
+        return isDeleted;
+    }
+
     /**
      * Verifies status of current task.
      *
@@ -87,10 +92,5 @@ class TaskFlowValidator {
     private static boolean ensureNotCompleted(TaskStatus currentStatus) {
         final boolean isCompleted = currentStatus == TaskStatus.COMPLETED;
         return isCompleted;
-    }
-
-    private static boolean ensureNotDeleted(TaskStatus currentStatus) {
-        final boolean isDeleted = currentStatus == TaskStatus.DELETED;
-        return isDeleted;
     }
 }

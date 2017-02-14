@@ -88,6 +88,7 @@ import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannot
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotReopenTaskFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotRestoreDeletedTaskFailure;
 import static org.spine3.examples.todolist.c.aggregate.MismatchHelper.of;
+import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.ensureNotDeleted;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidCreateDraftCommand;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidTransition;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
@@ -227,7 +228,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final TaskDefinition state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.OPEN;
-        final boolean isValid = isValidTransition(currentStatus, newStatus);
+        final boolean isValid = isValidTransition(currentStatus, newStatus) && !ensureNotDeleted(currentStatus);
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {

@@ -49,7 +49,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.reope
 /**
  * @author Illia Shepilov
  */
-@DisplayName("ReopenTask command")
+@DisplayName("ReopenTask command should")
 public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -64,22 +64,22 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     }
 
     @Test
-    @DisplayName("cannot reopen not completed task")
+    @DisplayName("throw CannotReopenTask failure when try to reopen not completed task")
     public void cannotReopenNotCompletedTask() {
         createTask();
         try {
             final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
             aggregate.dispatchForTest(reopenTaskCmd, commandContext);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotReopenTask);
         }
     }
 
     @Test
-    @DisplayName("reopens completed task")
-    public void reopensTask() {
+    @DisplayName("reopen completed task")
+    public void reopenTask() {
         createTask();
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
         aggregate.dispatchForTest(completeTaskCmd, commandContext);
@@ -97,23 +97,24 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     }
 
     @Test
-    @DisplayName("cannot reopen deleted task")
+    @DisplayName("throw CannotReopenTask when try to reopen deleted task")
     public void cannotReopenDeletedTask() {
         createTask();
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
-        final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
-        aggregate.dispatchForTest(reopenTaskCmd, commandContext);
-
-        final TaskDefinition state = aggregate.getState();
-
-        assertEquals(taskId, state.getId());
-        assertEquals(OPEN, state.getTaskStatus());
+        try {
+            final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
+            aggregate.dispatchForTest(reopenTaskCmd, commandContext);
+        } catch (Throwable e) {
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
+            final Throwable cause = Throwables.getRootCause(e);
+            assertTrue(cause instanceof CannotReopenTask);
+        }
     }
 
     @Test
-    @DisplayName("cannot reopen task in draft state")
+    @DisplayName("throw CannotReopenTask when try to reopen task in draft state")
     public void cannotReopenDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);
@@ -122,7 +123,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
             final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
             aggregate.dispatchForTest(reopenTaskCmd, commandContext);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotReopenTask);
         }

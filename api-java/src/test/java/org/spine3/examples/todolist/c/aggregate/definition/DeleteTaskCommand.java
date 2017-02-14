@@ -46,7 +46,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 /**
  * @author Illia Shepilov
  */
-@DisplayName("DeleteTask command")
+@DisplayName("DeleteTask command should")
 public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -61,8 +61,8 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
     }
 
     @Test
-    @DisplayName("deletes task")
-    public void deletesTask() {
+    @DisplayName("delete task")
+    public void deleteTask() {
         createTask();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
@@ -74,7 +74,7 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
     }
 
     @Test
-    @DisplayName("cannot delete already deleted task")
+    @DisplayName("throw CannotDeleteTask failure when try to delete already deleted task")
     public void cannotDeleteAlreadyDeletedTask() {
         createTask();
 
@@ -84,15 +84,15 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
         try {
             aggregate.dispatchForTest(deleteTaskCmd, commandContext);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotDeleteTask);
         }
     }
 
     @Test
-    @DisplayName("produces TaskDeleted event")
-    public void producesEvent() {
+    @DisplayName("produce TaskDeleted event")
+    public void produceEvent() {
         createTask();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);

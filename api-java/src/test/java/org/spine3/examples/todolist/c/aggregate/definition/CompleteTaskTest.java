@@ -50,7 +50,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CompleteTask command")
+@DisplayName("CompleteTask command should")
 public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -65,8 +65,8 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
     }
 
     @Test
-    @DisplayName("produces TaskCompleted event")
-    public void producesEvent() {
+    @DisplayName("produce TaskCompleted event")
+    public void produceEvent() {
         createTask();
 
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
@@ -83,8 +83,8 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
     }
 
     @Test
-    @DisplayName("completes the task")
-    public void completesTheTask() {
+    @DisplayName("complete the task")
+    public void completeTheTask() {
         createTask();
 
         completeTask();
@@ -95,7 +95,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
     }
 
     @Test
-    @DisplayName("cannot complete deleted task")
+    @DisplayName("throw CannotCompleteTask failure when try to complete deleted task")
     public void cannotCompleteDeletedTask() {
         createTask();
 
@@ -105,14 +105,14 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
         try {
             completeTask();
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotCompleteTask);
         }
     }
 
     @Test
-    @DisplayName("cannot complete task in draft state")
+    @DisplayName("throw CannotCompleteTask failure when try to complete task in draft state")
     public void cannotCompleteDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);
@@ -120,7 +120,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
         try {
             completeTask();
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotCompleteTask);
         }

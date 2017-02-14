@@ -69,7 +69,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.resto
 /**
  * @author Illia Shepilov
  */
-@DisplayName("RestoreDeletedTask command")
+@DisplayName("RestoreDeletedTask command should")
 public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDeletedTask> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -92,8 +92,8 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     }
 
     @Test
-    @DisplayName("produces LabelledTaskRestored event")
-    public void producesEvent() {
+    @DisplayName("produce LabelledTaskRestored event")
+    public void produceEvent() {
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
         final Command createTaskCmd = create(createTask, commandContext);
         commandBus.post(createTaskCmd, responseObserver);
@@ -132,8 +132,8 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     }
 
     @Test
-    @DisplayName("restores deleted task")
-    public void restoresTask() {
+    @DisplayName("restore deleted task")
+    public void restoreTask() {
         createBasicTask();
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
@@ -147,8 +147,8 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     }
 
     @Test
-    @DisplayName("restores deleted task draft")
-    public void restoresDraft() {
+    @DisplayName("restore deleted task draft")
+    public void restoreDraft() {
         createDraft();
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
@@ -166,7 +166,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     }
 
     @Test
-    @DisplayName("cannot restore task when task is completed")
+    @DisplayName("throw CannotRestoreDeletedTask failure when try to restore completed task")
     public void cannotRestoreCompletedTask() {
         createBasicTask();
 
@@ -175,14 +175,14 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         try {
             restoreDeletedTask();
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotRestoreDeletedTask);
         }
     }
 
     @Test
-    @DisplayName("cannot restore task when task is finalized")
+    @DisplayName("throw CannotRestoreDeletedTask when try to restore finalized task")
     public void cannotRestoreFinalizedTask() {
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
         final Command createTaskCmd = create(createTask, commandContext);
@@ -192,20 +192,20 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
             final Command restoreDeletedTaskCmd = create(restoreDeletedTask, commandContext);
             commandBus.post(restoreDeletedTaskCmd, responseObserver);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotRestoreDeletedTask);
         }
     }
 
     @Test
-    @DisplayName("cannot restore task when task in draft state")
+    @DisplayName("throw CannotRestoreDeletdTask when try to restore draft")
     public void cannotRestoreDraft() {
         createDraft();
         try {
             restoreDeletedTask();
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotRestoreDeletedTask);
         }

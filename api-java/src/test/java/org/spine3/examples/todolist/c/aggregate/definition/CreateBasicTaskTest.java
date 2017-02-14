@@ -40,7 +40,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.creat
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CreateBasicTask command")
+@DisplayName("CreateBasicTask command should")
 public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTask> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -55,8 +55,8 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
     }
 
     @Test
-    @DisplayName("produces TaskCreated event")
-    public void producesEvent() {
+    @DisplayName("produce TaskCreated event")
+    public void produceEvent() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         final List<? extends Message> messageList =
                 aggregate.dispatchForTest(createTaskCmd, commandContext);

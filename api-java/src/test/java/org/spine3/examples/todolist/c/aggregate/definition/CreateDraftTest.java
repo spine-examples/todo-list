@@ -40,7 +40,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.creat
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CreateDraft command")
+@DisplayName("CreateDraft command should")
 public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -55,8 +55,8 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
     }
 
     @Test
-    @DisplayName("produces TaskDraftCreated event")
-    public void producesEvent() {
+    @DisplayName("produce TaskDraftCreated event")
+    public void produceEvent() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         final List<? extends Message> messageList =
                 aggregate.dispatchForTest(createDraftCmd, commandContext);
@@ -71,8 +71,8 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
     }
 
     @Test
-    @DisplayName("creates draft")
-    public void createsDraft() {
+    @DisplayName("create draft")
+    public void createDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);
         final TaskDefinition state = aggregate.getState();

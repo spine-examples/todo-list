@@ -56,7 +56,7 @@ import static org.spine3.protobuf.AnyPacker.unpack;
  * @author Illia Shepilov
  */
 
-@DisplayName("UpdateTaskPriority command")
+@DisplayName("UpdateTaskPriority command should")
 public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTaskPriority> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -71,7 +71,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     }
 
     @Test
-    @DisplayName("cannot update priority for the deleted task")
+    @DisplayName("throw CannotUpdateTaskPriority failure when try to update priority for the deleted task")
     public void cannotUpdateDeletedTaskPriority() {
         createTask();
 
@@ -82,14 +82,14 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
             final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
             aggregate.dispatchForTest(updateTaskPriorityCmd, commandContext);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateTaskPriority);
         }
     }
 
     @Test
-    @DisplayName("cannot update priority for the completed task")
+    @DisplayName("throw CannotUpdateTaskPriority failure when try to update priority for the completed task")
     public void cannotUpdateCompletedTaskPriority() {
         createTask();
 
@@ -100,15 +100,15 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
             final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
             aggregate.dispatchForTest(updateTaskPriorityCmd, commandContext);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateTaskPriority);
         }
     }
 
     @Test
-    @DisplayName("produces TaskPriorityUpdated event")
-    public void producesEvent() {
+    @DisplayName("produce TaskPriorityUpdated event")
+    public void produceEvent() {
         createTask();
 
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
@@ -128,8 +128,8 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     }
 
     @Test
-    @DisplayName("updates task priority")
-    public void updatesPriority() {
+    @DisplayName("update task priority")
+    public void updatePriority() {
         final TaskPriority updatedPriority = TaskPriority.HIGH;
         createTask();
 
@@ -143,14 +143,14 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     }
 
     @Test
-    @DisplayName("produces throwing CannotUpdateTaskPriority failure")
-    public void producesFailure() {
+    @DisplayName("produce CannotUpdateTaskPriority failure")
+    public void produceFailure() {
         try {
             final UpdateTaskPriority updateTaskPriority =
                     updateTaskPriorityInstance(taskId, TaskPriority.LOW, TaskPriority.HIGH);
             aggregate.dispatchForTest(updateTaskPriority, commandContext);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateTaskPriority);
 

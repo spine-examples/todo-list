@@ -56,7 +56,7 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("UpdateTaskDueDate command")
+@DisplayName("UpdateTaskDueDate command should")
 public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskDueDate> {
 
     private TaskDefinitionPart aggregate;
@@ -71,7 +71,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     }
 
     @Test
-    @DisplayName("cannot update due date for the completed task")
+    @DisplayName("throw CannotUpdateTaskDueDate failure when try to update due date for the completed task")
     public void cannotUpdateCompletedTaskDueDate() {
         createTask();
 
@@ -82,14 +82,14 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
             final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
             aggregate.dispatchForTest(updateTaskDueDateCmd, commandContext);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateTaskDueDate);
         }
     }
 
     @Test
-    @DisplayName("cannot update due date for the deleted task")
+    @DisplayName("throw CannotUpdateTaskDueDate failure when try to update due date for the deleted task")
     public void cannotUpdateDeletedTaskDueDate() {
         createTask();
 
@@ -100,15 +100,15 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
             final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
             aggregate.dispatchForTest(updateTaskDueDateCmd, commandContext);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateTaskDueDate);
         }
     }
 
     @Test
-    @DisplayName("produces TaskDueDateUpdated event")
-    public void producesEvent() {
+    @DisplayName("produce TaskDueDateUpdated event")
+    public void produceEvent() {
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
         final List<? extends Message> messageList =
                 aggregate.dispatchForTest(updateTaskDueDateCmd, commandContext);
@@ -126,8 +126,8 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     }
 
     @Test
-    @DisplayName("updates task due date")
-    public void updatesDueDate() {
+    @DisplayName("update task due date")
+    public void updateDueDate() {
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
         createTask();
 
@@ -141,8 +141,8 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     }
 
     @Test
-    @DisplayName("produces throwing CannotUpdateTaskDueDate failure")
-    public void producesFailure() {
+    @DisplayName("produce CannotUpdateTaskDueDate failure")
+    public void produceFailure() {
         createTask();
 
         final Timestamp expectedDueDate = Timestamps.getCurrentTime();
@@ -157,7 +157,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
             final int expectedListSize = 1;
             assertEquals(expectedListSize, messageList.size());
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateTaskDueDate);
 

@@ -47,7 +47,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.final
 /**
  * @author Illia Shepilov
  */
-@DisplayName("FinalizeDraft command")
+@DisplayName("FinalizeDraft command should")
 public class FinalizeTaskTest extends TaskDefinitionCommandTest<FinalizeDraft> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -62,8 +62,8 @@ public class FinalizeTaskTest extends TaskDefinitionCommandTest<FinalizeDraft> {
     }
 
     @Test
-    @DisplayName("finalizes task")
-    public void finalizesTask() {
+    @DisplayName("finalize task")
+    public void finalizeTask() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);
 
@@ -81,7 +81,7 @@ public class FinalizeTaskTest extends TaskDefinitionCommandTest<FinalizeDraft> {
     }
 
     @Test
-    @DisplayName("cannot finalize deleted task")
+    @DisplayName("throw CannotFinalizeDraft failure when try to finalize deleted task")
     public void cannotFinalizeDeletedTask() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         aggregate.dispatchForTest(createTaskCmd, commandContext);
@@ -93,20 +93,20 @@ public class FinalizeTaskTest extends TaskDefinitionCommandTest<FinalizeDraft> {
             final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
             aggregate.dispatchForTest(finalizeDraftCmd, commandContext);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotFinalizeDraft);
         }
     }
 
     @Test
-    @DisplayName("cannot finalize task when task state is not draft")
+    @DisplayName("throw CannotFinalizeDraft failure when try to finalize task which is not draft")
     public void cannotFinalizeNotDraftTask() {
         try {
             final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
             aggregate.dispatchForTest(finalizeDraftCmd, commandContext);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotFinalizeDraft);
         }

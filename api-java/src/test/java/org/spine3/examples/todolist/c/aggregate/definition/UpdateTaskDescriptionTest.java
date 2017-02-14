@@ -56,7 +56,7 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("UpdateTaskDescription command")
+@DisplayName("UpdateTaskDescription command should")
 public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateTaskDescription> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -71,8 +71,8 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     }
 
     @Test
-    @DisplayName("produces TaskDescriptionUpdated event")
-    public void producesEvent() {
+    @DisplayName("produce TaskDescriptionUpdated event")
+    public void produceEvent() {
         createTask();
         final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId);
         final List<? extends Message> messageList =
@@ -91,20 +91,21 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     }
 
     @Test
-    @DisplayName("cannot update task with inappropriate description")
+    @DisplayName("throw CannotUpdateTaskWithInappropriateDescription failure " +
+            "when try to update task with too short description")
     public void cannotUpdateTaskDescription() {
         try {
             final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId, "", ".");
             aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateTaskWithInappropriateDescription);
         }
     }
 
     @Test
-    @DisplayName("cannot update description for deleted task")
+    @DisplayName("throw CannotUpdateTaskDescription failure when try to update description for deleted task")
     public void cannotUpdateDeletedTaskDescription() {
         createTask();
 
@@ -116,14 +117,14 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
             assertThrows(CannotUpdateTaskDescription.class, () ->
                     aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext));
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateTaskDescription);
         }
     }
 
     @Test
-    @DisplayName("cannot update description for the completed task")
+    @DisplayName("throw CannotUpdateTaskDescription failure when try to update description for the completed task")
     public void cannotUpdateCompletedTaskDescription() {
         createTask();
 
@@ -134,15 +135,15 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
             final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId);
             aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateTaskDescription);
         }
     }
 
     @Test
-    @DisplayName("updates task description")
-    public void updatesDescription() {
+    @DisplayName("update task description")
+    public void updateDescription() {
         final String newDescription = "new description.";
         createTask();
 
@@ -156,8 +157,8 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     }
 
     @Test
-    @DisplayName("produces throwing CannotUpdateTaskDescription failure")
-    public void producesFailure() {
+    @DisplayName("produce CannotUpdateTaskDescription failure")
+    public void produceFailure() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
         aggregate.dispatchForTest(createBasicTask, commandContext);
 
@@ -170,7 +171,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
                     updateTaskDescriptionInstance(taskId, expectedValue, newValue);
             aggregate.dispatchForTest(updateTaskDescription, commandContext);
         } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
             assertTrue(cause instanceof CannotUpdateTaskDescription);
 
