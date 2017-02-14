@@ -46,11 +46,6 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updat
  */
 public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
 
-    private static final String CONTAIN_TASK_VIEW_WITH_UPDATED_TASK_PRIORITY =
-            "contain task view with updated task priority";
-    private static final String CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_TASK_PRIORITY_WHEN_COMMAND_HAS_WRONG_TASK_ID =
-            "contain task view with not updated task priority when command has wrong task ID";
-
     private TodoClient client;
 
     @BeforeEach
@@ -61,11 +56,11 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(LABELLED_TASK_VIEW_SHOULD)
+    @DisplayName("LabelledTaskView should")
     class UpdateTaskPriorityInLabelledTasksView {
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_UPDATED_TASK_PRIORITY)
+        @DisplayName("contain task view with updated task priority")
         public void containUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, true);
@@ -73,7 +68,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_TASK_PRIORITY_WHEN_COMMAND_HAS_WRONG_TASK_ID)
+        @DisplayName("contain task view with not updated task priority when command has wrong task ID")
         public void containNotUpdated() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, false);
@@ -82,11 +77,11 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(DRAFT_TASKS_VIEW_SHOULD)
+    @DisplayName("DraftTasksView should")
     class UpdateTaskPriorityInDraftTasksView {
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_UPDATED_TASK_PRIORITY)
+        @DisplayName("contain task view with updated task priority")
         public void containUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view = obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, true);
@@ -95,7 +90,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_TASK_PRIORITY_WHEN_COMMAND_HAS_WRONG_TASK_ID)
+        @DisplayName("contain task view with not updated task priority when command has wrong task ID")
         public void containNotUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view = obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, false);
@@ -105,11 +100,11 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(MY_LIST_VIEW_SHOULD)
+    @DisplayName("MyListView should")
     class UpdateTaskPriorityInMyListView {
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_UPDATED_TASK_PRIORITY)
+        @DisplayName("contain task view with updated task priority")
         public void containUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskPriority(newPriority, true);
@@ -118,7 +113,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_TASK_PRIORITY_WHEN_COMMAND_HAS_WRONG_TASK_ID)
+        @DisplayName("contain task view with not updated task priority when command has wrong task ID")
         public void containNotUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskPriority(newPriority, false);

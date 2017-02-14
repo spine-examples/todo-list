@@ -49,10 +49,6 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.reope
 @DisplayName("After execution ReopenTask command")
 public class ReopenTaskTest extends CommandLineTodoClientTest {
 
-    private static final String CONTAIN_TASK_VIEW_WITH_UNCOMPLETED_TASK = "contain task view with uncompleted task";
-    private static final String CONTAIN_TASK_VIEW_WITH_COMPLETED_TASK = "contain task view with completed task " +
-            "when command has wrong id";
-
     private TodoClient client;
 
     @BeforeEach
@@ -63,18 +59,19 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(LABELLED_TASK_VIEW_SHOULD)
+    @DisplayName("LabelledTaskView should")
     class ReopenTaskFromLabelledTasksView {
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_UNCOMPLETED_TASK)
+        @DisplayName("contain task view with uncompleted task")
         public void containViewWithUncompletedTask() {
             final TaskView view = obtainViewWhenHandledCommandReopenTask(true);
             assertFalse(view.getCompleted());
         }
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_COMPLETED_TASK)
+        @DisplayName("contain task view with completed task " +
+                "when command has wrong id")
         public void containViewWithCompletedTask() {
             final TaskView view = obtainViewWhenHandledCommandReopenTask(false);
             assertTrue(view.getCompleted());
@@ -82,18 +79,19 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(MY_LIST_VIEW_SHOULD)
+    @DisplayName("MyListView should")
     class ReopenTaskFromMyListView {
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_UNCOMPLETED_TASK)
+        @DisplayName("contain task view with uncompleted task")
         public void containViewWithUncompletedTask() {
             final TaskView view = obtainTaskViewWhenHandledReopenTask(true);
             assertFalse(view.getCompleted());
         }
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_COMPLETED_TASK)
+        @DisplayName("contain task view with completed task " +
+                "when command has wrong id")
         public void containViewWithCompletedTask() {
             final TaskView view = obtainTaskViewWhenHandledReopenTask(false);
             assertTrue(view.getCompleted());

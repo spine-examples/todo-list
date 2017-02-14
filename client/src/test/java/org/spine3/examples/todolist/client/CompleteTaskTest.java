@@ -47,10 +47,6 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.compl
 @DisplayName("After execution CompleteTask command")
 public class CompleteTaskTest extends CommandLineTodoClientTest {
 
-    private static final String CONTAIN_TASK_VIEW_MARKED_AS_COMPLETED = "contain task view marked as completed";
-    private static final String TASK_VIEW_WHICH_DOES_NOT_MARKED_AS_COMPLETED_WHEN_COMMAND_HAS_WRONG_TASK_ID =
-            "task view which does not marked as completed when command has wrong task ID";
-
     private TodoClient client;
 
     @BeforeEach
@@ -61,18 +57,18 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(LABELLED_TASK_VIEW_SHOULD)
+    @DisplayName("LabelledTaskView should")
     class CompleteTaskFromLabelledTaskView {
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_MARKED_AS_COMPLETED)
+        @DisplayName("contain task view marked as completed")
         public void obtainLabelledViewWithCompletedTask() {
             final TaskView view = obtainViewWhenHandledCommandCompleteTask(true);
             assertTrue(view.getCompleted());
         }
 
         @Test
-        @DisplayName(TASK_VIEW_WHICH_DOES_NOT_MARKED_AS_COMPLETED_WHEN_COMMAND_HAS_WRONG_TASK_ID)
+        @DisplayName("task view which does not marked as completed when command has wrong task ID")
         public void obtainLabelledViewWithUncompletedTask() {
             final TaskView view = obtainViewWhenHandledCommandCompleteTask(false);
             assertFalse(view.getCompleted());
@@ -80,18 +76,18 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(MY_LIST_VIEW_SHOULD)
+    @DisplayName("MyListView should")
     class CompleteTaskFromMyListView {
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_MARKED_AS_COMPLETED)
+        @DisplayName("contain task view marked as completed")
         public void obtainMyListViewWithCompletedTask() {
             final TaskView view = obtainTaskViewWhenHandledCompleteTask(true);
             assertTrue(view.getCompleted());
         }
 
         @Test
-        @DisplayName(TASK_VIEW_WHICH_DOES_NOT_MARKED_AS_COMPLETED_WHEN_COMMAND_HAS_WRONG_TASK_ID)
+        @DisplayName("task view which does not marked as completed when command has wrong task ID")
         public void obtainMyListViewWithoutCompletedTask() {
             final TaskView view = obtainTaskViewWhenHandledCompleteTask(false);
             assertFalse(view.getCompleted());

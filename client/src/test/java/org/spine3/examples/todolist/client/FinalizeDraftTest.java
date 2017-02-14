@@ -57,11 +57,11 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(MY_LIST_VIEW_SHOULD)
+    @DisplayName("MyListView should")
     class FinalizeDraftFromMyListView {
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW)
+        @DisplayName("contain task view")
         public void obtainView() {
             final CreateDraft createDraft = createDraftTask();
 
@@ -87,11 +87,11 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(LABELLED_TASK_VIEW_SHOULD)
+    @DisplayName("LabelledTaskView should")
     class FinalizeDraftFromLabelledTasksView {
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW)
+        @DisplayName("contain task view")
         public void obtainView() {
             final CreateDraft createDraft = createDraftTask();
 
@@ -121,11 +121,11 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(DRAFT_TASKS_VIEW_SHOULD)
+    @DisplayName("DraftTasksView should")
     class FinalizeDraftFromDraftTasksView {
 
         @Test
-        @DisplayName(BE_EMPTY)
+        @DisplayName("be empty")
         public void obtainEmptyViewsWhenDraftIsFinalized() {
             final CreateDraft createDraft = createDraftTask();
 

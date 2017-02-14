@@ -53,10 +53,6 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.
 @DisplayName("After execution UpdateLabelDetails command")
 public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
 
-    private static final String CONTAIN_TASK_VIEW_WITH_UPDATED_LABEL_DETAILS =
-            "contain task view with updated LabelDetails";
-    private static final String CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_LABEL_DETAILS_WHEN_COMMAND_HAS_WRONG_TASK_ID =
-            "contain task view with not updated LabelDetails when command has wrong task ID";
     private static final String EXPECTED_COLOR = LabelColorView.BLUE_COLOR.getHexColor();
 
     private TodoClient client;
@@ -69,11 +65,11 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(LABELLED_TASK_VIEW_SHOULD)
+    @DisplayName("LabelledTaskView should")
     class UpdateLabelDetailsInLabelledTasksView {
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_UPDATED_LABEL_DETAILS)
+        @DisplayName("contain task view with updated LabelDetails")
         public void containUpdatedView() {
             final LabelColor updatedColor = LabelColor.BLUE;
             final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(updatedColor,
@@ -84,7 +80,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_LABEL_DETAILS_WHEN_COMMAND_HAS_WRONG_TASK_ID)
+        @DisplayName("contain task view with not updated LabelDetails when command has wrong task ID")
         public void containNotUpdatedView() {
             final LabelColor updatedColor = LabelColor.BLUE;
             final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(updatedColor,
@@ -96,11 +92,11 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(MY_LIST_VIEW_SHOULD)
+    @DisplayName("MyListView should")
     class UpdateLabelDetailsInMyListView {
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_UPDATED_LABEL_DETAILS)
+        @DisplayName("contain task view with updated LabelDetails")
         public void containUpdatedView() {
             final LabelColor newColor = LabelColor.BLUE;
             final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor, true);
@@ -108,7 +104,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_LABEL_DETAILS_WHEN_COMMAND_HAS_WRONG_TASK_ID)
+        @DisplayName("contain task view with not updated LabelDetails when command has wrong task ID")
         public void containNotUpdatedView() {
             final LabelColor newColor = LabelColor.BLUE;
             final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor, false);
@@ -117,11 +113,11 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(DRAFT_TASKS_VIEW_SHOULD)
+    @DisplayName("DraftTasksView should")
     class UpdateLabelDetailsInDraftTasksView {
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_UPDATED_LABEL_DETAILS)
+        @DisplayName("contain task view with updated LabelDetails")
         public void containUpdatedView() throws Exception {
             final CreateBasicLabel createBasicLabel = createBasicLabel();
             client.create(createBasicLabel);
@@ -132,7 +128,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WITH_NOT_UPDATED_LABEL_DETAILS_WHEN_COMMAND_HAS_WRONG_TASK_ID)
+        @DisplayName("contain task view with not updated LabelDetails when command has wrong task ID")
         public void containNotUpdatedView() throws Exception {
             final CreateBasicLabel createBasicLabel = createBasicLabel();
             client.create(createBasicLabel);

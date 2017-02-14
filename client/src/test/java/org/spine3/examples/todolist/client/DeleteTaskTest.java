@@ -47,9 +47,6 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 @DisplayName("After execution DeleteTask command")
 public class DeleteTaskTest extends CommandLineTodoClientTest {
 
-    private static final String CONTAIN_TASK_VIEW_WHEN_COMMAND_HAS_WRONG_ID =
-            "contain task view when command has wrong ID";
-
     private TodoClient client;
 
     @BeforeEach
@@ -60,11 +57,11 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(LABELLED_TASK_VIEW_SHOULD)
+    @DisplayName("LabelledTaskView should")
     class DeleteTaskFromLabelledTasksView {
 
         @Test
-        @DisplayName(BE_EMPTY)
+        @DisplayName("be empty")
         public void obtainEmptyView() {
             final CreateBasicTask createTask = createTask();
 
@@ -91,7 +88,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WHEN_COMMAND_HAS_WRONG_ID)
+        @DisplayName("contain task view when command has wrong ID")
         public void obtainView() {
             final CreateBasicTask createTask = createTask();
 
@@ -122,11 +119,11 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(DRAFT_TASKS_VIEW_SHOULD)
+    @DisplayName("DraftTasksView should")
     class DeleteTaskFromDraftTasksView {
 
         @Test
-        @DisplayName(BE_EMPTY)
+        @DisplayName("be empty")
         public void obtainEmptyView() {
             final CreateDraft createDraft = createDraft();
             client.create(createDraft);
@@ -141,7 +138,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WHEN_COMMAND_HAS_WRONG_ID)
+        @DisplayName("contain task view when command has wrong ID")
         public void obtainView() {
             final CreateDraft createDraft = createDraft();
             client.create(createDraft);
@@ -162,11 +159,11 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName(MY_LIST_VIEW_SHOULD)
+    @DisplayName("MyListView should")
     class DeleteTaskFromMyListView {
 
         @Test
-        @DisplayName(BE_EMPTY)
+        @DisplayName("be empty")
         public void obtainEmptyView() {
             final CreateBasicTask createTask = createTask();
 
@@ -177,7 +174,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName(CONTAIN_TASK_VIEW_WHEN_COMMAND_HAS_WRONG_ID)
+        @DisplayName("contain task view when command has wrong ID")
         public void obtainView() {
             final CreateBasicTask createTask = createTask();
 
