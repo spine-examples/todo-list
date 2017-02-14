@@ -76,19 +76,19 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static org.spine3.examples.todolist.c.aggregate.ExceptionMessages.create;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.CreateFailures.throwCannotCreateDraftFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.CreateFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateTaskDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateTaskDueDateFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateTaskPriorityFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateTooShortDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotCompleteTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotCreateDraftFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotCreateTaskWithInappropriateDescription;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotDeleteTaskFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotFinalizeDraftFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotReopenTaskFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotRestoreDeletedTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotUpdateDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotUpdateTaskDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotUpdateTaskDueDateFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotUpdateTaskPriorityFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotUpdateTooShortDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregate.MismatchHelper.of;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidCreateDraftCommand;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidTransition;
@@ -426,7 +426,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final String description = cmd.getDescription();
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
             final TaskId taskId = cmd.getId();
-            throwCannotCreateTaskWithInappropriateDescription(taskId);
+            throwCannotCreateTaskWithInappropriateDescriptionFailure(taskId);
         }
     }
 

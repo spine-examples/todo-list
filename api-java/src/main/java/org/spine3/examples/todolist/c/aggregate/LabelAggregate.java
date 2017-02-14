@@ -39,6 +39,7 @@ import org.spine3.server.command.Assign;
 import java.util.Collections;
 import java.util.List;
 
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateLabelDetailsFailure;
 import static org.spine3.examples.todolist.c.aggregate.MismatchHelper.of;
 
 /**
@@ -85,7 +86,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
         if (!isEquals) {
             final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
             final ValueMismatch mismatch = of(expectedLabelDetails, actualLabelDetails, newLabelDetails, getVersion());
-            FailureHelper.throwCannotUpdateLabelDetailsFailure(labelId, mismatch);
+            throwCannotUpdateLabelDetailsFailure(labelId, mismatch);
         }
 
         final LabelDetailsUpdated labelDetailsUpdated = LabelDetailsUpdated.newBuilder()

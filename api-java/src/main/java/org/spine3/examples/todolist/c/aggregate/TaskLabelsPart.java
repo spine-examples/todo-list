@@ -40,8 +40,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotAssignLabelToTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotRemoveLabelFromTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskLabelFailures.throwCannotAssignLabelToTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskLabelFailures.throwCannotRemoveLabelFromTaskFailure;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidAssignLabelToTaskCommand;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidRemoveLabelFromTaskCommand;
 

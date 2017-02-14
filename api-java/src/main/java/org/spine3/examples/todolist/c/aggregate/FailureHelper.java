@@ -58,7 +58,6 @@ import org.spine3.examples.todolist.c.failures.CannotUpdateTaskWithInappropriate
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings("OverlyCoupledClass")
 class FailureHelper {
 
     static final String TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE = "Command cannot be applied " +
@@ -106,24 +105,6 @@ class FailureHelper {
     }
 
     /**
-     * Constructs and throws the {@link CannotCreateDraft} failure according to the passed parameters.
-     *
-     * @param taskId the ID of the task
-     * @throws CannotCreateDraft the failure to throw
-     */
-    static void throwCannotCreateDraftFailure(TaskId taskId) throws CannotCreateDraft {
-        final UnsuccessfulTaskCommand commandFailed =
-                UnsuccessfulTaskCommand.newBuilder()
-                                       .setTaskId(taskId)
-                                       .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
-                                       .build();
-        final CreateDraftFailed createDraftFailed = CreateDraftFailed.newBuilder()
-                                                                     .setFailedCommand(commandFailed)
-                                                                     .build();
-        throw new CannotCreateDraft(createDraftFailed);
-    }
-
-    /**
      * Constructs and throws the {@link CannotDeleteTask} failure according to the passed parameters.
      *
      * @param taskId  the ID of the task
@@ -139,27 +120,6 @@ class FailureHelper {
                                                                   .setFailedCommand(commandFailed)
                                                                   .build();
         throw new CannotDeleteTask(deleteTaskFailed);
-    }
-
-    /**
-     * Constructs and throws the {@link CannotRemoveLabelFromTask} failure according to the passed parameters.
-     *
-     * @param taskId the ID of the task
-     * @throws CannotRemoveLabelFromTask the failure to throw
-     */
-    static void throwCannotRemoveLabelFromTaskFailure(LabelId labelId, TaskId taskId)
-            throws CannotRemoveLabelFromTask {
-        final UnsuccessfulTaskCommand commandFailed =
-                UnsuccessfulTaskCommand.newBuilder()
-                                       .setTaskId(taskId)
-                                       .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
-                                       .build();
-        final RemoveLabelFromTaskFailed removeLabelFromTaskFailed =
-                RemoveLabelFromTaskFailed.newBuilder()
-                                         .setLabelId(labelId)
-                                         .setFailedCommand(commandFailed)
-                                         .build();
-        throw new CannotRemoveLabelFromTask(removeLabelFromTaskFailed);
     }
 
     /**
@@ -199,222 +159,279 @@ class FailureHelper {
         throw new CannotRestoreDeletedTask(restoreDeletedTaskFailed);
     }
 
-    /**
-     * Constructs and throws the {@link CannotUpdateTaskDueDate} failure according to the passed parameters.
-     *
-     * @param taskId the ID of the task
-     * @throws CannotUpdateTaskDueDate the failure to throw
-     */
-    static void throwCannotUpdateTaskDueDateFailure(TaskId taskId) throws CannotUpdateTaskDueDate {
-        final UnsuccessfulTaskCommand commandFailed =
-                UnsuccessfulTaskCommand.newBuilder()
-                                       .setTaskId(taskId)
-                                       .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
-                                       .build();
-        final TaskDueDateUpdateFailed dueDateUpdateFailed =
-                TaskDueDateUpdateFailed.newBuilder()
-                                       .setFailedCommand(commandFailed)
-                                       .build();
-        throw new CannotUpdateTaskDueDate(dueDateUpdateFailed);
-    }
+    static class UpdateFailures {
 
-    /**
-     * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to the passed parameters.
-     *
-     * @param taskId   the ID of the task
-     * @param message  the exception message
-     * @param mismatch the {@link ValueMismatch}
-     * @throws CannotUpdateTaskDescription the failure to throw
-     */
-    static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, String message, ValueMismatch mismatch)
-            throws CannotUpdateTaskDescription {
-        final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
-                                                                             .setTaskId(taskId)
-                                                                             .setMessage(message)
-                                                                             .build();
-        final DescriptionUpdateFailed descriptionUpdateFailed =
-                DescriptionUpdateFailed.newBuilder()
-                                       .setFailedCommand(commandFailed)
-                                       .setDescriptionMismatch(mismatch)
-                                       .build();
-        throw new CannotUpdateTaskDescription(descriptionUpdateFailed);
-    }
+        private UpdateFailures() {
+        }
 
-    /**
-     * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to the passed parameters.
-     *
-     * @param taskId  the ID of the task
-     * @param message the exception message
-     * @throws CannotUpdateTaskDescription the failure to throw
-     */
-    static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, String message)
-            throws CannotUpdateTaskDescription {
-        final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
-                                                                             .setTaskId(taskId)
-                                                                             .setMessage(message)
-                                                                             .build();
-        final DescriptionUpdateFailed descriptionUpdateFailed =
-                DescriptionUpdateFailed.newBuilder()
-                                       .setFailedCommand(commandFailed)
-                                       .build();
-        throw new CannotUpdateTaskDescription(descriptionUpdateFailed);
-    }
+        /**
+         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure according to the passed parameters.
+         *
+         * @param taskId the ID of the task
+         * @throws CannotUpdateTaskDueDate the failure to throw
+         */
+        static void throwCannotUpdateTaskDueDateFailure(TaskId taskId) throws CannotUpdateTaskDueDate {
+            final UnsuccessfulTaskCommand commandFailed =
+                    UnsuccessfulTaskCommand.newBuilder()
+                                           .setTaskId(taskId)
+                                           .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
+                                           .build();
+            final TaskDueDateUpdateFailed dueDateUpdateFailed =
+                    TaskDueDateUpdateFailed.newBuilder()
+                                           .setFailedCommand(commandFailed)
+                                           .build();
+            throw new CannotUpdateTaskDueDate(dueDateUpdateFailed);
+        }
 
-    /**
-     * Constructs and throws the {@link CannotAssignLabelToTask} failure according to the passed parameters.
-     *
-     * @param taskId  the ID of the task
-     * @param labelId the ID of the label
-     * @throws CannotAssignLabelToTask the failure to throw
-     */
-    static void throwCannotAssignLabelToTaskFailure(TaskId taskId, LabelId labelId) throws CannotAssignLabelToTask {
-        final UnsuccessfulTaskCommand commandFailed =
-                UnsuccessfulTaskCommand.newBuilder()
-                                       .setTaskId(taskId)
-                                       .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
-                                       .build();
-        final AssignLabelToTaskFailed assignLabelToTaskFailed =
-                AssignLabelToTaskFailed.newBuilder()
-                                       .setFailedCommand(commandFailed)
-                                       .setLabelId(labelId)
-                                       .build();
-        throw new CannotAssignLabelToTask(assignLabelToTaskFailed);
-    }
-
-    /**
-     * Constructs and throws the {@link CannotUpdateTaskDueDate} failure according to the passed parameters.
-     *
-     * @param taskId   the ID of the task
-     * @param mismatch the {@link ValueMismatch}
-     * @throws CannotUpdateTaskDueDate the failure to throw
-     */
-    static void throwCannotUpdateTaskDueDateFailure(TaskId taskId, ValueMismatch mismatch)
-            throws CannotUpdateTaskDueDate {
-        final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
-                                                                             .setTaskId(taskId)
-                                                                             .build();
-        final TaskDueDateUpdateFailed dueDateUpdateFailed =
-                TaskDueDateUpdateFailed.newBuilder()
-                                       .setFailedCommand(commandFailed)
-                                       .setDueDateMismatch(mismatch)
-                                       .build();
-        throw new CannotUpdateTaskDueDate(dueDateUpdateFailed);
-    }
-
-    /**
-     * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to the passed parameters.
-     *
-     * @param taskId   the ID of the task
-     * @param mismatch the {@link ValueMismatch}
-     * @throws CannotUpdateTaskDescription the failure to throw
-     */
-    static void throwCannotUpdateDescriptionFailure(TaskId taskId, ValueMismatch mismatch)
-            throws CannotUpdateTaskDescription {
-        final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
-                                                                             .setTaskId(taskId)
-                                                                             .build();
-        final DescriptionUpdateFailed descriptionUpdateFailed =
-                DescriptionUpdateFailed.newBuilder()
-                                       .setFailedCommand(commandFailed)
-                                       .setDescriptionMismatch(mismatch)
-                                       .build();
-        throw new CannotUpdateTaskDescription(descriptionUpdateFailed);
-    }
-
-    /**
-     * Constructs and throws the {@link CannotUpdateTaskPriority} failure according to the passed parameters.
-     *
-     * @param taskId   the ID of the task
-     * @param mismatch the {@link ValueMismatch}
-     * @throws CannotUpdateTaskPriority the failure to throw
-     */
-    static void throwCannotUpdateTaskPriorityFailure(TaskId taskId, ValueMismatch mismatch)
-            throws CannotUpdateTaskPriority {
-        final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
-                                                                             .setTaskId(taskId)
-                                                                             .build();
-        final PriorityUpdateFailed priorityUpdateFailed = PriorityUpdateFailed.newBuilder()
-                                                                              .setFailedCommand(commandFailed)
-                                                                              .setPriorityMismatch(mismatch)
-                                                                              .build();
-        throw new CannotUpdateTaskPriority(priorityUpdateFailed);
-    }
-
-    /**
-     * Constructs and throws the {@link CannotUpdateTaskPriority} failure according to the passed parameters.
-     *
-     * @param taskId the ID of the task
-     * @throws CannotUpdateTaskPriority the failure to throw
-     */
-    static void throwCannotUpdateTaskPriorityFailure(TaskId taskId) throws CannotUpdateTaskPriority {
-        final UnsuccessfulTaskCommand commandFailed =
-                UnsuccessfulTaskCommand.newBuilder()
-                                       .setTaskId(taskId)
-                                       .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
-                                       .build();
-        final PriorityUpdateFailed priorityUpdateFailed = PriorityUpdateFailed.newBuilder()
-                                                                              .setFailedCommand(commandFailed)
-                                                                              .build();
-        throw new CannotUpdateTaskPriority(priorityUpdateFailed);
-    }
-
-    /**
-     * Constructs and throws the {@link CannotUpdateLabelDetails} failure according to the passed parameters.
-     *
-     * @param labelId  the ID of the label
-     * @param mismatch the {@link ValueMismatch}
-     * @throws CannotUpdateLabelDetails the failure to throw
-     */
-    static void throwCannotUpdateLabelDetailsFailure(LabelId labelId, ValueMismatch mismatch)
-            throws CannotUpdateLabelDetails {
-        final UnsuccessfulLabelCommand labelCommandFailed = UnsuccessfulLabelCommand.newBuilder()
-                                                                                    .setLabelId(labelId)
-                                                                                    .build();
-        final LabelDetailsUpdateFailed labelDetailsUpdateFailed =
-                LabelDetailsUpdateFailed.newBuilder()
-                                        .setFailedCommand(labelCommandFailed)
-                                        .setLabelDetailsMismatch(mismatch)
-                                        .build();
-        throw new CannotUpdateLabelDetails(labelDetailsUpdateFailed);
-    }
-
-    /**
-     * Constructs and throws the {@link CannotUpdateTaskWithInappropriateDescription} failure
-     * according to the passed parameters.
-     *
-     * @param taskId the ID of the task
-     * @throws CannotUpdateTaskWithInappropriateDescription the failure to throw
-     */
-    static void throwCannotUpdateTooShortDescriptionFailure(TaskId taskId)
-            throws CannotUpdateTaskWithInappropriateDescription {
-        final UnsuccessfulTaskCommand commandFailed =
-                UnsuccessfulTaskCommand.newBuilder()
-                                       .setMessage(TOO_SHORT_TASK_DESCRIPTION_EXCEPTION_MESSAGE)
-                                       .setTaskId(taskId)
-                                       .build();
-        final DescriptionUpdateFailed updateFailed = DescriptionUpdateFailed.newBuilder()
-                                                                            .setFailedCommand(commandFailed)
-                                                                            .build();
-        throw new CannotUpdateTaskWithInappropriateDescription(updateFailed);
-    }
-
-    /**
-     * Constructs and throws the {@link CannotCreateTaskWithInappropriateDescription} failure
-     * according to the passed parameters.
-     *
-     * @param taskId the ID of the task
-     * @throws CannotCreateTaskWithInappropriateDescription the failure to throw
-     */
-    static void throwCannotCreateTaskWithInappropriateDescription(TaskId taskId)
-            throws CannotCreateTaskWithInappropriateDescription {
-        final UnsuccessfulTaskCommand commandFailed =
-                UnsuccessfulTaskCommand.newBuilder()
-                                       .setMessage(TOO_SHORT_TASK_DESCRIPTION_EXCEPTION_MESSAGE)
-                                       .setTaskId(taskId)
-                                       .build();
-        final CreateBasicTaskFailed createBasicTaskFailed = CreateBasicTaskFailed.newBuilder()
-                                                                                 .setFailedCommand(commandFailed)
+        /**
+         * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to the passed parameters.
+         *
+         * @param taskId   the ID of the task
+         * @param message  the exception message
+         * @param mismatch the {@link ValueMismatch}
+         * @throws CannotUpdateTaskDescription the failure to throw
+         */
+        static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, String message, ValueMismatch mismatch)
+                throws CannotUpdateTaskDescription {
+            final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
+                                                                                 .setTaskId(taskId)
+                                                                                 .setMessage(message)
                                                                                  .build();
-        throw new CannotCreateTaskWithInappropriateDescription(createBasicTaskFailed);
+            final DescriptionUpdateFailed descriptionUpdateFailed =
+                    DescriptionUpdateFailed.newBuilder()
+                                           .setFailedCommand(commandFailed)
+                                           .setDescriptionMismatch(mismatch)
+                                           .build();
+            throw new CannotUpdateTaskDescription(descriptionUpdateFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to the passed parameters.
+         *
+         * @param taskId  the ID of the task
+         * @param message the exception message
+         * @throws CannotUpdateTaskDescription the failure to throw
+         */
+        static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, String message)
+                throws CannotUpdateTaskDescription {
+            final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
+                                                                                 .setTaskId(taskId)
+                                                                                 .setMessage(message)
+                                                                                 .build();
+            final DescriptionUpdateFailed descriptionUpdateFailed =
+                    DescriptionUpdateFailed.newBuilder()
+                                           .setFailedCommand(commandFailed)
+                                           .build();
+            throw new CannotUpdateTaskDescription(descriptionUpdateFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure according to the passed parameters.
+         *
+         * @param taskId   the ID of the task
+         * @param mismatch the {@link ValueMismatch}
+         * @throws CannotUpdateTaskDueDate the failure to throw
+         */
+        static void throwCannotUpdateTaskDueDateFailure(TaskId taskId, ValueMismatch mismatch)
+                throws CannotUpdateTaskDueDate {
+            final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
+                                                                                 .setTaskId(taskId)
+                                                                                 .build();
+            final TaskDueDateUpdateFailed dueDateUpdateFailed =
+                    TaskDueDateUpdateFailed.newBuilder()
+                                           .setFailedCommand(commandFailed)
+                                           .setDueDateMismatch(mismatch)
+                                           .build();
+            throw new CannotUpdateTaskDueDate(dueDateUpdateFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to the passed parameters.
+         *
+         * @param taskId   the ID of the task
+         * @param mismatch the {@link ValueMismatch}
+         * @throws CannotUpdateTaskDescription the failure to throw
+         */
+        static void throwCannotUpdateDescriptionFailure(TaskId taskId, ValueMismatch mismatch)
+                throws CannotUpdateTaskDescription {
+            final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
+                                                                                 .setTaskId(taskId)
+                                                                                 .build();
+            final DescriptionUpdateFailed descriptionUpdateFailed =
+                    DescriptionUpdateFailed.newBuilder()
+                                           .setFailedCommand(commandFailed)
+                                           .setDescriptionMismatch(mismatch)
+                                           .build();
+            throw new CannotUpdateTaskDescription(descriptionUpdateFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotUpdateTaskPriority} failure according to the passed parameters.
+         *
+         * @param taskId   the ID of the task
+         * @param mismatch the {@link ValueMismatch}
+         * @throws CannotUpdateTaskPriority the failure to throw
+         */
+        static void throwCannotUpdateTaskPriorityFailure(TaskId taskId, ValueMismatch mismatch)
+                throws CannotUpdateTaskPriority {
+            final UnsuccessfulTaskCommand commandFailed = UnsuccessfulTaskCommand.newBuilder()
+                                                                                 .setTaskId(taskId)
+                                                                                 .build();
+            final PriorityUpdateFailed priorityUpdateFailed = PriorityUpdateFailed.newBuilder()
+                                                                                  .setFailedCommand(commandFailed)
+                                                                                  .setPriorityMismatch(mismatch)
+                                                                                  .build();
+            throw new CannotUpdateTaskPriority(priorityUpdateFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotUpdateTaskPriority} failure according to the passed parameters.
+         *
+         * @param taskId the ID of the task
+         * @throws CannotUpdateTaskPriority the failure to throw
+         */
+        static void throwCannotUpdateTaskPriorityFailure(TaskId taskId) throws CannotUpdateTaskPriority {
+            final UnsuccessfulTaskCommand commandFailed =
+                    UnsuccessfulTaskCommand.newBuilder()
+                                           .setTaskId(taskId)
+                                           .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
+                                           .build();
+            final PriorityUpdateFailed priorityUpdateFailed = PriorityUpdateFailed.newBuilder()
+                                                                                  .setFailedCommand(commandFailed)
+                                                                                  .build();
+            throw new CannotUpdateTaskPriority(priorityUpdateFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotUpdateLabelDetails} failure according to the passed parameters.
+         *
+         * @param labelId  the ID of the label
+         * @param mismatch the {@link ValueMismatch}
+         * @throws CannotUpdateLabelDetails the failure to throw
+         */
+        static void throwCannotUpdateLabelDetailsFailure(LabelId labelId, ValueMismatch mismatch)
+                throws CannotUpdateLabelDetails {
+            final UnsuccessfulLabelCommand labelCommandFailed = UnsuccessfulLabelCommand.newBuilder()
+                                                                                        .setLabelId(labelId)
+                                                                                        .build();
+            final LabelDetailsUpdateFailed labelDetailsUpdateFailed =
+                    LabelDetailsUpdateFailed.newBuilder()
+                                            .setFailedCommand(labelCommandFailed)
+                                            .setLabelDetailsMismatch(mismatch)
+                                            .build();
+            throw new CannotUpdateLabelDetails(labelDetailsUpdateFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotUpdateTaskWithInappropriateDescription} failure
+         * according to the passed parameters.
+         *
+         * @param taskId the ID of the task
+         * @throws CannotUpdateTaskWithInappropriateDescription the failure to throw
+         */
+        static void throwCannotUpdateTooShortDescriptionFailure(TaskId taskId)
+                throws CannotUpdateTaskWithInappropriateDescription {
+            final UnsuccessfulTaskCommand commandFailed =
+                    UnsuccessfulTaskCommand.newBuilder()
+                                           .setMessage(TOO_SHORT_TASK_DESCRIPTION_EXCEPTION_MESSAGE)
+                                           .setTaskId(taskId)
+                                           .build();
+            final DescriptionUpdateFailed updateFailed = DescriptionUpdateFailed.newBuilder()
+                                                                                .setFailedCommand(commandFailed)
+                                                                                .build();
+            throw new CannotUpdateTaskWithInappropriateDescription(updateFailed);
+        }
+    }
+
+    static class TaskLabelFailures {
+
+        private TaskLabelFailures() {
+        }
+
+        /**
+         * Constructs and throws the {@link CannotAssignLabelToTask} failure according to the passed parameters.
+         *
+         * @param taskId  the ID of the task
+         * @param labelId the ID of the label
+         * @throws CannotAssignLabelToTask the failure to throw
+         */
+        static void throwCannotAssignLabelToTaskFailure(TaskId taskId, LabelId labelId) throws CannotAssignLabelToTask {
+            final UnsuccessfulTaskCommand commandFailed =
+                    UnsuccessfulTaskCommand.newBuilder()
+                                           .setTaskId(taskId)
+                                           .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
+                                           .build();
+            final AssignLabelToTaskFailed assignLabelToTaskFailed =
+                    AssignLabelToTaskFailed.newBuilder()
+                                           .setFailedCommand(commandFailed)
+                                           .setLabelId(labelId)
+                                           .build();
+            throw new CannotAssignLabelToTask(assignLabelToTaskFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotRemoveLabelFromTask} failure according to the passed parameters.
+         *
+         * @param taskId the ID of the task
+         * @throws CannotRemoveLabelFromTask the failure to throw
+         */
+        static void throwCannotRemoveLabelFromTaskFailure(LabelId labelId, TaskId taskId)
+                throws CannotRemoveLabelFromTask {
+            final UnsuccessfulTaskCommand commandFailed =
+                    UnsuccessfulTaskCommand.newBuilder()
+                                           .setTaskId(taskId)
+                                           .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
+                                           .build();
+            final RemoveLabelFromTaskFailed removeLabelFromTaskFailed =
+                    RemoveLabelFromTaskFailed.newBuilder()
+                                             .setLabelId(labelId)
+                                             .setFailedCommand(commandFailed)
+                                             .build();
+            throw new CannotRemoveLabelFromTask(removeLabelFromTaskFailed);
+        }
+    }
+
+    static class CreateFailures {
+
+        private CreateFailures() {
+        }
+
+        /**
+         * Constructs and throws the {@link CannotCreateDraft} failure according to the passed parameters.
+         *
+         * @param taskId the ID of the task
+         * @throws CannotCreateDraft the failure to throw
+         */
+        static void throwCannotCreateDraftFailure(TaskId taskId) throws CannotCreateDraft {
+            final UnsuccessfulTaskCommand commandFailed =
+                    UnsuccessfulTaskCommand.newBuilder()
+                                           .setTaskId(taskId)
+                                           .setMessage(TASK_DELETED_OR_COMPLETED_EXCEPTION_MESSAGE)
+                                           .build();
+            final CreateDraftFailed createDraftFailed = CreateDraftFailed.newBuilder()
+                                                                         .setFailedCommand(commandFailed)
+                                                                         .build();
+            throw new CannotCreateDraft(createDraftFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotCreateTaskWithInappropriateDescription} failure
+         * according to the passed parameters.
+         *
+         * @param taskId the ID of the task
+         * @throws CannotCreateTaskWithInappropriateDescription the failure to throw
+         */
+        static void throwCannotCreateTaskWithInappropriateDescriptionFailure(TaskId taskId)
+                throws CannotCreateTaskWithInappropriateDescription {
+            final UnsuccessfulTaskCommand commandFailed =
+                    UnsuccessfulTaskCommand.newBuilder()
+                                           .setMessage(TOO_SHORT_TASK_DESCRIPTION_EXCEPTION_MESSAGE)
+                                           .setTaskId(taskId)
+                                           .build();
+            final CreateBasicTaskFailed createBasicTaskFailed = CreateBasicTaskFailed.newBuilder()
+                                                                                     .setFailedCommand(commandFailed)
+                                                                                     .build();
+            throw new CannotCreateTaskWithInappropriateDescription(createBasicTaskFailed);
+        }
     }
 }

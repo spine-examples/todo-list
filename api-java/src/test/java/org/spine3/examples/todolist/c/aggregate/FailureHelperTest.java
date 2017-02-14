@@ -35,6 +35,11 @@ import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDescription;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Identifiers.newUuid;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.CreateFailures.throwCannotCreateDraftFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.CreateFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskLabelFailures.throwCannotAssignLabelToTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskLabelFailures.throwCannotRemoveLabelFromTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateTaskDescriptionFailure;
 import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
 
 /**
@@ -74,9 +79,9 @@ class FailureHelperTest {
 
     @Test
     @DisplayName("throw CannotCreateDraft failure")
-    public void throwCannotCreateDraftFailure() {
+    public void throwCannotCreateDraft() {
         try {
-            FailureHelper.throwCannotCreateDraftFailure(taskId);
+            throwCannotCreateDraftFailure(taskId);
         } catch (CannotCreateDraft ex) {
             final TaskId actual = ex.getFailure()
                                     .getCreateDraftFailed()
@@ -90,7 +95,7 @@ class FailureHelperTest {
     @DisplayName("throw CannotRemoveLabeFromTask failure")
     public void throwCannotRemoveLabelFromTask() {
         try {
-            FailureHelper.throwCannotRemoveLabelFromTaskFailure(labelId, taskId);
+            throwCannotRemoveLabelFromTaskFailure(labelId, taskId);
         } catch (CannotRemoveLabelFromTask ex) {
             final TaskId actual = ex.getFailure()
                                     .getRemoveLabelFailed()
@@ -105,7 +110,7 @@ class FailureHelperTest {
     public void throwCannotUpdateTaskDescription() {
         final String message = "Description is wrong";
         try {
-            FailureHelper.throwCannotUpdateTaskDescriptionFailure(taskId, message);
+            throwCannotUpdateTaskDescriptionFailure(taskId, message);
         } catch (CannotUpdateTaskDescription ex) {
             final UnsuccessfulTaskCommand failedCommand = ex.getFailure()
                                                             .getUpdateFailed()
@@ -120,7 +125,7 @@ class FailureHelperTest {
     @DisplayName("throw CannotAssignLabelToTask failure")
     public void throwCannotAssignLabelToTask() {
         try {
-            FailureHelper.throwCannotAssignLabelToTaskFailure(taskId, labelId);
+            throwCannotAssignLabelToTaskFailure(taskId, labelId);
         } catch (CannotAssignLabelToTask ex) {
             final UnsuccessfulTaskCommand failedCommand = ex.getFailure()
                                                             .getAssignLabelFailed()
@@ -132,9 +137,9 @@ class FailureHelperTest {
 
     @Test
     @DisplayName("throw CannotCreateTaskWithInappropriateDescription failure")
-    public void throwCannotCreateTaskWithInappropriateDescription(){
+    public void throwCannotCreateTaskWithInappropriateDescription() {
         try {
-            FailureHelper.throwCannotCreateTaskWithInappropriateDescription(taskId);
+            throwCannotCreateTaskWithInappropriateDescriptionFailure(taskId);
         } catch (CannotCreateTaskWithInappropriateDescription ex) {
             final TaskId actual = ex.getFailure()
                                     .getCreateTaskFailed()
