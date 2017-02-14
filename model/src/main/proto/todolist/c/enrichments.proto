@@ -47,7 +47,7 @@ message DetailsEnrichment {
     LabelDetails label_details = 2 [(by) = "label_id"];
 }
 
-// Enrichment for the labels list.
+// Enrichment for the label list.
 //
 message LabelsListEnrichment {
 
