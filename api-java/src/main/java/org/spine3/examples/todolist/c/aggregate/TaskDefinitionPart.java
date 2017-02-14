@@ -75,7 +75,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static org.spine3.examples.todolist.c.aggregate.ExceptionMessages.create;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskCreationFailures.throwCannotCreateDraftFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateDescriptionFailure;
@@ -100,12 +99,12 @@ import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValid
  * @author Illia Shepilov
  */
 @SuppressWarnings({"ClassWithTooManyMethods", // because according to the domain model task definition
-                                              // cannot be separated and should process all commands
-                                              // and events related to him. The {@code AggregatePart}
-                                              // does it with methods annotated as {@code Assign} and {@code Apply}.
-                                              // In that case class has to many methods.
-                   "OverlyCoupledClass"})     // As each method needs dependencies necessary to perform execution
-                                              // that class also overly coupled.
+        // cannot be separated and should process all commands
+        // and events related to him. The {@code AggregatePart}
+        // does it with methods annotated as {@code Assign} and {@code Apply}.
+        // In that case class has to many methods.
+        "OverlyCoupledClass"})     // As each method needs dependencies necessary to perform execution
+// that class also overly coupled.
 public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, TaskDefinition.Builder> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;
@@ -232,7 +231,6 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            final String message = create(currentStatus, newStatus);
             throwCannotReopenTaskFailure(taskId);
         }
 
@@ -252,7 +250,6 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            final String message = create(currentStatus, newStatus);
             throwCannotDeleteTaskFailure(taskId);
         }
 
@@ -272,7 +269,6 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            final String message = create(currentStatus, newStatus);
             throwCannotCompleteTaskFailure(taskId);
         }
 
@@ -308,7 +304,6 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            final String message = create(currentStatus, newStatus);
             throwCannotFinalizeDraftFailure(taskId);
         }
 
@@ -327,7 +322,6 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            final String message = create(currentStatus, newStatus);
             throwCannotRestoreDeletedTaskFailure(taskId);
         }
 
