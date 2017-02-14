@@ -57,8 +57,8 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName("LabelledTaskView should")
-    class CompleteTaskFromLabelledTaskView {
+    @DisplayName("LabelledTasksView should")
+    class CompleteTaskFromLabelledTasksView {
 
         @Test
         @DisplayName("contain task view marked as completed")

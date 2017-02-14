@@ -87,7 +87,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName("LabelledTaskView should")
+    @DisplayName("LabelledTasksView should")
     class FinalizeDraftFromLabelledTasksView {
 
         @Test

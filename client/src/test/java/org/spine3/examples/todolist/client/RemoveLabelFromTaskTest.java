@@ -59,7 +59,7 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
     }
     
     @Nested
-    @DisplayName("LabelledTaskView should")
+    @DisplayName("LabelledTasksView should")
     class RemoveLabelFromTaskFromLabelledTasksView {
 
         @Test

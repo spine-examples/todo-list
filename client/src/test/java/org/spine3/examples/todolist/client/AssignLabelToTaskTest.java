@@ -58,8 +58,8 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName("LabelledTaskView should")
-    class AssignLabelToTaskToLabelledTaskView {
+    @DisplayName("LabelledTasksView should")
+    class AssignLabelToTaskToLabelledTasksView {
 
         @Test
         @DisplayName("contain empty TaskView list")

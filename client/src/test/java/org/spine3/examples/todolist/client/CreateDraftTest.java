@@ -65,7 +65,7 @@ public class CreateDraftTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    @DisplayName("LabelledTaskView does not contains views")
+    @DisplayName("LabelledTasksView does not contains views")
     public void obtainLabelledView() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);

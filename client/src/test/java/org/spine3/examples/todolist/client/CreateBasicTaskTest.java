@@ -51,8 +51,8 @@ public class CreateBasicTaskTest extends CommandLineTodoClientTest {
     }
     
     @Test
-    @DisplayName("LabelledTaskView is empty")
-    public void obtainEmptyLabelledTaskView() {
+    @DisplayName("LabelledTasksView is empty")
+    public void obtainEmptyLabelledTasksView() {
         final CreateBasicTask createBasicTask = createBasicTask();
         client.create(createBasicTask);
 

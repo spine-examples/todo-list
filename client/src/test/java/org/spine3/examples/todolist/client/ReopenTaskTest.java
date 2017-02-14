@@ -59,7 +59,7 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName("LabelledTaskView should")
+    @DisplayName("LabelledTasksView should")
     class ReopenTaskFromLabelledTasksView {
 
         @Test

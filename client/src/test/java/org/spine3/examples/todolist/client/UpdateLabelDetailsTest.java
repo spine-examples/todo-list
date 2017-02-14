@@ -65,7 +65,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName("LabelledTaskView should")
+    @DisplayName("LabelledTasksView should")
     class UpdateLabelDetailsInLabelledTasksView {
 
         @Test

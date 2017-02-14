@@ -56,7 +56,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName("LabelledTaskView should")
+    @DisplayName("LabelledTasksView should")
     class UpdateTaskPriorityInLabelledTasksView {
 
         @Test

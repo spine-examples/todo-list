@@ -59,7 +59,7 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
     }
 
     @Nested
-    @DisplayName("LabelledTaskView should")
+    @DisplayName("LabelledTasksView should")
     class UpdateTaskDueDateInLabelledTasksView {
 
         @Test
