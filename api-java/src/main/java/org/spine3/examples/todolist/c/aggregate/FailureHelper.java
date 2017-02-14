@@ -391,9 +391,9 @@ class FailureHelper {
         }
     }
 
-    static class CreateFailures {
+    static class TaskCreationFailures {
 
-        private CreateFailures() {
+        private TaskCreationFailures() {
         }
 
         /**
