@@ -77,7 +77,7 @@ import static org.spine3.examples.todolist.testdata.TestEventFactory.taskReopene
 /**
  * @author Illia Shepilov
  */
-@SuppressWarnings("OptionalGetWithoutIsPresent") // it is OK as we create all those objects.
+@SuppressWarnings("OptionalGetWithoutIsPresent") // it is OK as object creation is controlled during the test.
 public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
     private static final String UPDATES_TASK_VIEW_COMPLETED_FLAG_TO_TRUE = "updates TaskView completed flag to true";

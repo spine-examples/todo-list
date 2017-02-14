@@ -107,7 +107,7 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
     /**
      * Injects the {@link BoundedContext} instance.
      *
-     * <p>Method uses only for test needs. As we need `clear` {@code BoundedContext}
+     * <p>Method uses only for test needs. As the {@code BoundedContext} must be `clear`
      * for each test, it injects through that method. Singleton instance is uses for non-test needs.
      *
      * @param boundedContext instance to inject

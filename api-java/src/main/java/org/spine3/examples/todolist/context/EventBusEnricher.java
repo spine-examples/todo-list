@@ -36,12 +36,14 @@ import org.spine3.examples.todolist.repository.TaskDefinitionRepository;
 import org.spine3.examples.todolist.repository.TaskLabelsRepository;
 import org.spine3.server.event.EventBus;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Performs all necessary initializations to create and add enricher fields for the {@link EventBus}.
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings("Guava") // as we use Guava Function until we migrate the whole framework to Java 8.
+@SuppressWarnings("Guava") // because Guava Function is used until migration the whole framework to Java 8.
 public class EventBusEnricher {
 
     private final TaskDefinitionRepository taskDefinitionRepo;
@@ -151,21 +153,25 @@ public class EventBusEnricher {
         }
 
         public Builder setTaskDefinitionRepository(TaskDefinitionRepository definitionRepository) {
+            checkNotNull(definitionRepository);
             this.taskDefinitionRepo = definitionRepository;
             return this;
         }
 
         public Builder setTaskLabelsRepository(TaskLabelsRepository taskLabelsRepository) {
+            checkNotNull(taskLabelsRepository);
             this.taskLabelsRepo = taskLabelsRepository;
             return this;
         }
 
         public Builder setLabelRepository(LabelAggregateRepository labelRepository) {
+            checkNotNull(labelRepository);
             this.labelRepository = labelRepository;
             return this;
         }
 
         public Builder setEventBus(EventBus eventBus) {
+            checkNotNull(eventBus);
             this.eventBus = eventBus;
             return this;
         }
