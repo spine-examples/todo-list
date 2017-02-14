@@ -22,6 +22,7 @@ package org.spine3.examples.todolist.c.aggregate;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.spine3.examples.todolist.TaskStatus;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
@@ -36,5 +37,13 @@ class ExceptionMessagesTest {
     @DisplayName("have the private constructor")
     public void havePrivateConstructor() {
         assertTrue(hasPrivateParameterlessCtor(ExceptionMessages.class));
+    }
+
+    @Test
+    @DisplayName("create exception message according to the passed parameters")
+    public void createMessage(){
+        final String expectedMessage = "Cannot make transition from: DRAFT to: OPEN state";
+        final String actualMessage = ExceptionMessages.create(TaskStatus.DRAFT, TaskStatus.OPEN);
+        assertEquals(expectedMessage, actualMessage);
     }
 }
