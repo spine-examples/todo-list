@@ -39,7 +39,6 @@ import org.spine3.examples.todolist.c.events.LabelCreated;
 import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
 import org.spine3.examples.todolist.c.failures.CannotUpdateLabelDetails;
 import org.spine3.examples.todolist.c.failures.Failures;
-import org.spine3.test.CommandTest;
 
 import java.util.List;
 
@@ -78,12 +77,7 @@ public class LabelAggregateTest {
 
     @Nested
     @DisplayName("CreateBasicLabel command")
-    class CreateBasicLabelCommand extends CommandTest<CreateBasicLabel> {
-
-        @Override
-        protected void setUp() {
-
-        }
+    class CreateBasicLabelCommand {
 
         @Test
         @DisplayName("produces LabelCreated event")
@@ -120,12 +114,7 @@ public class LabelAggregateTest {
 
     @Nested
     @DisplayName("UpdateLabelDetails command")
-    class UpdateLabelDetailsCommand extends CommandTest<UpdateLabelDetails> {
-
-        @Override
-        protected void setUp() {
-
-        }
+    class UpdateLabelDetailsCommand {
 
         @Test
         @DisplayName("produces LabelDetailsUpdated event")
