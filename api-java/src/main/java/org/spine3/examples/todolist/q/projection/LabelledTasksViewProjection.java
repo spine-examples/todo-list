@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.q.projections;
+package org.spine3.examples.todolist.q.projection;
 
 import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.LabelColor;
@@ -44,11 +44,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
-import static org.spine3.examples.todolist.q.projections.ProjectionHelper.removeViewByTaskId;
-import static org.spine3.examples.todolist.q.projections.ProjectionHelper.updateTaskViewList;
+import static org.spine3.examples.todolist.q.projection.ProjectionHelper.removeViewByTaskId;
+import static org.spine3.examples.todolist.q.projection.ProjectionHelper.updateTaskViewList;
 
 /**
- * A projections state of the created tasks marked with a certain label.
+ * A projection state of the created tasks marked with a certain label.
  *
  * <p> Contains the data about the task view.
  * <p> This view includes all tasks per label that are neither in a draft state nor deleted.

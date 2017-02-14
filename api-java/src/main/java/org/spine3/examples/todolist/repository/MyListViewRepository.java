@@ -25,15 +25,15 @@ import org.spine3.examples.todolist.c.events.TaskCompleted;
 import org.spine3.examples.todolist.c.events.TaskCreated;
 import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
 import org.spine3.examples.todolist.c.events.TaskReopened;
-import org.spine3.examples.todolist.q.projections.MyListView;
-import org.spine3.examples.todolist.q.projections.MyListViewProjection;
+import org.spine3.examples.todolist.q.projection.MyListView;
+import org.spine3.examples.todolist.q.projection.MyListViewProjection;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.entity.IdSetEventFunction;
 import org.spine3.server.projection.ProjectionRepository;
 
 import java.util.Collections;
 
-import static org.spine3.examples.todolist.q.projections.MyListViewProjection.ID;
+import static org.spine3.examples.todolist.q.projection.MyListViewProjection.ID;
 import static org.spine3.examples.todolist.repository.RepositoryHelper.addCommonIdSetFunctions;
 
 /**

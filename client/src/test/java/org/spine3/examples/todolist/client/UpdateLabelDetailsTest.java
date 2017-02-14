@@ -32,9 +32,9 @@ import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
-import org.spine3.examples.todolist.q.projections.LabelColorView;
-import org.spine3.examples.todolist.q.projections.LabelledTasksView;
-import org.spine3.examples.todolist.q.projections.TaskView;
+import org.spine3.examples.todolist.q.projection.LabelColorView;
+import org.spine3.examples.todolist.q.projection.LabelledTasksView;
+import org.spine3.examples.todolist.q.projection.TaskView;
 import org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory;
 
 import java.util.List;

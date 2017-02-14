@@ -23,9 +23,9 @@ package org.spine3.examples.todolist.client;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
-import org.spine3.examples.todolist.q.projections.DraftTasksView;
-import org.spine3.examples.todolist.q.projections.LabelledTasksView;
-import org.spine3.examples.todolist.q.projections.TaskView;
+import org.spine3.examples.todolist.q.projection.DraftTasksView;
+import org.spine3.examples.todolist.q.projection.LabelledTasksView;
+import org.spine3.examples.todolist.q.projection.TaskView;
 
 import java.util.List;
 

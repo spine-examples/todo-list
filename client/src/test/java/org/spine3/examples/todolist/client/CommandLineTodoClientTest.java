@@ -30,7 +30,7 @@ import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.client.builder.CommandBuilder;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
-import org.spine3.examples.todolist.q.projections.LabelledTasksView;
+import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.server.Server;
 import org.spine3.server.BoundedContext;
 import org.spine3.util.Exceptions;

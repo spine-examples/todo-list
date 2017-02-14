@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.q.projections;
+package org.spine3.examples.todolist.q.projection;
 
 import com.google.protobuf.Timestamp;
 import org.spine3.examples.todolist.LabelDetails;
@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import static org.spine3.examples.todolist.q.projections.TaskView.newBuilder;
+import static org.spine3.examples.todolist.q.projection.TaskView.newBuilder;
 
 /**
  * Class provides methods to manipulate and handle views.

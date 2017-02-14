@@ -23,15 +23,15 @@ package org.spine3.examples.todolist.repository;
 import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.c.events.TaskDraftCreated;
 import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
-import org.spine3.examples.todolist.q.projections.DraftTasksView;
-import org.spine3.examples.todolist.q.projections.DraftTasksViewProjection;
+import org.spine3.examples.todolist.q.projection.DraftTasksView;
+import org.spine3.examples.todolist.q.projection.DraftTasksViewProjection;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.entity.IdSetEventFunction;
 import org.spine3.server.projection.ProjectionRepository;
 
 import java.util.Collections;
 
-import static org.spine3.examples.todolist.q.projections.DraftTasksViewProjection.ID;
+import static org.spine3.examples.todolist.q.projection.DraftTasksViewProjection.ID;
 import static org.spine3.examples.todolist.repository.RepositoryHelper.addCommonIdSetFunctions;
 
 /**

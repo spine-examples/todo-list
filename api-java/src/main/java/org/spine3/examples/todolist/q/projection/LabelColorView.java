@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.q.projections;
+package org.spine3.examples.todolist.q.projection;
 
 import org.spine3.examples.todolist.LabelColor;
 

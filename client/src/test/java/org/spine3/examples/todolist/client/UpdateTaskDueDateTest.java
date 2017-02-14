@@ -31,8 +31,8 @@ import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
-import org.spine3.examples.todolist.q.projections.LabelledTasksView;
-import org.spine3.examples.todolist.q.projections.TaskView;
+import org.spine3.examples.todolist.q.projection.LabelledTasksView;
+import org.spine3.examples.todolist.q.projection.TaskView;
 import org.spine3.protobuf.Timestamps;
 
 import java.util.List;
