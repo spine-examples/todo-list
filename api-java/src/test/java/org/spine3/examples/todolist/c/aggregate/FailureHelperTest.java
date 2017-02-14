@@ -20,7 +20,6 @@
 
 package org.spine3.examples.todolist.c.aggregate;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.LabelId;
@@ -34,9 +33,8 @@ import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDescription;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.CreateFailures.throwCannotCreateDraftFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.CreateFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskCreationFailures.throwCannotCreateDraftFailure;
+import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskLabelFailures.throwCannotAssignLabelToTaskFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskLabelFailures.throwCannotRemoveLabelFromTaskFailure;
 import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateTaskDescriptionFailure;
@@ -48,28 +46,8 @@ import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
 @DisplayName("FailureHelper should")
 class FailureHelperTest {
 
-    private TaskId taskId;
-    private LabelId labelId;
-
-    @BeforeEach
-    public void setUp() {
-        taskId = createTaskId();
-        labelId = createLabelId();
-    }
-
-    private static LabelId createLabelId() {
-        final LabelId result = LabelId.newBuilder()
-                                      .setValue(newUuid())
-                                      .build();
-        return result;
-    }
-
-    private static TaskId createTaskId() {
-        final TaskId result = TaskId.newBuilder()
-                                    .setValue(newUuid())
-                                    .build();
-        return result;
-    }
+    private final TaskId taskId = TaskId.getDefaultInstance();
+    private final LabelId labelId = LabelId.getDefaultInstance();
 
     @Test
     @DisplayName("have the private constructor")
