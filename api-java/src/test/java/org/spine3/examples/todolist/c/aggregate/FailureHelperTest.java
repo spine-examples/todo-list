@@ -70,7 +70,7 @@ class FailureHelperTest {
     }
 
     @Test
-    @DisplayName("throw CannotRemoveLabeFromTask failure")
+    @DisplayName("throw CannotRemoveLabelFromTask failure")
     public void throwCannotRemoveLabelFromTask() {
         try {
             throwCannotRemoveLabelFromTaskFailure(labelId, taskId);
