@@ -43,7 +43,7 @@ public class TestLabelEventFactory {
     /**
      * Provides a pre-configured {@link LabelDetailsUpdated} event instance.
      *
-     * @return the {@link LabelDetailsUpdated} instance.
+     * @return the {@code LabelDetailsUpdated} instance.
      */
     public static LabelDetailsUpdated labelDetailsUpdatedInstance() {
         return labelDetailsUpdatedInstance(LABEL_ID, LABEL_COLOR, LABEL_TITLE);
@@ -54,7 +54,7 @@ public class TestLabelEventFactory {
      *
      * @param color the color of the updated label details
      * @param title the title of the updated label details
-     * @return the {@link LabelDetailsUpdated} instance
+     * @return the {@code LabelDetailsUpdated} instance
      */
     public static LabelDetailsUpdated labelDetailsUpdatedInstance(LabelId labelId, LabelColor color, String title) {
         final LabelDetails.Builder labelDetailsBuilder = LabelDetails.newBuilder()

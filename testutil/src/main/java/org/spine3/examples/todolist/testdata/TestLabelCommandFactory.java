@@ -48,7 +48,7 @@ public class TestLabelCommandFactory {
     /**
      * Provides the {@link CreateBasicLabel} event instance by specified label ID.
      *
-     * @return the {@link CreateBasicLabel} instance
+     * @return the {@code CreateBasicLabel} instance
      */
     public static CreateBasicLabel createLabelInstance() {
         final CreateBasicLabel result = createLabelInstance(LABEL_ID);
@@ -58,7 +58,7 @@ public class TestLabelCommandFactory {
     /**
      * Provides a pre-configured {@link CreateBasicLabel} event instance.
      *
-     * @return the {@link CreateBasicLabel} instance
+     * @return the {@code CreateBasicLabel} instance
      */
     public static CreateBasicLabel createLabelInstance(LabelId labelId) {
         final CreateBasicLabel result = CreateBasicLabel.newBuilder()
@@ -71,7 +71,7 @@ public class TestLabelCommandFactory {
     /**
      * Provides a pre-configured {@link UpdateLabelDetails} command instance.
      *
-     * @return the {@link UpdateLabelDetails} instance.
+     * @return the {@code UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelId labelId) {
         final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
@@ -88,7 +88,7 @@ public class TestLabelCommandFactory {
     /**
      * Provides a pre-configured {@link UpdateLabelDetails} command instance.
      *
-     * @return the {@link UpdateLabelDetails} instance.
+     * @return the {@code UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance() {
         final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
@@ -107,7 +107,7 @@ public class TestLabelCommandFactory {
      *
      * @param previousLabelDetails the previous label details
      * @param newLabelDetails      the new label details
-     * @return the {@link UpdateLabelDetails} instance.
+     * @return the {@code UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelId id,
                                                                 LabelDetails previousLabelDetails,

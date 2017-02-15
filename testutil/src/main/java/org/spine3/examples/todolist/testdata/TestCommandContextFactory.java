@@ -45,7 +45,7 @@ public class TestCommandContextFactory {
     /**
      * Creates a new {@link CommandContext} instance.
      *
-     * @return the {@link CommandContext} instance.
+     * @return the {@code CommandContext} instance.
      */
     public static CommandContext createCommandContext() {
         final UserId userId = newUserId(newUuid());
@@ -60,7 +60,7 @@ public class TestCommandContextFactory {
      * @param userId    the actor ID of the command context
      * @param commandId the command ID of the command context
      * @param when      indicates when was created context
-     * @return constructed instance of {@link CommandContext}
+     * @return constructed instance of the {@code CommandContext}
      */
     public static CommandContext createCommandContext(UserId userId, CommandId commandId, Timestamp when) {
         final CommandContext.Builder builder = CommandContext.newBuilder()

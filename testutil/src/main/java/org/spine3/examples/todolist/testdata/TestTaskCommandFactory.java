@@ -64,7 +64,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link CreateBasicTask} instance.
      *
-     * @return {@link CreateBasicTask} instance
+     * @return the {@code CreateBasicTask} instance
      */
     public static CreateBasicTask createTaskInstance() {
         final CreateBasicTask result = createTaskInstance(TASK_ID, DESCRIPTION);
@@ -89,7 +89,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link UpdateTaskDescription} instance.
      *
-     * @return {@link UpdateTaskDescription} instance
+     * @return the {@code UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance() {
         final UpdateTaskDescription result = updateTaskDescriptionInstance(TASK_ID, DESCRIPTION, DESCRIPTION);
@@ -97,10 +97,10 @@ public class TestTaskCommandFactory {
     }
 
     /**
-     * Provides {@link UpdateTaskDescription} instance by description and task ID specified.
+     * Provides the {@link UpdateTaskDescription} instance by description and task ID specified.
      *
      * @param taskId an identifier of the updated task
-     * @return {@link UpdateTaskDescription} instance
+     * @return the {@code UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId taskId) {
         final UpdateTaskDescription result = updateTaskDescriptionInstance(taskId, DESCRIPTION, DESCRIPTION);
@@ -113,7 +113,7 @@ public class TestTaskCommandFactory {
      * @param id                  an identifier of the updated task
      * @param previousDescription the previous description of the task
      * @param newDescription      the description of the updated task
-     * @return {@link UpdateTaskDescription} instance
+     * @return the {@code UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id,
                                                                       String previousDescription,
@@ -132,7 +132,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link UpdateTaskDueDate} command instance.
      *
-     * @return {@link UpdateTaskDueDate} instance
+     * @return the {@code UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance() {
         final UpdateTaskDueDate result = updateTaskDueDateInstance(TASK_ID, Timestamp.getDefaultInstance(), DUE_DATE);
@@ -142,7 +142,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link UpdateTaskDueDate} command instance.
      *
-     * @return {@link UpdateTaskDueDate} instance
+     * @return the {@code UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance(TaskId taskId) {
         final UpdateTaskDueDate result = updateTaskDueDateInstance(taskId, Timestamp.getDefaultInstance(), DUE_DATE);
@@ -173,7 +173,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link UpdateTaskPriority} command instance.
      *
-     * @return {@link UpdateTaskPriority} instance
+     * @return the {@code UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance() {
         final UpdateTaskPriority result = updateTaskPriorityInstance(TASK_ID,
@@ -185,7 +185,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link UpdateTaskPriority} command instance.
      *
-     * @return {@link UpdateTaskPriority} instance
+     * @return the {@code UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskId taskId) {
         final UpdateTaskPriority result = updateTaskPriorityInstance(taskId,
@@ -199,7 +199,7 @@ public class TestTaskCommandFactory {
      *
      * @param previousPriority the previous task priority
      * @param newPriority      the priority of the updated task
-     * @return {@link UpdateTaskPriority} instance
+     * @return the {@code UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskId id,
                                                                 TaskPriority previousPriority,
@@ -218,7 +218,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link CompleteTask} command instance.
      *
-     * @return {@link CompleteTask} instance
+     * @return the {@code CompleteTask} instance
      */
     public static CompleteTask completeTaskInstance() {
         return completeTaskInstance(TASK_ID);
@@ -227,7 +227,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link CompleteTask} command instance.
      *
-     * @return {@link CompleteTask} instance
+     * @return the {@code CompleteTask} instance
      */
     public static CompleteTask completeTaskInstance(TaskId id) {
         final CompleteTask result = CompleteTask.newBuilder()
@@ -239,7 +239,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link ReopenTask} command instance.
      *
-     * @return {@link ReopenTask} instance
+     * @return the {@code ReopenTask} instance
      */
     public static ReopenTask reopenTaskInstance() {
         final ReopenTask result = reopenTaskInstance(TASK_ID);
@@ -249,7 +249,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link ReopenTask} command instance.
      *
-     * @return {@link ReopenTask} instance
+     * @return the {@code ReopenTask} instance
      */
     public static ReopenTask reopenTaskInstance(TaskId id) {
         final ReopenTask result = ReopenTask.newBuilder()
@@ -261,7 +261,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link DeleteTask} command instance.
      *
-     * @return {@link DeleteTask} instance
+     * @return the {@code DeleteTask} instance
      */
     public static DeleteTask deleteTaskInstance() {
         final DeleteTask result = deleteTaskInstance(TASK_ID);
@@ -271,7 +271,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link DeleteTask} command instance.
      *
-     * @return {@link DeleteTask} instance
+     * @return the {@code DeleteTask} instance
      */
     public static DeleteTask deleteTaskInstance(TaskId id) {
         final DeleteTask result = DeleteTask.newBuilder()
@@ -283,7 +283,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link RestoreDeletedTask} command instance.
      *
-     * @return {@link RestoreDeletedTask} instance
+     * @return the {@code RestoreDeletedTask} instance
      */
     public static RestoreDeletedTask restoreDeletedTaskInstance() {
         final RestoreDeletedTask result = restoreDeletedTaskInstance(TASK_ID);
@@ -293,7 +293,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link RestoreDeletedTask} command instance.
      *
-     * @return {@link RestoreDeletedTask} instance
+     * @return the {@code RestoreDeletedTask} instance
      */
     public static RestoreDeletedTask restoreDeletedTaskInstance(TaskId id) {
         final RestoreDeletedTask result = RestoreDeletedTask.newBuilder()
@@ -305,7 +305,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link FinalizeDraft} command instance.
      *
-     * @return {@link FinalizeDraft} instance
+     * @return the {@code FinalizeDraft} instance
      */
     public static FinalizeDraft finalizeDraftInstance() {
         final FinalizeDraft result = finalizeDraftInstance(TASK_ID);
@@ -315,7 +315,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides the {@link FinalizeDraft} command instance according to the passed task ID.
      *
-     * @return {@link FinalizeDraft} instance
+     * @return the {@code FinalizeDraft} instance
      */
     public static FinalizeDraft finalizeDraftInstance(TaskId id) {
         final FinalizeDraft result = FinalizeDraft.newBuilder()
@@ -327,7 +327,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link CreateDraft} command instance.
      *
-     * @return {@link CreateDraft} instance
+     * @return the {@code CreateDraft} instance
      */
     public static CreateDraft createDraftInstance() {
         final CreateDraft result = createDraftInstance(TASK_ID);
@@ -337,7 +337,7 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link CreateDraft} command instance.
      *
-     * @return {@link CreateDraft} instance
+     * @return the {@code CreateDraft} instance
      */
     public static CreateDraft createDraftInstance(TaskId taskId) {
         final CreateDraft result = CreateDraft.newBuilder()

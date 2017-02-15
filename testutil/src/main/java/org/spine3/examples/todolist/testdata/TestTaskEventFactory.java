@@ -79,7 +79,7 @@ public class TestTaskEventFactory {
      *
      * @param description specified task description
      * @param priority    specified task priority
-     * @return the {@link TaskCreated} instance
+     * @return the {@code TaskCreated} instance
      */
     public static TaskCreated taskCreatedInstance(String description, TaskPriority priority) {
         final TaskDetails.Builder details = TaskDetails.newBuilder()
@@ -96,7 +96,7 @@ public class TestTaskEventFactory {
      * Provides the {@link TaskCreated} event by specified task ID.
      *
      * @param id the ID of the created task
-     * @return the {@link TaskCreated} instance
+     * @return the {@code TaskCreated} instance
      */
     public static TaskCreated taskCreatedInstance(TaskId id) {
         final TaskCreated result = TaskCreated.newBuilder()
@@ -108,7 +108,7 @@ public class TestTaskEventFactory {
     /**
      * Provides a pre-configured {@link TaskDraftCreated} event instance.
      *
-     * @return the {@link TaskDraftCreated} instance
+     * @return the {@code TaskDraftCreated} instance
      */
     public static TaskDraftCreated taskDraftCreatedInstance() {
         return taskDraftCreatedInstance(DESCRIPTION, TASK_PRIORITY, CREATION_TIME);
@@ -121,7 +121,7 @@ public class TestTaskEventFactory {
      * @param description  the description of the created draft
      * @param priority     the priority of the created draft
      * @param creationTime the time creation of the created draft
-     * @return the {@link TaskDraftCreated} instance
+     * @return the {@code TaskDraftCreated} instance
      */
     public static TaskDraftCreated taskDraftCreatedInstance(String description,
                                                             TaskPriority priority,
@@ -140,7 +140,7 @@ public class TestTaskEventFactory {
     /**
      * Provides a pre-configured {@link TaskDraftFinalized} event instance.
      *
-     * @return the {@link TaskDraftFinalized} instance
+     * @return the {@code TaskDraftFinalized} instance
      */
     public static TaskDraftFinalized taskDraftFinalizedInstance() {
         final TaskDraftFinalized result = TaskDraftFinalized.newBuilder()
@@ -152,7 +152,7 @@ public class TestTaskEventFactory {
     /**
      * Provides a pre-configured {@link TaskCompleted} event instance.
      *
-     * @return the {@link TaskCompleted} instance
+     * @return the {@code TaskCompleted} instance
      */
     public static TaskCompleted taskCompletedInstance() {
         return taskCompletedInstance(TASK_ID);
@@ -161,7 +161,7 @@ public class TestTaskEventFactory {
     /**
      * Provides pre-configured {@link TaskCompleted} event instance.
      *
-     * @return the {@link TaskCompleted} instance
+     * @return the {@code TaskCompleted} instance
      */
     public static TaskCompleted taskCompletedInstance(TaskId id) {
         final TaskCompleted result = TaskCompleted.newBuilder()
@@ -173,7 +173,7 @@ public class TestTaskEventFactory {
     /**
      * Provides a pre-configured {@link TaskReopened} event instance.
      *
-     * @return the {@link TaskReopened} instance
+     * @return the {@code TaskReopened} instance
      */
     public static TaskReopened taskReopenedInstance() {
         return taskReopenedInstance(TASK_ID);
@@ -182,7 +182,7 @@ public class TestTaskEventFactory {
     /**
      * Provides pre-configured {@link TaskReopened} event instance.
      *
-     * @return the {@link TaskReopened} instance
+     * @return the {@code TaskReopened} instance
      */
     public static TaskReopened taskReopenedInstance(TaskId id) {
         final TaskReopened result = TaskReopened.newBuilder()
@@ -194,7 +194,7 @@ public class TestTaskEventFactory {
     /**
      * Provides a pre-configured {@link TaskDeleted} event instance.
      *
-     * @return the {@link TaskDeleted} instance
+     * @return the {@code TaskDeleted} instance
      */
     public static TaskDeleted taskDeletedInstance() {
         final TaskDeleted result = TaskDeleted.newBuilder()
@@ -206,7 +206,7 @@ public class TestTaskEventFactory {
     /**
      * Provides a pre-configured {@link LabelledTaskRestored} event instance.
      *
-     * @return the {@link LabelledTaskRestored} instance
+     * @return the {@code LabelledTaskRestored} instance
      */
     public static LabelledTaskRestored labelledTaskRestoredInstance() {
         final LabelledTaskRestored result = LabelledTaskRestored.newBuilder()
@@ -224,7 +224,7 @@ public class TestTaskEventFactory {
         /**
          * Provides a pre-configured {@link TaskDescriptionUpdated} event instance.
          *
-         * @return the {@link TaskDescriptionUpdated} instance
+         * @return the {@code TaskDescriptionUpdated} instance
          */
         public static TaskDescriptionUpdated taskDescriptionUpdatedInstance() {
             return taskDescriptionUpdatedInstance(TASK_ID, UPDATED_DESCRIPTION);
@@ -234,7 +234,7 @@ public class TestTaskEventFactory {
          * Provides the {@link TaskDescriptionUpdated} event by task description and task ID specified.
          *
          * @param description the description of the updated task
-         * @return the {@link TaskDescriptionUpdated} instance
+         * @return the {@code TaskDescriptionUpdated} instance
          */
         public static TaskDescriptionUpdated taskDescriptionUpdatedInstance(TaskId id, String description) {
             final StringChange descriptionChange = StringChange.newBuilder()
@@ -250,7 +250,7 @@ public class TestTaskEventFactory {
         /**
          * Provides a pre-configured {@link TaskPriorityUpdated} event instance.
          *
-         * @return the {@link TaskPriorityUpdated} instance
+         * @return the {@code TaskPriorityUpdated} instance
          */
         public static TaskPriorityUpdated taskPriorityUpdatedInstance() {
             return taskPriorityUpdatedInstance(TASK_ID, UPDATED_TASK_PRIORITY);
@@ -260,7 +260,7 @@ public class TestTaskEventFactory {
          * Provides the {@link TaskPriorityUpdated} event by specified task priority.
          *
          * @param priority the priority of the updated task
-         * @return the {@link TaskPriorityUpdated} instance
+         * @return the {@code TaskPriorityUpdated} instance
          */
         public static TaskPriorityUpdated taskPriorityUpdatedInstance(TaskId id, TaskPriority priority) {
             final PriorityChange taskPriorityChange = PriorityChange.newBuilder()
@@ -276,7 +276,7 @@ public class TestTaskEventFactory {
         /**
          * Provides a pre-configured {@link TaskDueDateUpdated} event instance.
          *
-         * @return {@link TaskDueDateUpdated} instance
+         * @return the {@code TaskDueDateUpdated} instance
          */
         public static TaskDueDateUpdated taskDueDateUpdatedInstance() {
             return taskDueDateUpdatedInstance(TASK_ID, UPDATED_TASK_DUE_DATE);
@@ -286,7 +286,7 @@ public class TestTaskEventFactory {
          * Provides the {@link TaskDueDateUpdated} event by task due date and task ID specified.
          *
          * @param dueDate the due date of the updated task
-         * @return the {@link TaskDueDateUpdated} instance
+         * @return the {@code TaskDueDateUpdated} instance
          */
         public static TaskDueDateUpdated taskDueDateUpdatedInstance(TaskId id, Timestamp dueDate) {
             final TimestampChange dueDateChange = TimestampChange.newBuilder()

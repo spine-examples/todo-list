@@ -54,7 +54,7 @@ public class TestEventContextFactory {
      * <p> Created event context contains Enrichments.
      * <p> Enrichments contains label details by task ID and by label ID enrichments.
      *
-     * @return {@link EventContext} instance
+     * @return {@code EventContext} instance
      */
     public static EventContext eventContextInstance() {
         final Timestamp now = getCurrentTime();

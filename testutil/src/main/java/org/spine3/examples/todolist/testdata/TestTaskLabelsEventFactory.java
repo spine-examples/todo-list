@@ -41,7 +41,7 @@ public class TestTaskLabelsEventFactory {
     /**
      * Provides a pre-configured {@link LabelAssignedToTask} event instance.
      *
-     * @return {@link LabelAssignedToTask} instance
+     * @return the {@code LabelAssignedToTask} instance
      */
     public static LabelAssignedToTask labelAssignedToTaskInstance() {
         return labelAssignedToTaskInstance(TASK_ID, LABEL_ID);
@@ -51,7 +51,7 @@ public class TestTaskLabelsEventFactory {
      * Provides {@link LabelAssignedToTask} event by specified task label ID.
      *
      * @param labelId the ID of the assigned label
-     * @return {@link LabelAssignedToTask} instance
+     * @return the {@code LabelAssignedToTask} instance
      */
     public static LabelAssignedToTask labelAssignedToTaskInstance(TaskId taskId, LabelId labelId) {
         final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
@@ -64,7 +64,7 @@ public class TestTaskLabelsEventFactory {
     /**
      * Provides a pre-configured {@link LabelRemovedFromTask} event instance.
      *
-     * @return {@link LabelRemovedFromTask} instance
+     * @return the {@code LabelRemovedFromTask} instance
      */
     public static LabelRemovedFromTask labelRemovedFromTaskInstance() {
         final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()

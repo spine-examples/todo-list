@@ -78,7 +78,7 @@ public class TestEventEnricherFactory {
     /**
      * Provides a pre-configured {@link EventEnricher} event instance.
      *
-     * @return {@link EventEnricher}
+     * @return {@code EventEnricher}
      */
     public static EventEnricher eventEnricherInstance() {
         final EventEnricher result = EventEnricher.newBuilder()

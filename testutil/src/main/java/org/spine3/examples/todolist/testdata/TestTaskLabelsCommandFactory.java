@@ -41,7 +41,7 @@ public class TestTaskLabelsCommandFactory {
     /**
      * Provides a pre-configured {@link AssignLabelToTask} command instance.
      *
-     * @return the {@link AssignLabelToTask} instance
+     * @return the {@code AssignLabelToTask} instance
      */
     public static AssignLabelToTask assignLabelToTaskInstance(TaskId taskId, LabelId labelId) {
         final AssignLabelToTask result = AssignLabelToTask.newBuilder()
@@ -54,7 +54,7 @@ public class TestTaskLabelsCommandFactory {
     /**
      * Provides a pre-configured {@link AssignLabelToTask} command instance.
      *
-     * @return the {@link AssignLabelToTask} instance
+     * @return the {@code AssignLabelToTask} instance
      */
     public static AssignLabelToTask assignLabelToTaskInstance() {
         final AssignLabelToTask result = assignLabelToTaskInstance(TASK_ID, LABEL_ID);
@@ -64,7 +64,7 @@ public class TestTaskLabelsCommandFactory {
     /**
      * Provides a pre-configured {@link RemoveLabelFromTask} command instance.
      *
-     * @return {@link RemoveLabelFromTask} instance
+     * @return the {@code RemoveLabelFromTask} instance
      */
     public static RemoveLabelFromTask removeLabelFromTaskInstance() {
         final RemoveLabelFromTask result = removeLabelFromTaskInstance(TASK_ID, LABEL_ID);
@@ -74,7 +74,7 @@ public class TestTaskLabelsCommandFactory {
     /**
      * Provides a pre-configured {@link RemoveLabelFromTask} command instance.
      *
-     * @return the {@link RemoveLabelFromTask} instance
+     * @return the {@code RemoveLabelFromTask} instance
      */
     public static RemoveLabelFromTask removeLabelFromTaskInstance(TaskId taskId, LabelId labelId) {
         final RemoveLabelFromTask result = RemoveLabelFromTask.newBuilder()

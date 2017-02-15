@@ -38,8 +38,8 @@ public class TestBoundedContextFactory {
      * Provides a new {@link BoundedContext} instance
      * built with the specified {@link EventBus} and {@link StorageFactorySwitch}.
      *
-     * @param eventBus {@link EventBus} instance
-     * @return the {@link BoundedContext} instance
+     * @param eventBus {@code EventBus} instance
+     * @return the {@code BoundedContext} instance
      */
     public static BoundedContext boundedContextInstance(EventBus eventBus,
                                                         StorageFactorySwitch storageFactory) {
