@@ -71,7 +71,7 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain task view with completed task " +
-                "when command has wrong id")
+                "when command has wrong ID")
         public void containViewWithCompletedTask() {
             final TaskView view = obtainViewWhenHandledCommandReopenTask(false);
             assertTrue(view.getCompleted());
@@ -91,7 +91,7 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain task view with completed task " +
-                "when command has wrong id")
+                "when command has wrong ID")
         public void containViewWithCompletedTask() {
             final TaskView view = obtainTaskViewWhenHandledReopenTask(false);
             assertTrue(view.getCompleted());
