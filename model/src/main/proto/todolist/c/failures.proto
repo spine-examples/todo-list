@@ -143,13 +143,3 @@ message CannotCreateTaskWithInappropriateDescription{
     // Failed the task creation.
     CreateBasicTaskFailed create_task_failed = 1;
 }
-
-// A failure to find a label in a task.
-message LabelNotFound{
-
-    // A task which generated the failure.
-    TaskId task_id = 1;
-
-    // A label ID from the command, which wasn't found in the task.
-    LabelId label_id = 2;
-}
