@@ -99,7 +99,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         final Command createTaskCmd = create(createTask, commandContext);
         commandBus.post(createTaskCmd, responseObserver);
 
-        final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, LABEL_ID);
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, LABEL_ID);
         final Command assignLabelToTaskCmd = create(assignLabelToTask, commandContext);
         commandBus.post(assignLabelToTaskCmd, responseObserver);
 

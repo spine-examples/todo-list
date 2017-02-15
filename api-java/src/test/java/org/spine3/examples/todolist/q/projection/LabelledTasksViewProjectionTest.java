@@ -40,7 +40,6 @@ import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
 import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
 import org.spine3.examples.todolist.c.events.TaskReopened;
 import org.spine3.examples.todolist.repository.LabelledTasksViewRepository;
-import org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.event.EventBus;
 import org.spine3.server.event.enrich.EventEnricher;
@@ -73,6 +72,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskCom
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskDeletedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskReopenedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelAssignedToTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelRemovedFromTaskInstance;
 
 /**
  * @author Illia Shepilov
@@ -103,7 +103,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("add TaskView to LabelledTasksView")
         public void addView() {
-            final LabelAssignedToTask labelAssignedToTask = TestTaskLabelsEventFactory.labelAssignedToTaskInstance();
+            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
             LabelledTasksView labelledTaskView = repository.load(LABEL_ID)
@@ -152,7 +152,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("remove TaskView form LabelledTasksView")
         public void removeView() {
-            final LabelAssignedToTask labelAssignedToTask = TestTaskLabelsEventFactory.labelAssignedToTaskInstance();
+            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
             eventBus.post(labelAssignedToTaskEvent);
@@ -162,7 +162,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
                                                             .getState();
             assertEquals(LABEL_ID, labelledTasksView.getLabelId());
 
-            final LabelRemovedFromTask labelRemovedFromTask = TestTaskLabelsEventFactory.labelRemovedFromTaskInstance();
+            final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
             final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask, eventContext);
             eventBus.post(labelRemovedFromTaskEvent);
 
@@ -185,12 +185,12 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("add TaskView to LabelledTasksView")
         public void addView() {
-            final LabelAssignedToTask labelAssignedToTask = TestTaskLabelsEventFactory.labelAssignedToTaskInstance();
+            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final LabelRemovedFromTask labelRemovedFromTask = TestTaskLabelsEventFactory.labelRemovedFromTaskInstance();
+            final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
             final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask, eventContext);
             eventBus.post(labelRemovedFromTaskEvent);
 
@@ -238,7 +238,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("remove TaskView form LabelledTasksView")
         public void removesView() {
-            final LabelAssignedToTask labelAssignedToTask = TestTaskLabelsEventFactory.labelAssignedToTaskInstance();
+            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
             eventBus.post(labelAssignedToTaskEvent);

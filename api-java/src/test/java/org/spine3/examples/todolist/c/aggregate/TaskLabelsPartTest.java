@@ -109,7 +109,7 @@ public class TaskLabelsPartTest {
         @Test
         @DisplayName("produce LabelAssignedToTask event")
         public void produceEvent() {
-            final AssignLabelToTask assignLabelToTaskCmd = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, labelId);
+            final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance(taskId, labelId);
             final List<? extends Message> messageList =
                     taskLabelsPart.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
 
@@ -134,7 +134,7 @@ public class TaskLabelsPartTest {
                 final Command deleteTaskCmd = create(deleteTask, COMMAND_CONTEXT);
                 commandBus.post(deleteTaskCmd, responseObserver);
 
-                final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, labelId);
+                final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
                 final Command assignLabelToTaskCmd = create(assignLabelToTask, COMMAND_CONTEXT);
                 commandBus.post(assignLabelToTaskCmd, responseObserver);
             } catch (Throwable e) {
@@ -156,7 +156,7 @@ public class TaskLabelsPartTest {
                 final Command completeTaskCmd = create(completeTask, COMMAND_CONTEXT);
                 commandBus.post(completeTaskCmd, responseObserver);
 
-                final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, labelId);
+                final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
                 final Command assignLabelToTaskCmd = Commands.create(assignLabelToTask, COMMAND_CONTEXT);
                 commandBus.post(assignLabelToTaskCmd, responseObserver);
             } catch (Throwable e) {
@@ -174,7 +174,7 @@ public class TaskLabelsPartTest {
         @Test
         @DisplayName("produce LabelRemovedFromTask event")
         public void produceEvent() {
-            final RemoveLabelFromTask removeLabelFromTaskCmd = TestTaskLabelsCommandFactory.removeLabelFromTaskInstance(taskId, labelId);
+            final RemoveLabelFromTask removeLabelFromTaskCmd = removeLabelFromTaskInstance(taskId, labelId);
             final List<? extends Message> messageList =
                     taskLabelsPart.dispatchForTest(removeLabelFromTaskCmd, COMMAND_CONTEXT);
 
@@ -199,7 +199,7 @@ public class TaskLabelsPartTest {
                 final Command completeTaskCmd = create(completeTask, COMMAND_CONTEXT);
                 commandBus.post(completeTaskCmd, responseObserver);
 
-                final RemoveLabelFromTask removeLabelFromTask = TestTaskLabelsCommandFactory.removeLabelFromTaskInstance(taskId, labelId);
+                final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId, labelId);
                 final Command removeLabelFromTaskCmd = create(removeLabelFromTask, COMMAND_CONTEXT);
                 commandBus.post(removeLabelFromTaskCmd, responseObserver);
             } catch (Throwable e) {
@@ -221,7 +221,7 @@ public class TaskLabelsPartTest {
                 final Command deleteTaskCmd = create(deleteTask, COMMAND_CONTEXT);
                 commandBus.post(deleteTaskCmd, responseObserver);
 
-                final RemoveLabelFromTask removeLabelFromTask = TestTaskLabelsCommandFactory.removeLabelFromTaskInstance(taskId, labelId);
+                final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId, labelId);
                 final Command removeLabelFromTaskCmd = create(removeLabelFromTask, COMMAND_CONTEXT);
                 commandBus.post(removeLabelFromTaskCmd, responseObserver);
             } catch (Throwable e) {
