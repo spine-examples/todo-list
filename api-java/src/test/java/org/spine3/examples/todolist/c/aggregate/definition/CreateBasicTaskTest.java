@@ -64,9 +64,7 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
         assertNotNull(aggregate.getState()
                                .getCreated());
         assertNotNull(aggregate.getId());
-
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, messageList.size());
+        assertEquals(1, messageList.size());
         assertEquals(TaskCreated.class, messageList.get(0)
                                                    .getClass());
         final TaskCreated taskCreated = (TaskCreated) messageList.get(0);

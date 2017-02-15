@@ -66,7 +66,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     @Test
     @DisplayName("throw CannotReopenTask failure when try to reopen not completed task")
     public void cannotReopenNotCompletedTask() {
-        createTask();
+        dispatchCreateTaskCmd();
         try {
             final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
             aggregate.dispatchForTest(reopenTaskCmd, commandContext);
@@ -80,7 +80,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     @Test
     @DisplayName("reopen completed task")
     public void reopenTask() {
-        createTask();
+        dispatchCreateTaskCmd();
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
         aggregate.dispatchForTest(completeTaskCmd, commandContext);
 
@@ -99,7 +99,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     @Test
     @DisplayName("throw CannotReopenTask when try to reopen deleted task")
     public void cannotReopenDeletedTask() {
-        createTask();
+        dispatchCreateTaskCmd();
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
@@ -129,7 +129,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
         }
     }
 
-    private void createTask() {
+    private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         aggregate.dispatchForTest(createTaskCmd, commandContext);
     }

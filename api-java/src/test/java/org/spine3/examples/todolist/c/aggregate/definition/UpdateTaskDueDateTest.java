@@ -73,7 +73,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     @Test
     @DisplayName("throw CannotUpdateTaskDueDate failure when try to update due date for the completed task")
     public void cannotUpdateCompletedTaskDueDate() {
-        createTask();
+        dispatchCreateTaskCmd();
 
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
         aggregate.dispatchForTest(completeTaskCmd, commandContext);
@@ -91,7 +91,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     @Test
     @DisplayName("throw CannotUpdateTaskDueDate failure when try to update due date for the deleted task")
     public void cannotUpdateDeletedTaskDueDate() {
-        createTask();
+        dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
@@ -113,8 +113,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
         final List<? extends Message> messageList =
                 aggregate.dispatchForTest(updateTaskDueDateCmd, commandContext);
 
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, messageList.size());
+        assertEquals(1, messageList.size());
         assertEquals(TaskDueDateUpdated.class, messageList.get(0)
                                                           .getClass());
         final TaskDueDateUpdated taskDueDateUpdated = (TaskDueDateUpdated) messageList.get(0);
@@ -129,7 +128,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     @DisplayName("update task due date")
     public void updateDueDate() {
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
-        createTask();
+        dispatchCreateTaskCmd();
 
         final UpdateTaskDueDate updateTaskDueDateCmd =
                 updateTaskDueDateInstance(taskId, Timestamp.getDefaultInstance(), updatedDueDate);
@@ -143,7 +142,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     @Test
     @DisplayName("produce CannotUpdateTaskDueDate failure")
     public void produceFailure() {
-        createTask();
+        dispatchCreateTaskCmd();
 
         final Timestamp expectedDueDate = Timestamps.getCurrentTime();
         final Timestamp newDueDate = Timestamps.getCurrentTime();
@@ -154,8 +153,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
             final List<? extends com.google.protobuf.Message> messageList =
                     aggregate.dispatchForTest(updateTaskDueDate, commandContext);
 
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, messageList.size());
+            assertEquals(1, messageList.size());
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
@@ -180,7 +178,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
         }
     }
 
-    private void createTask() {
+    private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         aggregate.dispatchForTest(createTaskCmd, commandContext);
     }

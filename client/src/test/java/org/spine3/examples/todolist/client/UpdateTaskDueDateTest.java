@@ -133,9 +133,7 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = client.getMyListView()
                                                     .getMyList()
                                                     .getItemsList();
-
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
+        assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);
 
@@ -155,8 +153,7 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = client.getDraftTasksView()
                                                     .getDraftTasks()
                                                     .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
+        assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);
         assertEquals(createdTaskId, view.getId());
@@ -187,7 +184,6 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = tasksViewList.get(0)
                                                       .getLabelledTasks()
                                                       .getItemsList();
-
         assertEquals(expectedListSize, taskViews.size());
 
         final TaskView view = taskViews.get(0);

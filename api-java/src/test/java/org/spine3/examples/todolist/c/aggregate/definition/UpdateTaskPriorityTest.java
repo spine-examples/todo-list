@@ -73,7 +73,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     @Test
     @DisplayName("throw CannotUpdateTaskPriority failure when try to update priority for the deleted task")
     public void cannotUpdateDeletedTaskPriority() {
-        createTask();
+        dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
@@ -91,7 +91,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     @Test
     @DisplayName("throw CannotUpdateTaskPriority failure when try to update priority for the completed task")
     public void cannotUpdateCompletedTaskPriority() {
-        createTask();
+        dispatchCreateTaskCmd();
 
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
         aggregate.dispatchForTest(completeTaskCmd, commandContext);
@@ -109,14 +109,13 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     @Test
     @DisplayName("produce TaskPriorityUpdated event")
     public void produceEvent() {
-        createTask();
+        dispatchCreateTaskCmd();
 
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
         final List<? extends Message> messageList =
                 aggregate.dispatchForTest(updateTaskPriorityCmd, commandContext);
 
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, messageList.size());
+        assertEquals(1, messageList.size());
         assertEquals(TaskPriorityUpdated.class, messageList.get(0)
                                                            .getClass());
         final TaskPriorityUpdated taskPriorityUpdated = (TaskPriorityUpdated) messageList.get(0);
@@ -131,7 +130,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     @DisplayName("update task priority")
     public void updatePriority() {
         final TaskPriority updatedPriority = TaskPriority.HIGH;
-        createTask();
+        dispatchCreateTaskCmd();
 
         final UpdateTaskPriority updateTaskPriorityCmd =
                 updateTaskPriorityInstance(taskId, TaskPriority.TP_UNDEFINED, updatedPriority);
@@ -178,7 +177,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
         }
     }
 
-    private void createTask() {
+    private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         aggregate.dispatchForTest(createTaskCmd, commandContext);
     }

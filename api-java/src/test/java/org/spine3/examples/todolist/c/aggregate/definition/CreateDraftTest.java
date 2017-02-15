@@ -58,15 +58,14 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
     @DisplayName("produce TaskDraftCreated event")
     public void produceEvent() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
+
         final List<? extends Message> messageList =
                 aggregate.dispatchForTest(createDraftCmd, commandContext);
-
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, messageList.size());
+        assertEquals(1, messageList.size());
         assertEquals(TaskDraftCreated.class, messageList.get(0)
                                                         .getClass());
-        final TaskDraftCreated taskDraftCreated = (TaskDraftCreated) messageList.get(0);
 
+        final TaskDraftCreated taskDraftCreated = (TaskDraftCreated) messageList.get(0);
         assertEquals(taskId, taskDraftCreated.getId());
     }
 
