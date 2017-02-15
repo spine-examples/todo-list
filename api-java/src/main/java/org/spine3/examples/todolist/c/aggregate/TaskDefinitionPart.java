@@ -99,12 +99,12 @@ import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValid
  * @author Illia Shepilov
  */
 @SuppressWarnings({"ClassWithTooManyMethods", // because according to the domain model task definition
-        // cannot be separated and should process all commands
-        // and events related to him. The {@code AggregatePart}
-        // does it with methods annotated as {@code Assign} and {@code Apply}.
-        // In that case class has to many methods.
-        "OverlyCoupledClass"})     // As each method needs dependencies necessary to perform execution
-// that class also overly coupled.
+                                              // cannot be separated and should process all commands
+                                              // and events related to him. The {@code AggregatePart}
+                                              // does it with methods annotated as {@code Assign} and {@code Apply}.
+                                              // In that case class has to many methods.
+                   "OverlyCoupledClass"})     // As each method needs dependencies necessary to perform execution
+                                              // that class also overly coupled.
 public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, TaskDefinition.Builder> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;
