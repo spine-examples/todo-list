@@ -76,7 +76,7 @@ public class LabelAggregateTest {
     }
 
     @Nested
-    @DisplayName("CreateBasicLabel command should")
+    @DisplayName("CreateBasicLabel command should be interpret by LabelAggregate and")
     class CreateBasicLabelCommand {
 
         @Test
@@ -112,7 +112,7 @@ public class LabelAggregateTest {
     }
 
     @Nested
-    @DisplayName("UpdateLabelDetails command should")
+    @DisplayName("UpdateLabelDetails command should be interpret by LabelAggregate and")
     class UpdateLabelDetailsCommand {
 
         @Test

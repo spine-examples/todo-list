@@ -82,7 +82,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskDraftCreated event should")
+    @DisplayName("TaskDraftCreated event should be interpret by DraftTasksViewProjection and")
     class TaskDraftCreatedEvent {
 
         @Test
@@ -102,7 +102,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskDraftFinalized event should")
+    @DisplayName("TaskDraftFinalized event should be interpret by DraftTasksViewProjection and")
     class TaskDraftFinalizedEvent {
 
         @Test
@@ -187,7 +187,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskDueDateUpdated event should")
+    @DisplayName("TaskDueDateUpdated event should be interpret by DraftTasksViewProjection and")
     class DueDateUpdatedEvent {
 
         @Test
@@ -236,7 +236,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskPriorityUpdated event should")
+    @DisplayName("TaskPriorityUpdated event should be interpret by DraftTasksViewProjection and")
     class TaskPriorityUpdatedEvent {
 
         @Test
@@ -285,7 +285,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("LabelDetailsUpdated event should")
+    @DisplayName("LabelDetailsUpdated event should be interpret by DraftTasksViewProjection and")
     class LabelDetailsUpdatedEvent {
 
         @Test
@@ -345,7 +345,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("LabelRemovedFromTask event should")
+    @DisplayName("LabelRemovedFromTask event should be interpret by DraftTasksViewProjection and")
     class LabelRemovedFromTaskEvent {
 
         @Test

@@ -50,7 +50,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CompleteTask command should")
+@DisplayName("CompleteTask command should be interpret by TaskDefinitionPart and")
 public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
     private final CommandContext commandContext = createCommandContext();

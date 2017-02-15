@@ -56,7 +56,7 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("UpdateTaskDescription command should")
+@DisplayName("UpdateTaskDescription command should be interpret by TaskDefinitionPart and")
 public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateTaskDescription> {
 
     private final CommandContext commandContext = createCommandContext();

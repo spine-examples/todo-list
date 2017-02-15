@@ -46,7 +46,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 /**
  * @author Illia Shepilov
  */
-@DisplayName("DeleteTask command should")
+@DisplayName("DeleteTask command should be interpret by TaskDefinitionPart and")
 public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
 
     private final CommandContext commandContext = createCommandContext();

@@ -49,7 +49,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.reope
 /**
  * @author Illia Shepilov
  */
-@DisplayName("ReopenTask command should")
+@DisplayName("ReopenTask command should be interpret by TaskDefinitionPart and")
 public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask> {
 
     private final CommandContext commandContext = createCommandContext();

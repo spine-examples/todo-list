@@ -56,7 +56,7 @@ import static org.spine3.protobuf.AnyPacker.unpack;
  * @author Illia Shepilov
  */
 
-@DisplayName("UpdateTaskPriority command should")
+@DisplayName("UpdateTaskPriority command should be interpret by TaskDefinitionPart and")
 public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTaskPriority> {
 
     private final CommandContext commandContext = createCommandContext();

@@ -70,7 +70,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.resto
 /**
  * @author Illia Shepilov
  */
-@DisplayName("RestoreDeletedTask command should")
+@DisplayName("RestoreDeletedTask command should be interpret by TaskDefinitionPart and")
 public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDeletedTask> {
 
     private final CommandContext commandContext = createCommandContext();

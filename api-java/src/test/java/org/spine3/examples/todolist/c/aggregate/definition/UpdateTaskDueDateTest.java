@@ -56,7 +56,7 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("UpdateTaskDueDate command should")
+@DisplayName("UpdateTaskDueDate command should be interpret by TaskDefinitionPart and")
 public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskDueDate> {
 
     private TaskDefinitionPart aggregate;

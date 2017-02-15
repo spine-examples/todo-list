@@ -42,7 +42,6 @@ import org.spine3.examples.todolist.c.failures.CannotAssignLabelToTask;
 import org.spine3.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.examples.todolist.testdata.TestResponseObserver;
-import org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.command.CommandBus;
 
@@ -54,10 +53,10 @@ import static org.spine3.base.Commands.create;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.removeLabelFromTaskInstance;
 
 /**
@@ -103,7 +102,7 @@ public class TaskLabelsPartTest {
     }
 
     @Nested
-    @DisplayName("AssignLabelToTask command should")
+    @DisplayName("AssignLabelToTask command should be interpret by TaskLabelsPart and")
     class AssignLabelToTaskCommand {
 
         @Test
@@ -168,7 +167,7 @@ public class TaskLabelsPartTest {
     }
 
     @Nested
-    @DisplayName("RemoveLabelFromTask command should")
+    @DisplayName("RemoveLabelFromTask command should be interpret by TaskLabelsPart and")
     class RemoveLabelFromTaskCommand {
 
         @Test

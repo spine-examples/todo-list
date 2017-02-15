@@ -46,7 +46,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CreateDraft command should")
+@DisplayName("CreateDraft command should be interpret by TaskDefinitionPart and")
 public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
 
     private final CommandContext commandContext = createCommandContext();

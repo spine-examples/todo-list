@@ -47,7 +47,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.final
 /**
  * @author Illia Shepilov
  */
-@DisplayName("FinalizeDraft command should")
+@DisplayName("FinalizeDraft command should be interpret by TaskDefinitionPart and")
 public class FinalizeTaskTest extends TaskDefinitionCommandTest<FinalizeDraft> {
 
     private final CommandContext commandContext = createCommandContext();

@@ -43,7 +43,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.creat
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CreateBasicTask command should")
+@DisplayName("CreateBasicTask command should be interpret by TaskDefinitionPart and")
 public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTask> {
 
     private final CommandContext commandContext = createCommandContext();
