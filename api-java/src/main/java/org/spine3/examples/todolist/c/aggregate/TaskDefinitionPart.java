@@ -205,7 +205,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final TaskPriority actualPriority = state.getPriority();
         final TaskPriority expectedPriority = priorityChange.getPreviousValue();
 
-        boolean isEquals = actualPriority == expectedPriority;
+        boolean isEquals = actualPriority.equals(expectedPriority);
 
         if (!isEquals) {
             final TaskPriority newPriority = priorityChange.getNewValue();
