@@ -101,7 +101,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
 
             final TaskId taskId = createDraft.getId();
             final LabelId labelId = createBasicLabel.getLabelId();
-            final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, labelId);
+            final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
             client.assignLabel(assignLabelToTask);
 
             final FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId);
