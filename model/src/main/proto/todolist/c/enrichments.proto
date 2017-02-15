@@ -33,7 +33,7 @@ import "spine/enrichment_annotations.proto";
 import "todolist/values.proto";
 import "todolist/model.proto";
 
-// Enrichment for task and label details.
+// Enrichment for the events which required the task and label details.
 //
 message DetailsEnrichment {
 
@@ -47,7 +47,7 @@ message DetailsEnrichment {
     LabelDetails label_details = 2 [(by) = "label_id"];
 }
 
-// Enrichment for the label list.
+// Enrichment for the events which required the list of the label IDs.
 //
 message LabelsListEnrichment {
 
@@ -65,7 +65,7 @@ message LabelsListEnrichment {
     LabelIdsList label_ids_list = 1 [(by) = "task_id"];
 }
 
-// Enrichment for the task definition.
+// Task definition enrichment for the TaskDratfFinalized event.
 //
 message TaskEnrichment {
     option (enrichment_for) = "spine.examples.todolist.TaskDraftFinalized";
