@@ -25,10 +25,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.CommandContext;
+import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.TaskStatus;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.events.TaskCreated;
+import org.spine3.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
 
 import java.util.List;
 
@@ -72,5 +75,34 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
         assertEquals(taskId, taskCreated.getId());
         assertEquals(DESCRIPTION, taskCreated.getDetails()
                                              .getDescription());
+    }
+
+    @Test
+    @DisplayName("create the task")
+    public void createTask() {
+        final CreateBasicTask createBasicTask = createTaskInstance();
+        aggregate.dispatchForTest(createBasicTask, commandContext);
+
+        final TaskDefinition state = aggregate.getState();
+        assertEquals(state.getId(), createBasicTask.getId());
+        assertEquals(state.getTaskStatus(), TaskStatus.FINALIZED);
+    }
+
+    @Test
+    @DisplayName("throw CannotCreateTaskWithInappropriateDescription failure " +
+            "when try to create task with too short description")
+    public void notCreateTask() {
+        final CreateBasicTask createBasicTask = createTaskInstance(taskId, "D");
+        try {
+            aggregate.dispatchForTest(createBasicTask, commandContext);
+        } catch (IllegalStateException ex) {
+            final CannotCreateTaskWithInappropriateDescription failure =
+                    (CannotCreateTaskWithInappropriateDescription) ex.getCause();
+            final TaskId actualId = failure.getFailure()
+                                           .getCreateTaskFailed()
+                                           .getFailureDetails()
+                                           .getTaskId();
+            assertEquals(this.taskId, actualId);
+        }
     }
 }

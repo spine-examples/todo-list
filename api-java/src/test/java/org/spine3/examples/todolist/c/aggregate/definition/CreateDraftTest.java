@@ -28,14 +28,20 @@ import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
+import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
+import org.spine3.examples.todolist.c.commands.DeleteTask;
 import org.spine3.examples.todolist.c.events.TaskDraftCreated;
+import org.spine3.examples.todolist.c.failures.CannotCreateDraft;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.spine3.examples.todolist.TaskStatus.DRAFT;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 
 /**
  * @author Illia Shepilov
@@ -78,5 +84,28 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
 
         assertEquals(taskId, state.getId());
         assertEquals(DRAFT, state.getTaskStatus());
+    }
+
+    @Test
+    @DisplayName("throw CannotCreateDraft failure when try to create draft with deleted task ID")
+    public void notCreateDraft() {
+        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        aggregate.dispatchForTest(createTaskCmd, commandContext);
+
+        final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
+        aggregate.dispatchForTest(deleteTaskCmd, commandContext);
+
+        try {
+            final CreateDraft createDraftCmd = createDraftInstance(taskId);
+            aggregate.dispatchForTest(createDraftCmd, commandContext);
+        } catch (IllegalStateException ex) {
+            final Throwable cause = ex.getCause();
+            final CannotCreateDraft failure = (CannotCreateDraft) cause;
+            final TaskId actualId = failure.getFailure()
+                                           .getCreateDraftFailed()
+                                           .getFailureDetails()
+                                           .getTaskId();
+            assertEquals(taskId, actualId);
+        }
     }
 }
