@@ -76,18 +76,17 @@ public class LabelAggregateTest {
     }
 
     @Nested
-    @DisplayName("CreateBasicLabel command")
+    @DisplayName("CreateBasicLabel command should")
     class CreateBasicLabelCommand {
 
         @Test
-        @DisplayName("produces LabelCreated event")
-        public void producesLabel() {
+        @DisplayName("produce LabelCreated event")
+        public void produceLabel() {
             final CreateBasicLabel createLabelCmd = createLabelInstance(labelId);
             final List<? extends Message> messageList =
                     aggregate.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
 
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, messageList.size());
+            assertEquals(1, messageList.size());
             assertEquals(LabelCreated.class, messageList.get(0)
                                                         .getClass());
 
@@ -99,8 +98,8 @@ public class LabelAggregateTest {
         }
 
         @Test
-        @DisplayName("creates the basic label")
-        public void createsLabel() {
+        @DisplayName("create the basic label")
+        public void createLabel() {
             final CreateBasicLabel createLabelCmd = createLabelInstance(labelId);
             aggregate.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
 
@@ -113,12 +112,12 @@ public class LabelAggregateTest {
     }
 
     @Nested
-    @DisplayName("UpdateLabelDetails command")
+    @DisplayName("UpdateLabelDetails command should")
     class UpdateLabelDetailsCommand {
 
         @Test
-        @DisplayName("produces LabelDetailsUpdated event")
-        public void producesEvent() {
+        @DisplayName("produce LabelDetailsUpdated event")
+        public void produceEvent() {
             final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
             aggregate.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
 
@@ -126,8 +125,7 @@ public class LabelAggregateTest {
             final List<? extends Message> messageList =
                     aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
 
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, messageList.size());
+            assertEquals(1, messageList.size());
             assertEquals(LabelDetailsUpdated.class, messageList.get(0)
                                                                .getClass());
 
@@ -140,8 +138,8 @@ public class LabelAggregateTest {
         }
 
         @Test
-        @DisplayName("updates label details twice")
-        public void updatesLabelDetailsTwice() {
+        @DisplayName("update label details twice")
+        public void updateLabelDetailsTwice() {
             final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
             aggregate.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
 
@@ -174,7 +172,7 @@ public class LabelAggregateTest {
         }
 
         @Test
-        @DisplayName("cannot update label details when label details does not match expected")
+        @DisplayName("produce CannotUpdateLabelDetails failure when label details does not match expected")
         public void cannotUpdateLabelDetails() {
             final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
             aggregate.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
@@ -192,7 +190,7 @@ public class LabelAggregateTest {
                         updateLabelDetailsInstance(labelId, expectedLabelDetails, newLabelDetails);
                 aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
             } catch (Throwable e) {
-                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // We need it for checking.
+                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
                 final Throwable cause = Throwables.getRootCause(e);
                 assertTrue(cause instanceof CannotUpdateLabelDetails);
 
