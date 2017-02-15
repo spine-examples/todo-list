@@ -120,13 +120,6 @@ message CreateBasicTaskFailed {
     FailedTaskCommandDetails failure_details = 1;
 }
 
-// DTO for the failed created basic label command.
-message CreateBasicLabelFailed {
-
-    // Unsuccessful label command.
-    FailedLabelCommandDetails failure_details = 1;
-}
-
 // DTO for the failed assign label to task command.
 message AssignLabelToTaskFailed {
 

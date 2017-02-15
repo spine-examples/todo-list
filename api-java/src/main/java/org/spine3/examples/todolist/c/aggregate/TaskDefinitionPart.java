@@ -55,7 +55,6 @@ import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
 import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
 import org.spine3.examples.todolist.c.events.TaskReopened;
 import org.spine3.examples.todolist.c.failures.CannotCompleteTask;
-import org.spine3.examples.todolist.c.failures.CannotCreateBasicTask;
 import org.spine3.examples.todolist.c.failures.CannotCreateDraft;
 import org.spine3.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
 import org.spine3.examples.todolist.c.failures.CannotDeleteTask;
@@ -120,8 +119,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     }
 
     @Assign
-    List<? extends Message> handle(CreateBasicTask cmd)
-            throws CannotCreateBasicTask, CannotCreateTaskWithInappropriateDescription {
+    List<? extends Message> handle(CreateBasicTask cmd) throws CannotCreateTaskWithInappropriateDescription {
         validateCommand(cmd);
         final TaskId taskId = cmd.getId();
 
@@ -420,8 +418,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
                     .setTaskStatus(TaskStatus.DRAFT);
     }
 
-    private static void validateCommand(CreateBasicTask cmd)
-            throws CannotCreateBasicTask, CannotCreateTaskWithInappropriateDescription {
+    private static void validateCommand(CreateBasicTask cmd) throws CannotCreateTaskWithInappropriateDescription {
         final String description = cmd.getDescription();
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
             final TaskId taskId = cmd.getId();

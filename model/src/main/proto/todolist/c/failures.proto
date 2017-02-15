@@ -32,49 +32,40 @@ import "spine/annotations.proto";
 import "todolist/identifiers.proto";
 import "todolist/values.proto";
 
-// Fire the failure when cannot update task description.
+// Fire the failure when cannot update the task description.
+// Failure fires when task state either DRAFT or COMPLETED.
 message CannotUpdateTaskDescription {
 
     // Failed the description update.
     DescriptionUpdateFailed update_failed = 1;
 }
 
-// Fire the failure when cannot update task priority.
+// Fire the failure when cannot update the task description.
+// Failure fires when task state either DRAFT or COMPLETED.
 message CannotUpdateTaskPriority {
 
     // Failed the priority update.
     PriorityUpdateFailed update_failed = 1;
 }
 
-// Fire the failure when cannot update task due date.
+// Fire the failure when cannot update the task due date.
+// failure fires when task state either DRAFT or COMPLETED.
 message CannotUpdateTaskDueDate {
 
     // Failed the due date update.
     TaskDueDateUpdateFailed update_failed = 1;
 }
 
-// Fire the failure when cannot update label details.
+// Fire the failure when cannot update the label details.
+// Failure fires when the expected label details does not match the actual.
 message CannotUpdateLabelDetails {
 
     // Failed the label details update.
     LabelDetailsUpdateFailed update_failed = 1;
 }
 
-// Fire the failure when cannot create basic task.
-message CannotCreateBasicTask {
-
-    // Failed the task creation.
-    CreateBasicTaskFailed create_task_failed = 1;
-}
-
-// Fire the failure when cannot create basic label.
-message CannotCreateBasicLabel {
-
-    // Failed the label creation.
-    CreateBasicLabelFailed create_label_failed = 1;
-}
-
 // Fire the failure when cannot assign label to task.
+// Failure fires when task state either DRAFT or COMPLETED.
 message CannotAssignLabelToTask {
 
     // Failed the label assigning to the task.
@@ -82,6 +73,7 @@ message CannotAssignLabelToTask {
 }
 
 // Fire the failure when cannot remove label from task.
+// Failure fires when task state either DRAFT or COMPLETED.
 message CannotRemoveLabelFromTask {
 
     // Failed the label removing from task.
@@ -89,6 +81,7 @@ message CannotRemoveLabelFromTask {
 }
 
 // Fire the failure when cannot reopen task.
+// Failure fires when task is not COMPLETED.
 message CannotReopenTask {
 
     // Failed the task reopening.
@@ -96,6 +89,7 @@ message CannotReopenTask {
 }
 
 // Fire the failure when cannot delete task.
+// Failure fires when task either COMPLETED or DELETED.
 message CannotDeleteTask {
 
     // Failed the task deletion.
@@ -103,6 +97,7 @@ message CannotDeleteTask {
 }
 
 // Fire the failure when cannot restore deleted task.
+// Failure fires when task is not DELETED.
 message CannotRestoreDeletedTask {
 
     // Failed the task restoring.
@@ -110,6 +105,7 @@ message CannotRestoreDeletedTask {
 }
 
 // Fire the failure when cannot complete task.
+// Failure fires when task is not FINALIZED.
 message CannotCompleteTask {
 
     // Failed the task completion.
@@ -117,6 +113,7 @@ message CannotCompleteTask {
 }
 
 // Fire the failure when cannot create task draft.
+// Failure fires when task already has state.
 message CannotCreateDraft {
 
     // Failed the draft creation.
@@ -124,6 +121,7 @@ message CannotCreateDraft {
 }
 
 // Fire the failure when cannot finalize task draft.
+// Failure fires when task is not DRAFT.
 message CannotFinalizeDraft {
 
     // Failed the draft finalization.
@@ -131,6 +129,7 @@ message CannotFinalizeDraft {
 }
 
 // Fire the failure when cannot update task with inappropriate description.
+// Failure fires when the task description contains less than three symbols.
 message CannotUpdateTaskWithInappropriateDescription {
 
     // Failed the description update.
@@ -138,7 +137,8 @@ message CannotUpdateTaskWithInappropriateDescription {
 }
 
 // Fire the failure when cannot create task with inapproprriate descriprion.
-message CannotCreateTaskWithInappropriateDescription{
+// Failure fires when the task description contains less the three symbols.
+message CannotCreateTaskWithInappropriateDescription {
 
     // Failed the task creation.
     CreateBasicTaskFailed create_task_failed = 1;
