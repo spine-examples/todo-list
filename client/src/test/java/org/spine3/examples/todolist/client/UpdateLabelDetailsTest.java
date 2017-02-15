@@ -36,16 +36,17 @@ import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
 import org.spine3.examples.todolist.q.projection.LabelColorView;
 import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.q.projection.TaskView;
-import org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory;
+import org.spine3.examples.todolist.testdata.TestLabelCommandFactory;
+import org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.UPDATED_LABEL_TITLE;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assignLabelToTaskInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.LABEL_TITLE;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.updateLabelDetailsInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
+import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.updateLabelDetailsInstance;
 
 /**
  * @author Illia Shepilov
@@ -149,7 +150,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         final TaskId idOfCreatedTask = createTask.getId();
         final LabelId idOfCreatedLabel = createLabel.getLabelId();
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfCreatedTask, idOfCreatedLabel);
+        final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(idOfCreatedTask, idOfCreatedLabel);
         client.assignLabel(assignLabelToTask);
 
         final LabelId idOfUpdatedLabel = isCorrectId ? idOfCreatedLabel : createWrongTaskLabelId();
@@ -159,7 +160,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
                                                               .setTitle(LABEL_TITLE)
                                                               .build();
         final LabelDetails newLabelDetails = LabelDetails.newBuilder()
-                                                         .setTitle(TestTaskLabelCommandFactory.UPDATED_LABEL_TITLE)
+                                                         .setTitle(TestLabelCommandFactory.UPDATED_LABEL_TITLE)
                                                          .setColor(newColor)
                                                          .build();
         final UpdateLabelDetails updateLabelDetails =
@@ -189,7 +190,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         final TaskId taskId = createTask.getId();
         final LabelId labelId = createLabel.getLabelId();
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
 
         final LabelDetails detailsWithCorrectId = LabelDetails.newBuilder()
@@ -227,7 +228,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         final TaskId taskId = createDraft.getId();
         final LabelId labelId = createBasicLabel.getLabelId();
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
 
         final LabelId updatedLabelId = isCorrectId ? labelId : createWrongTaskLabelId();

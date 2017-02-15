@@ -25,6 +25,8 @@ import org.spine3.server.event.enrich.EventEnricher;
 import org.spine3.server.storage.StorageFactory;
 
 /**
+ * Provides the {@link EventBus} instances for the test needs.
+ *
  * @author Illia Shepilov
  */
 public class TestEventBusFactory {
@@ -32,6 +34,13 @@ public class TestEventBusFactory {
     private TestEventBusFactory() {
     }
 
+    /**
+     * Returns a pre-configured {@link EventBus} instance.
+     *
+     * @param storageFactory the {@link StorageFactory} to set
+     * @param eventEnricher  the {@link EventEnricher} to set
+     * @return the {@code EventBus} instance
+     */
     public static EventBus eventBusInstance(StorageFactory storageFactory, EventEnricher eventEnricher) {
         final EventBus result = EventBus.newBuilder()
                                         .setStorageFactory(storageFactory)

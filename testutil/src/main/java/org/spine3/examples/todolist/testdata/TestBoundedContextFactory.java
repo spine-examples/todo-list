@@ -25,7 +25,7 @@ import org.spine3.server.event.EventBus;
 import org.spine3.server.storage.StorageFactorySwitch;
 
 /**
- * Provides bounded context for test needs.
+ * Provides bounded context for the test needs.
  *
  * @author Illia Shepilov
  */
@@ -39,7 +39,7 @@ public class TestBoundedContextFactory {
      * built with the specified {@link EventBus} and {@link StorageFactorySwitch}.
      *
      * @param eventBus {@link EventBus} instance
-     * @return {@link BoundedContext} instance
+     * @return the {@link BoundedContext} instance
      */
     public static BoundedContext boundedContextInstance(EventBus eventBus,
                                                         StorageFactorySwitch storageFactory) {

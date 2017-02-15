@@ -32,6 +32,7 @@ import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.q.projection.TaskView;
+import org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,7 +41,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assignLabelToTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 
 /**
  * @author Illia Shepilov
@@ -80,7 +81,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
             final TaskId taskId = createTask.getId();
             final LabelId labelId = createLabel.getLabelId();
 
-            final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, labelId);
             client.assignLabel(assignLabelToTask);
 
             final int expectedListSize = 1;
@@ -109,10 +110,10 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
             final LabelId secondLabelId = createSecondLabel.getLabelId();
             final TaskId taskId = createTask.getId();
 
-            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, firstLabelId);
+            AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, firstLabelId);
             client.assignLabel(assignLabelToTask);
 
-            assignLabelToTask = assignLabelToTaskInstance(taskId, secondLabelId);
+            assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, secondLabelId);
             client.assignLabel(assignLabelToTask);
 
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
@@ -187,7 +188,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         final TaskId idOfCreatedTask = createTask.getId();
         final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfUpdatedTask, labelId);
+        final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(idOfUpdatedTask, labelId);
         client.assignLabel(assignLabelToTask);
 
         final List<TaskView> taskViews = client.getMyListView()
@@ -208,7 +209,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         final TaskId createTaskId = createDraft.getId();
         final TaskId taskIdToAssign = isCorrectId ? createTaskId : createWrongTaskId();
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskIdToAssign, labelId);
+        final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskIdToAssign, labelId);
         client.assignLabel(assignLabelToTask);
 
         final List<TaskView> taskViews = client.getDraftTasksView()

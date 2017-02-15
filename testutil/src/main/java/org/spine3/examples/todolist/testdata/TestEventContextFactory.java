@@ -37,7 +37,7 @@ import static org.spine3.protobuf.Values.newStringValue;
 import static org.spine3.test.Tests.newUserId;
 
 /**
- * Provides event context instances for test needs.
+ * Provides event context instances for the test needs.
  *
  * @author Illia Shepilov
  */

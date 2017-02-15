@@ -33,7 +33,7 @@ import static org.spine3.test.Tests.newUserId;
 import static org.spine3.time.ZoneOffsets.UTC;
 
 /**
- * Provides command context instances for test needs.
+ * Provides command context instances for the test needs.
  *
  * @author Illia Shepilov
  */
@@ -45,7 +45,7 @@ public class TestCommandContextFactory {
     /**
      * Creates a new {@link CommandContext} instance.
      *
-     * @return {@link CommandContext} instance.
+     * @return the {@link CommandContext} instance.
      */
     public static CommandContext createCommandContext() {
         final UserId userId = newUserId(newUuid());

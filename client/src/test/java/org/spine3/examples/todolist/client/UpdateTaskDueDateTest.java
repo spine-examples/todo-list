@@ -34,13 +34,14 @@ import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
 import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.q.projection.TaskView;
+import org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory;
 import org.spine3.protobuf.Timestamps;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assignLabelToTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 
 /**
@@ -170,7 +171,7 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         final TaskId taskId = createTask.getId();
         final LabelId labelId = createLabel.getLabelId();
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
 
         updateDueDate(newDueDate, isCorrectId, createdTaskId);

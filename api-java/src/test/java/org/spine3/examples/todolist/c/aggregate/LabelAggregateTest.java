@@ -47,10 +47,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.LABEL_TITLE;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.UPDATED_LABEL_TITLE;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.createLabelInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.updateLabelDetailsInstance;
+import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
+import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.UPDATED_LABEL_TITLE;
+import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
+import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.updateLabelDetailsInstance;
 
 /**
  * @author Illia Shepilov

@@ -33,12 +33,13 @@ import org.spine3.examples.todolist.c.commands.FinalizeDraft;
 import org.spine3.examples.todolist.q.projection.DraftTasksView;
 import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.q.projection.TaskView;
+import org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assignLabelToTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.finalizeDraftInstance;
 
 /**
@@ -100,7 +101,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
 
             final TaskId taskId = createDraft.getId();
             final LabelId labelId = createBasicLabel.getLabelId();
-            final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, labelId);
             client.assignLabel(assignLabelToTask);
 
             final FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId);

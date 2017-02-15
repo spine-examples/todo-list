@@ -20,7 +20,6 @@
 
 package org.spine3.examples.todolist.testdata;
 
-import com.google.common.collect.ImmutableList;
 import io.grpc.stub.StreamObserver;
 import org.spine3.base.Response;
 
@@ -29,6 +28,8 @@ import java.util.List;
 import static com.google.common.collect.Lists.newLinkedList;
 
 /**
+ * Provides the {@link StreamObserver} implementation for the test needs.
+ *
  * @author Illia Shepilov
  */
 public class TestResponseObserver implements StreamObserver<Response> {
@@ -50,10 +51,6 @@ public class TestResponseObserver implements StreamObserver<Response> {
     @Override
     public void onCompleted() {
         this.completed = true;
-    }
-
-    List<Response> getResponses() {
-        return ImmutableList.copyOf(responses);
     }
 
     Throwable getThrowable() {

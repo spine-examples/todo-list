@@ -33,6 +33,7 @@ import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
 import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.q.projection.TaskView;
+import org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory;
 
 import java.util.List;
 
@@ -40,8 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.assignLabelToTaskInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.removeLabelFromTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.removeLabelFromTaskInstance;
 
 /**
  * @author Illia Shepilov
@@ -71,10 +72,10 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
             final TaskId taskId = createTask.getId();
             final LabelId labelId = createLabel.getLabelId();
 
-            final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, labelId);
             client.assignLabel(assignLabelToTask);
 
-            final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId, labelId);
+            final RemoveLabelFromTask removeLabelFromTask = TestTaskLabelsCommandFactory.removeLabelFromTaskInstance(taskId, labelId);
             client.removeLabel(removeLabelFromTask);
 
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
@@ -95,10 +96,10 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
             final TaskId taskId = createTask.getId();
             final LabelId labelId = createLabel.getLabelId();
 
-            final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, labelId);
             client.assignLabel(assignLabelToTask);
 
-            final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId, createWrongTaskLabelId());
+            final RemoveLabelFromTask removeLabelFromTask = TestTaskLabelsCommandFactory.removeLabelFromTaskInstance(taskId, createWrongTaskLabelId());
             client.removeLabel(removeLabelFromTask);
 
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
@@ -193,11 +194,11 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
     }
 
     private void assignAndRemoveLabel(LabelId labelId, boolean isCorrectId, TaskId taskId) {
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
 
         final TaskId idOfUpdatedTask = isCorrectId ? taskId : createWrongTaskId();
-        final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(idOfUpdatedTask, labelId);
+        final RemoveLabelFromTask removeLabelFromTask = TestTaskLabelsCommandFactory.removeLabelFromTaskInstance(idOfUpdatedTask, labelId);
         client.removeLabel(removeLabelFromTask);
     }
 

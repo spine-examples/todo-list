@@ -47,21 +47,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.DESCRIPTION;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.LABEL_ID;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.TASK_ID;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.TASK_PRIORITY;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.UPDATED_DESCRIPTION;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.labelAssignedToTaskInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.labelDetailsUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskCompletedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskCreatedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDeletedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDescriptionUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskDueDateUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskPriorityUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestEventFactory.taskReopenedInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelCommandFactory.UPDATED_LABEL_TITLE;
+import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.UPDATED_LABEL_TITLE;
+import static org.spine3.examples.todolist.testdata.TestLabelEventFactory.labelDetailsUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.DESCRIPTION;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.LABEL_ID;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.TASK_ID;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.TASK_PRIORITY;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UPDATED_DESCRIPTION;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEventFactory.taskDescriptionUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEventFactory.taskDueDateUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEventFactory.taskPriorityUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskCompletedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskCreatedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskDeletedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskReopenedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelAssignedToTaskInstance;
 
 /**
  * @author Illia Shepilov
@@ -185,7 +185,8 @@ public class MyListViewProjectionTest extends ProjectionTest {
             final Timestamp updatedDueDate = Timestamps.getCurrentTime();
             final TaskId expectedTaskId = taskCreatedEvent.getId();
 
-            final TaskDueDateUpdated taskDueDateUpdatedEvent = taskDueDateUpdatedInstance(expectedTaskId, updatedDueDate);
+            final TaskDueDateUpdated taskDueDateUpdatedEvent =
+                    taskDueDateUpdatedInstance(expectedTaskId, updatedDueDate);
             projection.on(taskDueDateUpdatedEvent);
 
             final TaskListView taskListView = projection.getState()

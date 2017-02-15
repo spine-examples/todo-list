@@ -26,16 +26,15 @@ import org.spine3.examples.todolist.LabelDetailsChange;
 import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
-import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
 
 import static org.spine3.base.Identifiers.newUuid;
 
 /**
- * A factory of the task label commands for the test needs.
+ * A factory of the label commands for the test needs.
  *
  * @author Illia Shepilov
  */
-public class TestTaskLabelCommandFactory {
+public class TestLabelCommandFactory {
 
     public static final String LABEL_TITLE = "label title";
     public static final String UPDATED_LABEL_TITLE = "updated label title";
@@ -43,13 +42,13 @@ public class TestTaskLabelCommandFactory {
                                                   .setValue(newUuid())
                                                   .build();
 
-    private TestTaskLabelCommandFactory() {
+    private TestLabelCommandFactory() {
     }
 
     /**
-     * Provides default {@link CreateBasicLabel} event instance.
+     * Provides the {@link CreateBasicLabel} event instance by specified label ID.
      *
-     * @return {@link CreateBasicLabel} instance
+     * @return the {@link CreateBasicLabel} instance
      */
     public static CreateBasicLabel createLabelInstance() {
         final CreateBasicLabel result = createLabelInstance(LABEL_ID);
@@ -57,9 +56,9 @@ public class TestTaskLabelCommandFactory {
     }
 
     /**
-     * Provides default {@link CreateBasicLabel} event instance.
+     * Provides a pre-configured {@link CreateBasicLabel} event instance.
      *
-     * @return {@link CreateBasicLabel} instance
+     * @return the {@link CreateBasicLabel} instance
      */
     public static CreateBasicLabel createLabelInstance(LabelId labelId) {
         final CreateBasicLabel result = CreateBasicLabel.newBuilder()
@@ -72,7 +71,7 @@ public class TestTaskLabelCommandFactory {
     /**
      * Provides a pre-configured {@link UpdateLabelDetails} command instance.
      *
-     * @return {@link UpdateLabelDetails} instance.
+     * @return the {@link UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelId labelId) {
         final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
@@ -89,7 +88,7 @@ public class TestTaskLabelCommandFactory {
     /**
      * Provides a pre-configured {@link UpdateLabelDetails} command instance.
      *
-     * @return {@link UpdateLabelDetails} instance.
+     * @return the {@link UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance() {
         final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
@@ -104,11 +103,11 @@ public class TestTaskLabelCommandFactory {
     }
 
     /**
-     * Provides {@link UpdateLabelDetails} event by specified label color and title.
+     * Provides the {@link UpdateLabelDetails} event by specified label color and title.
      *
      * @param previousLabelDetails the previous label details
      * @param newLabelDetails      the new label details
-     * @return {@link UpdateLabelDetails} instance.
+     * @return the {@link UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelId id,
                                                                 LabelDetails previousLabelDetails,
@@ -122,14 +121,5 @@ public class TestTaskLabelCommandFactory {
                                                             .setLabelDetailsChange(labelDetailsChange)
                                                             .build();
         return result;
-    }
-
-    /**
-     * Provides default {@link LabelRemovedFromTask} event instance.
-     *
-     * @return {@link LabelRemovedFromTask} instance
-     */
-    public static LabelRemovedFromTask labelRemovedFromTaskInstance() {
-        return LabelRemovedFromTask.getDefaultInstance();
     }
 }
