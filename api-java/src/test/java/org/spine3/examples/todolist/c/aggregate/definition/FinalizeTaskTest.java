@@ -62,7 +62,7 @@ public class FinalizeTaskTest extends TaskDefinitionCommandTest<FinalizeDraft> {
     }
 
     @Test
-    @DisplayName("finalize task")
+    @DisplayName("finalize the task")
     public void finalizeTask() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);
@@ -81,7 +81,7 @@ public class FinalizeTaskTest extends TaskDefinitionCommandTest<FinalizeDraft> {
     }
 
     @Test
-    @DisplayName("throw CannotFinalizeDraft failure when try to finalize deleted task")
+    @DisplayName("throw CannotFinalizeDraft failure when try to finalize the deleted task")
     public void cannotFinalizeDeletedTask() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         aggregate.dispatchForTest(createTaskCmd, commandContext);
@@ -100,7 +100,7 @@ public class FinalizeTaskTest extends TaskDefinitionCommandTest<FinalizeDraft> {
     }
 
     @Test
-    @DisplayName("throw CannotFinalizeDraft failure when try to finalize task which is not draft")
+    @DisplayName("throw CannotFinalizeDraft failure when try to finalize the task which is not a draft")
     public void cannotFinalizeNotDraftTask() {
         try {
             final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);

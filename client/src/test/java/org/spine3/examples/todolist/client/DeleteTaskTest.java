@@ -78,8 +78,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
             client.delete(deleteTask);
 
             final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, labelledTasksView.size());
+            assertEquals(1, labelledTasksView.size());
 
             final List<TaskView> taskViews = labelledTasksView.get(0)
                                                               .getLabelledTasks()
@@ -150,8 +149,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
             final List<TaskView> taskViews = client.getDraftTasksView()
                                                    .getDraftTasks()
                                                    .getItemsList();
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, taskViews.size());
+            assertEquals(1, taskViews.size());
 
             final TaskView view = taskViews.get(0);
             assertEquals(taskId, view.getId());
@@ -180,12 +178,9 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
 
             final TaskId idOfCreatedTask = createTask.getId();
             final List<TaskView> taskViews = obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, false);
-
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, taskViews.size());
+            assertEquals(1, taskViews.size());
 
             final TaskView view = taskViews.get(0);
-
             final TaskId taskId = createTask.getId();
             assertEquals(taskId, view.getId());
         }

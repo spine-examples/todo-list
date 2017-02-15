@@ -29,27 +29,6 @@ import static org.spine3.base.Identifiers.newUuid;
  */
 abstract class ProjectionTest {
 
-    static final String DOES_NOT_UPDATE_TASK_DUE_DATE = "does not update task due date";
-    static final String TASK_COMPLETED_EVENT = "TaskCompleted event";
-    static final String TASK_REOPENED_EVENT = "TaskReopened event";
-    static final String UPDATES_LABEL_DETAILS = "updates label details";
-    static final String DOES_NOT_UPDATE_LABEL_DETAILS = "does not update label details";
-    static final String LABEL_REMOVED_FROM_TASK_EVENT = "LabelRemovedFromTask event";
-    static final String LABEL_DETAILS_UPDATED_EVENT = "LabelDetailsUpdated event";
-    static final String TASK_PRIORITY_UPDATED_EVENT = "TaskPriorityUpdated event";
-    static final String TASK_DUE_DATE_UPDATED_EVENT = "TaskDueDateUpdated event";
-    static final String TASK_DESCRIPTION_UPDATED_EVENT = "TaskDescriptionUpdated event";
-    static final String TASK_DELETED_EVENT = "TaskDeleted event";
-    static final String REMOVES_TASK_VIEW_FROM_STATE = "removes TaskView form state";
-    static final String ADDS_TASK_VIEW_TO_STATE = "adds TaskView to state";
-    static final String UPDATES_TASK_DUE_DATE = "updates task due date";
-    static final String UPDATES_TASK_DESCRIPTION = "updates task description";
-    static final String UPDATES_TASK_PRIORITY = "updates the task priority";
-    static final String DOES_NOT_UPDATE_TASK_PRIORITY_BY_WRONG_TASK_ID =
-            "does not update the task priority by wrong task ID";
-    static final String DOES_NOT_UPDATE_TASK_DESCRIPTION_BY_WRONG_TASK_ID =
-            "does not update task description by wrong task ID";
-
     TaskListId createTaskListId() {
         final TaskListId taskListId = TaskListId.newBuilder()
                                                 .setValue(newUuid())

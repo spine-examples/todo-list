@@ -71,7 +71,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDueDate failure when try to update due date for the completed task")
+    @DisplayName("throw CannotUpdateTaskDueDate failure when try to update the due date for the completed task")
     public void cannotUpdateCompletedTaskDueDate() {
         dispatchCreateTaskCmd();
 
@@ -89,7 +89,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDueDate failure when try to update due date for the deleted task")
+    @DisplayName("throw CannotUpdateTaskDueDate failure when try to update the due date for the deleted task")
     public void cannotUpdateDeletedTaskDueDate() {
         dispatchCreateTaskCmd();
 
@@ -125,7 +125,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     }
 
     @Test
-    @DisplayName("update task due date")
+    @DisplayName("update the task due date")
     public void updateDueDate() {
         final Timestamp updatedDueDate = Timestamps.getCurrentTime();
         dispatchCreateTaskCmd();

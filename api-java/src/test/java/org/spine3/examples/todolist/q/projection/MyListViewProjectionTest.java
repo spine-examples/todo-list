@@ -77,36 +77,33 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskCreated event")
+    @DisplayName("TaskCreated event should")
     class TaskCreatedEvent {
 
         @Test
-        @DisplayName(ADDS_TASK_VIEW_TO_STATE)
-        public void addsView() {
+        @DisplayName("add TaskView to MyListView")
+        public void addView() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            final int expectedSize = 1;
             projection.on(taskCreatedEvent);
 
             final List<TaskView> views = projection.getState()
                                                    .getMyList()
                                                    .getItemsList();
-
-            assertEquals(expectedSize, views.size());
+            assertEquals(1, views.size());
 
             final TaskView view = views.get(0);
-
             assertEquals(TASK_PRIORITY, view.getPriority());
             assertEquals(DESCRIPTION, view.getDescription());
         }
     }
 
     @Nested
-    @DisplayName(TASK_DELETED_EVENT)
+    @DisplayName("TaskDeleted event should")
     class TaskDeletedEvent {
 
         @Test
-        @DisplayName(REMOVES_TASK_VIEW_FROM_STATE)
-        public void removesView() {
+        @DisplayName("remove TaskView form MyListView")
+        public void removeView() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
             projection.on(taskCreatedEvent);
@@ -117,8 +114,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
             List<TaskView> views = projection.getState()
                                              .getMyList()
                                              .getItemsList();
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, views.size());
+            assertEquals(1, views.size());
 
             projection.on(taskDeletedEvent);
             views = projection.getState()
@@ -129,12 +125,12 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(TASK_DESCRIPTION_UPDATED_EVENT)
+    @DisplayName("TaskDescriptionUpdated event should")
     class TaskDescriptionUpdatedEvent {
 
         @Test
-        @DisplayName(UPDATES_TASK_DESCRIPTION)
-        public void updatesDescription() {
+        @DisplayName("update the task description in MyListView")
+        public void updateDescription() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -145,9 +141,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
-
-            final int expectedViewSize = 1;
-            assertEquals(expectedViewSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView view = taskListView.getItemsList()
                                               .get(0);
@@ -156,8 +150,8 @@ public class MyListViewProjectionTest extends ProjectionTest {
         }
 
         @Test
-        @DisplayName(DOES_NOT_UPDATE_TASK_DESCRIPTION_BY_WRONG_TASK_ID)
-        public void doesNotUpdateDescription() {
+        @DisplayName("not update the task description in MyListView by wrong task ID")
+        public void notUpdateDescription() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -169,8 +163,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView view = taskListView.getItemsList()
                                               .get(0);
@@ -180,12 +173,12 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(TASK_DUE_DATE_UPDATED_EVENT)
+    @DisplayName("TaskDueDateUpdated event should")
     class TaskDueDateUpdatedEvent {
 
         @Test
-        @DisplayName(UPDATES_TASK_DUE_DATE)
-        public void updatesDueDate() {
+        @DisplayName("update the task due date on MyListView")
+        public void updateDueDate() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -197,8 +190,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView taskView = taskListView.getItemsList()
                                                   .get(0);
@@ -207,7 +199,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
         }
 
         @Test
-        @DisplayName(DOES_NOT_UPDATE_TASK_DUE_DATE)
+        @DisplayName("not update the task due date in MyListView by wrong task ID")
         public void doeNotUpdateDueDate() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -220,8 +212,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView taskView = taskListView.getItemsList()
                                                   .get(0);
@@ -230,12 +221,12 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(TASK_PRIORITY_UPDATED_EVENT)
+    @DisplayName("TaskPriorityUpdated event should")
     class TaskPriorityUpdatedEvent {
 
         @Test
-        @DisplayName(UPDATES_TASK_PRIORITY)
-        public void updatesPriority() {
+        @DisplayName("update the task priority in MyListView")
+        public void updatePriority() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -248,8 +239,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView taskView = taskListView.getItemsList()
                                                   .get(0);
@@ -258,8 +248,8 @@ public class MyListViewProjectionTest extends ProjectionTest {
         }
 
         @Test
-        @DisplayName(DOES_NOT_UPDATE_TASK_PRIORITY_BY_WRONG_TASK_ID)
-        public void doesNotUpdatePriority() {
+        @DisplayName("not update the task priority in MyListView by wrong task ID")
+        public void notUpdatePriority() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -271,8 +261,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView taskView = taskListView.getItemsList()
                                                   .get(0);
@@ -282,12 +271,12 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(LABEL_DETAILS_UPDATED_EVENT)
+    @DisplayName("LabelDetailsUpdated event should")
     class LabelDetailsUpdatedEvent {
 
         @Test
-        @DisplayName(UPDATES_LABEL_DETAILS)
-        public void updatesLabelDetails() {
+        @DisplayName("update the label details in MyListView")
+        public void updateLabelDetails() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -304,8 +293,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView taskView = taskListView.getItemsList()
                                                   .get(0);
@@ -314,7 +302,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
         }
 
         @Test
-        @DisplayName(DOES_NOT_UPDATE_LABEL_DETAILS)
+        @DisplayName("not update the label details in MyListView by wrong label ID")
         public void doesNotUpdateLabelDetails() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -344,12 +332,12 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(TASK_COMPLETED_EVENT)
+    @DisplayName("TaskCompleted event should")
     class TaskCompletedEvent {
 
         @Test
-        @DisplayName("completes task")
-        public void completesTask() {
+        @DisplayName("set `completed` to `true` in MyListView")
+        public void completeTask() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -368,7 +356,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
         }
 
         @Test
-        @DisplayName("does not complete task by wrong task ID")
+        @DisplayName("not set `completed` to `true` in MyListView by wrong task ID")
         public void doesNotComplete() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
@@ -389,12 +377,12 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(TASK_REOPENED_EVENT)
+    @DisplayName("TaskReopened event should")
     class TaskReopenedEvent {
 
         @Test
-        @DisplayName("reopens task")
-        public void reopensTask() {
+        @DisplayName("set `completed` to `false` in MyListView")
+        public void reopenTask() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -416,8 +404,8 @@ public class MyListViewProjectionTest extends ProjectionTest {
         }
 
         @Test
-        @DisplayName("does not reopen task by wrong task ID")
-        public void doesNotReopenTask() {
+        @DisplayName("not set `completed` to `true` by wrong task ID")
+        public void notReopenTask() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 

@@ -82,21 +82,19 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskDraftCreated event")
+    @DisplayName("TaskDraftCreated event should")
     class TaskDraftCreatedEvent {
 
         @Test
-        @DisplayName(ADDS_TASK_VIEW_TO_STATE)
-        public void addsView() {
+        @DisplayName("add TaskView to DraftTasksView")
+        public void addView() {
             taskDraftCreated();
 
             final TaskListView listView = projection.getState()
                                                     .getDraftTasks();
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, listView.getItemsCount());
+            assertEquals(1, listView.getItemsCount());
 
             final TaskView taskView = listView.getItems(0);
-
             assertEquals(TASK_ID, taskView.getId());
             assertEquals(DESCRIPTION, taskView.getDescription());
             assertEquals(TASK_PRIORITY, taskView.getPriority());
@@ -104,12 +102,12 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskDraftFinalized event")
+    @DisplayName("TaskDraftFinalized event should")
     class TaskDraftFinalizedEvent {
 
         @Test
-        @DisplayName(REMOVES_TASK_VIEW_FROM_STATE)
-        public void removesView() {
+        @DisplayName("remove TaskView form DraftTasksView")
+        public void removeView() {
             taskDraftCreated();
 
             final TaskDraftFinalized taskDraftFinalizedEvent = taskDraftFinalizedInstance();
@@ -123,12 +121,12 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(TASK_DELETED_EVENT)
+    @DisplayName("TaskDeleted event should")
     class TaskDeletedEvent {
 
         @Test
-        @DisplayName(REMOVES_TASK_VIEW_FROM_STATE)
-        public void removesView() {
+        @DisplayName("remove TaskView form DraftTasksView")
+        public void removeView() {
             taskDraftCreated();
 
             final TaskDeleted taskDeletedEvent = taskDeletedInstance();
@@ -142,12 +140,12 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(TASK_DESCRIPTION_UPDATED_EVENT)
+    @DisplayName("TaskDescriptionUpdated event should")
     class TaskDescriptionUpdatedEvent {
 
         @Test
-        @DisplayName(UPDATES_TASK_DESCRIPTION)
-        public void updatesDescription() {
+        @DisplayName("update the task description in DraftTaskView")
+        public void updateDescription() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
             projection.on(taskDraftCreatedEvent);
 
@@ -158,8 +156,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
-            final int expectedViewSize = 1;
-            assertEquals(expectedViewSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView view = taskListView.getItemsList()
                                               .get(0);
@@ -168,8 +165,8 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
         }
 
         @Test
-        @DisplayName(DOES_NOT_UPDATE_TASK_DESCRIPTION_BY_WRONG_TASK_ID)
-        public void doesNotUpdateDescription() {
+        @DisplayName("not update the task description by wrong task ID")
+        public void notUpdateDescription() {
             taskDraftCreated();
 
             final String updatedDescription = UPDATED_DESCRIPTION;
@@ -180,8 +177,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView view = taskListView.getItemsList()
                                               .get(0);
@@ -191,12 +187,12 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(TASK_DUE_DATE_UPDATED_EVENT)
+    @DisplayName("TaskDueDateUpdated event should")
     class DueDateUpdatedEvent {
 
         @Test
-        @DisplayName(UPDATES_TASK_DUE_DATE)
-        public void updatesDueDate() {
+        @DisplayName("update the task due date in DraftTaskView")
+        public void updateDueDate() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
             projection.on(taskDraftCreatedEvent);
 
@@ -208,8 +204,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView taskView = taskListView.getItemsList()
                                                   .get(0);
@@ -218,8 +213,8 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
         }
 
         @Test
-        @DisplayName("does not update task due date by wrong task ID")
-        public void doesNotUpdate() {
+        @DisplayName("not update the task due date by wrong task ID")
+        public void notUpdate() {
             taskDraftCreated();
 
             final Timestamp updatedDueDate = Timestamps.getCurrentTime();
@@ -230,8 +225,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView taskView = taskListView.getItemsList()
                                                   .get(0);
@@ -241,11 +235,11 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(TASK_PRIORITY_UPDATED_EVENT)
+    @DisplayName("TaskPriorityUpdated event should")
     class TaskPriorityUpdatedEvent {
 
         @Test
-        @DisplayName(UPDATES_TASK_PRIORITY)
+        @DisplayName("update the task priority in DraftTasksView")
         public void updatesPriority() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
             projection.on(taskDraftCreatedEvent);
@@ -259,8 +253,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView taskView = taskListView.getItemsList()
                                                   .get(0);
@@ -269,8 +262,8 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
         }
 
         @Test
-        @DisplayName(DOES_NOT_UPDATE_TASK_PRIORITY_BY_WRONG_TASK_ID)
-        public void doesNotUpdatePriority() {
+        @DisplayName("not update the task priority by wrong task ID")
+        public void notUpdatePriority() {
             taskDraftCreated();
 
             final TaskPriority updatedTaskPriority = TaskPriority.LOW;
@@ -281,8 +274,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView taskView = taskListView.getItemsList()
                                                   .get(0);
@@ -292,12 +284,12 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(LABEL_DETAILS_UPDATED_EVENT)
+    @DisplayName("LabelDetailsUpdated event should")
     class LabelDetailsUpdatedEvent {
 
         @Test
-        @DisplayName(UPDATES_LABEL_DETAILS)
-        public void updatesLabelDetails() {
+        @DisplayName("update the label details in DraftTasksView")
+        public void updateLabelDetails() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
             projection.on(taskDraftCreatedEvent);
 
@@ -314,8 +306,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView taskView = taskListView.getItemsList()
                                                   .get(0);
@@ -324,7 +315,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
         }
 
         @Test
-        @DisplayName(DOES_NOT_UPDATE_LABEL_DETAILS)
+        @DisplayName("not update label details in DraftTasksView by wrong label id")
         public void doesNotUpdateLabelDetails() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
             projection.on(taskDraftCreatedEvent);
@@ -343,8 +334,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView taskView = taskListView.getItemsList()
                                                   .get(0);
@@ -354,12 +344,12 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(LABEL_REMOVED_FROM_TASK_EVENT)
+    @DisplayName("LabelRemovedFromTask event should")
     class LabelRemovedFromTaskEvent {
 
         @Test
-        @DisplayName(REMOVES_TASK_VIEW_FROM_STATE)
-        public void removesView() {
+        @DisplayName("remove TaskView form DraftTasksView")
+        public void removeView() {
             taskDraftCreated();
 
             final LabelAssignedToTask labelAssignedToTaskEvent = labelAssignedToTaskInstance();
@@ -370,8 +360,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
-            final int expectedViewListSize = 1;
-            assertEquals(expectedViewListSize, taskListView.getItemsCount());
+            assertEquals(1, taskListView.getItemsCount());
 
             final TaskView taskView = taskListView.getItemsList()
                                                   .get(0);

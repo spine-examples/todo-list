@@ -62,14 +62,14 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
     class UpdateTaskDescriptionInLabelledTasksView {
 
         @Test
-        @DisplayName("contain task view with updated task description")
+        @DisplayName("contain the task view with updated task description")
         public void containUpdatedView() {
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, true);
             assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
         }
 
         @Test
-        @DisplayName("contain task view with not updated task description when command has wrong ID")
+        @DisplayName("contain the task view with not updated task description when command has wrong ID")
         public void containNotUpdatedView() {
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, false);
             final String actualDescription = view.getDescription();
@@ -83,14 +83,14 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
     class UpdateTaskDescriptionInDraftTasksView {
 
         @Test
-        @DisplayName("contain task view with not updated task description when command has wrong ID")
+        @DisplayName("contain the task view with not updated task description when command has wrong ID")
         public void containNotUpdatedView() {
             final TaskView view = obtainViewWhenHandledUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, false);
             assertNotEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
         }
 
         @Test
-        @DisplayName("contain task view with updated task description")
+        @DisplayName("contain the task view with updated task description")
         public void containUpdatedView() {
             final TaskView view = obtainViewWhenHandledUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, true);
             assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
@@ -102,7 +102,7 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
     class UpdateTaskDescriptionInMyListView {
 
         @Test
-        @DisplayName("contain task view with updated task description")
+        @DisplayName("contain the task view with updated task description")
         public void containUpdatedView() {
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(UPDATED_TASK_DESCRIPTION, true);
             final String actualDescription = view.getDescription();
@@ -110,7 +110,7 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view with not updated task description when command has wrong ID")
+        @DisplayName("contain the task view with not updated task description when command has wrong ID")
         public void containNotUpdatedView() {
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(UPDATED_TASK_DESCRIPTION, false);
             final String actualDescription = view.getDescription();
@@ -128,8 +128,7 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = client.getMyListView()
                                                     .getMyList()
                                                     .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
+        assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);
         assertEquals(createTask.getId(), view.getId());
@@ -153,10 +152,9 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
        updateDescription(newDescription, isCorrectId, createTask);
 
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, tasksViewList.get(0)
-                                                    .getLabelledTasks()
-                                                    .getItemsCount());
+        assertEquals(1, tasksViewList.get(0)
+                                     .getLabelledTasks()
+                                     .getItemsCount());
         final TaskView view = tasksViewList.get(0)
                                            .getLabelledTasks()
                                            .getItems(0);
@@ -181,8 +179,7 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = client.getDraftTasksView()
                                                     .getDraftTasks()
                                                     .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
+        assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);
         assertEquals(createdTaskId, view.getId());

@@ -70,7 +70,7 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
     }
 
     @Test
-    @DisplayName("create draft")
+    @DisplayName("create the draft")
     public void createDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);

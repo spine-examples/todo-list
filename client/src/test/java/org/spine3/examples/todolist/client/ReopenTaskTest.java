@@ -63,15 +63,14 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
     class ReopenTaskFromLabelledTasksView {
 
         @Test
-        @DisplayName("contain task view with uncompleted task")
+        @DisplayName("contain the task view with uncompleted task")
         public void containViewWithUncompletedTask() {
             final TaskView view = obtainViewWhenHandledCommandReopenTask(true);
             assertFalse(view.getCompleted());
         }
 
         @Test
-        @DisplayName("contain task view with completed task " +
-                "when command has wrong ID")
+        @DisplayName("contain the task view with completed task when command has wrong ID")
         public void containViewWithCompletedTask() {
             final TaskView view = obtainViewWhenHandledCommandReopenTask(false);
             assertTrue(view.getCompleted());
@@ -83,15 +82,14 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
     class ReopenTaskFromMyListView {
 
         @Test
-        @DisplayName("contain task view with uncompleted task")
+        @DisplayName("contain the task view with uncompleted task")
         public void containViewWithUncompletedTask() {
             final TaskView view = obtainTaskViewWhenHandledReopenTask(true);
             assertFalse(view.getCompleted());
         }
 
         @Test
-        @DisplayName("contain task view with completed task " +
-                "when command has wrong ID")
+        @DisplayName("contain the task view with completed task when command has wrong ID")
         public void containViewWithCompletedTask() {
             final TaskView view = obtainTaskViewWhenHandledReopenTask(false);
             assertTrue(view.getCompleted());
@@ -114,8 +112,7 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
         completeAndReopenTask(isCorrectId, createdTaskId);
 
         final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, labelledTasksView.size());
+        assertEquals(1, labelledTasksView.size());
 
         final List<TaskView> taskViews = labelledTasksView.get(0)
                                                           .getLabelledTasks()

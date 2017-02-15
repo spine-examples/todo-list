@@ -62,7 +62,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
     class AssignLabelToTaskToLabelledTasksView {
 
         @Test
-        @DisplayName("contain empty TaskView list")
+        @DisplayName("contain the empty TaskView list")
         public void obtainEmptyView() {
             createTask();
             createLabel();
@@ -72,7 +72,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view with label")
+        @DisplayName("contain TaskView with label")
         public void obtainViewsWithLabel() {
             final CreateBasicTask createTask = createTask();
             final CreateBasicLabel createLabel = createLabel();
@@ -99,7 +99,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain two task views with labels")
+        @DisplayName("contain two task view with labels")
         public void obtainViewsWithLabels() {
             final CreateBasicTask createTask = createTask();
             final CreateBasicLabel createLabel = createLabel();
@@ -134,7 +134,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
     class AssignLabelToTaskToDraftTaskView {
 
         @Test
-        @DisplayName("contain task view without label when command has wrong task ID")
+        @DisplayName("contain the task view without label when command has wrong task ID")
         public void obtainDraftViewWithoutLabels() {
             final CreateBasicLabel createBasicLabel = createLabel();
             final LabelId labelId = createBasicLabel.getLabelId();
@@ -193,8 +193,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = client.getMyListView()
                                                .getMyList()
                                                .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
+        assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);
         assertEquals(idOfCreatedTask, view.getId());
@@ -215,8 +214,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = client.getDraftTasksView()
                                                .getDraftTasks()
                                                .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
+        assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);
         assertEquals(createTaskId, view.getId());

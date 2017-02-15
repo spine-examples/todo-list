@@ -80,8 +80,6 @@ import static org.spine3.examples.todolist.testdata.TestEventFactory.taskReopene
 @SuppressWarnings("OptionalGetWithoutIsPresent") // it is OK as object creation is controlled during the test.
 public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
-    private static final String UPDATES_TASK_VIEW_COMPLETED_FLAG_TO_TRUE = "updates TaskView completed flag to true";
-    private static final String UPDATES_TASK_VIEW_COMPLETED_FLAG_TO_FALSE = "updates TaskView completed flag to false";
     private final EventContext eventContext = eventContextInstance();
     private ProjectionRepository<LabelId, LabelledTasksViewProjection, LabelledTasksView> repository;
     private EventBus eventBus;
@@ -99,11 +97,11 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("LabelAssignedToTask event")
+    @DisplayName("LabelAssignedToTask event should")
     class LabelAssignedToTaskEvent {
 
         @Test
-        @DisplayName(ADDS_TASK_VIEW_TO_STATE)
+        @DisplayName("add TaskView to LabelledTasksView")
         public void addView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
@@ -148,12 +146,12 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(LABEL_REMOVED_FROM_TASK_EVENT)
+    @DisplayName("LabelRemovedFromTask event should")
     class LabelRemovedFromTaskEvent {
 
         @Test
-        @DisplayName(REMOVES_TASK_VIEW_FROM_STATE)
-        public void removesView() {
+        @DisplayName("remove TaskView form LabelledTasksView")
+        public void removeView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
@@ -181,12 +179,12 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("LabelledTaskRestored event")
+    @DisplayName("LabelledTaskRestored event should")
     class LabelledTaskRestoredEvent {
 
         @Test
-        @DisplayName(ADDS_TASK_VIEW_TO_STATE)
-        public void addsView() {
+        @DisplayName("add TaskView to LabelledTasksView")
+        public void addView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
@@ -234,11 +232,11 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(TASK_DELETED_EVENT)
+    @DisplayName("TaskDeleted event should")
     class TaskDeletedEvent {
 
         @Test
-        @DisplayName(REMOVES_TASK_VIEW_FROM_STATE)
+        @DisplayName("remove TaskView form LabelledTasksView")
         public void removesView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
@@ -281,12 +279,12 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName(TASK_DESCRIPTION_UPDATED_EVENT)
+    @DisplayName("TaskDescriptionUpdated event should")
     class UpdateTaskDescriptionEvent {
 
         @Test
-        @DisplayName(UPDATES_TASK_DESCRIPTION)
-        public void updatesDescription() {
+        @DisplayName("update the task description in LabelledTasksView")
+        public void updateDescription() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
@@ -302,17 +300,15 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
             final TaskListView listView = labelledTasksView.getLabelledTasks();
             final int actualListSize = listView.getItemsCount();
-
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, actualListSize);
+            assertEquals(1, actualListSize);
 
             final TaskView taskView = listView.getItems(0);
             assertEquals(UPDATED_DESCRIPTION, taskView.getDescription());
         }
 
         @Test
-        @DisplayName(DOES_NOT_UPDATE_TASK_DESCRIPTION_BY_WRONG_TASK_ID)
-        public void doesNotUpdateDescription() {
+        @DisplayName("not update the task description in LabelledTasksView by wrong task ID")
+        public void notUpdateDescription() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
@@ -328,24 +324,21 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             matchesExpectedValues(labelledTasksView);
             final TaskListView listView = labelledTasksView.getLabelledTasks();
             int actualListSize = listView.getItemsCount();
-
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, actualListSize);
+            assertEquals(1, actualListSize);
 
             final TaskView taskView = listView.getItems(0);
-
             assertNotEquals(UPDATED_DESCRIPTION, taskView.getDescription());
         }
 
     }
 
     @Nested
-    @DisplayName(TASK_PRIORITY_UPDATED_EVENT)
+    @DisplayName("TaskPriorityUpdated event should")
     class TaskPriorityUpdatedEvent {
 
         @Test
-        @DisplayName(UPDATES_TASK_PRIORITY)
-        public void updatesPriority() {
+        @DisplayName("update the task priority in LabelledTasksView")
+        public void updatePriority() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
@@ -360,18 +353,15 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             matchesExpectedValues(labelledTasksView);
             final TaskListView listView = labelledTasksView.getLabelledTasks();
             final int actualListSize = listView.getItemsCount();
-
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, actualListSize);
+            assertEquals(1, actualListSize);
 
             final TaskView taskView = listView.getItems(0);
-
             assertEquals(UPDATED_TASK_PRIORITY, taskView.getPriority());
         }
 
         @Test
-        @DisplayName(DOES_NOT_UPDATE_TASK_PRIORITY_BY_WRONG_TASK_ID)
-        public void doesNotUpdatePriority() {
+        @DisplayName("not update the task priority in LabelledTasksView by wrong task ID")
+        public void notUpdatePriority() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
@@ -387,23 +377,20 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             matchesExpectedValues(labelledTasksView);
             final TaskListView listView = labelledTasksView.getLabelledTasks();
             final int actualListSize = listView.getItemsCount();
-
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, actualListSize);
+            assertEquals(1, actualListSize);
 
             final TaskView taskView = listView.getItems(0);
-
             assertNotEquals(UPDATED_TASK_PRIORITY, taskView.getPriority());
         }
     }
 
     @Nested
-    @DisplayName(TASK_DUE_DATE_UPDATED_EVENT)
+    @DisplayName("TaskDueDateUpdated event should")
     class TaskDueDateUpdatedEvent {
 
         @Test
-        @DisplayName(UPDATES_TASK_DUE_DATE)
-        public void updatesDueDate() {
+        @DisplayName("update the task due date in LabelledTasksView")
+        public void updateDueDate() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
@@ -418,17 +405,14 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             matchesExpectedValues(labelledTasksView);
             final TaskListView listView = labelledTasksView.getLabelledTasks();
             final int actualListSize = listView.getItemsCount();
-
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, actualListSize);
+            assertEquals(1, actualListSize);
 
             final TaskView taskView = listView.getItems(0);
-
             assertEquals(UPDATED_TASK_DUE_DATE, taskView.getDueDate());
         }
 
         @Test
-        @DisplayName(DOES_NOT_UPDATE_TASK_DUE_DATE)
+        @DisplayName("not update the task due date in LabelledTasksView by wrong task ID")
         public void doesNotUpdateDueDate() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
@@ -445,23 +429,20 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             matchesExpectedValues(labelledTasksView);
             final TaskListView listView = labelledTasksView.getLabelledTasks();
             final int actualListSize = listView.getItemsCount();
-
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, actualListSize);
+            assertEquals(1, actualListSize);
 
             final TaskView taskView = listView.getItems(0);
-
             assertNotEquals(UPDATED_TASK_DUE_DATE, taskView.getDueDate());
         }
     }
 
     @Nested
-    @DisplayName(TASK_COMPLETED_EVENT)
+    @DisplayName("TaskCompleted event should")
     class TaskCompletedEvent {
 
         @Test
-        @DisplayName(UPDATES_TASK_VIEW_COMPLETED_FLAG_TO_TRUE)
-        public void updatesCompletedFlagToTrue() {
+        @DisplayName("set `completed` to true in LabelledTasksView")
+        public void setCompletedFlagToTrue() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
@@ -476,18 +457,15 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             matchesExpectedValues(labelledTasksView);
             final TaskListView listView = labelledTasksView.getLabelledTasks();
             final int actualListSize = listView.getItemsCount();
-
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, actualListSize);
+            assertEquals(1, actualListSize);
 
             final TaskView taskView = listView.getItems(0);
-
             assertTrue(taskView.getCompleted());
         }
 
         @Test
-        @DisplayName(UPDATES_TASK_VIEW_COMPLETED_FLAG_TO_FALSE)
-        public void updatesCompletedFlagToFalse() {
+        @DisplayName("set `completed` to false in LabelledTasksView")
+        public void setCompletedFlagToFalse() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
@@ -502,23 +480,20 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             matchesExpectedValues(labelledTasksView);
             final TaskListView listView = labelledTasksView.getLabelledTasks();
             final int actualListSize = listView.getItemsCount();
-
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, actualListSize);
+            assertEquals(1, actualListSize);
 
             final TaskView taskView = listView.getItems(0);
-
             assertTrue(taskView.getCompleted());
         }
     }
 
     @Nested
-    @DisplayName(TASK_REOPENED_EVENT)
+    @DisplayName("TaskReopened event should")
     class TaskReopenedEvent {
 
         @Test
-        @DisplayName(UPDATES_TASK_VIEW_COMPLETED_FLAG_TO_FALSE)
-        public void updatesCompletedFlagToFalse() {
+        @DisplayName("set `completed` to `false` in LabelledTasksView")
+        public void setCompletedFlagToFalse() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
@@ -537,18 +512,15 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             matchesExpectedValues(labelledTasksView);
             final TaskListView listView = labelledTasksView.getLabelledTasks();
             final int actualListSize = listView.getItemsCount();
-
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, actualListSize);
+            assertEquals(1, actualListSize);
 
             final TaskView taskView = listView.getItems(0);
-
             assertFalse(taskView.getCompleted());
         }
 
         @Test
-        @DisplayName(UPDATES_TASK_VIEW_COMPLETED_FLAG_TO_TRUE)
-        public void updatesCompletedFlagToTrue() {
+        @DisplayName("set `completed` to `true` in LabelledTasksView")
+        public void setCompletedFlagToTrue() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
@@ -567,25 +539,22 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             matchesExpectedValues(labelledTasksView);
             final TaskListView listView = labelledTasksView.getLabelledTasks();
             final int actualListSize = listView.getItemsCount();
-
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, actualListSize);
+            assertEquals(1, actualListSize);
 
             final TaskView taskView = listView.getItems(0);
-
             assertTrue(taskView.getCompleted());
         }
     }
 
     @Nested
-    @DisplayName(LABEL_DETAILS_UPDATED_EVENT)
+    @DisplayName("LabelDetailsUpdated event should")
     class LabelDetailsUpdatedEvent {
 
         private static final String UPDATED_LABEL_TITLE = "Updated label title.";
 
         @Test
-        @DisplayName("updates LabelDetails")
-        public void updatesLabelDetails() {
+        @DisplayName("update the label details in LabelledTasksView")
+        public void updateLabelDetails() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
@@ -604,8 +573,8 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
         }
 
         @Test
-        @DisplayName("does not update LabelDetails by wrong task ID")
-        public void doesNotUpdateLabelDetails() {
+        @DisplayName("not update the label details in LabelledTasksView by wrong task ID")
+        public void notUpdateLabelDetails() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);

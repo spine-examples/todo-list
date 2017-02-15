@@ -68,7 +68,7 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("task view which does not marked as completed when command has wrong task ID")
+        @DisplayName("contain task view which does not marked as completed when command has wrong task ID")
         public void obtainLabelledViewWithUncompletedTask() {
             final TaskView view = obtainViewWhenHandledCommandCompleteTask(false);
             assertFalse(view.getCompleted());
@@ -133,8 +133,7 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = client.getMyListView()
                                                .getMyList()
                                                .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
+        assertEquals(1, taskViews.size());
 
         final TaskView result = taskViews.get(0);
         assertEquals(idOfCreatedTask, result.getId());

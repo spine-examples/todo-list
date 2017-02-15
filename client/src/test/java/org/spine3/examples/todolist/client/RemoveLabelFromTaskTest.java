@@ -78,8 +78,7 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
             client.removeLabel(removeLabelFromTask);
 
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, tasksViewList.size());
+            assertEquals(1, tasksViewList.size());
 
             final List<TaskView> taskViews = tasksViewList.get(0)
                                                           .getLabelledTasks()
@@ -88,7 +87,7 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view")
+        @DisplayName("contain the task view")
         public void containView() {
             final CreateBasicTask createTask = createTask();
             final CreateBasicLabel createLabel = createLabel();
@@ -103,17 +102,14 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
             client.removeLabel(removeLabelFromTask);
 
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
-            int expectedListSize = 2;
-            assertEquals(expectedListSize, tasksViewList.size());
+            assertEquals(2, tasksViewList.size());
 
             final LabelledTasksView labelledTasksView = getLabelledTasksView(tasksViewList);
             final List<TaskView> taskViews = labelledTasksView.getLabelledTasks()
                                                               .getItemsList();
+            assertEquals(1, taskViews.size());
 
-            expectedListSize = 1;
-            assertEquals(expectedListSize, taskViews.size());
             final TaskView view = taskViews.get(0);
-
             assertEquals(taskId, view.getId());
             assertFalse(taskViews.isEmpty());
         }
@@ -124,7 +120,7 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
     class RemoveLabelFromTaskFromDraftTasksView {
 
         @Test
-        @DisplayName("contain task view without label")
+        @DisplayName("contain the task view without label")
         public void containViewWithoutLabels() {
             final CreateBasicLabel createBasicLabel = createLabel();
             final LabelId labelId = createBasicLabel.getLabelId();
@@ -134,7 +130,7 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view with labels when command has wrong task ID")
+        @DisplayName("contain the task view with labels when command has wrong task ID")
         public void containLabelledViewWhenTaskIdIsWrong() {
             final CreateBasicLabel createBasicLabel = createLabel();
             final LabelId labelId = createBasicLabel.getLabelId();
@@ -149,7 +145,7 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
     class RemoveLabelFromTaskFromMyListView {
 
         @Test
-        @DisplayName("contain task view without label")
+        @DisplayName("contain the task view without label")
         public void containViewWithLabels() {
             final CreateBasicLabel createLabel = createLabel();
             final LabelId labelId = createLabel.getLabelId();
@@ -159,7 +155,7 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view with labels when command has wrong task ID")
+        @DisplayName("contain the task view with labels when command has wrong task ID")
         public void containViewsWithoutLabels() {
             final CreateBasicLabel createLabel = createLabel();
             final LabelId labelId = createLabel.getLabelId();
@@ -206,8 +202,7 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
     }
 
     private static TaskView checkAndObtainView(TaskId taskId, List<TaskView> taskViews) {
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
+        assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);
         assertEquals(taskId, view.getId());

@@ -91,7 +91,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
 
     @Test
     @DisplayName("throw CannotUpdateTaskWithInappropriateDescription failure " +
-            "when try to update task with too short description")
+            "when try to update the task by too short description")
     public void cannotUpdateTaskDescription() {
         try {
             final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId, "", ".");
@@ -104,7 +104,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDescription failure when try to update description for deleted task")
+    @DisplayName("throw CannotUpdateTaskDescription failure when try to update the description for the deleted task")
     public void cannotUpdateDeletedTaskDescription() {
         dispatchCreateTaskCmd();
 
@@ -123,7 +123,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDescription failure when try to update description for the completed task")
+    @DisplayName("throw CannotUpdateTaskDescription failure when try to update the description for the completed task")
     public void cannotUpdateCompletedTaskDescription() {
         dispatchCreateTaskCmd();
 
@@ -141,7 +141,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     }
 
     @Test
-    @DisplayName("update task description")
+    @DisplayName("update the task description")
     public void updateDescription() {
         final String newDescription = "new description.";
         dispatchCreateTaskCmd();

@@ -51,7 +51,7 @@ public class CreateBasicTaskTest extends CommandLineTodoClientTest {
     }
     
     @Test
-    @DisplayName("LabelledTasksView is empty")
+    @DisplayName("LabelledTasksView should be empty")
     public void obtainEmptyLabelledTasksView() {
         final CreateBasicTask createBasicTask = createBasicTask();
         client.create(createBasicTask);
@@ -61,7 +61,7 @@ public class CreateBasicTaskTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    @DisplayName("DraftTaskView is empty")
+    @DisplayName("DraftTaskView should be empty")
     public void obtainEmptyDraftViewList() {
         final CreateBasicTask createBasicTask = createBasicTask();
         client.create(createBasicTask);
@@ -73,7 +73,7 @@ public class CreateBasicTaskTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    @DisplayName("MyListView contains created task")
+    @DisplayName("MyListView should contain the created task")
     public void obtainMyListView() {
         final CreateBasicTask createFirstTask = createBasicTask();
         client.create(createFirstTask);
@@ -84,8 +84,7 @@ public class CreateBasicTaskTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = client.getMyListView()
                                                     .getMyList()
                                                     .getItemsList();
-        final int expectedMessagesCount = 2;
-        assertEquals(expectedMessagesCount, taskViews.size());
+        assertEquals(2, taskViews.size());
 
         final TaskView firstView = taskViews.get(0);
         final TaskView secondView = taskViews.get(1);

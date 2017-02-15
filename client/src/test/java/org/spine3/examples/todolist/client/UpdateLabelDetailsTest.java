@@ -69,7 +69,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
     class UpdateLabelDetailsInLabelledTasksView {
 
         @Test
-        @DisplayName("contain task view with updated LabelDetails")
+        @DisplayName("contain the task view with updated label details")
         public void containUpdatedView() {
             final LabelColor updatedColor = LabelColor.BLUE;
             final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(updatedColor,
@@ -80,7 +80,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view with not updated LabelDetails when command has wrong task ID")
+        @DisplayName("contain the task view with not updated label details when command has wrong task ID")
         public void containNotUpdatedView() {
             final LabelColor updatedColor = LabelColor.BLUE;
             final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(updatedColor,
@@ -96,7 +96,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
     class UpdateLabelDetailsInMyListView {
 
         @Test
-        @DisplayName("contain task view with updated LabelDetails")
+        @DisplayName("contain the task view with updated label details")
         public void containUpdatedView() {
             final LabelColor newColor = LabelColor.BLUE;
             final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor, true);
@@ -104,7 +104,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view with not updated LabelDetails when command has wrong task ID")
+        @DisplayName("contain the task view with not updated label details when command has wrong task ID")
         public void containNotUpdatedView() {
             final LabelColor newColor = LabelColor.BLUE;
             final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor, false);
@@ -117,7 +117,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
     class UpdateLabelDetailsInDraftTasksView {
 
         @Test
-        @DisplayName("contain task view with updated LabelDetails")
+        @DisplayName("contain the task view with updated label details")
         public void containUpdatedView() throws Exception {
             final CreateBasicLabel createBasicLabel = createBasicLabel();
             client.create(createBasicLabel);
@@ -128,7 +128,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view with not updated LabelDetails when command has wrong task ID")
+        @DisplayName("contain the task view with not updated label details when command has wrong task ID")
         public void containNotUpdatedView() throws Exception {
             final CreateBasicLabel createBasicLabel = createBasicLabel();
             client.create(createBasicLabel);
@@ -167,10 +167,9 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         client.update(updateLabelDetails);
 
         final List<TaskView> taskViews = client.getMyListView()
-                                                    .getMyList()
-                                                    .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
+                                               .getMyList()
+                                               .getItemsList();
+        assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);
         assertEquals(idOfCreatedTask, view.getId());
@@ -209,9 +208,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         client.update(updateLabelDetails);
 
         final List<LabelledTasksView> labelledTasksViewList = client.getLabelledTasksView();
-        final int correctIdExpectedSize = 1;
-        final int incorrectIdExpectedSize = 2;
-        final int expectedListSize = isCorrectId ? correctIdExpectedSize : incorrectIdExpectedSize;
+        final int expectedListSize = isCorrectId ? 1 : 2;
         assertEquals(expectedListSize, labelledTasksViewList.size());
 
         final LabelledTasksView view = getLabelledTasksView(labelledTasksViewList);
@@ -248,10 +245,9 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         client.update(updateLabelDetails);
 
         final List<TaskView> taskViews = client.getDraftTasksView()
-                                                    .getDraftTasks()
-                                                    .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
+                                               .getDraftTasks()
+                                               .getItemsList();
+        assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);
         assertEquals(taskId, view.getId());

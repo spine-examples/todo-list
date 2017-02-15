@@ -61,7 +61,7 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
     }
 
     @Test
-    @DisplayName("delete task")
+    @DisplayName("delete the task")
     public void deleteTask() {
         dispatchCreateTaskCmd();
 
@@ -74,7 +74,7 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
     }
 
     @Test
-    @DisplayName("throw CannotDeleteTask failure when try to delete already deleted task")
+    @DisplayName("throw CannotDeleteTask failure when try to delete the already deleted task")
     public void cannotDeleteAlreadyDeletedTask() {
         dispatchCreateTaskCmd();
 

@@ -61,7 +61,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
     class FinalizeDraftFromMyListView {
 
         @Test
-        @DisplayName("contain task view")
+        @DisplayName("contain the task view")
         public void obtainView() {
             final CreateDraft createDraft = createDraftTask();
 
@@ -91,7 +91,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
     class FinalizeDraftFromLabelledTasksView {
 
         @Test
-        @DisplayName("contain task view")
+        @DisplayName("contain the task view")
         public void obtainView() {
             final CreateDraft createDraft = createDraftTask();
 
@@ -133,9 +133,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
 
             List<TaskView> taskViewList = draftTasksView.getDraftTasks()
                                                         .getItemsList();
-            final int expectedListSize = 1;
-
-            assertEquals(expectedListSize, taskViewList.size());
+            assertEquals(1, taskViewList.size());
             assertEquals(createDraft.getId(), taskViewList.get(0)
                                                           .getId());
             final FinalizeDraft finalizeDraft = finalizeDraftInstance(createDraft.getId());
@@ -148,7 +146,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("be not empty when command has wrong task ID")
+        @DisplayName("not be empty when command has wrong task ID")
         public void obtainViewWhenFinalizedWrongDraft() {
             final CreateDraft createDraft = createDraftTask();
             final TaskId taskId = createDraft.getId();
@@ -159,8 +157,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
             final List<TaskView> taskViews = client.getDraftTasksView()
                                                         .getDraftTasks()
                                                         .getItemsList();
-            final int expectedListSize = 1;
-            assertEquals(expectedListSize, taskViews.size());
+            assertEquals(1, taskViews.size());
 
             final TaskView view = taskViews.get(0);
             assertEquals(taskId, view.getId());

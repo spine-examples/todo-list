@@ -53,7 +53,7 @@ public class ProjectionHelperTest {
 
     @BeforeEach
     public void setUp() {
-        viewList = initViewList();
+        viewList = createViewList();
     }
 
     @Test
@@ -108,7 +108,7 @@ public class ProjectionHelperTest {
         assertTrue(viewList.contains(viewWithDefaultTaskId));
     }
 
-    private List<TaskView> initViewList() {
+    private List<TaskView> createViewList() {
         final List<TaskView> viewList = new ArrayList<>();
         viewWithDefaultLabelId = TaskView.newBuilder()
                                          .setId(TASK_ID)

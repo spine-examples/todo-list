@@ -97,7 +97,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     }
 
     @Test
-    @DisplayName("throw CannotReopenTask when try to reopen deleted task")
+    @DisplayName("throw CannotReopenTask when try to reopen the deleted task")
     public void cannotReopenDeletedTask() {
         dispatchCreateTaskCmd();
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
@@ -114,7 +114,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     }
 
     @Test
-    @DisplayName("throw CannotReopenTask when try to reopen task in draft state")
+    @DisplayName("throw CannotReopenTask when try to reopen the task in draft state")
     public void cannotReopenDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);

@@ -138,7 +138,7 @@ public class LabelAggregateTest {
         }
 
         @Test
-        @DisplayName("update label details twice")
+        @DisplayName("update the label details twice")
         public void updateLabelDetailsTwice() {
             final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
             aggregate.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
@@ -172,7 +172,7 @@ public class LabelAggregateTest {
         }
 
         @Test
-        @DisplayName("produce CannotUpdateLabelDetails failure when label details does not match expected")
+        @DisplayName("produce CannotUpdateLabelDetails failure when the label details does not match expected")
         public void cannotUpdateLabelDetails() {
             final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
             aggregate.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);

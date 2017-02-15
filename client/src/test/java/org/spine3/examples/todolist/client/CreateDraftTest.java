@@ -49,7 +49,7 @@ public class CreateDraftTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    @DisplayName("DraftTasksView contains draft")
+    @DisplayName("DraftTasksView should contain the task view")
     public void obtainDraftView() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
@@ -57,15 +57,13 @@ public class CreateDraftTest extends CommandLineTodoClientTest {
         final DraftTasksView draftTasksView = client.getDraftTasksView();
         final List<TaskView> taskViewList = draftTasksView.getDraftTasks()
                                                           .getItemsList();
-        final int expectedListSize = 1;
-
-        assertEquals(expectedListSize, taskViewList.size());
+        assertEquals(1, taskViewList.size());
         assertEquals(createDraft.getId(), taskViewList.get(0)
                                                       .getId());
     }
 
     @Test
-    @DisplayName("LabelledTasksView does not contains views")
+    @DisplayName("LabelledTasksView should not contain the task view")
     public void obtainLabelledView() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
@@ -75,7 +73,7 @@ public class CreateDraftTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    @DisplayName("MyListView does not contains views")
+    @DisplayName("MyListView should not contain task view")
     public void ObtainMyListView() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);

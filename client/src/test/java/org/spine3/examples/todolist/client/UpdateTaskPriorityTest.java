@@ -60,7 +60,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
     class UpdateTaskPriorityInLabelledTasksView {
 
         @Test
-        @DisplayName("contain task view with updated task priority")
+        @DisplayName("contain the task view with updated task priority")
         public void containUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, true);
@@ -68,7 +68,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view with not updated task priority when command has wrong task ID")
+        @DisplayName("contain the task view with not updated task priority when command has wrong task ID")
         public void containNotUpdated() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, false);
@@ -81,7 +81,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
     class UpdateTaskPriorityInDraftTasksView {
 
         @Test
-        @DisplayName("contain task view with updated task priority")
+        @DisplayName("contain the task view with updated task priority")
         public void containUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view = obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, true);
@@ -104,7 +104,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
     class UpdateTaskPriorityInMyListView {
 
         @Test
-        @DisplayName("contain task view with updated task priority")
+        @DisplayName("contain the task view with updated task priority")
         public void containUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskPriority(newPriority, true);
@@ -132,14 +132,10 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = client.getMyListView()
                                                     .getMyList()
                                                     .getItemsList();
-
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
-
+        assertEquals(1, taskViews.size());
         final TaskView view = taskViews.get(0);
 
         assertEquals(idOfCreatedTask, view.getId());
-
         return view;
     }
 
@@ -166,7 +162,6 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         assertEquals(expectedListSize, taskViews.size());
 
         final TaskView view = taskViews.get(0);
-
         assertEquals(createLabel.getLabelId(), view.getLabelId());
         assertEquals(createdTaskId, view.getId());
 
@@ -184,8 +179,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = client.getDraftTasksView()
                                                     .getDraftTasks()
                                                     .getItemsList();
-        final int expectedListSize = 1;
-        assertEquals(expectedListSize, taskViews.size());
+        assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);
         assertEquals(createdTaskId, view.getId());
