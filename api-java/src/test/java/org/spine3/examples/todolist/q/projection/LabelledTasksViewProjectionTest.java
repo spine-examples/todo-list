@@ -59,6 +59,10 @@ import static org.spine3.examples.todolist.testdata.TestEventContextFactory.even
 import static org.spine3.examples.todolist.testdata.TestEventEnricherFactory.LABEL_TITLE;
 import static org.spine3.examples.todolist.testdata.TestEventEnricherFactory.eventEnricherInstance;
 import static org.spine3.examples.todolist.testdata.TestLabelEventFactory.labelDetailsUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.ChangeStatusEvents.labelledTaskRestoredInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.ChangeStatusEvents.taskCompletedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.ChangeStatusEvents.taskDeletedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.ChangeStatusEvents.taskReopenedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.LABEL_ID;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.TASK_ID;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UPDATED_DESCRIPTION;
@@ -67,10 +71,6 @@ import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UPDATED
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskDescriptionUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskDueDateUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskPriorityUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.labelledTaskRestoredInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskCompletedInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskDeletedInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskReopenedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelAssignedToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelRemovedFromTaskInstance;
 

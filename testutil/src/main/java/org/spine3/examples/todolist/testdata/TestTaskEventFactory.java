@@ -65,157 +65,6 @@ public class TestTaskEventFactory {
     private TestTaskEventFactory() {
     }
 
-    /**
-     * Provides a pre-configured {@link TaskCreated} event instance.
-     *
-     * @return the {@link TaskCreated} instance
-     */
-    public static TaskCreated taskCreatedInstance() {
-        return taskCreatedInstance(DESCRIPTION, TASK_PRIORITY);
-    }
-
-    /**
-     * Provides the {@link TaskCreated} event by specified description and task priority.
-     *
-     * @param description specified task description
-     * @param priority    specified task priority
-     * @return the {@code TaskCreated} instance
-     */
-    public static TaskCreated taskCreatedInstance(String description, TaskPriority priority) {
-        final TaskDetails.Builder details = TaskDetails.newBuilder()
-                                                       .setDescription(description)
-                                                       .setPriority(priority);
-        final TaskCreated result = TaskCreated.newBuilder()
-                                              .setId(TASK_ID)
-                                              .setDetails(details)
-                                              .build();
-        return result;
-    }
-
-    /**
-     * Provides the {@link TaskCreated} event by specified task ID.
-     *
-     * @param id the ID of the created task
-     * @return the {@code TaskCreated} instance
-     */
-    public static TaskCreated taskCreatedInstance(TaskId id) {
-        final TaskCreated result = TaskCreated.newBuilder()
-                                              .setId(id)
-                                              .build();
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link TaskDraftCreated} event instance.
-     *
-     * @return the {@code TaskDraftCreated} instance
-     */
-    public static TaskDraftCreated taskDraftCreatedInstance() {
-        return taskDraftCreatedInstance(DESCRIPTION, TASK_PRIORITY, CREATION_TIME);
-    }
-
-    /**
-     * Provides the {@link TaskDraftCreated} event by specified task description,
-     * task priority and draft creation time.
-     *
-     * @param description  the description of the created draft
-     * @param priority     the priority of the created draft
-     * @param creationTime the time creation of the created draft
-     * @return the {@code TaskDraftCreated} instance
-     */
-    public static TaskDraftCreated taskDraftCreatedInstance(String description,
-                                                            TaskPriority priority,
-                                                            Timestamp creationTime) {
-        final TaskDetails.Builder details = TaskDetails.newBuilder()
-                                                       .setPriority(priority)
-                                                       .setDescription(description);
-        final TaskDraftCreated result = TaskDraftCreated.newBuilder()
-                                                        .setId(TASK_ID)
-                                                        .setDetails(details)
-                                                        .setDraftCreationTime(creationTime)
-                                                        .build();
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link TaskDraftFinalized} event instance.
-     *
-     * @return the {@code TaskDraftFinalized} instance
-     */
-    public static TaskDraftFinalized taskDraftFinalizedInstance() {
-        final TaskDraftFinalized result = TaskDraftFinalized.newBuilder()
-                                                            .setTaskId(TASK_ID)
-                                                            .build();
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link TaskCompleted} event instance.
-     *
-     * @return the {@code TaskCompleted} instance
-     */
-    public static TaskCompleted taskCompletedInstance() {
-        return taskCompletedInstance(TASK_ID);
-    }
-
-    /**
-     * Provides pre-configured {@link TaskCompleted} event instance.
-     *
-     * @return the {@code TaskCompleted} instance
-     */
-    public static TaskCompleted taskCompletedInstance(TaskId id) {
-        final TaskCompleted result = TaskCompleted.newBuilder()
-                                                  .setTaskId(id)
-                                                  .build();
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link TaskReopened} event instance.
-     *
-     * @return the {@code TaskReopened} instance
-     */
-    public static TaskReopened taskReopenedInstance() {
-        return taskReopenedInstance(TASK_ID);
-    }
-
-    /**
-     * Provides pre-configured {@link TaskReopened} event instance.
-     *
-     * @return the {@code TaskReopened} instance
-     */
-    public static TaskReopened taskReopenedInstance(TaskId id) {
-        final TaskReopened result = TaskReopened.newBuilder()
-                                                .setTaskId(id)
-                                                .build();
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link TaskDeleted} event instance.
-     *
-     * @return the {@code TaskDeleted} instance
-     */
-    public static TaskDeleted taskDeletedInstance() {
-        final TaskDeleted result = TaskDeleted.newBuilder()
-                                              .setTaskId(TASK_ID)
-                                              .build();
-        return result;
-    }
-
-    /**
-     * Provides a pre-configured {@link LabelledTaskRestored} event instance.
-     *
-     * @return the {@code LabelledTaskRestored} instance
-     */
-    public static LabelledTaskRestored labelledTaskRestoredInstance() {
-        final LabelledTaskRestored result = LabelledTaskRestored.newBuilder()
-                                                                .setTaskId(TASK_ID)
-                                                                .setLabelId(LABEL_ID)
-                                                                .build();
-        return result;
-    }
-
     public static class UpdateEvents {
 
         private UpdateEvents() {
@@ -296,6 +145,163 @@ public class TestTaskEventFactory {
                                                                 .setTaskId(id)
                                                                 .setDueDateChange(dueDateChange)
                                                                 .build();
+            return result;
+        }
+    }
+
+    public static class ChangeStatusEvents {
+
+        private ChangeStatusEvents() {
+        }
+
+        /**
+         * Provides a pre-configured {@link TaskCreated} event instance.
+         *
+         * @return the {@link TaskCreated} instance
+         */
+        public static TaskCreated taskCreatedInstance() {
+            return taskCreatedInstance(DESCRIPTION, TASK_PRIORITY);
+        }
+
+        /**
+         * Provides the {@link TaskCreated} event by specified description and task priority.
+         *
+         * @param description specified task description
+         * @param priority    specified task priority
+         * @return the {@code TaskCreated} instance
+         */
+        public static TaskCreated taskCreatedInstance(String description, TaskPriority priority) {
+            final TaskDetails.Builder details = TaskDetails.newBuilder()
+                                                           .setDescription(description)
+                                                           .setPriority(priority);
+            final TaskCreated result = TaskCreated.newBuilder()
+                                                  .setId(TASK_ID)
+                                                  .setDetails(details)
+                                                  .build();
+            return result;
+        }
+
+        /**
+         * Provides the {@link TaskCreated} event by specified task ID.
+         *
+         * @param id the ID of the created task
+         * @return the {@code TaskCreated} instance
+         */
+        public static TaskCreated taskCreatedInstance(TaskId id) {
+            final TaskCreated result = TaskCreated.newBuilder()
+                                                  .setId(id)
+                                                  .build();
+            return result;
+        }
+
+        /**
+         * Provides a pre-configured {@link TaskDraftCreated} event instance.
+         *
+         * @return the {@code TaskDraftCreated} instance
+         */
+        public static TaskDraftCreated taskDraftCreatedInstance() {
+            return taskDraftCreatedInstance(DESCRIPTION, TASK_PRIORITY, CREATION_TIME);
+        }
+
+        /**
+         * Provides the {@link TaskDraftCreated} event by specified task description,
+         * task priority and draft creation time.
+         *
+         * @param description  the description of the created draft
+         * @param priority     the priority of the created draft
+         * @param creationTime the time creation of the created draft
+         * @return the {@code TaskDraftCreated} instance
+         */
+        public static TaskDraftCreated taskDraftCreatedInstance(String description,
+                                                                TaskPriority priority,
+                                                                Timestamp creationTime) {
+            final TaskDetails.Builder details = TaskDetails.newBuilder()
+                                                           .setPriority(priority)
+                                                           .setDescription(description);
+            final TaskDraftCreated result = TaskDraftCreated.newBuilder()
+                                                            .setId(TASK_ID)
+                                                            .setDetails(details)
+                                                            .setDraftCreationTime(creationTime)
+                                                            .build();
+            return result;
+        }
+
+        /**
+         * Provides a pre-configured {@link TaskDraftFinalized} event instance.
+         *
+         * @return the {@code TaskDraftFinalized} instance
+         */
+        public static TaskDraftFinalized taskDraftFinalizedInstance() {
+            final TaskDraftFinalized result = TaskDraftFinalized.newBuilder()
+                                                                .setTaskId(TASK_ID)
+                                                                .build();
+            return result;
+        }
+
+        /**
+         * Provides a pre-configured {@link TaskCompleted} event instance.
+         *
+         * @return the {@code TaskCompleted} instance
+         */
+        public static TaskCompleted taskCompletedInstance() {
+            return taskCompletedInstance(TASK_ID);
+        }
+
+        /**
+         * Provides pre-configured {@link TaskCompleted} event instance.
+         *
+         * @return the {@code TaskCompleted} instance
+         */
+        public static TaskCompleted taskCompletedInstance(TaskId id) {
+            final TaskCompleted result = TaskCompleted.newBuilder()
+                                                      .setTaskId(id)
+                                                      .build();
+            return result;
+        }
+
+        /**
+         * Provides a pre-configured {@link TaskReopened} event instance.
+         *
+         * @return the {@code TaskReopened} instance
+         */
+        public static TaskReopened taskReopenedInstance() {
+            return taskReopenedInstance(TASK_ID);
+        }
+
+        /**
+         * Provides pre-configured {@link TaskReopened} event instance.
+         *
+         * @return the {@code TaskReopened} instance
+         */
+        public static TaskReopened taskReopenedInstance(TaskId id) {
+            final TaskReopened result = TaskReopened.newBuilder()
+                                                    .setTaskId(id)
+                                                    .build();
+            return result;
+        }
+
+        /**
+         * Provides a pre-configured {@link TaskDeleted} event instance.
+         *
+         * @return the {@code TaskDeleted} instance
+         */
+        public static TaskDeleted taskDeletedInstance() {
+            final TaskDeleted result = TaskDeleted.newBuilder()
+                                                  .setTaskId(TASK_ID)
+                                                  .build();
+            return result;
+        }
+
+        /**
+         * Provides a pre-configured {@link LabelledTaskRestored} event instance.
+         *
+         * @return the {@code LabelledTaskRestored} instance
+         */
+        public static LabelledTaskRestored labelledTaskRestoredInstance() {
+            final LabelledTaskRestored result = LabelledTaskRestored.newBuilder()
+                                                                    .setTaskId(TASK_ID)
+                                                                    .setLabelId(LABEL_ID)
+                                                                    .build();
             return result;
         }
     }

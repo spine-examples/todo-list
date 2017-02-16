@@ -48,6 +48,9 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.UPDATED_LABEL_TITLE;
 import static org.spine3.examples.todolist.testdata.TestLabelEventFactory.labelDetailsUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.ChangeStatusEvents.taskDeletedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.ChangeStatusEvents.taskDraftCreatedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.ChangeStatusEvents.taskDraftFinalizedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.LABEL_ID;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.TASK_ID;
@@ -56,9 +59,6 @@ import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UPDATED
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskDescriptionUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskDueDateUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskPriorityUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskDeletedInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskDraftCreatedInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskDraftFinalizedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelAssignedToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelRemovedFromTaskInstance;
 
