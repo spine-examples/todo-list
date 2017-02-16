@@ -69,18 +69,25 @@ public class TodoListBoundedContext {
     private static BoundedContext create() {
         final BoundedContext boundedContext = createBoundedContext();
 
-        boundedContext.register(new TaskDefinitionRepository(boundedContext));
-        boundedContext.register(new TaskLabelsRepository(boundedContext));
-        boundedContext.register(new LabelAggregateRepository(boundedContext));
-        boundedContext.register(new MyListViewRepository(boundedContext));
-        boundedContext.register(new LabelledTasksViewRepository(boundedContext));
-        boundedContext.register(new DraftTasksViewRepository(boundedContext));
+        final TaskDefinitionRepository taskDefinitionRepo = new TaskDefinitionRepository(boundedContext);
+        final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository(boundedContext);
+        final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository(boundedContext);
+        final MyListViewRepository myListViewRepo = new MyListViewRepository(boundedContext);
+        final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository(boundedContext);
+        final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository(boundedContext);
+
+        boundedContext.register(taskDefinitionRepo);
+        boundedContext.register(taskLabelsRepo);
+        boundedContext.register(labelAggregateRepo);
+        boundedContext.register(myListViewRepo);
+        boundedContext.register(tasksViewRepo);
+        boundedContext.register(draftTasksViewRepo);
 
         TodoListEventEnricher.newBuilder()
                              .setEventBus(boundedContext.getEventBus())
-                             .setLabelRepository(new LabelAggregateRepository(boundedContext))
-                             .setTaskDefinitionRepository(new TaskDefinitionRepository(boundedContext))
-                             .setTaskLabelsRepository(new TaskLabelsRepository(boundedContext))
+                             .setLabelRepository(labelAggregateRepo)
+                             .setTaskDefinitionRepository(taskDefinitionRepo)
+                             .setTaskLabelsRepository(taskLabelsRepo)
                              .build()
                              .addEnrichmentFields();
         return boundedContext;
