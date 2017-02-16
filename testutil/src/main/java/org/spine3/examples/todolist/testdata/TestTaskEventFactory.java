@@ -216,9 +216,9 @@ public class TestTaskEventFactory {
         return result;
     }
 
-    public static class UpdateEventFactory {
+    public static class UpdateEvents {
 
-        private UpdateEventFactory() {
+        private UpdateEvents() {
         }
 
         /**

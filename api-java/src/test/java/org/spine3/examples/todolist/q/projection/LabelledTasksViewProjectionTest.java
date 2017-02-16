@@ -64,9 +64,9 @@ import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.TASK_ID
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UPDATED_DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UPDATED_TASK_DUE_DATE;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UPDATED_TASK_PRIORITY;
-import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEventFactory.taskDescriptionUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEventFactory.taskDueDateUpdatedInstance;
-import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEventFactory.taskPriorityUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskDescriptionUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskDueDateUpdatedInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskPriorityUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.labelledTaskRestoredInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskCompletedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.taskDeletedInstance;
