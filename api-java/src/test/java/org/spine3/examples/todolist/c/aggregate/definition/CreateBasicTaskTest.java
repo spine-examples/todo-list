@@ -43,7 +43,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.creat
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CreateBasicTask command should be interpret by TaskDefinitionPart and")
+@DisplayName("CreateBasicTask command should be interpreted by TaskDefinitionPart and")
 public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTask> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -90,7 +90,7 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
 
     @Test
     @DisplayName("throw CannotCreateTaskWithInappropriateDescription failure " +
-            "when try to create task with too short description")
+            "when it is trying to create task with too short description")
     public void notCreateTask() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, "D");
         try {

@@ -46,7 +46,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CreateDraft command should be interpret by TaskDefinitionPart and")
+@DisplayName("CreateDraft command should be interpreted by TaskDefinitionPart and")
 public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -87,7 +87,7 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
     }
 
     @Test
-    @DisplayName("throw CannotCreateDraft failure when try to create draft with deleted task ID")
+    @DisplayName("throw CannotCreateDraft failure when it is trying to create draft with deleted task ID")
     public void notCreateDraft() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         aggregate.dispatchForTest(createTaskCmd, commandContext);

@@ -102,7 +102,7 @@ public class TaskLabelsPartTest {
     }
 
     @Nested
-    @DisplayName("AssignLabelToTask command should be interpret by TaskLabelsPart and")
+    @DisplayName("AssignLabelToTask command should be interpreted by TaskLabelsPart and")
     class AssignLabelToTaskCommand {
 
         @Test
@@ -122,7 +122,7 @@ public class TaskLabelsPartTest {
         }
 
         @Test
-        @DisplayName("throw CannotAssignLabelToTask failure when try to assign the label to the deleted task")
+        @DisplayName("throw CannotAssignLabelToTask failure when it is trying to assign the label to the deleted task")
         public void cannotAssignLabelToDeletedTask() {
             try {
                 final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
@@ -144,7 +144,8 @@ public class TaskLabelsPartTest {
         }
 
         @Test
-        @DisplayName("throw CannotAssignLabelToTask failure when try to assign the label to the completed task")
+        @DisplayName("throw CannotAssignLabelToTask failure " +
+                "when it is trying to assign the label to the completed task")
         public void cannotAssignLabelToCompletedTask() {
             try {
                 final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
@@ -167,7 +168,7 @@ public class TaskLabelsPartTest {
     }
 
     @Nested
-    @DisplayName("RemoveLabelFromTask command should be interpret by TaskLabelsPart and")
+    @DisplayName("RemoveLabelFromTask command should be interpreted by TaskLabelsPart and")
     class RemoveLabelFromTaskCommand {
 
         @Test
@@ -187,7 +188,8 @@ public class TaskLabelsPartTest {
         }
 
         @Test
-        @DisplayName("throw CannotRemoveLabelFromTask failure when try to remove the label from the completed task")
+        @DisplayName("throw CannotRemoveLabelFromTask failure " +
+                "when it is trying to remove the label from the completed task")
         public void cannotRemoveLabelFromCompletedTask() {
             try {
                 final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
@@ -209,7 +211,8 @@ public class TaskLabelsPartTest {
         }
 
         @Test
-        @DisplayName("throw CannotRemoveLabelFromTask failure when try to remove the label from the deleted task")
+        @DisplayName("throw CannotRemoveLabelFromTask failure " +
+                "when it is trying to remove the label from the deleted task")
         public void cannotRemoveLabelFromDeletedTask() {
             try {
                 final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);

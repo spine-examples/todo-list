@@ -46,7 +46,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 /**
  * @author Illia Shepilov
  */
-@DisplayName("DeleteTask command should be interpret by TaskDefinitionPart and")
+@DisplayName("DeleteTask command should be interpreted by TaskDefinitionPart and")
 public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -74,7 +74,7 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
     }
 
     @Test
-    @DisplayName("throw CannotDeleteTask failure when try to delete the already deleted task")
+    @DisplayName("throw CannotDeleteTask failure when it is trying to delete the already deleted task")
     public void cannotDeleteAlreadyDeletedTask() {
         dispatchCreateTaskCmd();
 

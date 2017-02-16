@@ -44,7 +44,6 @@ import org.spine3.examples.todolist.c.events.LabelledTaskRestored;
 import org.spine3.examples.todolist.c.failures.CannotRestoreDeletedTask;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.examples.todolist.testdata.TestResponseObserver;
-import org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory;
 import org.spine3.protobuf.AnyPacker;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.command.CommandBus;
@@ -60,17 +59,17 @@ import static org.spine3.examples.todolist.TaskStatus.DELETED;
 import static org.spine3.examples.todolist.TaskStatus.OPEN;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.LABEL_ID;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.restoreDeletedTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("RestoreDeletedTask command should be interpret by TaskDefinitionPart and")
+@DisplayName("RestoreDeletedTask command should be interpreted by TaskDefinitionPart and")
 public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDeletedTask> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -167,7 +166,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     }
 
     @Test
-    @DisplayName("throw CannotRestoreDeletedTask failure when try to restore the completed task")
+    @DisplayName("throw CannotRestoreDeletedTask failure when it is trying to restore the completed task")
     public void cannotRestoreCompletedTask() {
         createBasicTask();
 
@@ -183,7 +182,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     }
 
     @Test
-    @DisplayName("throw CannotRestoreDeletedTask when try to restore the finalized task")
+    @DisplayName("throw CannotRestoreDeletedTask when it is trying to restore the finalized task")
     public void cannotRestoreFinalizedTask() {
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
         final Command createTaskCmd = create(createTask, commandContext);
@@ -200,7 +199,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     }
 
     @Test
-    @DisplayName("throw CannotRestoreDeletdTask when try to restore the draft")
+    @DisplayName("throw CannotRestoreDeletedTask when it is trying to restore the draft")
     public void cannotRestoreDraft() {
         createDraft();
         try {

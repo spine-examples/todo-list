@@ -56,7 +56,7 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("UpdateTaskDescription command should be interpret by TaskDefinitionPart and")
+@DisplayName("UpdateTaskDescription command should be interpreted by TaskDefinitionPart and")
 public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateTaskDescription> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -91,7 +91,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
 
     @Test
     @DisplayName("throw CannotUpdateTaskWithInappropriateDescription failure " +
-            "when try to update the task by too short description")
+            "when it is trying to update the task by too short description")
     public void cannotUpdateTaskDescription() {
         try {
             final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId, "", ".");
@@ -104,7 +104,8 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDescription failure when try to update the description for the deleted task")
+    @DisplayName("throw CannotUpdateTaskDescription failure " +
+            "when it is trying to update the description for the deleted task")
     public void cannotUpdateDeletedTaskDescription() {
         dispatchCreateTaskCmd();
 
@@ -123,7 +124,8 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDescription failure when try to update the description for the completed task")
+    @DisplayName("throw CannotUpdateTaskDescription failure " +
+            "when it is trying to update the description for the completed task")
     public void cannotUpdateCompletedTaskDescription() {
         dispatchCreateTaskCmd();
 

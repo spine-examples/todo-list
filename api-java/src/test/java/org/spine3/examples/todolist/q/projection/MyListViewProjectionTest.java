@@ -77,7 +77,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskCreated event should be interpret by MyListViewProjection and")
+    @DisplayName("TaskCreated event should be interpreted by MyListViewProjection and")
     class TaskCreatedEvent {
 
         @Test
@@ -98,7 +98,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskDeleted event should be interpret by MyListViewProjection and")
+    @DisplayName("TaskDeleted event should be interpreted by MyListViewProjection and")
     class TaskDeletedEvent {
 
         @Test
@@ -125,7 +125,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskDescriptionUpdated event should be interpret by MyListViewProjection and")
+    @DisplayName("TaskDescriptionUpdated event should be interpreted by MyListViewProjection and")
     class TaskDescriptionUpdatedEvent {
 
         @Test
@@ -173,7 +173,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskDueDateUpdated event should be interpret by MyListViewProjection and")
+    @DisplayName("TaskDueDateUpdated event should be interpreted by MyListViewProjection and")
     class TaskDueDateUpdatedEvent {
 
         @Test
@@ -222,7 +222,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskPriorityUpdated event should be interpret by MyListViewProjection and")
+    @DisplayName("TaskPriorityUpdated event should be interpreted by MyListViewProjection and")
     class TaskPriorityUpdatedEvent {
 
         @Test
@@ -272,7 +272,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("LabelDetailsUpdated event should be interpret by MyListViewProjection and")
+    @DisplayName("LabelDetailsUpdated event should be interpreted by MyListViewProjection and")
     class LabelDetailsUpdatedEvent {
 
         @Test
@@ -333,7 +333,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskCompleted event should be interpret by MyListViewProjection and")
+    @DisplayName("TaskCompleted event should be interpreted by MyListViewProjection and")
     class TaskCompletedEvent {
 
         @Test
@@ -378,7 +378,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskReopened event should be interpret by MyListViewProjection and")
+    @DisplayName("TaskReopened event should be interpreted by MyListViewProjection and")
     class TaskReopenedEvent {
 
         @Test

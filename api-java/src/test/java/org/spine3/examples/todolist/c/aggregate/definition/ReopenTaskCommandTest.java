@@ -49,7 +49,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.reope
 /**
  * @author Illia Shepilov
  */
-@DisplayName("ReopenTask command should be interpret by TaskDefinitionPart and")
+@DisplayName("ReopenTask command should be interpreted by TaskDefinitionPart and")
 public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -64,7 +64,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     }
 
     @Test
-    @DisplayName("throw CannotReopenTask failure when try to reopen not completed task")
+    @DisplayName("throw CannotReopenTask failure when it is trying to reopen not completed task")
     public void cannotReopenNotCompletedTask() {
         dispatchCreateTaskCmd();
         try {
@@ -97,7 +97,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     }
 
     @Test
-    @DisplayName("throw CannotReopenTask when try to reopen the deleted task")
+    @DisplayName("throw CannotReopenTask when it is trying to reopen the deleted task")
     public void cannotReopenDeletedTask() {
         dispatchCreateTaskCmd();
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
@@ -114,7 +114,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     }
 
     @Test
-    @DisplayName("throw CannotReopenTask when try to reopen the task in draft state")
+    @DisplayName("throw CannotReopenTask when it is trying to reopen the task in draft state")
     public void cannotReopenDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);

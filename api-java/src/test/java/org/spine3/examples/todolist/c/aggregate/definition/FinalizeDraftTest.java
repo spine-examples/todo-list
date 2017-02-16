@@ -47,7 +47,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.final
 /**
  * @author Illia Shepilov
  */
-@DisplayName("FinalizeDraft command should be interpret by TaskDefinitionPart and")
+@DisplayName("FinalizeDraft command should be interpreted by TaskDefinitionPart and")
 public class FinalizeDraftTest extends TaskDefinitionCommandTest<FinalizeDraft> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -81,7 +81,7 @@ public class FinalizeDraftTest extends TaskDefinitionCommandTest<FinalizeDraft> 
     }
 
     @Test
-    @DisplayName("throw CannotFinalizeDraft failure when try to finalize the deleted task")
+    @DisplayName("throw CannotFinalizeDraft failure when it is trying to finalize the deleted task")
     public void cannotFinalizeDeletedTask() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         aggregate.dispatchForTest(createTaskCmd, commandContext);
@@ -100,7 +100,7 @@ public class FinalizeDraftTest extends TaskDefinitionCommandTest<FinalizeDraft> 
     }
 
     @Test
-    @DisplayName("throw CannotFinalizeDraft failure when try to finalize the task which is not a draft")
+    @DisplayName("throw CannotFinalizeDraft failure when it is trying to finalize the task which is not a draft")
     public void cannotFinalizeNotDraftTask() {
         try {
             final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);

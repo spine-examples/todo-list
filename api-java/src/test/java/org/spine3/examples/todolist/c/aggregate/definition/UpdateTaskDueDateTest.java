@@ -56,7 +56,7 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("UpdateTaskDueDate command should be interpret by TaskDefinitionPart and")
+@DisplayName("UpdateTaskDueDate command should be interpreted by TaskDefinitionPart and")
 public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskDueDate> {
 
     private TaskDefinitionPart aggregate;
@@ -71,7 +71,8 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDueDate failure when try to update the due date for the completed task")
+    @DisplayName("throw CannotUpdateTaskDueDate failure " +
+            "when it is trying to update the due date for the completed task")
     public void cannotUpdateCompletedTaskDueDate() {
         dispatchCreateTaskCmd();
 
@@ -89,7 +90,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDueDate failure when try to update the due date for the deleted task")
+    @DisplayName("throw CannotUpdateTaskDueDate failure when it is trying to update the due date for the deleted task")
     public void cannotUpdateDeletedTaskDueDate() {
         dispatchCreateTaskCmd();
 

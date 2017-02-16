@@ -50,7 +50,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CompleteTask command should be interpret by TaskDefinitionPart and")
+@DisplayName("CompleteTask command should be interpreted by TaskDefinitionPart and")
 public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -94,7 +94,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
     }
 
     @Test
-    @DisplayName("throw CannotCompleteTask failure when try to complete the deleted task")
+    @DisplayName("throw CannotCompleteTask failure when it is trying to complete the deleted task")
     public void cannotCompleteDeletedTask() {
         dispatchCreateTaskCmd();
 
@@ -111,7 +111,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
     }
 
     @Test
-    @DisplayName("throw CannotCompleteTask failure when try to complete the task in draft state")
+    @DisplayName("throw CannotCompleteTask failure when it is trying to complete the task in draft state")
     public void cannotCompleteDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);

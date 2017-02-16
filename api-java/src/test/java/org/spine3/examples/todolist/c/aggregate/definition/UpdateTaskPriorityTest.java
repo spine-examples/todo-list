@@ -56,7 +56,7 @@ import static org.spine3.protobuf.AnyPacker.unpack;
  * @author Illia Shepilov
  */
 
-@DisplayName("UpdateTaskPriority command should be interpret by TaskDefinitionPart and")
+@DisplayName("UpdateTaskPriority command should be interpreted by TaskDefinitionPart and")
 public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTaskPriority> {
 
     private final CommandContext commandContext = createCommandContext();
@@ -71,7 +71,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskPriority failure when try to update the priority for the deleted task")
+    @DisplayName("throw CannotUpdateTaskPriority failure when it is trying to update the priority for the deleted task")
     public void cannotUpdateDeletedTaskPriority() {
         dispatchCreateTaskCmd();
 
@@ -89,7 +89,8 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskPriority failure when try to update the priority for the completed task")
+    @DisplayName("throw CannotUpdateTaskPriority failure " +
+            "when it is trying to update the priority for the completed task")
     public void cannotUpdateCompletedTaskPriority() {
         dispatchCreateTaskCmd();
 
