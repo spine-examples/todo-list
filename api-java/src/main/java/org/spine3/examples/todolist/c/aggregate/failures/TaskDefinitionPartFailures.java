@@ -18,49 +18,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregate;
+package org.spine3.examples.todolist.c.aggregate.failures;
 
 import org.spine3.change.ValueMismatch;
-import org.spine3.examples.todolist.AssignLabelToTaskFailed;
 import org.spine3.examples.todolist.CompleteTaskFailed;
 import org.spine3.examples.todolist.CreateBasicTaskFailed;
 import org.spine3.examples.todolist.CreateDraftFailed;
 import org.spine3.examples.todolist.DeleteTaskFailed;
 import org.spine3.examples.todolist.DescriptionUpdateFailed;
-import org.spine3.examples.todolist.FailedLabelCommandDetails;
 import org.spine3.examples.todolist.FailedTaskCommandDetails;
 import org.spine3.examples.todolist.FinalizeDraftFailed;
-import org.spine3.examples.todolist.LabelDetailsUpdateFailed;
-import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.PriorityUpdateFailed;
-import org.spine3.examples.todolist.RemoveLabelFromTaskFailed;
 import org.spine3.examples.todolist.ReopenTaskFailed;
 import org.spine3.examples.todolist.RestoreDeletedTaskFailed;
 import org.spine3.examples.todolist.TaskDueDateUpdateFailed;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.failures.CannotAssignLabelToTask;
+import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.failures.CannotCompleteTask;
 import org.spine3.examples.todolist.c.failures.CannotCreateDraft;
 import org.spine3.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
 import org.spine3.examples.todolist.c.failures.CannotDeleteTask;
 import org.spine3.examples.todolist.c.failures.CannotFinalizeDraft;
-import org.spine3.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 import org.spine3.examples.todolist.c.failures.CannotReopenTask;
 import org.spine3.examples.todolist.c.failures.CannotRestoreDeletedTask;
-import org.spine3.examples.todolist.c.failures.CannotUpdateLabelDetails;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDescription;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDueDate;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskPriority;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskWithInappropriateDescription;
 
 /**
- * Utility class for working with failures.
+ * Utility class for working with {@link TaskDefinitionPart} failures.
  *
  * @author Illia Shepilov
  */
-class FailureHelper {
+public class TaskDefinitionPartFailures {
 
-    private FailureHelper() {
+    private TaskDefinitionPartFailures() {
     }
 
     /**
@@ -69,7 +62,7 @@ class FailureHelper {
      * @param taskId the ID of the task
      * @throws CannotReopenTask the failure to throw
      */
-    static void throwCannotReopenTaskFailure(TaskId taskId) throws CannotReopenTask {
+    public static void throwCannotReopenTaskFailure(TaskId taskId) throws CannotReopenTask {
         final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
                                                                                .setTaskId(taskId)
                                                                                .build();
@@ -85,7 +78,7 @@ class FailureHelper {
      * @param taskId the ID of the task
      * @throws CannotFinalizeDraft the failure to throw
      */
-    static void throwCannotFinalizeDraftFailure(TaskId taskId) throws CannotFinalizeDraft {
+    public static void throwCannotFinalizeDraftFailure(TaskId taskId) throws CannotFinalizeDraft {
         final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
                                                                                .setTaskId(taskId)
                                                                                .build();
@@ -101,7 +94,7 @@ class FailureHelper {
      * @param taskId the ID of the task
      * @throws CannotDeleteTask the failure to throw
      */
-    static void throwCannotDeleteTaskFailure(TaskId taskId) throws CannotDeleteTask {
+    public static void throwCannotDeleteTaskFailure(TaskId taskId) throws CannotDeleteTask {
         final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
                                                                                .setTaskId(taskId)
                                                                                .build();
@@ -117,7 +110,7 @@ class FailureHelper {
      * @param taskId the ID of the task
      * @throws CannotCompleteTask the failure to throw
      */
-    static void throwCannotCompleteTaskFailure(TaskId taskId) throws CannotCompleteTask {
+    public static void throwCannotCompleteTaskFailure(TaskId taskId) throws CannotCompleteTask {
         final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
                                                                                .setTaskId(taskId)
                                                                                .build();
@@ -133,7 +126,7 @@ class FailureHelper {
      * @param taskId the ID of the task
      * @throws CannotRestoreDeletedTask the {@code CannotRestoreDeletedTask} failure
      */
-    static void throwCannotRestoreDeletedTaskFailure(TaskId taskId) throws CannotRestoreDeletedTask {
+    public static void throwCannotRestoreDeletedTaskFailure(TaskId taskId) throws CannotRestoreDeletedTask {
         final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
                                                                                .setTaskId(taskId)
                                                                                .build();
@@ -144,7 +137,7 @@ class FailureHelper {
         throw new CannotRestoreDeletedTask(restoreDeletedTaskFailed);
     }
 
-    static class UpdateFailures {
+    public static class UpdateFailures {
 
         private UpdateFailures() {
         }
@@ -155,7 +148,7 @@ class FailureHelper {
          * @param taskId the ID of the task
          * @throws CannotUpdateTaskDueDate the failure to throw
          */
-        static void throwCannotUpdateTaskDueDateFailure(TaskId taskId) throws CannotUpdateTaskDueDate {
+        public static void throwCannotUpdateTaskDueDateFailure(TaskId taskId) throws CannotUpdateTaskDueDate {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
                                             .setTaskId(taskId)
@@ -174,7 +167,7 @@ class FailureHelper {
          * @param mismatch the {@link ValueMismatch}
          * @throws CannotUpdateTaskDescription the failure to throw
          */
-        static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, ValueMismatch mismatch)
+        public static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId, ValueMismatch mismatch)
                 throws CannotUpdateTaskDescription {
             final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
                                                                                    .setTaskId(taskId)
@@ -193,7 +186,7 @@ class FailureHelper {
          * @param taskId the ID of the task
          * @throws CannotUpdateTaskDescription the failure to throw
          */
-        static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId)
+        public static void throwCannotUpdateTaskDescriptionFailure(TaskId taskId)
                 throws CannotUpdateTaskDescription {
             final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
                                                                                    .setTaskId(taskId)
@@ -212,7 +205,7 @@ class FailureHelper {
          * @param mismatch the {@link ValueMismatch}
          * @throws CannotUpdateTaskDueDate the failure to throw
          */
-        static void throwCannotUpdateTaskDueDateFailure(TaskId taskId, ValueMismatch mismatch)
+        public static void throwCannotUpdateTaskDueDateFailure(TaskId taskId, ValueMismatch mismatch)
                 throws CannotUpdateTaskDueDate {
             final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
                                                                                    .setTaskId(taskId)
@@ -232,7 +225,7 @@ class FailureHelper {
          * @param mismatch the {@link ValueMismatch}
          * @throws CannotUpdateTaskDescription the failure to throw
          */
-        static void throwCannotUpdateDescriptionFailure(TaskId taskId, ValueMismatch mismatch)
+        public static void throwCannotUpdateDescriptionFailure(TaskId taskId, ValueMismatch mismatch)
                 throws CannotUpdateTaskDescription {
             final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
                                                                                    .setTaskId(taskId)
@@ -252,7 +245,7 @@ class FailureHelper {
          * @param mismatch the {@link ValueMismatch}
          * @throws CannotUpdateTaskPriority the failure to throw
          */
-        static void throwCannotUpdateTaskPriorityFailure(TaskId taskId, ValueMismatch mismatch)
+        public static void throwCannotUpdateTaskPriorityFailure(TaskId taskId, ValueMismatch mismatch)
                 throws CannotUpdateTaskPriority {
             final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
                                                                                    .setTaskId(taskId)
@@ -270,7 +263,7 @@ class FailureHelper {
          * @param taskId the ID of the task
          * @throws CannotUpdateTaskPriority the failure to throw
          */
-        static void throwCannotUpdateTaskPriorityFailure(TaskId taskId) throws CannotUpdateTaskPriority {
+        public static void throwCannotUpdateTaskPriorityFailure(TaskId taskId) throws CannotUpdateTaskPriority {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
                                             .setTaskId(taskId)
@@ -282,33 +275,13 @@ class FailureHelper {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateLabelDetails} failure according to the passed parameters.
-         *
-         * @param labelId  the ID of the label
-         * @param mismatch the {@link ValueMismatch}
-         * @throws CannotUpdateLabelDetails the failure to throw
-         */
-        static void throwCannotUpdateLabelDetailsFailure(LabelId labelId, ValueMismatch mismatch)
-                throws CannotUpdateLabelDetails {
-            final FailedLabelCommandDetails labelCommandFailed = FailedLabelCommandDetails.newBuilder()
-                                                                                          .setLabelId(labelId)
-                                                                                          .build();
-            final LabelDetailsUpdateFailed labelDetailsUpdateFailed =
-                    LabelDetailsUpdateFailed.newBuilder()
-                                            .setFailureDetails(labelCommandFailed)
-                                            .setLabelDetailsMismatch(mismatch)
-                                            .build();
-            throw new CannotUpdateLabelDetails(labelDetailsUpdateFailed);
-        }
-
-        /**
          * Constructs and throws the {@link CannotUpdateTaskWithInappropriateDescription} failure
          * according to the passed parameters.
          *
          * @param taskId the ID of the task
          * @throws CannotUpdateTaskWithInappropriateDescription the failure to throw
          */
-        static void throwCannotUpdateTooShortDescriptionFailure(TaskId taskId)
+        public static void throwCannotUpdateTooShortDescriptionFailure(TaskId taskId)
                 throws CannotUpdateTaskWithInappropriateDescription {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
@@ -321,53 +294,7 @@ class FailureHelper {
         }
     }
 
-    static class TaskLabelFailures {
-
-        private TaskLabelFailures() {
-        }
-
-        /**
-         * Constructs and throws the {@link CannotAssignLabelToTask} failure according to the passed parameters.
-         *
-         * @param taskId  the ID of the task
-         * @param labelId the ID of the label
-         * @throws CannotAssignLabelToTask the failure to throw
-         */
-        static void throwCannotAssignLabelToTaskFailure(TaskId taskId, LabelId labelId) throws CannotAssignLabelToTask {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(taskId)
-                                            .build();
-            final AssignLabelToTaskFailed assignLabelToTaskFailed =
-                    AssignLabelToTaskFailed.newBuilder()
-                                           .setFailureDetails(commandFailed)
-                                           .setLabelId(labelId)
-                                           .build();
-            throw new CannotAssignLabelToTask(assignLabelToTaskFailed);
-        }
-
-        /**
-         * Constructs and throws the {@link CannotRemoveLabelFromTask} failure according to the passed parameters.
-         *
-         * @param taskId the ID of the task
-         * @throws CannotRemoveLabelFromTask the failure to throw
-         */
-        static void throwCannotRemoveLabelFromTaskFailure(LabelId labelId, TaskId taskId)
-                throws CannotRemoveLabelFromTask {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(taskId)
-                                            .build();
-            final RemoveLabelFromTaskFailed removeLabelFromTaskFailed =
-                    RemoveLabelFromTaskFailed.newBuilder()
-                                             .setLabelId(labelId)
-                                             .setFailureDetails(commandFailed)
-                                             .build();
-            throw new CannotRemoveLabelFromTask(removeLabelFromTaskFailed);
-        }
-    }
-
-    static class TaskCreationFailures {
+    public static class TaskCreationFailures {
 
         private TaskCreationFailures() {
         }
@@ -378,7 +305,7 @@ class FailureHelper {
          * @param taskId the ID of the task
          * @throws CannotCreateDraft the failure to throw
          */
-        static void throwCannotCreateDraftFailure(TaskId taskId) throws CannotCreateDraft {
+        public static void throwCannotCreateDraftFailure(TaskId taskId) throws CannotCreateDraft {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
                                             .setTaskId(taskId)
@@ -396,7 +323,7 @@ class FailureHelper {
          * @param taskId the ID of the task
          * @throws CannotCreateTaskWithInappropriateDescription the failure to throw
          */
-        static void throwCannotCreateTaskWithInappropriateDescriptionFailure(TaskId taskId)
+        public static void throwCannotCreateTaskWithInappropriateDescriptionFailure(TaskId taskId)
                 throws CannotCreateTaskWithInappropriateDescription {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()

@@ -74,24 +74,24 @@ import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskCreationFailures.throwCannotCreateDraftFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateTaskDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateTaskDueDateFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateTaskPriorityFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateTooShortDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotCompleteTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotDeleteTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotFinalizeDraftFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotReopenTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.throwCannotRestoreDeletedTaskFailure;
 import static org.spine3.examples.todolist.c.aggregate.MismatchHelper.of;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.ensureNotDeleted;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidCreateDraftCommand;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidTransition;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskPriorityCommand;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDateFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriorityFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTooShortDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.throwCannotCompleteTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.throwCannotDeleteTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.throwCannotFinalizeDraftFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.throwCannotReopenTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.throwCannotRestoreDeletedTaskFailure;
 
 /**
  * The aggregate managing the state of a {@link TaskDefinition}.
@@ -99,12 +99,12 @@ import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValid
  * @author Illia Shepilov
  */
 @SuppressWarnings({"ClassWithTooManyMethods", // because according to the domain model task definition
-                                              // cannot be separated and should process all commands
-                                              // and events related to him. The {@code AggregatePart}
-                                              // does it with methods annotated as {@code Assign} and {@code Apply}.
-                                              // In that case class has to many methods.
-                   "OverlyCoupledClass"})     // As each method needs dependencies necessary to perform execution
-                                              // that class also overly coupled.
+        // cannot be separated and should process all commands
+        // and events related to him. The {@code AggregatePart}
+        // does it with methods annotated as {@code Assign} and {@code Apply}.
+        // In that case class has to many methods.
+        "OverlyCoupledClass"})     // As each method needs dependencies necessary to perform execution
+// that class also overly coupled.
 public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, TaskDefinition.Builder> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;

@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.c.aggregate;
+package org.spine3.examples.todolist.c.aggregate.failures;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,18 +33,18 @@ import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDescription;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskCreationFailures.throwCannotCreateDraftFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskLabelFailures.throwCannotAssignLabelToTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.TaskLabelFailures.throwCannotRemoveLabelFromTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateTaskDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotAssignLabelToTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotRemoveLabelFromTaskFailure;
 import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("FailureHelper should")
-class FailureHelperTest {
+@DisplayName("TaskDefinitionPartFailures should")
+class TaskDefinitionPartFailuresTest {
 
     private final TaskId taskId = TaskId.getDefaultInstance();
     private final LabelId labelId = LabelId.getDefaultInstance();
@@ -52,7 +52,7 @@ class FailureHelperTest {
     @Test
     @DisplayName("have the private constructor")
     public void havePrivateConstructor() {
-        assertTrue(hasPrivateParameterlessCtor(FailureHelper.class));
+        assertTrue(hasPrivateParameterlessCtor(TaskDefinitionPartFailures.class));
     }
 
     @Test
@@ -70,20 +70,6 @@ class FailureHelperTest {
     }
 
     @Test
-    @DisplayName("throw CannotRemoveLabelFromTask failure")
-    public void throwCannotRemoveLabelFromTask() {
-        try {
-            throwCannotRemoveLabelFromTaskFailure(labelId, taskId);
-        } catch (CannotRemoveLabelFromTask ex) {
-            final TaskId actual = ex.getFailure()
-                                    .getRemoveLabelFailed()
-                                    .getFailureDetails()
-                                    .getTaskId();
-            assertEquals(taskId, actual);
-        }
-    }
-
-    @Test
     @DisplayName("throw CannotUpdateTaskDescription failure")
     public void throwCannotUpdateTaskDescription() {
         try {
@@ -91,20 +77,6 @@ class FailureHelperTest {
         } catch (CannotUpdateTaskDescription ex) {
             final FailedTaskCommandDetails failedCommand = ex.getFailure()
                                                              .getUpdateFailed()
-                                                             .getFailureDetails();
-            final TaskId actualId = failedCommand.getTaskId();
-            assertEquals(taskId, actualId);
-        }
-    }
-
-    @Test
-    @DisplayName("throw CannotAssignLabelToTask failure")
-    public void throwCannotAssignLabelToTask() {
-        try {
-            throwCannotAssignLabelToTaskFailure(taskId, labelId);
-        } catch (CannotAssignLabelToTask ex) {
-            final FailedTaskCommandDetails failedCommand = ex.getFailure()
-                                                             .getAssignLabelFailed()
                                                              .getFailureDetails();
             final TaskId actualId = failedCommand.getTaskId();
             assertEquals(taskId, actualId);

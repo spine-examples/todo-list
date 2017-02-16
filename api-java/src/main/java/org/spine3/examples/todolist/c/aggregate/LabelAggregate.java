@@ -39,8 +39,8 @@ import org.spine3.server.command.Assign;
 import java.util.Collections;
 import java.util.List;
 
-import static org.spine3.examples.todolist.c.aggregate.FailureHelper.UpdateFailures.throwCannotUpdateLabelDetailsFailure;
 import static org.spine3.examples.todolist.c.aggregate.MismatchHelper.of;
+import static org.spine3.examples.todolist.c.aggregate.failures.LabelAggregateFailures.throwCannotUpdateLabelDetailsFailure;
 
 /**
  * The aggregate managing the state of a {@link TaskLabel}.
