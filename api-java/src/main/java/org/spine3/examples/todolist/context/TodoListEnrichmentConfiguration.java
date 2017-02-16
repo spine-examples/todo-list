@@ -45,14 +45,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 @SuppressWarnings("Guava") // because com.google.common.base.Function is used
                            // until the migration of Spine to Java 8 is performed.
-public class TodoListEventEnricher {
+public class TodoListEnrichmentConfiguration {
 
     private final TaskDefinitionRepository taskDefinitionRepo;
     private final TaskLabelsRepository taskLabelsRepo;
     private final LabelAggregateRepository labelRepository;
     private final EventBus eventBus;
 
-    private TodoListEventEnricher(Builder builder) {
+    private TodoListEnrichmentConfiguration(Builder builder) {
         this.taskDefinitionRepo = builder.taskDefinitionRepo;
         this.taskLabelsRepo = builder.taskLabelsRepo;
         this.labelRepository = builder.labelRepository;
@@ -132,7 +132,7 @@ public class TodoListEventEnricher {
     }
 
     /**
-     * Creates a new builder for (@code TodoListEventEnricher).
+     * Creates a new builder for (@code TodoListEnrichmentConfiguration).
      *
      * @return new builder instance
      */
@@ -171,14 +171,10 @@ public class TodoListEventEnricher {
             return this;
         }
 
-        public Builder setEventBus(EventBus eventBus) {
+        public TodoListEnrichmentConfiguration apply(EventBus eventBus) {
             checkNotNull(eventBus);
             this.eventBus = eventBus;
-            return this;
-        }
-
-        public TodoListEventEnricher build() {
-            final TodoListEventEnricher result = new TodoListEventEnricher(this);
+            final TodoListEnrichmentConfiguration result = new TodoListEnrichmentConfiguration(this);
             return result;
         }
     }
