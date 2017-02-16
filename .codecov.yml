@@ -9,6 +9,8 @@ coverage:
   ignore:
   - generated/*
   - test/*
+  - testutil/src/main/java/org/spine3/examples/todolist/testdata/*
+
   status:
     patch: false
 

@@ -20,7 +20,7 @@
 
 /**
  * This package contains implementation for classes which provides
- * methods to process aggregates and projections.
+ * methods to process aggregates and projection.
  */
 @ParametersAreNonnullByDefault
 package org.spine3.examples.todolist;

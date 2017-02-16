@@ -42,7 +42,7 @@ message TaskId {
 
 // An ID of a task label.
 //
-message TaskLabelId {
+message LabelId {
 
     // String representation of UUID.
     //

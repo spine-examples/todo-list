@@ -77,7 +77,7 @@ message LabelDetails {
 message DescriptionUpdateFailed {
 
     // Unsuccessful task command.
-    UnsuccessfulTaskCommand failed_command = 1;
+    FailedTaskCommandDetails failure_details = 1;
 
     // A mismatching description value.
     change.ValueMismatch description_mismatch = 2;
@@ -87,7 +87,7 @@ message DescriptionUpdateFailed {
 message PriorityUpdateFailed {
 
     // Unsuccessful task command.
-    UnsuccessfulTaskCommand failed_command = 1;
+    FailedTaskCommandDetails failure_details = 1;
 
     // A mismatching priority value.
     change.ValueMismatch priority_mismatch = 2;
@@ -97,7 +97,7 @@ message PriorityUpdateFailed {
 message TaskDueDateUpdateFailed {
 
     // Unsuccessful task command.
-    UnsuccessfulTaskCommand failed_command = 1;
+    FailedTaskCommandDetails failure_details = 1;
 
     // A mismatching due date value.
     change.ValueMismatch due_date_mismatch = 2;
@@ -107,7 +107,7 @@ message TaskDueDateUpdateFailed {
 message LabelDetailsUpdateFailed {
 
     // Unsuccessful label command.
-    UnsuccessfulLabelCommand failed_command = 1;
+    FailedLabelCommandDetails failure_details = 1;
 
     // A mismatching label details value.
     change.ValueMismatch label_details_mismatch = 2;
@@ -117,101 +117,88 @@ message LabelDetailsUpdateFailed {
 message CreateBasicTaskFailed {
 
     // Unsuccessful task command.
-    UnsuccessfulTaskCommand failed_command = 1;
-}
-
-// DTO for the failed created basic label command.
-message CreateBasicLabelFailed {
-
-    // Unsuccessful label command.
-    UnsuccessfulLabelCommand failed_command = 1;
+    FailedTaskCommandDetails failure_details = 1;
 }
 
 // DTO for the failed assign label to task command.
 message AssignLabelToTaskFailed {
 
     // Unsuccessful task command.
-    UnsuccessfulTaskCommand assign_label_failed = 1;
+    FailedTaskCommandDetails failure_details = 1;
 
     // An identifier of the label.
-    TaskLabelId label_id = 2;
+    LabelId label_id = 2;
 }
 
 // DTO for the failed remove label from task command.
 message RemoveLabelFromTaskFailed {
 
     // An unsuccessful task command.
-    UnsuccessfulTaskCommand failed_command = 1;
+    FailedTaskCommandDetails failure_details = 1;
 
     // An identifier of the label.
-    TaskLabelId label_id = 2;
+    LabelId label_id = 2;
 }
 
 // DTO for the failed reopen task command.
 message ReopenTaskFailed {
 
     // An unsuccessful task command.
-    UnsuccessfulTaskCommand failed_command = 1;
+    FailedTaskCommandDetails failure_details = 1;
 }
 
 // DTO for the failed delete task command.
 message DeleteTaskFailed {
 
     // An unsuccessful task command.
-    UnsuccessfulTaskCommand failed_command = 1;
+    FailedTaskCommandDetails failure_details = 1;
 }
 
 // DTO for the failed restore deleted task command.
 message RestoreDeletedTaskFailed {
 
     // An unsuccessful task command.
-    UnsuccessfulTaskCommand failed_command = 1;
+    FailedTaskCommandDetails failure_details = 1;
 }
 
 // DTO for the failed complete task command.
 message CompleteTaskFailed {
 
     // An unsuccessful task command.
-    UnsuccessfulTaskCommand failed_command = 1;
+    FailedTaskCommandDetails failure_details = 1;
 }
 
 // DTO for the failed create task draft command.
 message CreateDraftFailed {
 
     // An unsuccessful task command.
-    UnsuccessfulTaskCommand failed_command = 1;
+    FailedTaskCommandDetails failure_details = 1;
 }
 
 // DTO for the failed finalize draft command.
 message FinalizeDraftFailed {
 
     // An unsuccessful task command.
-    UnsuccessfulTaskCommand failed_command = 1;
+    FailedTaskCommandDetails failure_details = 1;
 }
 
 // DTO for the unsuccessful task command.
-message UnsuccessfulTaskCommand {
+message FailedTaskCommandDetails {
 
     // A task identifier.
     TaskId task_id = 1;
-
-    // A failure message.
-    string message = 2;
 }
 
 // DTO for the unsuccessful label command.
-message UnsuccessfulLabelCommand {
+message FailedLabelCommandDetails {
 
     // A task label identifier.
-    TaskLabelId label_id = 1;
-
-    // A failure message.
-    string message = 2;
+    LabelId label_id = 1;
 }
 
 // DTO for the list of the label IDs.
-message LabelIdList {
+message LabelIdsList {
 
-    // A label identifiers.
-    repeated TaskLabelId label_id = 1;
+    // Label IDs.
+    repeated LabelId ids = 1;
 }

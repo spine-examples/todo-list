@@ -20,21 +20,12 @@
 
 package org.spine3.examples.todolist.server;
 
-import org.spine3.examples.todolist.repositories.DraftTasksViewRepository;
-import org.spine3.examples.todolist.repositories.LabelledTasksViewRepository;
-import org.spine3.examples.todolist.repositories.MyListViewRepository;
-import org.spine3.examples.todolist.repositories.TaskAggregateRepository;
-import org.spine3.examples.todolist.repositories.TaskLabelAggregateRepository;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.CommandService;
 import org.spine3.server.QueryService;
-import org.spine3.server.SubscriptionService;
-import org.spine3.server.event.enrich.EventEnricher;
-import org.spine3.server.storage.StorageFactory;
 import org.spine3.server.transport.GrpcContainer;
 
 import java.io.IOException;
-import java.util.function.Supplier;
 
 import static org.spine3.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static org.spine3.server.event.EventStore.log;
@@ -48,40 +39,19 @@ public class Server {
 
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
-    private TaskAggregateRepository taskAggregateRepository;
-    private TaskLabelAggregateRepository taskLabelAggregateRepository;
-    private MyListViewRepository myListViewRepository;
-    private LabelledTasksViewRepository labelledViewRepository;
-    private DraftTasksViewRepository draftTasksViewRepository;
 
-    public Server(StorageFactory storageFactory) {
-        final TodoListRepositoryProvider repositoryProvider = new TodoListRepositoryProvider();
-        final Supplier<EventEnricher> eventEnricherSupplier = EventEnricherSupplier.newBuilder()
-                                                                                   .setRepositoryProvider(repositoryProvider)
-                                                                                   .build();
-        final EventEnricher eventEnricher = eventEnricherSupplier.get();
-        this.boundedContext = initBoundedContext(storageFactory, eventEnricher);
-        initRepositories(storageFactory);
-        registerRepositories();
-        repositoryProvider.setTaskAggregateRepository(taskAggregateRepository);
-        repositoryProvider.setLabelAggregateRepository(taskLabelAggregateRepository);
+    public Server(BoundedContext boundedContext) {
+        this.boundedContext = boundedContext;
+
         final CommandService commandService = initCommandService();
         final QueryService queryService = initQueryService();
-        final SubscriptionService subscriptionService = initSubscriptionService();
-        this.grpcContainer = initGrpcContainer(commandService, subscriptionService, queryService);
+        this.grpcContainer = initGrpcContainer(commandService, queryService);
     }
 
     private QueryService initQueryService() {
         final QueryService result = QueryService.newBuilder()
                                                 .add(boundedContext)
                                                 .build();
-        return result;
-    }
-
-    private SubscriptionService initSubscriptionService() {
-        final SubscriptionService result = SubscriptionService.newBuilder()
-                                                              .add(boundedContext)
-                                                              .build();
         return result;
     }
 
@@ -92,49 +62,13 @@ public class Server {
         return result;
     }
 
-    private static GrpcContainer initGrpcContainer(CommandService commandService,
-                                                   SubscriptionService subscriptionService,
-                                                   QueryService queryService) {
+    private static GrpcContainer initGrpcContainer(CommandService commandService, QueryService queryService) {
         final GrpcContainer result = GrpcContainer.newBuilder()
                                                   .addService(commandService)
-                                                  .addService(subscriptionService)
                                                   .addService(queryService)
                                                   .setPort(DEFAULT_CLIENT_SERVICE_PORT)
                                                   .build();
         return result;
-    }
-
-    private static BoundedContext initBoundedContext(StorageFactory storageFactory, EventEnricher eventEnricher) {
-        final BoundedContext result = BoundedContext.newBuilder()
-                                                    .setStorageFactory(storageFactory)
-                                                    .setEventEnricher(eventEnricher)
-                                                    .build();
-        return result;
-    }
-
-    private void initRepositories(StorageFactory storageFactory) {
-        taskAggregateRepository = new TaskAggregateRepository(boundedContext);
-        taskAggregateRepository.initStorage(storageFactory);
-
-        taskLabelAggregateRepository = new TaskLabelAggregateRepository(boundedContext);
-        taskLabelAggregateRepository.initStorage(storageFactory);
-
-        myListViewRepository = new MyListViewRepository(boundedContext);
-        myListViewRepository.initStorage(storageFactory);
-
-        labelledViewRepository = new LabelledTasksViewRepository(boundedContext);
-        labelledViewRepository.initStorage(storageFactory);
-
-        draftTasksViewRepository = new DraftTasksViewRepository(boundedContext);
-        draftTasksViewRepository.initStorage(storageFactory);
-    }
-
-    private void registerRepositories() {
-        boundedContext.register(taskAggregateRepository);
-        boundedContext.register(taskLabelAggregateRepository);
-        boundedContext.register(myListViewRepository);
-        boundedContext.register(labelledViewRepository);
-        boundedContext.register(draftTasksViewRepository);
     }
 
     /**
@@ -169,6 +103,5 @@ public class Server {
      */
     public void shutdown() throws Exception {
         grpcContainer.shutdown();
-        boundedContext.close();
     }
 }

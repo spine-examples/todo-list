@@ -20,7 +20,7 @@
 
 package org.spine3.examples.todolist.client.builder;
 
-import org.spine3.examples.todolist.TaskLabelId;
+import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 
 import static org.spine3.base.Identifiers.newUuid;
@@ -71,16 +71,16 @@ public final class LabelBuilder {
          * @return the {@link CreateBasicLabel} command
          */
         public CreateBasicLabel build() {
-            final TaskLabelId id = generateId();
+            final LabelId id = generateId();
             builder.setLabelId(id);
             return builder.build();
         }
     }
 
-    private static TaskLabelId generateId() {
-        final TaskLabelId id = TaskLabelId.newBuilder()
-                                          .setValue(newUuid())
-                                          .build();
+    private static LabelId generateId() {
+        final LabelId id = LabelId.newBuilder()
+                                  .setValue(newUuid())
+                                  .build();
         return id;
     }
 }

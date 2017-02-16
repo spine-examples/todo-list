@@ -132,7 +132,7 @@ message AssignLabelToTask {
     TaskId id = 1;
 
     // An identifier of the label to assign to the target task.
-    TaskLabelId label_id = 2;
+    LabelId label_id = 2;
 }
 
 // Remove the previously assigned label from a task.
@@ -149,7 +149,7 @@ message RemoveLabelFromTask {
     TaskId id = 1;
 
     // An identifier of the label to assign to the target task.
-    TaskLabelId label_id = 2;
+    LabelId label_id = 2;
 }
 
 // Create a draft.
@@ -244,7 +244,7 @@ message RestoreDeletedTask {
 message CreateBasicLabel {
 
     // An identifier of the target label.
-    TaskLabelId label_id = 1;
+    LabelId label_id = 1;
 
     // A title for the label.
     string label_title = 2 [(required) = true];
@@ -258,7 +258,7 @@ message CreateBasicLabel {
 message UpdateLabelDetails {
 
     // An identifier of the target label.
-    TaskLabelId id = 1;
+    LabelId id = 1;
 
     // The label details change.
     // Contains the previous label details and the label details to set for the target label.

@@ -22,5 +22,5 @@ dependencies {
     compile project(path: ':model')
     compile project(path: ':server')
     compile project(path: ':api-java')
-    testCompile project(':api-java').sourceSets.test.output
+    testCompile project(path: ':testutil')
 }

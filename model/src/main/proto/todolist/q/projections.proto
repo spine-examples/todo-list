@@ -23,7 +23,7 @@ syntax = "proto3";
 package spine.examples.todolist;
 
 option (type_url_prefix) = "type.spine.examples.todolist";
-option java_package = "org.spine3.examples.todolist.q.projections";
+option java_package = "org.spine3.examples.todolist.q.projection";
 option java_outer_classname = "ProjectionsProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
@@ -36,7 +36,7 @@ import "spine/validate.proto";
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
 
-// A projections state of created tasks.
+// A projection state of created tasks.
 //
 // This view includes all tasks that are not in a draft state and not deleted.
 //
@@ -53,7 +53,7 @@ message MyListView {
     TaskListView my_list = 2;
 }
 
-// A projections state of tasks in a "draft" state.
+// A projection state of tasks in a "draft" state.
 //
 // This view includes all non-deleted tasks, which creation is in progress.
 //
@@ -68,7 +68,7 @@ message DraftTasksView {
     TaskListView draft_tasks = 2;
 }
 
-// A projections state of the created tasks marked with a certain label.
+// A projection state of the created tasks marked with a certain label.
 //
 // This view includes all tasks per label that are neither in a draft state nor deleted.
 //
@@ -80,7 +80,7 @@ message DraftTasksView {
 //
 message LabelledTasksView {
 
-    TaskLabelId label_id = 1;
+    LabelId label_id = 1;
 
     string label_title = 2 [(required) = true];
 
@@ -114,7 +114,7 @@ message TaskView {
     TaskPriority priority = 3;
 
     // Task label identifier.
-    TaskLabelId label_id = 4;
+    LabelId label_id = 4;
 
     // A color of the label.
     LabelColor label_color = 5;

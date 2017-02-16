@@ -25,9 +25,11 @@ package org.spine3.examples.todolist;
  *
  * @author Illia Shepilov
  */
-public class EnrichmentNotFoundException extends RuntimeException {
+class EnrichmentNotFoundException extends RuntimeException {
 
-    public EnrichmentNotFoundException(String message) {
+    private static final long serialVersionUID = 1L;
+
+    EnrichmentNotFoundException(String message) {
         super(message);
     }
 }

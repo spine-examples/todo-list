@@ -34,9 +34,9 @@ import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
 import org.spine3.examples.todolist.c.commands.UpdateTaskDescription;
 import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
 import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
-import org.spine3.examples.todolist.q.projections.DraftTasksView;
-import org.spine3.examples.todolist.q.projections.LabelledTasksView;
-import org.spine3.examples.todolist.q.projections.MyListView;
+import org.spine3.examples.todolist.q.projection.DraftTasksView;
+import org.spine3.examples.todolist.q.projection.LabelledTasksView;
+import org.spine3.examples.todolist.q.projection.MyListView;
 
 import java.util.List;
 
