@@ -25,6 +25,9 @@ import org.spine3.examples.todolist.TaskListId;
 import static org.spine3.base.Identifiers.newUuid;
 
 /**
+ * The parent class for the projection test classes.
+ * Provides the common methods for testing.
+ *
  * @author Illia Shepilov
  */
 abstract class ProjectionTest {

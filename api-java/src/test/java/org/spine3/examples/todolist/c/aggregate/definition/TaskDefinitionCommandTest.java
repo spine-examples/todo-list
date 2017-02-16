@@ -30,6 +30,9 @@ import org.spine3.test.CommandTest;
 import static org.spine3.base.Identifiers.newUuid;
 
 /**
+ * The parent class for the {@link TaskDefinitionPart} test classes.
+ * Provides the common methods for testing.
+ *
  * @author Illia Shepilov
  */
 abstract class TaskDefinitionCommandTest<C extends Message> extends CommandTest<C> {
