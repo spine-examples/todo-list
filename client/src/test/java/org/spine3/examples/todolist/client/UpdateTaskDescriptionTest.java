@@ -46,7 +46,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updat
 /**
  * @author Illia Shepilov
  */
-@DisplayName("After execution UpdateTaskDescription command")
+@DisplayName("After execution of UpdateTaskDescription command")
 public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
 
     private TodoClient client;

@@ -45,7 +45,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.compl
 /**
  * @author Illia Shepilov
  */
-@DisplayName("After execution CompleteTask command")
+@DisplayName("After execution of CompleteTask command")
 public class CompleteTaskTest extends CommandLineTodoClientTest {
 
     private TodoClient client;

@@ -63,7 +63,7 @@ public class ProjectionHelperTest {
     }
 
     @Test
-    @DisplayName("remove TaskView form state by label ID")
+    @DisplayName("remove TaskView from state by label ID")
     public void removeView() {
         final int expectedListSize = 1;
         final TaskListView view = ProjectionHelper.removeViewByLabelId(viewList, LABEL_ID);

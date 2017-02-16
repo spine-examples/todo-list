@@ -46,7 +46,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
 /**
  * @author Illia Shepilov
  */
-@DisplayName("After execution AssignLabelToTask command")
+@DisplayName("After execution of AssignLabelToTask command")
 public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
 
     private TodoClient client;

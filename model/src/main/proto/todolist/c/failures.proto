@@ -33,7 +33,7 @@ import "todolist/identifiers.proto";
 import "todolist/values.proto";
 
 // Fire the failure when cannot update the task description.
-// Failure fires when task state either DRAFT or COMPLETED.
+// Failure fires when task state either DELETED or COMPLETED.
 message CannotUpdateTaskDescription {
 
     // Failed the description update.
@@ -41,7 +41,7 @@ message CannotUpdateTaskDescription {
 }
 
 // Fire the failure when cannot update the task description.
-// Failure fires when task state either DRAFT or COMPLETED.
+// Failure fires when task state either DELETED or COMPLETED.
 message CannotUpdateTaskPriority {
 
     // Failed the priority update.
@@ -49,7 +49,7 @@ message CannotUpdateTaskPriority {
 }
 
 // Fire the failure when cannot update the task due date.
-// failure fires when task state either DRAFT or COMPLETED.
+// failure fires when task state either DELETED or COMPLETED.
 message CannotUpdateTaskDueDate {
 
     // Failed the due date update.
@@ -65,7 +65,7 @@ message CannotUpdateLabelDetails {
 }
 
 // Fire the failure when cannot assign label to task.
-// Failure fires when task state either DRAFT or COMPLETED.
+// Failure fires when task state either DELETED or COMPLETED.
 message CannotAssignLabelToTask {
 
     // Failed the label assigning to the task.
@@ -73,7 +73,7 @@ message CannotAssignLabelToTask {
 }
 
 // Fire the failure when cannot remove label from task.
-// Failure fires when task state either DRAFT or COMPLETED.
+// Failure fires when task state either DELETED or COMPLETED.
 message CannotRemoveLabelFromTask {
 
     // Failed the label removing from task.

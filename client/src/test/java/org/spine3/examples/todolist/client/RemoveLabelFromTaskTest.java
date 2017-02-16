@@ -47,7 +47,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
 /**
  * @author Illia Shepilov
  */
-@DisplayName("After execution RemoveLabelFromTask command")
+@DisplayName("After execution of RemoveLabelFromTask command")
 public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
 
     private TodoClient client;

@@ -38,7 +38,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCR
 /**
  * @author Illia Shepilov
  */
-@DisplayName("After execution CreateBasicTask command")
+@DisplayName("After execution of CreateBasicTask command")
 public class CreateBasicTaskTest extends CommandLineTodoClientTest {
 
     private TodoClient client;

@@ -51,7 +51,7 @@ import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.upda
 /**
  * @author Illia Shepilov
  */
-@DisplayName("After execution UpdateLabelDetails command")
+@DisplayName("After execution of UpdateLabelDetails command")
 public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
 
     private static final String EXPECTED_COLOR = LabelColorView.BLUE_COLOR.getHexColor();

@@ -45,7 +45,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 /**
  * @author Illia Shepilov
  */
-@DisplayName("After execution DeleteTask command")
+@DisplayName("After execution of DeleteTask command")
 public class DeleteTaskTest extends CommandLineTodoClientTest {
 
     private TodoClient client;

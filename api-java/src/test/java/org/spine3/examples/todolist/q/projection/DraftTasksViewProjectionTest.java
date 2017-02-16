@@ -106,7 +106,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     class TaskDraftFinalizedEvent {
 
         @Test
-        @DisplayName("remove TaskView form DraftTasksView")
+        @DisplayName("remove TaskView from DraftTasksView")
         public void removeView() {
             taskDraftCreated();
 
@@ -125,7 +125,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     class TaskDeletedEvent {
 
         @Test
-        @DisplayName("remove TaskView form DraftTasksView")
+        @DisplayName("remove TaskView from DraftTasksView")
         public void removeView() {
             taskDraftCreated();
 
@@ -349,7 +349,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
     class LabelRemovedFromTaskEvent {
 
         @Test
-        @DisplayName("remove TaskView form DraftTasksView")
+        @DisplayName("remove TaskView from DraftTasksView")
         public void removeView() {
             taskDraftCreated();
 

@@ -87,7 +87,7 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
     }
 
     @Test
-    @DisplayName("throw CannotCreateDraft failure when it is trying to create draft with deleted task ID")
+    @DisplayName("throw CannotCreateDraft failure upon an attempt to create draft with deleted task ID")
     public void notCreateDraft() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         aggregate.dispatchForTest(createTaskCmd, commandContext);

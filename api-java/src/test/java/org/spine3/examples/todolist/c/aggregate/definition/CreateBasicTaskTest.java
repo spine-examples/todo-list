@@ -90,7 +90,7 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
 
     @Test
     @DisplayName("throw CannotCreateTaskWithInappropriateDescription failure " +
-            "when it is trying to create task with too short description")
+            "upon an attempt to create task with too short description")
     public void notCreateTask() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, "D");
         try {

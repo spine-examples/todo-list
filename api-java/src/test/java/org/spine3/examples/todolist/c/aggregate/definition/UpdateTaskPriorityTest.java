@@ -71,7 +71,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskPriority failure when it is trying to update the priority for the deleted task")
+    @DisplayName("throw CannotUpdateTaskPriority failure upon an attempt to update the priority of the deleted task")
     public void cannotUpdateDeletedTaskPriority() {
         dispatchCreateTaskCmd();
 
@@ -90,7 +90,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
 
     @Test
     @DisplayName("throw CannotUpdateTaskPriority failure " +
-            "when it is trying to update the priority for the completed task")
+            "upon an attempt to update the priority of the completed task")
     public void cannotUpdateCompletedTaskPriority() {
         dispatchCreateTaskCmd();
 

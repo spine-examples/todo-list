@@ -122,7 +122,7 @@ public class TaskLabelsPartTest {
         }
 
         @Test
-        @DisplayName("throw CannotAssignLabelToTask failure when it is trying to assign the label to the deleted task")
+        @DisplayName("throw CannotAssignLabelToTask failure upon an attempt to assign the label to the deleted task")
         public void cannotAssignLabelToDeletedTask() {
             try {
                 final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
@@ -145,7 +145,7 @@ public class TaskLabelsPartTest {
 
         @Test
         @DisplayName("throw CannotAssignLabelToTask failure " +
-                "when it is trying to assign the label to the completed task")
+                "upon an attempt to assign the label to the completed task")
         public void cannotAssignLabelToCompletedTask() {
             try {
                 final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
@@ -189,7 +189,7 @@ public class TaskLabelsPartTest {
 
         @Test
         @DisplayName("throw CannotRemoveLabelFromTask failure " +
-                "when it is trying to remove the label from the completed task")
+                "upon an attempt to remove the label from the completed task")
         public void cannotRemoveLabelFromCompletedTask() {
             try {
                 final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
@@ -212,7 +212,7 @@ public class TaskLabelsPartTest {
 
         @Test
         @DisplayName("throw CannotRemoveLabelFromTask failure " +
-                "when it is trying to remove the label from the deleted task")
+                "upon an attempt to remove the label from the deleted task")
         public void cannotRemoveLabelFromDeletedTask() {
             try {
                 final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);

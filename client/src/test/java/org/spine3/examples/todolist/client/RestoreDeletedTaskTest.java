@@ -46,7 +46,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.resto
 /**
  * @author Illia Shepilov
  */
-@DisplayName("After execution RestoreDeletedTask command")
+@DisplayName("After execution of RestoreDeletedTask command")
 public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
 
     private TodoClient client;

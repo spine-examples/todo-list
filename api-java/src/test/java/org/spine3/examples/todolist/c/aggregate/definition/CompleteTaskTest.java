@@ -94,7 +94,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
     }
 
     @Test
-    @DisplayName("throw CannotCompleteTask failure when it is trying to complete the deleted task")
+    @DisplayName("throw CannotCompleteTask failure upon an attempt to complete the deleted task")
     public void cannotCompleteDeletedTask() {
         dispatchCreateTaskCmd();
 
@@ -111,7 +111,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
     }
 
     @Test
-    @DisplayName("throw CannotCompleteTask failure when it is trying to complete the task in draft state")
+    @DisplayName("throw CannotCompleteTask failure upon an attempt to complete the task in draft state")
     public void cannotCompleteDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);

@@ -166,7 +166,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     }
 
     @Test
-    @DisplayName("throw CannotRestoreDeletedTask failure when it is trying to restore the completed task")
+    @DisplayName("throw CannotRestoreDeletedTask failure upon an attempt to restore the completed task")
     public void cannotRestoreCompletedTask() {
         createBasicTask();
 
@@ -182,7 +182,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     }
 
     @Test
-    @DisplayName("throw CannotRestoreDeletedTask when it is trying to restore the finalized task")
+    @DisplayName("throw CannotRestoreDeletedTask upon an attempt to restore the finalized task")
     public void cannotRestoreFinalizedTask() {
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
         final Command createTaskCmd = create(createTask, commandContext);
@@ -199,7 +199,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     }
 
     @Test
-    @DisplayName("throw CannotRestoreDeletedTask when it is trying to restore the draft")
+    @DisplayName("throw CannotRestoreDeletedTask upon an attempt to restore the draft")
     public void cannotRestoreDraft() {
         createDraft();
         try {

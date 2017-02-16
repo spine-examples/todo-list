@@ -45,7 +45,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.final
 /**
  * @author Illia Shepilov
  */
-@DisplayName("After execution FinalizeDraft command")
+@DisplayName("After execution of FinalizeDraft command")
 public class FinalizeDraftTest extends CommandLineTodoClientTest {
 
     private TodoClient client;
