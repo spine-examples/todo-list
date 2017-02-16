@@ -56,87 +56,6 @@ public class TaskDefinitionPartFailures {
     private TaskDefinitionPartFailures() {
     }
 
-    /**
-     * Constructs and throws the {@link CannotReopenTask} failure according to the passed parameters.
-     *
-     * @param taskId the ID of the task
-     * @throws CannotReopenTask the failure to throw
-     */
-    public static void throwCannotReopenTaskFailure(TaskId taskId) throws CannotReopenTask {
-        final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
-                                                                               .setTaskId(taskId)
-                                                                               .build();
-        final ReopenTaskFailed reopenTaskFailed = ReopenTaskFailed.newBuilder()
-                                                                  .setFailureDetails(commandFailed)
-                                                                  .build();
-        throw new CannotReopenTask(reopenTaskFailed);
-    }
-
-    /**
-     * Constructs and throws the {@link CannotFinalizeDraft} failure according to the passed parameters.
-     *
-     * @param taskId the ID of the task
-     * @throws CannotFinalizeDraft the failure to throw
-     */
-    public static void throwCannotFinalizeDraftFailure(TaskId taskId) throws CannotFinalizeDraft {
-        final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
-                                                                               .setTaskId(taskId)
-                                                                               .build();
-        final FinalizeDraftFailed finalizeDraftFailed = FinalizeDraftFailed.newBuilder()
-                                                                           .setFailureDetails(commandFailed)
-                                                                           .build();
-        throw new CannotFinalizeDraft(finalizeDraftFailed);
-    }
-
-    /**
-     * Constructs and throws the {@link CannotDeleteTask} failure according to the passed parameters.
-     *
-     * @param taskId the ID of the task
-     * @throws CannotDeleteTask the failure to throw
-     */
-    public static void throwCannotDeleteTaskFailure(TaskId taskId) throws CannotDeleteTask {
-        final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
-                                                                               .setTaskId(taskId)
-                                                                               .build();
-        final DeleteTaskFailed deleteTaskFailed = DeleteTaskFailed.newBuilder()
-                                                                  .setFailureDetails(commandFailed)
-                                                                  .build();
-        throw new CannotDeleteTask(deleteTaskFailed);
-    }
-
-    /**
-     * Constructs and throws the {@link CannotCompleteTask} failure according to the passed parameters.
-     *
-     * @param taskId the ID of the task
-     * @throws CannotCompleteTask the failure to throw
-     */
-    public static void throwCannotCompleteTaskFailure(TaskId taskId) throws CannotCompleteTask {
-        final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
-                                                                               .setTaskId(taskId)
-                                                                               .build();
-        final CompleteTaskFailed completeTaskFailed = CompleteTaskFailed.newBuilder()
-                                                                        .setFailureDetails(commandFailed)
-                                                                        .build();
-        throw new CannotCompleteTask(completeTaskFailed);
-    }
-
-    /**
-     * Constructs and throws the {@link CannotRestoreDeletedTask} failure according to the passed parameters.
-     *
-     * @param taskId the ID of the task
-     * @throws CannotRestoreDeletedTask the {@code CannotRestoreDeletedTask} failure
-     */
-    public static void throwCannotRestoreDeletedTaskFailure(TaskId taskId) throws CannotRestoreDeletedTask {
-        final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
-                                                                               .setTaskId(taskId)
-                                                                               .build();
-        final RestoreDeletedTaskFailed restoreDeletedTaskFailed =
-                RestoreDeletedTaskFailed.newBuilder()
-                                        .setFailureDetails(commandFailed)
-                                        .build();
-        throw new CannotRestoreDeletedTask(restoreDeletedTaskFailed);
-    }
-
     public static class UpdateFailures {
 
         private UpdateFailures() {
@@ -333,6 +252,93 @@ public class TaskDefinitionPartFailures {
                                                                                      .setFailureDetails(commandFailed)
                                                                                      .build();
             throw new CannotCreateTaskWithInappropriateDescription(createBasicTaskFailed);
+        }
+    }
+
+    public static class ChangeStatusFailures {
+
+        private ChangeStatusFailures() {
+        }
+
+        /**
+         * Constructs and throws the {@link CannotReopenTask} failure according to the passed parameters.
+         *
+         * @param taskId the ID of the task
+         * @throws CannotReopenTask the failure to throw
+         */
+        public static void throwCannotReopenTaskFailure(TaskId taskId) throws CannotReopenTask {
+            final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
+                                                                                   .setTaskId(taskId)
+                                                                                   .build();
+            final ReopenTaskFailed reopenTaskFailed = ReopenTaskFailed.newBuilder()
+                                                                      .setFailureDetails(commandFailed)
+                                                                      .build();
+            throw new CannotReopenTask(reopenTaskFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotFinalizeDraft} failure according to the passed parameters.
+         *
+         * @param taskId the ID of the task
+         * @throws CannotFinalizeDraft the failure to throw
+         */
+        public static void throwCannotFinalizeDraftFailure(TaskId taskId) throws CannotFinalizeDraft {
+            final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
+                                                                                   .setTaskId(taskId)
+                                                                                   .build();
+            final FinalizeDraftFailed finalizeDraftFailed = FinalizeDraftFailed.newBuilder()
+                                                                               .setFailureDetails(commandFailed)
+                                                                               .build();
+            throw new CannotFinalizeDraft(finalizeDraftFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotDeleteTask} failure according to the passed parameters.
+         *
+         * @param taskId the ID of the task
+         * @throws CannotDeleteTask the failure to throw
+         */
+        public static void throwCannotDeleteTaskFailure(TaskId taskId) throws CannotDeleteTask {
+            final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
+                                                                                   .setTaskId(taskId)
+                                                                                   .build();
+            final DeleteTaskFailed deleteTaskFailed = DeleteTaskFailed.newBuilder()
+                                                                      .setFailureDetails(commandFailed)
+                                                                      .build();
+            throw new CannotDeleteTask(deleteTaskFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotCompleteTask} failure according to the passed parameters.
+         *
+         * @param taskId the ID of the task
+         * @throws CannotCompleteTask the failure to throw
+         */
+        public static void throwCannotCompleteTaskFailure(TaskId taskId) throws CannotCompleteTask {
+            final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
+                                                                                   .setTaskId(taskId)
+                                                                                   .build();
+            final CompleteTaskFailed completeTaskFailed = CompleteTaskFailed.newBuilder()
+                                                                            .setFailureDetails(commandFailed)
+                                                                            .build();
+            throw new CannotCompleteTask(completeTaskFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotRestoreDeletedTask} failure according to the passed parameters.
+         *
+         * @param taskId the ID of the task
+         * @throws CannotRestoreDeletedTask the {@code CannotRestoreDeletedTask} failure
+         */
+        public static void throwCannotRestoreDeletedTaskFailure(TaskId taskId) throws CannotRestoreDeletedTask {
+            final FailedTaskCommandDetails commandFailed = FailedTaskCommandDetails.newBuilder()
+                                                                                   .setTaskId(taskId)
+                                                                                   .build();
+            final RestoreDeletedTaskFailed restoreDeletedTaskFailed =
+                    RestoreDeletedTaskFailed.newBuilder()
+                                            .setFailureDetails(commandFailed)
+                                            .build();
+            throw new CannotRestoreDeletedTask(restoreDeletedTaskFailed);
         }
     }
 }

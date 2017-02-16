@@ -80,6 +80,11 @@ import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValid
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidTransition;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskPriorityCommand;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotCompleteTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotDeleteTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotFinalizeDraftFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotReopenTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotRestoreDeletedTaskFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateDescriptionFailure;
@@ -87,11 +92,6 @@ import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPa
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDateFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriorityFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTooShortDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.throwCannotCompleteTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.throwCannotDeleteTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.throwCannotFinalizeDraftFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.throwCannotReopenTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.throwCannotRestoreDeletedTaskFailure;
 
 /**
  * The aggregate managing the state of a {@link TaskDefinition}.
