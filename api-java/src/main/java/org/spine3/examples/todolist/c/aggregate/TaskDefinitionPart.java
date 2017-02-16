@@ -98,13 +98,13 @@ import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPa
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings({"ClassWithTooManyMethods", // because according to the domain model task definition
-        // cannot be separated and should process all commands
-        // and events related to him. The {@code AggregatePart}
-        // does it with methods annotated as {@code Assign} and {@code Apply}.
-        // In that case class has to many methods.
-        "OverlyCoupledClass"})     // As each method needs dependencies necessary to perform execution
-// that class also overly coupled.
+@SuppressWarnings({"ClassWithTooManyMethods", /* Task definition cannot be separated and should process all commands
+                                                 and events related to it according to the domain model.
+                                                 The {@code AggregatePart} does it with methods annotated
+                                                 as {@code Assign} and {@code Apply}.
+                                                 In that case class has too many methods.*/
+                       "OverlyCoupledClass"}) /* As each method needs dependencies  necessary to perform execution
+                                                 that class also overly coupled.*/
 public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, TaskDefinition.Builder> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;
@@ -331,7 +331,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         result.add(deletedTaskRestored);
 
         final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
-        final TaskLabels taskLabels = root.getTaskLabelIdsState();
+        final TaskLabels taskLabels = root.getTaskLabelsState();
         final List<LabelId> labelIdsList = taskLabels.getLabelIdsList()
                                                      .getIdsList();
         for (LabelId labelId : labelIdsList) {

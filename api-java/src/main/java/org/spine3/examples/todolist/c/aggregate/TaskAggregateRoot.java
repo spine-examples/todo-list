@@ -37,8 +37,10 @@ import org.spine3.util.Environment;
  */
 public class TaskAggregateRoot extends AggregateRoot<TaskId> {
 
-    // It must be initialized through {@code #injectBoundedContext(BoundedContext)} method
-    // during the tests, in other cases it will be initialized by default.
+    /**
+     * It must be initialized through {@code #injectBoundedContext(BoundedContext)} method
+     * during the tests, in other cases it will be initialized by default.
+     */
     @SuppressWarnings("StaticVariableMayNotBeInitialized")
     private static BoundedContext boundedContext;
 
@@ -71,7 +73,7 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
     }
 
     /**
-     * Creates the {@link TaskAggregateRoot} instance according to the {@code TaskId}.
+     * Obtains the {@link TaskAggregateRoot} instance with the given {@code TaskId}.
      *
      * @param id a task identifier
      * @return the aggregate root for the task
@@ -81,9 +83,7 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
     }
 
     /**
-     * Returns the {@link TaskDefinition}.
-     *
-     * <p>Obtains the state from the {@code boundedContext}.
+     * Returns the {@link TaskDefinition} state from the {@code boundedContext}.
      *
      * @return the state for the {@link TaskDefinitionPart}.
      */
@@ -93,13 +93,11 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
     }
 
     /**
-     * Returns the {@link TaskLabels}.
-     *
-     * <p>Obtains the state from the {@code boundedContext}.
+     * Returns the {@link TaskLabels} state from the {@code boundedContext}.
      *
      * @return the state for the {@link TaskLabelsPart}
      */
-    public TaskLabels getTaskLabelIdsState() {
+    public TaskLabels getTaskLabelsState() {
         final TaskLabels result = getPartState(TaskLabels.class);
         return result;
     }
