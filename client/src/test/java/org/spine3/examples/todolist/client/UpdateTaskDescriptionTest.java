@@ -33,15 +33,14 @@ import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.commands.UpdateTaskDescription;
 import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.q.projection.TaskView;
-import org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 
 /**
  * @author Illia Shepilov
@@ -127,8 +126,8 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         updateDescription(newDescription, isCorrectId, createTask);
 
         final List<TaskView> taskViews = client.getMyListView()
-                                                    .getMyList()
-                                                    .getItemsList();
+                                               .getMyList()
+                                               .getItemsList();
         assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);
@@ -146,11 +145,10 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         final LabelId labelId = createLabel.getLabelId();
         final TaskId taskId = createTask.getId();
 
-        final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(taskId, labelId);
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.assignLabel(assignLabelToTask);
 
-
-       updateDescription(newDescription, isCorrectId, createTask);
+        updateDescription(newDescription, isCorrectId, createTask);
 
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
         assertEquals(1, tasksViewList.get(0)
@@ -178,8 +176,8 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         client.update(updateTaskDescription);
 
         final List<TaskView> taskViews = client.getDraftTasksView()
-                                                    .getDraftTasks()
-                                                    .getItemsList();
+                                               .getDraftTasks()
+                                               .getItemsList();
         assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);

@@ -33,14 +33,13 @@ import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
 import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.q.projection.TaskView;
-import org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 
 /**
  * @author Illia Shepilov
@@ -131,8 +130,8 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         updatePriority(newPriority, isCorrectId, idOfCreatedTask);
 
         final List<TaskView> taskViews = client.getMyListView()
-                                                    .getMyList()
-                                                    .getItemsList();
+                                               .getMyList()
+                                               .getItemsList();
         assertEquals(1, taskViews.size());
         final TaskView view = taskViews.get(0);
 
@@ -149,7 +148,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         client.create(createLabel);
 
         final int expectedListSize = 1;
-        final AssignLabelToTask assignLabelToTask = TestTaskLabelsCommandFactory.assignLabelToTaskInstance(createdTaskId, createLabel.getLabelId());
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(createdTaskId, createLabel.getLabelId());
         client.assignLabel(assignLabelToTask);
 
         updatePriority(priority, isCorrectId, createdTaskId);
@@ -178,8 +177,8 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         updatePriority(newPriority, isCorrectId, createdTaskId);
 
         final List<TaskView> taskViews = client.getDraftTasksView()
-                                                    .getDraftTasks()
-                                                    .getItemsList();
+                                               .getDraftTasks()
+                                               .getItemsList();
         assertEquals(1, taskViews.size());
 
         final TaskView view = taskViews.get(0);

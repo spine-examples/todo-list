@@ -33,14 +33,13 @@ import org.spine3.examples.todolist.c.commands.FinalizeDraft;
 import org.spine3.examples.todolist.q.projection.DraftTasksView;
 import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.q.projection.TaskView;
-import org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.finalizeDraftInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 
 /**
  * @author Illia Shepilov
@@ -67,8 +66,8 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
             final CreateDraft createDraft = createDraftTask();
 
             List<TaskView> views = client.getMyListView()
-                                              .getMyList()
-                                              .getItemsList();
+                                         .getMyList()
+                                         .getItemsList();
             int expectedListSize = 0;
             assertEquals(expectedListSize, views.size());
 
@@ -78,8 +77,8 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
 
             expectedListSize = 1;
             views = client.getMyListView()
-                               .getMyList()
-                               .getItemsList();
+                          .getMyList()
+                          .getItemsList();
             assertEquals(expectedListSize, views.size());
 
             final TaskView view = views.get(0);
@@ -156,8 +155,8 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
             client.finalize(finalizeDraft);
 
             final List<TaskView> taskViews = client.getDraftTasksView()
-                                                        .getDraftTasks()
-                                                        .getItemsList();
+                                                   .getDraftTasks()
+                                                   .getItemsList();
             assertEquals(1, taskViews.size());
 
             final TaskView view = taskViews.get(0);
