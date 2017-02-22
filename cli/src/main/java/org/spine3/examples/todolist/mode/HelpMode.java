@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, TeamDev Ltd. All rights reserved.
+ * Copyright 2017, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,15 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    compile group: 'jline', name: 'jline', version: '2.14.2'
+package org.spine3.examples.todolist.mode;
 
-    compile project(path: ':api-java')
-    compile project(path: ':client')
-}
+import jline.console.ConsoleReader;
 
-task runTodoList(dependsOn: jar, type: JavaExec) {
-    standardInput = System.in
-    main = 'org.spine3.examples.todolist.CliEntryPoint'
-    classpath = sourceSets.main.runtimeClasspath
+import java.io.IOException;
+
+/**
+ * @author Illia Shepilov
+ */
+public class HelpMode extends Mode {
+
+    private final String helpMessage;
+
+    HelpMode(ConsoleReader reader, String helpMessage) {
+        super(reader);
+        this.helpMessage = helpMessage;
+    }
+
+    @Override
+    public void start() throws IOException {
+        sendMessageToUser(helpMessage);
+    }
 }
