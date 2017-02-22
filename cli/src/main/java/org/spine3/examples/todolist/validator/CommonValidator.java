@@ -24,6 +24,13 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
 
 /**
+ * Serves as validator class when is needed validate common cases.
+ *
+ * <p>Validation will be passed when:
+ *    <li>input is not empty;
+ *    <li>input is not {@code null}.
+ * <p>In other cases validation will be failed.
+ *
  * @author Illia Shepilov
  */
 public class CommonValidator implements Validator {
@@ -49,6 +56,11 @@ public class CommonValidator implements Validator {
         return true;
     }
 
+    /**
+     * Returns the message is indicated incorrect input by user.
+     *
+     * @return the warning message
+     */
     public String getMessage() {
         return message;
     }

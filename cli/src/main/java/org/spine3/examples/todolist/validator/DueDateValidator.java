@@ -20,6 +20,8 @@
 
 package org.spine3.examples.todolist.validator;
 
+import org.spine3.examples.todolist.DateHelper;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -29,6 +31,13 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
 
 /**
+ * Serves as validator class for the task due date input.
+ *
+ * <p>Validation will be passed when:
+ *     <li>input is not {@code null};
+ *     <li>input is not empty;
+ *     <li>input has correct format according to the {@link DateHelper#getDateFormat()}.
+ * <p>
  * @author Illia Shepilov
  */
 public class DueDateValidator implements Validator {
@@ -68,6 +77,11 @@ public class DueDateValidator implements Validator {
         return true;
     }
 
+    /**
+     * Returns the message is indicated incorrect input by user.
+     *
+     * @return the warning message
+     */
     public String getMessage() {
         return message;
     }

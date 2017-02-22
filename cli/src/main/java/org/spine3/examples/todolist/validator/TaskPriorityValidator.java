@@ -25,6 +25,10 @@ import org.spine3.examples.todolist.TaskPriority;
 import java.util.Map;
 
 /**
+ * Serves as validator class for the task priority.
+ *
+ * <p>Validation will be successful if {@code priorityMap} contains the specified priority.
+ *
  * @author Illia Shepilov
  */
 public class TaskPriorityValidator implements Validator {

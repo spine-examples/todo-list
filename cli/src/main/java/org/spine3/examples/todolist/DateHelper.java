@@ -18,10 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist;import java.text.SimpleDateFormat;
+package org.spine3.examples.todolist;
+
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 /**
+ * Utility class for working with dates.
+ *
  * @author Illia Shepilov
  */
 public class DateHelper {

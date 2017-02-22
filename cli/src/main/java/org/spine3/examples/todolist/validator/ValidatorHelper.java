@@ -30,10 +30,22 @@ class ValidatorHelper {
     private ValidatorHelper() {
     }
 
+    /**
+     * Checks whether input is {@code null} or not.
+     *
+     * @param input the value to check
+     * @return {@code true} if value is {@code null}, otherwise {@code false}
+     */
     static boolean isNull(String input) {
         return input == null;
     }
 
+    /**
+     * Checks whether input is empty or not.
+     *
+     * @param input the value to check
+     * @return {@code true} if value is empty, otherwise {@code false}
+     */
     static boolean isEmpty(String input) {
         return input.isEmpty();
     }
