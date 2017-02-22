@@ -42,7 +42,6 @@ import java.text.SimpleDateFormat;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static org.spine3.examples.todolist.DateHelper.getDateFormat;
 import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_ID_MESSAGE;
 import static org.spine3.examples.todolist.mode.GeneralMode.MainModeConstants.ENTER_LABEL_ID_MESSAGE;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.CANCEL_INPUT;
@@ -50,6 +49,7 @@ import static org.spine3.examples.todolist.mode.Mode.ModeConstants.INCORRECT_INP
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.INPUT_IS_CANCELED;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.LABEL_COLOR_VALUE;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.TASK_PRIORITY_VALUE;
+import static org.spine3.examples.todolist.validator.DueDateValidator.getDateFormat;
 
 /**
  * @author Illia Shepilov
