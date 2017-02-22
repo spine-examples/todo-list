@@ -28,7 +28,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.Command;
 import org.spine3.base.CommandContext;
-import org.spine3.base.Commands;
 import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
@@ -49,7 +48,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.base.Commands.create;
+import static org.spine3.base.Commands.createCommand;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
@@ -126,15 +125,15 @@ public class TaskLabelsPartTest {
         public void cannotAssignLabelToDeletedTask() {
             try {
                 final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-                final Command createTaskCmd = create(createTask, COMMAND_CONTEXT);
+                final Command createTaskCmd = createCommand(createTask, COMMAND_CONTEXT);
                 commandBus.post(createTaskCmd, responseObserver);
 
                 final DeleteTask deleteTask = deleteTaskInstance(taskId);
-                final Command deleteTaskCmd = create(deleteTask, COMMAND_CONTEXT);
+                final Command deleteTaskCmd = createCommand(deleteTask, COMMAND_CONTEXT);
                 commandBus.post(deleteTaskCmd, responseObserver);
 
                 final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-                final Command assignLabelToTaskCmd = create(assignLabelToTask, COMMAND_CONTEXT);
+                final Command assignLabelToTaskCmd = createCommand(assignLabelToTask, COMMAND_CONTEXT);
                 commandBus.post(assignLabelToTaskCmd, responseObserver);
             } catch (Throwable e) {
                 @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
@@ -149,15 +148,15 @@ public class TaskLabelsPartTest {
         public void cannotAssignLabelToCompletedTask() {
             try {
                 final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-                final Command createTaskCmd = create(createTask, COMMAND_CONTEXT);
+                final Command createTaskCmd = createCommand(createTask, COMMAND_CONTEXT);
                 commandBus.post(createTaskCmd, responseObserver);
 
                 final CompleteTask completeTask = completeTaskInstance(taskId);
-                final Command completeTaskCmd = create(completeTask, COMMAND_CONTEXT);
+                final Command completeTaskCmd = createCommand(completeTask, COMMAND_CONTEXT);
                 commandBus.post(completeTaskCmd, responseObserver);
 
                 final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-                final Command assignLabelToTaskCmd = Commands.create(assignLabelToTask, COMMAND_CONTEXT);
+                final Command assignLabelToTaskCmd = createCommand(assignLabelToTask, COMMAND_CONTEXT);
                 commandBus.post(assignLabelToTaskCmd, responseObserver);
             } catch (Throwable e) {
                 @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
@@ -193,15 +192,15 @@ public class TaskLabelsPartTest {
         public void cannotRemoveLabelFromCompletedTask() {
             try {
                 final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-                final Command createTaskCmd = create(createTask, COMMAND_CONTEXT);
+                final Command createTaskCmd = createCommand(createTask, COMMAND_CONTEXT);
                 commandBus.post(createTaskCmd, responseObserver);
 
                 final CompleteTask completeTask = completeTaskInstance(taskId);
-                final Command completeTaskCmd = create(completeTask, COMMAND_CONTEXT);
+                final Command completeTaskCmd = createCommand(completeTask, COMMAND_CONTEXT);
                 commandBus.post(completeTaskCmd, responseObserver);
 
                 final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId, labelId);
-                final Command removeLabelFromTaskCmd = create(removeLabelFromTask, COMMAND_CONTEXT);
+                final Command removeLabelFromTaskCmd = createCommand(removeLabelFromTask, COMMAND_CONTEXT);
                 commandBus.post(removeLabelFromTaskCmd, responseObserver);
             } catch (Throwable e) {
                 @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
@@ -216,15 +215,15 @@ public class TaskLabelsPartTest {
         public void cannotRemoveLabelFromDeletedTask() {
             try {
                 final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-                final Command createTaskCmd = create(createTask, COMMAND_CONTEXT);
+                final Command createTaskCmd = createCommand(createTask, COMMAND_CONTEXT);
                 commandBus.post(createTaskCmd, responseObserver);
 
                 final DeleteTask deleteTask = deleteTaskInstance(taskId);
-                final Command deleteTaskCmd = create(deleteTask, COMMAND_CONTEXT);
+                final Command deleteTaskCmd = createCommand(deleteTask, COMMAND_CONTEXT);
                 commandBus.post(deleteTaskCmd, responseObserver);
 
                 final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId, labelId);
-                final Command removeLabelFromTaskCmd = create(removeLabelFromTask, COMMAND_CONTEXT);
+                final Command removeLabelFromTaskCmd = createCommand(removeLabelFromTask, COMMAND_CONTEXT);
                 commandBus.post(removeLabelFromTaskCmd, responseObserver);
             } catch (Throwable e) {
                 @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.

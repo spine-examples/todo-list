@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spine3.base.Command;
 import org.spine3.base.CommandContext;
+import org.spine3.base.Commands;
 import org.spine3.base.Event;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
@@ -54,7 +55,6 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.base.Commands.create;
 import static org.spine3.examples.todolist.TaskStatus.DELETED;
 import static org.spine3.examples.todolist.TaskStatus.OPEN;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
@@ -95,19 +95,19 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     @DisplayName("produce LabelledTaskRestored event")
     public void produceEvent() {
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        final Command createTaskCmd = create(createTask, commandContext);
+        final Command createTaskCmd = Commands.createCommand(createTask, commandContext);
         commandBus.post(createTaskCmd, responseObserver);
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, LABEL_ID);
-        final Command assignLabelToTaskCmd = create(assignLabelToTask, commandContext);
+        final Command assignLabelToTaskCmd = Commands.createCommand(assignLabelToTask, commandContext);
         commandBus.post(assignLabelToTaskCmd, responseObserver);
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        final Command deleteTaskCmd = create(deleteTask, commandContext);
+        final Command deleteTaskCmd = Commands.createCommand(deleteTask, commandContext);
         commandBus.post(deleteTaskCmd, responseObserver);
 
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-        final Command restoreDeletedTaskCmd = create(restoreDeletedTask, commandContext);
+        final Command restoreDeletedTaskCmd = Commands.createCommand(restoreDeletedTask, commandContext);
         commandBus.post(restoreDeletedTaskCmd, responseObserver);
 
         final EventStreamQuery query = EventStreamQuery.newBuilder()
@@ -185,11 +185,11 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     @DisplayName("throw CannotRestoreDeletedTask upon an attempt to restore the finalized task")
     public void cannotRestoreFinalizedTask() {
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        final Command createTaskCmd = create(createTask, commandContext);
+        final Command createTaskCmd = Commands.createCommand(createTask, commandContext);
         commandBus.post(createTaskCmd, responseObserver);
         try {
             final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-            final Command restoreDeletedTaskCmd = create(restoreDeletedTask, commandContext);
+            final Command restoreDeletedTaskCmd = Commands.createCommand(restoreDeletedTask, commandContext);
             commandBus.post(restoreDeletedTaskCmd, responseObserver);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.

@@ -28,7 +28,7 @@ import org.spine3.examples.todolist.c.events.TaskReopened;
 import org.spine3.examples.todolist.q.projection.MyListView;
 import org.spine3.examples.todolist.q.projection.MyListViewProjection;
 import org.spine3.server.BoundedContext;
-import org.spine3.server.entity.IdSetEventFunction;
+import org.spine3.server.entity.idfunc.IdSetEventFunction;
 import org.spine3.server.projection.ProjectionRepository;
 
 import java.util.Collections;
