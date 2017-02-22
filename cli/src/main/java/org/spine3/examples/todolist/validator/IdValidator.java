@@ -24,6 +24,13 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
 
 /**
+ * Serves as validator class for the validation ID input.
+ *
+ * <p>Validation will be passed if:
+ *    <li>input is not {@code null};
+ *    <li>input is not empty.
+ * <p>In other cases validation will be failed.
+ *
  * @author Illia Shepilov
  */
 public class IdValidator implements Validator {
@@ -49,6 +56,11 @@ public class IdValidator implements Validator {
         return true;
     }
 
+    /**
+     * Returns the message is indicated incorrect input by user.
+     *
+     * @return the warning message
+     */
     public String getMessage() {
         return message;
     }

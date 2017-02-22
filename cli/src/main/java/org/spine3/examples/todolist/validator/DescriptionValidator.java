@@ -24,6 +24,14 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
 
 /**
+ * Serves as validator class when is needed to validate the task description.
+ *
+ * <p>Validation will be successful when:
+ *    <li>input is not {@code null};
+ *    <li>input is not empty;
+ *    <li>input has unless four symbols.
+ * <p>In other cases validation will be failed.
+ *
  * @author Illia Shepilov
  */
 public class DescriptionValidator implements Validator {
@@ -55,6 +63,11 @@ public class DescriptionValidator implements Validator {
         return true;
     }
 
+    /**
+     * Returns the message is indicated incorrect input by user.
+     *
+     * @return the warning message
+     */
     public String getMessage() {
         return message;
     }

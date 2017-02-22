@@ -22,19 +22,28 @@ package org.spine3.examples.todolist.validator;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
-import static org.spine3.examples.todolist.DateHelper.DATE_FORMAT;
-import static org.spine3.examples.todolist.DateHelper.getDateFormat;
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
 
 /**
+ * Serves as validator class for the task due date input.
+ *
+ * <p>Validation will be passed when:
+ *    <li>input is not {@code null};
+ *    <li>input is not empty;
+ *    <li>input has correct format according to the {@code DATE_FORMAT}.
+ * <p>
+ *
  * @author Illia Shepilov
  */
 public class DueDateValidator implements Validator {
 
     private static final String DUE_DATE_IS_NULL = "The due date cannot be null.";
     private static final String DUE_DATE_IS_EMPTY = "The due date cannot be empty.";
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
     private static final String INCORRECT_DUE_DATE = "Incorrect due date format. Correct format: " + DATE_FORMAT + '.';
     private String message;
 
@@ -59,8 +68,7 @@ public class DueDateValidator implements Validator {
 
     private boolean isCorrectFormat(String input) {
         try {
-            final SimpleDateFormat simpleDateFormat = getDateFormat();
-            simpleDateFormat.parse(input);
+            SIMPLE_DATE_FORMAT.parse(input);
         } catch (ParseException ignored) {
             message = INCORRECT_DUE_DATE;
             return false;
@@ -68,6 +76,15 @@ public class DueDateValidator implements Validator {
         return true;
     }
 
+    public static SimpleDateFormat getDateFormat() {
+        return SIMPLE_DATE_FORMAT;
+    }
+
+    /**
+     * Returns the message is indicated incorrect input by user.
+     *
+     * @return the warning message
+     */
     public String getMessage() {
         return message;
     }

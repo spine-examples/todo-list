@@ -25,6 +25,10 @@ import org.spine3.examples.todolist.LabelColor;
 import java.util.Map;
 
 /**
+ * Serves as validator class for the label color input.
+ *
+ * <p>Validation will be passed if {@code colorMap} contains the specified color.
+ *
  * @author Illia Shepilov
  */
 public class LabelColorValidator implements Validator {

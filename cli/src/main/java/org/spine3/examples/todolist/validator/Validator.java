@@ -21,9 +21,17 @@
 package org.spine3.examples.todolist.validator;
 
 /**
+ * Serves as supertype for all `cli` validators.
+ *
  * @author Illia Shepilov
  */
 public interface Validator {
 
+    /**
+     * Validates the input text from the user.
+     *
+     * @param input the user input
+     * @return {@code true} if input is valid, otherwise {@code false}
+     */
     boolean validate(String input);
 }
