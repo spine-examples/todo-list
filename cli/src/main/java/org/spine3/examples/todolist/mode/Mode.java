@@ -34,6 +34,7 @@ import org.spine3.examples.todolist.validator.DueDateValidator;
 import org.spine3.examples.todolist.validator.IdValidator;
 import org.spine3.examples.todolist.validator.LabelColorValidator;
 import org.spine3.examples.todolist.validator.TaskPriorityValidator;
+import org.spine3.examples.todolist.validator.Validator;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -55,9 +56,9 @@ import static org.spine3.examples.todolist.mode.Mode.ModeConstants.TASK_PRIORITY
  */
 public abstract class Mode {
 
-    private TaskPriorityValidator priorityValidator;
+    private Validator priorityValidator;
+    private Validator colorValidator;
     private DueDateValidator dueDateValidator;
-    private LabelColorValidator colorValidator;
     private CommonValidator commonValidator;
     private IdValidator idValidator;
     private DescriptionValidator descriptionValidator;
