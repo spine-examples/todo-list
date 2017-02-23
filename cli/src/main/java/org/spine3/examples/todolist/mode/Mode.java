@@ -46,9 +46,9 @@ import static com.google.common.collect.Maps.newHashMap;
 import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_ID_MESSAGE;
 import static org.spine3.examples.todolist.mode.GeneralMode.MainModeConstants.ENTER_LABEL_ID_MESSAGE;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.CANCEL_INPUT;
+import static org.spine3.examples.todolist.mode.Mode.ModeConstants.DATE_FORMAT;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.INPUT_IS_CANCELED;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.LABEL_COLOR_VALUE;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.SIMPLE_DATE_FORMAT;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.TASK_PRIORITY_VALUE;
 
 /**
@@ -285,16 +285,15 @@ public abstract class Mode {
     }
 
     static SimpleDateFormat getDateFormat() {
-        return SIMPLE_DATE_FORMAT;
+        final SimpleDateFormat result = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+        return result;
     }
 
     static class ModeConstants {
         static final String DATE_FORMAT = "yyyy-MM-dd";
-        static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
         static final String CANCEL_HINT = "Enter `c` to cancel the input.";
         static final String INPUT_IS_CANCELED = "Input is canceled";
         static final String LINE_SEPARATOR = System.lineSeparator();
-        static final String INCORRECT_INPUT = "Incorrect input.";
         static final String TASK_PRIORITY_VALUE = LINE_SEPARATOR +
                 "Valid task priority:" + LINE_SEPARATOR +
                 "1: LOW;" + LINE_SEPARATOR +
