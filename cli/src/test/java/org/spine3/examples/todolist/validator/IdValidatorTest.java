@@ -20,10 +20,12 @@
 
 package org.spine3.examples.todolist.validator;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Identifiers.newUuid;
 
@@ -33,7 +35,12 @@ import static org.spine3.base.Identifiers.newUuid;
 @DisplayName("IdValidator should")
 class IdValidatorTest {
 
-    private final Validator validator = new IdValidator();
+    private IdValidator validator = new IdValidator();
+
+    @BeforeEach
+    public void setUp() {
+        validator = new IdValidator();
+    }
 
     @Test
     @DisplayName("pass the validation")
@@ -54,5 +61,12 @@ class IdValidatorTest {
     public void notPassTheValidationWhenIdIsEmpty() {
         final boolean passed = validator.validate("");
         assertFalse(passed);
+    }
+
+    @Test
+    @DisplayName("return non null message when validation is failed")
+    public void getMessage() {
+        validator.validate(null);
+        assertNotNull(validator.getMessage());
     }
 }

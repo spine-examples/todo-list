@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -53,22 +54,29 @@ class DueDateValidatorTest {
 
     @Test
     @DisplayName("not pass the validation when validated value is null")
-    public void notPassValidationWhenInputIsNull(){
+    public void notPassValidationWhenInputIsNull() {
         final boolean passed = validator.validate(null);
         assertFalse(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when validated value is empty")
-    public void notPassValidationWhenInputIsEmpty(){
+    public void notPassValidationWhenInputIsEmpty() {
         final boolean passed = validator.validate("");
         assertFalse(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when passed value has incorrect format")
-    public void notPassTheValidationWhenInputHasIncorrectFormat(){
+    public void notPassTheValidationWhenInputHasIncorrectFormat() {
         final boolean passed = validator.validate("2017:02:22");
         assertFalse(passed);
+    }
+
+    @Test
+    @DisplayName("return non null message when validation is failed")
+    public void getMessage() {
+        validator.validate(null);
+        checkNotNull(validator.getMessage());
     }
 }

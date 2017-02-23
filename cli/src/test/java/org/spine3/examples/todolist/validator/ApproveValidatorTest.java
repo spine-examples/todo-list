@@ -20,10 +20,12 @@
 
 package org.spine3.examples.todolist.validator;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -32,7 +34,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("ApproveValidator should")
 class ApproveValidatorTest {
 
-    private final Validator validator = new ApproveValidator();
+    private static final String INCORRECT_INPUT = "O";
+
+    private ApproveValidator validator;
+
+    @BeforeEach
+    public void setUp() {
+        validator = new ApproveValidator();
+    }
 
     @Test
     @DisplayName("pass the validation when input is `n`")
@@ -65,7 +74,14 @@ class ApproveValidatorTest {
     @Test
     @DisplayName("not pass the validation when input neither positive neither negative")
     public void notPassTheValidationWhenIsputIsIncorrect() {
-        final boolean passed = validator.validate("O");
+        final boolean passed = validator.validate(INCORRECT_INPUT);
         assertFalse(passed);
+    }
+
+    @Test
+    @DisplayName("return non message when validation is failed")
+    public void getMessage() {
+        validator.validate(INCORRECT_INPUT);
+        assertNotNull(validator.getMessage());
     }
 }
