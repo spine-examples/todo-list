@@ -22,6 +22,7 @@ package org.spine3.examples.todolist.validator;
 
 import org.spine3.examples.todolist.LabelColor;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -33,7 +34,10 @@ import java.util.Map;
  */
 public class LabelColorValidator implements Validator {
 
+    private static final String INCORRECT_INPUT = "Incorrect label color";
+
     private final Map<String, LabelColor> colorMap;
+    private String message;
 
     public LabelColorValidator(Map<String, LabelColor> colorMap) {
         this.colorMap = colorMap;
@@ -42,7 +46,17 @@ public class LabelColorValidator implements Validator {
     @Override
     public boolean validate(String input) {
         final LabelColor labelColor = colorMap.get(input);
-        final boolean result = labelColor != null;
-        return result;
+        final boolean passed = labelColor != null;
+        if (!passed) {
+            message = INCORRECT_INPUT;
+        }
+        return passed;
     }
+
+    @Nullable
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
 }

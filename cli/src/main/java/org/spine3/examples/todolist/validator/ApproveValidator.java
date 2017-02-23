@@ -55,11 +55,7 @@ public class ApproveValidator implements Validator {
         return true;
     }
 
-    /**
-     * Returns the message is indicated incorrect input by user.
-     *
-     * @return the warning message
-     */
+    @Override
     @Nullable
     public String getMessage() {
         return message;

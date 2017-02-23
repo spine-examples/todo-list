@@ -20,6 +20,8 @@
 
 package org.spine3.examples.todolist.validator;
 
+import javax.annotation.Nullable;
+
 /**
  * Serves as supertype for all `cli` validators.
  *
@@ -34,4 +36,12 @@ public interface Validator {
      * @return {@code true} if input is valid, otherwise {@code false}
      */
     boolean validate(String input);
+
+    /**
+     * Returns the message is indicated incorrect input by user.
+     *
+     * @return the warning message
+     */
+    @Nullable
+    public String getMessage();
 }
