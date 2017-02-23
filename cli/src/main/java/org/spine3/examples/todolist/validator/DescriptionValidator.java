@@ -20,6 +20,8 @@
 
 package org.spine3.examples.todolist.validator;
 
+import javax.annotation.Nullable;
+
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
 
@@ -68,6 +70,7 @@ public class DescriptionValidator implements Validator {
      *
      * @return the warning message
      */
+    @Nullable
     public String getMessage() {
         return message;
     }

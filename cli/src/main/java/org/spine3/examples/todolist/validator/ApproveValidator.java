@@ -20,6 +20,11 @@
 
 package org.spine3.examples.todolist.validator;
 
+import javax.annotation.Nullable;
+
+import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
+import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
+
 /**
  * Serves as validator class for the user approve answer.
  *
@@ -41,7 +46,7 @@ public class ApproveValidator implements Validator {
     public boolean validate(String input) {
 
         final boolean isNegativeOrPositiveAns = NEGATIVE_ANSWER.equals(input) || POSITIVE_ANSWER.equals(input);
-        final boolean invalidInput = input.isEmpty() || !isNegativeOrPositiveAns;
+        final boolean invalidInput = isNull(input) || isEmpty(input) || !isNegativeOrPositiveAns;
 
         if (invalidInput) {
             this.message = INCORRECT_INPUT;
@@ -55,6 +60,7 @@ public class ApproveValidator implements Validator {
      *
      * @return the warning message
      */
+    @Nullable
     public String getMessage() {
         return message;
     }

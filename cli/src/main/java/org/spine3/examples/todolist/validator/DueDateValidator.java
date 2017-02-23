@@ -20,9 +20,9 @@
 
 package org.spine3.examples.todolist.validator;
 
+import javax.annotation.Nullable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
 
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
@@ -42,10 +42,15 @@ public class DueDateValidator implements Validator {
 
     private static final String DUE_DATE_IS_NULL = "The due date cannot be null.";
     private static final String DUE_DATE_IS_EMPTY = "The due date cannot be empty.";
-    private static final String DATE_FORMAT = "yyyy-MM-dd";
-    private static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
-    private static final String INCORRECT_DUE_DATE = "Incorrect due date format. Correct format: " + DATE_FORMAT + '.';
+
+    private final SimpleDateFormat dateFormat;
+    private final String incorrectDueDateMsg;
     private String message;
+
+    public DueDateValidator(SimpleDateFormat dateFormat) {
+        this.dateFormat = dateFormat;
+        incorrectDueDateMsg = "Incorrect due date format. Correct format: " + dateFormat.getDateFormatSymbols() + '.';
+    }
 
     @Override
     public boolean validate(String input) {
@@ -68,16 +73,12 @@ public class DueDateValidator implements Validator {
 
     private boolean isCorrectFormat(String input) {
         try {
-            SIMPLE_DATE_FORMAT.parse(input);
+            dateFormat.parse(input);
         } catch (ParseException ignored) {
-            message = INCORRECT_DUE_DATE;
+            message = incorrectDueDateMsg;
             return false;
         }
         return true;
-    }
-
-    public static SimpleDateFormat getDateFormat() {
-        return SIMPLE_DATE_FORMAT;
     }
 
     /**
@@ -85,6 +86,7 @@ public class DueDateValidator implements Validator {
      *
      * @return the warning message
      */
+    @Nullable
     public String getMessage() {
         return message;
     }
