@@ -26,7 +26,7 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
 
 /**
- * Serves as validator class for the user approve answer.
+ * Serves as a validator for the user approve answer.
  *
  * <p>Validation will be passed when:
  *    <li>input is `y`;

@@ -26,7 +26,7 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
 
 /**
- * Serves as validator class when is needed to validate the task description.
+ * Serves as a validator when is needed to validate the task description.
  *
  * <p>Validation will be successful when:
  *    <li>input is not {@code null};
@@ -40,7 +40,7 @@ public class DescriptionValidator implements Validator {
 
     private static final String DESCRIPTION_IS_NULL = "Description cannot be null.";
     private static final String DESCRIPTION_IS_EMPTY = "Description cannot be empty.";
-    private static final String INCORRECT_DESCRIPTION = "Description should contains at least 3 symbols.";
+    private static final String INCORRECT_DESCRIPTION = "Description should contain at least 3 symbols.";
     private static final int MINIMAL_DESCRIPTION_LENGTH = 3;
     private String message;
 

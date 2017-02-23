@@ -26,12 +26,11 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
 
 /**
- * Serves as validator class when is needed validate common cases.
+ * Serves as a validator when is needed validate common cases.
  *
- * <p>Validation will be passed when:
- *    <li>input is not empty;
- *    <li>input is not {@code null}.
- * <p>In other cases validation will be failed.
+ * <p>Validation will be failed when input neither empty or {@code null}.
+ *
+ * <p>In other cases validation will be passed.
  *
  * @author Illia Shepilov
  */

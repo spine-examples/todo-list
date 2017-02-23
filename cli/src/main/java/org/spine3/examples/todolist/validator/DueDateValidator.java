@@ -28,7 +28,7 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
 
 /**
- * Serves as validator class for the task due date input.
+ * Serves as a validator class for the task due date input.
  *
  * <p>Validation will be passed when:
  *    <li>input is not {@code null};
