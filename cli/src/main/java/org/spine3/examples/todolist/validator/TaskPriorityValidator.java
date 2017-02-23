@@ -22,6 +22,7 @@ package org.spine3.examples.todolist.validator;
 
 import org.spine3.examples.todolist.TaskPriority;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -33,7 +34,10 @@ import java.util.Map;
  */
 public class TaskPriorityValidator implements Validator {
 
+    private static final String INCORRECT_INPUT = "Incorrect task priority";
+
     private final Map<String, TaskPriority> priorityMap;
+    private String message;
 
     public TaskPriorityValidator(Map<String, TaskPriority> priorityMap) {
         this.priorityMap = priorityMap;
@@ -42,7 +46,16 @@ public class TaskPriorityValidator implements Validator {
     @Override
     public boolean validate(String input) {
         final TaskPriority taskPriority = priorityMap.get(input);
-        final boolean result = taskPriority != null;
-        return result;
+        final boolean passed = taskPriority != null;
+        if (!passed) {
+            message = INCORRECT_INPUT;
+        }
+        return passed;
+    }
+
+    @Nullable
+    @Override
+    public String getMessage() {
+        return message;
     }
 }

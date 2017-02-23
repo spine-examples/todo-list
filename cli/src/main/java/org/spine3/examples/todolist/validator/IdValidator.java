@@ -58,12 +58,8 @@ public class IdValidator implements Validator {
         return true;
     }
 
-    /**
-     * Returns the message is indicated incorrect input by user.
-     *
-     * @return the warning message
-     */
     @Nullable
+    @Override
     public String getMessage() {
         return message;
     }
