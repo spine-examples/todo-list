@@ -100,7 +100,7 @@ public class MyTasksMode extends CommonMode {
 
         static final String MY_TASKS_MENU = "******************** My tasks menu *******************" + LINE_SEPARATOR;
         static final String MY_TASKS_PROMPT = "my-tasks>";
-        static final String EMPTY_MY_LIST_TASKS = "No tasks in the my list.";
+        static final String EMPTY_MY_LIST_TASKS = "Task list is empty.";
         static final String HELP_MESSAGE = "0:    Help." + LINE_SEPARATOR +
                 "1:    Show all my tasks." + LINE_SEPARATOR +
                 CommonMode.CommonModeConstants.HELP_MESSAGE +
