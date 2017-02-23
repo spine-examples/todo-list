@@ -27,8 +27,8 @@ import org.junit.jupiter.api.Test;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -77,6 +77,6 @@ class DueDateValidatorTest {
     @DisplayName("return non null message when validation is failed")
     public void getMessage() {
         validator.validate(null);
-        checkNotNull(validator.getMessage());
+        assertNotNull(validator.getMessage());
     }
 }
