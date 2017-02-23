@@ -30,7 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import static org.spine3.examples.todolist.DateHelper.getDateFormat;
+import static org.spine3.examples.todolist.mode.Mode.getDateFormat;
 
 /**
  * Serves as utility class for creating user friendly representation of the information.
@@ -55,9 +55,8 @@ public class DisplayHelper {
     }
 
     static String constructUserFriendlyDate(long millis) {
-        final SimpleDateFormat simpleDateFormat = getDateFormat();
         final String date = millis == 0 ? CommonMode.CommonModeConstants.DEFAULT_VALUE :
-                            simpleDateFormat.format(new Date(millis));
+                            getDateFormat().format(new Date(millis));
         return date;
     }
 

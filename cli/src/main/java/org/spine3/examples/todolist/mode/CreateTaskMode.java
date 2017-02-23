@@ -43,7 +43,6 @@ import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.examples.todolist.DateHelper.DATE_FORMAT;
 import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.BACK_TO_THE_PREVIOUS_MENU_QUESTION;
 import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATED_DRAFT_MESSAGE;
 import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATED_TASK_MESSAGE;
@@ -64,6 +63,7 @@ import static org.spine3.examples.todolist.mode.GeneralMode.MainModeConstants.TO
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.BACK;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.CANCEL_HINT;
+import static org.spine3.examples.todolist.mode.Mode.ModeConstants.DATE_FORMAT;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.INCORRECT_COMMAND;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.NEGATIVE_ANSWER;

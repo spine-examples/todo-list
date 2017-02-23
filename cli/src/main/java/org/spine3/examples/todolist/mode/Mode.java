@@ -39,17 +39,17 @@ import org.spine3.examples.todolist.validator.Validator;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_ID_MESSAGE;
 import static org.spine3.examples.todolist.mode.GeneralMode.MainModeConstants.ENTER_LABEL_ID_MESSAGE;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.CANCEL_INPUT;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.INCORRECT_INPUT;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.INPUT_IS_CANCELED;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.LABEL_COLOR_VALUE;
+import static org.spine3.examples.todolist.mode.Mode.ModeConstants.SIMPLE_DATE_FORMAT;
 import static org.spine3.examples.todolist.mode.Mode.ModeConstants.TASK_PRIORITY_VALUE;
-import static org.spine3.examples.todolist.validator.DueDateValidator.getDateFormat;
 
 /**
  * @author Illia Shepilov
@@ -58,11 +58,11 @@ public abstract class Mode {
 
     private Validator priorityValidator;
     private Validator colorValidator;
-    private DueDateValidator dueDateValidator;
-    private CommonValidator commonValidator;
-    private IdValidator idValidator;
-    private DescriptionValidator descriptionValidator;
-    private ApproveValidator approveValidator;
+    private Validator dueDateValidator;
+    private Validator commonValidator;
+    private Validator idValidator;
+    private Validator descriptionValidator;
+    private Validator approveValidator;
     private final Map<String, TaskPriority> priorityMap;
     private final Map<String, LabelColor> colorMap;
     private final ConsoleReader reader;
@@ -94,7 +94,7 @@ public abstract class Mode {
         final boolean isValid = colorValidator.validate(color);
 
         if (!isValid) {
-            sendMessageToUser(INCORRECT_INPUT);
+            sendMessageToUser(colorValidator.getMessage());
             color = obtainLabelColorValue(message);
         }
 
@@ -192,7 +192,7 @@ public abstract class Mode {
         final boolean isValid = priorityValidator.validate(priority);
 
         if (!isValid) {
-            sendMessageToUser(INCORRECT_INPUT);
+            sendMessageToUser(priorityValidator.getMessage());
             priority = obtainPriorityValue(message);
         }
         return priority;
@@ -257,7 +257,7 @@ public abstract class Mode {
 
     private void initValidators() {
         descriptionValidator = new DescriptionValidator();
-        dueDateValidator = new DueDateValidator();
+        dueDateValidator = new DueDateValidator(getDateFormat());
         idValidator = new IdValidator();
         priorityValidator = new TaskPriorityValidator(priorityMap);
         commonValidator = new CommonValidator();
@@ -284,7 +284,13 @@ public abstract class Mode {
         return colorMap;
     }
 
+    static SimpleDateFormat getDateFormat() {
+        return SIMPLE_DATE_FORMAT;
+    }
+
     static class ModeConstants {
+        static final String DATE_FORMAT = "yyyy-MM-dd";
+        static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
         static final String CANCEL_HINT = "Enter `c` to cancel the input.";
         static final String INPUT_IS_CANCELED = "Input is canceled";
         static final String LINE_SEPARATOR = System.lineSeparator();
