@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.validator;
 
+import javax.annotation.Nullable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -85,6 +86,7 @@ public class DueDateValidator implements Validator {
      *
      * @return the warning message
      */
+    @Nullable
     public String getMessage() {
         return message;
     }
