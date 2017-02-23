@@ -24,7 +24,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Illia Shepilov
@@ -34,35 +35,30 @@ class DescriptionValidatorTest {
 
     private final Validator validator = new DescriptionValidator();
 
-    @BeforeEach
-    void setUp() {
-
-    }
-
     @Test
     @DisplayName("pass the validation")
-    public void passValidation(){
+    public void passValidation() {
         final boolean passed = validator.validate("Description");
         assertTrue(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when passed input is null")
-    public void notPassValidationWhenInputIsNull(){
+    public void notPassValidationWhenInputIsNull() {
         final boolean passed = validator.validate(null);
         assertFalse(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when passed input is empty")
-    public void notPassValidationWhenInputIsEmpty(){
+    public void notPassValidationWhenInputIsEmpty() {
         final boolean passed = validator.validate("");
         assertFalse(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when passed input has less then three symbols")
-    public void notPassValidationWhenInputHasLessThenThreeSymbols(){
+    public void notPassValidationWhenInputHasLessThenThreeSymbols() {
         final boolean passed = validator.validate("D");
         assertFalse(passed);
     }

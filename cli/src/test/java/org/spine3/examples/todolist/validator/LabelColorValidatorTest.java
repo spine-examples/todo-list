@@ -37,26 +37,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("LabelColorValidator should")
 class LabelColorValidatorTest {
 
+    private static final String CORRECT_LABEL_COLOR_KEY = "1";
+    private static final String INCORRECT_LABEL_COLOR_KEY = "0";
+
     private Validator validator;
 
     @BeforeEach
     void setUp() {
         final Map<String, LabelColor> colorMap = newHashMap();
-        colorMap.put("1", LabelColor.RED);
+        colorMap.put(CORRECT_LABEL_COLOR_KEY, LabelColor.RED);
         validator = new LabelColorValidator(colorMap);
     }
 
     @Test
     @DisplayName("pass the validation")
     public void passValidation() {
-        final boolean passed = validator.validate("1");
+        final boolean passed = validator.validate(CORRECT_LABEL_COLOR_KEY);
         assertTrue(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when color map does not contain value by specified key")
     public void notPassValidation() {
-        final boolean passed = validator.validate("0");
+        final boolean passed = validator.validate(INCORRECT_LABEL_COLOR_KEY);
         assertFalse(passed);
     }
 }

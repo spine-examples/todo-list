@@ -37,26 +37,29 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("TaskPriorityValidator should")
 class TaskPriorityValidatorTest {
 
+    private static final String TASK_PRIORITY_CORRECT_KEY = "1";
+    private static final String TASK_PRIORITY_INCORRECT_KEY = "2";
+
     private Validator validator;
 
     @BeforeEach
     public void setUp() {
         final Map<String, TaskPriority> priorityMap = newHashMap();
-        priorityMap.put("1", TaskPriority.LOW);
+        priorityMap.put(TASK_PRIORITY_CORRECT_KEY, TaskPriority.LOW);
         validator = new TaskPriorityValidator(priorityMap);
     }
 
     @Test
     @DisplayName("pass the validation")
     public void passTheCheck() {
-        final boolean passed = validator.validate("1");
+        final boolean passed = validator.validate(TASK_PRIORITY_CORRECT_KEY);
         assertTrue(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when priority map does not contain value by specified key")
     public void notPassTheCheck() {
-        final boolean passed = validator.validate("2");
+        final boolean passed = validator.validate(TASK_PRIORITY_INCORRECT_KEY);
         assertFalse(passed);
     }
 }

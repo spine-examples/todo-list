@@ -20,11 +20,11 @@
 
 package org.spine3.examples.todolist.validator;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Identifiers.newUuid;
 
 /**
@@ -37,21 +37,21 @@ class IdValidatorTest {
 
     @Test
     @DisplayName("pass the validation")
-    public void passValidation(){
+    public void passValidation() {
         final boolean passed = validator.validate(newUuid());
         assertTrue(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when passed value is null")
-    public void notPassValidationWhenIdIsNull(){
+    public void notPassValidationWhenIdIsNull() {
         final boolean passed = validator.validate(null);
         assertFalse(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when passed value is empty")
-    public void notPassTheValidationWhenIdIsEmpty(){
+    public void notPassTheValidationWhenIdIsEmpty() {
         final boolean passed = validator.validate("");
         assertFalse(passed);
     }
