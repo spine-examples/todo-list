@@ -26,7 +26,6 @@ import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.q.projection.MyListView;
 import org.spine3.examples.todolist.q.projection.TaskView;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 

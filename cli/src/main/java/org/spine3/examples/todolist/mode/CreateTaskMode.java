@@ -20,7 +20,6 @@
 
 package org.spine3.examples.todolist.mode;
 
-import com.google.common.collect.Maps;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 import jline.console.ConsoleReader;
