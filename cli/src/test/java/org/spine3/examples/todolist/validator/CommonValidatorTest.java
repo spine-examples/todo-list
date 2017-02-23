@@ -44,14 +44,14 @@ class CommonValidatorTest {
     @Test
     @DisplayName("not pass the validation when input is empty")
     public void notPassValidationWhenInputIsEmpty() {
-        final boolean passed = validator.validate("Some input");
+        final boolean passed = validator.validate("");
         assertFalse(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when input is null")
     public void notPassValidationWhenInputIsNull() {
-        final boolean passed = validator.validate("Some input");
+        final boolean passed = validator.validate(null);
         assertFalse(passed);
     }
 }
