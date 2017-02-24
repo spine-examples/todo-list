@@ -53,7 +53,7 @@ message CreateBasicTask {
     TaskId id = 1;
 
     // A description for the task created.
-    string description = 2 [(required) = true];
+    string description = 2 [(required) = true, (pattern).regex = "^[A-Za-z0-9\\s-()\\.,+]{3,}$"];
 
     // Reserved for future extension.
     reserved 3 to 10;
@@ -72,7 +72,7 @@ message UpdateTaskDescription {
 
     // The description change.
     // Contains the previous description and the description to set for the target task.
-    change.StringChange description_change = 2 [(required) = true];
+    DescriptionChange description_change = 2 [(required) = true];
 
     // Reserved for future extension.
     reserved 3 to 10;

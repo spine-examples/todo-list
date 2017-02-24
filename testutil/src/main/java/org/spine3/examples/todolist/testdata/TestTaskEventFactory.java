@@ -21,8 +21,8 @@
 package org.spine3.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
-import org.spine3.change.StringChange;
 import org.spine3.change.TimestampChange;
+import org.spine3.examples.todolist.DescriptionChange;
 import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.TaskDetails;
@@ -86,9 +86,9 @@ public class TestTaskEventFactory {
          * @return the {@code TaskDescriptionUpdated} instance
          */
         public static TaskDescriptionUpdated taskDescriptionUpdatedInstance(TaskId id, String description) {
-            final StringChange descriptionChange = StringChange.newBuilder()
-                                                               .setNewValue(description)
-                                                               .build();
+            final DescriptionChange descriptionChange = DescriptionChange.newBuilder()
+                                                                         .setNewValue(description)
+                                                                         .build();
             final TaskDescriptionUpdated result = TaskDescriptionUpdated.newBuilder()
                                                                         .setTaskId(id)
                                                                         .setDescriptionChange(descriptionChange)

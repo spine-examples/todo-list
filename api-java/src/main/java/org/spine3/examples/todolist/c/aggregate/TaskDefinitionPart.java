@@ -25,6 +25,7 @@ import com.google.protobuf.Timestamp;
 import org.spine3.change.StringChange;
 import org.spine3.change.TimestampChange;
 import org.spine3.change.ValueMismatch;
+import org.spine3.examples.todolist.DescriptionChange;
 import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.TaskDefinition;
@@ -137,7 +138,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
             throws CannotUpdateTaskDescription, CannotUpdateTaskWithInappropriateDescription {
         validateCommand(cmd);
         final TaskDefinition state = getState();
-        final StringChange change = cmd.getDescriptionChange();
+        final DescriptionChange change = cmd.getDescriptionChange();
 
         final String actualDescription = state.getDescription();
         final String expectedDescription = change.getPreviousValue();
