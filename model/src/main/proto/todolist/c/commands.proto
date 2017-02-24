@@ -247,7 +247,7 @@ message CreateBasicLabel {
     LabelId label_id = 1;
 
     // A title for the label.
-    string label_title = 2 [(required) = true];
+    string label_title = 2 [(required) = true, (pattern).regex = "^[A-Za-z0-9\\s-()\\.+]{3,}$"];
 
     // Reserved for future extension.
     reserved 3 to 10;

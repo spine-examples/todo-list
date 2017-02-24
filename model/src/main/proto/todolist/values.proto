@@ -67,7 +67,7 @@ message TaskDetails {
 message LabelDetails {
 
     // Label title.
-    string title = 1 [(required) = true];
+    string title = 1 [(required) = true, (pattern).regex = "^[A-Za-z0-9\\s-()\\.+]{3,}$"];
 
     // Label color.
     LabelColor color = 2;
