@@ -35,9 +35,9 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
  *
  * @author Illia Shepilov
  */
-public class ApproveValidator implements Validator {
+public class ApproveAnswerValidator implements Validator<String> {
 
-    private static final String INCORRECT_INPUT = "Incorrect input. Valid values: 'y' or 'n'";
+    private static final String INVALID_INPUT = "Invalid input. Valid values: 'y' or 'n'";
     private static final String NEGATIVE_ANSWER = "n";
     private static final String POSITIVE_ANSWER = "y";
     private String message;
@@ -49,7 +49,7 @@ public class ApproveValidator implements Validator {
         final boolean invalidInput = isNull(input) || isEmpty(input) || !isNegativeOrPositiveAns;
 
         if (invalidInput) {
-            this.message = INCORRECT_INPUT;
+            this.message = INVALID_INPUT;
             return false;
         }
         return true;

@@ -31,16 +31,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("ApproveValidator should")
-class ApproveValidatorTest {
+@DisplayName("ApproveAnswerValidator should")
+class ApproveAnswerValidatorTest {
 
-    private static final String INCORRECT_INPUT = "O";
+    private static final String INVALID_INPUT = "O";
 
-    private ApproveValidator validator;
+    private ApproveAnswerValidator validator;
 
     @BeforeEach
     public void setUp() {
-        validator = new ApproveValidator();
+        validator = new ApproveAnswerValidator();
     }
 
     @Test
@@ -74,14 +74,14 @@ class ApproveValidatorTest {
     @Test
     @DisplayName("not pass the validation when input neither positive neither negative")
     public void notPassTheValidationWhenIsputIsIncorrect() {
-        final boolean passed = validator.validate(INCORRECT_INPUT);
+        final boolean passed = validator.validate(INVALID_INPUT);
         assertFalse(passed);
     }
 
     @Test
     @DisplayName("return non message when validation is failed")
     public void getMessage() {
-        validator.validate(INCORRECT_INPUT);
+        validator.validate(INVALID_INPUT);
         assertNotNull(validator.getMessage());
     }
 }
