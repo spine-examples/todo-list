@@ -35,7 +35,7 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
  *
  * @author Illia Shepilov
  */
-public class IdValidator implements Validator {
+public class IdValidator implements Validator <String>{
 
     private static final String ID_IS_NULL = "Id cannot be null.";
     private static final String ID_IS_EMPTY = "Id cannot be empty.";

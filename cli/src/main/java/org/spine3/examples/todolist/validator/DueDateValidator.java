@@ -38,7 +38,7 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
  *
  * @author Illia Shepilov
  */
-public class DueDateValidator implements Validator {
+public class DueDateValidator implements Validator<String> {
 
     private static final String DUE_DATE_IS_NULL = "The due date cannot be null.";
     private static final String DUE_DATE_IS_EMPTY = "The due date cannot be empty.";

@@ -36,7 +36,7 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
  *
  * @author Illia Shepilov
  */
-public class DescriptionValidator implements Validator {
+public class DescriptionValidator implements Validator<String> {
 
     private static final String DESCRIPTION_IS_NULL = "Description cannot be null.";
     private static final String DESCRIPTION_IS_EMPTY = "Description cannot be empty.";

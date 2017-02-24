@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * @author Illia Shepilov
  */
-public class LabelColorValidator implements Validator {
+public class LabelColorValidator implements Validator<String> {
 
     private static final String INCORRECT_INPUT = "Incorrect label color";
 

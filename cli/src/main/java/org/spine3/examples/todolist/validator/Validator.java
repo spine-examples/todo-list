@@ -27,15 +27,15 @@ import javax.annotation.Nullable;
  *
  * @author Illia Shepilov
  */
-public interface Validator {
+public interface Validator<T> {
 
     /**
-     * Validates the input text from the user.
+     * Validates the value text from the user.
      *
-     * @param input the user input
-     * @return {@code true} if input is valid, otherwise {@code false}
+     * @param value the user value
+     * @return {@code true} if value is valid, otherwise {@code false}
      */
-    boolean validate(String input);
+    boolean validate(T value);
 
     /**
      * Returns the message is indicated incorrect input by user.

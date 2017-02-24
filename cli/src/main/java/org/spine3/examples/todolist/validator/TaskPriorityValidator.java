@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * @author Illia Shepilov
  */
-public class TaskPriorityValidator implements Validator {
+public class TaskPriorityValidator implements Validator<String> {
 
     private static final String INCORRECT_INPUT = "Incorrect task priority";
 
