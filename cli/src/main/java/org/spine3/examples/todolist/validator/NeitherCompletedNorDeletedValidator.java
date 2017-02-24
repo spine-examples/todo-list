@@ -26,15 +26,15 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
 import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
 
 /**
- * Serves as a validator when is needed validate common cases.
+ * Serves as a validator when is needed to validate the common cases.
  *
- * <p>Validation will be failed when input neither empty or {@code null}.
+ * <p>Validation will be failed when input is empty or {@code null}.
  *
- * <p>In other cases validation will be passed.
+ * <p>In other cases validation will pass successfully.
  *
  * @author Illia Shepilov
  */
-public class CommonValidator implements Validator {
+public class NeitherCompletedNorDeletedValidator implements Validator<String> {
 
     private static final String EMPTY_VALUE = "Inserted value cannot be empty.";
     private static final String VALUE_IS_NULL = "Inserted value cannot be null";

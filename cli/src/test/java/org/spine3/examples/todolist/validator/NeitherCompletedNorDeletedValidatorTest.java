@@ -31,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CommonValidator should")
-class CommonValidatorTest {
+@DisplayName("NeitherCompletedNorDeletedValidator should")
+class NeitherCompletedNorDeletedValidatorTest {
 
-    private CommonValidator validator;
+    private NeitherCompletedNorDeletedValidator validator;
 
     @BeforeEach
     public void setUp() {
-        validator = new CommonValidator();
+        validator = new NeitherCompletedNorDeletedValidator();
     }
 
     @Test
