@@ -37,7 +37,7 @@ import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
 public class NeitherCompletedNorDeletedValidator implements Validator<String> {
 
     private static final String EMPTY_VALUE = "Inserted value cannot be empty.";
-    private static final String VALUE_IS_NULL = "Inserted value cannot be null";
+    private static final String VALUE_IS_NULL = "Inserted value cannot be null.";
     private String message;
 
     @Override
