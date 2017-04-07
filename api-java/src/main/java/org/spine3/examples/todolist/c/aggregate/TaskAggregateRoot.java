@@ -61,6 +61,9 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
         if (!testEnv) {
             boundedContext = TodoListBoundedContext.getInstance();
         }
+        if(testEnv){
+            boundedContext = TodoListBoundedContext.createTestInstance();
+        }
     }
 
     /**
