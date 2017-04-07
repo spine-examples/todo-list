@@ -47,6 +47,7 @@ import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.examples.todolist.testdata.TestResponseObserver;
 import org.spine3.protobuf.AnyPacker;
 import org.spine3.server.BoundedContext;
+import org.spine3.server.aggregate.AggregateRoot;
 import org.spine3.server.command.CommandBus;
 import org.spine3.server.event.EventStreamQuery;
 
@@ -88,7 +89,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
 
         commandBus = boundedContext.getCommandBus();
         taskId = createTaskId();
-        taskDefinitionPart = createTaskDefinitionPart(taskId);
+        taskDefinitionPart = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test

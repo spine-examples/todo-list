@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
+import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
@@ -59,7 +59,7 @@ public class ProjectionHelperTest {
     @Test
     @DisplayName("have the private constructor")
     public void havePrivateConstructor() {
-        assertTrue(hasPrivateParameterlessCtor(ProjectionHelper.class));
+        assertHasPrivateParameterlessCtor(ProjectionHelper.class);
     }
 
     @Test

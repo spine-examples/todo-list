@@ -38,9 +38,9 @@ import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
 import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
 import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
 import org.spine3.examples.todolist.c.events.TaskReopened;
-import org.spine3.protobuf.Timestamps;
 
 import static org.spine3.base.Identifiers.newUuid;
+import static org.spine3.protobuf.Timestamps2.getCurrentTime;
 
 /**
  * A factory of the task events for the test needs.
@@ -53,14 +53,14 @@ public class TestTaskEventFactory {
     public static final String DESCRIPTION = "task description";
     public static final TaskPriority TASK_PRIORITY = TaskPriority.NORMAL;
     public static final TaskPriority UPDATED_TASK_PRIORITY = TaskPriority.NORMAL;
-    public static final Timestamp UPDATED_TASK_DUE_DATE = Timestamps.getCurrentTime();
+    public static final Timestamp UPDATED_TASK_DUE_DATE = getCurrentTime();
     public static final LabelId LABEL_ID = LabelId.newBuilder()
                                                   .setValue(newUuid())
                                                   .build();
     public static final TaskId TASK_ID = TaskId.newBuilder()
                                                .setValue(newUuid())
                                                .build();
-    private static final Timestamp CREATION_TIME = Timestamps.getCurrentTime();
+    private static final Timestamp CREATION_TIME = getCurrentTime();
 
     private TestTaskEventFactory() {
     }

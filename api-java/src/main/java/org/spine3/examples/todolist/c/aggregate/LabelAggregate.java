@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
+import org.spine3.base.CommandContext;
 import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
@@ -71,7 +72,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
     }
 
     @Assign
-    List<? extends Message> handle(UpdateLabelDetails cmd) throws CannotUpdateLabelDetails {
+    List<? extends Message> handle(UpdateLabelDetails cmd, CommandContext ctx) throws CannotUpdateLabelDetails {
         final TaskLabel state = getState();
         final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
                                                             .setColor(state.getColor())
@@ -86,7 +87,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
         if (!isEquals) {
             final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
             final ValueMismatch mismatch = of(expectedLabelDetails, actualLabelDetails, newLabelDetails, getVersion());
-            throwCannotUpdateLabelDetailsFailure(labelId, mismatch);
+            throwCannotUpdateLabelDetailsFailure(cmd, ctx, mismatch);
         }
 
         final LabelDetailsUpdated labelDetailsUpdated = LabelDetailsUpdated.newBuilder()

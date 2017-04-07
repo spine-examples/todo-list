@@ -74,7 +74,7 @@ public class TodoListEnrichmentConfiguration {
             if (taskId == null) {
                 return TaskDefinition.getDefaultInstance();
             }
-            final TaskDefinitionPart aggregate = taskDefinitionRepo.load(taskId)
+            final TaskDefinitionPart aggregate = taskDefinitionRepo.find(taskId)
                                                                    .get();
             final TaskDefinition taskDefinition = aggregate.getState();
             return taskDefinition;
@@ -87,7 +87,7 @@ public class TodoListEnrichmentConfiguration {
             if (taskId == null) {
                 return TaskDetails.getDefaultInstance();
             }
-            final TaskDefinitionPart aggregate = taskDefinitionRepo.load(taskId)
+            final TaskDefinitionPart aggregate = taskDefinitionRepo.find(taskId)
                                                                    .get();
             final TaskDefinition state = aggregate.getState();
             final TaskDetails details = TaskDetails.newBuilder()
@@ -105,7 +105,7 @@ public class TodoListEnrichmentConfiguration {
             if (taskId == null) {
                 return LabelIdsList.getDefaultInstance();
             }
-            final TaskLabelsPart aggregate = taskLabelsRepo.load(taskId)
+            final TaskLabelsPart aggregate = taskLabelsRepo.find(taskId)
                                                            .get();
             final LabelIdsList state = aggregate.getState()
                                                 .getLabelIdsList();
@@ -119,7 +119,7 @@ public class TodoListEnrichmentConfiguration {
             if (labelId == null) {
                 return LabelDetails.getDefaultInstance();
             }
-            final LabelAggregate aggregate = labelRepository.load(labelId)
+            final LabelAggregate aggregate = labelRepository.find(labelId)
                                                             .get();
             final TaskLabel state = aggregate.getState();
             final LabelDetails labelDetails = LabelDetails.newBuilder()

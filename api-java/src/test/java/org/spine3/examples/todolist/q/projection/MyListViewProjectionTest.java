@@ -39,7 +39,6 @@ import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
 import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
 import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
 import org.spine3.examples.todolist.c.events.TaskReopened;
-import org.spine3.protobuf.Timestamps;
 
 import java.util.List;
 
@@ -62,6 +61,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateE
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskDueDateUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskPriorityUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelAssignedToTaskInstance;
+import static org.spine3.protobuf.Timestamps2.getCurrentTime;
 
 /**
  * @author Illia Shepilov
@@ -182,7 +182,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
-            final Timestamp updatedDueDate = Timestamps.getCurrentTime();
+            final Timestamp updatedDueDate = getCurrentTime();
             final TaskId expectedTaskId = taskCreatedEvent.getId();
 
             final TaskDueDateUpdated taskDueDateUpdatedEvent =
@@ -205,7 +205,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
-            final Timestamp updatedDueDate = Timestamps.getCurrentTime();
+            final Timestamp updatedDueDate = getCurrentTime();
 
             final TaskDueDateUpdated taskDueDateUpdatedEvent =
                     taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), updatedDueDate);

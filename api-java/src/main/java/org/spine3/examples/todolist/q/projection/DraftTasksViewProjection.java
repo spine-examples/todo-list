@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.q.projection;
 
+import org.spine3.base.Subscribe;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
@@ -31,7 +32,6 @@ import org.spine3.examples.todolist.c.events.TaskDraftCreated;
 import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
 import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
 import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
-import org.spine3.server.event.Subscribe;
 import org.spine3.server.projection.Projection;
 
 import java.util.List;

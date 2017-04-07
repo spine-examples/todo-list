@@ -22,23 +22,21 @@ package org.spine3.examples.todolist.c.aggregate.failures;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.FailedTaskCommandDetails;
-import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.failures.CannotAssignLabelToTask;
+import org.spine3.examples.todolist.c.commands.CreateBasicTask;
+import org.spine3.examples.todolist.c.commands.CreateDraft;
+import org.spine3.examples.todolist.c.commands.UpdateTaskDescription;
 import org.spine3.examples.todolist.c.failures.CannotCreateDraft;
 import org.spine3.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
-import org.spine3.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDescription;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotAssignLabelToTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotRemoveLabelFromTaskFailure;
-import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
+import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
@@ -47,21 +45,24 @@ import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
 class TaskDefinitionPartFailuresTest {
 
     private final TaskId taskId = TaskId.getDefaultInstance();
-    private final LabelId labelId = LabelId.getDefaultInstance();
 
     @Test
     @DisplayName("have the private constructor")
     public void havePrivateConstructor() {
-        assertTrue(hasPrivateParameterlessCtor(TaskDefinitionPartFailures.class));
+        assertHasPrivateParameterlessCtor(TaskDefinitionPartFailures.class);
     }
 
     @Test
     @DisplayName("throw CannotCreateDraft failure")
     public void throwCannotCreateDraft() {
+        final CreateDraft cmd = CreateDraft.newBuilder()
+                                           .setId(taskId)
+                                           .build();
+        final CommandContext ctx = CommandContext.getDefaultInstance();
         try {
-            throwCannotCreateDraftFailure(taskId);
+            throwCannotCreateDraftFailure(cmd, ctx);
         } catch (CannotCreateDraft ex) {
-            final TaskId actual = ex.getFailure()
+            final TaskId actual = ex.getFailureMessage()
                                     .getCreateDraftFailed()
                                     .getFailureDetails()
                                     .getTaskId();
@@ -72,10 +73,14 @@ class TaskDefinitionPartFailuresTest {
     @Test
     @DisplayName("throw CannotUpdateTaskDescription failure")
     public void throwCannotUpdateTaskDescription() {
+        final UpdateTaskDescription cmd = UpdateTaskDescription.newBuilder()
+                                                               .setId(taskId)
+                                                               .build();
+        final CommandContext ctx = CommandContext.getDefaultInstance();
         try {
-            throwCannotUpdateTaskDescriptionFailure(taskId);
+            throwCannotUpdateTaskDescriptionFailure(cmd, ctx);
         } catch (CannotUpdateTaskDescription ex) {
-            final FailedTaskCommandDetails failedCommand = ex.getFailure()
+            final FailedTaskCommandDetails failedCommand = ex.getFailureMessage()
                                                              .getUpdateFailed()
                                                              .getFailureDetails();
             final TaskId actualId = failedCommand.getTaskId();
@@ -86,10 +91,14 @@ class TaskDefinitionPartFailuresTest {
     @Test
     @DisplayName("throw CannotCreateTaskWithInappropriateDescription failure")
     public void throwCannotCreateTaskWithInappropriateDescription() {
+        final CreateBasicTask cmd = CreateBasicTask.newBuilder()
+                                                   .setId(taskId)
+                                                   .build();
+        final CommandContext ctx = CommandContext.getDefaultInstance();
         try {
-            throwCannotCreateTaskWithInappropriateDescriptionFailure(taskId);
+            throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd, ctx);
         } catch (CannotCreateTaskWithInappropriateDescription ex) {
-            final TaskId actual = ex.getFailure()
+            final TaskId actual = ex.getFailureMessage()
                                     .getCreateTaskFailed()
                                     .getFailureDetails()
                                     .getTaskId();

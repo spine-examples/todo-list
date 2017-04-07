@@ -31,6 +31,7 @@ import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskDueDateUpdateFailed;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
@@ -39,7 +40,6 @@ import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
 import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDueDate;
 import org.spine3.examples.todolist.c.failures.Failures;
-import org.spine3.protobuf.Timestamps;
 
 import java.util.List;
 
@@ -52,6 +52,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.creat
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 import static org.spine3.protobuf.AnyPacker.unpack;
+import static org.spine3.protobuf.Timestamps2.getCurrentTime;
 
 /**
  * @author Illia Shepilov
@@ -67,7 +68,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     @BeforeEach
     protected void setUp() {
         taskId = createTaskId();
-        aggregate = createTaskDefinitionPart(taskId);
+        aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test
@@ -128,7 +129,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     @Test
     @DisplayName("update the task due date")
     public void updateDueDate() {
-        final Timestamp updatedDueDate = Timestamps.getCurrentTime();
+        final Timestamp updatedDueDate = getCurrentTime();
         dispatchCreateTaskCmd();
 
         final UpdateTaskDueDate updateTaskDueDateCmd =
@@ -145,8 +146,8 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     public void produceFailure() {
         dispatchCreateTaskCmd();
 
-        final Timestamp expectedDueDate = Timestamps.getCurrentTime();
-        final Timestamp newDueDate = Timestamps.getCurrentTime();
+        final Timestamp expectedDueDate = getCurrentTime();
+        final Timestamp newDueDate = getCurrentTime();
 
         try {
             final UpdateTaskDueDate updateTaskDueDate =
@@ -162,7 +163,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
 
             @SuppressWarnings("ConstantConditions")
             final Failures.CannotUpdateTaskDueDate cannotUpdateTaskDueDate =
-                    ((CannotUpdateTaskDueDate) cause).getFailure();
+                    ((CannotUpdateTaskDueDate) cause).getFailureMessage();
 
             final TaskDueDateUpdateFailed dueDateUpdateFailed = cannotUpdateTaskDueDate.getUpdateFailed();
             final TaskId actualTaskId = dueDateUpdateFailed.getFailureDetails()

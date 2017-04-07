@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.repository;
 
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.aggregate.AggregatePartRepository;
@@ -30,7 +31,7 @@ import org.spine3.server.aggregate.AggregatePartRepository;
  *
  * @author Illia Shepilov
  */
-public class TaskDefinitionRepository extends AggregatePartRepository<TaskId, TaskDefinitionPart> {
+public class TaskDefinitionRepository extends AggregatePartRepository<TaskId, TaskDefinitionPart, TaskAggregateRoot> {
     /**
      * {@inheritDoc}
      *

@@ -22,17 +22,19 @@ package org.spine3.examples.todolist.c.aggregate.failures;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.FailedTaskCommandDetails;
 import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
+import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
 import org.spine3.examples.todolist.c.failures.CannotAssignLabelToTask;
 import org.spine3.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotAssignLabelToTaskFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotRemoveLabelFromTaskFailure;
-import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
+import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
@@ -46,16 +48,21 @@ public class TaskLabelsPartFailuresTest {
     @Test
     @DisplayName("have the private constructor")
     public void havePrivateConstructor() {
-        assertTrue(hasPrivateParameterlessCtor(TaskLabelsPartFailures.class));
+        assertHasPrivateParameterlessCtor(TaskLabelsPartFailures.class);
     }
 
     @Test
     @DisplayName("throw CannotRemoveLabelFromTask failure")
     public void throwCannotRemoveLabelFromTask() {
+        final RemoveLabelFromTask cmd = RemoveLabelFromTask.newBuilder()
+                                                           .setId(taskId)
+                                                           .setLabelId(labelId)
+                                                           .build();
+        final CommandContext ctx = CommandContext.getDefaultInstance();
         try {
-            throwCannotRemoveLabelFromTaskFailure(labelId, taskId);
+            throwCannotRemoveLabelFromTaskFailure(cmd, ctx);
         } catch (CannotRemoveLabelFromTask ex) {
-            final TaskId actual = ex.getFailure()
+            final TaskId actual = ex.getFailureMessage()
                                     .getRemoveLabelFailed()
                                     .getFailureDetails()
                                     .getTaskId();
@@ -66,10 +73,15 @@ public class TaskLabelsPartFailuresTest {
     @Test
     @DisplayName("throw CannotAssignLabelToTask failure")
     public void throwCannotAssignLabelToTask() {
+        final AssignLabelToTask cmd = AssignLabelToTask.newBuilder()
+                                                       .setLabelId(labelId)
+                                                       .setId(taskId)
+                                                       .build();
+        final CommandContext ctx = CommandContext.getDefaultInstance();
         try {
-            throwCannotAssignLabelToTaskFailure(taskId, labelId);
+            throwCannotAssignLabelToTaskFailure(cmd, ctx);
         } catch (CannotAssignLabelToTask ex) {
-            final FailedTaskCommandDetails failedCommand = ex.getFailure()
+            final FailedTaskCommandDetails failedCommand = ex.getFailureMessage()
                                                              .getAssignLabelFailed()
                                                              .getFailureDetails();
             final TaskId actualId = failedCommand.getTaskId();

@@ -23,6 +23,7 @@ package org.spine3.examples.todolist.c.aggregate.definition;
 import com.google.protobuf.Message;
 import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.testdata.TestCommandContextFactory;
 import org.spine3.test.CommandTest;
@@ -48,7 +49,7 @@ abstract class TaskDefinitionCommandTest<C extends Message> extends CommandTest<
         return TestCommandContextFactory.createCommandContext();
     }
 
-    TaskDefinitionPart createTaskDefinitionPart(TaskId taskId) {
-        return new TaskDefinitionPart(taskId);
+    TaskDefinitionPart createTaskDefinitionPart(TaskAggregateRoot root) {
+        return new TaskDefinitionPart(root);
     }
 }

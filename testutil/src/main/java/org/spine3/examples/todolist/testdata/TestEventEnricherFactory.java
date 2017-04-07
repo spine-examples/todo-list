@@ -28,12 +28,12 @@ import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.protobuf.Timestamps;
 import org.spine3.server.event.enrich.EventEnricher;
 
 import java.util.function.Function;
 
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.LABEL_ID;
+import static org.spine3.protobuf.Timestamps2.getCurrentTime;
 
 /**
  * Provides event enricher for the test needs.
@@ -50,7 +50,7 @@ public class TestEventEnricherFactory {
                                                                .build();
     private static final TaskDefinition TASK_DEFINITION = TaskDefinition.newBuilder()
                                                                         .setDescription(DESCRIPTION)
-                                                                        .setDueDate(Timestamps.getCurrentTime())
+                                                                        .setDueDate(getCurrentTime())
                                                                         .setPriority(TaskPriority.NORMAL)
                                                                         .build();
     private static final LabelDetails LABEL_DETAILS = LabelDetails.newBuilder()

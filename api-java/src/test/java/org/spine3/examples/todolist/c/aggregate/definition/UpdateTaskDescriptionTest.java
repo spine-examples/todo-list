@@ -31,6 +31,7 @@ import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.DescriptionUpdateFailed;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
@@ -67,7 +68,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     @BeforeEach
     protected void setUp() {
         taskId = createTaskId();
-        aggregate = createTaskDefinitionPart(taskId);
+        aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test
@@ -177,7 +178,8 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
             assertTrue(cause instanceof CannotUpdateTaskDescription);
 
             @SuppressWarnings("ConstantConditions")
-            final Failures.CannotUpdateTaskDescription failure = ((CannotUpdateTaskDescription) cause).getFailure();
+            final Failures.CannotUpdateTaskDescription failure =
+                    ((CannotUpdateTaskDescription) cause).getFailureMessage();
             final DescriptionUpdateFailed descriptionUpdateFailed = failure.getUpdateFailed();
             final TaskId actualTaskId = descriptionUpdateFailed.getFailureDetails()
                                                                .getTaskId();

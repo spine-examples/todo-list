@@ -22,6 +22,7 @@ package org.spine3.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
+import org.spine3.base.CommandContext;
 import org.spine3.change.StringChange;
 import org.spine3.change.TimestampChange;
 import org.spine3.change.ValueMismatch;
@@ -65,7 +66,7 @@ import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDescription;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDueDate;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskPriority;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskWithInappropriateDescription;
-import org.spine3.protobuf.Timestamps;
+import org.spine3.protobuf.Timestamps2;
 import org.spine3.server.aggregate.AggregatePart;
 import org.spine3.server.aggregate.Apply;
 import org.spine3.server.command.Assign;
@@ -103,24 +104,24 @@ import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPa
                                                  The {@code AggregatePart} does it with methods annotated
                                                  as {@code Assign} and {@code Apply}.
                                                  In that case class has too many methods.*/
-                       "OverlyCoupledClass"}) /* As each method needs dependencies  necessary to perform execution
+        "OverlyCoupledClass"}) /* As each method needs dependencies  necessary to perform execution
                                                  that class also overly coupled.*/
-public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, TaskDefinition.Builder> {
+public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, TaskDefinition.Builder, TaskAggregateRoot> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;
 
     /**
      * {@inheritDoc}
      *
-     * @param id
+     * @param root
      */
-    public TaskDefinitionPart(TaskId id) {
-        super(id);
+    public TaskDefinitionPart(TaskAggregateRoot root) {
+        super(root);
     }
 
     @Assign
-    List<? extends Message> handle(CreateBasicTask cmd) throws CannotCreateTaskWithInappropriateDescription {
-        validateCommand(cmd);
+    List<? extends Message> handle(CreateBasicTask cmd, CommandContext ctx) throws CannotCreateTaskWithInappropriateDescription {
+        validateCommand(cmd, ctx);
         final TaskId taskId = cmd.getId();
 
         final TaskDetails.Builder taskDetails = TaskDetails.newBuilder()
@@ -133,9 +134,9 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     }
 
     @Assign
-    List<? extends Message> handle(UpdateTaskDescription cmd)
+    List<? extends Message> handle(UpdateTaskDescription cmd, CommandContext ctx)
             throws CannotUpdateTaskDescription, CannotUpdateTaskWithInappropriateDescription {
-        validateCommand(cmd);
+        validateCommand(cmd, ctx);
         final TaskDefinition state = getState();
         final StringChange change = cmd.getDescriptionChange();
 
@@ -147,7 +148,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         if (!isEquals) {
             final String newDescription = change.getNewValue();
             final ValueMismatch mismatch = of(expectedDescription, actualDescription, newDescription, getVersion());
-            throwCannotUpdateDescriptionFailure(taskId, mismatch);
+            throwCannotUpdateDescriptionFailure(cmd, ctx, mismatch);
         }
 
         final TaskDescriptionUpdated taskDescriptionUpdated = TaskDescriptionUpdated.newBuilder()
@@ -159,7 +160,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     }
 
     @Assign
-    List<? extends Message> handle(UpdateTaskDueDate cmd) throws CannotUpdateTaskDueDate {
+    List<? extends Message> handle(UpdateTaskDueDate cmd, CommandContext ctx) throws CannotUpdateTaskDueDate {
         final TaskDefinition state = getState();
         final TaskStatus taskStatus = state.getTaskStatus();
         final boolean isValid = isValidUpdateTaskDueDateCommand(taskStatus);
@@ -167,19 +168,19 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            throwCannotUpdateTaskDueDateFailure(taskId);
+            throwCannotUpdateTaskDueDateFailure(cmd, ctx);
         }
 
         final TimestampChange change = cmd.getDueDateChange();
         final Timestamp actualDueDate = state.getDueDate();
         final Timestamp expectedDueDate = change.getPreviousValue();
 
-        final boolean isEquals = Timestamps.compare(actualDueDate, expectedDueDate) == 0;
+        final boolean isEquals = Timestamps2.compare(actualDueDate, expectedDueDate) == 0;
 
         if (!isEquals) {
             final Timestamp newDueDate = change.getNewValue();
             final ValueMismatch mismatch = of(expectedDueDate, actualDueDate, newDueDate, getVersion());
-            throwCannotUpdateTaskDueDateFailure(taskId, mismatch);
+            throwCannotUpdateTaskDueDateFailure(cmd, ctx, mismatch);
         }
 
         final TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated.newBuilder()
@@ -191,14 +192,14 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     }
 
     @Assign
-    List<? extends Message> handle(UpdateTaskPriority cmd) throws CannotUpdateTaskPriority {
+    List<? extends Message> handle(UpdateTaskPriority cmd, CommandContext ctx) throws CannotUpdateTaskPriority {
         final TaskDefinition state = getState();
         final TaskStatus taskStatus = state.getTaskStatus();
         final boolean isValid = isValidUpdateTaskPriorityCommand(taskStatus);
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            throwCannotUpdateTaskPriorityFailure(taskId);
+            throwCannotUpdateTaskPriorityFailure(cmd, ctx);
         }
 
         final PriorityChange priorityChange = cmd.getPriorityChange();
@@ -210,7 +211,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         if (!isEquals) {
             final TaskPriority newPriority = priorityChange.getNewValue();
             final ValueMismatch mismatch = of(expectedPriority, actualPriority, newPriority, getVersion());
-            throwCannotUpdateTaskPriorityFailure(taskId, mismatch);
+            throwCannotUpdateTaskPriorityFailure(cmd, ctx, mismatch);
         }
 
         final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
@@ -222,7 +223,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     }
 
     @Assign
-    List<? extends Message> handle(ReopenTask cmd) throws CannotReopenTask {
+    List<? extends Message> handle(ReopenTask cmd, CommandContext ctx) throws CannotReopenTask {
         final TaskDefinition state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.OPEN;
@@ -230,7 +231,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            throwCannotReopenTaskFailure(taskId);
+            throwCannotReopenTaskFailure(cmd, ctx);
         }
 
         final TaskReopened taskReopened = TaskReopened.newBuilder()
@@ -241,7 +242,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     }
 
     @Assign
-    List<? extends Message> handle(DeleteTask cmd) throws CannotDeleteTask {
+    List<? extends Message> handle(DeleteTask cmd, CommandContext ctx) throws CannotDeleteTask {
         final TaskDefinition state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.DELETED;
@@ -249,7 +250,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            throwCannotDeleteTaskFailure(taskId);
+            throwCannotDeleteTaskFailure(cmd, ctx);
         }
 
         final TaskDeleted taskDeleted = TaskDeleted.newBuilder()
@@ -260,7 +261,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     }
 
     @Assign
-    List<? extends Message> handle(CompleteTask cmd) throws CannotCompleteTask {
+    List<? extends Message> handle(CompleteTask cmd, CommandContext ctx) throws CannotCompleteTask {
         final TaskDefinition state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.COMPLETED;
@@ -268,7 +269,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            throwCannotCompleteTaskFailure(taskId);
+            throwCannotCompleteTaskFailure(cmd, ctx);
         }
 
         final TaskCompleted taskCompleted = TaskCompleted.newBuilder()
@@ -279,31 +280,31 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     }
 
     @Assign
-    List<? extends Message> handle(CreateDraft cmd) throws CannotCreateDraft {
+    List<? extends Message> handle(CreateDraft cmd, CommandContext ctx) throws CannotCreateDraft {
         final TaskId taskId = cmd.getId();
         final boolean isValid = isValidCreateDraftCommand(getState().getTaskStatus());
 
         if (!isValid) {
-            throwCannotCreateDraftFailure(taskId);
+            throwCannotCreateDraftFailure(cmd, ctx);
         }
 
         final TaskDraftCreated draftCreated = TaskDraftCreated.newBuilder()
                                                               .setId(taskId)
-                                                              .setDraftCreationTime(Timestamps.getCurrentTime())
+                                                              .setDraftCreationTime(Timestamps2.getCurrentTime())
                                                               .build();
         final List<TaskDraftCreated> result = Collections.singletonList(draftCreated);
         return result;
     }
 
     @Assign
-    List<? extends Message> handle(FinalizeDraft cmd) throws CannotFinalizeDraft {
+    List<? extends Message> handle(FinalizeDraft cmd, CommandContext ctx) throws CannotFinalizeDraft {
         final TaskStatus currentStatus = getState().getTaskStatus();
         final TaskStatus newStatus = TaskStatus.FINALIZED;
         final TaskId taskId = cmd.getId();
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            throwCannotFinalizeDraftFailure(taskId);
+            throwCannotFinalizeDraftFailure(cmd, ctx);
         }
 
         final TaskDraftFinalized taskDraftFinalized = TaskDraftFinalized.newBuilder()
@@ -314,14 +315,14 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     }
 
     @Assign
-    List<? extends Message> handle(RestoreDeletedTask cmd) throws CannotRestoreDeletedTask {
+    List<? extends Message> handle(RestoreDeletedTask cmd, CommandContext ctx) throws CannotRestoreDeletedTask {
         final TaskStatus currentStatus = getState().getTaskStatus();
         final TaskStatus newStatus = TaskStatus.OPEN;
         final TaskId taskId = cmd.getId();
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            throwCannotRestoreDeletedTaskFailure(taskId);
+            throwCannotRestoreDeletedTaskFailure(cmd, ctx);
         }
 
         final DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored.newBuilder()
@@ -352,7 +353,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     private void taskCreated(TaskCreated event) {
         final TaskDetails taskDetails = event.getDetails();
         getBuilder().setId(event.getId())
-                    .setCreated(Timestamps.getCurrentTime())
+                    .setCreated(Timestamps2.getCurrentTime())
                     .setDescription(taskDetails.getDescription())
                     .setPriority(taskDetails.getPriority())
                     .setTaskStatus(TaskStatus.FINALIZED);
@@ -418,28 +419,29 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
                     .setTaskStatus(TaskStatus.DRAFT);
     }
 
-    private static void validateCommand(CreateBasicTask cmd) throws CannotCreateTaskWithInappropriateDescription {
+    private static void validateCommand(CreateBasicTask cmd, CommandContext ctx)
+            throws CannotCreateTaskWithInappropriateDescription {
         final String description = cmd.getDescription();
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
             final TaskId taskId = cmd.getId();
-            throwCannotCreateTaskWithInappropriateDescriptionFailure(taskId);
+            throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd, ctx);
         }
     }
 
-    private void validateCommand(UpdateTaskDescription cmd)
+    private void validateCommand(UpdateTaskDescription cmd, CommandContext ctx)
             throws CannotUpdateTaskDescription, CannotUpdateTaskWithInappropriateDescription {
         final String description = cmd.getDescriptionChange()
                                       .getNewValue();
         final TaskId taskId = cmd.getId();
 
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
-            throwCannotUpdateTooShortDescriptionFailure(taskId);
+            throwCannotUpdateTooShortDescriptionFailure(cmd, ctx);
         }
 
         boolean isValid = TaskFlowValidator.ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
 
         if (!isValid) {
-            throwCannotUpdateTaskDescriptionFailure(taskId);
+            throwCannotUpdateTaskDescriptionFailure(cmd, ctx);
         }
     }
 }

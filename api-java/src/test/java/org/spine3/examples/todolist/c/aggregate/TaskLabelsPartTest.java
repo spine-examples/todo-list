@@ -78,8 +78,9 @@ public class TaskLabelsPartTest {
         commandBus = boundedContext.getCommandBus();
         responseObserver = new TestResponseObserver();
         taskId = createTaskId();
+        final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
         labelId = createLabelId();
-        taskLabelsPart = createTaskLabelsPart(taskId);
+        taskLabelsPart = createTaskLabelsPart(root);
     }
 
     private static LabelId createLabelId() {
@@ -96,8 +97,8 @@ public class TaskLabelsPartTest {
         return result;
     }
 
-    private static TaskLabelsPart createTaskLabelsPart(TaskId taskId) {
-        return new TaskLabelsPart(taskId);
+    private static TaskLabelsPart createTaskLabelsPart(TaskAggregateRoot root) {
+        return new TaskLabelsPart(root);
     }
 
     @Nested

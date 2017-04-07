@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
+import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.LabelIdsList;
 import org.spine3.examples.todolist.TaskDefinition;
@@ -51,19 +52,19 @@ import static org.spine3.examples.todolist.c.aggregate.failures.TaskLabelsPartFa
  * @author Illia Shepilov
  */
 @SuppressWarnings("unused") // The methods annotated with {@link Apply} are declared {@code private} by design.
-public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels.Builder> {
+public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels.Builder, TaskAggregateRoot> {
 
     /**
      * {@inheritDoc}
      *
-     * @param id
+     * @param root
      */
-    public TaskLabelsPart(TaskId id) {
-        super(id);
+    public TaskLabelsPart(TaskAggregateRoot root) {
+        super(root);
     }
 
     @Assign
-    List<? extends Message> handle(RemoveLabelFromTask cmd) throws CannotRemoveLabelFromTask {
+    List<? extends Message> handle(RemoveLabelFromTask cmd, CommandContext ctx) throws CannotRemoveLabelFromTask {
         final LabelId labelId = cmd.getLabelId();
         final TaskId taskId = cmd.getId();
 
@@ -72,7 +73,7 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
         final boolean isValid = isValidRemoveLabelFromTaskCommand(taskDefinitionState.getTaskStatus());
 
         if (!isValid) {
-            throwCannotRemoveLabelFromTaskFailure(labelId, taskId);
+            throwCannotRemoveLabelFromTaskFailure(cmd, ctx);
         }
 
         final LabelRemovedFromTask labelRemoved = LabelRemovedFromTask.newBuilder()
@@ -84,7 +85,7 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
     }
 
     @Assign
-    List<? extends Message> handle(AssignLabelToTask cmd) throws CannotAssignLabelToTask {
+    List<? extends Message> handle(AssignLabelToTask cmd, CommandContext ctx) throws CannotAssignLabelToTask {
         final TaskId taskId = cmd.getId();
         final LabelId labelId = cmd.getLabelId();
 
@@ -93,7 +94,7 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
         final boolean isValid = isValidAssignLabelToTaskCommand(state.getTaskStatus());
 
         if (!isValid) {
-            throwCannotAssignLabelToTaskFailure(taskId, labelId);
+            throwCannotAssignLabelToTaskFailure(cmd, ctx);
         }
 
         final LabelAssignedToTask labelAssigned = LabelAssignedToTask.newBuilder()

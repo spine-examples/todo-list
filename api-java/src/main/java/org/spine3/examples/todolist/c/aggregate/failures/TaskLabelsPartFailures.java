@@ -20,12 +20,13 @@
 
 package org.spine3.examples.todolist.c.aggregate.failures;
 
+import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.AssignLabelToTaskFailed;
 import org.spine3.examples.todolist.FailedTaskCommandDetails;
-import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.RemoveLabelFromTaskFailed;
-import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.c.aggregate.TaskLabelsPart;
+import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
+import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
 import org.spine3.examples.todolist.c.failures.CannotAssignLabelToTask;
 import org.spine3.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 
@@ -42,41 +43,42 @@ public class TaskLabelsPartFailures {
     /**
      * Constructs and throws the {@link CannotAssignLabelToTask} failure according to the passed parameters.
      *
-     * @param taskId  the ID of the task
-     * @param labelId the ID of the label
+     * @param cmd the {@code AssignLabelToTask} command which thrown the failure
+     * @param ctx the {@code CommandContext}
      * @throws CannotAssignLabelToTask the failure to throw
      */
-    public static void throwCannotAssignLabelToTaskFailure(TaskId taskId, LabelId labelId)
-            throws CannotAssignLabelToTask {
+    public static void throwCannotAssignLabelToTaskFailure(AssignLabelToTask cmd,
+                                                           CommandContext ctx) throws CannotAssignLabelToTask {
         final FailedTaskCommandDetails commandFailed =
                 FailedTaskCommandDetails.newBuilder()
-                                        .setTaskId(taskId)
+                                        .setTaskId(cmd.getId())
                                         .build();
         final AssignLabelToTaskFailed assignLabelToTaskFailed =
                 AssignLabelToTaskFailed.newBuilder()
                                        .setFailureDetails(commandFailed)
-                                       .setLabelId(labelId)
+                                       .setLabelId(cmd.getLabelId())
                                        .build();
-        throw new CannotAssignLabelToTask(assignLabelToTaskFailed);
+        throw new CannotAssignLabelToTask(cmd, ctx, assignLabelToTaskFailed);
     }
 
     /**
      * Constructs and throws the {@link CannotRemoveLabelFromTask} failure according to the passed parameters.
      *
-     * @param taskId the ID of the task
+     * @param cmd the {@code AssignLabelToTask} command which thrown the failure
+     * @param ctx the {@code CommandContext}
      * @throws CannotRemoveLabelFromTask the failure to throw
      */
-    public static void throwCannotRemoveLabelFromTaskFailure(LabelId labelId, TaskId taskId)
+    public static void throwCannotRemoveLabelFromTaskFailure(RemoveLabelFromTask cmd, CommandContext ctx)
             throws CannotRemoveLabelFromTask {
         final FailedTaskCommandDetails commandFailed =
                 FailedTaskCommandDetails.newBuilder()
-                                        .setTaskId(taskId)
+                                        .setTaskId(cmd.getId())
                                         .build();
         final RemoveLabelFromTaskFailed removeLabelFromTaskFailed =
                 RemoveLabelFromTaskFailed.newBuilder()
-                                         .setLabelId(labelId)
+                                         .setLabelId(cmd.getLabelId())
                                          .setFailureDetails(commandFailed)
                                          .build();
-        throw new CannotRemoveLabelFromTask(removeLabelFromTaskFailed);
+        throw new CannotRemoveLabelFromTask(cmd, ctx, removeLabelFromTaskFailed);
     }
 }
