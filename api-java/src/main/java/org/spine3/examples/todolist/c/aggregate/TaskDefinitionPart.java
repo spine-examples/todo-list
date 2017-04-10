@@ -426,7 +426,6 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
             throws CannotCreateTaskWithInappropriateDescription {
         final String description = cmd.getDescription();
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
-            final TaskId taskId = cmd.getId();
             throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd, ctx);
         }
     }
@@ -435,7 +434,6 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
             throws CannotUpdateTaskDescription, CannotUpdateTaskWithInappropriateDescription {
         final String description = cmd.getDescriptionChange()
                                       .getNewValue();
-        final TaskId taskId = cmd.getId();
 
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
             throwCannotUpdateTooShortDescriptionFailure(cmd, ctx);
