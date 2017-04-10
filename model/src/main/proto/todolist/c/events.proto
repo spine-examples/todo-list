@@ -71,7 +71,7 @@ message TaskDraftCreated {
     TaskId id = 1;
 
     // Details of the created task draft.
-    TaskDetails details = 2;
+    TaskDetails details = 2 [(required) = true];
 
     // The draft creation time.
     //

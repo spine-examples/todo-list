@@ -93,6 +93,7 @@ import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPa
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDateFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriorityFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTooShortDescriptionFailure;
+import static org.spine3.protobuf.Timestamps2.getCurrentTime;
 
 /**
  * The aggregate managing the state of a {@link TaskDefinition}.
@@ -288,10 +289,13 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
             throwCannotCreateDraftFailure(cmd, ctx);
         }
 
-        final TaskDraftCreated draftCreated = TaskDraftCreated.newBuilder()
-                                                              .setId(taskId)
-                                                              .setDraftCreationTime(Timestamps2.getCurrentTime())
-                                                              .build();
+        final TaskDraftCreated draftCreated =
+                TaskDraftCreated.newBuilder()
+                                .setId(taskId)
+                                .setDraftCreationTime(getCurrentTime())
+                                .setDetails(TaskDetails.newBuilder()
+                                                       .setDescription(cmd.getDescription()))
+                                .build();
         final List<TaskDraftCreated> result = Collections.singletonList(draftCreated);
         return result;
     }
@@ -352,7 +356,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     private void taskCreated(TaskCreated event) {
         final TaskDetails taskDetails = event.getDetails();
         getBuilder().setId(event.getId())
-                    .setCreated(Timestamps2.getCurrentTime())
+                    .setCreated(getCurrentTime())
                     .setDescription(taskDetails.getDescription())
                     .setPriority(taskDetails.getPriority())
                     .setTaskStatus(TaskStatus.FINALIZED);
