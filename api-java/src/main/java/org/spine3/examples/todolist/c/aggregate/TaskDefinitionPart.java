@@ -331,8 +331,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final List<Message> result = newLinkedList();
         result.add(deletedTaskRestored);
 
-        final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
-        final TaskLabels taskLabels = root.getTaskLabelsState();
+        final TaskLabels taskLabels = getPartState(TaskLabels.class);
         final List<LabelId> labelIdsList = taskLabels.getLabelIdsList()
                                                      .getIdsList();
         for (LabelId labelId : labelIdsList) {

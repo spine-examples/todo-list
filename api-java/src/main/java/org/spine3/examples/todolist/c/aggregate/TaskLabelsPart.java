@@ -68,8 +68,7 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
         final LabelId labelId = cmd.getLabelId();
         final TaskId taskId = cmd.getId();
 
-        final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
-        final TaskDefinition taskDefinitionState = root.getTaskDefinitionState();
+        final TaskDefinition taskDefinitionState = getPartState(TaskDefinition.class);
         final boolean isValid = isValidRemoveLabelFromTaskCommand(taskDefinitionState.getTaskStatus());
 
         if (!isValid) {
@@ -89,8 +88,7 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
         final TaskId taskId = cmd.getId();
         final LabelId labelId = cmd.getLabelId();
 
-        final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
-        final TaskDefinition state = root.getTaskDefinitionState();
+        final TaskDefinition state = getPartState(TaskDefinition.class);
         final boolean isValid = isValidAssignLabelToTaskCommand(state.getTaskStatus());
 
         if (!isValid) {

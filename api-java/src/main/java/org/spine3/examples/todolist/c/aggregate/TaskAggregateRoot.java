@@ -86,26 +86,6 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
     }
 
     /**
-     * Returns the {@link TaskDefinition} state from the {@code boundedContext}.
-     *
-     * @return the state for the {@link TaskDefinitionPart}.
-     */
-    public TaskDefinition getTaskDefinitionState() {
-        final TaskDefinition result = getPartState(TaskDefinition.class);
-        return result;
-    }
-
-    /**
-     * Returns the {@link TaskLabels} state from the {@code boundedContext}.
-     *
-     * @return the state for the {@link TaskLabelsPart}
-     */
-    public TaskLabels getTaskLabelsState() {
-        final TaskLabels result = getPartState(TaskLabels.class);
-        return result;
-    }
-
-    /**
      * Injects the {@link BoundedContext} instance.
      *
      * <p>Method uses only for test needs. As the {@code BoundedContext} must be `clear`
