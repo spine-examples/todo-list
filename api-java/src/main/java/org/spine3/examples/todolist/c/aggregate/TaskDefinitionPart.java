@@ -161,7 +161,8 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
     }
 
     @Assign
-    List<? extends Message> handle(UpdateTaskDueDate cmd, CommandContext ctx) throws CannotUpdateTaskDueDate {
+    List<? extends Message> handle(UpdateTaskDueDate cmd, CommandContext ctx)
+            throws CannotUpdateTaskDueDate {
         final TaskDefinition state = getState();
         final TaskStatus taskStatus = state.getTaskStatus();
         final boolean isValid = isValidUpdateTaskDueDateCommand(taskStatus);
@@ -180,14 +181,16 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
 
         if (!isEquals) {
             final Timestamp newDueDate = change.getNewValue();
-            final ValueMismatch mismatch = of(expectedDueDate, actualDueDate, newDueDate, getVersion());
+            final ValueMismatch mismatch = of(expectedDueDate, actualDueDate,
+                                              newDueDate, getVersion());
             throwCannotUpdateTaskDueDateFailure(cmd, ctx, mismatch);
         }
 
-        final TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated.newBuilder()
-                                                                        .setTaskId(taskId)
-                                                                        .setDueDateChange(cmd.getDueDateChange())
-                                                                        .build();
+        final TaskDueDateUpdated taskDueDateUpdated =
+                TaskDueDateUpdated.newBuilder()
+                                  .setTaskId(taskId)
+                                  .setDueDateChange(cmd.getDueDateChange())
+                                  .build();
         final List<? extends Message> result = Collections.singletonList(taskDueDateUpdated);
         return result;
     }
