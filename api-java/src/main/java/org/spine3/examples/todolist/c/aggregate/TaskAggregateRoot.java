@@ -49,6 +49,16 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
     }
 
     /**
+     * Creates an new instance.
+     *
+     * @param boundedContext the bounded context to which the aggregate belongs
+     * @param id             the ID of the aggregate
+     */
+    protected TaskAggregateRoot(BoundedContext boundedContext, TaskId id) {
+        super(boundedContext, id);
+    }
+
+    /**
      * Obtains and sets the {@link BoundedContext} singleton instance,
      * if the {@link Environment} is non-test environment.
      *

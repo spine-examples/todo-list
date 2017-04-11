@@ -56,6 +56,7 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.spine3.examples.todolist.TaskStatus.DELETED;
 import static org.spine3.examples.todolist.TaskStatus.OPEN;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
@@ -175,6 +176,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         taskDefinitionPart.dispatchForTest(completeTask, commandContext);
         try {
             restoreDeletedTask();
+            fail("CannotRestoreDeletedTask was not thrown.");
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
