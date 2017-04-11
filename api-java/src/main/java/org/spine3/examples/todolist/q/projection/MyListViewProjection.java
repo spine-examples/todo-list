@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
-import static org.spine3.examples.todolist.q.projection.ProjectionHelper.removeViewByTaskId;
+import static org.spine3.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static org.spine3.examples.todolist.q.projection.ProjectionHelper.updateTaskViewList;
 
 /**
@@ -100,7 +100,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
-        final TaskListView taskListView = removeViewByTaskId(views, event.getTaskId());
+        final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
         final MyListView state = getState().newBuilderForType()
                                            .setMyList(taskListView)
                                            .build();

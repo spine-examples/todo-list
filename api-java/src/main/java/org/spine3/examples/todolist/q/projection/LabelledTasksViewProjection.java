@@ -45,8 +45,8 @@ import java.util.List;
 
 import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
 import static org.spine3.examples.todolist.q.projection.LabelColorView.valueOf;
-import static org.spine3.examples.todolist.q.projection.ProjectionHelper.removeViewByLabelId;
-import static org.spine3.examples.todolist.q.projection.ProjectionHelper.removeViewByTaskId;
+import static org.spine3.examples.todolist.q.projection.ProjectionHelper.removeViewsByLabelId;
+import static org.spine3.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static org.spine3.examples.todolist.q.projection.ProjectionHelper.updateTaskViewList;
 
 /**
@@ -106,7 +106,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId, LabelledTas
         if (isEquals) {
             final List<TaskView> views = new ArrayList<>(getState().getLabelledTasks()
                                                                    .getItemsList());
-            final TaskListView updatedView = removeViewByLabelId(views, labelId);
+            final TaskListView updatedView = removeViewsByLabelId(views, labelId);
             final LabelledTasksView state = toViewState(updatedView.getItemsList());
             incrementState(state);
         }
@@ -116,7 +116,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId, LabelledTas
     public void on(TaskDeleted event) {
         final List<TaskView> views = new ArrayList<>(getState().getLabelledTasks()
                                                                .getItemsList());
-        final TaskListView updatedView = removeViewByTaskId(views, event.getTaskId());
+        final TaskListView updatedView = removeViewsByTaskId(views, event.getTaskId());
         final LabelledTasksView state = toViewState(updatedView.getItemsList());
         incrementState(state);
     }

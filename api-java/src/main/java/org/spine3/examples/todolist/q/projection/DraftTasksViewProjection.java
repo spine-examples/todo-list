@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.examples.todolist.q.projection.ProjectionHelper.removeViewByTaskId;
+import static org.spine3.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static org.spine3.examples.todolist.q.projection.ProjectionHelper.updateTaskViewList;
 
 /**
@@ -96,7 +96,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
-        final TaskListView taskListView = removeViewByTaskId(views, event.getTaskId());
+        final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
         final DraftTasksView state = getState().newBuilderForType()
                                                .setDraftTasks(taskListView)
                                                .build();
@@ -109,7 +109,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
-        final TaskListView taskListView = removeViewByTaskId(views, event.getTaskId());
+        final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
         final DraftTasksView state = getState().newBuilderForType()
                                                .setDraftTasks(taskListView)
                                                .build();

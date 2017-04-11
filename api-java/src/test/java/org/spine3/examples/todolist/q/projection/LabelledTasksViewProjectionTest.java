@@ -257,28 +257,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             matchesExpectedValues(labelledTasksView);
 
             TaskListView listView = labelledTasksView.getLabelledTasks();
-            int actualListSize = listView.getItemsCount();
-
-            int expectedListSize = 1;
-            assertEquals(expectedListSize, actualListSize);
-
-            final TaskView taskView = listView.getItems(0);
-
-            matchesExpectedValues(taskView);
-
-            eventBus.post(deletedTaskEvent);
-
-            expectedListSize = 0;
-            listView = repository.find(LABEL_ID)
-                                 .get()
-                                 .getState()
-                                 .getLabelledTasks();
-            actualListSize = listView.getItemsCount();
-
-            eventBus.post(deletedTaskEvent);
-            assertEquals(expectedListSize, actualListSize);
-            assertTrue(listView.getItemsList()
-                               .isEmpty());
+            assertTrue(listView.getItemsList().isEmpty());
         }
     }
 

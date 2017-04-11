@@ -114,12 +114,6 @@ public class MyListViewProjectionTest extends ProjectionTest {
             List<TaskView> views = projection.getState()
                                              .getMyList()
                                              .getItemsList();
-            assertEquals(1, views.size());
-
-            projection.on(taskDeletedEvent);
-            views = projection.getState()
-                              .getMyList()
-                              .getItemsList();
             assertTrue(views.isEmpty());
         }
     }
