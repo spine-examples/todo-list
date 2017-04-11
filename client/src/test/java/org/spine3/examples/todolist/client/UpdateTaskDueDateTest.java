@@ -34,7 +34,6 @@ import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
 import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.q.projection.TaskView;
-import org.spine3.protobuf.Timestamps;
 
 import java.util.List;
 
@@ -42,6 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static org.spine3.protobuf.Timestamps2.getCurrentTime;
 
 /**
  * @author Illia Shepilov
@@ -65,7 +65,7 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain the task view with updated due date")
         public void containUpdatedView() {
-            final Timestamp newDueDate = Timestamps.getCurrentTime();
+            final Timestamp newDueDate = getCurrentTime();
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskDueDate(newDueDate, true);
             assertEquals(newDueDate, view.getDueDate());
         }
@@ -73,7 +73,7 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain the task view with not updated due date when command has wrong task ID")
         public void containNotUpdatedView() {
-            final Timestamp newDueDate = Timestamps.getCurrentTime();
+            final Timestamp newDueDate = getCurrentTime();
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskDueDate(newDueDate, false);
             assertNotEquals(newDueDate, view.getDueDate());
         }
@@ -86,7 +86,7 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain the task view with updated due date")
         public void containUpdatedView() {
-            final Timestamp newDueDate = Timestamps.getCurrentTime();
+            final Timestamp newDueDate = getCurrentTime();
             final TaskView view = obtainViewWhenHandledUpdateTaskDueDate(newDueDate, true);
 
             assertEquals(newDueDate, view.getDueDate());
@@ -95,7 +95,7 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain the task view with not updated due date when command has wrong task ID")
         public void containNotUpdatedView() {
-            final Timestamp newDueDate = Timestamps.getCurrentTime();
+            final Timestamp newDueDate = getCurrentTime();
             final TaskView view = obtainViewWhenHandledUpdateTaskDueDate(newDueDate, false);
 
             assertNotEquals(newDueDate, view.getDueDate());
@@ -109,7 +109,7 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain the task view with updated due date")
         public void containUpdatedView() {
-            final Timestamp newDueDate = Timestamps.getCurrentTime();
+            final Timestamp newDueDate = getCurrentTime();
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskDueDate(newDueDate, true);
             assertEquals(newDueDate, view.getDueDate());
         }
@@ -117,7 +117,7 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain task view with not updated due date when command has wrong task ID")
         public void containNotUpdatedView() {
-            final Timestamp newDueDate = Timestamps.getCurrentTime();
+            final Timestamp newDueDate = getCurrentTime();
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskDueDate(newDueDate, false);
             assertNotEquals(newDueDate, view.getDueDate());
         }
