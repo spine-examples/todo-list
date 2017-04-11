@@ -176,7 +176,6 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         taskDefinitionPart.dispatchForTest(completeTask, commandContext);
         try {
             restoreDeletedTask();
-            fail("CannotRestoreDeletedTask was not thrown.");
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);
