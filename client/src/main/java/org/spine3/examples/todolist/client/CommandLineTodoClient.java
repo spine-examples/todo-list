@@ -28,8 +28,8 @@ import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spine3.base.Command;
-import org.spine3.base.Queries;
 import org.spine3.client.CommandFactory;
+import org.spine3.client.Queries;
 import org.spine3.client.Query;
 import org.spine3.client.QueryResponse;
 import org.spine3.client.grpc.CommandServiceGrpc;
@@ -90,85 +90,85 @@ public class CommandLineTodoClient implements TodoClient {
 
     @Override
     public void create(CreateBasicTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void create(CreateBasicLabel cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void create(CreateDraft cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void update(UpdateTaskDescription cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void update(UpdateTaskDueDate cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void update(UpdateTaskPriority cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void update(UpdateLabelDetails cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void delete(DeleteTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void removeLabel(RemoveLabelFromTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void assignLabel(AssignLabelToTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void reopen(ReopenTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void restore(RestoreDeletedTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void complete(CompleteTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void finalize(FinalizeDraft cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = commandFactory.createCommand(cmd);
         commandService.post(executableCmd);
     }
 
