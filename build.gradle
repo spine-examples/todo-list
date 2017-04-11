@@ -116,7 +116,7 @@ rootProject.jar { onlyIf { false } }
 final boolean isTravis = System.env.TRAVIS == 'true'
 
 ext {
-    protobufVersion = '3.0.0'
+    protobufVersion = '3.2.0'
     protobufDependency = "com.google.protobuf:protoc:${protobufVersion}"
     gRpcVersion = '1.0.0'
     slf4jVersion = '1.7.21'
