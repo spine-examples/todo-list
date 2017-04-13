@@ -21,9 +21,7 @@
 package org.spine3.examples.todolist.c.aggregate;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabels;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.aggregate.AggregateRoot;
@@ -70,9 +68,6 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
                                            .isTests();
         if (!testEnv) {
             boundedContext = TodoListBoundedContext.getInstance();
-        }
-        if(testEnv){
-            boundedContext = TodoListBoundedContext.createTestInstance();
         }
     }
 

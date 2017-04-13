@@ -67,6 +67,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     @Override
     @BeforeEach
     protected void setUp() {
+        super.setUp();
         taskId = createTaskId();
         aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
         dispatchCreateTaskCmd();

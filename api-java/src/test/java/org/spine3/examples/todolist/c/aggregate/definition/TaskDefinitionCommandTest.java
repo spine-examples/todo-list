@@ -25,6 +25,7 @@ import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
+import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.examples.todolist.testdata.TestCommandContextFactory;
 import org.spine3.test.CommandTest;
 
@@ -37,6 +38,11 @@ import static org.spine3.base.Identifiers.newUuid;
  * @author Illia Shepilov
  */
 abstract class TaskDefinitionCommandTest<C extends Message> extends CommandTest<C> {
+
+    @Override
+    protected void setUp() {
+        TaskAggregateRoot.injectBoundedContext(TodoListBoundedContext.createTestInstance());
+    }
 
     public static TaskId createTaskId() {
         final TaskId result = TaskId.newBuilder()

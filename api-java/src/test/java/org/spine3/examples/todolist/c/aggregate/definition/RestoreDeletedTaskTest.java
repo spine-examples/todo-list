@@ -83,7 +83,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     @BeforeEach
     public void setUp() {
         responseObserver = new TestResponseObserver();
-        boundedContext = TodoListBoundedContext.getInstance();
+        boundedContext = TodoListBoundedContext.createTestInstance();
         TaskAggregateRoot.injectBoundedContext(boundedContext);
 
         commandBus = boundedContext.getCommandBus();

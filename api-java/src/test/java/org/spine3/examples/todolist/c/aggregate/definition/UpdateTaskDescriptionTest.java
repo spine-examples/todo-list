@@ -67,6 +67,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     @Override
     @BeforeEach
     protected void setUp() {
+        super.setUp();
         taskId = createTaskId();
         aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }

@@ -60,6 +60,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     @Override
     @BeforeEach
     protected void setUp() {
+        super.setUp();
         taskId = createTaskId();
         aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }

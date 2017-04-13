@@ -58,6 +58,7 @@ public class FinalizeDraftTest extends TaskDefinitionCommandTest<FinalizeDraft> 
     @Override
     @BeforeEach
     protected void setUp() {
+        super.setUp();
         taskId = createTaskId();
         aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }

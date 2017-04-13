@@ -57,6 +57,7 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
     @Override
     @BeforeEach
     protected void setUp() {
+        super.setUp();
         taskId = createTaskId();
         aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }

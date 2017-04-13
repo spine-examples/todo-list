@@ -54,6 +54,7 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
     @Override
     @BeforeEach
     public void setUp() {
+        super.setUp();
         taskId = createTaskId();
         aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }

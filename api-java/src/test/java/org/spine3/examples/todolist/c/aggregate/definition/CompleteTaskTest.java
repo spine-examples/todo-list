@@ -62,6 +62,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
     @Override
     @BeforeEach
     protected void setUp() {
+        super.setUp();
         taskId = createTaskId();
         aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
