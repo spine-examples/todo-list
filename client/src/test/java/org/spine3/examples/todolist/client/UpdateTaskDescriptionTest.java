@@ -170,7 +170,7 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         final TaskId createdTaskId = createDraft.getId();
 
         final TaskId updatedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
-        final String previousDescription = "";
+        final String previousDescription = createDraft.getDescription();
         final UpdateTaskDescription updateTaskDescription =
                 updateTaskDescriptionInstance(updatedTaskId, previousDescription, newDescription);
         client.update(updateTaskDescription);
