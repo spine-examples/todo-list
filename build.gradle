@@ -118,7 +118,7 @@ final boolean isTravis = System.env.TRAVIS == 'true'
 ext {
     protobufVersion = '3.2.0'
     protobufDependency = "com.google.protobuf:protoc:${protobufVersion}"
-    gRpcVersion = '1.0.0'
+    gRpcVersion = '1.1.2'
     slf4jVersion = '1.7.21'
     servletApiVersion = '3.1.0'
     gcloudJavaVersion = '0.2.8'
@@ -127,7 +127,7 @@ ext {
     // Take latest snapshot of Spine from the repo.
     // See: http://stackoverflow.com/questions/22372508/use-latest-snapshot-version-from-the-remote-repo
 //    spineVersion = 'latest.integration'
-    spineVersion = '0.8.29-SNAPSHOT'
+    spineVersion = '0.8.32-SNAPSHOT'
 
 }
 
