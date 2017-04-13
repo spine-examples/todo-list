@@ -47,8 +47,7 @@ import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.examples.todolist.testdata.TestResponseObserver;
 import org.spine3.protobuf.AnyPacker;
 import org.spine3.server.BoundedContext;
-import org.spine3.server.aggregate.AggregateRoot;
-import org.spine3.server.command.CommandBus;
+import org.spine3.server.commandbus.CommandBus;
 import org.spine3.server.event.EventStreamQuery;
 
 import java.util.List;
@@ -56,7 +55,6 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.spine3.examples.todolist.TaskStatus.DELETED;
 import static org.spine3.examples.todolist.TaskStatus.OPEN;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;

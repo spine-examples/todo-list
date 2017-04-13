@@ -42,7 +42,7 @@ import org.spine3.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.examples.todolist.testdata.TestResponseObserver;
 import org.spine3.server.BoundedContext;
-import org.spine3.server.command.CommandBus;
+import org.spine3.server.commandbus.CommandBus;
 
 import java.util.List;
 

@@ -51,7 +51,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.base.Events.createEvent;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.q.projection.LabelColorView.RED_COLOR;
 import static org.spine3.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
@@ -74,6 +73,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateE
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskPriorityUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelAssignedToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelRemovedFromTaskInstance;
+import static org.spine3.server.command.EventFactory.createEvent;
 
 /**
  * @author Illia Shepilov
