@@ -94,6 +94,17 @@ public final class TaskBuilder {
         private final CreateDraft.Builder builder = CreateDraft.newBuilder();
 
         /**
+         * Sets the description to the {@link CreateDraft.Builder}.
+         *
+         * @param description the draft task description
+         * @return the {@code CreateTaskDraftBuilder} instance
+         */
+        public CreateTaskDraftBuilder setDescription(String description) {
+            builder.setDescription(description);
+            return this;
+        }
+
+        /**
          * Builds the {@link CreateDraft} command.
          *
          * @return the {@code CreateDraft} command

@@ -44,6 +44,7 @@ import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
+import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DRAFT_DESCRIPTION;
 
 /**
  * @author Illia Shepilov
@@ -97,6 +98,7 @@ abstract class CommandLineTodoClientTest {
     static CreateDraft createDraft() {
         final CreateDraft result = CommandBuilder.task()
                                                  .createDraft()
+                                                 .setDescription(DRAFT_DESCRIPTION)
                                                  .build();
         return result;
     }
