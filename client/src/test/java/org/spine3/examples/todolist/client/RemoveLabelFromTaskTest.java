@@ -98,12 +98,8 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
             client.assignLabel(assignLabelToTask);
 
-            final RemoveLabelFromTask removeLabelFromTask =
-                    removeLabelFromTaskInstance(taskId, createWrongTaskLabelId());
-            client.removeLabel(removeLabelFromTask);
-
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
-            assertEquals(2, tasksViewList.size());
+            assertEquals(1, tasksViewList.size());
 
             final LabelledTasksView labelledTasksView = getLabelledTasksView(tasksViewList);
             final List<TaskView> taskViews = labelledTasksView.getLabelledTasks()
