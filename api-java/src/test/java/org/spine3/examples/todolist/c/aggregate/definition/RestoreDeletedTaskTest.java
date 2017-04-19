@@ -37,6 +37,7 @@ import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
+import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
@@ -57,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.examples.todolist.TaskStatus.DELETED;
 import static org.spine3.examples.todolist.TaskStatus.OPEN;
+import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.LABEL_ID;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
@@ -97,6 +99,10 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
         final Command createTaskCmd = Commands.createCommand(createTask, commandContext);
         commandBus.post(createTaskCmd, responseObserver);
+
+        final CreateBasicLabel createLabel = createLabelInstance(LABEL_ID);
+        final Command createLabelCmd = Commands.createCommand(createLabel, commandContext);
+        commandBus.post(createLabelCmd, responseObserver);
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, LABEL_ID);
         final Command assignLabelToTaskCmd = Commands.createCommand(assignLabelToTask, commandContext);
