@@ -110,6 +110,7 @@ import static org.spine3.protobuf.Timestamps2.getCurrentTime;
 public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, TaskDefinition.Builder, TaskAggregateRoot> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;
+    private static final String DEFAULT_DRAFT_DESCRIPTION = "Task description goes here.";
 
     /**
      * {@inheritDoc}
@@ -297,7 +298,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
                                 .setId(taskId)
                                 .setDraftCreationTime(getCurrentTime())
                                 .setDetails(TaskDetails.newBuilder()
-                                                       .setDescription(cmd.getDescription()))
+                                                       .setDescription(DEFAULT_DRAFT_DESCRIPTION))
                                 .build();
         final List<TaskDraftCreated> result = Collections.singletonList(draftCreated);
         return result;

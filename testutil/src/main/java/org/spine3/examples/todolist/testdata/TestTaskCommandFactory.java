@@ -55,7 +55,6 @@ public class TestTaskCommandFactory {
                                                   .setValue(newUuid())
                                                   .build();
     public static final String DESCRIPTION = "Create command description.";
-    public static final String DRAFT_DESCRIPTION = "Draft task description.";
     public static final Timestamp DUE_DATE = getCurrentTime();
     public static final String UPDATED_LABEL_TITLE = "labelTitle";
 
@@ -343,7 +342,6 @@ public class TestTaskCommandFactory {
     public static CreateDraft createDraftInstance(TaskId taskId) {
         final CreateDraft result = CreateDraft.newBuilder()
                                               .setId(taskId)
-                                              .setDescription(DRAFT_DESCRIPTION)
                                               .build();
         return result;
     }
