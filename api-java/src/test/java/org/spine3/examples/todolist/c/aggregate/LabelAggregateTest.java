@@ -196,7 +196,7 @@ public class LabelAggregateTest {
 
                 @SuppressWarnings("ConstantConditions")
                 final Failures.CannotUpdateLabelDetails cannotUpdateLabelDetails =
-                        ((CannotUpdateLabelDetails) cause).getFailure();
+                        ((CannotUpdateLabelDetails) cause).getFailureMessage();
                 final LabelDetailsUpdateFailed labelDetailsUpdateFailed = cannotUpdateLabelDetails.getUpdateFailed();
                 final LabelId actualLabelId = labelDetailsUpdateFailed.getFailureDetails()
                                                                       .getLabelId();

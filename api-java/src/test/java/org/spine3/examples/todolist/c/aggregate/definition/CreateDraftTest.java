@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
@@ -56,8 +57,9 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
     @Override
     @BeforeEach
     protected void setUp() {
+        super.setUp();
         taskId = createTaskId();
-        aggregate = createTaskDefinitionPart(taskId);
+        aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test
@@ -101,7 +103,7 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
         } catch (IllegalStateException ex) {
             final Throwable cause = ex.getCause();
             final CannotCreateDraft failure = (CannotCreateDraft) cause;
-            final TaskId actualId = failure.getFailure()
+            final TaskId actualId = failure.getFailureMessage()
                                            .getCreateDraftFailed()
                                            .getFailureDetails()
                                            .getTaskId();

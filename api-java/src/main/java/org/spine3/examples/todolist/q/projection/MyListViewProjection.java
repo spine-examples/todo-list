@@ -21,6 +21,7 @@
 package org.spine3.examples.todolist.q.projection;
 
 import org.spine3.base.EventContext;
+import org.spine3.base.Subscribe;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskId;
@@ -37,7 +38,6 @@ import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
 import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
 import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
 import org.spine3.examples.todolist.c.events.TaskReopened;
-import org.spine3.server.event.Subscribe;
 import org.spine3.server.projection.Projection;
 
 import java.util.List;
@@ -45,7 +45,7 @@ import java.util.stream.Collectors;
 
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.EnrichmentHelper.getEnrichment;
-import static org.spine3.examples.todolist.q.projection.ProjectionHelper.removeViewByTaskId;
+import static org.spine3.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static org.spine3.examples.todolist.q.projection.ProjectionHelper.updateTaskViewList;
 
 /**
@@ -100,7 +100,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
-        final TaskListView taskListView = removeViewByTaskId(views, event.getTaskId());
+        final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
         final MyListView state = getState().newBuilderForType()
                                            .setMyList(taskListView)
                                            .build();

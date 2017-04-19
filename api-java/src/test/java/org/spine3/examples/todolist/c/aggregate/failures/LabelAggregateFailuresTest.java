@@ -22,14 +22,14 @@ package org.spine3.examples.todolist.c.aggregate.failures;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.spine3.base.CommandContext;
 import org.spine3.change.ValueMismatch;
-import org.spine3.examples.todolist.LabelId;
+import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
 import org.spine3.examples.todolist.c.failures.CannotUpdateLabelDetails;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.examples.todolist.c.aggregate.failures.LabelAggregateFailures.throwCannotUpdateLabelDetailsFailure;
-import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
+import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
@@ -40,15 +40,16 @@ class LabelAggregateFailuresTest {
     @Test
     @DisplayName("have the private constructor")
     public void havePrivateConstructor() {
-        assertTrue(hasPrivateParameterlessCtor(LabelAggregateFailures.class));
+        assertHasPrivateParameterlessCtor(LabelAggregateFailures.class);
     }
 
     @Test
     @DisplayName("throw CannotUpdateLabelDetails failure")
     public void throwCannotUpdateLabelDetails() {
-        final LabelId labelId = LabelId.getDefaultInstance();
+        final UpdateLabelDetails cmd = UpdateLabelDetails.getDefaultInstance();
+        final CommandContext ctx = CommandContext.getDefaultInstance();
         final ValueMismatch valueMismatch = ValueMismatch.getDefaultInstance();
         assertThrows(CannotUpdateLabelDetails.class, () ->
-                throwCannotUpdateLabelDetailsFailure(labelId, valueMismatch));
+                throwCannotUpdateLabelDetailsFailure(cmd, ctx, valueMismatch));
     }
 }

@@ -51,8 +51,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.base.Events.createEvent;
 import static org.spine3.base.Identifiers.newUuid;
+import static org.spine3.examples.todolist.q.projection.LabelColorView.RED_COLOR;
 import static org.spine3.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
 import static org.spine3.examples.todolist.testdata.TestEventBusFactory.eventBusInstance;
 import static org.spine3.examples.todolist.testdata.TestEventContextFactory.eventContextInstance;
@@ -73,11 +73,13 @@ import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateE
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskPriorityUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelAssignedToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelRemovedFromTaskInstance;
+import static org.spine3.server.command.EventFactory.createEvent;
 
 /**
  * @author Illia Shepilov
  */
-@SuppressWarnings("OptionalGetWithoutIsPresent") // it is OK as object creation is controlled during the test.
+@SuppressWarnings("OptionalGetWithoutIsPresent")
+// it is OK as object creation is controlled during the test.
 public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
     private final EventContext eventContext = eventContextInstance();
@@ -86,11 +88,12 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
     @BeforeEach
     public void setUp() {
-        final StorageFactorySwitch storageFactorySwitch = StorageFactorySwitch.getInstance();
+        final StorageFactorySwitch storageFactorySwitch = StorageFactorySwitch.getInstance(false);
         final StorageFactory storageFactory = storageFactorySwitch.get();
         final EventEnricher eventEnricher = eventEnricherInstance();
         eventBus = eventBusInstance(storageFactory, eventEnricher);
-        final BoundedContext boundedContext = boundedContextInstance(eventBus, storageFactorySwitch);
+        final BoundedContext boundedContext = boundedContextInstance(eventBus,
+                                                                     storageFactorySwitch);
         repository = new LabelledTasksViewRepository(boundedContext);
         repository.initStorage(storageFactory);
         boundedContext.register(repository);
@@ -106,7 +109,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
             eventBus.post(labelAssignedToTaskEvent);
-            LabelledTasksView labelledTaskView = repository.load(LABEL_ID)
+            LabelledTasksView labelledTaskView = repository.find(LABEL_ID)
                                                            .get()
                                                            .getState();
 
@@ -124,7 +127,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
             eventBus.post(labelAssignedToTaskEvent);
 
-            labelledTaskView = repository.load(LABEL_ID)
+            labelledTaskView = repository.find(LABEL_ID)
                                          .get()
                                          .getState();
             listView = labelledTaskView.getLabelledTasks();
@@ -157,21 +160,22 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             eventBus.post(labelAssignedToTaskEvent);
             eventBus.post(labelAssignedToTaskEvent);
 
-            LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
-                                                            .get()
-                                                            .getState();
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
+                                                                  .get()
+                                                                  .getState();
             assertEquals(LABEL_ID, labelledTasksView.getLabelId());
+            assertEquals(2, labelledTasksView.getLabelledTasks()
+                                             .getItemsList()
+                                             .size());
 
             final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
             final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask, eventContext);
             eventBus.post(labelRemovedFromTaskEvent);
 
-            labelledTasksView = repository.load(LABEL_ID)
-                                          .get()
-                                          .getState();
-            doesNotMatchValues(labelledTasksView);
-
-            final TaskListView labelledTasks = labelledTasksView.getLabelledTasks();
+            final LabelledTasksView updatedLabelledTaskView = repository.find(LABEL_ID)
+                                                                        .get()
+                                                                        .getState();
+            final TaskListView labelledTasks = updatedLabelledTaskView.getLabelledTasks();
 
             assertTrue(labelledTasks.getItemsList()
                                     .isEmpty());
@@ -198,7 +202,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event deletedTaskRestoredEvent = createEvent(deletedTaskRestored, eventContext);
             eventBus.post(deletedTaskRestoredEvent);
 
-            LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                             .get()
                                                             .getState();
             matchesExpectedValues(labelledTasksView);
@@ -212,11 +216,11 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             assertEquals(TASK_ID, taskView.getId());
 
             eventBus.post(deletedTaskRestoredEvent);
-            labelledTasksView = repository.load(LABEL_ID)
+            labelledTasksView = repository.find(LABEL_ID)
                                           .get()
                                           .getState();
             matchesExpectedValues(labelledTasksView);
-            listView = repository.load(LABEL_ID)
+            listView = repository.find(LABEL_ID)
                                  .get()
                                  .getState()
                                  .getLabelledTasks();
@@ -247,34 +251,13 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event deletedTaskEvent = createEvent(taskDeleted, eventContext);
             eventBus.post(deletedTaskEvent);
 
-            final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                                   .get()
                                                                   .getState();
             matchesExpectedValues(labelledTasksView);
 
             TaskListView listView = labelledTasksView.getLabelledTasks();
-            int actualListSize = listView.getItemsCount();
-
-            int expectedListSize = 1;
-            assertEquals(expectedListSize, actualListSize);
-
-            final TaskView taskView = listView.getItems(0);
-
-            matchesExpectedValues(taskView);
-
-            eventBus.post(deletedTaskEvent);
-
-            expectedListSize = 0;
-            listView = repository.load(LABEL_ID)
-                                 .get()
-                                 .getState()
-                                 .getLabelledTasks();
-            actualListSize = listView.getItemsCount();
-
-            eventBus.post(deletedTaskEvent);
-            assertEquals(expectedListSize, actualListSize);
-            assertTrue(listView.getItemsList()
-                               .isEmpty());
+            assertTrue(listView.getItemsList().isEmpty());
         }
     }
 
@@ -293,7 +276,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated, eventContext);
             eventBus.post(descriptionUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                                   .get()
                                                                   .getState();
             matchesExpectedValues(labelledTasksView);
@@ -314,11 +297,12 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             eventBus.post(labelAssignedToTaskEvent);
 
             final TaskDescriptionUpdated taskDescriptionUpdated =
-                    taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), UPDATED_DESCRIPTION);
+                    taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(),
+                                                   UPDATED_DESCRIPTION);
             final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated, eventContext);
             eventBus.post(descriptionUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                                   .get()
                                                                   .getState();
             matchesExpectedValues(labelledTasksView);
@@ -347,7 +331,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated, eventContext);
             eventBus.post(taskPriorityUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                                   .get()
                                                                   .getState();
             matchesExpectedValues(labelledTasksView);
@@ -371,7 +355,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated, eventContext);
             eventBus.post(taskPriorityUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                                   .get()
                                                                   .getState();
             matchesExpectedValues(labelledTasksView);
@@ -399,7 +383,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated, eventContext);
             eventBus.post(taskDueDateUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                                   .get()
                                                                   .getState();
             matchesExpectedValues(labelledTasksView);
@@ -423,7 +407,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated, eventContext);
             eventBus.post(taskDueDateUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                                   .get()
                                                                   .getState();
             matchesExpectedValues(labelledTasksView);
@@ -451,7 +435,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
             eventBus.post(taskCompletedEvent);
 
-            final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                                   .get()
                                                                   .getState();
             matchesExpectedValues(labelledTasksView);
@@ -474,7 +458,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
             eventBus.post(taskCompletedEvent);
 
-            final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                                   .get()
                                                                   .getState();
             matchesExpectedValues(labelledTasksView);
@@ -506,7 +490,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event taskReopenedEvent = createEvent(taskReopened, eventContext);
             eventBus.post(taskReopenedEvent);
 
-            final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                                   .get()
                                                                   .getState();
             matchesExpectedValues(labelledTasksView);
@@ -533,7 +517,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event taskReopenedEvent = createEvent(taskReopened, eventContext);
             eventBus.post(taskReopenedEvent);
 
-            final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                                   .get()
                                                                   .getState();
             matchesExpectedValues(labelledTasksView);
@@ -564,12 +548,12 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event labelDetailsUpdatedEvent = createEvent(labelDetailsUpdated, eventContext);
             eventBus.post(labelDetailsUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                                   .get()
                                                                   .getState();
             assertEquals(LABEL_ID, labelledTasksView.getLabelId());
             assertEquals(UPDATED_LABEL_TITLE, labelledTasksView.getLabelTitle());
-            assertEquals(LabelColorView.RED_COLOR.getHexColor(), labelledTasksView.getLabelColor());
+            assertEquals(RED_COLOR.getHexColor(), labelledTasksView.getLabelColor());
         }
 
         @Test
@@ -588,12 +572,12 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event labelDetailsUpdatedEvent = createEvent(labelDetailsUpdated, eventContext);
             eventBus.post(labelDetailsUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = repository.load(LABEL_ID)
+            final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
                                                                   .get()
                                                                   .getState();
             assertEquals(LABEL_ID, labelledTasksView.getLabelId());
             assertNotEquals(UPDATED_LABEL_TITLE, labelledTasksView.getLabelTitle());
-            assertNotEquals(LabelColorView.RED_COLOR.getHexColor(), labelledTasksView.getLabelColor());
+            assertNotEquals(RED_COLOR.getHexColor(), labelledTasksView.getLabelColor());
         }
     }
 

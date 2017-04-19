@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
@@ -57,8 +58,9 @@ public class FinalizeDraftTest extends TaskDefinitionCommandTest<FinalizeDraft> 
     @Override
     @BeforeEach
     protected void setUp() {
+        super.setUp();
         taskId = createTaskId();
-        aggregate = createTaskDefinitionPart(taskId);
+        aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test

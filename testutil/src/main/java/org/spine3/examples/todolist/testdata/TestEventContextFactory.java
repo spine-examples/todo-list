@@ -26,13 +26,13 @@ import org.spine3.base.CommandContext;
 import org.spine3.base.Commands;
 import org.spine3.base.EventContext;
 import org.spine3.base.EventId;
-import org.spine3.base.Events;
 import org.spine3.protobuf.AnyPacker;
+import org.spine3.server.command.EventFactory;
 import org.spine3.users.UserId;
 
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
-import static org.spine3.protobuf.Timestamps.getCurrentTime;
+import static org.spine3.protobuf.Timestamps2.getCurrentTime;
 import static org.spine3.protobuf.Values.newStringValue;
 import static org.spine3.test.Tests.newUserId;
 
@@ -59,8 +59,9 @@ public class TestEventContextFactory {
     public static EventContext eventContextInstance() {
         final Timestamp now = getCurrentTime();
         final UserId userId = newUserId(newUuid());
-        final CommandContext commandContext = createCommandContext(userId, Commands.generateId(), now);
-        final EventId eventId = Events.generateId();
+        final CommandContext commandContext = createCommandContext(userId, Commands.generateId(),
+                                                                   now);
+        final EventId eventId = EventFactory.generateId();
         final EventContext.Builder builder = EventContext.newBuilder()
                                                          .setEventId(eventId)
                                                          .setCommandContext(commandContext)

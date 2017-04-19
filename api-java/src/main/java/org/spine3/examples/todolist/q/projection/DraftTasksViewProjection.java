@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.q.projection;
 
+import org.spine3.base.Subscribe;
 import org.spine3.examples.todolist.TaskDetails;
 import org.spine3.examples.todolist.TaskListId;
 import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
@@ -31,14 +32,13 @@ import org.spine3.examples.todolist.c.events.TaskDraftCreated;
 import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
 import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
 import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
-import org.spine3.server.event.Subscribe;
 import org.spine3.server.projection.Projection;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.examples.todolist.q.projection.ProjectionHelper.removeViewByTaskId;
+import static org.spine3.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static org.spine3.examples.todolist.q.projection.ProjectionHelper.updateTaskViewList;
 
 /**
@@ -96,7 +96,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
-        final TaskListView taskListView = removeViewByTaskId(views, event.getTaskId());
+        final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
         final DraftTasksView state = getState().newBuilderForType()
                                                .setDraftTasks(taskListView)
                                                .build();
@@ -109,7 +109,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
                                                .getItemsList()
                                                .stream()
                                                .collect(Collectors.toList());
-        final TaskListView taskListView = removeViewByTaskId(views, event.getTaskId());
+        final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
         final DraftTasksView state = getState().newBuilderForType()
                                                .setDraftTasks(taskListView)
                                                .build();

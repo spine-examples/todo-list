@@ -34,10 +34,10 @@ import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
 import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
 import org.spine3.examples.todolist.c.events.TaskReopened;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static org.spine3.examples.todolist.q.projection.TaskView.newBuilder;
 
@@ -52,43 +52,39 @@ class ProjectionHelper {
     }
 
     /**
-     * Removes the matching {@link TaskView} from the list of views by the task ID.
+     * Removes the matching {@link TaskView}s from the list of views by the task ID.
      *
      * @param views the list of the {@link TaskView}
      * @param id    the task ID of the task view
-     * @return {@link TaskListView} without deleted task view
+     * @return {@link TaskListView} without deleted task views
      */
-    static TaskListView removeViewByTaskId(List<TaskView> views, TaskId id) {
-        final TaskView taskView = views.stream()
-                                       .filter(t -> t.getId()
-                                                     .equals(id))
-                                       .findFirst()
-                                       .orElse(null);
-        final TaskListView result = removeTaskView(views, taskView);
+    static TaskListView removeViewsByTaskId(List<TaskView> views, TaskId id) {
+        final List<TaskView> taskViews = views.stream()
+                                        .filter(t -> t.getId()
+                                                      .equals(id))
+                                        .collect(Collectors.toList());
+        final TaskListView result = removeTaskViews(views, taskViews);
         return result;
     }
 
     /**
-     * Removes the matching {@link TaskView} from the given list of views by the label ID.
+     * Removes the matching {@link TaskView}s from the given list of views by the label ID.
      *
      * @param views the list of the {@link TaskView}
      * @param id    the label ID of the task view
-     * @return {@link TaskListView} without deleted task view
+     * @return {@link TaskListView} without deleted task views
      */
-    static TaskListView removeViewByLabelId(List<TaskView> views, LabelId id) {
-        final TaskView taskView = views.stream()
-                                       .filter(t -> t.getLabelId()
-                                                     .equals(id))
-                                       .findFirst()
-                                       .orElse(null);
-        final TaskListView result = removeTaskView(views, taskView);
+    static TaskListView removeViewsByLabelId(List<TaskView> views, LabelId id) {
+        final List<TaskView> taskViews = views.stream()
+                                        .filter(t -> t.getLabelId()
+                                                      .equals(id))
+                                        .collect(Collectors.toList());
+        final TaskListView result = removeTaskViews(views, taskViews);
         return result;
     }
 
-    private static TaskListView removeTaskView(List<TaskView> views, @Nullable TaskView taskView) {
-        if (taskView != null) {
-            views.remove(taskView);
-        }
+    private static TaskListView removeTaskViews(List<TaskView> views, List<TaskView> taskViews) {
+        views.removeAll(taskViews);
         final TaskListView result = TaskListView.newBuilder()
                                                 .addAllItems(views)
                                                 .build();

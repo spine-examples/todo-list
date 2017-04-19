@@ -32,6 +32,7 @@ import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskPriorityValue;
+import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
@@ -66,8 +67,9 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     @Override
     @BeforeEach
     protected void setUp() {
+        super.setUp();
         taskId = createTaskId();
-        aggregate = createTaskDefinitionPart(taskId);
+        aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test
@@ -156,7 +158,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
 
             @SuppressWarnings("ConstantConditions")
             final Failures.CannotUpdateTaskPriority cannotUpdateTaskPriority =
-                    ((CannotUpdateTaskPriority) cause).getFailure();
+                    ((CannotUpdateTaskPriority) cause).getFailureMessage();
             final PriorityUpdateFailed priorityUpdateFailed = cannotUpdateTaskPriority.getUpdateFailed();
             final TaskId actualTaskId = priorityUpdateFailed.getFailureDetails()
                                                             .getTaskId();

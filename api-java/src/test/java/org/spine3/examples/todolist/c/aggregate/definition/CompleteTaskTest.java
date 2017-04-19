@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
+import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
@@ -40,6 +41,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.spine3.examples.todolist.TaskStatus.COMPLETED;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
@@ -60,8 +62,9 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
     @Override
     @BeforeEach
     protected void setUp() {
+        super.setUp();
         taskId = createTaskId();
-        aggregate = createTaskDefinitionPart(taskId);
+        aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test
@@ -118,6 +121,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
         try {
             dispatchCompleteTaskCmd();
+            fail("CannotCompleteTask was not thrown.");
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
             final Throwable cause = Throwables.getRootCause(e);

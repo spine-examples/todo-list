@@ -21,13 +21,13 @@
 package org.spine3.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Timestamp;
+import org.spine3.base.Version;
 import org.spine3.change.StringMismatch;
 import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskPriorityValue;
 import org.spine3.protobuf.AnyPacker;
-import org.spine3.server.entity.Version;
 
 import static com.google.protobuf.Any.pack;
 

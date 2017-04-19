@@ -28,8 +28,7 @@ import io.grpc.stub.StreamObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spine3.base.Command;
-import org.spine3.base.Queries;
-import org.spine3.client.CommandFactory;
+import org.spine3.client.ActorRequestFactory;
 import org.spine3.client.Query;
 import org.spine3.client.QueryResponse;
 import org.spine3.client.grpc.CommandServiceGrpc;
@@ -74,13 +73,13 @@ public class CommandLineTodoClient implements TodoClient {
     private final ManagedChannel channel;
     private final QueryService queryService;
     private final CommandServiceGrpc.CommandServiceBlockingStub commandService;
-    private final CommandFactory commandFactory;
+    private final ActorRequestFactory requestFactory;
 
     /**
      * Construct the client connecting to server at {@code host:port}.
      */
     public CommandLineTodoClient(String host, int port, BoundedContext boundedContext) {
-        this.commandFactory = commandFactoryInstance();
+        this.requestFactory = actorRequestFactoryInstance();
         this.channel = initChannel(host, port);
         this.commandService = CommandServiceGrpc.newBlockingStub(channel);
         this.queryService = QueryService.newBuilder()
@@ -90,92 +89,107 @@ public class CommandLineTodoClient implements TodoClient {
 
     @Override
     public void create(CreateBasicTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void create(CreateBasicLabel cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void create(CreateDraft cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void update(UpdateTaskDescription cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void update(UpdateTaskDueDate cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void update(UpdateTaskPriority cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void update(UpdateLabelDetails cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void delete(DeleteTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void removeLabel(RemoveLabelFromTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void assignLabel(AssignLabelToTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void reopen(ReopenTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void restore(RestoreDeletedTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void complete(CompleteTask cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public void finalize(FinalizeDraft cmd) {
-        final Command executableCmd = commandFactory.create(cmd);
+        final Command executableCmd = requestFactory.command()
+                                                    .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public MyListView getMyListView() {
         try {
-            final Query query = Queries.readAll(MyListView.class);
+            final Query query = requestFactory.query()
+                                              .all(MyListView.class);
             final EventStreamObserver responseObserver = new EventStreamObserver();
             queryService.read(query, responseObserver);
 
@@ -195,7 +209,8 @@ public class CommandLineTodoClient implements TodoClient {
     @Override
     public List<LabelledTasksView> getLabelledTasksView() {
         try {
-            final Query query = Queries.readAll(LabelledTasksView.class);
+            final Query query = requestFactory.query()
+                                              .all(LabelledTasksView.class);
             final EventStreamObserver responseObserver = new EventStreamObserver();
             queryService.read(query, responseObserver);
             final List<LabelledTasksView> result = newArrayList();
@@ -214,7 +229,8 @@ public class CommandLineTodoClient implements TodoClient {
     @Override
     public DraftTasksView getDraftTasksView() {
         try {
-            final Query query = Queries.readAll(DraftTasksView.class);
+            final Query query = requestFactory.query()
+                                              .all(DraftTasksView.class);
             final EventStreamObserver responseObserver = new EventStreamObserver();
             queryService.read(query, responseObserver);
 
@@ -248,14 +264,14 @@ public class CommandLineTodoClient implements TodoClient {
         return result;
     }
 
-    private static CommandFactory commandFactoryInstance() {
+    private static ActorRequestFactory actorRequestFactoryInstance() {
         final UserId userId = UserId.newBuilder()
                                     .setValue(newUuid())
                                     .build();
-        final CommandFactory result = CommandFactory.newBuilder()
-                                                    .setActor(userId)
-                                                    .setZoneOffset(ZoneOffsets.UTC)
-                                                    .build();
+        final ActorRequestFactory result = ActorRequestFactory.newBuilder()
+                                                              .setActor(userId)
+                                                              .setZoneOffset(ZoneOffsets.UTC)
+                                                              .build();
         return result;
     }
 

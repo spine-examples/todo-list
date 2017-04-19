@@ -39,7 +39,6 @@ import org.spine3.examples.todolist.c.events.TaskDraftCreated;
 import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
 import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
 import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
-import org.spine3.protobuf.Timestamps;
 
 import java.util.List;
 
@@ -61,6 +60,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateE
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskPriorityUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelAssignedToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelRemovedFromTaskInstance;
+import static org.spine3.protobuf.Timestamps2.getCurrentTime;
 
 /**
  * @author Illia Shepilov
@@ -196,7 +196,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
             projection.on(taskDraftCreatedEvent);
 
-            final Timestamp updatedDueDate = Timestamps.getCurrentTime();
+            final Timestamp updatedDueDate = getCurrentTime();
             final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
 
             final TaskDueDateUpdated taskDueDateUpdatedEvent =
@@ -218,7 +218,7 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
         public void notUpdate() {
             taskDraftCreated();
 
-            final Timestamp updatedDueDate = Timestamps.getCurrentTime();
+            final Timestamp updatedDueDate = getCurrentTime();
 
             final TaskDueDateUpdated taskDueDateUpdatedEvent =
                     taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), updatedDueDate);

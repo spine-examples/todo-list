@@ -25,9 +25,8 @@ import org.junit.jupiter.api.Test;
 import org.spine3.examples.todolist.c.enrichments.TaskEnrichment;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.examples.todolist.testdata.TestEventContextFactory.eventContextInstance;
-import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
+import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
@@ -38,7 +37,7 @@ class EnrichmentHelperTest {
     @Test
     @DisplayName("have the private constructor")
     public void havePrivateConstructor() {
-        assertTrue(hasPrivateParameterlessCtor(EnrichmentHelper.class));
+        assertHasPrivateParameterlessCtor(EnrichmentHelper.class);
     }
 
     @Test

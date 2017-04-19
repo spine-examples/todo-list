@@ -37,9 +37,9 @@ import org.spine3.examples.todolist.c.commands.RestoreDeletedTask;
 import org.spine3.examples.todolist.c.commands.UpdateTaskDescription;
 import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
 import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
-import org.spine3.protobuf.Timestamps;
 
 import static org.spine3.base.Identifiers.newUuid;
+import static org.spine3.protobuf.Timestamps2.getCurrentTime;
 
 /**
  * A factory of the task commands for the test needs.
@@ -55,7 +55,7 @@ public class TestTaskCommandFactory {
                                                   .setValue(newUuid())
                                                   .build();
     public static final String DESCRIPTION = "Create command description.";
-    public static final Timestamp DUE_DATE = Timestamps.getCurrentTime();
+    public static final Timestamp DUE_DATE = getCurrentTime();
     public static final String UPDATED_LABEL_TITLE = "labelTitle";
 
     private TestTaskCommandFactory() {

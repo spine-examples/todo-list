@@ -28,6 +28,7 @@ import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskStatus;
+import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.events.TaskCreated;
@@ -53,8 +54,9 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
     @Override
     @BeforeEach
     public void setUp() {
+        super.setUp();
         taskId = createTaskId();
-        aggregate = createTaskDefinitionPart(taskId);
+        aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test
@@ -98,7 +100,7 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
         } catch (IllegalStateException ex) {
             final CannotCreateTaskWithInappropriateDescription failure =
                     (CannotCreateTaskWithInappropriateDescription) ex.getCause();
-            final TaskId actualId = failure.getFailure()
+            final TaskId actualId = failure.getFailureMessage()
                                            .getCreateTaskFailed()
                                            .getFailureDetails()
                                            .getTaskId();

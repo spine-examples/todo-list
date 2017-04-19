@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
+import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
@@ -59,14 +59,14 @@ public class ProjectionHelperTest {
     @Test
     @DisplayName("have the private constructor")
     public void havePrivateConstructor() {
-        assertTrue(hasPrivateParameterlessCtor(ProjectionHelper.class));
+        assertHasPrivateParameterlessCtor(ProjectionHelper.class);
     }
 
     @Test
     @DisplayName("remove TaskView from state by label ID")
     public void removeView() {
-        final int expectedListSize = 1;
-        final TaskListView view = ProjectionHelper.removeViewByLabelId(viewList, LABEL_ID);
+        final int expectedListSize = 2;
+        final TaskListView view = ProjectionHelper.removeViewsByLabelId(viewList, LABEL_ID);
 
         assertEquals(expectedListSize, view.getItemsCount());
         assertFalse(viewList.contains(viewWithDefaultTaskId));
@@ -75,11 +75,11 @@ public class ProjectionHelperTest {
     @Test
     @DisplayName("not remove TaskView from state by wrong label ID")
     public void notRemoveViewByLabelId() {
-        final int expectedListSize = 2;
+        final int expectedListSize = viewList.size();
         final LabelId wrongLabelId = LabelId.newBuilder()
                                             .setValue(newUuid())
                                             .build();
-        final TaskListView view = ProjectionHelper.removeViewByLabelId(viewList, wrongLabelId);
+        final TaskListView view = ProjectionHelper.removeViewsByLabelId(viewList, wrongLabelId);
 
         assertEquals(expectedListSize, view.getItemsCount());
         assertTrue(viewList.contains(viewWithDefaultTaskId));
@@ -88,8 +88,8 @@ public class ProjectionHelperTest {
     @Test
     @DisplayName("remove TaskView from state by task ID")
     public void removeViewByTaskId() {
-        final int expectedListSize = 1;
-        final TaskListView view = ProjectionHelper.removeViewByTaskId(viewList, TASK_ID);
+        final int expectedListSize = 2;
+        final TaskListView view = ProjectionHelper.removeViewsByTaskId(viewList, TASK_ID);
 
         assertEquals(expectedListSize, view.getItemsCount());
         assertFalse(viewList.contains(viewWithDefaultLabelId));
@@ -98,11 +98,11 @@ public class ProjectionHelperTest {
     @Test
     @DisplayName("not remove TaskView from state by wrong task ID")
     public void notRemoveTaskViewByTaskId() {
-        final int expectedListSize = 2;
+        final int expectedListSize = viewList.size();
         final TaskId wrongTaskId = TaskId.newBuilder()
                                          .setValue(newUuid())
                                          .build();
-        final TaskListView view = ProjectionHelper.removeViewByTaskId(viewList, wrongTaskId);
+        final TaskListView view = ProjectionHelper.removeViewsByTaskId(viewList, wrongTaskId);
 
         assertEquals(expectedListSize, view.getItemsCount());
         assertTrue(viewList.contains(viewWithDefaultTaskId));
@@ -119,6 +119,8 @@ public class ProjectionHelperTest {
                                         .setId(TaskId.getDefaultInstance())
                                         .build();
         viewList.add(viewWithDefaultLabelId);
+        viewList.add(viewWithDefaultLabelId);
+        viewList.add(viewWithDefaultTaskId);
         viewList.add(viewWithDefaultTaskId);
         return viewList;
     }

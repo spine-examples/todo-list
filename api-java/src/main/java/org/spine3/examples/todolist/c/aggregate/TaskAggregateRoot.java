@@ -21,9 +21,7 @@
 package org.spine3.examples.todolist.c.aggregate;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabels;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.aggregate.AggregateRoot;
@@ -46,6 +44,16 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
 
     static {
         initBoundedContextIfNeeded();
+    }
+
+    /**
+     * Creates an new instance.
+     *
+     * @param boundedContext the bounded context to which the aggregate belongs
+     * @param id             the ID of the aggregate
+     */
+    protected TaskAggregateRoot(BoundedContext boundedContext, TaskId id) {
+        super(boundedContext, id);
     }
 
     /**
@@ -80,26 +88,6 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
      */
     public static TaskAggregateRoot get(TaskId id) {
         return new TaskAggregateRoot(id);
-    }
-
-    /**
-     * Returns the {@link TaskDefinition} state from the {@code boundedContext}.
-     *
-     * @return the state for the {@link TaskDefinitionPart}.
-     */
-    public TaskDefinition getTaskDefinitionState() {
-        final TaskDefinition result = getPartState(TaskDefinition.class);
-        return result;
-    }
-
-    /**
-     * Returns the {@link TaskLabels} state from the {@code boundedContext}.
-     *
-     * @return the state for the {@link TaskLabelsPart}
-     */
-    public TaskLabels getTaskLabelsState() {
-        final TaskLabels result = getPartState(TaskLabels.class);
-        return result;
     }
 
     /**
