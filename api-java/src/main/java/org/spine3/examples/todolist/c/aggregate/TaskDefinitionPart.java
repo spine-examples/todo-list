@@ -327,8 +327,9 @@ public class TaskDefinitionPart extends AggregatePart<TaskId, TaskDefinition, Ta
         final TaskStatus currentStatus = getState().getTaskStatus();
         final TaskStatus newStatus = TaskStatus.OPEN;
         final TaskId taskId = cmd.getId();
-        final boolean isValid = isValidTransition(currentStatus, newStatus);
 
+        final boolean isValid = currentStatus == TaskStatus.DELETED
+                && isValidTransition(currentStatus, newStatus);
         if (!isValid) {
             throwCannotRestoreDeletedTaskFailure(cmd, ctx);
         }
