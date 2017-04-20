@@ -179,6 +179,7 @@ subprojects {
         compile group: 'org.spine3', name: 'spine-users', version: spineVersion
         compile group: 'org.spine3', name: 'spine-values', version: spineVersion
 
+        testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '2.0'
         testCompile("org.spine3:spine-testutil-core:${spineVersion}") {
             // We are using JUnit 5.x instead of 4.x dependency of Spine testing framework.
             exclude group: 'junit'
