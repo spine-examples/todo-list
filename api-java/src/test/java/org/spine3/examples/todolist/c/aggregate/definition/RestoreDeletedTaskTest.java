@@ -20,7 +20,6 @@
 
 package org.spine3.examples.todolist.c.aggregate.definition;
 
-import com.google.common.base.Throwables;
 import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -54,8 +53,10 @@ import org.spine3.server.event.EventStreamQuery;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.examples.todolist.TaskStatus.DELETED;
 import static org.spine3.examples.todolist.TaskStatus.OPEN;
 import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
@@ -105,7 +106,8 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         commandBus.post(createLabelCmd, responseObserver);
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, LABEL_ID);
-        final Command assignLabelToTaskCmd = Commands.createCommand(assignLabelToTask, commandContext);
+        final Command assignLabelToTaskCmd = Commands.createCommand(assignLabelToTask,
+                                                                    commandContext);
         commandBus.post(assignLabelToTaskCmd, responseObserver);
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
@@ -113,7 +115,8 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         commandBus.post(deleteTaskCmd, responseObserver);
 
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-        final Command restoreDeletedTaskCmd = Commands.createCommand(restoreDeletedTask, commandContext);
+        final Command restoreDeletedTaskCmd = Commands.createCommand(restoreDeletedTask,
+                                                                     commandContext);
         commandBus.post(restoreDeletedTaskCmd, responseObserver);
 
         final EventStreamQuery query = EventStreamQuery.newBuilder()
@@ -178,13 +181,9 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
 
         final CompleteTask completeTask = completeTaskInstance(taskId);
         taskDefinitionPart.dispatchForTest(completeTask, commandContext);
-        try {
-            restoreDeletedTask();
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotRestoreDeletedTask);
-        }
+
+        final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
+        assertThat(t.getCause(), instanceOf(CannotRestoreDeletedTask.class));
     }
 
     @Test
@@ -193,28 +192,18 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
         final Command createTaskCmd = Commands.createCommand(createTask, commandContext);
         commandBus.post(createTaskCmd, responseObserver);
-        try {
-            final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-            final Command restoreDeletedTaskCmd = Commands.createCommand(restoreDeletedTask, commandContext);
-            commandBus.post(restoreDeletedTaskCmd, responseObserver);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotRestoreDeletedTask);
-        }
+
+        final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
+        assertThat(t.getCause(), instanceOf(CannotRestoreDeletedTask.class));
     }
 
     @Test
     @DisplayName("throw CannotRestoreDeletedTask upon an attempt to restore the draft")
     public void cannotRestoreDraft() {
         createDraft();
-        try {
-            restoreDeletedTask();
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotRestoreDeletedTask);
-        }
+
+        final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
+        assertThat(t.getCause(), instanceOf(CannotRestoreDeletedTask.class));
     }
 
     private void createBasicTask() {
