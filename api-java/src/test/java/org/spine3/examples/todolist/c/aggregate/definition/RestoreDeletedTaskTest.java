@@ -190,9 +190,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     @Test
     @DisplayName("throw CannotRestoreDeletedTask upon an attempt to restore the finalized task")
     public void cannotRestoreFinalizedTask() {
-        final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        final Command createTaskCmd = Commands.createCommand(createTask, commandContext);
-        commandBus.post(createTaskCmd, responseObserver);
+        createBasicTask();
 
         final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotRestoreDeletedTask.class));
