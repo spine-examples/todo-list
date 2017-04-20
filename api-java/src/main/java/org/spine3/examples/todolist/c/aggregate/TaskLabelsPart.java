@@ -42,7 +42,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidAssignLabelToTaskCommand;
-import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidRemoveLabelFromTaskCommand;
+import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidTaskStatusToRemoveLabel;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotAssignLabelToTaskFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotRemoveLabelFromTaskFailure;
 
@@ -64,14 +64,19 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
     }
 
     @Assign
-    List<? extends Message> handle(RemoveLabelFromTask cmd, CommandContext ctx) throws CannotRemoveLabelFromTask {
+    List<? extends Message> handle(RemoveLabelFromTask cmd, CommandContext ctx)
+            throws CannotRemoveLabelFromTask {
         final LabelId labelId = cmd.getLabelId();
         final TaskId taskId = cmd.getId();
 
         final TaskDefinition taskDefinitionState = getPartState(TaskDefinition.class);
-        final boolean isValid = isValidRemoveLabelFromTaskCommand(taskDefinitionState.getTaskStatus());
+        final boolean isLabelExists = getState().getLabelIdsList()
+                                                .getIdsList()
+                                                .contains(labelId);
+        final boolean isValidTaskStatus =
+                isValidTaskStatusToRemoveLabel(taskDefinitionState.getTaskStatus());
 
-        if (!isValid) {
+        if (!isLabelExists || !isValidTaskStatus) {
             throwCannotRemoveLabelFromTaskFailure(cmd, ctx);
         }
 

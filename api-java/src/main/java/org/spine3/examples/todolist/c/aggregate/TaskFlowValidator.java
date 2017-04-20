@@ -53,7 +53,7 @@ class TaskFlowValidator {
         return isValid;
     }
 
-    static boolean isValidRemoveLabelFromTaskCommand(TaskStatus currentStatus) {
+    static boolean isValidTaskStatusToRemoveLabel(TaskStatus currentStatus) {
         final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
         return isValid;
     }
