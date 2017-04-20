@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.c.aggregate.definition;
 
+import com.google.common.base.Throwables;
 import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -183,7 +184,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         taskDefinitionPart.dispatchForTest(completeTask, commandContext);
 
         final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
-        assertThat(t.getCause(), instanceOf(CannotRestoreDeletedTask.class));
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotRestoreDeletedTask.class));
     }
 
     @Test
@@ -194,7 +195,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         commandBus.post(createTaskCmd, responseObserver);
 
         final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
-        assertThat(t.getCause(), instanceOf(CannotRestoreDeletedTask.class));
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotRestoreDeletedTask.class));
     }
 
     @Test
@@ -203,7 +204,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         createDraft();
 
         final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
-        assertThat(t.getCause(), instanceOf(CannotRestoreDeletedTask.class));
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotRestoreDeletedTask.class));
     }
 
     private void createBasicTask() {
