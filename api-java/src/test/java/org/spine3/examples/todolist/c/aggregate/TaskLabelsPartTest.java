@@ -66,7 +66,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
 /**
  * @author Illia Shepilov
  */
-public class TaskLabelsPartTest {
+class TaskLabelsPartTest {
 
     private static final CommandContext COMMAND_CONTEXT = createCommandContext();
 
@@ -77,7 +77,7 @@ public class TaskLabelsPartTest {
     private LabelId labelId;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
         TaskAggregateRoot.injectBoundedContext(boundedContext);
         commandBus = boundedContext.getCommandBus();
@@ -90,17 +90,15 @@ public class TaskLabelsPartTest {
     }
 
     private static LabelId createLabelId() {
-        final LabelId result = LabelId.newBuilder()
-                                      .setValue(newUuid())
-                                      .build();
-        return result;
+        return LabelId.newBuilder()
+                      .setValue(newUuid())
+                      .build();
     }
 
     private static TaskId createTaskId() {
-        final TaskId result = TaskId.newBuilder()
-                                    .setValue(newUuid())
-                                    .build();
-        return result;
+        return TaskId.newBuilder()
+                     .setValue(newUuid())
+                     .build();
     }
 
     private static TaskLabelsPart createTaskLabelsPart(TaskAggregateRoot root) {
@@ -113,7 +111,7 @@ public class TaskLabelsPartTest {
 
         @Test
         @DisplayName("produce LabelAssignedToTask event")
-        public void produceEvent() {
+        void produceEvent() {
             final AssignLabelToTask assignLabelToTaskCmd = assignLabelToTaskInstance(taskId, labelId);
             final List<? extends Message> messageList =
                     taskLabelsPart.dispatchForTest(assignLabelToTaskCmd, COMMAND_CONTEXT);
@@ -129,7 +127,7 @@ public class TaskLabelsPartTest {
 
         @Test
         @DisplayName("throw CannotAssignLabelToTask failure upon an attempt to assign the label to the deleted task")
-        public void cannotAssignLabelToDeletedTask() {
+        void cannotAssignLabelToDeletedTask() {
             try {
                 createBasicTask();
                 deleteTask();
@@ -144,7 +142,7 @@ public class TaskLabelsPartTest {
         @Test
         @DisplayName("throw CannotAssignLabelToTask failure " +
                 "upon an attempt to assign the label to the completed task")
-        public void cannotAssignLabelToCompletedTask() {
+        void cannotAssignLabelToCompletedTask() {
             try {
                 createBasicTask();
                 completeTask();
@@ -163,7 +161,7 @@ public class TaskLabelsPartTest {
 
         @Test
         @DisplayName("produce LabelRemovedFromTask event")
-        public void produceEvent() {
+        void produceEvent() {
             createBasicTask();
             assignLabelToTask();
 
@@ -190,7 +188,7 @@ public class TaskLabelsPartTest {
         @Test
         @DisplayName("throw CannotRemoveLabelFromTask failure " +
                 "upon an attempt to remove the label from the completed task")
-        public void cannotRemoveLabelFromCompletedTask() {
+        void cannotRemoveLabelFromCompletedTask() {
             try {
                 createBasicTask();
                 completeTask();
@@ -205,7 +203,7 @@ public class TaskLabelsPartTest {
         @Test
         @DisplayName("throw CannotRemoveLabelFromTask failure " +
                 "upon an attempt to remove the label from the deleted task")
-        public void cannotRemoveLabelFromDeletedTask() {
+        void cannotRemoveLabelFromDeletedTask() {
             try {
                 createBasicTask();
                 deleteTask();
