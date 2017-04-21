@@ -33,8 +33,10 @@ import org.spine3.examples.todolist.c.failures.CannotDeleteTask;
 
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.examples.todolist.TaskStatus.DELETED;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
@@ -54,7 +56,7 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
 
     @Test
     @DisplayName("delete the task")
-    public void deleteTask() {
+    void deleteTask() {
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
@@ -67,24 +69,21 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
 
     @Test
     @DisplayName("throw CannotDeleteTask failure upon an attempt to delete the already deleted task")
-    public void cannotDeleteAlreadyDeletedTask() {
+    void cannotDeleteAlreadyDeletedTask() {
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
-        try {
-            aggregate.dispatchForTest(deleteTaskCmd, commandContext);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotDeleteTask);
-        }
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> aggregate.dispatchForTest(deleteTaskCmd,
+                                                                         commandContext));
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotDeleteTask.class));
     }
 
     @Test
     @DisplayName("produce TaskDeleted event")
-    public void produceEvent() {
+    void produceEvent() {
         dispatchCreateTaskCmd();
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
 
