@@ -59,12 +59,10 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
     @Test
     @DisplayName("produce TaskCompleted event")
-    public void produceEvent() {
+    void produceEvent() {
         dispatchCreateTaskCmd();
 
-        final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-        final List<? extends Message> messageList =
-                aggregate.dispatchForTest(completeTaskCmd, commandContext);
+        final List<? extends Message> messageList = dispatchCompleteTaskCmd();
 
         assertEquals(1, messageList.size());
         assertEquals(TaskCompleted.class, messageList.get(0)
@@ -76,7 +74,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
     @Test
     @DisplayName("complete the task")
-    public void completeTheTask() {
+    void completeTheTask() {
         dispatchCreateTaskCmd();
 
         dispatchCompleteTaskCmd();
@@ -88,7 +86,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
     @Test
     @DisplayName("throw CannotCompleteTask failure upon an attempt to complete the deleted task")
-    public void cannotCompleteDeletedTask() {
+    void cannotCompleteDeletedTask() {
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
@@ -105,7 +103,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
     @Test
     @DisplayName("throw CannotCompleteTask failure upon an attempt to complete the task in draft state")
-    public void cannotCompleteDraft() {
+    void cannotCompleteDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);
 
@@ -124,8 +122,8 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
         aggregate.dispatchForTest(createTaskCmd, commandContext);
     }
 
-    private void dispatchCompleteTaskCmd() {
+    private List<? extends Message> dispatchCompleteTaskCmd() {
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-        aggregate.dispatchForTest(completeTaskCmd, commandContext);
+        return aggregate.dispatchForTest(completeTaskCmd, commandContext);
     }
 }
