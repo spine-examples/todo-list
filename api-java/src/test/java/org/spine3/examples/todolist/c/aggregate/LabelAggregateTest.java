@@ -20,7 +20,6 @@
 
 package org.spine3.examples.todolist.c.aggregate;
 
-import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +44,7 @@ import java.util.List;
 
 import static com.google.protobuf.Any.pack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.UPDATED_LABEL_TITLE;
@@ -168,34 +167,30 @@ class LabelAggregateTest {
                                                              .setColor(LabelColor.RED)
                                                              .setTitle(UPDATED_LABEL_TITLE)
                                                              .build();
-            try {
-                final UpdateLabelDetails updateLabelDetailsCmd =
-                        updateLabelDetailsInstance(labelId, expectedLabelDetails, newLabelDetails);
-                dispatch(updateLabelDetailsCmd);
-            } catch (Throwable e) {
-                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-                final Throwable cause = Throwables.getRootCause(e);
-                assertTrue(cause instanceof CannotUpdateLabelDetails);
+            final UpdateLabelDetails updateLabelDetails =
+                    updateLabelDetailsInstance(labelId, expectedLabelDetails, newLabelDetails);
+            createCommand(updateLabelDetails);
+            final CannotUpdateLabelDetails failure =
+                    assertThrows(CannotUpdateLabelDetails.class,
+                                 () -> aggregate.handle(commandMessage().get(),
+                                                        commandContext().get()));
+            final Failures.CannotUpdateLabelDetails cannotUpdateLabelDetails =
+                    failure.getFailureMessage();
+            final LabelDetailsUpdateFailed labelDetailsUpdateFailed =
+                    cannotUpdateLabelDetails.getUpdateFailed();
+            final LabelId actualLabelId = labelDetailsUpdateFailed.getFailureDetails()
+                                                                  .getLabelId();
+            assertEquals(labelId, actualLabelId);
 
-                @SuppressWarnings("ConstantConditions")
-                final Failures.CannotUpdateLabelDetails cannotUpdateLabelDetails =
-                        ((CannotUpdateLabelDetails) cause).getFailureMessage();
-                final LabelDetailsUpdateFailed labelDetailsUpdateFailed =
-                        cannotUpdateLabelDetails.getUpdateFailed();
-                final LabelId actualLabelId = labelDetailsUpdateFailed.getFailureDetails()
-                                                                      .getLabelId();
-                assertEquals(labelId, actualLabelId);
+            final ValueMismatch mismatch = labelDetailsUpdateFailed.getLabelDetailsMismatch();
+            assertEquals(pack(expectedLabelDetails), mismatch.getExpected());
+            assertEquals(pack(newLabelDetails), mismatch.getNewValue());
 
-                final ValueMismatch mismatch = labelDetailsUpdateFailed.getLabelDetailsMismatch();
-                assertEquals(pack(expectedLabelDetails), mismatch.getExpected());
-                assertEquals(pack(newLabelDetails), mismatch.getNewValue());
-
-                final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
-                                                                    .setColor(LabelColor.GRAY)
-                                                                    .setTitle(LABEL_TITLE)
-                                                                    .build();
-                assertEquals(pack(actualLabelDetails), mismatch.getActual());
-            }
+            final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
+                                                                .setColor(LabelColor.GRAY)
+                                                                .setTitle(LABEL_TITLE)
+                                                                .build();
+            assertEquals(pack(actualLabelDetails), mismatch.getActual());
         }
     }
 
