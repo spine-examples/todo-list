@@ -26,13 +26,10 @@ import com.google.protobuf.StringValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.base.CommandContext;
 import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.DescriptionUpdateFailed;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
-import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
@@ -60,16 +57,10 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 @DisplayName("UpdateTaskDescription command should be interpreted by TaskDefinitionPart and")
 public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateTaskDescription> {
 
-    private final CommandContext commandContext = createCommandContext();
-    private TaskDefinitionPart aggregate;
-    private TaskId taskId;
-
     @Override
     @BeforeEach
     protected void setUp() {
         super.setUp();
-        taskId = createTaskId();
-        aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test
