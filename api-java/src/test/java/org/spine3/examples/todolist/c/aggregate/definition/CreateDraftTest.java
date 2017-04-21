@@ -20,6 +20,7 @@
 
 package org.spine3.examples.todolist.c.aggregate.definition;
 
+import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -35,6 +36,7 @@ import org.spine3.examples.todolist.c.failures.CannotCreateDraft;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.examples.todolist.TaskStatus.DRAFT;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
@@ -55,7 +57,7 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
 
     @Test
     @DisplayName("produce TaskDraftCreated event")
-    public void produceEvent() {
+    void produceEvent() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
 
         final List<? extends Message> messageList =
@@ -70,7 +72,7 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
 
     @Test
     @DisplayName("create the draft")
-    public void createDraft() {
+    void createDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);
         final TaskDefinition state = aggregate.getState();
@@ -80,25 +82,25 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
     }
 
     @Test
-    @DisplayName("throw CannotCreateDraft failure upon an attempt to create draft with deleted task ID")
-    public void notCreateDraft() {
+    @DisplayName("throw CannotCreateDraft failure upon " +
+            "an attempt to create draft with deleted task ID")
+    void notCreateDraft() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         aggregate.dispatchForTest(createTaskCmd, commandContext);
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
-        try {
-            final CreateDraft createDraftCmd = createDraftInstance(taskId);
-            aggregate.dispatchForTest(createDraftCmd, commandContext);
-        } catch (IllegalStateException ex) {
-            final Throwable cause = ex.getCause();
-            final CannotCreateDraft failure = (CannotCreateDraft) cause;
-            final TaskId actualId = failure.getFailureMessage()
-                                           .getCreateDraftFailed()
-                                           .getFailureDetails()
-                                           .getTaskId();
-            assertEquals(taskId, actualId);
-        }
+        final CreateDraft createDraftCmd = createDraftInstance(taskId);
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> aggregate.dispatchForTest(createDraftCmd,
+                                                                         commandContext));
+        final Throwable cause = Throwables.getRootCause(t);
+        final CannotCreateDraft failure = (CannotCreateDraft) cause;
+        final TaskId actualId = failure.getFailureMessage()
+                                       .getCreateDraftFailed()
+                                       .getFailureDetails()
+                                       .getTaskId();
+        assertEquals(taskId, actualId);
     }
 }
