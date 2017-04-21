@@ -35,9 +35,10 @@ import org.spine3.examples.todolist.c.failures.CannotCompleteTask;
 
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.examples.todolist.TaskStatus.COMPLETED;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
@@ -92,29 +93,19 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
-        try {
-            dispatchCompleteTaskCmd();
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotCompleteTask);
-        }
+        final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
     }
 
     @Test
-    @DisplayName("throw CannotCompleteTask failure upon an attempt to complete the task in draft state")
+    @DisplayName("throw CannotCompleteTask failure upon " +
+            "an attempt to complete the task in draft state")
     void cannotCompleteDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);
 
-        try {
-            dispatchCompleteTaskCmd();
-            fail("CannotCompleteTask was not thrown.");
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotCompleteTask);
-        }
+        final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
     }
 
     private void dispatchCreateTaskCmd() {
