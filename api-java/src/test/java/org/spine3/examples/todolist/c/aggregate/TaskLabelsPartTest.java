@@ -20,14 +20,12 @@
 
 package org.spine3.examples.todolist.c.aggregate;
 
-import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.Command;
-import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
@@ -41,20 +39,17 @@ import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
 import org.spine3.examples.todolist.c.failures.CannotAssignLabelToTask;
 import org.spine3.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
-import org.spine3.examples.todolist.testdata.TestLabelCommandFactory;
 import org.spine3.examples.todolist.testdata.TestResponseObserver;
 import org.spine3.server.BoundedContext;
 import org.spine3.server.commandbus.CommandBus;
+import org.spine3.test.AggregatePartCommandTest;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.spine3.base.Commands.createCommand;
 import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
+import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
@@ -67,53 +62,23 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
  */
 class TaskLabelsPartTest {
 
-    private static final CommandContext COMMAND_CONTEXT = createCommandContext();
-
-    private TestResponseObserver responseObserver;
-    private CommandBus commandBus;
-    private TaskLabelsPart taskLabelsPart;
-    private TaskId taskId;
-    private LabelId labelId;
-
-    @BeforeEach
-    void setUp() {
-        final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
-        TaskAggregateRoot.injectBoundedContext(boundedContext);
-        commandBus = boundedContext.getCommandBus();
-        responseObserver = new TestResponseObserver();
-        taskId = createTaskId();
-        final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
-        labelId = createLabelId();
-        taskLabelsPart = createTaskLabelsPart(root);
-        createLabel();
-    }
-
-    private static LabelId createLabelId() {
-        return LabelId.newBuilder()
-                      .setValue(newUuid())
-                      .build();
-    }
-
-    private static TaskId createTaskId() {
-        return TaskId.newBuilder()
-                     .setValue(newUuid())
-                     .build();
-    }
-
-    private static TaskLabelsPart createTaskLabelsPart(TaskAggregateRoot root) {
-        return new TaskLabelsPart(root);
-    }
-
     @Nested
     @DisplayName("AssignLabelToTask command should be interpreted by TaskLabelsPart and")
-    class AssignLabelToTaskCommand {
+    class AssignLabelToTaskCommand extends TaskLabelsCommandTest<AssignLabelToTask> {
+
+        @BeforeEach
+        @Override
+        protected void setUp() {
+            super.setUp();
+            final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            createCommand(assignLabelToTask);
+        }
 
         @Test
         @DisplayName("produce LabelAssignedToTask event")
         void produceEvent() {
-            final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
             final List<? extends Message> messageList =
-                    taskLabelsPart.dispatchForTest(assignLabelToTask, COMMAND_CONTEXT);
+                    taskLabelsPart.dispatchForTest(commandMessage().get(), commandContext().get());
 
             assertEquals(1, messageList.size());
             assertEquals(LabelAssignedToTask.class, messageList.get(0)
@@ -132,9 +97,9 @@ class TaskLabelsPartTest {
             createBasicTask();
             deleteTask();
 
-            final Throwable t = assertThrows(Throwable.class,
-                                             TaskLabelsPartTest.this::assignLabelToTask);
-            assertThat(Throwables.getRootCause(t), instanceOf(CannotAssignLabelToTask.class));
+            assertThrows(CannotAssignLabelToTask.class,
+                         () -> taskLabelsPart.handle(commandMessage().get(),
+                                                     commandContext().get()));
         }
 
         @Test
@@ -144,23 +109,33 @@ class TaskLabelsPartTest {
             createBasicTask();
             completeTask();
 
-            final Throwable t = assertThrows(Throwable.class,
-                                             TaskLabelsPartTest.this::assignLabelToTask);
-            assertThat(Throwables.getRootCause(t), instanceOf(CannotAssignLabelToTask.class));
+            assertThrows(CannotAssignLabelToTask.class,
+                         () -> taskLabelsPart.handle(commandMessage().get(),
+                                                     commandContext().get()));
         }
     }
 
     @Nested
     @DisplayName("RemoveLabelFromTask command should be interpreted by TaskLabelsPart and")
-    class RemoveLabelFromTaskCommand {
+    class RemoveLabelFromTaskCommand extends TaskLabelsCommandTest<RemoveLabelFromTask> {
+
+        @BeforeEach
+        @Override
+        protected void setUp() {
+            super.setUp();
+            final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId,
+                                                                                        labelId);
+            createCommand(removeLabelFromTask);
+        }
 
         @Test
         @DisplayName("produce LabelRemovedFromTask event")
-        void produceEvent() {
+        void produceEvent() throws CannotRemoveLabelFromTask {
             createBasicTask();
-            assignLabelToTask();
+            dispatchAssignLabelToTask();
 
-            final List<? extends Message> messageList = removeLabelFromTask(labelId);
+            final List<? extends Message> messageList =
+                    taskLabelsPart.handle(commandMessage().get(), commandContext().get());
 
             assertEquals(1, messageList.size());
             assertEquals(LabelRemovedFromTask.class, messageList.get(0)
@@ -176,9 +151,9 @@ class TaskLabelsPartTest {
         @DisplayName("throw CannotRemoveLabelFromTask failure " +
                 "upon an attempt to remove the not existing label")
         void cannotRemoveNotExistingLabel() {
-            final Throwable t = assertThrows(Throwable.class,
-                                             () -> removeLabelFromTask(createLabelId()));
-            assertThat(t.getCause(), instanceOf(CannotRemoveLabelFromTask.class));
+            assertThrows(CannotRemoveLabelFromTask.class,
+                         () -> taskLabelsPart.handle(commandMessage().get(),
+                                                     commandContext().get()));
         }
 
         @Test
@@ -188,8 +163,9 @@ class TaskLabelsPartTest {
             createBasicTask();
             completeTask();
 
-            final Throwable t = assertThrows(Throwable.class, () -> removeLabelFromTask(labelId));
-            assertThat(Throwables.getRootCause(t), instanceOf(CannotRemoveLabelFromTask.class));
+            assertThrows(CannotRemoveLabelFromTask.class,
+                         () -> taskLabelsPart.handle(commandMessage().get(),
+                                                     commandContext().get()));
         }
 
         @Test
@@ -199,43 +175,80 @@ class TaskLabelsPartTest {
             createBasicTask();
             deleteTask();
 
-            final Throwable t = assertThrows(Throwable.class, () -> removeLabelFromTask(labelId));
-            assertThat(Throwables.getRootCause(t), instanceOf(CannotRemoveLabelFromTask.class));
+            assertThrows(CannotRemoveLabelFromTask.class,
+                         () -> taskLabelsPart.handle(commandMessage().get(),
+                                                     commandContext().get()));
         }
 
-        private List<? extends Message> removeLabelFromTask(LabelId labelId) {
-            final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId,
-                                                                                        labelId);
-            return taskLabelsPart.dispatchForTest(removeLabelFromTask, COMMAND_CONTEXT);
+        private void dispatchAssignLabelToTask() {
+            final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            final Command assignLabelToTaskCmd = createDifferentCommand(assignLabelToTask);
+            taskLabelsPart.dispatchForTest(assignLabelToTaskCmd.getMessage(),
+                                           assignLabelToTaskCmd.getContext());
         }
     }
 
-    private void createLabel() {
-        final CreateBasicLabel createLabel = TestLabelCommandFactory.createLabelInstance(labelId);
-        final Command createLabelCmd = createCommand(createLabel, COMMAND_CONTEXT);
-        commandBus.post(createLabelCmd, responseObserver);
-    }
+    private abstract static class TaskLabelsCommandTest<C extends Message>
+            extends AggregatePartCommandTest<C, TaskLabelsPart> {
 
-    private void createBasicTask() {
-        final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        final Command createTaskCmd = createCommand(createTask, COMMAND_CONTEXT);
-        commandBus.post(createTaskCmd, responseObserver);
-    }
+        TestResponseObserver responseObserver;
+        CommandBus commandBus;
+        TaskLabelsPart taskLabelsPart;
+        TaskId taskId;
+        LabelId labelId;
 
-    private void assignLabelToTask() {
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        taskLabelsPart.dispatchForTest(assignLabelToTask, COMMAND_CONTEXT);
-    }
+        @Override
+        protected void setUp() {
+            super.setUp();
+            taskLabelsPart = aggregatePart().get();
+            createLabel();
+        }
 
-    private void deleteTask() {
-        final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        final Command deleteTaskCmd = createCommand(deleteTask, COMMAND_CONTEXT);
-        commandBus.post(deleteTaskCmd, responseObserver);
-    }
+        @Override
+        protected TaskLabelsPart createAggregatePart() {
+            final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
+            commandBus = boundedContext.getCommandBus();
+            responseObserver = new TestResponseObserver();
+            taskId = createTaskId();
+            labelId = createLabelId();
+            final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, taskId);
+            return new TaskLabelsPart(root);
+        }
 
-    private void completeTask() {
-        final CompleteTask completeTask = completeTaskInstance(taskId);
-        final Command completeTaskCmd = createCommand(completeTask, COMMAND_CONTEXT);
-        commandBus.post(completeTaskCmd, responseObserver);
+        private void createLabel() {
+            final CreateBasicLabel createLabel = createLabelInstance(labelId);
+            final Command createLabelCmd = createDifferentCommand(createLabel);
+            commandBus.post(createLabelCmd, responseObserver);
+        }
+
+        void createBasicTask() {
+            final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
+            final Command createTaskCmd = createDifferentCommand(createTask);
+            commandBus.post(createTaskCmd, responseObserver);
+        }
+
+        void deleteTask() {
+            final DeleteTask deleteTask = deleteTaskInstance(taskId);
+            final Command deleteTaskCmd = createDifferentCommand(deleteTask);
+            commandBus.post(deleteTaskCmd, responseObserver);
+        }
+
+        void completeTask() {
+            final CompleteTask completeTask = completeTaskInstance(taskId);
+            final Command completeTaskCmd = createDifferentCommand(completeTask);
+            commandBus.post(completeTaskCmd, responseObserver);
+        }
+
+        static LabelId createLabelId() {
+            return LabelId.newBuilder()
+                          .setValue(newUuid())
+                          .build();
+        }
+
+        private static TaskId createTaskId() {
+            return TaskId.newBuilder()
+                         .setValue(newUuid())
+                         .build();
+        }
     }
 }
