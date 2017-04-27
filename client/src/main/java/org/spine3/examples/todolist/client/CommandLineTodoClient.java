@@ -238,8 +238,9 @@ public class CommandLineTodoClient implements TodoClient {
             if (isEmpty) {
                 return DraftTasksView.getDefaultInstance();
             }
-            final DraftTasksView result = responseObserver.queryResponses.get(0)
-                                                                         .unpack(DraftTasksView.class);
+            final DraftTasksView result =
+                    responseObserver.queryResponses.get(0)
+                                                   .unpack(DraftTasksView.class);
             return result;
         } catch (InvalidProtocolBufferException e) {
             throw Exceptions.wrappedCause(e);

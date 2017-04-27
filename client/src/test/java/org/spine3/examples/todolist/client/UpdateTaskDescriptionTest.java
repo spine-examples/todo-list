@@ -64,14 +64,17 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain the task view with updated task description")
         public void containUpdatedView() {
-            final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, true);
+            final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(
+                    UPDATED_TASK_DESCRIPTION, true);
             assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
         }
 
         @Test
-        @DisplayName("contain the task view with not updated task description when command has wrong ID")
+        @DisplayName("contain the task view with not updated task description " +
+                "when command has wrong ID")
         public void containNotUpdatedView() {
-            final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, false);
+            final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(
+                    UPDATED_TASK_DESCRIPTION, false);
             final String actualDescription = view.getDescription();
             assertNotEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
             assertEquals(DESCRIPTION, actualDescription);
@@ -83,16 +86,19 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
     class UpdateTaskDescriptionInDraftTasksView {
 
         @Test
-        @DisplayName("contain the task view with not updated task description when command has wrong ID")
+        @DisplayName("contain the task view with not updated task description " +
+                "when command has wrong ID")
         public void containNotUpdatedView() {
-            final TaskView view = obtainViewWhenHandledUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, false);
+            final TaskView view = obtainViewWhenHandledUpdateTaskDescription(
+                    UPDATED_TASK_DESCRIPTION, false);
             assertNotEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
         }
 
         @Test
         @DisplayName("contain the task view with updated task description")
         public void containUpdatedView() {
-            final TaskView view = obtainViewWhenHandledUpdateTaskDescription(UPDATED_TASK_DESCRIPTION, true);
+            final TaskView view = obtainViewWhenHandledUpdateTaskDescription(
+                    UPDATED_TASK_DESCRIPTION, true);
             assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
         }
     }
@@ -104,22 +110,26 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain the task view with updated task description")
         public void containUpdatedView() {
-            final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(UPDATED_TASK_DESCRIPTION, true);
+            final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(
+                    UPDATED_TASK_DESCRIPTION, true);
             final String actualDescription = view.getDescription();
             assertEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
         }
 
         @Test
-        @DisplayName("contain the task view with not updated task description when command has wrong ID")
+        @DisplayName("contain the task view with not updated task description " +
+                "when command has wrong ID")
         public void containNotUpdatedView() {
-            final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(UPDATED_TASK_DESCRIPTION, false);
+            final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(
+                    UPDATED_TASK_DESCRIPTION, false);
             final String actualDescription = view.getDescription();
             assertEquals(DESCRIPTION, actualDescription);
             assertNotEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
         }
     }
 
-    private TaskView obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(String newDescription, boolean isCorrectId) {
+    private TaskView obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(String newDescription,
+            boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 
@@ -136,7 +146,8 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private TaskView obtainViewWhenHandledCommandUpdateTaskDescription(String newDescription, boolean isCorrectId) {
+    private TaskView obtainViewWhenHandledCommandUpdateTaskDescription(String newDescription,
+            boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 
@@ -164,7 +175,7 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
     }
 
     private TaskView obtainViewWhenHandledUpdateTaskDescription(String newDescription,
-                                                                boolean isCorrectId) {
+            boolean isCorrectId) {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
         final TaskId createdTaskId = createDraft.getId();
@@ -190,11 +201,13 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private void updateDescription(String newDescription, boolean isCorrectId, CreateBasicTask createTask) {
+    private void updateDescription(String newDescription, boolean isCorrectId,
+            CreateBasicTask createTask) {
         final TaskId idOfCreatedTask = createTask.getId();
         final TaskId updatedTaskId = isCorrectId ? idOfCreatedTask : createWrongTaskId();
         final UpdateTaskDescription updateTaskDescription =
-                updateTaskDescriptionInstance(updatedTaskId, createTask.getDescription(), newDescription);
+                updateTaskDescriptionInstance(updatedTaskId, createTask.getDescription(),
+                                              newDescription);
         client.update(updateTaskDescription);
     }
 }

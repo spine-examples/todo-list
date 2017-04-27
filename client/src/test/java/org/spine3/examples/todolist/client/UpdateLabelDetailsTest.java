@@ -72,20 +72,23 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         @DisplayName("contain the task view with updated label details")
         public void containUpdatedView() {
             final LabelColor updatedColor = LabelColor.BLUE;
-            final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(updatedColor,
-                                                                                          UPDATED_LABEL_TITLE,
-                                                                                          true);
+            final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(
+                    updatedColor,
+                    UPDATED_LABEL_TITLE,
+                    true);
             assertEquals(UPDATED_LABEL_TITLE, view.getLabelTitle());
             assertEquals(EXPECTED_COLOR, view.getLabelColor());
         }
 
         @Test
-        @DisplayName("contain the task view with not updated label details when command has wrong task ID")
+        @DisplayName("contain the task view with not updated label details " +
+                "when command has wrong task ID")
         public void containNotUpdatedView() {
             final LabelColor updatedColor = LabelColor.BLUE;
-            final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(updatedColor,
-                                                                                          UPDATED_LABEL_TITLE,
-                                                                                          false);
+            final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(
+                    updatedColor,
+                    UPDATED_LABEL_TITLE,
+                    false);
             assertNotEquals(UPDATED_LABEL_TITLE, view.getLabelTitle());
             assertNotEquals(EXPECTED_COLOR, view.getLabelColor());
         }
@@ -99,15 +102,18 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         @DisplayName("contain the task view with updated label details")
         public void containUpdatedView() {
             final LabelColor newColor = LabelColor.BLUE;
-            final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor, true);
+            final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor,
+                                                                                     true);
             assertEquals(LabelColor.BLUE, view.getLabelColor());
         }
 
         @Test
-        @DisplayName("contain the task view with not updated label details when command has wrong task ID")
+        @DisplayName("contain the task view with not updated label details " +
+                "when command has wrong task ID")
         public void containNotUpdatedView() {
             final LabelColor newColor = LabelColor.BLUE;
-            final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor, false);
+            final TaskView view =
+                    obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor, false);
             assertNotEquals(newColor, view.getLabelColor());
         }
     }
@@ -123,23 +129,27 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
             client.create(createBasicLabel);
 
             final LabelColor newLabelColor = LabelColor.RED;
-            final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetails(newLabelColor, true);
+            final TaskView view =
+                    obtainTaskViewWhenHandledUpdateLabelDetails(newLabelColor, true);
             assertEquals(newLabelColor, view.getLabelColor());
         }
 
         @Test
-        @DisplayName("contain the task view with not updated label details when command has wrong task ID")
+        @DisplayName("contain the task view with not updated label details " +
+                "when command has wrong task ID")
         public void containNotUpdatedView() throws Exception {
             final CreateBasicLabel createBasicLabel = createBasicLabel();
             client.create(createBasicLabel);
 
             final LabelColor newLabelColor = LabelColor.RED;
-            final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetails(newLabelColor, false);
+            final TaskView view =
+                    obtainTaskViewWhenHandledUpdateLabelDetails(newLabelColor, false);
             assertNotEquals(newLabelColor, view.getLabelColor());
         }
     }
 
-    private TaskView obtainTaskViewWhenHandledUpdateLabelDetailsCommand(LabelColor newColor, boolean isCorrectId) {
+    private TaskView obtainTaskViewWhenHandledUpdateLabelDetailsCommand(LabelColor newColor,
+            boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 
@@ -149,7 +159,8 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         final TaskId idOfCreatedTask = createTask.getId();
         final LabelId idOfCreatedLabel = createLabel.getLabelId();
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfCreatedTask, idOfCreatedLabel);
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfCreatedTask,
+                                                                              idOfCreatedLabel);
         client.assignLabel(assignLabelToTask);
 
         final LabelId idOfUpdatedLabel = isCorrectId ? idOfCreatedLabel : createWrongTaskLabelId();
@@ -158,10 +169,11 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
                                                               .setColor(LabelColor.GRAY)
                                                               .setTitle(LABEL_TITLE)
                                                               .build();
-        final LabelDetails newLabelDetails = LabelDetails.newBuilder()
-                                                         .setTitle(TestLabelCommandFactory.UPDATED_LABEL_TITLE)
-                                                         .setColor(newColor)
-                                                         .build();
+        final LabelDetails newLabelDetails =
+                LabelDetails.newBuilder()
+                            .setTitle(TestLabelCommandFactory.UPDATED_LABEL_TITLE)
+                            .setColor(newColor)
+                            .build();
         final UpdateLabelDetails updateLabelDetails =
                 updateLabelDetailsInstance(idOfUpdatedLabel, previousLabelDetails, newLabelDetails);
         client.update(updateLabelDetails);
@@ -177,9 +189,10 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private LabelledTasksView obtainViewWhenHandledCommandUpdateLabelDetails(LabelColor updatedColor,
-                                                                             String updatedTitle,
-                                                                             boolean isCorrectId) {
+    private LabelledTasksView obtainViewWhenHandledCommandUpdateLabelDetails(
+            LabelColor updatedColor,
+            String updatedTitle,
+            boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 
@@ -217,7 +230,8 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private TaskView obtainTaskViewWhenHandledUpdateLabelDetails(LabelColor newLabelColor, boolean isCorrectId) {
+    private TaskView obtainTaskViewWhenHandledUpdateLabelDetails(LabelColor newLabelColor,
+            boolean isCorrectId) {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 
@@ -232,10 +246,11 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
 
         final LabelId updatedLabelId = isCorrectId ? labelId : createWrongTaskLabelId();
 
-        final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
-                                                              .setTitle(createBasicLabel.getLabelTitle())
-                                                              .setColor(LabelColor.GRAY)
-                                                              .build();
+        final LabelDetails previousLabelDetails =
+                LabelDetails.newBuilder()
+                            .setTitle(createBasicLabel.getLabelTitle())
+                            .setColor(LabelColor.GRAY)
+                            .build();
         final LabelDetails newLabelDetails = LabelDetails.newBuilder()
                                                          .setTitle(UPDATED_LABEL_TITLE)
                                                          .setColor(newLabelColor)
