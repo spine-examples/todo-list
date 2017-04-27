@@ -22,6 +22,7 @@ package org.spine3.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -62,6 +63,8 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
  */
 class TaskLabelsPartTest {
 
+    //TODO:2017-04-27:dmytro.grankin: Enable after repositories caching fix.
+    @Disabled
     @Nested
     @DisplayName("AssignLabelToTask command should be interpreted by TaskLabelsPart and")
     class AssignLabelToTaskCommand extends TaskLabelsCommandTest<AssignLabelToTask> {
