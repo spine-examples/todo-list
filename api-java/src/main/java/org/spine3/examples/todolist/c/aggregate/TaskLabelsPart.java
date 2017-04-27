@@ -51,8 +51,10 @@ import static org.spine3.examples.todolist.c.aggregate.failures.TaskLabelsPartFa
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings("unused") // The methods annotated with {@link Apply} are declared {@code private} by design.
-public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels.Builder, TaskAggregateRoot> {
+@SuppressWarnings("unused") // The methods annotated with {@link Apply} are declared
+// {@code private} by design.
+public class TaskLabelsPart
+        extends AggregatePart<TaskId, TaskLabels, TaskLabels.Builder, TaskAggregateRoot> {
 
     /**
      * {@inheritDoc}
@@ -89,7 +91,8 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
     }
 
     @Assign
-    List<? extends Message> handle(AssignLabelToTask cmd, CommandContext ctx) throws CannotAssignLabelToTask {
+    List<? extends Message> handle(AssignLabelToTask cmd, CommandContext ctx)
+            throws CannotAssignLabelToTask {
         final TaskId taskId = cmd.getId();
         final LabelId labelId = cmd.getLabelId();
 

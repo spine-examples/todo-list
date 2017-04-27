@@ -171,7 +171,8 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     }
 
     @Test
-    @DisplayName("throw CannotRestoreDeletedTask failure upon an attempt to restore the completed task")
+    @DisplayName("throw CannotRestoreDeletedTask failure upon an attempt to " +
+            "restore the completed task")
     public void cannotRestoreCompletedTask() {
         createBasicTask();
 

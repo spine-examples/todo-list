@@ -83,7 +83,8 @@ import static org.spine3.server.command.EventFactory.createEvent;
 public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
     private final EventContext eventContext = eventContextInstance();
-    private ProjectionRepository<LabelId, LabelledTasksViewProjection, LabelledTasksView> repository;
+    private ProjectionRepository<LabelId, LabelledTasksViewProjection,
+            LabelledTasksView> repository;
     private EventBus eventBus;
 
     @BeforeEach
@@ -100,7 +101,8 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("LabelAssignedToTask event should be interpreted by LabelledTasksViewProjection and")
+    @DisplayName("LabelAssignedToTask event should be interpreted " +
+            "by LabelledTasksViewProjection and")
     class LabelAssignedToTaskEvent {
 
         @Test
@@ -149,7 +151,8 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("LabelRemovedFromTask event should be interpreted by LabelledTasksViewProjection and")
+    @DisplayName("LabelRemovedFromTask event should be interpreted by " +
+            "LabelledTasksViewProjection and")
     class LabelRemovedFromTaskEvent {
 
         @Test
@@ -183,7 +186,8 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("LabelledTaskRestored event should be interpreted by LabelledTasksViewProjection and")
+    @DisplayName("LabelledTaskRestored event should be interpreted by " +
+            "LabelledTasksViewProjection and")
     class LabelledTaskRestoredEvent {
 
         @Test
@@ -262,7 +266,8 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskDescriptionUpdated event should be interpreted by LabelledTasksViewProjection and")
+    @DisplayName("TaskDescriptionUpdated event should be interpreted by " +
+            "LabelledTasksViewProjection and")
     class UpdateTaskDescriptionEvent {
 
         @Test
@@ -317,7 +322,8 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskPriorityUpdated event should be interpreted by LabelledTasksViewProjection and")
+    @DisplayName("TaskPriorityUpdated event should be interpreted by " +
+            "LabelledTasksViewProjection and")
     class TaskPriorityUpdatedEvent {
 
         @Test
@@ -369,7 +375,8 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("TaskDueDateUpdated event should be interpreted by LabelledTasksViewProjection and")
+    @DisplayName("TaskDueDateUpdated event should be interpreted by " +
+            "LabelledTasksViewProjection and")
     class TaskDueDateUpdatedEvent {
 
         @Test
@@ -531,7 +538,8 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
     }
 
     @Nested
-    @DisplayName("LabelDetailsUpdated event should be interpreted by LabelledTasksViewProjection and")
+    @DisplayName("LabelDetailsUpdated event should be interpreted by " +
+            "LabelledTasksViewProjection and")
     class LabelDetailsUpdatedEvent {
 
         private static final String UPDATED_LABEL_TITLE = "Updated label title.";

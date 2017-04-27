@@ -44,7 +44,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Illia Shepilov
  */
 @SuppressWarnings("Guava") // because com.google.common.base.Function is used
-                           // until the migration of Spine to Java 8 is performed.
+// until the migration of Spine to Java 8 is performed.
 public class TodoListEnrichmentConfiguration {
 
     private final TaskDefinitionRepository taskDefinitionRepo;
@@ -174,7 +174,8 @@ public class TodoListEnrichmentConfiguration {
         public TodoListEnrichmentConfiguration apply(EventBus eventBus) {
             checkNotNull(eventBus);
             this.eventBus = eventBus;
-            final TodoListEnrichmentConfiguration result = new TodoListEnrichmentConfiguration(this);
+            final TodoListEnrichmentConfiguration result =
+                    new TodoListEnrichmentConfiguration(this);
             return result;
         }
     }

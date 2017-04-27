@@ -60,9 +60,9 @@ class ProjectionHelper {
      */
     static TaskListView removeViewsByTaskId(List<TaskView> views, TaskId id) {
         final List<TaskView> taskViews = views.stream()
-                                        .filter(t -> t.getId()
-                                                      .equals(id))
-                                        .collect(Collectors.toList());
+                                              .filter(t -> t.getId()
+                                                            .equals(id))
+                                              .collect(Collectors.toList());
         final TaskListView result = removeTaskViews(views, taskViews);
         return result;
     }
@@ -76,9 +76,9 @@ class ProjectionHelper {
      */
     static TaskListView removeViewsByLabelId(List<TaskView> views, LabelId id) {
         final List<TaskView> taskViews = views.stream()
-                                        .filter(t -> t.getLabelId()
-                                                      .equals(id))
-                                        .collect(Collectors.toList());
+                                              .filter(t -> t.getLabelId()
+                                                            .equals(id))
+                                              .collect(Collectors.toList());
         final TaskListView result = removeTaskViews(views, taskViews);
         return result;
     }
@@ -131,7 +131,8 @@ class ProjectionHelper {
     static List<TaskView> updateTaskViewList(List<TaskView> views, LabelRemovedFromTask event) {
         final TaskId targetTaskId = event.getTaskId();
 
-        final TaskTransformation updateFn = builder -> builder.setLabelId(LabelId.getDefaultInstance());
+        final TaskTransformation updateFn =
+                builder -> builder.setLabelId(LabelId.getDefaultInstance());
         final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
         return result;
     }
@@ -241,10 +242,11 @@ class ProjectionHelper {
         return result;
     }
 
-    @SuppressWarnings("MethodWithMultipleLoops")    // It's fine, as there aren't a lot of transformations per task.
+    @SuppressWarnings("MethodWithMultipleLoops")    // It's fine, as there aren't a
+    // lot of transformations per task.
     private static List<TaskView> transformWithUpdate(List<TaskView> views,
-                                                      TaskId targetTaskId,
-                                                      TaskTransformation transformation) {
+            TaskId targetTaskId,
+            TaskTransformation transformation) {
         final int listSize = views.size();
         final List<TaskView> updatedList = new ArrayList<>(listSize);
         for (TaskView view : views) {

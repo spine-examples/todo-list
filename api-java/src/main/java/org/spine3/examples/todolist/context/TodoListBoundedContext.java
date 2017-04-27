@@ -69,12 +69,16 @@ public class TodoListBoundedContext {
     private static BoundedContext create() {
         final BoundedContext boundedContext = createBoundedContext();
 
-        final TaskDefinitionRepository taskDefinitionRepo = new TaskDefinitionRepository(boundedContext);
-        final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository(boundedContext);
+        final TaskDefinitionRepository taskDefinitionRepo =
+                new TaskDefinitionRepository(boundedContext);
+        final LabelAggregateRepository labelAggregateRepo =
+                new LabelAggregateRepository(boundedContext);
         final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository(boundedContext);
         final MyListViewRepository myListViewRepo = new MyListViewRepository(boundedContext);
-        final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository(boundedContext);
-        final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository(boundedContext);
+        final LabelledTasksViewRepository tasksViewRepo =
+                new LabelledTasksViewRepository(boundedContext);
+        final DraftTasksViewRepository draftTasksViewRepo =
+                new DraftTasksViewRepository(boundedContext);
 
         boundedContext.register(taskDefinitionRepo);
         boundedContext.register(taskLabelsRepo);

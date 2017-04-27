@@ -67,14 +67,16 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     @DisplayName("produce TaskDescriptionUpdated event")
     public void produceEvent() {
         dispatchCreateTaskCmd();
-        final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId);
+        final UpdateTaskDescription updateTaskDescriptionCmd =
+                updateTaskDescriptionInstance(taskId);
         final List<? extends Message> messageList =
                 aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
 
         assertEquals(1, messageList.size());
         assertEquals(TaskDescriptionUpdated.class, messageList.get(0)
                                                               .getClass());
-        final TaskDescriptionUpdated taskDescriptionUpdated = (TaskDescriptionUpdated) messageList.get(0);
+        final TaskDescriptionUpdated taskDescriptionUpdated =
+                (TaskDescriptionUpdated) messageList.get(0);
 
         assertEquals(taskId, taskDescriptionUpdated.getTaskId());
         final String newDescription = taskDescriptionUpdated.getDescriptionChange()
@@ -87,7 +89,8 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
             "upon an attempt to update the task by too short description")
     public void cannotUpdateTaskDescription() {
         try {
-            final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId, "", ".");
+            final UpdateTaskDescription updateTaskDescriptionCmd =
+                    updateTaskDescriptionInstance(taskId, "", ".");
             aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
@@ -106,7 +109,8 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
         try {
-            final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId);
+            final UpdateTaskDescription updateTaskDescriptionCmd =
+                    updateTaskDescriptionInstance(taskId);
             assertThrows(CannotUpdateTaskDescription.class, () ->
                     aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext));
         } catch (Throwable e) {
@@ -126,7 +130,8 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
         aggregate.dispatchForTest(completeTaskCmd, commandContext);
 
         try {
-            final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId);
+            final UpdateTaskDescription updateTaskDescriptionCmd =
+                    updateTaskDescriptionInstance(taskId);
             aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.

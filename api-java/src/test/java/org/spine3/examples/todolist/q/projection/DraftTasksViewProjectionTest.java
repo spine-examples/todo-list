@@ -296,7 +296,8 @@ public class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
 
-            final LabelAssignedToTask labelAssignedToTaskEvent = labelAssignedToTaskInstance(expectedTaskId, LABEL_ID);
+            final LabelAssignedToTask labelAssignedToTaskEvent =
+                    labelAssignedToTaskInstance(expectedTaskId, LABEL_ID);
             projection.on(labelAssignedToTaskEvent);
 
             final LabelColor updatedColor = LabelColor.BLUE;

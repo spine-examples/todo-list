@@ -64,7 +64,8 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskPriority failure upon an attempt to update the priority of the deleted task")
+    @DisplayName("throw CannotUpdateTaskPriority failure upon an attempt to " +
+            "update the priority of the deleted task")
     public void cannotUpdateDeletedTaskPriority() {
         dispatchCreateTaskCmd();
 
@@ -150,21 +151,25 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
             @SuppressWarnings("ConstantConditions")
             final Failures.CannotUpdateTaskPriority cannotUpdateTaskPriority =
                     ((CannotUpdateTaskPriority) cause).getFailureMessage();
-            final PriorityUpdateFailed priorityUpdateFailed = cannotUpdateTaskPriority.getUpdateFailed();
+            final PriorityUpdateFailed priorityUpdateFailed =
+                    cannotUpdateTaskPriority.getUpdateFailed();
             final TaskId actualTaskId = priorityUpdateFailed.getFailureDetails()
                                                             .getTaskId();
             assertEquals(taskId, actualTaskId);
 
             final ValueMismatch mismatch = priorityUpdateFailed.getPriorityMismatch();
-            final TaskPriorityValue expectedValue = TaskPriorityValue.newBuilder()
-                                                                     .setPriorityValue(TaskPriority.LOW)
-                                                                     .build();
-            final TaskPriorityValue actualValue = TaskPriorityValue.newBuilder()
-                                                                   .setPriorityValue(TaskPriority.TP_UNDEFINED)
-                                                                   .build();
-            final TaskPriorityValue newValue = TaskPriorityValue.newBuilder()
-                                                                .setPriorityValue(TaskPriority.HIGH)
-                                                                .build();
+            final TaskPriorityValue expectedValue =
+                    TaskPriorityValue.newBuilder()
+                                     .setPriorityValue(TaskPriority.LOW)
+                                     .build();
+            final TaskPriorityValue actualValue =
+                    TaskPriorityValue.newBuilder()
+                                     .setPriorityValue(TaskPriority.TP_UNDEFINED)
+                                     .build();
+            final TaskPriorityValue newValue =
+                    TaskPriorityValue.newBuilder()
+                                     .setPriorityValue(TaskPriority.HIGH)
+                                     .build();
             assertEquals(actualValue, unpack(mismatch.getActual()));
             assertEquals(expectedValue, unpack(mismatch.getExpected()));
             assertEquals(newValue, unpack(mismatch.getNewValue()));

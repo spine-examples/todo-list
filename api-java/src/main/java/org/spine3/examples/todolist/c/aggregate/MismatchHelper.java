@@ -51,22 +51,26 @@ class MismatchHelper {
      * @return new {@code ValueMismatch} instance
      */
     static ValueMismatch of(TaskPriority expectedPriority, TaskPriority actualPriority,
-                            TaskPriority newPriority, Version version) {
-        final TaskPriorityValue actualPriorityValue = TaskPriorityValue.newBuilder()
-                                                                       .setPriorityValue(actualPriority)
-                                                                       .build();
-        final TaskPriorityValue expectedPriorityValue = TaskPriorityValue.newBuilder()
-                                                                         .setPriorityValue(expectedPriority)
-                                                                         .build();
-        final TaskPriorityValue newPriorityValue = TaskPriorityValue.newBuilder()
-                                                                    .setPriorityValue(newPriority)
-                                                                    .build();
-        final ValueMismatch result = ValueMismatch.newBuilder()
-                                                  .setExpected(AnyPacker.pack(expectedPriorityValue))
-                                                  .setActual(AnyPacker.pack(actualPriorityValue))
-                                                  .setNewValue(AnyPacker.pack(newPriorityValue))
-                                                  .setVersion(version.getNumber())
-                                                  .build();
+            TaskPriority newPriority, Version version) {
+        final TaskPriorityValue actualPriorityValue =
+                TaskPriorityValue.newBuilder()
+                                 .setPriorityValue(actualPriority)
+                                 .build();
+        final TaskPriorityValue expectedPriorityValue =
+                TaskPriorityValue.newBuilder()
+                                 .setPriorityValue(expectedPriority)
+                                 .build();
+        final TaskPriorityValue newPriorityValue =
+                TaskPriorityValue.newBuilder()
+                                 .setPriorityValue(newPriority)
+                                 .build();
+        final ValueMismatch result =
+                ValueMismatch.newBuilder()
+                             .setExpected(AnyPacker.pack(expectedPriorityValue))
+                             .setActual(AnyPacker.pack(actualPriorityValue))
+                             .setNewValue(AnyPacker.pack(newPriorityValue))
+                             .setVersion(version.getNumber())
+                             .build();
         return result;
     }
 
@@ -79,7 +83,8 @@ class MismatchHelper {
      * @param version       the version of the entity in which the mismatch is discovered
      * @return new {@code ValueMismatch} instance
      */
-    static ValueMismatch of(String expectedValue, String actualValue, String newValue, Version version) {
+    static ValueMismatch of(String expectedValue, String actualValue, String newValue,
+            Version version) {
         final ValueMismatch result = StringMismatch.unexpectedValue(expectedValue,
                                                                     actualValue,
                                                                     newValue,
@@ -96,7 +101,8 @@ class MismatchHelper {
      * @param version      the version of the entity in which the mismatch is discovered
      * @return new {@code ValueMismatch} instance
      */
-    static ValueMismatch of(Timestamp expectedTime, Timestamp actualTime, Timestamp newTime, Version version) {
+    static ValueMismatch of(Timestamp expectedTime, Timestamp actualTime, Timestamp newTime,
+            Version version) {
         final ValueMismatch result = ValueMismatch.newBuilder()
                                                   .setExpected(AnyPacker.pack(expectedTime))
                                                   .setActual(AnyPacker.pack(actualTime))
@@ -116,7 +122,7 @@ class MismatchHelper {
      * @return new {@code ValueMismatch} instance
      */
     static ValueMismatch of(LabelDetails expectedLabelDetails, LabelDetails actualLabelDetails,
-                            LabelDetails newLabelDetails, Version version) {
+            LabelDetails newLabelDetails, Version version) {
         final ValueMismatch result = ValueMismatch.newBuilder()
                                                   .setActual(pack(actualLabelDetails))
                                                   .setExpected(pack(expectedLabelDetails))

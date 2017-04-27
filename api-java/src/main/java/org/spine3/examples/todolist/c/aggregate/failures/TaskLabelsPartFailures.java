@@ -41,14 +41,16 @@ public class TaskLabelsPartFailures {
     }
 
     /**
-     * Constructs and throws the {@link CannotAssignLabelToTask} failure according to the passed parameters.
+     * Constructs and throws the {@link CannotAssignLabelToTask} failure according to
+     * the passed parameters.
      *
      * @param cmd the {@code AssignLabelToTask} command which thrown the failure
      * @param ctx the {@code CommandContext}
      * @throws CannotAssignLabelToTask the failure to throw
      */
     public static void throwCannotAssignLabelToTaskFailure(AssignLabelToTask cmd,
-                                                           CommandContext ctx) throws CannotAssignLabelToTask {
+            CommandContext ctx)
+            throws CannotAssignLabelToTask {
         final FailedTaskCommandDetails commandFailed =
                 FailedTaskCommandDetails.newBuilder()
                                         .setTaskId(cmd.getId())
@@ -62,13 +64,15 @@ public class TaskLabelsPartFailures {
     }
 
     /**
-     * Constructs and throws the {@link CannotRemoveLabelFromTask} failure according to the passed parameters.
+     * Constructs and throws the {@link CannotRemoveLabelFromTask} failure according to
+     * the passed parameters.
      *
      * @param cmd the {@code AssignLabelToTask} command which thrown the failure
      * @param ctx the {@code CommandContext}
      * @throws CannotRemoveLabelFromTask the failure to throw
      */
-    public static void throwCannotRemoveLabelFromTaskFailure(RemoveLabelFromTask cmd, CommandContext ctx)
+    public static void throwCannotRemoveLabelFromTaskFailure(RemoveLabelFromTask cmd,
+            CommandContext ctx)
             throws CannotRemoveLabelFromTask {
         final FailedTaskCommandDetails commandFailed =
                 FailedTaskCommandDetails.newBuilder()
