@@ -61,7 +61,8 @@ public class TestCommandContextFactory {
      * @param when      indicates when was created context
      * @return constructed instance of the {@code CommandContext}
      */
-    public static CommandContext createCommandContext(UserId userId, CommandId commandId, Timestamp when) {
+    public static CommandContext createCommandContext(UserId userId, CommandId commandId,
+            Timestamp when) {
         final CommandContext.Builder builder = CommandContext.newBuilder()
                                                              .setCommandId(commandId)
                                                              .setActor(userId)

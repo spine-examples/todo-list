@@ -110,16 +110,18 @@ public class TestLabelCommandFactory {
      * @return the {@code UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelId id,
-                                                                LabelDetails previousLabelDetails,
-                                                                LabelDetails newLabelDetails) {
-        final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()
-                                                                        .setPreviousDetails(previousLabelDetails)
-                                                                        .setNewDetails(newLabelDetails)
-                                                                        .build();
-        final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
-                                                            .setId(id)
-                                                            .setLabelDetailsChange(labelDetailsChange)
-                                                            .build();
+            LabelDetails previousLabelDetails,
+            LabelDetails newLabelDetails) {
+        final LabelDetailsChange labelDetailsChange =
+                LabelDetailsChange.newBuilder()
+                                  .setPreviousDetails(previousLabelDetails)
+                                  .setNewDetails(newLabelDetails)
+                                  .build();
+        final UpdateLabelDetails result =
+                UpdateLabelDetails.newBuilder()
+                                  .setId(id)
+                                  .setLabelDetailsChange(labelDetailsChange)
+                                  .build();
         return result;
     }
 }
