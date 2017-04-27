@@ -62,7 +62,8 @@ public class Server {
         return result;
     }
 
-    private static GrpcContainer initGrpcContainer(CommandService commandService, QueryService queryService) {
+    private static GrpcContainer initGrpcContainer(CommandService commandService,
+            QueryService queryService) {
         final GrpcContainer result = GrpcContainer.newBuilder()
                                                   .addService(commandService)
                                                   .addService(queryService)
@@ -78,7 +79,8 @@ public class Server {
      */
     public void start() throws IOException {
         startServer();
-        log().info("Server started, listening to commands on the port " + DEFAULT_CLIENT_SERVICE_PORT);
+        log().info(
+                "Server started, listening to commands on the port " + DEFAULT_CLIENT_SERVICE_PORT);
         awaitTermination();
     }
 
