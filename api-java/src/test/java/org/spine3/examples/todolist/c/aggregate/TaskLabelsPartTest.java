@@ -149,7 +149,7 @@ class TaskLabelsPartTest {
 
         @Test
         @DisplayName("throw CannotRemoveLabelFromTask failure " +
-                "upon an attempt to remove the not existing label")
+                "upon an attempt to remove the not assigned label")
         void cannotRemoveNotExistingLabel() {
             assertThrows(CannotRemoveLabelFromTask.class,
                          () -> taskLabelsPart.handle(commandMessage().get(),

@@ -70,13 +70,13 @@ public class TaskLabelsPart extends AggregatePart<TaskId, TaskLabels, TaskLabels
         final TaskId taskId = cmd.getId();
 
         final TaskDefinition taskDefinitionState = getPartState(TaskDefinition.class);
-        final boolean isLabelExists = getState().getLabelIdsList()
-                                                .getIdsList()
-                                                .contains(labelId);
+        final boolean isLabelAssigned = getState().getLabelIdsList()
+                                                  .getIdsList()
+                                                  .contains(labelId);
         final boolean isValidTaskStatus =
                 isValidTaskStatusToRemoveLabel(taskDefinitionState.getTaskStatus());
 
-        if (!isLabelExists || !isValidTaskStatus) {
+        if (!isLabelAssigned || !isValidTaskStatus) {
             throwCannotRemoveLabelFromTaskFailure(cmd, ctx);
         }
 
