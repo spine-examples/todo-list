@@ -32,6 +32,7 @@ import org.spine3.examples.todolist.c.failures.CannotAssignLabelToTask;
 import org.spine3.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotAssignLabelToTaskFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotRemoveLabelFromTaskFailure;
 import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
@@ -40,52 +41,52 @@ import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
  * @author Illia Shepilov
  */
 @DisplayName("TaskLabelsPartFailures should")
-public class TaskLabelsPartFailuresTest {
+class TaskLabelsPartFailuresTest {
 
     private final TaskId taskId = TaskId.getDefaultInstance();
     private final LabelId labelId = LabelId.getDefaultInstance();
 
     @Test
     @DisplayName("have the private constructor")
-    public void havePrivateConstructor() {
+    void havePrivateConstructor() {
         assertHasPrivateParameterlessCtor(TaskLabelsPartFailures.class);
     }
 
     @Test
     @DisplayName("throw CannotRemoveLabelFromTask failure")
-    public void throwCannotRemoveLabelFromTask() {
+    void throwCannotRemoveLabelFromTask() {
         final RemoveLabelFromTask cmd = RemoveLabelFromTask.newBuilder()
                                                            .setId(taskId)
                                                            .setLabelId(labelId)
                                                            .build();
         final CommandContext ctx = CommandContext.getDefaultInstance();
-        try {
-            throwCannotRemoveLabelFromTaskFailure(cmd, ctx);
-        } catch (CannotRemoveLabelFromTask ex) {
-            final TaskId actual = ex.getFailureMessage()
-                                    .getRemoveLabelFailed()
-                                    .getFailureDetails()
-                                    .getTaskId();
-            assertEquals(taskId, actual);
-        }
+
+        final CannotRemoveLabelFromTask failure =
+                assertThrows(CannotRemoveLabelFromTask.class,
+                             () -> throwCannotRemoveLabelFromTaskFailure(cmd, ctx));
+        final TaskId actual = failure.getFailureMessage()
+                                     .getRemoveLabelFailed()
+                                     .getFailureDetails()
+                                     .getTaskId();
+        assertEquals(taskId, actual);
     }
 
     @Test
     @DisplayName("throw CannotAssignLabelToTask failure")
-    public void throwCannotAssignLabelToTask() {
+    void throwCannotAssignLabelToTask() {
         final AssignLabelToTask cmd = AssignLabelToTask.newBuilder()
                                                        .setLabelId(labelId)
                                                        .setId(taskId)
                                                        .build();
         final CommandContext ctx = CommandContext.getDefaultInstance();
-        try {
-            throwCannotAssignLabelToTaskFailure(cmd, ctx);
-        } catch (CannotAssignLabelToTask ex) {
-            final FailedTaskCommandDetails failedCommand = ex.getFailureMessage()
-                                                             .getAssignLabelFailed()
-                                                             .getFailureDetails();
-            final TaskId actualId = failedCommand.getTaskId();
-            assertEquals(taskId, actualId);
-        }
+
+        final CannotAssignLabelToTask failure =
+                assertThrows(CannotAssignLabelToTask.class,
+                             () -> throwCannotAssignLabelToTaskFailure(cmd, ctx));
+        final FailedTaskCommandDetails failedCommand = failure.getFailureMessage()
+                                                              .getAssignLabelFailed()
+                                                              .getFailureDetails();
+        final TaskId actualId = failedCommand.getTaskId();
+        assertEquals(taskId, actualId);
     }
 }
