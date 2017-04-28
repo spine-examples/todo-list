@@ -41,8 +41,10 @@ import org.spine3.examples.todolist.c.failures.Failures;
 
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
@@ -66,44 +68,39 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     @Test
     @DisplayName("throw CannotUpdateTaskPriority failure upon an attempt to " +
             "update the priority of the deleted task")
-    public void cannotUpdateDeletedTaskPriority() {
+    void cannotUpdateDeletedTaskPriority() {
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
-        try {
-            final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
-            aggregate.dispatchForTest(updateTaskPriorityCmd, commandContext);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskPriority);
-        }
+        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> aggregate.dispatchForTest(updateTaskPriorityCmd,
+                                                                         commandContext));
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskPriority.class));
+
     }
 
     @Test
     @DisplayName("throw CannotUpdateTaskPriority failure " +
             "upon an attempt to update the priority of the completed task")
-    public void cannotUpdateCompletedTaskPriority() {
+    void cannotUpdateCompletedTaskPriority() {
         dispatchCreateTaskCmd();
 
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
         aggregate.dispatchForTest(completeTaskCmd, commandContext);
 
-        try {
-            final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
-            aggregate.dispatchForTest(updateTaskPriorityCmd, commandContext);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskPriority);
-        }
+        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> aggregate.dispatchForTest(updateTaskPriorityCmd,
+                                                                         commandContext));
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskPriority.class));
     }
 
     @Test
     @DisplayName("produce TaskPriorityUpdated event")
-    public void produceEvent() {
+    void produceEvent() {
         dispatchCreateTaskCmd();
 
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
@@ -123,7 +120,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
 
     @Test
     @DisplayName("update the task priority")
-    public void updatePriority() {
+    void updatePriority() {
         final TaskPriority updatedPriority = TaskPriority.HIGH;
         dispatchCreateTaskCmd();
 
@@ -138,42 +135,40 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
 
     @Test
     @DisplayName("produce CannotUpdateTaskPriority failure")
-    public void produceFailure() {
-        try {
-            final UpdateTaskPriority updateTaskPriority =
-                    updateTaskPriorityInstance(taskId, TaskPriority.LOW, TaskPriority.HIGH);
-            aggregate.dispatchForTest(updateTaskPriority, commandContext);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskPriority);
+    void produceFailure() {
+        final UpdateTaskPriority updateTaskPriority =
+                updateTaskPriorityInstance(taskId, TaskPriority.LOW, TaskPriority.HIGH);
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> aggregate.dispatchForTest(updateTaskPriority,
+                                                                         commandContext));
+        final Throwable cause = Throwables.getRootCause(t);
+        assertThat(cause, instanceOf(CannotUpdateTaskPriority.class));
 
-            @SuppressWarnings("ConstantConditions")
-            final Failures.CannotUpdateTaskPriority cannotUpdateTaskPriority =
-                    ((CannotUpdateTaskPriority) cause).getFailureMessage();
-            final PriorityUpdateFailed priorityUpdateFailed =
-                    cannotUpdateTaskPriority.getUpdateFailed();
-            final TaskId actualTaskId = priorityUpdateFailed.getFailureDetails()
-                                                            .getTaskId();
-            assertEquals(taskId, actualTaskId);
+        @SuppressWarnings("ConstantConditions") // Instance type checked before.
+        final Failures.CannotUpdateTaskPriority cannotUpdateTaskPriority =
+                ((CannotUpdateTaskPriority) cause).getFailureMessage();
+        final PriorityUpdateFailed priorityUpdateFailed =
+                cannotUpdateTaskPriority.getUpdateFailed();
+        final TaskId actualTaskId = priorityUpdateFailed.getFailureDetails()
+                                                        .getTaskId();
+        assertEquals(taskId, actualTaskId);
 
-            final ValueMismatch mismatch = priorityUpdateFailed.getPriorityMismatch();
-            final TaskPriorityValue expectedValue =
-                    TaskPriorityValue.newBuilder()
-                                     .setPriorityValue(TaskPriority.LOW)
-                                     .build();
-            final TaskPriorityValue actualValue =
-                    TaskPriorityValue.newBuilder()
-                                     .setPriorityValue(TaskPriority.TP_UNDEFINED)
-                                     .build();
-            final TaskPriorityValue newValue =
-                    TaskPriorityValue.newBuilder()
-                                     .setPriorityValue(TaskPriority.HIGH)
-                                     .build();
-            assertEquals(actualValue, unpack(mismatch.getActual()));
-            assertEquals(expectedValue, unpack(mismatch.getExpected()));
-            assertEquals(newValue, unpack(mismatch.getNewValue()));
-        }
+        final ValueMismatch mismatch = priorityUpdateFailed.getPriorityMismatch();
+        final TaskPriorityValue expectedValue =
+                TaskPriorityValue.newBuilder()
+                                 .setPriorityValue(TaskPriority.LOW)
+                                 .build();
+        final TaskPriorityValue actualValue =
+                TaskPriorityValue.newBuilder()
+                                 .setPriorityValue(TaskPriority.TP_UNDEFINED)
+                                 .build();
+        final TaskPriorityValue newValue =
+                TaskPriorityValue.newBuilder()
+                                 .setPriorityValue(TaskPriority.HIGH)
+                                 .build();
+        assertEquals(actualValue, unpack(mismatch.getActual()));
+        assertEquals(expectedValue, unpack(mismatch.getExpected()));
+        assertEquals(newValue, unpack(mismatch.getNewValue()));
     }
 
     private void dispatchCreateTaskCmd() {
