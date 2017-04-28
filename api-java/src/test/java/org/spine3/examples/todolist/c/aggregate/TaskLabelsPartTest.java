@@ -64,6 +64,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
 class TaskLabelsPartTest {
 
     //TODO:2017-04-27:dmytro.grankin: Enable after repositories caching fix.
+    //https://github.com/SpineEventEngine/core-java/issues/449
     @Disabled
     @Nested
     @DisplayName("AssignLabelToTask command should be interpreted by TaskLabelsPart and")
