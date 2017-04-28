@@ -32,7 +32,6 @@ import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.q.projection.TaskView;
-import org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -41,7 +40,7 @@ import static com.google.common.collect.Sets.newHashSet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.*;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 
 /**
  * @author Illia Shepilov

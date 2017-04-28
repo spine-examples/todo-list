@@ -48,13 +48,12 @@ public class TestEventEnricherFactory {
                                                                .setDescription(DESCRIPTION)
                                                                .setPriority(TaskPriority.LOW)
                                                                .build();
-    private static final TaskDefinition TASK_DEFINITION = TaskDefinition.newBuilder()
-                                                                        .setDescription(DESCRIPTION)
-                                                                        .setDueDate(
-                                                                                getCurrentTime())
-                                                                        .setPriority(
-                                                                                TaskPriority.NORMAL)
-                                                                        .build();
+    private static final TaskDefinition TASK_DEFINITION =
+            TaskDefinition.newBuilder()
+                          .setDescription(DESCRIPTION)
+                          .setDueDate(getCurrentTime())
+                          .setPriority(TaskPriority.NORMAL)
+                          .build();
     private static final LabelDetails LABEL_DETAILS = LabelDetails.newBuilder()
                                                                   .setColor(LabelColor.BLUE)
                                                                   .setTitle(LABEL_TITLE)

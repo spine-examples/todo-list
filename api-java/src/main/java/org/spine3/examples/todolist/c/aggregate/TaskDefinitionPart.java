@@ -76,6 +76,7 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static org.spine3.examples.todolist.c.aggregate.MismatchHelper.of;
+import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.ensureNeitherCompletedNorDeleted;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.ensureNotDeleted;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidCreateDraftCommand;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidTransition;
@@ -455,8 +456,7 @@ public class TaskDefinitionPart
             throwCannotUpdateTooShortDescriptionFailure(cmd, ctx);
         }
 
-        boolean isValid = TaskFlowValidator.ensureNeitherCompletedNorDeleted(
-                getState().getTaskStatus());
+        boolean isValid = ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
 
         if (!isValid) {
             throwCannotUpdateTaskDescriptionFailure(cmd, ctx);
