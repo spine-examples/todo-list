@@ -39,20 +39,20 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCR
  * @author Illia Shepilov
  */
 @DisplayName("After execution of CreateBasicTask command")
-public class CreateBasicTaskTest extends CommandLineTodoClientTest {
+class CreateBasicTaskTest extends CommandLineTodoClientTest {
 
     private TodoClient client;
 
     @BeforeEach
     @Override
-    public void setUp() throws InterruptedException {
+    void setUp() throws InterruptedException {
         super.setUp();
         client = getClient();
     }
-    
+
     @Test
     @DisplayName("LabelledTasksView should be empty")
-    public void obtainEmptyLabelledTasksView() {
+    void obtainEmptyLabelledTasksView() {
         final CreateBasicTask createBasicTask = createBasicTask();
         client.create(createBasicTask);
 
@@ -62,19 +62,19 @@ public class CreateBasicTaskTest extends CommandLineTodoClientTest {
 
     @Test
     @DisplayName("DraftTaskView should be empty")
-    public void obtainEmptyDraftViewList() {
+    void obtainEmptyDraftViewList() {
         final CreateBasicTask createBasicTask = createBasicTask();
         client.create(createBasicTask);
 
         final List<TaskView> taskViews = client.getDraftTasksView()
-                                                    .getDraftTasks()
-                                                    .getItemsList();
+                                               .getDraftTasks()
+                                               .getItemsList();
         assertTrue(taskViews.isEmpty());
     }
 
     @Test
     @DisplayName("MyListView should contain the created task")
-    public void obtainMyListView() {
+    void obtainMyListView() {
         final CreateBasicTask createFirstTask = createBasicTask();
         client.create(createFirstTask);
 
@@ -82,8 +82,8 @@ public class CreateBasicTaskTest extends CommandLineTodoClientTest {
         client.create(createSecondTask);
 
         final List<TaskView> taskViews = client.getMyListView()
-                                                    .getMyList()
-                                                    .getItemsList();
+                                               .getMyList()
+                                               .getItemsList();
         assertEquals(2, taskViews.size());
 
         final TaskView firstView = taskViews.get(0);

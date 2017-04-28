@@ -33,9 +33,8 @@ import static org.spine3.base.Identifiers.newUuid;
 abstract class ProjectionTest {
 
     TaskListId createTaskListId() {
-        final TaskListId taskListId = TaskListId.newBuilder()
-                                                .setValue(newUuid())
-                                                .build();
-        return taskListId;
+        return TaskListId.newBuilder()
+                         .setValue(newUuid())
+                         .build();
     }
 }

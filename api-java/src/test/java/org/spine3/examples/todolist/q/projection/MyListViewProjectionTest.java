@@ -66,7 +66,7 @@ import static org.spine3.protobuf.Timestamps2.getCurrentTime;
 /**
  * @author Illia Shepilov
  */
-public class MyListViewProjectionTest extends ProjectionTest {
+class MyListViewProjectionTest extends ProjectionTest {
 
     private MyListViewProjection projection;
 
@@ -82,7 +82,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("add TaskView to MyListView")
-        public void addView() {
+        void addView() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -103,7 +103,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("remove TaskView from MyListView")
-        public void removeView() {
+        void removeView() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
             projection.on(taskCreatedEvent);
@@ -124,7 +124,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("update the task description in MyListView")
-        public void updateDescription() {
+        void updateDescription() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -145,7 +145,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("not update the task description in MyListView by wrong task ID")
-        public void notUpdateDescription() {
+        void notUpdateDescription() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -172,7 +172,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("update the task due date on MyListView")
-        public void updateDueDate() {
+        void updateDueDate() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -195,7 +195,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("not update the task due date in MyListView by wrong task ID")
-        public void doeNotUpdateDueDate() {
+        void doeNotUpdateDueDate() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -221,7 +221,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("update the task priority in MyListView")
-        public void updatePriority() {
+        void updatePriority() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -244,7 +244,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("not update the task priority in MyListView by wrong task ID")
-        public void notUpdatePriority() {
+        void notUpdatePriority() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -271,7 +271,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("update the label details in MyListView")
-        public void updateLabelDetails() {
+        void updateLabelDetails() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -299,7 +299,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("not update the label details in MyListView by wrong label ID")
-        public void doesNotUpdateLabelDetails() {
+        void doesNotUpdateLabelDetails() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -333,7 +333,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("set `completed` to `true` in MyListView")
-        public void completeTask() {
+        void completeTask() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -353,7 +353,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("not set `completed` to `true` in MyListView by wrong task ID")
-        public void doesNotComplete() {
+        void doesNotComplete() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -379,7 +379,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("set `completed` to `false` in MyListView")
-        public void reopenTask() {
+        void reopenTask() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
@@ -402,7 +402,7 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("not set `completed` to `true` by wrong task ID")
-        public void notReopenTask() {
+        void notReopenTask() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 

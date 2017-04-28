@@ -36,13 +36,13 @@ class EnrichmentHelperTest {
 
     @Test
     @DisplayName("have the private constructor")
-    public void havePrivateConstructor() {
+    void havePrivateConstructor() {
         assertHasPrivateParameterlessCtor(EnrichmentHelper.class);
     }
 
     @Test
     @DisplayName("throw EnrichmentNotFoundException when enrichment is not present")
-    public void throwException() {
+    void throwException() {
         assertThrows(EnrichmentNotFoundException.class, () ->
                 EnrichmentHelper.getEnrichment(TaskEnrichment.class, eventContextInstance()));
     }

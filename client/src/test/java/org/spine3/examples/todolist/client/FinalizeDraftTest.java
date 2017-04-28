@@ -45,13 +45,13 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
  * @author Illia Shepilov
  */
 @DisplayName("After execution of FinalizeDraft command")
-public class FinalizeDraftTest extends CommandLineTodoClientTest {
+class FinalizeDraftTest extends CommandLineTodoClientTest {
 
     private TodoClient client;
 
     @BeforeEach
     @Override
-    public void setUp() throws InterruptedException {
+    void setUp() throws InterruptedException {
         super.setUp();
         client = getClient();
     }
@@ -62,7 +62,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view")
-        public void obtainView() {
+        void obtainView() {
             final CreateDraft createDraft = createDraftTask();
 
             List<TaskView> views = client.getMyListView()
@@ -92,7 +92,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view")
-        public void obtainView() {
+        void obtainView() {
             final CreateDraft createDraft = createDraftTask();
 
             final CreateBasicLabel createBasicLabel = createBasicLabel();
@@ -126,7 +126,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("be empty")
-        public void obtainEmptyViewsWhenDraftIsFinalized() {
+        void obtainEmptyViewsWhenDraftIsFinalized() {
             final CreateDraft createDraft = createDraftTask();
 
             DraftTasksView draftTasksView = client.getDraftTasksView();
@@ -147,7 +147,7 @@ public class FinalizeDraftTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("not be empty when command has wrong task ID")
-        public void obtainViewWhenFinalizedWrongDraft() {
+        void obtainViewWhenFinalizedWrongDraft() {
             final CreateDraft createDraft = createDraftTask();
             final TaskId taskId = createDraft.getId();
 

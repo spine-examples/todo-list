@@ -46,20 +46,20 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
  * @author Illia Shepilov
  */
 @DisplayName("After execution of RestoreDeletedTask command")
-public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
+class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
 
     private TodoClient client;
 
     @BeforeEach
     @Override
-    public void setUp() throws InterruptedException {
+    void setUp() throws InterruptedException {
         super.setUp();
         client = getClient();
     }
 
     @Test
     @DisplayName("LabelledTasksView should contain restored task")
-    public void containRestoredTask() {
+    void containRestoredTask() {
         final CreateBasicTask createTask = createTask();
         final CreateBasicLabel createLabel = createLabel();
 
@@ -89,7 +89,7 @@ public class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
     @Test
     @DisplayName("LabelledTasksView should not contain restored task " +
             "when command has wrong task ID")
-    public void containEmptyView() {
+    void containEmptyView() {
         final CreateBasicTask createTask = createTask();
         final CreateBasicLabel createLabel = createLabel();
 

@@ -37,20 +37,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of CreateDraft command")
-public class CreateDraftTest extends CommandLineTodoClientTest {
+class CreateDraftTest extends CommandLineTodoClientTest {
 
     private TodoClient client;
 
     @BeforeEach
     @Override
-    public void setUp() throws InterruptedException {
+    void setUp() throws InterruptedException {
         super.setUp();
         client = getClient();
     }
 
     @Test
     @DisplayName("DraftTasksView should contain the task view")
-    public void obtainDraftView() {
+    void obtainDraftView() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 
@@ -64,7 +64,7 @@ public class CreateDraftTest extends CommandLineTodoClientTest {
 
     @Test
     @DisplayName("LabelledTasksView should not contain the task view")
-    public void obtainLabelledView() {
+    void obtainLabelledView() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 
@@ -74,13 +74,13 @@ public class CreateDraftTest extends CommandLineTodoClientTest {
 
     @Test
     @DisplayName("MyListView should not contain task view")
-    public void ObtainMyListView() {
+    void ObtainMyListView() {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 
         final List<TaskView> taskViews = client.getMyListView()
-                                                    .getMyList()
-                                                    .getItemsList();
+                                               .getMyList()
+                                               .getItemsList();
         assertTrue(taskViews.isEmpty());
     }
 }
