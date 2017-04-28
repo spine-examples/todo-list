@@ -23,6 +23,7 @@ package org.spine3.examples.todolist.c.aggregate.definition;
 import com.google.common.base.Throwables;
 import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -90,6 +91,10 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         aggregate = new TaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
+    //TODO:2017-04-27:dmytro.grankin: Enable after repositories caching fix.
+    //https://github.com/SpineEventEngine/core-java/issues/449
+    //Event is not produced in reason of receiving invalid TaskLabels state due to repo caching.
+    @Disabled
     @Test
     @DisplayName("produce LabelledTaskRestored event")
     void produceEvent() {
@@ -131,7 +136,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
                       .findFirst()
                       .map(event -> AnyPacker.unpack(event.getMessage()))
                       .map(LabelledTaskRestored.class::cast)
-                      .orElse(LabelledTaskRestored.getDefaultInstance());
+                      .orElseThrow(() -> new IllegalStateException("Event was not produced."));
         assertEquals(taskId, labelledTaskRestored.getTaskId());
         assertEquals(LABEL_ID, labelledTaskRestored.getLabelId());
     }
