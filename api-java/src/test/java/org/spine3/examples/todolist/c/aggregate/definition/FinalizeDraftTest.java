@@ -31,8 +31,10 @@ import org.spine3.examples.todolist.c.commands.DeleteTask;
 import org.spine3.examples.todolist.c.commands.FinalizeDraft;
 import org.spine3.examples.todolist.c.failures.CannotFinalizeDraft;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.examples.todolist.TaskStatus.DRAFT;
 import static org.spine3.examples.todolist.TaskStatus.FINALIZED;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
@@ -55,7 +57,7 @@ public class FinalizeDraftTest extends TaskDefinitionCommandTest<FinalizeDraft> 
 
     @Test
     @DisplayName("finalize the task")
-    public void finalizeTask() {
+    void finalizeTask() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);
 
@@ -74,34 +76,28 @@ public class FinalizeDraftTest extends TaskDefinitionCommandTest<FinalizeDraft> 
 
     @Test
     @DisplayName("throw CannotFinalizeDraft failure upon an attempt to finalize the deleted task")
-    public void cannotFinalizeDeletedTask() {
+    void cannotFinalizeDeletedTask() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         aggregate.dispatchForTest(createTaskCmd, commandContext);
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
-        try {
-            final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
-            aggregate.dispatchForTest(finalizeDraftCmd, commandContext);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotFinalizeDraft);
-        }
+        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> aggregate.dispatchForTest(finalizeDraftCmd,
+                                                                         commandContext));
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotFinalizeDraft.class));
     }
 
     @Test
     @DisplayName("throw CannotFinalizeDraft failure upon an attempt to finalize " +
             "the task which is not a draft")
-    public void cannotFinalizeNotDraftTask() {
-        try {
-            final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
-            aggregate.dispatchForTest(finalizeDraftCmd, commandContext);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotFinalizeDraft);
-        }
+    void cannotFinalizeNotDraftTask() {
+        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> aggregate.dispatchForTest(finalizeDraftCmd,
+                                                                         commandContext));
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotFinalizeDraft.class));
     }
 }
