@@ -95,7 +95,7 @@ enum TaskStatusTransition {
      * @param currentStatus current status of the task
      * @param newStatus     suggested new status of the task
      * @return {@code true} if passed statuses satisfy one of the transitions,
-     * {@code false} otherwise
+     *         {@code false} otherwise
      */
     static boolean isValid(TaskStatus currentStatus, TaskStatus newStatus) {
         for (TaskStatusTransition transition : TaskStatusTransition.values()) {
