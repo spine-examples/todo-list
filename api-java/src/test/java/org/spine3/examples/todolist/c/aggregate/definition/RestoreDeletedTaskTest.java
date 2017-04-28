@@ -92,7 +92,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
 
     @Test
     @DisplayName("produce LabelledTaskRestored event")
-    public void produceEvent() {
+    void produceEvent() {
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
         final Command createTaskCmd = Commands.createCommand(createTask, commandContext);
         commandBus.post(createTaskCmd, responseObserver);
@@ -138,7 +138,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
 
     @Test
     @DisplayName("restore the deleted task")
-    public void restoreTask() {
+    void restoreTask() {
         createBasicTask();
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
@@ -153,7 +153,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
 
     @Test
     @DisplayName("restore the deleted task draft")
-    public void restoreDraft() {
+    void restoreDraft() {
         createDraft();
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
@@ -173,7 +173,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
     @Test
     @DisplayName("throw CannotRestoreDeletedTask failure upon an attempt to " +
             "restore the completed task")
-    public void cannotRestoreCompletedTask() {
+    void cannotRestoreCompletedTask() {
         createBasicTask();
 
         final CompleteTask completeTask = completeTaskInstance(taskId);
@@ -185,7 +185,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
 
     @Test
     @DisplayName("throw CannotRestoreDeletedTask upon an attempt to restore the finalized task")
-    public void cannotRestoreFinalizedTask() {
+    void cannotRestoreFinalizedTask() {
         createBasicTask();
 
         final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
@@ -194,7 +194,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
 
     @Test
     @DisplayName("throw CannotRestoreDeletedTask upon an attempt to restore the draft")
-    public void cannotRestoreDraft() {
+    void cannotRestoreDraft() {
         createDraft();
 
         final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
