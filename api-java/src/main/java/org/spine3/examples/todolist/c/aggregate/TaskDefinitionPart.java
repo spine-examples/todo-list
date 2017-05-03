@@ -225,8 +225,7 @@ public class TaskDefinitionPart
             final TaskPriority newPriority = priorityChange.getNewValue();
             final ValueMismatch mismatch = of(expectedPriority, actualPriority, newPriority,
                                               getVersion());
-            throwCannotUpdateTaskPriority(cmd, ctx,
-                                          mismatch);
+            throwCannotUpdateTaskPriority(cmd, ctx, mismatch);
         }
 
         final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
