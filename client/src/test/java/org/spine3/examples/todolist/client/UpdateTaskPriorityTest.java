@@ -68,7 +68,7 @@ class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain the task view with not updated task priority " +
+        @DisplayName("contain the task view with non-updated task priority " +
                 "when command has wrong task ID")
         void containNotUpdated() {
             final TaskPriority newPriority = TaskPriority.HIGH;
@@ -93,7 +93,7 @@ class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view with not updated task priority " +
+        @DisplayName("contain task view with non-updated task priority " +
                 "when command has wrong task ID")
         void containNotUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
@@ -119,7 +119,7 @@ class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view with not updated task priority " +
+        @DisplayName("contain task view with non-updated task priority " +
                 "when command has wrong task ID")
         void containNotUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;

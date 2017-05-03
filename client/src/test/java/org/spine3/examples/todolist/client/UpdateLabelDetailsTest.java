@@ -81,7 +81,7 @@ class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain the task view with not updated label details " +
+        @DisplayName("contain the task view with non-updated label details " +
                 "when command has wrong task ID")
         void containNotUpdatedView() {
             final LabelColor updatedColor = LabelColor.BLUE;
@@ -108,7 +108,7 @@ class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain the task view with not updated label details " +
+        @DisplayName("contain the task view with non-updated label details " +
                 "when command has wrong task ID")
         void containNotUpdatedView() {
             final LabelColor newColor = LabelColor.BLUE;
@@ -135,7 +135,7 @@ class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain the task view with not updated label details " +
+        @DisplayName("contain the task view with non-updated label details " +
                 "when command has wrong task ID")
         void containNotUpdatedView() throws Exception {
             final CreateBasicLabel createBasicLabel = createBasicLabel();

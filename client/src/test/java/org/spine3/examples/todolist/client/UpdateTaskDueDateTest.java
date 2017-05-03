@@ -72,7 +72,7 @@ class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain the task view with not updated due date " +
+        @DisplayName("contain the task view with non-updated due date " +
                 "when command has wrong task ID")
         void containNotUpdatedView() {
             final Timestamp newDueDate = getCurrentTime();
@@ -97,7 +97,7 @@ class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain the task view with not updated due date " +
+        @DisplayName("contain the task view with non-updated due date " +
                 "when command has wrong task ID")
         void containNotUpdatedView() {
             final Timestamp newDueDate = getCurrentTime();
@@ -122,7 +122,7 @@ class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view with not updated due date when command has wrong task ID")
+        @DisplayName("contain task view with non-updated due date when command has wrong task ID")
         void containNotUpdatedView() {
             final Timestamp newDueDate = getCurrentTime();
             final TaskView view =

@@ -70,7 +70,7 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain the task view with not updated task description " +
+        @DisplayName("contain the task view with non-updated task description " +
                 "when command has wrong ID")
         void containNotUpdatedView() {
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(
@@ -86,7 +86,7 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
     class UpdateTaskDescriptionInDraftTasksView {
 
         @Test
-        @DisplayName("contain the task view with not updated task description " +
+        @DisplayName("contain the task view with non-updated task description " +
                 "when command has wrong ID")
         void containNotUpdatedView() {
             final TaskView view = obtainViewWhenHandledUpdateTaskDescription(
@@ -117,7 +117,7 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain the task view with not updated task description " +
+        @DisplayName("contain the task view with non-updated task description " +
                 "when command has wrong ID")
         void containNotUpdatedView() {
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(
