@@ -26,6 +26,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.spine3.change.ValueMismatch;
+import org.spine3.examples.todolist.PriorityChange;
 import org.spine3.examples.todolist.PriorityUpdateFailed;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
@@ -45,6 +46,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.spine3.examples.todolist.TaskPriority.HIGH;
+import static org.spine3.examples.todolist.TaskPriority.LOW;
+import static org.spine3.examples.todolist.TaskPriority.TP_UNDEFINED;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
@@ -115,17 +119,17 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
         assertEquals(taskId, taskPriorityUpdated.getTaskId());
         final TaskPriority newPriority = taskPriorityUpdated.getPriorityChange()
                                                             .getNewValue();
-        assertEquals(TaskPriority.HIGH, newPriority);
+        assertEquals(HIGH, newPriority);
     }
 
     @Test
     @DisplayName("update the task priority")
     void updatePriority() {
-        final TaskPriority updatedPriority = TaskPriority.HIGH;
+        final TaskPriority updatedPriority = HIGH;
         dispatchCreateTaskCmd();
 
         final UpdateTaskPriority updateTaskPriorityCmd =
-                updateTaskPriorityInstance(taskId, TaskPriority.TP_UNDEFINED, updatedPriority);
+                updateTaskPriorityInstance(taskId, TP_UNDEFINED, updatedPriority);
         aggregate.dispatchForTest(envelopeOf(updateTaskPriorityCmd));
         final TaskDefinition state = aggregate.getState();
 
@@ -136,8 +140,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     @Test
     @DisplayName("produce CannotUpdateTaskPriority failure")
     void produceFailure() {
-        final UpdateTaskPriority updateTaskPriority =
-                updateTaskPriorityInstance(taskId, TaskPriority.LOW, TaskPriority.HIGH);
+        final UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(taskId, LOW, HIGH);
         final Throwable t = assertThrows(Throwable.class,
                                          () -> aggregate.dispatchForTest(
                                                  envelopeOf(updateTaskPriority)));
@@ -153,19 +156,11 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
                                                         .getTaskId();
         assertEquals(taskId, actualTaskId);
 
+        final PriorityChange priorityChange = updateTaskPriority.getPriorityChange();
         final ValueMismatch mismatch = priorityUpdateFailed.getPriorityMismatch();
-        final TaskPriorityValue expectedValue =
-                TaskPriorityValue.newBuilder()
-                                 .setPriorityValue(TaskPriority.LOW)
-                                 .build();
-        final TaskPriorityValue actualValue =
-                TaskPriorityValue.newBuilder()
-                                 .setPriorityValue(TaskPriority.TP_UNDEFINED)
-                                 .build();
-        final TaskPriorityValue newValue =
-                TaskPriorityValue.newBuilder()
-                                 .setPriorityValue(TaskPriority.HIGH)
-                                 .build();
+        final TaskPriorityValue expectedValue = priorityValueOf(priorityChange.getPreviousValue());
+        final TaskPriorityValue actualValue = priorityValueOf(TP_UNDEFINED);
+        final TaskPriorityValue newValue = priorityValueOf(priorityChange.getNewValue());
         assertEquals(actualValue, unpack(mismatch.getActual()));
         assertEquals(expectedValue, unpack(mismatch.getExpected()));
         assertEquals(newValue, unpack(mismatch.getNewValue()));
@@ -174,5 +169,11 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
     private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         aggregate.dispatchForTest(envelopeOf(createTaskCmd));
+    }
+
+    private TaskPriorityValue priorityValueOf(TaskPriority taskPriority) {
+        return TaskPriorityValue.newBuilder()
+                                .setPriorityValue(taskPriority)
+                                .build();
     }
 }
