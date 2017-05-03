@@ -82,18 +82,18 @@ import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValid
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidTransition;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskPriorityCommand;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotCompleteTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotDeleteTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotFinalizeDraftFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotReopenTaskFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotRestoreDeletedTaskFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotCompleteTask;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotDeleteTask;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotFinalizeDraft;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotReopenTask;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotRestoreDeletedTask;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDateFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriorityFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTooShortDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateDescription;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriority;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTooShortDescription;
 import static org.spine3.time.Time.getCurrentTime;
 import static org.spine3.time.Timestamps2.compare;
 
@@ -156,7 +156,7 @@ public class TaskDefinitionPart
             final String newDescription = change.getNewValue();
             final ValueMismatch mismatch = of(expectedDescription, actualDescription,
                                               newDescription, getVersion());
-            throwCannotUpdateDescriptionFailure(cmd, ctx, mismatch);
+            throwCannotUpdateDescription(cmd, ctx, mismatch);
         }
 
         final TaskDescriptionUpdated taskDescriptionUpdated =
@@ -178,7 +178,7 @@ public class TaskDefinitionPart
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            throwCannotUpdateTaskDueDateFailure(cmd, ctx);
+            throwCannotUpdateTaskDueDate(cmd, ctx);
         }
 
         final TimestampChange change = cmd.getDueDateChange();
@@ -191,7 +191,7 @@ public class TaskDefinitionPart
             final Timestamp newDueDate = change.getNewValue();
             final ValueMismatch mismatch = of(expectedDueDate, actualDueDate,
                                               newDueDate, getVersion());
-            throwCannotUpdateTaskDueDateFailure(cmd, ctx, mismatch);
+            throwCannotUpdateTaskDueDate(cmd, ctx, mismatch);
         }
 
         final TaskDueDateUpdated taskDueDateUpdated =
@@ -212,7 +212,7 @@ public class TaskDefinitionPart
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            throwCannotUpdateTaskPriorityFailure(cmd, ctx);
+            throwCannotUpdateTaskPriority(cmd, ctx);
         }
 
         final PriorityChange priorityChange = cmd.getPriorityChange();
@@ -225,7 +225,8 @@ public class TaskDefinitionPart
             final TaskPriority newPriority = priorityChange.getNewValue();
             final ValueMismatch mismatch = of(expectedPriority, actualPriority, newPriority,
                                               getVersion());
-            throwCannotUpdateTaskPriorityFailure(cmd, ctx, mismatch);
+            throwCannotUpdateTaskPriority(cmd, ctx,
+                                          mismatch);
         }
 
         final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
@@ -245,7 +246,7 @@ public class TaskDefinitionPart
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            throwCannotReopenTaskFailure(cmd, ctx);
+            throwCannotReopenTask(cmd, ctx);
         }
 
         final TaskReopened taskReopened = TaskReopened.newBuilder()
@@ -264,7 +265,7 @@ public class TaskDefinitionPart
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            throwCannotDeleteTaskFailure(cmd, ctx);
+            throwCannotDeleteTask(cmd, ctx);
         }
 
         final TaskDeleted taskDeleted = TaskDeleted.newBuilder()
@@ -283,7 +284,7 @@ public class TaskDefinitionPart
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            throwCannotCompleteTaskFailure(cmd, ctx);
+            throwCannotCompleteTask(cmd, ctx);
         }
 
         final TaskCompleted taskCompleted = TaskCompleted.newBuilder()
@@ -322,7 +323,7 @@ public class TaskDefinitionPart
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            throwCannotFinalizeDraftFailure(cmd, ctx);
+            throwCannotFinalizeDraft(cmd, ctx);
         }
 
         final TaskDraftFinalized taskDraftFinalized = TaskDraftFinalized.newBuilder()
@@ -339,7 +340,7 @@ public class TaskDefinitionPart
         final TaskId taskId = cmd.getId();
         final boolean isValid = ensureDeleted(currentStatus);
         if (!isValid) {
-            throwCannotRestoreDeletedTaskFailure(cmd, ctx);
+            throwCannotRestoreDeletedTask(cmd, ctx);
         }
 
         final DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored.newBuilder()
@@ -450,13 +451,13 @@ public class TaskDefinitionPart
                                       .getNewValue();
 
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
-            throwCannotUpdateTooShortDescriptionFailure(cmd, ctx);
+            throwCannotUpdateTooShortDescription(cmd, ctx);
         }
 
         boolean isValid = ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
 
         if (!isValid) {
-            throwCannotUpdateTaskDescriptionFailure(cmd, ctx);
+            throwCannotUpdateTaskDescription(cmd, ctx);
         }
     }
 }

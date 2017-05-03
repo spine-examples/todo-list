@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
-import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescriptionFailure;
+import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
 import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
@@ -73,7 +73,7 @@ class TaskDefinitionPartFailuresTest {
 
     @Test
     @DisplayName("throw CannotUpdateTaskDescription failure")
-    void throwCannotUpdateTaskDescription() {
+    void throwCannotUpdateTaskDescriptionFailure() {
         final UpdateTaskDescription cmd = UpdateTaskDescription.newBuilder()
                                                                .setId(taskId)
                                                                .build();
@@ -81,7 +81,7 @@ class TaskDefinitionPartFailuresTest {
 
         final CannotUpdateTaskDescription failure =
                 assertThrows(CannotUpdateTaskDescription.class,
-                             () -> throwCannotUpdateTaskDescriptionFailure(cmd, ctx));
+                             () -> throwCannotUpdateTaskDescription(cmd, ctx));
         final FailedTaskCommandDetails failedCommand = failure.getFailureMessage()
                                                               .getUpdateFailed()
                                                               .getFailureDetails();
