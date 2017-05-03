@@ -75,8 +75,9 @@ import java.util.List;
 
 import static com.google.common.collect.Lists.newLinkedList;
 import static org.spine3.examples.todolist.c.aggregate.MismatchHelper.of;
+import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.ensureCompleted;
+import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.ensureDeleted;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.ensureNeitherCompletedNorDeleted;
-import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.ensureNotDeleted;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidCreateDraftCommand;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidTransition;
 import static org.spine3.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
@@ -240,9 +241,7 @@ public class TaskDefinitionPart
     List<? extends Message> handle(ReopenTask cmd, CommandContext ctx) throws CannotReopenTask {
         final TaskDefinition state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
-        final TaskStatus newStatus = TaskStatus.OPEN;
-        final boolean isValid =
-                isValidTransition(currentStatus, newStatus) && !ensureNotDeleted(currentStatus);
+        final boolean isValid = ensureCompleted(currentStatus);
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
@@ -337,10 +336,8 @@ public class TaskDefinitionPart
     List<? extends Message> handle(RestoreDeletedTask cmd, CommandContext ctx)
             throws CannotRestoreDeletedTask {
         final TaskStatus currentStatus = getState().getTaskStatus();
-        final TaskStatus newStatus = TaskStatus.OPEN;
         final TaskId taskId = cmd.getId();
-        final boolean isValid = ensureNotDeleted(currentStatus)
-                && isValidTransition(currentStatus, newStatus);
+        final boolean isValid = ensureDeleted(currentStatus);
         if (!isValid) {
             throwCannotRestoreDeletedTaskFailure(cmd, ctx);
         }
