@@ -22,8 +22,8 @@ package org.spine3.examples.todolist;
 
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
+import org.spine3.base.Enrichments;
 import org.spine3.base.EventContext;
-import org.spine3.base.Events;
 
 /**
  * Utility class for working with enrichments.
@@ -46,7 +46,7 @@ public class EnrichmentHelper {
     // Google Guava.
     public static <T extends Message, E extends Class<T>> T getEnrichment(E enrichmentClass,
             EventContext context) {
-        final Optional<T> enrichmentOptional = Events.getEnrichment(enrichmentClass, context);
+        final Optional<T> enrichmentOptional = Enrichments.getEnrichment(enrichmentClass, context);
         if (enrichmentOptional.isPresent()) {
             T result = enrichmentOptional.get();
             return result;

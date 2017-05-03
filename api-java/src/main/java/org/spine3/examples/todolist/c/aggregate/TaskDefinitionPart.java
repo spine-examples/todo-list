@@ -66,7 +66,6 @@ import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDescription;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDueDate;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskPriority;
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskWithInappropriateDescription;
-import org.spine3.protobuf.Timestamps2;
 import org.spine3.server.aggregate.AggregatePart;
 import org.spine3.server.aggregate.Apply;
 import org.spine3.server.command.Assign;
@@ -94,7 +93,8 @@ import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPa
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDateFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriorityFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTooShortDescriptionFailure;
-import static org.spine3.protobuf.Timestamps2.getCurrentTime;
+import static org.spine3.time.Time.getCurrentTime;
+import static org.spine3.time.Timestamps2.compare;
 
 /**
  * The aggregate managing the state of a {@link TaskDefinition}.
@@ -184,7 +184,7 @@ public class TaskDefinitionPart
         final Timestamp actualDueDate = state.getDueDate();
         final Timestamp expectedDueDate = change.getPreviousValue();
 
-        final boolean isEquals = Timestamps2.compare(actualDueDate, expectedDueDate) == 0;
+        final boolean isEquals = compare(actualDueDate, expectedDueDate) == 0;
 
         if (!isEquals) {
             final Timestamp newDueDate = change.getNewValue();

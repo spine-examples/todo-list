@@ -72,12 +72,12 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(deleteTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
 
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(updateTaskPriorityCmd,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(updateTaskPriorityCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskPriority.class));
 
     }
@@ -89,12 +89,12 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
         dispatchCreateTaskCmd();
 
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-        aggregate.dispatchForTest(completeTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(completeTaskCmd));
 
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(updateTaskPriorityCmd,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(updateTaskPriorityCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskPriority.class));
     }
 
@@ -105,7 +105,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
 
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
         final List<? extends Message> messageList =
-                aggregate.dispatchForTest(updateTaskPriorityCmd, commandContext);
+                aggregate.dispatchForTest(envelopeOf(updateTaskPriorityCmd));
 
         assertEquals(1, messageList.size());
         assertEquals(TaskPriorityUpdated.class, messageList.get(0)
@@ -126,7 +126,7 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
 
         final UpdateTaskPriority updateTaskPriorityCmd =
                 updateTaskPriorityInstance(taskId, TaskPriority.TP_UNDEFINED, updatedPriority);
-        aggregate.dispatchForTest(updateTaskPriorityCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(updateTaskPriorityCmd));
         final TaskDefinition state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -139,8 +139,8 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
         final UpdateTaskPriority updateTaskPriority =
                 updateTaskPriorityInstance(taskId, TaskPriority.LOW, TaskPriority.HIGH);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(updateTaskPriority,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(updateTaskPriority)));
         final Throwable cause = Throwables.getRootCause(t);
         assertThat(cause, instanceOf(CannotUpdateTaskPriority.class));
 
@@ -173,6 +173,6 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
 
     private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createTaskCmd));
     }
 }

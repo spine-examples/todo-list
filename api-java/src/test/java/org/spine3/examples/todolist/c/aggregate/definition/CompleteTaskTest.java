@@ -91,7 +91,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(deleteTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
 
         final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
@@ -102,7 +102,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
             "an attempt to complete the task in draft state")
     void cannotCompleteDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
-        aggregate.dispatchForTest(createDraftCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createDraftCmd));
 
         final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
@@ -110,11 +110,11 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
     private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createTaskCmd));
     }
 
     private List<? extends Message> dispatchCompleteTaskCmd() {
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-        return aggregate.dispatchForTest(completeTaskCmd, commandContext);
+        return aggregate.dispatchForTest(envelopeOf(completeTaskCmd));
     }
 }

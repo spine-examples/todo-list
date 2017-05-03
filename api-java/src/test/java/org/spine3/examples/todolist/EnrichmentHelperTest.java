@@ -22,10 +22,10 @@ package org.spine3.examples.todolist;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.c.enrichments.TaskEnrichment;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.spine3.examples.todolist.testdata.TestEventContextFactory.eventContextInstance;
 import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
@@ -44,6 +44,7 @@ class EnrichmentHelperTest {
     @DisplayName("throw EnrichmentNotFoundException when enrichment is not present")
     void throwException() {
         assertThrows(EnrichmentNotFoundException.class, () ->
-                EnrichmentHelper.getEnrichment(TaskEnrichment.class, eventContextInstance()));
+                EnrichmentHelper.getEnrichment(TaskEnrichment.class,
+                                               EventContext.getDefaultInstance()));
     }
 }

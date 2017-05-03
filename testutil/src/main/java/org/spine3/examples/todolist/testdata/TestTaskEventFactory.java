@@ -40,7 +40,7 @@ import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
 import org.spine3.examples.todolist.c.events.TaskReopened;
 
 import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.protobuf.Timestamps2.getCurrentTime;
+import static org.spine3.time.Time.getCurrentTime;
 
 /**
  * A factory of the task events for the test needs.

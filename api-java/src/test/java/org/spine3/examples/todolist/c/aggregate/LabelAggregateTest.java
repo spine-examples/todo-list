@@ -27,6 +27,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.Command;
 import org.spine3.change.ValueMismatch;
+import org.spine3.envelope.CommandEnvelope;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
 import org.spine3.examples.todolist.LabelDetailsUpdateFailed;
@@ -101,7 +102,7 @@ class LabelAggregateTest {
 
         private List<? extends Message> dispatch(UpdateLabelDetails details) {
             final Command command = createCommand(details);
-            return aggregate.dispatchForTest(command.getMessage(), command.getContext());
+            return aggregate.dispatchForTest(CommandEnvelope.of(command));
         }
 
         @Test
@@ -220,7 +221,7 @@ class LabelAggregateTest {
         List<? extends Message> createBasicLabel() {
             final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
             final Command command = createDifferentCommand(createBasicLabel);
-            return aggregate.dispatchForTest(command.getMessage(), command.getContext());
+            return aggregate.dispatchForTest(CommandEnvelope.of(command));
         }
 
         private static LabelId createLabelId() {

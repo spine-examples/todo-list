@@ -21,14 +21,13 @@
 package org.spine3.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
+import org.spine3.base.ActorContext;
 import org.spine3.base.CommandContext;
-import org.spine3.base.CommandId;
-import org.spine3.base.Commands;
 import org.spine3.users.UserId;
 
 import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.protobuf.Timestamps2.getCurrentTime;
 import static org.spine3.test.Tests.newUserId;
+import static org.spine3.time.Time.getCurrentTime;
 import static org.spine3.time.ZoneOffsets.UTC;
 
 /**
@@ -49,25 +48,24 @@ public class TestCommandContextFactory {
     public static CommandContext createCommandContext() {
         final UserId userId = newUserId(newUuid());
         final Timestamp now = getCurrentTime();
-        final CommandId commandId = Commands.generateId();
-        return createCommandContext(userId, commandId, now);
+        return createCommandContext(userId, now);
     }
 
     /**
      * Creates a new {@link CommandContext} instance according to the parameters specified.
      *
-     * @param userId    the actor ID of the command context
-     * @param commandId the command ID of the command context
-     * @param when      indicates when was created context
+     * @param userId the actor ID of the command context
+     * @param when   indicates when was created context
      * @return constructed instance of the {@code CommandContext}
      */
-    public static CommandContext createCommandContext(UserId userId, CommandId commandId,
-            Timestamp when) {
-        final CommandContext.Builder builder = CommandContext.newBuilder()
-                                                             .setCommandId(commandId)
-                                                             .setActor(userId)
-                                                             .setTimestamp(when)
-                                                             .setZoneOffset(UTC);
-        return builder.build();
+    public static CommandContext createCommandContext(UserId userId, Timestamp when) {
+        final ActorContext actorContext = ActorContext.newBuilder()
+                                                      .setActor(userId)
+                                                      .setTimestamp(when)
+                                                      .setZoneOffset(UTC)
+                                                      .build();
+        return CommandContext.newBuilder()
+                             .setActorContext(actorContext)
+                             .build();
     }
 }

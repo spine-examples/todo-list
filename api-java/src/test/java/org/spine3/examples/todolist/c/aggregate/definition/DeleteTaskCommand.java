@@ -25,6 +25,7 @@ import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.spine3.envelope.CommandEnvelope;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
@@ -60,7 +61,7 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(deleteTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
         final TaskDefinition state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -74,11 +75,11 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(deleteTaskCmd, commandContext);
+        final CommandEnvelope deleteTaskEnvelope = envelopeOf(deleteTaskCmd);
+        aggregate.dispatchForTest(deleteTaskEnvelope);
 
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(deleteTaskCmd,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(deleteTaskEnvelope));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotDeleteTask.class));
     }
 
@@ -89,7 +90,7 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
 
         final List<? extends Message> messageList =
-                aggregate.dispatchForTest(deleteTaskCmd, commandContext);
+                aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDeleted.class, messageList.get(0)
                                                    .getClass());
@@ -99,6 +100,6 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
 
     private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createTaskCmd));
     }
 }

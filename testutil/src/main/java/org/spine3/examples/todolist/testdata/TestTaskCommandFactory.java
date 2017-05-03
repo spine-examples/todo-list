@@ -39,7 +39,7 @@ import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
 import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
 
 import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.protobuf.Timestamps2.getCurrentTime;
+import static org.spine3.time.Time.getCurrentTime;
 
 /**
  * A factory of the task commands for the test needs.

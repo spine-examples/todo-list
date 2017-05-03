@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
-import static org.spine3.protobuf.Timestamps2.getCurrentTime;
+import static org.spine3.time.Time.getCurrentTime;
 
 /**
  * @author Illia Shepilov

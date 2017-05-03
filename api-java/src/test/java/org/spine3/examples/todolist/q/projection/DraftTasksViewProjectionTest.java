@@ -60,7 +60,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateE
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskPriorityUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelAssignedToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelRemovedFromTaskInstance;
-import static org.spine3.protobuf.Timestamps2.getCurrentTime;
+import static org.spine3.time.Time.getCurrentTime;
 
 /**
  * @author Illia Shepilov

@@ -202,7 +202,7 @@ public class CommandLineTodoClient implements TodoClient {
                                                                .unpack(MyListView.class);
             return result;
         } catch (InvalidProtocolBufferException e) {
-            throw Exceptions.wrappedCause(e);
+            throw Exceptions.illegalStateWithCauseOf(e);
         }
     }
 
@@ -222,7 +222,7 @@ public class CommandLineTodoClient implements TodoClient {
 
             return result;
         } catch (InvalidProtocolBufferException e) {
-            throw Exceptions.wrappedCause(e);
+            throw Exceptions.illegalStateWithCauseOf(e);
         }
     }
 
@@ -243,7 +243,7 @@ public class CommandLineTodoClient implements TodoClient {
                                                    .unpack(DraftTasksView.class);
             return result;
         } catch (InvalidProtocolBufferException e) {
-            throw Exceptions.wrappedCause(e);
+            throw Exceptions.illegalStateWithCauseOf(e);
         }
     }
 
@@ -253,7 +253,7 @@ public class CommandLineTodoClient implements TodoClient {
             channel.shutdown()
                    .awaitTermination(TIMEOUT, SECONDS);
         } catch (InterruptedException e) {
-            throw Exceptions.wrappedCause(e);
+            throw Exceptions.illegalStateWithCauseOf(e);
         }
     }
 

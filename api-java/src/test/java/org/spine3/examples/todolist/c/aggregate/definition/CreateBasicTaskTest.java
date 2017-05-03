@@ -57,7 +57,7 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
     void produceEvent() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         final List<? extends Message> messageList =
-                aggregate.dispatchForTest(createTaskCmd, commandContext);
+                aggregate.dispatchForTest(envelopeOf(createTaskCmd));
 
         assertNotNull(aggregate.getState()
                                .getCreated());
@@ -76,7 +76,7 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
     @DisplayName("create the task")
     void createTask() {
         final CreateBasicTask createBasicTask = createTaskInstance();
-        aggregate.dispatchForTest(createBasicTask, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createBasicTask));
 
         final TaskDefinition state = aggregate.getState();
         assertEquals(state.getId(), createBasicTask.getId());
@@ -90,8 +90,8 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, "D");
 
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(createBasicTask,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(createBasicTask)));
         final Throwable rootCause = Throwables.getRootCause(t);
         final CannotCreateTaskWithInappropriateDescription failure =
                 (CannotCreateTaskWithInappropriateDescription) rootCause;

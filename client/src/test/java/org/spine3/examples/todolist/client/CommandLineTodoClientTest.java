@@ -78,7 +78,7 @@ abstract class CommandLineTodoClientTest {
                 server.start();
                 serverStartLatch.countDown();
             } catch (IOException e) {
-                throw Exceptions.wrappedCause(e);
+                throw Exceptions.illegalStateWithCauseOf(e);
             }
         });
 

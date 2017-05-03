@@ -36,7 +36,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.examples.todolist.TaskStatus.COMPLETED;
 import static org.spine3.examples.todolist.TaskStatus.OPEN;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
@@ -65,8 +64,8 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
 
         final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(reopenTaskCmd,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(reopenTaskCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotReopenTask.class));
     }
 
@@ -75,14 +74,14 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     void reopenTask() {
         dispatchCreateTaskCmd();
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-        aggregate.dispatchForTest(completeTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(completeTaskCmd));
 
         TaskDefinition state = aggregate.getState();
         assertEquals(taskId, state.getId());
         assertEquals(COMPLETED, state.getTaskStatus());
 
         final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
-        aggregate.dispatchForTest(reopenTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(reopenTaskCmd));
 
         state = aggregate.getState();
         assertEquals(taskId, state.getId());
@@ -94,12 +93,12 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     void cannotReopenDeletedTask() {
         dispatchCreateTaskCmd();
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(deleteTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
 
         final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(reopenTaskCmd,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(reopenTaskCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotReopenTask.class));
     }
 
@@ -107,17 +106,17 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     @DisplayName("throw CannotReopenTask upon an attempt to reopen the task in draft state")
     void cannotReopenDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
-        aggregate.dispatchForTest(createDraftCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createDraftCmd));
 
         final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(reopenTaskCmd,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(reopenTaskCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotReopenTask.class));
     }
 
     private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createTaskCmd));
     }
 }

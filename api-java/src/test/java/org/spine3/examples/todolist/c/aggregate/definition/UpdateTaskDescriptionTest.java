@@ -71,7 +71,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId);
         final List<? extends Message> messageList =
-                aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
+                aggregate.dispatchForTest(envelopeOf(updateTaskDescriptionCmd));
 
         assertEquals(1, messageList.size());
         assertEquals(TaskDescriptionUpdated.class, messageList.get(0)
@@ -92,8 +92,8 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId, "", ".");
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(updateTaskDescriptionCmd,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(updateTaskDescriptionCmd)));
         assertThat(Throwables.getRootCause(t),
                    instanceOf(CannotUpdateTaskWithInappropriateDescription.class));
     }
@@ -105,12 +105,13 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(deleteTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
 
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId);
-        Throwable t = assertThrows(Throwable.class, () ->
-                aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext));
+        Throwable t = assertThrows(Throwable.class,
+                                   () -> aggregate.dispatchForTest(
+                                           envelopeOf(updateTaskDescriptionCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDescription.class));
     }
 
@@ -121,12 +122,13 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
         dispatchCreateTaskCmd();
 
         final CompleteTask completeTaskCmd = completeTaskInstance();
-        aggregate.dispatchForTest(completeTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(completeTaskCmd));
 
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId);
-        Throwable t = assertThrows(Throwable.class, () ->
-                aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext));
+        Throwable t = assertThrows(Throwable.class,
+                                   () -> aggregate.dispatchForTest(
+                                           envelopeOf(updateTaskDescriptionCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDescription.class));
     }
 
@@ -138,7 +140,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
 
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId, DESCRIPTION, newDescription);
-        aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(updateTaskDescriptionCmd));
         final TaskDefinition state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -149,7 +151,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     @DisplayName("produce CannotUpdateTaskDescription failure")
     void produceFailure() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createBasicTask, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createBasicTask));
 
         final String expectedValue = "expected description";
         final String newValue = "update description";
@@ -158,8 +160,8 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
         final UpdateTaskDescription updateTaskDescription =
                 updateTaskDescriptionInstance(taskId, expectedValue, newValue);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(updateTaskDescription,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(updateTaskDescription)));
         final Throwable cause = Throwables.getRootCause(t);
         assertThat(cause, instanceOf(CannotUpdateTaskDescription.class));
 
@@ -189,6 +191,6 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
 
     private void dispatchCreateTaskCmd() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createBasicTask, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createBasicTask));
     }
 }

@@ -21,15 +21,15 @@
 package org.spine3.examples.todolist.c.aggregate.definition;
 
 import com.google.protobuf.Message;
-import org.spine3.base.CommandContext;
+import org.spine3.envelope.CommandEnvelope;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
 import org.spine3.test.AggregatePartCommandTest;
+import org.spine3.test.TestActorRequestFactory;
 
 import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 
 /**
  * The parent class for the {@link TaskDefinitionPart} test classes.
@@ -40,7 +40,8 @@ import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.cr
 abstract class TaskDefinitionCommandTest<C extends Message>
         extends AggregatePartCommandTest<C, TaskDefinitionPart> {
 
-    final CommandContext commandContext = createCommandContext();
+    private final TestActorRequestFactory requestFactory =
+            TestActorRequestFactory.newInstance(getClass());
     TaskDefinitionPart aggregate;
     TaskId taskId;
 
@@ -57,6 +58,11 @@ abstract class TaskDefinitionCommandTest<C extends Message>
         taskId = createTaskId();
         final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
         return new TaskDefinitionPart(root);
+    }
+
+    CommandEnvelope envelopeOf(Message commandMessage) {
+        return CommandEnvelope.of(requestFactory.command()
+                                                .create(commandMessage));
     }
 
     private static TaskId createTaskId() {
