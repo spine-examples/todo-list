@@ -72,7 +72,7 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain the task view with non-updated task description " +
                 "when command has wrong ID")
-        void containNotUpdatedView() {
+        void containNonUpdatedView() {
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(
                     UPDATED_TASK_DESCRIPTION, false);
             final String actualDescription = view.getDescription();
@@ -88,7 +88,7 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain the task view with non-updated task description " +
                 "when command has wrong ID")
-        void containNotUpdatedView() {
+        void containNonUpdatedView() {
             final TaskView view = obtainViewWhenHandledUpdateTaskDescription(
                     UPDATED_TASK_DESCRIPTION, false);
             assertNotEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
@@ -119,7 +119,7 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain the task view with non-updated task description " +
                 "when command has wrong ID")
-        void containNotUpdatedView() {
+        void containNonUpdatedView() {
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(
                     UPDATED_TASK_DESCRIPTION, false);
             final String actualDescription = view.getDescription();
