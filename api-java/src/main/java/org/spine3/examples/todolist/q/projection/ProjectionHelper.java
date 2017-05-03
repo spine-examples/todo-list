@@ -242,8 +242,8 @@ class ProjectionHelper {
         return result;
     }
 
-    @SuppressWarnings("MethodWithMultipleLoops")    // It's fine, as there aren't a
-    // lot of transformations per task.
+    @SuppressWarnings("MethodWithMultipleLoops") // It's fine, as there aren't a
+                                                 // lot of transformations per task.
     private static List<TaskView> transformWithUpdate(List<TaskView> views,
             TaskId targetTaskId,
             TaskTransformation transformation) {

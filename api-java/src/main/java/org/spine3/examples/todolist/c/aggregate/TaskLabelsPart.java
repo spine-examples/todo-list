@@ -52,7 +52,7 @@ import static org.spine3.examples.todolist.c.aggregate.failures.TaskLabelsPartFa
  * @author Illia Shepilov
  */
 @SuppressWarnings("unused") // The methods annotated with {@link Apply} are declared
-// {@code private} by design.
+                            // {@code private} by design.
 public class TaskLabelsPart
         extends AggregatePart<TaskId, TaskLabels, TaskLabels.Builder, TaskAggregateRoot> {
 

@@ -43,8 +43,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings("Guava") // because com.google.common.base.Function is used
-// until the migration of Spine to Java 8 is performed.
+@SuppressWarnings("Guava") // Because com.google.common.base.Function is used
+                           // until the migration of Spine to Java 8 is performed.
 public class TodoListEnrichmentConfiguration {
 
     private final TaskDefinitionRepository taskDefinitionRepo;
