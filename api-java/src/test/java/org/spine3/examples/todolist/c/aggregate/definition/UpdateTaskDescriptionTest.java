@@ -51,6 +51,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.creat
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 import static org.spine3.protobuf.AnyPacker.unpack;
+import static org.spine3.protobuf.Wrapper.forString;
 
 /**
  * @author Illia Shepilov
@@ -173,15 +174,9 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
                                                            .getTaskId();
         assertEquals(taskId, actualTaskId);
 
-        final StringValue expectedStringValue = StringValue.newBuilder()
-                                                           .setValue(expectedValue)
-                                                           .build();
-        final StringValue actualStringValue = StringValue.newBuilder()
-                                                         .setValue(actualValue)
-                                                         .build();
-        final StringValue newStringValue = StringValue.newBuilder()
-                                                      .setValue(newValue)
-                                                      .build();
+        final StringValue expectedStringValue = forString(expectedValue);
+        final StringValue actualStringValue = forString(actualValue);
+        final StringValue newStringValue = forString(newValue);
 
         final ValueMismatch mismatch = descriptionUpdateFailed.getDescriptionMismatch();
         assertEquals(expectedStringValue, unpack(mismatch.getExpected()));
