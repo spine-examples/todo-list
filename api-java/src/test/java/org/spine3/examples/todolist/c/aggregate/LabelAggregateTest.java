@@ -72,7 +72,7 @@ class LabelAggregateTest {
 
             final LabelCreated labelCreated = (LabelCreated) messageList.get(0);
 
-            assertEquals(labelId, labelCreated.getId());
+            assertEquals(getLabelId(), labelCreated.getId());
             assertEquals(LABEL_TITLE, labelCreated.getDetails()
                                                   .getTitle());
         }
@@ -84,7 +84,7 @@ class LabelAggregateTest {
 
             final TaskLabel state = aggregate.getState();
 
-            assertEquals(labelId, state.getId());
+            assertEquals(getLabelId(), state.getId());
             assertEquals(LabelColor.GRAY, state.getColor());
             assertEquals(LABEL_TITLE, state.getTitle());
         }
@@ -108,7 +108,7 @@ class LabelAggregateTest {
         @Test
         @DisplayName("produce LabelDetailsUpdated event")
         void produceEvent() {
-            final UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(labelId);
+            final UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(getLabelId());
             final List<? extends Message> messageList = dispatch(updateLabelDetails);
 
             assertEquals(1, messageList.size());
@@ -119,7 +119,7 @@ class LabelAggregateTest {
                     (LabelDetailsUpdated) messageList.get(0);
             final LabelDetails details = labelDetailsUpdated.getLabelDetailsChange()
                                                             .getNewDetails();
-            assertEquals(labelId, labelDetailsUpdated.getLabelId());
+            assertEquals(getLabelId(), labelDetailsUpdated.getLabelId());
             assertEquals(LabelColor.GREEN, details.getColor());
             assertEquals(UPDATED_LABEL_TITLE, details.getTitle());
         }
@@ -127,11 +127,11 @@ class LabelAggregateTest {
         @Test
         @DisplayName("update the label details twice")
         void updateLabelDetailsTwice() {
-            UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(labelId);
+            UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(getLabelId());
             dispatch(updateLabelDetails);
 
             TaskLabel state = aggregate.getState();
-            assertEquals(labelId, state.getId());
+            assertEquals(getLabelId(), state.getId());
             assertEquals(LabelColor.GREEN, state.getColor());
             assertEquals(UPDATED_LABEL_TITLE, state.getTitle());
 
@@ -146,12 +146,12 @@ class LabelAggregateTest {
                                                              .setColor(updatedLabelColor)
                                                              .setTitle(updatedTitle)
                                                              .build();
-            updateLabelDetails = updateLabelDetailsInstance(labelId, previousLabelDetails,
+            updateLabelDetails = updateLabelDetailsInstance(getLabelId(), previousLabelDetails,
                                                             newLabelDetails);
             dispatch(updateLabelDetails);
 
             state = aggregate.getState();
-            assertEquals(labelId, state.getId());
+            assertEquals(getLabelId(), state.getId());
             assertEquals(updatedLabelColor, state.getColor());
             assertEquals(updatedTitle, state.getTitle());
         }
@@ -169,7 +169,7 @@ class LabelAggregateTest {
                                                              .setTitle(UPDATED_LABEL_TITLE)
                                                              .build();
             final UpdateLabelDetails updateLabelDetails =
-                    updateLabelDetailsInstance(labelId, expectedLabelDetails, newLabelDetails);
+                    updateLabelDetailsInstance(getLabelId(), expectedLabelDetails, newLabelDetails);
             createCommand(updateLabelDetails);
             final CannotUpdateLabelDetails failure =
                     assertThrows(CannotUpdateLabelDetails.class,
@@ -181,7 +181,7 @@ class LabelAggregateTest {
                     cannotUpdateLabelDetails.getUpdateFailed();
             final LabelId actualLabelId = labelDetailsUpdateFailed.getFailureDetails()
                                                                   .getLabelId();
-            assertEquals(labelId, actualLabelId);
+            assertEquals(getLabelId(), actualLabelId);
 
             final ValueMismatch mismatch = labelDetailsUpdateFailed.getLabelDetailsMismatch();
             assertEquals(pack(expectedLabelDetails), mismatch.getExpected());
@@ -198,7 +198,7 @@ class LabelAggregateTest {
     private static abstract class LabelAggregateCommandTest<C extends Message>
             extends AggregateCommandTest<C, LabelAggregate> {
 
-        LabelId labelId;
+        private LabelId labelId;
         LabelAggregate aggregate;
 
         @BeforeEach
@@ -216,6 +216,10 @@ class LabelAggregateTest {
         protected LabelAggregate createAggregate() {
             labelId = createLabelId();
             return new LabelAggregate(labelId);
+        }
+
+        LabelId getLabelId() {
+            return labelId;
         }
 
         List<? extends Message> createBasicLabel() {
