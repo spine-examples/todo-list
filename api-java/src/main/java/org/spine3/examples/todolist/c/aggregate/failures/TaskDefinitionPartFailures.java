@@ -72,8 +72,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code UpdateTaskDueDate} command which thrown the failure
          * @param ctx the {@code CommandContext}
@@ -93,8 +93,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskDescription} failure
+         * according to the passed parameters.
          *
          * @param cmd      the {@code UpdateTaskDescription} command which thrown the failure
          * @param ctx      the {@code CommandContext}
@@ -117,8 +117,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskDescription} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code UpdateTaskDescription} command which thrown the failure
          * @param ctx the {@code CommandContext}
@@ -138,8 +138,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure
+         * according to the passed parameters.
          *
          * @param cmd      the {@code UpdateTaskDueDate} command which thrown the failure
          * @param ctx      the {@code CommandContext}
@@ -162,8 +162,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskDescription} failure
+         * according to the passed parameters.
          *
          * @param cmd      the {@code UpdateTaskDescription} command which thrown the failure
          * @param ctx      the {@code CommandContext}
@@ -186,8 +186,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskPriority} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskPriority} failure
+         * according to the passed parameters.
          *
          * @param cmd      the {@code UpdateTaskPriority} command which thrown the failure
          * @param ctx      the {@code CommandContext}
@@ -210,8 +210,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskPriority} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskPriority} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code UpdateTaskPriority} command which thrown the failure
          * @param ctx the {@code CommandContext}
@@ -259,8 +259,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotCreateDraft} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotCreateDraft} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code CreateDraft} command which thrown the failure
          * @param ctx the {@code CommandContext}
@@ -308,8 +308,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotReopenTask} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotReopenTask} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code ReopenTask} command which thrown the failure
          * @param ctx the {@code CommandContext}
@@ -329,8 +329,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotFinalizeDraft} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotFinalizeDraft} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code FinalizeDraft} command which thrown the failure
          * @param ctx the {@code CommandContext}
@@ -350,8 +350,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotDeleteTask} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotDeleteTask} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code DeleteTask} command which thrown the failure
          * @param ctx the {@code CommandContext}
@@ -371,8 +371,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotCompleteTask} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotCompleteTask} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code CompleteTask} command which thrown the failure
          * @param ctx the {@code CommandContext}
@@ -392,8 +392,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotRestoreDeletedTask} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotRestoreDeletedTask} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code RestoreDeletedTask} command which thrown the failure
          * @param ctx the {@code CommandContext}
