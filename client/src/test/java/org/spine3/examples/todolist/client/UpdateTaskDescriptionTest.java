@@ -71,7 +71,7 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with non-updated task description " +
-                "when command has wrong ID")
+                "when command ID does not match the aggregate")
         void containNonUpdatedView() {
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(
                     UPDATED_TASK_DESCRIPTION, false);
@@ -87,7 +87,7 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with non-updated task description " +
-                "when command has wrong ID")
+                "when command ID does not match the aggregate")
         void containNonUpdatedView() {
             final TaskView view = obtainViewWhenHandledUpdateTaskDescription(
                     UPDATED_TASK_DESCRIPTION, false);
@@ -118,7 +118,7 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with non-updated task description " +
-                "when command has wrong ID")
+                "when command ID does not match the aggregate")
         void containNonUpdatedView() {
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(
                     UPDATED_TASK_DESCRIPTION, false);
