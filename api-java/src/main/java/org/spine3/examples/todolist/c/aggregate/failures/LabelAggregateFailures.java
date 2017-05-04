@@ -39,7 +39,8 @@ public class LabelAggregateFailures {
     }
 
     /**
-     * Constructs and throws the {@link CannotUpdateLabelDetails} failure according to the passed parameters.
+     * Constructs and throws the {@link CannotUpdateLabelDetails} failure according to
+     * the passed parameters.
      *
      * @param cmd      the failed command
      * @param ctx      the {@code CommandContext}
@@ -47,11 +48,13 @@ public class LabelAggregateFailures {
      * @throws CannotUpdateLabelDetails the failure to throw
      */
     public static void throwCannotUpdateLabelDetailsFailure(UpdateLabelDetails cmd,
-                                                            CommandContext ctx,
-                                                            ValueMismatch mismatch) throws CannotUpdateLabelDetails {
-        final FailedLabelCommandDetails labelCommandFailed = FailedLabelCommandDetails.newBuilder()
-                                                                                      .setLabelId(cmd.getId())
-                                                                                      .build();
+            CommandContext ctx,
+            ValueMismatch mismatch)
+            throws CannotUpdateLabelDetails {
+        final FailedLabelCommandDetails labelCommandFailed =
+                FailedLabelCommandDetails.newBuilder()
+                                         .setLabelId(cmd.getId())
+                                         .build();
         final LabelDetailsUpdateFailed labelDetailsUpdateFailed =
                 LabelDetailsUpdateFailed.newBuilder()
                                         .setFailureDetails(labelCommandFailed)

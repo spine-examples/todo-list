@@ -31,7 +31,8 @@ public enum LabelColorView {
     GREEN_COLOR(LabelColor.GREEN, "#008000"),
     GRAY_COLOR(LabelColor.GRAY, "#808080");
 
-    private static final String WRONG_LABEL_COLOR_EXCEPTION_MESSAGE = "No enum constant by specified label color: ";
+    private static final String WRONG_LABEL_COLOR_EXCEPTION_MESSAGE =
+            "No enum constant by specified label color: ";
 
     private final LabelColor labelColor;
     private final String hexColor;

@@ -277,7 +277,8 @@ public class MyListViewProjectionTest extends ProjectionTest {
 
             final TaskId expectedTaskId = taskCreatedEvent.getId();
 
-            final LabelAssignedToTask labelAssignedToTaskEvent = labelAssignedToTaskInstance(expectedTaskId, LABEL_ID);
+            final LabelAssignedToTask labelAssignedToTaskEvent =
+                    labelAssignedToTaskInstance(expectedTaskId, LABEL_ID);
             projection.on(labelAssignedToTaskEvent);
 
             final LabelColor updatedColor = LabelColor.BLUE;
@@ -356,7 +357,8 @@ public class MyListViewProjectionTest extends ProjectionTest {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             projection.on(taskCreatedEvent);
 
-            final TaskCompleted taskCompletedEvent = taskCompletedInstance(TaskId.getDefaultInstance());
+            final TaskCompleted taskCompletedEvent =
+                    taskCompletedInstance(TaskId.getDefaultInstance());
             projection.on(taskCompletedEvent);
 
             final TaskListView taskListView = projection.getState()
@@ -407,7 +409,8 @@ public class MyListViewProjectionTest extends ProjectionTest {
             final TaskCompleted taskCompletedEvent = taskCompletedInstance();
             projection.on(taskCompletedEvent);
 
-            final TaskReopened taskReopenedEvent = taskReopenedInstance(TaskId.getDefaultInstance());
+            final TaskReopened taskReopenedEvent =
+                    taskReopenedInstance(TaskId.getDefaultInstance());
             projection.on(taskReopenedEvent);
 
             final TaskListView taskListView = projection.getState()

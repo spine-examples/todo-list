@@ -41,7 +41,8 @@ import static org.spine3.examples.todolist.repository.RepositoryHelper.addCommon
  *
  * @author Illia Shepilov
  */
-public class MyListViewRepository extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {
+public class MyListViewRepository
+        extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {
 
     public MyListViewRepository(BoundedContext boundedContext) {
         super(boundedContext);

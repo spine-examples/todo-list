@@ -48,7 +48,8 @@ import static org.spine3.examples.todolist.c.aggregate.failures.LabelAggregateFa
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings("unused") // The methods annotated with {@link Apply} are declared {@code private} by design.
+@SuppressWarnings("unused") // The methods annotated with {@link Apply} are declared {@code private}
+// by design.
 public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Builder> {
 
     /**
@@ -72,7 +73,8 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
     }
 
     @Assign
-    List<? extends Message> handle(UpdateLabelDetails cmd, CommandContext ctx) throws CannotUpdateLabelDetails {
+    List<? extends Message> handle(UpdateLabelDetails cmd, CommandContext ctx)
+            throws CannotUpdateLabelDetails {
         final TaskLabel state = getState();
         final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
                                                             .setColor(state.getColor())
@@ -86,14 +88,16 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
 
         if (!isEquals) {
             final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
-            final ValueMismatch mismatch = of(expectedLabelDetails, actualLabelDetails, newLabelDetails, getVersion());
+            final ValueMismatch mismatch = of(expectedLabelDetails, actualLabelDetails,
+                                              newLabelDetails, getVersion());
             throwCannotUpdateLabelDetailsFailure(cmd, ctx, mismatch);
         }
 
-        final LabelDetailsUpdated labelDetailsUpdated = LabelDetailsUpdated.newBuilder()
-                                                                           .setLabelId(labelId)
-                                                                           .setLabelDetailsChange(labelDetailsChange)
-                                                                           .build();
+        final LabelDetailsUpdated labelDetailsUpdated =
+                LabelDetailsUpdated.newBuilder()
+                                   .setLabelId(labelId)
+                                   .setLabelDetailsChange(labelDetailsChange)
+                                   .build();
         final List<? extends Message> result = Collections.singletonList(labelDetailsUpdated);
         return result;
     }

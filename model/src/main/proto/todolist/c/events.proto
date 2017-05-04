@@ -96,7 +96,8 @@ message TaskDescriptionUpdated {
 
     // Reserved for future extension.
     //
-    // For instance, to mark the start and end positions of the text changed (useful for huge task descriptions).
+    // For instance, to mark the start and end positions of the text changed (useful for
+    // huge task descriptions).
     reserved 3 to 10;
 }
 
@@ -114,7 +115,8 @@ message TaskPriorityUpdated {
 
     // Reserved for future extension.
     //
-    // For instance, to mark the start and end positions of the text changed (useful for huge task descriptions).
+    // For instance, to mark the start and end positions of the text changed (useful for
+    // huge task descriptions).
     reserved 3 to 10;
 }
 

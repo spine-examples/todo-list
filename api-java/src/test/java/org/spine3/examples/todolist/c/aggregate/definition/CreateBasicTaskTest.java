@@ -20,16 +20,14 @@
 
 package org.spine3.examples.todolist.c.aggregate.definition;
 
+import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskStatus;
-import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
-import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.events.TaskCreated;
 import org.spine3.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
@@ -38,6 +36,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 
@@ -47,21 +46,15 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.creat
 @DisplayName("CreateBasicTask command should be interpreted by TaskDefinitionPart and")
 public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTask> {
 
-    private final CommandContext commandContext = createCommandContext();
-    private TaskDefinitionPart aggregate;
-    private TaskId taskId;
-
     @Override
     @BeforeEach
     public void setUp() {
         super.setUp();
-        taskId = createTaskId();
-        aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test
     @DisplayName("produce TaskCreated event")
-    public void produceEvent() {
+    void produceEvent() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         final List<? extends Message> messageList =
                 aggregate.dispatchForTest(createTaskCmd, commandContext);
@@ -81,7 +74,7 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
 
     @Test
     @DisplayName("create the task")
-    public void createTask() {
+    void createTask() {
         final CreateBasicTask createBasicTask = createTaskInstance();
         aggregate.dispatchForTest(createBasicTask, commandContext);
 
@@ -93,18 +86,19 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
     @Test
     @DisplayName("throw CannotCreateTaskWithInappropriateDescription failure " +
             "upon an attempt to create task with too short description")
-    public void notCreateTask() {
+    void notCreateTask() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, "D");
-        try {
-            aggregate.dispatchForTest(createBasicTask, commandContext);
-        } catch (IllegalStateException ex) {
-            final CannotCreateTaskWithInappropriateDescription failure =
-                    (CannotCreateTaskWithInappropriateDescription) ex.getCause();
-            final TaskId actualId = failure.getFailureMessage()
-                                           .getCreateTaskFailed()
-                                           .getFailureDetails()
-                                           .getTaskId();
-            assertEquals(this.taskId, actualId);
-        }
+
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> aggregate.dispatchForTest(createBasicTask,
+                                                                         commandContext));
+        final Throwable rootCause = Throwables.getRootCause(t);
+        final CannotCreateTaskWithInappropriateDescription failure =
+                (CannotCreateTaskWithInappropriateDescription) rootCause;
+        final TaskId actualId = failure.getFailureMessage()
+                                       .getCreateTaskFailed()
+                                       .getFailureDetails()
+                                       .getTaskId();
+        assertEquals(this.taskId, actualId);
     }
 }

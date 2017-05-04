@@ -20,13 +20,12 @@
 
 package org.spine3.examples.todolist.c.aggregate;
 
-import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.spine3.base.CommandContext;
+import org.spine3.base.Command;
 import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelDetails;
@@ -39,14 +38,14 @@ import org.spine3.examples.todolist.c.events.LabelCreated;
 import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
 import org.spine3.examples.todolist.c.failures.CannotUpdateLabelDetails;
 import org.spine3.examples.todolist.c.failures.Failures;
+import org.spine3.test.AggregateCommandTest;
 
 import java.util.List;
 
 import static com.google.protobuf.Any.pack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.UPDATED_LABEL_TITLE;
 import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
@@ -55,36 +54,16 @@ import static org.spine3.examples.todolist.testdata.TestLabelCommandFactory.upda
 /**
  * @author Illia Shepilov
  */
-public class LabelAggregateTest {
-
-    private static final CommandContext COMMAND_CONTEXT = createCommandContext();
-
-    private LabelId labelId;
-    private LabelAggregate aggregate;
-
-    @BeforeEach
-    public void setUp() {
-        labelId = createLabelId();
-        aggregate = new LabelAggregate(labelId);
-    }
-
-    private static LabelId createLabelId() {
-        final LabelId result = LabelId.newBuilder()
-                                      .setValue(newUuid())
-                                      .build();
-        return result;
-    }
+class LabelAggregateTest {
 
     @Nested
     @DisplayName("CreateBasicLabel command should be interpreted by LabelAggregate and")
-    class CreateBasicLabelCommand {
+    class CreateBasicLabelCommand extends LabelAggregateCommandTest<CreateBasicLabel> {
 
         @Test
         @DisplayName("produce LabelCreated event")
-        public void produceLabel() {
-            final CreateBasicLabel createLabelCmd = createLabelInstance(labelId);
-            final List<? extends Message> messageList =
-                    aggregate.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
+        void produceLabel() {
+            final List<? extends Message> messageList = createBasicLabel();
 
             assertEquals(1, messageList.size());
             assertEquals(LabelCreated.class, messageList.get(0)
@@ -99,9 +78,8 @@ public class LabelAggregateTest {
 
         @Test
         @DisplayName("create the basic label")
-        public void createLabel() {
-            final CreateBasicLabel createLabelCmd = createLabelInstance(labelId);
-            aggregate.dispatchForTest(createLabelCmd, COMMAND_CONTEXT);
+        void createLabel() {
+            createBasicLabel();
 
             final TaskLabel state = aggregate.getState();
 
@@ -113,23 +91,31 @@ public class LabelAggregateTest {
 
     @Nested
     @DisplayName("UpdateLabelDetails command should be interpreted by LabelAggregate and")
-    class UpdateLabelDetailsCommand {
+    class UpdateLabelDetailsCommand extends LabelAggregateCommandTest<UpdateLabelDetails> {
+
+        @Override
+        public void setUp() {
+            super.setUp();
+            createBasicLabel();
+        }
+
+        private List<? extends Message> dispatch(UpdateLabelDetails details) {
+            final Command command = createCommand(details);
+            return aggregate.dispatchForTest(command.getMessage(), command.getContext());
+        }
 
         @Test
         @DisplayName("produce LabelDetailsUpdated event")
-        public void produceEvent() {
-            final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
-            aggregate.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
-
-            final UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance(labelId);
-            final List<? extends Message> messageList =
-                    aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
+        void produceEvent() {
+            final UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(labelId);
+            final List<? extends Message> messageList = dispatch(updateLabelDetails);
 
             assertEquals(1, messageList.size());
             assertEquals(LabelDetailsUpdated.class, messageList.get(0)
                                                                .getClass());
 
-            final LabelDetailsUpdated labelDetailsUpdated = (LabelDetailsUpdated) messageList.get(0);
+            final LabelDetailsUpdated labelDetailsUpdated =
+                    (LabelDetailsUpdated) messageList.get(0);
             final LabelDetails details = labelDetailsUpdated.getLabelDetailsChange()
                                                             .getNewDetails();
             assertEquals(labelId, labelDetailsUpdated.getLabelId());
@@ -139,12 +125,9 @@ public class LabelAggregateTest {
 
         @Test
         @DisplayName("update the label details twice")
-        public void updateLabelDetailsTwice() {
-            final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
-            aggregate.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
-
-            UpdateLabelDetails updateLabelDetailsCmd = updateLabelDetailsInstance(labelId);
-            aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
+        void updateLabelDetailsTwice() {
+            UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(labelId);
+            dispatch(updateLabelDetails);
 
             TaskLabel state = aggregate.getState();
             assertEquals(labelId, state.getId());
@@ -162,8 +145,9 @@ public class LabelAggregateTest {
                                                              .setColor(updatedLabelColor)
                                                              .setTitle(updatedTitle)
                                                              .build();
-            updateLabelDetailsCmd = updateLabelDetailsInstance(labelId, previousLabelDetails, newLabelDetails);
-            aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
+            updateLabelDetails = updateLabelDetailsInstance(labelId, previousLabelDetails,
+                                                            newLabelDetails);
+            dispatch(updateLabelDetails);
 
             state = aggregate.getState();
             assertEquals(labelId, state.getId());
@@ -172,11 +156,9 @@ public class LabelAggregateTest {
         }
 
         @Test
-        @DisplayName("produce CannotUpdateLabelDetails failure when the label details does not match expected")
-        public void cannotUpdateLabelDetails() {
-            final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
-            aggregate.dispatchForTest(createBasicLabel, COMMAND_CONTEXT);
-
+        @DisplayName("produce CannotUpdateLabelDetails failure " +
+                "when the label details does not match expected")
+        void cannotUpdateLabelDetails() {
             final LabelDetails expectedLabelDetails = LabelDetails.newBuilder()
                                                                   .setColor(LabelColor.BLUE)
                                                                   .setTitle(LABEL_TITLE)
@@ -185,33 +167,66 @@ public class LabelAggregateTest {
                                                              .setColor(LabelColor.RED)
                                                              .setTitle(UPDATED_LABEL_TITLE)
                                                              .build();
-            try {
-                final UpdateLabelDetails updateLabelDetailsCmd =
-                        updateLabelDetailsInstance(labelId, expectedLabelDetails, newLabelDetails);
-                aggregate.dispatchForTest(updateLabelDetailsCmd, COMMAND_CONTEXT);
-            } catch (Throwable e) {
-                @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-                final Throwable cause = Throwables.getRootCause(e);
-                assertTrue(cause instanceof CannotUpdateLabelDetails);
+            final UpdateLabelDetails updateLabelDetails =
+                    updateLabelDetailsInstance(labelId, expectedLabelDetails, newLabelDetails);
+            createCommand(updateLabelDetails);
+            final CannotUpdateLabelDetails failure =
+                    assertThrows(CannotUpdateLabelDetails.class,
+                                 () -> aggregate.handle(commandMessage().get(),
+                                                        commandContext().get()));
+            final Failures.CannotUpdateLabelDetails cannotUpdateLabelDetails =
+                    failure.getFailureMessage();
+            final LabelDetailsUpdateFailed labelDetailsUpdateFailed =
+                    cannotUpdateLabelDetails.getUpdateFailed();
+            final LabelId actualLabelId = labelDetailsUpdateFailed.getFailureDetails()
+                                                                  .getLabelId();
+            assertEquals(labelId, actualLabelId);
 
-                @SuppressWarnings("ConstantConditions")
-                final Failures.CannotUpdateLabelDetails cannotUpdateLabelDetails =
-                        ((CannotUpdateLabelDetails) cause).getFailureMessage();
-                final LabelDetailsUpdateFailed labelDetailsUpdateFailed = cannotUpdateLabelDetails.getUpdateFailed();
-                final LabelId actualLabelId = labelDetailsUpdateFailed.getFailureDetails()
-                                                                      .getLabelId();
-                assertEquals(labelId, actualLabelId);
+            final ValueMismatch mismatch = labelDetailsUpdateFailed.getLabelDetailsMismatch();
+            assertEquals(pack(expectedLabelDetails), mismatch.getExpected());
+            assertEquals(pack(newLabelDetails), mismatch.getNewValue());
 
-                final ValueMismatch mismatch = labelDetailsUpdateFailed.getLabelDetailsMismatch();
-                assertEquals(pack(expectedLabelDetails), mismatch.getExpected());
-                assertEquals(pack(newLabelDetails), mismatch.getNewValue());
+            final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
+                                                                .setColor(LabelColor.GRAY)
+                                                                .setTitle(LABEL_TITLE)
+                                                                .build();
+            assertEquals(pack(actualLabelDetails), mismatch.getActual());
+        }
+    }
 
-                final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
-                                                                    .setColor(LabelColor.GRAY)
-                                                                    .setTitle(LABEL_TITLE)
-                                                                    .build();
-                assertEquals(pack(actualLabelDetails), mismatch.getActual());
-            }
+    private static abstract class LabelAggregateCommandTest<C extends Message>
+            extends AggregateCommandTest<C, LabelAggregate> {
+
+        LabelId labelId;
+        LabelAggregate aggregate;
+
+        @BeforeEach
+        public void initTest() {
+            setUp();
+        }
+
+        @Override
+        public void setUp() {
+            super.setUp();
+            aggregate = aggregate().get();
+        }
+
+        @Override
+        protected LabelAggregate createAggregate() {
+            labelId = createLabelId();
+            return new LabelAggregate(labelId);
+        }
+
+        List<? extends Message> createBasicLabel() {
+            final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
+            final Command command = createDifferentCommand(createBasicLabel);
+            return aggregate.dispatchForTest(command.getMessage(), command.getContext());
+        }
+
+        private static LabelId createLabelId() {
+            return LabelId.newBuilder()
+                          .setValue(newUuid())
+                          .build();
         }
     }
 }

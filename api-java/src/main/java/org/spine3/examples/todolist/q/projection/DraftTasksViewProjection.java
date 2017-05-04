@@ -51,7 +51,8 @@ import static org.spine3.examples.todolist.q.projection.ProjectionHelper.updateT
 public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksView> {
 
     /**
-     * As long as there is just a single end-user in the app, the {@link DraftTasksViewProjection} is a singleton.
+     * As long as there is just a single end-user in the app, the {@link DraftTasksViewProjection}
+     * is a singleton.
      */
     public static final TaskListId ID = TaskListId.newBuilder()
                                                   .setValue(newUuid())

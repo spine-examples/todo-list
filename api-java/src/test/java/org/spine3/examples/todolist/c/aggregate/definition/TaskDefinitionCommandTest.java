@@ -26,10 +26,10 @@ import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
 import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.context.TodoListBoundedContext;
-import org.spine3.examples.todolist.testdata.TestCommandContextFactory;
-import org.spine3.test.CommandTest;
+import org.spine3.test.AggregatePartCommandTest;
 
 import static org.spine3.base.Identifiers.newUuid;
+import static org.spine3.examples.todolist.testdata.TestCommandContextFactory.createCommandContext;
 
 /**
  * The parent class for the {@link TaskDefinitionPart} test classes.
@@ -37,25 +37,31 @@ import static org.spine3.base.Identifiers.newUuid;
  *
  * @author Illia Shepilov
  */
-abstract class TaskDefinitionCommandTest<C extends Message> extends CommandTest<C> {
+abstract class TaskDefinitionCommandTest<C extends Message>
+        extends AggregatePartCommandTest<C, TaskDefinitionPart> {
+
+    final CommandContext commandContext = createCommandContext();
+    TaskDefinitionPart aggregate;
+    TaskId taskId;
 
     @Override
     protected void setUp() {
+        super.setUp();
+        aggregate = aggregatePart().get();
+    }
+
+    @Override
+    protected TaskDefinitionPart createAggregatePart() {
         TaskAggregateRoot.injectBoundedContext(TodoListBoundedContext.createTestInstance());
-    }
 
-    public static TaskId createTaskId() {
-        final TaskId result = TaskId.newBuilder()
-                                    .setValue(newUuid())
-                                    .build();
-        return result;
-    }
-
-    CommandContext createCommandContext() {
-        return TestCommandContextFactory.createCommandContext();
-    }
-
-    TaskDefinitionPart createTaskDefinitionPart(TaskAggregateRoot root) {
+        taskId = createTaskId();
+        final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
         return new TaskDefinitionPart(root);
+    }
+
+    private static TaskId createTaskId() {
+        return TaskId.newBuilder()
+                     .setValue(newUuid())
+                     .build();
     }
 }

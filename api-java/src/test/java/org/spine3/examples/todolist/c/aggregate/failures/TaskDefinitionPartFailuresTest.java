@@ -33,6 +33,7 @@ import org.spine3.examples.todolist.c.failures.CannotCreateTaskWithInappropriate
 import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDescription;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
 import static org.spine3.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescriptionFailure;
@@ -48,61 +49,62 @@ class TaskDefinitionPartFailuresTest {
 
     @Test
     @DisplayName("have the private constructor")
-    public void havePrivateConstructor() {
+    void havePrivateConstructor() {
         assertHasPrivateParameterlessCtor(TaskDefinitionPartFailures.class);
     }
 
     @Test
     @DisplayName("throw CannotCreateDraft failure")
-    public void throwCannotCreateDraft() {
+    void throwCannotCreateDraft() {
         final CreateDraft cmd = CreateDraft.newBuilder()
                                            .setId(taskId)
                                            .build();
         final CommandContext ctx = CommandContext.getDefaultInstance();
-        try {
-            throwCannotCreateDraftFailure(cmd, ctx);
-        } catch (CannotCreateDraft ex) {
-            final TaskId actual = ex.getFailureMessage()
-                                    .getCreateDraftFailed()
-                                    .getFailureDetails()
-                                    .getTaskId();
-            assertEquals(taskId, actual);
-        }
+
+        final CannotCreateDraft failure = assertThrows(CannotCreateDraft.class,
+                                                       () -> throwCannotCreateDraftFailure(cmd,
+                                                                                           ctx));
+        final TaskId actual = failure.getFailureMessage()
+                                     .getCreateDraftFailed()
+                                     .getFailureDetails()
+                                     .getTaskId();
+        assertEquals(taskId, actual);
     }
 
     @Test
     @DisplayName("throw CannotUpdateTaskDescription failure")
-    public void throwCannotUpdateTaskDescription() {
+    void throwCannotUpdateTaskDescription() {
         final UpdateTaskDescription cmd = UpdateTaskDescription.newBuilder()
                                                                .setId(taskId)
                                                                .build();
         final CommandContext ctx = CommandContext.getDefaultInstance();
-        try {
-            throwCannotUpdateTaskDescriptionFailure(cmd, ctx);
-        } catch (CannotUpdateTaskDescription ex) {
-            final FailedTaskCommandDetails failedCommand = ex.getFailureMessage()
-                                                             .getUpdateFailed()
-                                                             .getFailureDetails();
-            final TaskId actualId = failedCommand.getTaskId();
-            assertEquals(taskId, actualId);
-        }
+
+        final CannotUpdateTaskDescription failure =
+                assertThrows(CannotUpdateTaskDescription.class,
+                             () -> throwCannotUpdateTaskDescriptionFailure(cmd, ctx));
+        final FailedTaskCommandDetails failedCommand = failure.getFailureMessage()
+                                                              .getUpdateFailed()
+                                                              .getFailureDetails();
+        final TaskId actualId = failedCommand.getTaskId();
+        assertEquals(taskId, actualId);
     }
 
     @Test
     @DisplayName("throw CannotCreateTaskWithInappropriateDescription failure")
-    public void throwCannotCreateTaskWithInappropriateDescription() {
+    void throwCannotCreateTaskWithInappropriateDescription() {
         final CreateBasicTask cmd = CreateBasicTask.newBuilder()
                                                    .setId(taskId)
                                                    .build();
         final CommandContext ctx = CommandContext.getDefaultInstance();
-        try {
-            throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd, ctx);
-        } catch (CannotCreateTaskWithInappropriateDescription ex) {
-            final TaskId actual = ex.getFailureMessage()
-                                    .getCreateTaskFailed()
-                                    .getFailureDetails()
-                                    .getTaskId();
-            assertEquals(taskId, actual);
-        }
+
+        final CannotCreateTaskWithInappropriateDescription failure =
+                assertThrows(CannotCreateTaskWithInappropriateDescription.class,
+                             () -> throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd,
+                                                                                            ctx));
+        final TaskId actual = failure.getFailureMessage()
+                                     .getCreateTaskFailed()
+                                     .getFailureDetails()
+                                     .getTaskId();
+        assertEquals(taskId, actual);
     }
 }

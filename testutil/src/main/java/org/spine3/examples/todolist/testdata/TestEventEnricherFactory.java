@@ -48,29 +48,33 @@ public class TestEventEnricherFactory {
                                                                .setDescription(DESCRIPTION)
                                                                .setPriority(TaskPriority.LOW)
                                                                .build();
-    private static final TaskDefinition TASK_DEFINITION = TaskDefinition.newBuilder()
-                                                                        .setDescription(DESCRIPTION)
-                                                                        .setDueDate(getCurrentTime())
-                                                                        .setPriority(TaskPriority.NORMAL)
-                                                                        .build();
+    private static final TaskDefinition TASK_DEFINITION =
+            TaskDefinition.newBuilder()
+                          .setDescription(DESCRIPTION)
+                          .setDueDate(getCurrentTime())
+                          .setPriority(TaskPriority.NORMAL)
+                          .build();
     private static final LabelDetails LABEL_DETAILS = LabelDetails.newBuilder()
                                                                   .setColor(LabelColor.BLUE)
                                                                   .setTitle(LABEL_TITLE)
                                                                   .build();
 
-    private static final Function<LabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS = labelId -> LABEL_DETAILS;
+    private static final Function<LabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS =
+            labelId -> LABEL_DETAILS;
 
-    private static final Function<TaskId, LabelIdsList> TASK_ID_TO_LABEL_IDS_LIST = taskId -> {
+    private static final Function<TaskId, LabelIdsList> TASK_ID_TO_LABEL_IDS_LIST =
+            taskId -> {
+                final LabelIdsList result = LabelIdsList.newBuilder()
+                                                        .addIds(LABEL_ID)
+                                                        .build();
+                return result;
+            };
 
-        final LabelIdsList result = LabelIdsList.newBuilder()
-                                                .addIds(LABEL_ID)
-                                                .build();
-        return result;
-    };
+    private static final Function<TaskId, TaskDetails> TASK_ID_TO_TASK_DETAILS =
+            taskId -> TASK_DETAILS;
 
-    private static final Function<TaskId, TaskDetails> TASK_ID_TO_TASK_DETAILS = taskId -> TASK_DETAILS;
-
-    private static final Function<TaskId, TaskDefinition> TASK_ID_TO_TASK_DEFINITION = taskId -> TASK_DEFINITION;
+    private static final Function<TaskId, TaskDefinition> TASK_ID_TO_TASK_DEFINITION =
+            taskId -> TASK_DEFINITION;
 
     private TestEventEnricherFactory() {
     }
@@ -81,20 +85,21 @@ public class TestEventEnricherFactory {
      * @return {@code EventEnricher}
      */
     public static EventEnricher eventEnricherInstance() {
-        final EventEnricher result = EventEnricher.newBuilder()
-                                                  .addFieldEnrichment(LabelId.class,
-                                                                      LabelDetails.class,
-                                                                      LABEL_ID_TO_LABEL_DETAILS::apply)
-                                                  .addFieldEnrichment(TaskId.class,
-                                                                      TaskDetails.class,
-                                                                      TASK_ID_TO_TASK_DETAILS::apply)
-                                                  .addFieldEnrichment(TaskId.class,
-                                                                      LabelIdsList.class,
-                                                                      TASK_ID_TO_LABEL_IDS_LIST::apply)
-                                                  .addFieldEnrichment(TaskId.class,
-                                                                      TaskDefinition.class,
-                                                                      TASK_ID_TO_TASK_DEFINITION::apply)
-                                                  .build();
+        final EventEnricher result =
+                EventEnricher.newBuilder()
+                             .addFieldEnrichment(LabelId.class,
+                                                 LabelDetails.class,
+                                                 LABEL_ID_TO_LABEL_DETAILS::apply)
+                             .addFieldEnrichment(TaskId.class,
+                                                 TaskDetails.class,
+                                                 TASK_ID_TO_TASK_DETAILS::apply)
+                             .addFieldEnrichment(TaskId.class,
+                                                 LabelIdsList.class,
+                                                 TASK_ID_TO_LABEL_IDS_LIST::apply)
+                             .addFieldEnrichment(TaskId.class,
+                                                 TaskDefinition.class,
+                                                 TASK_ID_TO_TASK_DEFINITION::apply)
+                             .build();
         return result;
     }
 }

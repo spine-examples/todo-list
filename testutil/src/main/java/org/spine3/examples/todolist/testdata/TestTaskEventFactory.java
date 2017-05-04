@@ -80,19 +80,23 @@ public class TestTaskEventFactory {
         }
 
         /**
-         * Provides the {@link TaskDescriptionUpdated} event by task description and task ID specified.
+         * Provides the {@link TaskDescriptionUpdated} event by task description and
+         * task ID specified.
          *
          * @param description the description of the updated task
          * @return the {@code TaskDescriptionUpdated} instance
          */
-        public static TaskDescriptionUpdated taskDescriptionUpdatedInstance(TaskId id, String description) {
-            final StringChange descriptionChange = StringChange.newBuilder()
-                                                               .setNewValue(description)
-                                                               .build();
-            final TaskDescriptionUpdated result = TaskDescriptionUpdated.newBuilder()
-                                                                        .setTaskId(id)
-                                                                        .setDescriptionChange(descriptionChange)
-                                                                        .build();
+        public static TaskDescriptionUpdated taskDescriptionUpdatedInstance(TaskId id,
+                String description) {
+            final StringChange descriptionChange =
+                    StringChange.newBuilder()
+                                .setNewValue(description)
+                                .build();
+            final TaskDescriptionUpdated result =
+                    TaskDescriptionUpdated.newBuilder()
+                                          .setTaskId(id)
+                                          .setDescriptionChange(descriptionChange)
+                                          .build();
             return result;
         }
 
@@ -111,13 +115,15 @@ public class TestTaskEventFactory {
          * @param priority the priority of the updated task
          * @return the {@code TaskPriorityUpdated} instance
          */
-        public static TaskPriorityUpdated taskPriorityUpdatedInstance(TaskId id, TaskPriority priority) {
+        public static TaskPriorityUpdated taskPriorityUpdatedInstance(TaskId id,
+                TaskPriority priority) {
             final PriorityChange taskPriorityChange = PriorityChange.newBuilder()
                                                                     .setNewValue(priority)
                                                                     .build();
             final TaskPriorityUpdated result = TaskPriorityUpdated.newBuilder()
                                                                   .setTaskId(id)
-                                                                  .setPriorityChange(taskPriorityChange)
+                                                                  .setPriorityChange(
+                                                                          taskPriorityChange)
                                                                   .build();
             return result;
         }
@@ -213,8 +219,8 @@ public class TestTaskEventFactory {
          * @return the {@code TaskDraftCreated} instance
          */
         public static TaskDraftCreated taskDraftCreatedInstance(String description,
-                                                                TaskPriority priority,
-                                                                Timestamp creationTime) {
+                TaskPriority priority,
+                Timestamp creationTime) {
             final TaskDetails.Builder details = TaskDetails.newBuilder()
                                                            .setPriority(priority)
                                                            .setDescription(description);

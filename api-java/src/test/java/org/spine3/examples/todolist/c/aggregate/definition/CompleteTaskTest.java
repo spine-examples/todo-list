@@ -25,11 +25,7 @@ import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.base.CommandContext;
 import org.spine3.examples.todolist.TaskDefinition;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
-import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.CreateDraft;
@@ -39,9 +35,10 @@ import org.spine3.examples.todolist.c.failures.CannotCompleteTask;
 
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.examples.todolist.TaskStatus.COMPLETED;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
@@ -55,26 +52,18 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.delet
 @DisplayName("CompleteTask command should be interpreted by TaskDefinitionPart and")
 public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
-    private final CommandContext commandContext = createCommandContext();
-    private TaskDefinitionPart aggregate;
-    private TaskId taskId;
-
     @Override
     @BeforeEach
     protected void setUp() {
         super.setUp();
-        taskId = createTaskId();
-        aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test
     @DisplayName("produce TaskCompleted event")
-    public void produceEvent() {
+    void produceEvent() {
         dispatchCreateTaskCmd();
 
-        final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-        final List<? extends Message> messageList =
-                aggregate.dispatchForTest(completeTaskCmd, commandContext);
+        final List<? extends Message> messageList = dispatchCompleteTaskCmd();
 
         assertEquals(1, messageList.size());
         assertEquals(TaskCompleted.class, messageList.get(0)
@@ -86,7 +75,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
     @Test
     @DisplayName("complete the task")
-    public void completeTheTask() {
+    void completeTheTask() {
         dispatchCreateTaskCmd();
 
         dispatchCompleteTaskCmd();
@@ -98,35 +87,25 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
     @Test
     @DisplayName("throw CannotCompleteTask failure upon an attempt to complete the deleted task")
-    public void cannotCompleteDeletedTask() {
+    void cannotCompleteDeletedTask() {
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
-        try {
-            dispatchCompleteTaskCmd();
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotCompleteTask);
-        }
+        final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
     }
 
     @Test
-    @DisplayName("throw CannotCompleteTask failure upon an attempt to complete the task in draft state")
-    public void cannotCompleteDraft() {
+    @DisplayName("throw CannotCompleteTask failure upon " +
+            "an attempt to complete the task in draft state")
+    void cannotCompleteDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         aggregate.dispatchForTest(createDraftCmd, commandContext);
 
-        try {
-            dispatchCompleteTaskCmd();
-            fail("CannotCompleteTask was not thrown.");
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotCompleteTask);
-        }
+        final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
     }
 
     private void dispatchCreateTaskCmd() {
@@ -134,8 +113,8 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
         aggregate.dispatchForTest(createTaskCmd, commandContext);
     }
 
-    private void dispatchCompleteTaskCmd() {
+    private List<? extends Message> dispatchCompleteTaskCmd() {
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-        aggregate.dispatchForTest(completeTaskCmd, commandContext);
+        return aggregate.dispatchForTest(completeTaskCmd, commandContext);
     }
 }

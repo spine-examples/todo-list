@@ -41,7 +41,8 @@ public class TestEventBusFactory {
      * @param eventEnricher  the {@link EventEnricher} to set
      * @return the {@code EventBus} instance
      */
-    public static EventBus eventBusInstance(StorageFactory storageFactory, EventEnricher eventEnricher) {
+    public static EventBus eventBusInstance(StorageFactory storageFactory,
+            EventEnricher eventEnricher) {
         final EventBus result = EventBus.newBuilder()
                                         .setStorageFactory(storageFactory)
                                         .setEnricher(eventEnricher)

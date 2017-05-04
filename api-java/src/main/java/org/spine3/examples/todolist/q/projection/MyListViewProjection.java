@@ -60,7 +60,8 @@ import static org.spine3.examples.todolist.q.projection.ProjectionHelper.updateT
 public class MyListViewProjection extends Projection<TaskListId, MyListView> {
 
     /**
-     * As long as there is just a single end-user in the app, the {@link MyListViewProjection} is a singleton.
+     * As long as there is just a single end-user in the app, the {@link MyListViewProjection}
+     * is a singleton.
      */
     public static final TaskListId ID = TaskListId.newBuilder()
                                                   .setValue(newUuid())

@@ -52,7 +52,8 @@ class RepositoryHelper {
      * @param id         the {@link TaskListId}
      */
     static <M extends Message, P extends AbstractVersionableEntity<TaskListId, M>> void
-    addCommonIdSetFunctions(EventDispatchingRepository<TaskListId, P, M> repository, TaskListId id) {
+    addCommonIdSetFunctions(
+            EventDispatchingRepository<TaskListId, P, M> repository, TaskListId id) {
         final IdSetEventFunction<TaskListId, TaskDeleted> taskDeletedFn =
                 (message, context) -> Collections.singleton(id);
         repository.addIdSetFunction(TaskDeleted.class, taskDeletedFn);

@@ -93,16 +93,16 @@ public class LabelledTasksViewRepository
                 getLabelIdsSet(context);
         addIdSetFunction(TaskCompleted.class, taskCompletedFn);
 
-        final IdSetEventFunction<LabelId, TaskPriorityUpdated> taskPriorityUpdatedFn = (message, context) ->
-                getLabelIdsSet(context);
+        final IdSetEventFunction<LabelId, TaskPriorityUpdated> taskPriorityUpdatedFn =
+                (message, context) -> getLabelIdsSet(context);
         addIdSetFunction(TaskPriorityUpdated.class, taskPriorityUpdatedFn);
 
-        final IdSetEventFunction<LabelId, TaskDescriptionUpdated> taskDescriptionUpdatedFn = (message, context) ->
-                getLabelIdsSet(context);
+        final IdSetEventFunction<LabelId, TaskDescriptionUpdated> taskDescriptionUpdatedFn =
+                (message, context) -> getLabelIdsSet(context);
         addIdSetFunction(TaskDescriptionUpdated.class, taskDescriptionUpdatedFn);
 
-        final IdSetEventFunction<LabelId, TaskDueDateUpdated> taskDueDateUpdatedFn = (message, context) ->
-                getLabelIdsSet(context);
+        final IdSetEventFunction<LabelId, TaskDueDateUpdated> taskDueDateUpdatedFn =
+                (message, context) -> getLabelIdsSet(context);
         addIdSetFunction(TaskDueDateUpdated.class, taskDueDateUpdatedFn);
     }
 

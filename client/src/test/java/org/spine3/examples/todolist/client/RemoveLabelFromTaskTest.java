@@ -74,7 +74,8 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
             client.assignLabel(assignLabelToTask);
 
-            final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId, labelId);
+            final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId,
+                                                                                        labelId);
             client.removeLabel(removeLabelFromTask);
 
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
@@ -132,7 +133,8 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
             final CreateBasicLabel createBasicLabel = createLabel();
             final LabelId labelId = createBasicLabel.getLabelId();
 
-            final TaskView view = obtainTaskViewWhenHandledRemoveLabeledFromTask(labelId, false);
+            final TaskView view = obtainTaskViewWhenHandledRemoveLabeledFromTask(labelId,
+                                                                                 false);
             assertEquals(labelId, view.getLabelId());
         }
     }
@@ -147,7 +149,8 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
             final CreateBasicLabel createLabel = createLabel();
             final LabelId labelId = createLabel.getLabelId();
 
-            final TaskView view = obtainTaskViewWhenHandledRemoveLabelFromTask(labelId, true);
+            final TaskView view = obtainTaskViewWhenHandledRemoveLabelFromTask(labelId,
+                                                                               true);
             assertNotEquals(labelId, view.getLabelId());
         }
 
@@ -157,12 +160,14 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
             final CreateBasicLabel createLabel = createLabel();
             final LabelId labelId = createLabel.getLabelId();
 
-            final TaskView view = obtainTaskViewWhenHandledRemoveLabelFromTask(labelId, false);
+            final TaskView view = obtainTaskViewWhenHandledRemoveLabelFromTask(labelId,
+                                                                               false);
             assertEquals(labelId, view.getLabelId());
         }
     }
 
-    private TaskView obtainTaskViewWhenHandledRemoveLabelFromTask(LabelId labelId, boolean isCorrectId) {
+    private TaskView obtainTaskViewWhenHandledRemoveLabelFromTask(LabelId labelId,
+            boolean isCorrectId) {
         final CreateBasicTask createTask = createTask();
         final TaskId taskId = createTask.getId();
 
@@ -175,7 +180,8 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private TaskView obtainTaskViewWhenHandledRemoveLabeledFromTask(LabelId labelId, boolean isCorrectId) {
+    private TaskView obtainTaskViewWhenHandledRemoveLabeledFromTask(LabelId labelId,
+            boolean isCorrectId) {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
         final TaskId taskId = createDraft.getId();
@@ -194,7 +200,8 @@ public class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
         client.assignLabel(assignLabelToTask);
 
         final TaskId idOfUpdatedTask = isCorrectId ? taskId : createWrongTaskId();
-        final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(idOfUpdatedTask, labelId);
+        final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(idOfUpdatedTask,
+                                                                                    labelId);
         client.removeLabel(removeLabelFromTask);
     }
 

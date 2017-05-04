@@ -31,7 +31,8 @@ import org.spine3.server.aggregate.AggregatePartRepository;
  *
  * @author Illia Shepilov
  */
-public class TaskDefinitionRepository extends AggregatePartRepository<TaskId, TaskDefinitionPart, TaskAggregateRoot> {
+public class TaskDefinitionRepository
+        extends AggregatePartRepository<TaskId, TaskDefinitionPart, TaskAggregateRoot> {
     /**
      * {@inheritDoc}
      *

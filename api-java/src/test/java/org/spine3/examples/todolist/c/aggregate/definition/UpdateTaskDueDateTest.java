@@ -26,13 +26,10 @@ import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.base.CommandContext;
 import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskDueDateUpdateFailed;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
-import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
@@ -43,8 +40,10 @@ import org.spine3.examples.todolist.c.failures.Failures;
 
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DUE_DATE;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
@@ -60,55 +59,44 @@ import static org.spine3.protobuf.Timestamps2.getCurrentTime;
 @DisplayName("UpdateTaskDueDate command should be interpreted by TaskDefinitionPart and")
 public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskDueDate> {
 
-    private TaskDefinitionPart aggregate;
-    private final CommandContext commandContext = createCommandContext();
-    private TaskId taskId;
-
     @Override
     @BeforeEach
     protected void setUp() {
         super.setUp();
-        taskId = createTaskId();
-        aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
         dispatchCreateTaskCmd();
     }
 
     @Test
     @DisplayName("throw CannotUpdateTaskDueDate failure " +
             "upon an attempt to update the due date of the completed task")
-    public void cannotUpdateCompletedTaskDueDate() {
+    void cannotUpdateCompletedTaskDueDate() {
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
         aggregate.dispatchForTest(completeTaskCmd, commandContext);
 
-        try {
-            final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
-            aggregate.dispatchForTest(updateTaskDueDateCmd, commandContext);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskDueDate);
-        }
+        final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> aggregate.dispatchForTest(updateTaskDueDateCmd,
+                                                                         commandContext));
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDueDate.class));
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDueDate failure upon an attempt to update the due date of the deleted task")
-    public void cannotUpdateDeletedTaskDueDate() {
+    @DisplayName("throw CannotUpdateTaskDueDate failure " +
+            "upon an attempt to update the due date of the deleted task")
+    void cannotUpdateDeletedTaskDueDate() {
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
-        try {
-            final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
-            aggregate.dispatchForTest(updateTaskDueDateCmd, commandContext);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskDueDate);
-        }
+        final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> aggregate.dispatchForTest(updateTaskDueDateCmd,
+                                                                         commandContext));
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDueDate.class));
     }
 
     @Test
     @DisplayName("produce TaskDueDateUpdated event")
-    public void produceEvent() {
+    void produceEvent() {
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
         final List<? extends Message> messageList =
                 aggregate.dispatchForTest(updateTaskDueDateCmd, commandContext);
@@ -126,7 +114,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
 
     @Test
     @DisplayName("update the task due date")
-    public void updateDueDate() {
+    void updateDueDate() {
         final Timestamp updatedDueDate = getCurrentTime();
         final UpdateTaskDueDate updateTaskDueDateCmd =
                 updateTaskDueDateInstance(taskId, Timestamp.getDefaultInstance(), updatedDueDate);
@@ -139,39 +127,33 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
 
     @Test
     @DisplayName("produce CannotUpdateTaskDueDate failure")
-    public void produceFailure() {
+    void produceFailure() {
         final Timestamp expectedDueDate = getCurrentTime();
         final Timestamp newDueDate = getCurrentTime();
 
-        try {
-            final UpdateTaskDueDate updateTaskDueDate =
-                    updateTaskDueDateInstance(taskId, expectedDueDate, newDueDate);
-            final List<? extends com.google.protobuf.Message> messageList =
-                    aggregate.dispatchForTest(updateTaskDueDate, commandContext);
+        final UpdateTaskDueDate updateTaskDueDate =
+                updateTaskDueDateInstance(taskId, expectedDueDate, newDueDate);
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> aggregate.dispatchForTest(updateTaskDueDate,
+                                                                         commandContext));
+        final Throwable cause = Throwables.getRootCause(t);
+        assertThat(cause, instanceOf(CannotUpdateTaskDueDate.class));
 
-            assertEquals(1, messageList.size());
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskDueDate);
+        final Failures.CannotUpdateTaskDueDate cannotUpdateTaskDueDate =
+                ((CannotUpdateTaskDueDate) cause).getFailureMessage();
 
-            @SuppressWarnings("ConstantConditions")
-            final Failures.CannotUpdateTaskDueDate cannotUpdateTaskDueDate =
-                    ((CannotUpdateTaskDueDate) cause).getFailureMessage();
+        final TaskDueDateUpdateFailed dueDateUpdateFailed = cannotUpdateTaskDueDate.getUpdateFailed();
+        final TaskId actualTaskId = dueDateUpdateFailed.getFailureDetails()
+                                                       .getTaskId();
+        assertEquals(taskId, actualTaskId);
 
-            final TaskDueDateUpdateFailed dueDateUpdateFailed = cannotUpdateTaskDueDate.getUpdateFailed();
-            final TaskId actualTaskId = dueDateUpdateFailed.getFailureDetails()
-                                                           .getTaskId();
-            assertEquals(taskId, actualTaskId);
+        final ValueMismatch mismatch = dueDateUpdateFailed.getDueDateMismatch();
 
-            final ValueMismatch mismatch = dueDateUpdateFailed.getDueDateMismatch();
+        assertEquals(newDueDate, unpack(mismatch.getNewValue()));
+        assertEquals(expectedDueDate, unpack(mismatch.getExpected()));
 
-            assertEquals(newDueDate, unpack(mismatch.getNewValue()));
-            assertEquals(expectedDueDate, unpack(mismatch.getExpected()));
-
-            final Timestamp actualDueDate = Timestamp.getDefaultInstance();
-            assertEquals(actualDueDate, unpack(mismatch.getActual()));
-        }
+        final Timestamp actualDueDate = Timestamp.getDefaultInstance();
+        assertEquals(actualDueDate, unpack(mismatch.getActual()));
     }
 
     private void dispatchCreateTaskCmd() {

@@ -25,15 +25,12 @@ import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.base.CommandContext;
 import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.PriorityUpdateFailed;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.TaskPriority;
 import org.spine3.examples.todolist.TaskPriorityValue;
-import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
-import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
@@ -60,20 +57,15 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 @DisplayName("UpdateTaskPriority command should be interpreted by TaskDefinitionPart and")
 public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTaskPriority> {
 
-    private final CommandContext commandContext = createCommandContext();
-    private TaskDefinitionPart aggregate;
-    private TaskId taskId;
-
     @Override
     @BeforeEach
     protected void setUp() {
         super.setUp();
-        taskId = createTaskId();
-        aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskPriority failure upon an attempt to update the priority of the deleted task")
+    @DisplayName("throw CannotUpdateTaskPriority failure upon an attempt to " +
+            "update the priority of the deleted task")
     public void cannotUpdateDeletedTaskPriority() {
         dispatchCreateTaskCmd();
 
@@ -159,21 +151,25 @@ public class UpdateTaskPriorityTest extends TaskDefinitionCommandTest<UpdateTask
             @SuppressWarnings("ConstantConditions")
             final Failures.CannotUpdateTaskPriority cannotUpdateTaskPriority =
                     ((CannotUpdateTaskPriority) cause).getFailureMessage();
-            final PriorityUpdateFailed priorityUpdateFailed = cannotUpdateTaskPriority.getUpdateFailed();
+            final PriorityUpdateFailed priorityUpdateFailed =
+                    cannotUpdateTaskPriority.getUpdateFailed();
             final TaskId actualTaskId = priorityUpdateFailed.getFailureDetails()
                                                             .getTaskId();
             assertEquals(taskId, actualTaskId);
 
             final ValueMismatch mismatch = priorityUpdateFailed.getPriorityMismatch();
-            final TaskPriorityValue expectedValue = TaskPriorityValue.newBuilder()
-                                                                     .setPriorityValue(TaskPriority.LOW)
-                                                                     .build();
-            final TaskPriorityValue actualValue = TaskPriorityValue.newBuilder()
-                                                                   .setPriorityValue(TaskPriority.TP_UNDEFINED)
-                                                                   .build();
-            final TaskPriorityValue newValue = TaskPriorityValue.newBuilder()
-                                                                .setPriorityValue(TaskPriority.HIGH)
-                                                                .build();
+            final TaskPriorityValue expectedValue =
+                    TaskPriorityValue.newBuilder()
+                                     .setPriorityValue(TaskPriority.LOW)
+                                     .build();
+            final TaskPriorityValue actualValue =
+                    TaskPriorityValue.newBuilder()
+                                     .setPriorityValue(TaskPriority.TP_UNDEFINED)
+                                     .build();
+            final TaskPriorityValue newValue =
+                    TaskPriorityValue.newBuilder()
+                                     .setPriorityValue(TaskPriority.HIGH)
+                                     .build();
             assertEquals(actualValue, unpack(mismatch.getActual()));
             assertEquals(expectedValue, unpack(mismatch.getExpected()));
             assertEquals(newValue, unpack(mismatch.getNewValue()));

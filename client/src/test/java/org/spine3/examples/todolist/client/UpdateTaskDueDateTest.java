@@ -66,15 +66,18 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         @DisplayName("contain the task view with updated due date")
         public void containUpdatedView() {
             final Timestamp newDueDate = getCurrentTime();
-            final TaskView view = obtainViewWhenHandledCommandUpdateTaskDueDate(newDueDate, true);
+            final TaskView view =
+                    obtainViewWhenHandledCommandUpdateTaskDueDate(newDueDate, true);
             assertEquals(newDueDate, view.getDueDate());
         }
 
         @Test
-        @DisplayName("contain the task view with not updated due date when command has wrong task ID")
+        @DisplayName("contain the task view with not updated due date " +
+                "when command has wrong task ID")
         public void containNotUpdatedView() {
             final Timestamp newDueDate = getCurrentTime();
-            final TaskView view = obtainViewWhenHandledCommandUpdateTaskDueDate(newDueDate, false);
+            final TaskView view =
+                    obtainViewWhenHandledCommandUpdateTaskDueDate(newDueDate, false);
             assertNotEquals(newDueDate, view.getDueDate());
         }
     }
@@ -87,16 +90,19 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         @DisplayName("contain the task view with updated due date")
         public void containUpdatedView() {
             final Timestamp newDueDate = getCurrentTime();
-            final TaskView view = obtainViewWhenHandledUpdateTaskDueDate(newDueDate, true);
+            final TaskView view =
+                    obtainViewWhenHandledUpdateTaskDueDate(newDueDate, true);
 
             assertEquals(newDueDate, view.getDueDate());
         }
 
         @Test
-        @DisplayName("contain the task view with not updated due date when command has wrong task ID")
+        @DisplayName("contain the task view with not updated due date " +
+                "when command has wrong task ID")
         public void containNotUpdatedView() {
             final Timestamp newDueDate = getCurrentTime();
-            final TaskView view = obtainViewWhenHandledUpdateTaskDueDate(newDueDate, false);
+            final TaskView view =
+                    obtainViewWhenHandledUpdateTaskDueDate(newDueDate, false);
 
             assertNotEquals(newDueDate, view.getDueDate());
         }
@@ -110,7 +116,8 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         @DisplayName("contain the task view with updated due date")
         public void containUpdatedView() {
             final Timestamp newDueDate = getCurrentTime();
-            final TaskView view = obtainTaskViewWhenHandledUpdateTaskDueDate(newDueDate, true);
+            final TaskView view =
+                    obtainTaskViewWhenHandledUpdateTaskDueDate(newDueDate, true);
             assertEquals(newDueDate, view.getDueDate());
         }
 
@@ -118,12 +125,14 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         @DisplayName("contain task view with not updated due date when command has wrong task ID")
         public void containNotUpdatedView() {
             final Timestamp newDueDate = getCurrentTime();
-            final TaskView view = obtainTaskViewWhenHandledUpdateTaskDueDate(newDueDate, false);
+            final TaskView view =
+                    obtainTaskViewWhenHandledUpdateTaskDueDate(newDueDate, false);
             assertNotEquals(newDueDate, view.getDueDate());
         }
     }
 
-    private TaskView obtainTaskViewWhenHandledUpdateTaskDueDate(Timestamp newDueDate, boolean isCorrectId) {
+    private TaskView obtainTaskViewWhenHandledUpdateTaskDueDate(Timestamp newDueDate,
+            boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 
@@ -140,7 +149,8 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private TaskView obtainViewWhenHandledUpdateTaskDueDate(Timestamp newDueDate, boolean isCorrectId) {
+    private TaskView obtainViewWhenHandledUpdateTaskDueDate(Timestamp newDueDate,
+            boolean isCorrectId) {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 
@@ -159,7 +169,8 @@ public class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private TaskView obtainViewWhenHandledCommandUpdateTaskDueDate(Timestamp newDueDate, boolean isCorrectId) {
+    private TaskView obtainViewWhenHandledCommandUpdateTaskDueDate(Timestamp newDueDate,
+            boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
         final TaskId createdTaskId = createTask.getId();
         client.create(createTask);

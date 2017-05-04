@@ -26,13 +26,10 @@ import com.google.protobuf.StringValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.base.CommandContext;
 import org.spine3.change.ValueMismatch;
 import org.spine3.examples.todolist.DescriptionUpdateFailed;
 import org.spine3.examples.todolist.TaskDefinition;
 import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.aggregate.TaskAggregateRoot;
-import org.spine3.examples.todolist.c.aggregate.TaskDefinitionPart;
 import org.spine3.examples.todolist.c.commands.CompleteTask;
 import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
@@ -60,30 +57,26 @@ import static org.spine3.protobuf.AnyPacker.unpack;
 @DisplayName("UpdateTaskDescription command should be interpreted by TaskDefinitionPart and")
 public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateTaskDescription> {
 
-    private final CommandContext commandContext = createCommandContext();
-    private TaskDefinitionPart aggregate;
-    private TaskId taskId;
-
     @Override
     @BeforeEach
     protected void setUp() {
         super.setUp();
-        taskId = createTaskId();
-        aggregate = createTaskDefinitionPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test
     @DisplayName("produce TaskDescriptionUpdated event")
     public void produceEvent() {
         dispatchCreateTaskCmd();
-        final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId);
+        final UpdateTaskDescription updateTaskDescriptionCmd =
+                updateTaskDescriptionInstance(taskId);
         final List<? extends Message> messageList =
                 aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
 
         assertEquals(1, messageList.size());
         assertEquals(TaskDescriptionUpdated.class, messageList.get(0)
                                                               .getClass());
-        final TaskDescriptionUpdated taskDescriptionUpdated = (TaskDescriptionUpdated) messageList.get(0);
+        final TaskDescriptionUpdated taskDescriptionUpdated =
+                (TaskDescriptionUpdated) messageList.get(0);
 
         assertEquals(taskId, taskDescriptionUpdated.getTaskId());
         final String newDescription = taskDescriptionUpdated.getDescriptionChange()
@@ -96,7 +89,8 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
             "upon an attempt to update the task by too short description")
     public void cannotUpdateTaskDescription() {
         try {
-            final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId, "", ".");
+            final UpdateTaskDescription updateTaskDescriptionCmd =
+                    updateTaskDescriptionInstance(taskId, "", ".");
             aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
@@ -115,7 +109,8 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
         aggregate.dispatchForTest(deleteTaskCmd, commandContext);
 
         try {
-            final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId);
+            final UpdateTaskDescription updateTaskDescriptionCmd =
+                    updateTaskDescriptionInstance(taskId);
             assertThrows(CannotUpdateTaskDescription.class, () ->
                     aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext));
         } catch (Throwable e) {
@@ -135,7 +130,8 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
         aggregate.dispatchForTest(completeTaskCmd, commandContext);
 
         try {
-            final UpdateTaskDescription updateTaskDescriptionCmd = updateTaskDescriptionInstance(taskId);
+            final UpdateTaskDescription updateTaskDescriptionCmd =
+                    updateTaskDescriptionInstance(taskId);
             aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
         } catch (Throwable e) {
             @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.

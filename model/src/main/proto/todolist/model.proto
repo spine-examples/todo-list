@@ -50,7 +50,8 @@ message TaskDefinition {
     // Task priority.
     //
     // If a task is created in "Quick" mode, its priority is "NORMAL".
-    // If a task is created in scope of a wizard, the end-user is prompted to set the priority explicitly.
+    // If a task is created in scope of a wizard, the end-user is prompted to set
+    // the priority explicitly.
     TaskPriority priority = 3;
 
     // Task creation date.

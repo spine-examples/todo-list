@@ -167,7 +167,8 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
             final CreateBasicTask createTask = createTask();
 
             final TaskId idOfCreatedTask = createTask.getId();
-            final List<TaskView> taskViews = obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, true);
+            final List<TaskView> taskViews =
+                    obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, true);
 
             assertTrue(taskViews.isEmpty());
         }
@@ -178,7 +179,8 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
             final CreateBasicTask createTask = createTask();
 
             final TaskId idOfCreatedTask = createTask.getId();
-            final List<TaskView> taskViews = obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, false);
+            final List<TaskView> taskViews =
+                    obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, false);
             assertEquals(1, taskViews.size());
 
             final TaskView view = taskViews.get(0);
@@ -187,7 +189,8 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
         }
     }
 
-    private List<TaskView> obtainTaskViewListWhenHandledDeleteTask(TaskId idOfCreatedTask, boolean isCorrectId) {
+    private List<TaskView> obtainTaskViewListWhenHandledDeleteTask(TaskId idOfCreatedTask,
+            boolean isCorrectId) {
         final TaskId idOfDeletedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
 
         final DeleteTask deleteTask = deleteTaskInstance(idOfDeletedTask);

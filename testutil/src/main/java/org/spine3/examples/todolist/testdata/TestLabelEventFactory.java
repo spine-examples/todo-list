@@ -56,17 +56,21 @@ public class TestLabelEventFactory {
      * @param title the title of the updated label details
      * @return the {@code LabelDetailsUpdated} instance
      */
-    public static LabelDetailsUpdated labelDetailsUpdatedInstance(LabelId labelId, LabelColor color, String title) {
-        final LabelDetails.Builder labelDetailsBuilder = LabelDetails.newBuilder()
-                                                                     .setColor(color)
-                                                                     .setTitle(title);
-        final LabelDetailsChange labelDetailsChange = LabelDetailsChange.newBuilder()
-                                                                        .setNewDetails(labelDetailsBuilder)
-                                                                        .build();
-        final LabelDetailsUpdated result = LabelDetailsUpdated.newBuilder()
-                                                              .setLabelId(labelId)
-                                                              .setLabelDetailsChange(labelDetailsChange)
-                                                              .build();
+    public static LabelDetailsUpdated labelDetailsUpdatedInstance(LabelId labelId, LabelColor color,
+            String title) {
+        final LabelDetails.Builder labelDetailsBuilder =
+                LabelDetails.newBuilder()
+                            .setColor(color)
+                            .setTitle(title);
+        final LabelDetailsChange labelDetailsChange =
+                LabelDetailsChange.newBuilder()
+                                  .setNewDetails(labelDetailsBuilder)
+                                  .build();
+        final LabelDetailsUpdated result =
+                LabelDetailsUpdated.newBuilder()
+                                   .setLabelId(labelId)
+                                   .setLabelDetailsChange(labelDetailsChange)
+                                   .build();
         return result;
     }
 }
