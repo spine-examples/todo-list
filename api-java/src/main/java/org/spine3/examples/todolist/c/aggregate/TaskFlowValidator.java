@@ -39,59 +39,46 @@ class TaskFlowValidator {
      * @param newStatus     new task status
      */
     static boolean isValidTransition(TaskStatus currentStatus, TaskStatus newStatus) {
-        final boolean isValid = TaskStatusTransition.isValid(currentStatus, newStatus);
-        return isValid;
+        return TaskStatusTransition.isValid(currentStatus, newStatus);
     }
 
     static boolean isValidUpdateTaskPriorityCommand(TaskStatus currentStatus) {
-        final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
-        return isValid;
+        return ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
     static boolean isValidUpdateTaskDueDateCommand(TaskStatus currentStatus) {
-        final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
-        return isValid;
+        return ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
     static boolean isValidTaskStatusToRemoveLabel(TaskStatus currentStatus) {
-        final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
-        return isValid;
+        return ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
     static boolean isValidAssignLabelToTaskCommand(TaskStatus currentStatus) {
-        final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
-        return isValid;
+        return ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
     static boolean isValidCreateDraftCommand(TaskStatus currentStatus) {
-        final boolean isValid = ensureNeitherCompletedNorDeleted(currentStatus);
-        return isValid;
+        return ensureNeitherCompletedNorDeleted(currentStatus);
     }
 
-    static boolean ensureNotDeleted(TaskStatus currentStatus) {
-        final boolean isDeleted = currentStatus == TaskStatus.DELETED;
-        return isDeleted;
+    static boolean ensureDeleted(TaskStatus currentStatus) {
+        return currentStatus == TaskStatus.DELETED;
+    }
+
+    static boolean ensureCompleted(TaskStatus currentStatus) {
+        return currentStatus == TaskStatus.COMPLETED;
     }
 
     /**
-     * Verifies status of current task.
-     *
-     * <p> If it is COMPLETED or DELETED {@link TaskStatus} state,
-     * throws {@link IllegalStateException}.
+     * Verifies that the specified {@link TaskStatus} is neither completed nor deleted.
      *
      * @param currentStatus task current state {@link TaskStatus}
-     * @throws IllegalStateException if status, passed to the method,
-     *                               {@code TaskStatus.COMPLETED} or {@code TaskStatus.DELETED}.
+     * @return {@code true} if the status is neither completed nor deleted
      */
     static boolean ensureNeitherCompletedNorDeleted(TaskStatus currentStatus) {
-        boolean isDeleted = ensureNotDeleted(currentStatus);
-        boolean isCompleted = ensureNotCompleted(currentStatus);
-        final boolean result = !isDeleted && !isCompleted;
-        return result;
-    }
-
-    private static boolean ensureNotCompleted(TaskStatus currentStatus) {
-        final boolean isCompleted = currentStatus == TaskStatus.COMPLETED;
-        return isCompleted;
+        boolean isDeleted = ensureDeleted(currentStatus);
+        boolean isCompleted = ensureCompleted(currentStatus);
+        return !isDeleted && !isCompleted;
     }
 }

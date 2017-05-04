@@ -51,7 +51,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.creat
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 import static org.spine3.protobuf.AnyPacker.unpack;
-import static org.spine3.protobuf.Timestamps2.getCurrentTime;
+import static org.spine3.time.Time.getCurrentTime;
 
 /**
  * @author Illia Shepilov
@@ -71,12 +71,12 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
             "upon an attempt to update the due date of the completed task")
     void cannotUpdateCompletedTaskDueDate() {
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-        aggregate.dispatchForTest(completeTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(completeTaskCmd));
 
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(updateTaskDueDateCmd,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(updateTaskDueDateCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDueDate.class));
     }
 
@@ -85,12 +85,12 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
             "upon an attempt to update the due date of the deleted task")
     void cannotUpdateDeletedTaskDueDate() {
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(deleteTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
 
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(updateTaskDueDateCmd,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(updateTaskDueDateCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDueDate.class));
     }
 
@@ -99,7 +99,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
     void produceEvent() {
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
         final List<? extends Message> messageList =
-                aggregate.dispatchForTest(updateTaskDueDateCmd, commandContext);
+                aggregate.dispatchForTest(envelopeOf(updateTaskDueDateCmd));
 
         assertEquals(1, messageList.size());
         assertEquals(TaskDueDateUpdated.class, messageList.get(0)
@@ -118,7 +118,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
         final Timestamp updatedDueDate = getCurrentTime();
         final UpdateTaskDueDate updateTaskDueDateCmd =
                 updateTaskDueDateInstance(taskId, Timestamp.getDefaultInstance(), updatedDueDate);
-        aggregate.dispatchForTest(updateTaskDueDateCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(updateTaskDueDateCmd));
         final TaskDefinition state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -134,8 +134,8 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
         final UpdateTaskDueDate updateTaskDueDate =
                 updateTaskDueDateInstance(taskId, expectedDueDate, newDueDate);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(updateTaskDueDate,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(updateTaskDueDate)));
         final Throwable cause = Throwables.getRootCause(t);
         assertThat(cause, instanceOf(CannotUpdateTaskDueDate.class));
 
@@ -158,6 +158,6 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
 
     private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createTaskCmd));
     }
 }

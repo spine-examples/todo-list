@@ -22,8 +22,8 @@ package org.spine3.examples.todolist;
 
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
+import org.spine3.base.Enrichments;
 import org.spine3.base.EventContext;
-import org.spine3.base.Events;
 
 /**
  * Utility class for working with enrichments.
@@ -42,14 +42,13 @@ public class EnrichmentHelper {
      * @param context         the {@code EventContext}
      * @return the enrichment if it is present, throws {@code EnrichmentNotFoundException} otherwise
      */
-    @SuppressWarnings("Guava") //Spine API is Java 7-based and uses {@code Optional} from
-    // Google Guava.
-    public static <T extends Message, E extends Class<T>> T getEnrichment(E enrichmentClass,
-            EventContext context) {
-        final Optional<T> enrichmentOptional = Events.getEnrichment(enrichmentClass, context);
+    @SuppressWarnings("Guava") // Spine API is Java 7-based
+                               // and uses {@code Optional} from Google Guava.
+    public static <T extends Message, E extends Class<T>>
+    T getEnrichment(E enrichmentClass, EventContext context) {
+        final Optional<T> enrichmentOptional = Enrichments.getEnrichment(enrichmentClass, context);
         if (enrichmentOptional.isPresent()) {
-            T result = enrichmentOptional.get();
-            return result;
+            return enrichmentOptional.get();
         }
         throw new EnrichmentNotFoundException(enrichmentClass + " not found");
     }

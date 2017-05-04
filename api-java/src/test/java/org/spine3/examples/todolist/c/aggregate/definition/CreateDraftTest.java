@@ -61,7 +61,7 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
 
         final List<? extends Message> messageList =
-                aggregate.dispatchForTest(createDraftCmd, commandContext);
+                aggregate.dispatchForTest(envelopeOf(createDraftCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDraftCreated.class, messageList.get(0)
                                                         .getClass());
@@ -74,7 +74,7 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
     @DisplayName("create the draft")
     void createDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
-        aggregate.dispatchForTest(createDraftCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createDraftCmd));
         final TaskDefinition state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -86,15 +86,15 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
             "an attempt to create draft with deleted task ID")
     void notCreateDraft() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createTaskCmd));
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(deleteTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
 
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(createDraftCmd,
-                                                                         commandContext));
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(createDraftCmd)));
         final Throwable cause = Throwables.getRootCause(t);
         final CannotCreateDraft failure = (CannotCreateDraft) cause;
         final TaskId actualId = failure.getFailureMessage()

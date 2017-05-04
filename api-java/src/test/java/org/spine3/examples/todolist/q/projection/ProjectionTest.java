@@ -20,7 +20,11 @@
 
 package org.spine3.examples.todolist.q.projection;
 
+import com.google.protobuf.Message;
+import org.spine3.base.Event;
 import org.spine3.examples.todolist.TaskListId;
+import org.spine3.server.command.EventFactory;
+import org.spine3.test.TestEventFactory;
 
 import static org.spine3.base.Identifiers.newUuid;
 
@@ -32,10 +36,15 @@ import static org.spine3.base.Identifiers.newUuid;
  */
 abstract class ProjectionTest {
 
+    private final EventFactory eventFactory = TestEventFactory.newInstance(getClass());
+
+    Event createEvent(Message messageOrAny) {
+        return eventFactory.createEvent(messageOrAny, null);
+    }
+
     TaskListId createTaskListId() {
-        final TaskListId taskListId = TaskListId.newBuilder()
-                                                .setValue(newUuid())
-                                                .build();
-        return taskListId;
+        return TaskListId.newBuilder()
+                         .setValue(newUuid())
+                         .build();
     }
 }

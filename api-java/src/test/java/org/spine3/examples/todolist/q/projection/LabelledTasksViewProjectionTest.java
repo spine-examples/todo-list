@@ -25,7 +25,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.Event;
-import org.spine3.base.EventContext;
 import org.spine3.examples.todolist.LabelColor;
 import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
@@ -55,7 +54,6 @@ import static org.spine3.base.Identifiers.newUuid;
 import static org.spine3.examples.todolist.q.projection.LabelColorView.RED_COLOR;
 import static org.spine3.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
 import static org.spine3.examples.todolist.testdata.TestEventBusFactory.eventBusInstance;
-import static org.spine3.examples.todolist.testdata.TestEventContextFactory.eventContextInstance;
 import static org.spine3.examples.todolist.testdata.TestEventEnricherFactory.LABEL_TITLE;
 import static org.spine3.examples.todolist.testdata.TestEventEnricherFactory.eventEnricherInstance;
 import static org.spine3.examples.todolist.testdata.TestLabelEventFactory.labelDetailsUpdatedInstance;
@@ -73,22 +71,18 @@ import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateE
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskPriorityUpdatedInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelAssignedToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskLabelsEventFactory.labelRemovedFromTaskInstance;
-import static org.spine3.server.command.EventFactory.createEvent;
 
 /**
  * @author Illia Shepilov
  */
-@SuppressWarnings("OptionalGetWithoutIsPresent")
-// it is OK as object creation is controlled during the test.
-public class LabelledTasksViewProjectionTest extends ProjectionTest {
+class LabelledTasksViewProjectionTest extends ProjectionTest {
 
-    private final EventContext eventContext = eventContextInstance();
     private ProjectionRepository<LabelId, LabelledTasksViewProjection,
             LabelledTasksView> repository;
     private EventBus eventBus;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         final StorageFactorySwitch storageFactorySwitch = StorageFactorySwitch.getInstance(false);
         final StorageFactory storageFactory = storageFactorySwitch.get();
         final EventEnricher eventEnricher = eventEnricherInstance();
@@ -107,9 +101,9 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("add TaskView to LabelledTasksView")
-        public void addView() {
+        void addView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
             LabelledTasksView labelledTaskView = repository.find(LABEL_ID)
                                                            .get()
@@ -157,9 +151,9 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("remove TaskView from LabelledTasksView")
-        public void removeView() {
+        void removeView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
             eventBus.post(labelAssignedToTaskEvent);
 
@@ -172,7 +166,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
                                              .size());
 
             final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
-            final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask, eventContext);
+            final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask);
             eventBus.post(labelRemovedFromTaskEvent);
 
             final LabelledTasksView updatedLabelledTaskView = repository.find(LABEL_ID)
@@ -192,18 +186,18 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("add TaskView to LabelledTasksView")
-        public void addView() {
+        void addView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
             eventBus.post(labelAssignedToTaskEvent);
 
             final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
-            final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask, eventContext);
+            final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask);
             eventBus.post(labelRemovedFromTaskEvent);
 
             final LabelledTaskRestored deletedTaskRestored = labelledTaskRestoredInstance();
-            final Event deletedTaskRestoredEvent = createEvent(deletedTaskRestored, eventContext);
+            final Event deletedTaskRestoredEvent = createEvent(deletedTaskRestored);
             eventBus.post(deletedTaskRestoredEvent);
 
             LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
@@ -245,14 +239,14 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("remove TaskView from LabelledTasksView")
-        public void removesView() {
+        void removesView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
             eventBus.post(labelAssignedToTaskEvent);
 
             final TaskDeleted taskDeleted = taskDeletedInstance();
-            final Event deletedTaskEvent = createEvent(taskDeleted, eventContext);
+            final Event deletedTaskEvent = createEvent(taskDeleted);
             eventBus.post(deletedTaskEvent);
 
             final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
@@ -261,7 +255,8 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
             matchesExpectedValues(labelledTasksView);
 
             TaskListView listView = labelledTasksView.getLabelledTasks();
-            assertTrue(listView.getItemsList().isEmpty());
+            assertTrue(listView.getItemsList()
+                               .isEmpty());
         }
     }
 
@@ -272,13 +267,13 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("update the task description in LabelledTasksView")
-        public void updateDescription() {
+        void updateDescription() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
             final TaskDescriptionUpdated taskDescriptionUpdated = taskDescriptionUpdatedInstance();
-            final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated, eventContext);
+            final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated);
             eventBus.post(descriptionUpdatedEvent);
 
             final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
@@ -296,15 +291,15 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("not update the task description in LabelledTasksView by wrong task ID")
-        public void notUpdateDescription() {
+        void notUpdateDescription() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
             final TaskDescriptionUpdated taskDescriptionUpdated =
                     taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(),
                                                    UPDATED_DESCRIPTION);
-            final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated, eventContext);
+            final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated);
             eventBus.post(descriptionUpdatedEvent);
 
             final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
@@ -328,13 +323,13 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("update the task priority in LabelledTasksView")
-        public void updatePriority() {
+        void updatePriority() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
             final TaskPriorityUpdated taskPriorityUpdated = taskPriorityUpdatedInstance();
-            final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated, eventContext);
+            final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated);
             eventBus.post(taskPriorityUpdatedEvent);
 
             final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
@@ -351,14 +346,14 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("not update the task priority in LabelledTasksView by wrong task ID")
-        public void notUpdatePriority() {
+        void notUpdatePriority() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
             final TaskPriorityUpdated taskPriorityUpdated =
                     taskPriorityUpdatedInstance(TaskId.getDefaultInstance(), UPDATED_TASK_PRIORITY);
-            final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated, eventContext);
+            final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated);
             eventBus.post(taskPriorityUpdatedEvent);
 
             final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
@@ -381,13 +376,13 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("update the task due date in LabelledTasksView")
-        public void updateDueDate() {
+        void updateDueDate() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
             final TaskDueDateUpdated taskDueDateUpdated = taskDueDateUpdatedInstance();
-            final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated, eventContext);
+            final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated);
             eventBus.post(taskDueDateUpdatedEvent);
 
             final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
@@ -404,14 +399,14 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("not update the task due date in LabelledTasksView by wrong task ID")
-        public void doesNotUpdateDueDate() {
+        void doesNotUpdateDueDate() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
             final TaskDueDateUpdated taskDueDateUpdated =
                     taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), UPDATED_TASK_DUE_DATE);
-            final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated, eventContext);
+            final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated);
             eventBus.post(taskDueDateUpdatedEvent);
 
             final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
@@ -433,13 +428,13 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("set `completed` to true in LabelledTasksView")
-        public void setCompletedFlagToTrue() {
+        void setCompletedFlagToTrue() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
             final TaskCompleted taskCompleted = taskCompletedInstance();
-            final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
+            final Event taskCompletedEvent = createEvent(taskCompleted);
             eventBus.post(taskCompletedEvent);
 
             final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
@@ -456,13 +451,13 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("set `completed` to false in LabelledTasksView")
-        public void setCompletedFlagToFalse() {
+        void setCompletedFlagToFalse() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
             final TaskCompleted taskCompleted = taskCompletedInstance();
-            final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
+            final Event taskCompletedEvent = createEvent(taskCompleted);
             eventBus.post(taskCompletedEvent);
 
             final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
@@ -484,17 +479,17 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("set `completed` to `false` in LabelledTasksView")
-        public void setCompletedFlagToFalse() {
+        void setCompletedFlagToFalse() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
             final TaskCompleted taskCompleted = taskCompletedInstance();
-            final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
+            final Event taskCompletedEvent = createEvent(taskCompleted);
             eventBus.post(taskCompletedEvent);
 
             final TaskReopened taskReopened = taskReopenedInstance();
-            final Event taskReopenedEvent = createEvent(taskReopened, eventContext);
+            final Event taskReopenedEvent = createEvent(taskReopened);
             eventBus.post(taskReopenedEvent);
 
             final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
@@ -511,17 +506,17 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("set `completed` to `true` in LabelledTasksView")
-        public void setCompletedFlagToTrue() {
+        void setCompletedFlagToTrue() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
             final TaskCompleted taskCompleted = taskCompletedInstance();
-            final Event taskCompletedEvent = createEvent(taskCompleted, eventContext);
+            final Event taskCompletedEvent = createEvent(taskCompleted);
             eventBus.post(taskCompletedEvent);
 
             final TaskReopened taskReopened = taskReopenedInstance(TaskId.getDefaultInstance());
-            final Event taskReopenedEvent = createEvent(taskReopened, eventContext);
+            final Event taskReopenedEvent = createEvent(taskReopened);
             eventBus.post(taskReopenedEvent);
 
             final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
@@ -546,14 +541,14 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("update the label details in LabelledTasksView")
-        public void updateLabelDetails() {
+        void updateLabelDetails() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
             final LabelDetailsUpdated labelDetailsUpdated =
                     labelDetailsUpdatedInstance(LABEL_ID, LabelColor.RED, UPDATED_LABEL_TITLE);
-            final Event labelDetailsUpdatedEvent = createEvent(labelDetailsUpdated, eventContext);
+            final Event labelDetailsUpdatedEvent = createEvent(labelDetailsUpdated);
             eventBus.post(labelDetailsUpdatedEvent);
 
             final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)
@@ -566,9 +561,9 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
         @Test
         @DisplayName("not update the label details in LabelledTasksView by wrong task ID")
-        public void notUpdateLabelDetails() {
+        void notUpdateLabelDetails() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask, eventContext);
+            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
             final LabelId wrongLabelId = LabelId.newBuilder()
@@ -577,7 +572,7 @@ public class LabelledTasksViewProjectionTest extends ProjectionTest {
 
             final LabelDetailsUpdated labelDetailsUpdated =
                     labelDetailsUpdatedInstance(wrongLabelId, LabelColor.RED, UPDATED_LABEL_TITLE);
-            final Event labelDetailsUpdatedEvent = createEvent(labelDetailsUpdated, eventContext);
+            final Event labelDetailsUpdatedEvent = createEvent(labelDetailsUpdated);
             eventBus.post(labelDetailsUpdatedEvent);
 
             final LabelledTasksView labelledTasksView = repository.find(LABEL_ID)

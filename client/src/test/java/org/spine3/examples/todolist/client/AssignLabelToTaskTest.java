@@ -46,13 +46,13 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
  * @author Illia Shepilov
  */
 @DisplayName("After execution of AssignLabelToTask command")
-public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
+class AssignLabelToTaskTest extends CommandLineTodoClientTest {
 
     private TodoClient client;
 
     @BeforeEach
     @Override
-    public void setUp() throws InterruptedException {
+    void setUp() throws InterruptedException {
         super.setUp();
         client = getClient();
     }
@@ -63,7 +63,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the empty TaskView list")
-        public void obtainEmptyView() {
+        void obtainEmptyView() {
             createTask();
             createLabel();
 
@@ -73,7 +73,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain TaskView with label")
-        public void obtainViewsWithLabel() {
+        void obtainViewsWithLabel() {
             final CreateBasicTask createTask = createTask();
             final CreateBasicLabel createLabel = createLabel();
 
@@ -100,7 +100,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain two task view with labels")
-        public void obtainViewsWithLabels() {
+        void obtainViewsWithLabels() {
             final CreateBasicTask createTask = createTask();
             final CreateBasicLabel createLabel = createLabel();
             final CreateBasicLabel createSecondLabel = createLabel();
@@ -135,7 +135,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view without label when command has wrong task ID")
-        public void obtainDraftViewWithoutLabels() {
+        void obtainDraftViewWithoutLabels() {
             final CreateBasicLabel createBasicLabel = createLabel();
             final LabelId labelId = createBasicLabel.getLabelId();
 
@@ -145,7 +145,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain task view with label")
-        public void obtainDraftViewWithLabels() {
+        void obtainDraftViewWithLabels() {
             final CreateBasicLabel createBasicLabel = createLabel();
             final LabelId labelId = createBasicLabel.getLabelId();
             final TaskView view = obtainViewWhenHandledAssignLabelToTask(labelId, true);
@@ -160,7 +160,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("task view with label")
-        public void obtainMyListViewWithLabels() {
+        void obtainMyListViewWithLabels() {
             final CreateBasicLabel createLabel = createLabel();
             final LabelId labelId = createLabel.getLabelId();
 
@@ -171,7 +171,7 @@ public class AssignLabelToTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain task view without label when command has wrong task ID")
-        public void obtainMyListViewWithoutLabels() {
+        void obtainMyListViewWithoutLabels() {
             final CreateBasicLabel createLabel = createLabel();
 
             final LabelId labelId = createLabel.getLabelId();

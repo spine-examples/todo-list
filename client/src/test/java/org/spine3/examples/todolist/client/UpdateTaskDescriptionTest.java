@@ -46,13 +46,13 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
  * @author Illia Shepilov
  */
 @DisplayName("After execution of UpdateTaskDescription command")
-public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
+class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
 
     private TodoClient client;
 
     @BeforeEach
     @Override
-    public void setUp() throws InterruptedException {
+    void setUp() throws InterruptedException {
         super.setUp();
         client = getClient();
     }
@@ -63,16 +63,16 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with updated task description")
-        public void containUpdatedView() {
+        void containUpdatedView() {
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(
                     UPDATED_TASK_DESCRIPTION, true);
             assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
         }
 
         @Test
-        @DisplayName("contain the task view with not updated task description " +
-                "when command has wrong ID")
-        public void containNotUpdatedView() {
+        @DisplayName("contain the task view with non-updated task description " +
+                "when command ID does not match the aggregate")
+        void containNonUpdatedView() {
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(
                     UPDATED_TASK_DESCRIPTION, false);
             final String actualDescription = view.getDescription();
@@ -86,9 +86,9 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
     class UpdateTaskDescriptionInDraftTasksView {
 
         @Test
-        @DisplayName("contain the task view with not updated task description " +
-                "when command has wrong ID")
-        public void containNotUpdatedView() {
+        @DisplayName("contain the task view with non-updated task description " +
+                "when command ID does not match the aggregate")
+        void containNonUpdatedView() {
             final TaskView view = obtainViewWhenHandledUpdateTaskDescription(
                     UPDATED_TASK_DESCRIPTION, false);
             assertNotEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
@@ -96,7 +96,7 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with updated task description")
-        public void containUpdatedView() {
+        void containUpdatedView() {
             final TaskView view = obtainViewWhenHandledUpdateTaskDescription(
                     UPDATED_TASK_DESCRIPTION, true);
             assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription());
@@ -109,7 +109,7 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with updated task description")
-        public void containUpdatedView() {
+        void containUpdatedView() {
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(
                     UPDATED_TASK_DESCRIPTION, true);
             final String actualDescription = view.getDescription();
@@ -117,9 +117,9 @@ public class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain the task view with not updated task description " +
-                "when command has wrong ID")
-        public void containNotUpdatedView() {
+        @DisplayName("contain the task view with non-updated task description " +
+                "when command ID does not match the aggregate")
+        void containNonUpdatedView() {
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(
                     UPDATED_TASK_DESCRIPTION, false);
             final String actualDescription = view.getDescription();

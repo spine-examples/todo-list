@@ -33,7 +33,7 @@ import org.spine3.server.event.enrich.EventEnricher;
 import java.util.function.Function;
 
 import static org.spine3.examples.todolist.testdata.TestTaskEventFactory.LABEL_ID;
-import static org.spine3.protobuf.Timestamps2.getCurrentTime;
+import static org.spine3.time.Time.getCurrentTime;
 
 /**
  * Provides event enricher for the test needs.

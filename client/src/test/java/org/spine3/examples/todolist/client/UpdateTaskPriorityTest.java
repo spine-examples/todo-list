@@ -44,13 +44,13 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
 /**
  * @author Illia Shepilov
  */
-public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
+class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
 
     private TodoClient client;
 
     @BeforeEach
     @Override
-    public void setUp() throws InterruptedException {
+    void setUp() throws InterruptedException {
         super.setUp();
         client = getClient();
     }
@@ -61,16 +61,16 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with updated task priority")
-        public void containUpdatedView() {
+        void containUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, true);
             assertEquals(newPriority, view.getPriority());
         }
 
         @Test
-        @DisplayName("contain the task view with not updated task priority " +
+        @DisplayName("contain the task view with non-updated task priority " +
                 "when command has wrong task ID")
-        public void containNotUpdated() {
+        void containNonUpdated() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority,
                                                                                  false);
@@ -84,7 +84,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with updated task priority")
-        public void containUpdatedView() {
+        void containUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view =
                     obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, true);
@@ -93,9 +93,9 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view with not updated task priority " +
+        @DisplayName("contain task view with non-updated task priority " +
                 "when command has wrong task ID")
-        public void containNotUpdatedView() {
+        void containNonUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view =
                     obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, false);
@@ -110,7 +110,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with updated task priority")
-        public void containUpdatedView() {
+        void containUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view =
                     obtainTaskViewWhenHandledUpdateTaskPriority(newPriority, true);
@@ -119,9 +119,9 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain task view with not updated task priority " +
+        @DisplayName("contain task view with non-updated task priority " +
                 "when command has wrong task ID")
-        public void containNotUpdatedView() {
+        void containNonUpdatedView() {
             final TaskPriority newPriority = TaskPriority.HIGH;
             final TaskView view =
                     obtainTaskViewWhenHandledUpdateTaskPriority(newPriority, false);
@@ -159,7 +159,7 @@ public class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
 
         final int expectedListSize = 1;
         final AssignLabelToTask assignLabelToTask =
-                assignLabelToTaskInstance(createdTaskId,createLabel.getLabelId());
+                assignLabelToTaskInstance(createdTaskId, createLabel.getLabelId());
         client.assignLabel(assignLabelToTask);
 
         updatePriority(priority, isCorrectId, createdTaskId);

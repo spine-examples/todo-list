@@ -61,8 +61,8 @@ message CannotUpdateTaskDueDate {
 
 // The failure to update a label details.
 //
-// It is thrown if an attempt is made to update the label when the expected label details do not
-// match the actual.
+// It is thrown if an attempt is made to update the label when
+// the expected label details do not match the actual.
 message CannotUpdateLabelDetails {
 
     // Failed the label details update.
@@ -71,8 +71,8 @@ message CannotUpdateLabelDetails {
 
 // The failure to assign label to task.
 //
-// It is thrown if an attempt is made to assign the label to the task in either DELETED or
-// COMPLETED state.
+// It is thrown if an attempt is made to assign the label
+// to the task in either DELETED or COMPLETED state.
 message CannotAssignLabelToTask {
 
     // Failed the label assigning to the task.
@@ -81,8 +81,8 @@ message CannotAssignLabelToTask {
 
 // The failure to remove label from task.
 //
-// It is thrown if an attempt is made to remove the label from the task in either DELETED or
-// COMPLETED state.
+// It is thrown if an attempt is made to remove the label
+// from the task in either DELETED or COMPLETED state.
 message CannotRemoveLabelFromTask {
 
     // Failed the label removing from task.
@@ -100,8 +100,8 @@ message CannotReopenTask {
 
 // The failure to delete a task.
 //
-// It is thrown if an attempt is made to delete the task when task in either DELETED or
-// COMPLETED state.
+// It is thrown if an attempt is made to delete the task
+// when task in either DELETED or COMPLETED state.
 message CannotDeleteTask {
 
     // Failed the task deletion.

@@ -72,15 +72,14 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code UpdateTaskDueDate} command which thrown the failure
          * @param ctx the {@code CommandContext}
          * @throws CannotUpdateTaskDueDate the failure to throw
          */
-        public static void throwCannotUpdateTaskDueDateFailure(UpdateTaskDueDate cmd,
-                CommandContext ctx)
+        public static void throwCannotUpdateTaskDueDate(UpdateTaskDueDate cmd, CommandContext ctx)
                 throws CannotUpdateTaskDueDate {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
@@ -94,17 +93,16 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskDescription} failure
+         * according to the passed parameters.
          *
          * @param cmd      the {@code UpdateTaskDescription} command which thrown the failure
          * @param ctx      the {@code CommandContext}
          * @param mismatch the {@link ValueMismatch}
          * @throws CannotUpdateTaskDescription the failure to throw
          */
-        public static void throwCannotUpdateTaskDescriptionFailure(UpdateTaskDescription cmd,
-                CommandContext ctx,
-                ValueMismatch mismatch)
+        public static void throwCannotUpdateTaskDescription(
+                UpdateTaskDescription cmd, CommandContext ctx, ValueMismatch mismatch)
                 throws CannotUpdateTaskDescription {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
@@ -119,16 +117,15 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskDescription} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code UpdateTaskDescription} command which thrown the failure
          * @param ctx the {@code CommandContext}
          * @throws CannotUpdateTaskDescription the failure to throw
          */
-        public static void throwCannotUpdateTaskDescriptionFailure(UpdateTaskDescription cmd,
-                CommandContext ctx)
-                throws CannotUpdateTaskDescription {
+        public static void throwCannotUpdateTaskDescription(
+                UpdateTaskDescription cmd, CommandContext ctx) throws CannotUpdateTaskDescription {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
                                             .setTaskId(cmd.getId())
@@ -141,17 +138,16 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure
+         * according to the passed parameters.
          *
          * @param cmd      the {@code UpdateTaskDueDate} command which thrown the failure
          * @param ctx      the {@code CommandContext}
          * @param mismatch the {@link ValueMismatch}
          * @throws CannotUpdateTaskDueDate the failure to throw
          */
-        public static void throwCannotUpdateTaskDueDateFailure(UpdateTaskDueDate cmd,
-                CommandContext ctx,
-                ValueMismatch mismatch)
+        public static void throwCannotUpdateTaskDueDate(
+                UpdateTaskDueDate cmd, CommandContext ctx, ValueMismatch mismatch)
                 throws CannotUpdateTaskDueDate {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
@@ -166,17 +162,16 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDescription} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskDescription} failure
+         * according to the passed parameters.
          *
          * @param cmd      the {@code UpdateTaskDescription} command which thrown the failure
          * @param ctx      the {@code CommandContext}
          * @param mismatch the {@link ValueMismatch}
          * @throws CannotUpdateTaskDescription the failure to throw
          */
-        public static void throwCannotUpdateDescriptionFailure(UpdateTaskDescription cmd,
-                CommandContext ctx,
-                ValueMismatch mismatch)
+        public static void throwCannotUpdateDescription(
+                UpdateTaskDescription cmd, CommandContext ctx, ValueMismatch mismatch)
                 throws CannotUpdateTaskDescription {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
@@ -191,17 +186,16 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskPriority} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskPriority} failure
+         * according to the passed parameters.
          *
          * @param cmd      the {@code UpdateTaskPriority} command which thrown the failure
          * @param ctx      the {@code CommandContext}
          * @param mismatch the {@link ValueMismatch}
          * @throws CannotUpdateTaskPriority the failure to throw
          */
-        public static void throwCannotUpdateTaskPriorityFailure(UpdateTaskPriority cmd,
-                CommandContext ctx,
-                ValueMismatch mismatch)
+        public static void throwCannotUpdateTaskPriority(
+                UpdateTaskPriority cmd, CommandContext ctx, ValueMismatch mismatch)
                 throws CannotUpdateTaskPriority {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
@@ -216,15 +210,14 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskPriority} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotUpdateTaskPriority} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code UpdateTaskPriority} command which thrown the failure
          * @param ctx the {@code CommandContext}
          * @throws CannotUpdateTaskPriority the failure to throw
          */
-        public static void throwCannotUpdateTaskPriorityFailure(UpdateTaskPriority cmd,
-                CommandContext ctx)
+        public static void throwCannotUpdateTaskPriority(UpdateTaskPriority cmd, CommandContext ctx)
                 throws CannotUpdateTaskPriority {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
@@ -245,8 +238,8 @@ public class TaskDefinitionPartFailures {
          * @param ctx the {@code CommandContext}
          * @throws CannotUpdateTaskWithInappropriateDescription the failure to throw
          */
-        public static void throwCannotUpdateTooShortDescriptionFailure(UpdateTaskDescription cmd,
-                CommandContext ctx)
+        public static void throwCannotUpdateTooShortDescription(
+                UpdateTaskDescription cmd, CommandContext ctx)
                 throws CannotUpdateTaskWithInappropriateDescription {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
@@ -266,8 +259,8 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotCreateDraft} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotCreateDraft} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code CreateDraft} command which thrown the failure
          * @param ctx the {@code CommandContext}
@@ -295,8 +288,7 @@ public class TaskDefinitionPartFailures {
          * @throws CannotCreateTaskWithInappropriateDescription the failure to throw
          */
         public static void throwCannotCreateTaskWithInappropriateDescriptionFailure(
-                CreateBasicTask cmd,
-                CommandContext ctx)
+                CreateBasicTask cmd, CommandContext ctx)
                 throws CannotCreateTaskWithInappropriateDescription {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
@@ -316,14 +308,14 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotReopenTask} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotReopenTask} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code ReopenTask} command which thrown the failure
          * @param ctx the {@code CommandContext}
          * @throws CannotReopenTask the failure to throw
          */
-        public static void throwCannotReopenTaskFailure(ReopenTask cmd, CommandContext ctx)
+        public static void throwCannotReopenTask(ReopenTask cmd, CommandContext ctx)
                 throws CannotReopenTask {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
@@ -337,14 +329,14 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotFinalizeDraft} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotFinalizeDraft} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code FinalizeDraft} command which thrown the failure
          * @param ctx the {@code CommandContext}
          * @throws CannotFinalizeDraft the failure to throw
          */
-        public static void throwCannotFinalizeDraftFailure(FinalizeDraft cmd, CommandContext ctx)
+        public static void throwCannotFinalizeDraft(FinalizeDraft cmd, CommandContext ctx)
                 throws CannotFinalizeDraft {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
@@ -358,14 +350,14 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotDeleteTask} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotDeleteTask} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code DeleteTask} command which thrown the failure
          * @param ctx the {@code CommandContext}
          * @throws CannotDeleteTask the failure to throw
          */
-        public static void throwCannotDeleteTaskFailure(DeleteTask cmd, CommandContext ctx)
+        public static void throwCannotDeleteTask(DeleteTask cmd, CommandContext ctx)
                 throws CannotDeleteTask {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
@@ -379,15 +371,14 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotCompleteTask} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotCompleteTask} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code CompleteTask} command which thrown the failure
          * @param ctx the {@code CommandContext}
          * @throws CannotCompleteTask the failure to throw
          */
-        public static void throwCannotCompleteTaskFailure(CompleteTask cmd,
-                CommandContext ctx)
+        public static void throwCannotCompleteTask(CompleteTask cmd, CommandContext ctx)
                 throws CannotCompleteTask {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()
@@ -401,15 +392,14 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotRestoreDeletedTask} failure according to
-         * the passed parameters.
+         * Constructs and throws the {@link CannotRestoreDeletedTask} failure
+         * according to the passed parameters.
          *
          * @param cmd the {@code RestoreDeletedTask} command which thrown the failure
          * @param ctx the {@code CommandContext}
          * @throws CannotRestoreDeletedTask the {@code CannotRestoreDeletedTask} failure
          */
-        public static void throwCannotRestoreDeletedTaskFailure(RestoreDeletedTask cmd,
-                CommandContext ctx)
+        public static void throwCannotRestoreDeletedTask(RestoreDeletedTask cmd, CommandContext ctx)
                 throws CannotRestoreDeletedTask {
             final FailedTaskCommandDetails commandFailed =
                     FailedTaskCommandDetails.newBuilder()

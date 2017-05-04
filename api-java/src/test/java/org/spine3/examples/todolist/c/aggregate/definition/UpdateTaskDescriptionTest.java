@@ -41,15 +41,17 @@ import org.spine3.examples.todolist.c.failures.Failures;
 
 import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 import static org.spine3.protobuf.AnyPacker.unpack;
+import static org.spine3.protobuf.Wrapper.forString;
 
 /**
  * @author Illia Shepilov
@@ -65,12 +67,12 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
 
     @Test
     @DisplayName("produce TaskDescriptionUpdated event")
-    public void produceEvent() {
+    void produceEvent() {
         dispatchCreateTaskCmd();
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId);
         final List<? extends Message> messageList =
-                aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
+                aggregate.dispatchForTest(envelopeOf(updateTaskDescriptionCmd));
 
         assertEquals(1, messageList.size());
         assertEquals(TaskDescriptionUpdated.class, messageList.get(0)
@@ -87,68 +89,59 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     @Test
     @DisplayName("throw CannotUpdateTaskWithInappropriateDescription failure " +
             "upon an attempt to update the task by too short description")
-    public void cannotUpdateTaskDescription() {
-        try {
-            final UpdateTaskDescription updateTaskDescriptionCmd =
-                    updateTaskDescriptionInstance(taskId, "", ".");
-            aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskWithInappropriateDescription);
-        }
+    void cannotUpdateTaskDescription() {
+        final UpdateTaskDescription updateTaskDescriptionCmd =
+                updateTaskDescriptionInstance(taskId, "", ".");
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(updateTaskDescriptionCmd)));
+        assertThat(Throwables.getRootCause(t),
+                   instanceOf(CannotUpdateTaskWithInappropriateDescription.class));
     }
 
     @Test
     @DisplayName("throw CannotUpdateTaskDescription failure " +
             "upon an attempt to update the description of the deleted task")
-    public void cannotUpdateDeletedTaskDescription() {
+    void cannotUpdateDeletedTaskDescription() {
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(deleteTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
 
-        try {
-            final UpdateTaskDescription updateTaskDescriptionCmd =
-                    updateTaskDescriptionInstance(taskId);
-            assertThrows(CannotUpdateTaskDescription.class, () ->
-                    aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext));
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskDescription);
-        }
+        final UpdateTaskDescription updateTaskDescriptionCmd =
+                updateTaskDescriptionInstance(taskId);
+        Throwable t = assertThrows(Throwable.class,
+                                   () -> aggregate.dispatchForTest(
+                                           envelopeOf(updateTaskDescriptionCmd)));
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDescription.class));
     }
 
     @Test
     @DisplayName("throw CannotUpdateTaskDescription failure " +
             "upon an attempt to update the description of the completed task")
-    public void cannotUpdateCompletedTaskDescription() {
+    void cannotUpdateCompletedTaskDescription() {
         dispatchCreateTaskCmd();
 
         final CompleteTask completeTaskCmd = completeTaskInstance();
-        aggregate.dispatchForTest(completeTaskCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(completeTaskCmd));
 
-        try {
-            final UpdateTaskDescription updateTaskDescriptionCmd =
-                    updateTaskDescriptionInstance(taskId);
-            aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskDescription);
-        }
+        final UpdateTaskDescription updateTaskDescriptionCmd =
+                updateTaskDescriptionInstance(taskId);
+        Throwable t = assertThrows(Throwable.class,
+                                   () -> aggregate.dispatchForTest(
+                                           envelopeOf(updateTaskDescriptionCmd)));
+        assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDescription.class));
     }
 
     @Test
     @DisplayName("update the task description")
-    public void updateDescription() {
+    void updateDescription() {
         final String newDescription = "new description.";
         dispatchCreateTaskCmd();
 
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId, DESCRIPTION, newDescription);
-        aggregate.dispatchForTest(updateTaskDescriptionCmd, commandContext);
+        aggregate.dispatchForTest(envelopeOf(updateTaskDescriptionCmd));
         final TaskDefinition state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -157,50 +150,42 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
 
     @Test
     @DisplayName("produce CannotUpdateTaskDescription failure")
-    public void produceFailure() {
+    void produceFailure() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createBasicTask, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createBasicTask));
 
         final String expectedValue = "expected description";
         final String newValue = "update description";
         final String actualValue = createBasicTask.getDescription();
 
-        try {
-            final UpdateTaskDescription updateTaskDescription =
-                    updateTaskDescriptionInstance(taskId, expectedValue, newValue);
-            aggregate.dispatchForTest(updateTaskDescription, commandContext);
-        } catch (Throwable e) {
-            @SuppressWarnings("ThrowableResultOfMethodCallIgnored") // Need it for checking.
-            final Throwable cause = Throwables.getRootCause(e);
-            assertTrue(cause instanceof CannotUpdateTaskDescription);
+        final UpdateTaskDescription updateTaskDescription =
+                updateTaskDescriptionInstance(taskId, expectedValue, newValue);
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> aggregate.dispatchForTest(
+                                                 envelopeOf(updateTaskDescription)));
+        final Throwable cause = Throwables.getRootCause(t);
+        assertThat(cause, instanceOf(CannotUpdateTaskDescription.class));
 
-            @SuppressWarnings("ConstantConditions")
-            final Failures.CannotUpdateTaskDescription failure =
-                    ((CannotUpdateTaskDescription) cause).getFailureMessage();
-            final DescriptionUpdateFailed descriptionUpdateFailed = failure.getUpdateFailed();
-            final TaskId actualTaskId = descriptionUpdateFailed.getFailureDetails()
-                                                               .getTaskId();
-            assertEquals(taskId, actualTaskId);
+        @SuppressWarnings("ConstantConditions") // Instance type checked before.
+        final Failures.CannotUpdateTaskDescription failure =
+                ((CannotUpdateTaskDescription) cause).getFailureMessage();
+        final DescriptionUpdateFailed descriptionUpdateFailed = failure.getUpdateFailed();
+        final TaskId actualTaskId = descriptionUpdateFailed.getFailureDetails()
+                                                           .getTaskId();
+        assertEquals(taskId, actualTaskId);
 
-            final StringValue expectedStringValue = StringValue.newBuilder()
-                                                               .setValue(expectedValue)
-                                                               .build();
-            final StringValue actualStringValue = StringValue.newBuilder()
-                                                             .setValue(actualValue)
-                                                             .build();
-            final StringValue newStringValue = StringValue.newBuilder()
-                                                          .setValue(newValue)
-                                                          .build();
+        final StringValue expectedStringValue = forString(expectedValue);
+        final StringValue actualStringValue = forString(actualValue);
+        final StringValue newStringValue = forString(newValue);
 
-            final ValueMismatch mismatch = descriptionUpdateFailed.getDescriptionMismatch();
-            assertEquals(expectedStringValue, unpack(mismatch.getExpected()));
-            assertEquals(actualStringValue, unpack(mismatch.getActual()));
-            assertEquals(newStringValue, unpack(mismatch.getNewValue()));
-        }
+        final ValueMismatch mismatch = descriptionUpdateFailed.getDescriptionMismatch();
+        assertEquals(expectedStringValue, unpack(mismatch.getExpected()));
+        assertEquals(actualStringValue, unpack(mismatch.getActual()));
+        assertEquals(newStringValue, unpack(mismatch.getNewValue()));
     }
 
     private void dispatchCreateTaskCmd() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(createBasicTask, commandContext);
+        aggregate.dispatchForTest(envelopeOf(createBasicTask));
     }
 }

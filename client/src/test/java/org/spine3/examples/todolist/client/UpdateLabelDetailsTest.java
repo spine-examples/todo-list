@@ -51,7 +51,7 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
  * @author Illia Shepilov
  */
 @DisplayName("After execution of UpdateLabelDetails command")
-public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
+class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
 
     private static final String EXPECTED_COLOR = LabelColorView.BLUE_COLOR.getHexColor();
 
@@ -59,7 +59,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
 
     @BeforeEach
     @Override
-    public void setUp() throws InterruptedException {
+    void setUp() throws InterruptedException {
         super.setUp();
         client = getClient();
     }
@@ -70,7 +70,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with updated label details")
-        public void containUpdatedView() {
+        void containUpdatedView() {
             final LabelColor updatedColor = LabelColor.BLUE;
             final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(
                     updatedColor,
@@ -81,9 +81,9 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain the task view with not updated label details " +
+        @DisplayName("contain the task view with non-updated label details " +
                 "when command has wrong task ID")
-        public void containNotUpdatedView() {
+        void containNonUpdatedView() {
             final LabelColor updatedColor = LabelColor.BLUE;
             final LabelledTasksView view = obtainViewWhenHandledCommandUpdateLabelDetails(
                     updatedColor,
@@ -100,7 +100,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with updated label details")
-        public void containUpdatedView() {
+        void containUpdatedView() {
             final LabelColor newColor = LabelColor.BLUE;
             final TaskView view = obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor,
                                                                                      true);
@@ -108,9 +108,9 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain the task view with not updated label details " +
+        @DisplayName("contain the task view with non-updated label details " +
                 "when command has wrong task ID")
-        public void containNotUpdatedView() {
+        void containNonUpdatedView() {
             final LabelColor newColor = LabelColor.BLUE;
             final TaskView view =
                     obtainTaskViewWhenHandledUpdateLabelDetailsCommand(newColor, false);
@@ -124,7 +124,7 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with updated label details")
-        public void containUpdatedView() throws Exception {
+        void containUpdatedView() throws Exception {
             final CreateBasicLabel createBasicLabel = createBasicLabel();
             client.create(createBasicLabel);
 
@@ -135,9 +135,9 @@ public class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         }
 
         @Test
-        @DisplayName("contain the task view with not updated label details " +
+        @DisplayName("contain the task view with non-updated label details " +
                 "when command has wrong task ID")
-        public void containNotUpdatedView() throws Exception {
+        void containNonUpdatedView() {
             final CreateBasicLabel createBasicLabel = createBasicLabel();
             client.create(createBasicLabel);
 

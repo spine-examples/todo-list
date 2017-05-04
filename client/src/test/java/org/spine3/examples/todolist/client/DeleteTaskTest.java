@@ -33,7 +33,6 @@ import org.spine3.examples.todolist.c.commands.CreateDraft;
 import org.spine3.examples.todolist.c.commands.DeleteTask;
 import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.q.projection.TaskView;
-import org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory;
 
 import java.util.List;
 
@@ -46,13 +45,13 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
  * @author Illia Shepilov
  */
 @DisplayName("After execution of DeleteTask command")
-public class DeleteTaskTest extends CommandLineTodoClientTest {
+class DeleteTaskTest extends CommandLineTodoClientTest {
 
     private TodoClient client;
 
     @BeforeEach
     @Override
-    public void setUp() throws InterruptedException {
+    void setUp() throws InterruptedException {
         super.setUp();
         client = getClient();
     }
@@ -63,7 +62,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("be empty")
-        public void obtainEmptyView() {
+        void obtainEmptyView() {
             final CreateBasicTask createTask = createTask();
 
             final CreateBasicLabel createLabel = createBasicLabel();
@@ -89,7 +88,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain task view when command has wrong ID")
-        public void obtainView() {
+        void obtainView() {
             final CreateBasicTask createTask = createTask();
 
             final CreateBasicLabel createLabel = createBasicLabel();
@@ -124,7 +123,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("be empty")
-        public void obtainEmptyView() {
+        void obtainEmptyView() {
             final CreateDraft createDraft = createDraft();
             client.create(createDraft);
 
@@ -139,7 +138,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain task view when command has wrong ID")
-        public void obtainView() {
+        void obtainView() {
             final CreateDraft createDraft = createDraft();
             client.create(createDraft);
 
@@ -163,7 +162,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("be empty")
-        public void obtainEmptyView() {
+        void obtainEmptyView() {
             final CreateBasicTask createTask = createTask();
 
             final TaskId idOfCreatedTask = createTask.getId();
@@ -175,7 +174,7 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain task view when command has wrong ID")
-        public void obtainView() {
+        void obtainView() {
             final CreateBasicTask createTask = createTask();
 
             final TaskId idOfCreatedTask = createTask.getId();
@@ -196,9 +195,8 @@ public class DeleteTaskTest extends CommandLineTodoClientTest {
         final DeleteTask deleteTask = deleteTaskInstance(idOfDeletedTask);
         client.delete(deleteTask);
 
-        final List<TaskView> result = client.getMyListView()
-                                            .getMyList()
-                                            .getItemsList();
-        return result;
+        return client.getMyListView()
+                     .getMyList()
+                     .getItemsList();
     }
 }

@@ -56,7 +56,7 @@ abstract class CommandLineTodoClientTest {
     private TodoClient client;
 
     @BeforeEach
-    public void setUp() throws InterruptedException {
+    void setUp() throws InterruptedException {
         final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
         TaskAggregateRoot.injectBoundedContext(boundedContext);
 
@@ -78,7 +78,7 @@ abstract class CommandLineTodoClientTest {
                 server.start();
                 serverStartLatch.countDown();
             } catch (IOException e) {
-                throw Exceptions.wrappedCause(e);
+                throw Exceptions.illegalStateWithCauseOf(e);
             }
         });
 
@@ -87,40 +87,35 @@ abstract class CommandLineTodoClientTest {
     }
 
     static CreateBasicLabel createBasicLabel() {
-        final CreateBasicLabel result = CommandBuilder.label()
-                                                      .createLabel()
-                                                      .setTitle(LABEL_TITLE)
-                                                      .build();
-        return result;
+        return CommandBuilder.label()
+                             .createLabel()
+                             .setTitle(LABEL_TITLE)
+                             .build();
     }
 
     static CreateDraft createDraft() {
-        final CreateDraft result = CommandBuilder.task()
-                                                 .createDraft()
-                                                 .build();
-        return result;
+        return CommandBuilder.task()
+                             .createDraft()
+                             .build();
     }
 
     static CreateBasicTask createBasicTask() {
-        final CreateBasicTask result = CommandBuilder.task()
-                                                     .createTask()
-                                                     .setDescription(DESCRIPTION)
-                                                     .build();
-        return result;
+        return CommandBuilder.task()
+                             .createTask()
+                             .setDescription(DESCRIPTION)
+                             .build();
     }
 
     static TaskId createWrongTaskId() {
-        final TaskId result = TaskId.newBuilder()
-                                    .setValue(newUuid())
-                                    .build();
-        return result;
+        return TaskId.newBuilder()
+                     .setValue(newUuid())
+                     .build();
     }
 
     static LabelId createWrongTaskLabelId() {
-        final LabelId result = LabelId.newBuilder()
-                                      .setValue(newUuid())
-                                      .build();
-        return result;
+        return LabelId.newBuilder()
+                      .setValue(newUuid())
+                      .build();
     }
 
     static LabelledTasksView getLabelledTasksView(List<LabelledTasksView> tasksViewList) {

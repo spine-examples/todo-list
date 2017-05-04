@@ -45,13 +45,13 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
  * @author Illia Shepilov
  */
 @DisplayName("After execution of CompleteTask command")
-public class CompleteTaskTest extends CommandLineTodoClientTest {
+class CompleteTaskTest extends CommandLineTodoClientTest {
 
     private TodoClient client;
 
     @BeforeEach
     @Override
-    public void setUp() throws InterruptedException {
+    void setUp() throws InterruptedException {
         super.setUp();
         client = getClient();
     }
@@ -62,7 +62,7 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain task view marked as completed")
-        public void obtainLabelledViewWithCompletedTask() {
+        void obtainLabelledViewWithCompletedTask() {
             final TaskView view = obtainViewWhenHandledCommandCompleteTask(true);
             assertTrue(view.getCompleted());
         }
@@ -70,7 +70,7 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain task view which does not marked as completed " +
                 "when command has wrong task ID")
-        public void obtainLabelledViewWithUncompletedTask() {
+        void obtainLabelledViewWithUncompletedTask() {
             final TaskView view = obtainViewWhenHandledCommandCompleteTask(false);
             assertFalse(view.getCompleted());
         }
@@ -82,14 +82,14 @@ public class CompleteTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain task view marked as completed")
-        public void obtainMyListViewWithCompletedTask() {
+        void obtainMyListViewWithCompletedTask() {
             final TaskView view = obtainTaskViewWhenHandledCompleteTask(true);
             assertTrue(view.getCompleted());
         }
 
         @Test
         @DisplayName("task view which does not marked as completed when command has wrong task ID")
-        public void obtainMyListViewWithoutCompletedTask() {
+        void obtainMyListViewWithoutCompletedTask() {
             final TaskView view = obtainTaskViewWhenHandledCompleteTask(false);
             assertFalse(view.getCompleted());
         }

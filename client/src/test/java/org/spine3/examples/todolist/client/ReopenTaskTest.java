@@ -33,28 +33,27 @@ import org.spine3.examples.todolist.c.commands.CreateBasicTask;
 import org.spine3.examples.todolist.c.commands.ReopenTask;
 import org.spine3.examples.todolist.q.projection.LabelledTasksView;
 import org.spine3.examples.todolist.q.projection.TaskView;
-import org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static org.spine3.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
+import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 
 /**
  * @author Illia Shepilov
  */
 @DisplayName("After execution of ReopenTask command")
-public class ReopenTaskTest extends CommandLineTodoClientTest {
+class ReopenTaskTest extends CommandLineTodoClientTest {
 
     private TodoClient client;
 
     @BeforeEach
     @Override
-    public void setUp() throws InterruptedException {
+    void setUp() throws InterruptedException {
         super.setUp();
         client = getClient();
     }
@@ -65,14 +64,14 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with uncompleted task")
-        public void containViewWithUncompletedTask() {
+        void containViewWithUncompletedTask() {
             final TaskView view = obtainViewWhenHandledCommandReopenTask(true);
             assertFalse(view.getCompleted());
         }
 
         @Test
         @DisplayName("contain the task view with completed task when command has wrong ID")
-        public void containViewWithCompletedTask() {
+        void containViewWithCompletedTask() {
             final TaskView view = obtainViewWhenHandledCommandReopenTask(false);
             assertTrue(view.getCompleted());
         }
@@ -84,14 +83,14 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
 
         @Test
         @DisplayName("contain the task view with uncompleted task")
-        public void containViewWithUncompletedTask() {
+        void containViewWithUncompletedTask() {
             final TaskView view = obtainTaskViewWhenHandledReopenTask(true);
             assertFalse(view.getCompleted());
         }
 
         @Test
         @DisplayName("contain the task view with completed task when command has wrong ID")
-        public void containViewWithCompletedTask() {
+        void containViewWithCompletedTask() {
             final TaskView view = obtainTaskViewWhenHandledReopenTask(false);
             assertTrue(view.getCompleted());
         }
@@ -118,8 +117,7 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
         final List<TaskView> taskViews = labelledTasksView.get(0)
                                                           .getLabelledTasks()
                                                           .getItemsList();
-        final TaskView view = checkAndObtainView(taskId, taskViews);
-        return view;
+        return checkAndObtainView(taskId, taskViews);
     }
 
     private TaskView obtainTaskViewWhenHandledReopenTask(boolean isCorrectId) {
@@ -129,10 +127,9 @@ public class ReopenTaskTest extends CommandLineTodoClientTest {
         completeAndReopenTask(isCorrectId, idOfCreatedTask);
 
         final List<TaskView> taskViews = client.getMyListView()
-                                                    .getMyList()
-                                                    .getItemsList();
-        final TaskView view = checkAndObtainView(idOfCreatedTask, taskViews);
-        return view;
+                                               .getMyList()
+                                               .getItemsList();
+        return checkAndObtainView(idOfCreatedTask, taskViews);
     }
 
     private static TaskView checkAndObtainView(TaskId idOfCreatedTask, List<TaskView> taskViews) {

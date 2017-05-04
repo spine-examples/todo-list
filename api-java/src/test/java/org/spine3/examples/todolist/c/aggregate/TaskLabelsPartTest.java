@@ -27,6 +27,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.spine3.base.Command;
+import org.spine3.envelope.CommandEnvelope;
 import org.spine3.examples.todolist.LabelId;
 import org.spine3.examples.todolist.TaskId;
 import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
@@ -63,8 +64,6 @@ import static org.spine3.examples.todolist.testdata.TestTaskLabelsCommandFactory
  */
 class TaskLabelsPartTest {
 
-    //TODO:2017-04-27:dmytro.grankin: Enable after repositories caching fix.
-    @Disabled
     @Nested
     @DisplayName("AssignLabelToTask command should be interpreted by TaskLabelsPart and")
     class AssignLabelToTaskCommand extends TaskLabelsCommandTest<AssignLabelToTask> {
@@ -81,7 +80,7 @@ class TaskLabelsPartTest {
         @DisplayName("produce LabelAssignedToTask event")
         void produceEvent() {
             final List<? extends Message> messageList =
-                    taskLabelsPart.dispatchForTest(commandMessage().get(), commandContext().get());
+                    taskLabelsPart.dispatchForTest(CommandEnvelope.of(command().get()));
 
             assertEquals(1, messageList.size());
             assertEquals(LabelAssignedToTask.class, messageList.get(0)
@@ -186,8 +185,7 @@ class TaskLabelsPartTest {
         private void dispatchAssignLabelToTask() {
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
             final Command assignLabelToTaskCmd = createDifferentCommand(assignLabelToTask);
-            taskLabelsPart.dispatchForTest(assignLabelToTaskCmd.getMessage(),
-                                           assignLabelToTaskCmd.getContext());
+            taskLabelsPart.dispatchForTest(CommandEnvelope.of(assignLabelToTaskCmd));
         }
     }
 
