@@ -40,10 +40,12 @@ import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.events.TaskReopened;
 import io.spine.server.projection.Projection;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.spine.base.Identifiers.newUuid;
 import static io.spine.examples.todolist.EnrichmentHelper.getEnrichment;
+import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskListView;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskViewList;
 
@@ -91,8 +93,8 @@ public class MyListViewProjection extends
 
     @Subscribe
     public void on(TaskDeleted event) {
-        final List<TaskView> views = getState().getMyList()
-                                               .getItemsList();
+        final List<TaskView> views = new ArrayList<>(getState().getMyList()
+                                                               .getItemsList());
         final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
         getBuilder().setMyList(taskListView);
     }
@@ -183,8 +185,10 @@ public class MyListViewProjection extends
     }
 
     private void addTaskView(TaskView taskView) {
-        getState().getMyList()
-                  .getItemsList()
-                  .add(taskView);
+        final List<TaskView> views = new ArrayList<>(getState().getMyList()
+                                                               .getItemsList());
+        views.add(taskView);
+        final TaskListView taskListView = newTaskListView(views);
+        getBuilder().setMyList(taskListView);
     }
 }

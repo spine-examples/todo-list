@@ -38,8 +38,11 @@ import io.spine.server.aggregate.AggregatePart;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidAssignLabelToTaskCommand;
+import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidTaskStatusToRemoveLabel;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotAssignLabelToTaskFailure;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotRemoveLabelFromTaskFailure;
 import static java.util.Collections.singletonList;
@@ -74,8 +77,7 @@ public class TaskLabelsPart
                                                   .getIdsList()
                                                   .contains(labelId);
         final boolean isValidTaskStatus =
-                TaskFlowValidator.isValidTaskStatusToRemoveLabel(
-                        taskDefinitionState.getTaskStatus());
+                isValidTaskStatusToRemoveLabel(taskDefinitionState.getTaskStatus());
 
         if (!isLabelAssigned || !isValidTaskStatus) {
             throwCannotRemoveLabelFromTaskFailure(cmd);
@@ -95,8 +97,7 @@ public class TaskLabelsPart
         final LabelId labelId = cmd.getLabelId();
 
         final TaskDefinition state = getPartState(TaskDefinition.class);
-        final boolean isValid = TaskFlowValidator.isValidAssignLabelToTaskCommand(
-                state.getTaskStatus());
+        final boolean isValid = isValidAssignLabelToTaskCommand(state.getTaskStatus());
 
         if (!isValid) {
             throwCannotAssignLabelToTaskFailure(cmd);
@@ -111,8 +112,8 @@ public class TaskLabelsPart
 
     @Apply
     private void labelAssignedToTask(LabelAssignedToTask event) {
-        List<LabelId> list = getState().getLabelIdsList()
-                                       .getIdsList();
+        List<LabelId> list = new ArrayList<>(getState().getLabelIdsList()
+                                                       .getIdsList());
         list.add(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
                                                       .addAllIds(list)
@@ -122,8 +123,8 @@ public class TaskLabelsPart
 
     @Apply
     private void labelRemovedFromTask(LabelRemovedFromTask event) {
-        List<LabelId> list = getState().getLabelIdsList()
-                                       .getIdsList();
+        List<LabelId> list = new ArrayList<>(getState().getLabelIdsList()
+                                                       .getIdsList());
         list.remove(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
                                                       .addAllIds(list)

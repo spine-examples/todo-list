@@ -83,6 +83,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         final TaskView taskView = viewFor(taskDetails, labelId, taskId);
         final LabelDetails labelDetails = enrichment.getLabelDetails();
 
+        getBuilder().setLabelId(labelId);
         addTaskView(taskView);
         updateLabelDetails(labelDetails);
     }
@@ -97,6 +98,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         final TaskView taskView = viewFor(taskDetails, labelId, taskId);
         final LabelDetails labelDetails = enrichment.getLabelDetails();
 
+        getBuilder().setLabelId(labelId);
         addTaskView(taskView);
         updateLabelDetails(labelDetails);
     }
@@ -191,9 +193,11 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     private void addTaskView(TaskView taskView) {
-        getState().getLabelledTasks()
-                  .getItemsList()
-                  .add(taskView);
+        final List<TaskView> views = new ArrayList<>(getState().getLabelledTasks()
+                                                               .getItemsList());
+        views.add(taskView);
+        final TaskListView taskListView = newTaskListView(views);
+        getBuilder().setLabelledTasks(taskListView);
     }
 
     private void updateLabelDetails(LabelDetails newDetails) {

@@ -21,10 +21,7 @@
 package io.spine.examples.todolist.q.projection;
 
 import com.google.protobuf.Timestamp;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import io.spine.base.EventContext;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
@@ -39,13 +36,13 @@ import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
 import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
 import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.events.TaskReopened;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.UPDATED_LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestLabelEventFactory.labelDetailsUpdatedInstance;
 import static io.spine.examples.todolist.testdata.TestTaskEventFactory.ChangeStatusEvents.taskCompletedInstance;
@@ -61,7 +58,12 @@ import static io.spine.examples.todolist.testdata.TestTaskEventFactory.UpdateEve
 import static io.spine.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskDueDateUpdatedInstance;
 import static io.spine.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskPriorityUpdatedInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsEventFactory.labelAssignedToTaskInstance;
+import static io.spine.server.projection.ProjectionEventDispatcher.dispatch;
 import static io.spine.time.Time.getCurrentTime;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Illia Shepilov
@@ -84,7 +86,7 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("add TaskView to MyListView")
         void addView() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final List<TaskView> views = projection.getState()
                                                    .getMyList()
@@ -105,11 +107,11 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("remove TaskView from MyListView")
         void removeView() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final TaskDeleted taskDeletedEvent = taskDeletedInstance();
-            projection.on(taskDeletedEvent);
+            dispatch(projection, taskDeletedEvent, EventContext.getDefaultInstance());
 
             List<TaskView> views = projection.getState()
                                              .getMyList()
@@ -126,12 +128,12 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("update the task description in MyListView")
         void updateDescription() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final TaskId expectedTaskId = taskCreatedEvent.getId();
             final TaskDescriptionUpdated descriptionUpdatedEvent =
                     taskDescriptionUpdatedInstance(expectedTaskId, UPDATED_DESCRIPTION);
-            projection.on(descriptionUpdatedEvent);
+            dispatch(projection, descriptionUpdatedEvent, EventContext.getDefaultInstance());
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
@@ -147,13 +149,13 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("not update the task description in MyListView by wrong task ID")
         void notUpdateDescription() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final String updatedDescription = UPDATED_DESCRIPTION;
 
             final TaskDescriptionUpdated descriptionUpdatedEvent =
                     taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), updatedDescription);
-            projection.on(descriptionUpdatedEvent);
+            dispatch(projection, descriptionUpdatedEvent, EventContext.getDefaultInstance());
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
@@ -174,14 +176,14 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("update the task due date on MyListView")
         void updateDueDate() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final Timestamp updatedDueDate = getCurrentTime();
             final TaskId expectedTaskId = taskCreatedEvent.getId();
 
             final TaskDueDateUpdated taskDueDateUpdatedEvent =
                     taskDueDateUpdatedInstance(expectedTaskId, updatedDueDate);
-            projection.on(taskDueDateUpdatedEvent);
+            dispatch(projection, taskDueDateUpdatedEvent, EventContext.getDefaultInstance());
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
@@ -197,13 +199,13 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("not update the task due date in MyListView by wrong task ID")
         void doeNotUpdateDueDate() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final Timestamp updatedDueDate = getCurrentTime();
 
             final TaskDueDateUpdated taskDueDateUpdatedEvent =
                     taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), updatedDueDate);
-            projection.on(taskDueDateUpdatedEvent);
+            dispatch(projection, taskDueDateUpdatedEvent, EventContext.getDefaultInstance());
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
@@ -223,14 +225,14 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("update the task priority in MyListView")
         void updatePriority() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final TaskPriority updatedTaskPriority = TaskPriority.LOW;
             final TaskId expectedTaskId = taskCreatedEvent.getId();
 
             final TaskPriorityUpdated taskPriorityUpdatedEvent =
                     taskPriorityUpdatedInstance(expectedTaskId, updatedTaskPriority);
-            projection.on(taskPriorityUpdatedEvent);
+            dispatch(projection, taskPriorityUpdatedEvent, EventContext.getDefaultInstance());
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
@@ -246,13 +248,13 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("not update the task priority in MyListView by wrong task ID")
         void notUpdatePriority() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final TaskPriority updatedTaskPriority = TaskPriority.LOW;
 
             final TaskPriorityUpdated taskPriorityUpdatedEvent =
                     taskPriorityUpdatedInstance(TaskId.getDefaultInstance(), updatedTaskPriority);
-            projection.on(taskPriorityUpdatedEvent);
+            dispatch(projection, taskPriorityUpdatedEvent, EventContext.getDefaultInstance());
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
@@ -273,19 +275,19 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("update the label details in MyListView")
         void updateLabelDetails() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final TaskId expectedTaskId = taskCreatedEvent.getId();
 
             final LabelAssignedToTask labelAssignedToTaskEvent =
                     labelAssignedToTaskInstance(expectedTaskId, LABEL_ID);
-            projection.on(labelAssignedToTaskEvent);
+            dispatch(projection, labelAssignedToTaskEvent, EventContext.getDefaultInstance());
 
             final LabelColor updatedColor = LabelColor.BLUE;
 
             final LabelDetailsUpdated labelDetailsUpdatedEvent =
                     labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
-            projection.on(labelDetailsUpdatedEvent);
+            dispatch(projection, labelDetailsUpdatedEvent, EventContext.getDefaultInstance());
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
@@ -301,19 +303,19 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("not update the label details in MyListView by wrong label ID")
         void doesNotUpdateLabelDetails() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final TaskId expectedTaskId = taskCreatedEvent.getId();
 
             final LabelAssignedToTask labelAssignedToTaskEvent =
                     labelAssignedToTaskInstance(expectedTaskId, LabelId.getDefaultInstance());
-            projection.on(labelAssignedToTaskEvent);
+            dispatch(projection, labelAssignedToTaskEvent, EventContext.getDefaultInstance());
 
             final LabelColor updatedColor = LabelColor.BLUE;
 
             final LabelDetailsUpdated labelDetailsUpdatedEvent =
                     labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
-            projection.on(labelDetailsUpdatedEvent);
+            dispatch(projection,labelDetailsUpdatedEvent , EventContext.getDefaultInstance());
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
@@ -335,10 +337,10 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("set `completed` to `true` in MyListView")
         void completeTask() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final TaskCompleted taskCompletedEvent = taskCompletedInstance();
-            projection.on(taskCompletedEvent);
+            dispatch(projection, taskCompletedEvent, EventContext.getDefaultInstance());
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
@@ -355,11 +357,11 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("not set `completed` to `true` in MyListView by wrong task ID")
         void doesNotComplete() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final TaskCompleted taskCompletedEvent =
                     taskCompletedInstance(TaskId.getDefaultInstance());
-            projection.on(taskCompletedEvent);
+            dispatch(projection, taskCompletedEvent, EventContext.getDefaultInstance());
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
@@ -381,13 +383,13 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("set `completed` to `false` in MyListView")
         void reopenTask() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final TaskCompleted taskCompletedEvent = taskCompletedInstance();
-            projection.on(taskCompletedEvent);
+            dispatch(projection, taskCompletedEvent, EventContext.getDefaultInstance());
 
             final TaskReopened taskReopenedEvent = taskReopenedInstance();
-            projection.on(taskReopenedEvent);
+            dispatch(projection, taskReopenedEvent, EventContext.getDefaultInstance());
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
@@ -404,14 +406,14 @@ class MyListViewProjectionTest extends ProjectionTest {
         @DisplayName("not set `completed` to `true` by wrong task ID")
         void notReopenTask() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
-            projection.on(taskCreatedEvent);
+            dispatch(projection, taskCreatedEvent, EventContext.getDefaultInstance());
 
             final TaskCompleted taskCompletedEvent = taskCompletedInstance();
-            projection.on(taskCompletedEvent);
+            dispatch(projection, taskCompletedEvent, EventContext.getDefaultInstance());
 
             final TaskReopened taskReopenedEvent =
                     taskReopenedInstance(TaskId.getDefaultInstance());
-            projection.on(taskReopenedEvent);
+            dispatch(projection, taskReopenedEvent, EventContext.getDefaultInstance());
 
             final TaskListView taskListView = projection.getState()
                                                         .getMyList();
