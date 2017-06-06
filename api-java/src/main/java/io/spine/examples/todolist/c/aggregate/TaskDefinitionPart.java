@@ -22,6 +22,7 @@ package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
+import io.spine.examples.todolist.TaskDefinitionValidatingBuilder;
 import io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures;
 import io.spine.base.CommandContext;
 import io.spine.change.StringChange;
@@ -102,8 +103,10 @@ import static io.spine.time.Timestamps2.compare;
                                                  In that case class has too many methods.*/
         "OverlyCoupledClass"}) /* As each method needs dependencies  necessary to perform execution
                                                  that class also overly coupled.*/
-public class TaskDefinitionPart
-        extends AggregatePart<TaskId, TaskDefinition, TaskDefinition.Builder, TaskAggregateRoot> {
+public class TaskDefinitionPart extends AggregatePart<TaskId,
+                                                      TaskDefinition,
+                                                      TaskDefinitionValidatingBuilder,
+                                                      TaskAggregateRoot> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;
     private static final String DEFAULT_DRAFT_DESCRIPTION = "Task description goes here.";
@@ -148,7 +151,7 @@ public class TaskDefinitionPart
             final String newDescription = change.getNewValue();
             final ValueMismatch mismatch = of(expectedDescription, actualDescription,
                                               newDescription, getVersion());
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateDescription(cmd, ctx, mismatch);
+            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateDescription(cmd, mismatch);
         }
 
         final TaskDescriptionUpdated taskDescriptionUpdated =
@@ -170,7 +173,7 @@ public class TaskDefinitionPart
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate(cmd, ctx);
+            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate(cmd);
         }
 
         final TimestampChange change = cmd.getDueDateChange();
@@ -183,7 +186,7 @@ public class TaskDefinitionPart
             final Timestamp newDueDate = change.getNewValue();
             final ValueMismatch mismatch = of(expectedDueDate, actualDueDate,
                                               newDueDate, getVersion());
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate(cmd, ctx, mismatch);
+            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate(cmd, mismatch);
         }
 
         final TaskDueDateUpdated taskDueDateUpdated =
@@ -204,7 +207,7 @@ public class TaskDefinitionPart
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriority(cmd, ctx);
+            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriority(cmd);
         }
 
         final PriorityChange priorityChange = cmd.getPriorityChange();
@@ -217,7 +220,7 @@ public class TaskDefinitionPart
             final TaskPriority newPriority = priorityChange.getNewValue();
             final ValueMismatch mismatch = of(expectedPriority, actualPriority, newPriority,
                                               getVersion());
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriority(cmd, ctx, mismatch);
+            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriority(cmd, mismatch);
         }
 
         final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
@@ -237,7 +240,7 @@ public class TaskDefinitionPart
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotReopenTask(cmd, ctx);
+            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotReopenTask(cmd);
         }
 
         final TaskReopened taskReopened = TaskReopened.newBuilder()
@@ -256,7 +259,7 @@ public class TaskDefinitionPart
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotDeleteTask(cmd, ctx);
+            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotDeleteTask(cmd);
         }
 
         final TaskDeleted taskDeleted = TaskDeleted.newBuilder()
@@ -275,7 +278,7 @@ public class TaskDefinitionPart
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotCompleteTask(cmd, ctx);
+            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotCompleteTask(cmd);
         }
 
         final TaskCompleted taskCompleted = TaskCompleted.newBuilder()
@@ -291,7 +294,7 @@ public class TaskDefinitionPart
         final boolean isValid = isValidCreateDraftCommand(getState().getTaskStatus());
 
         if (!isValid) {
-            TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure(cmd, ctx);
+            TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure(cmd);
         }
 
         final TaskDraftCreated draftCreated =
@@ -314,7 +317,7 @@ public class TaskDefinitionPart
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotFinalizeDraft(cmd, ctx);
+            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotFinalizeDraft(cmd);
         }
 
         final TaskDraftFinalized taskDraftFinalized = TaskDraftFinalized.newBuilder()
@@ -331,7 +334,7 @@ public class TaskDefinitionPart
         final TaskId taskId = cmd.getId();
         final boolean isValid = ensureDeleted(currentStatus);
         if (!isValid) {
-            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotRestoreDeletedTask(cmd, ctx);
+            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotRestoreDeletedTask(cmd);
         }
 
         final DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored.newBuilder()
@@ -432,7 +435,7 @@ public class TaskDefinitionPart
             throws CannotCreateTaskWithInappropriateDescription {
         final String description = cmd.getDescription();
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
-            TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd, ctx);
+            TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd);
         }
     }
 
@@ -442,13 +445,13 @@ public class TaskDefinitionPart
                                       .getNewValue();
 
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTooShortDescription(cmd, ctx);
+            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTooShortDescription(cmd);
         }
 
         boolean isValid = ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
 
         if (!isValid) {
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescription(cmd, ctx);
+            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescription(cmd);
         }
     }
 }

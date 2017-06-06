@@ -34,6 +34,7 @@ import io.spine.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDe
 
 import java.util.List;
 
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -56,9 +57,7 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
     @DisplayName("produce TaskCreated event")
     void produceEvent() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        final List<? extends Message> messageList =
-                aggregate.dispatchForTest(envelopeOf(createTaskCmd));
-
+        final List<? extends Message> messageList = dispatch(aggregate, envelopeOf(createTaskCmd));
         assertNotNull(aggregate.getState()
                                .getCreated());
         assertNotNull(aggregate.getId());
@@ -76,7 +75,7 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
     @DisplayName("create the task")
     void createTask() {
         final CreateBasicTask createBasicTask = createTaskInstance();
-        aggregate.dispatchForTest(envelopeOf(createBasicTask));
+        dispatch(aggregate, envelopeOf(createBasicTask));
 
         final TaskDefinition state = aggregate.getState();
         assertEquals(state.getId(), createBasicTask.getId());
@@ -90,8 +89,7 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, "D");
 
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(
-                                                 envelopeOf(createBasicTask)));
+                                         () -> dispatch(aggregate, envelopeOf(createBasicTask)));
         final Throwable rootCause = Throwables.getRootCause(t);
         final CannotCreateTaskWithInappropriateDescription failure =
                 (CannotCreateTaskWithInappropriateDescription) rootCause;

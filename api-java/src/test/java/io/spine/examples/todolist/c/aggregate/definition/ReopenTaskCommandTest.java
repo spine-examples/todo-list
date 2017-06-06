@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
+import io.spine.server.aggregate.AggregateCommandDispatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.ReopenTask;
 import io.spine.examples.todolist.c.failures.CannotReopenTask;
 
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,8 +66,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
 
         final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(
-                                                 envelopeOf(reopenTaskCmd)));
+                                         () -> dispatch(aggregate, envelopeOf(reopenTaskCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotReopenTask.class));
     }
 
@@ -74,14 +75,14 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     void reopenTask() {
         dispatchCreateTaskCmd();
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(completeTaskCmd));
+        dispatch(aggregate, envelopeOf(completeTaskCmd));
 
         TaskDefinition state = aggregate.getState();
         assertEquals(taskId, state.getId());
         assertEquals(COMPLETED, state.getTaskStatus());
 
         final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(reopenTaskCmd));
+        dispatch(aggregate, envelopeOf(reopenTaskCmd));
 
         state = aggregate.getState();
         assertEquals(taskId, state.getId());
@@ -93,12 +94,11 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     void cannotReopenDeletedTask() {
         dispatchCreateTaskCmd();
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
+        dispatch(aggregate, envelopeOf(deleteTaskCmd));
 
         final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(
-                                                 envelopeOf(reopenTaskCmd)));
+                                         () -> dispatch(aggregate, envelopeOf(reopenTaskCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotReopenTask.class));
     }
 
@@ -106,17 +106,16 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
     @DisplayName("throw CannotReopenTask upon an attempt to reopen the task in draft state")
     void cannotReopenDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(createDraftCmd));
+        dispatch(aggregate, envelopeOf(createDraftCmd));
 
         final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(
-                                                 envelopeOf(reopenTaskCmd)));
+                                         () -> dispatch(aggregate, envelopeOf(reopenTaskCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotReopenTask.class));
     }
 
     private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(envelopeOf(createTaskCmd));
+        dispatch(aggregate, envelopeOf(createTaskCmd));
     }
 }

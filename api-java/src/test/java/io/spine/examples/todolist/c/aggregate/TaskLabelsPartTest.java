@@ -47,6 +47,7 @@ import io.spine.test.AggregatePartCommandTest;
 
 import java.util.List;
 
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.base.Identifiers.newUuid;
@@ -79,7 +80,7 @@ class TaskLabelsPartTest {
         @DisplayName("produce LabelAssignedToTask event")
         void produceEvent() {
             final List<? extends Message> messageList =
-                    taskLabelsPart.dispatchForTest(CommandEnvelope.of(command().get()));
+                    dispatch(taskLabelsPart, CommandEnvelope.of(command().get()));
 
             assertEquals(1, messageList.size());
             assertEquals(LabelAssignedToTask.class, messageList.get(0)
@@ -184,7 +185,7 @@ class TaskLabelsPartTest {
         private void dispatchAssignLabelToTask() {
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
             final Command assignLabelToTaskCmd = createDifferentCommand(assignLabelToTask);
-            taskLabelsPart.dispatchForTest(CommandEnvelope.of(assignLabelToTaskCmd));
+            dispatch(taskLabelsPart, CommandEnvelope.of(assignLabelToTaskCmd));
         }
     }
 

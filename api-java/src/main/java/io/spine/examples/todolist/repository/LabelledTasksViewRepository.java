@@ -53,8 +53,8 @@ import static io.spine.examples.todolist.EnrichmentHelper.getEnrichment;
  */
 public class LabelledTasksViewRepository
         extends ProjectionRepository<LabelId, LabelledTasksViewProjection, LabelledTasksView> {
-    public LabelledTasksViewRepository(BoundedContext boundedContext) {
-        super(boundedContext);
+
+    public LabelledTasksViewRepository() {
         addIdSetFunctions();
     }
 

@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
+import io.spine.server.aggregate.AggregateCommandDispatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -44,6 +45,7 @@ import io.spine.test.AggregateCommandTest;
 import java.util.List;
 
 import static com.google.protobuf.Any.pack;
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.base.Identifiers.newUuid;
@@ -100,16 +102,16 @@ class LabelAggregateTest {
             createBasicLabel();
         }
 
-        private List<? extends Message> dispatch(UpdateLabelDetails details) {
+        private List<? extends Message> dispatchUpdateLabelDetails(UpdateLabelDetails details) {
             final Command command = createCommand(details);
-            return aggregate.dispatchForTest(CommandEnvelope.of(command));
+            return dispatch(aggregate, CommandEnvelope.of(command));
         }
 
         @Test
         @DisplayName("produce LabelDetailsUpdated event")
         void produceEvent() {
             final UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(getLabelId());
-            final List<? extends Message> messageList = dispatch(updateLabelDetails);
+            final List<? extends Message> messageList = dispatchUpdateLabelDetails(updateLabelDetails);
 
             assertEquals(1, messageList.size());
             assertEquals(LabelDetailsUpdated.class, messageList.get(0)
@@ -128,7 +130,7 @@ class LabelAggregateTest {
         @DisplayName("update the label details twice")
         void updateLabelDetailsTwice() {
             UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(getLabelId());
-            dispatch(updateLabelDetails);
+            dispatchUpdateLabelDetails(updateLabelDetails);
 
             TaskLabel state = aggregate.getState();
             assertEquals(getLabelId(), state.getId());
@@ -148,7 +150,7 @@ class LabelAggregateTest {
                                                              .build();
             updateLabelDetails = updateLabelDetailsInstance(getLabelId(), previousLabelDetails,
                                                             newLabelDetails);
-            dispatch(updateLabelDetails);
+            dispatchUpdateLabelDetails(updateLabelDetails);
 
             state = aggregate.getState();
             assertEquals(getLabelId(), state.getId());
@@ -225,7 +227,7 @@ class LabelAggregateTest {
         List<? extends Message> createBasicLabel() {
             final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
             final Command command = createDifferentCommand(createBasicLabel);
-            return aggregate.dispatchForTest(CommandEnvelope.of(command));
+            return dispatch(aggregate, CommandEnvelope.of(command));
         }
 
         private static LabelId createLabelId() {

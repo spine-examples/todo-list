@@ -33,12 +33,4 @@ import io.spine.server.aggregate.AggregatePartRepository;
  */
 public class TaskDefinitionRepository
         extends AggregatePartRepository<TaskId, TaskDefinitionPart, TaskAggregateRoot> {
-    /**
-     * {@inheritDoc}
-     *
-     * @param boundedContext
-     */
-    public TaskDefinitionRepository(BoundedContext boundedContext) {
-        super(boundedContext);
-    }
 }

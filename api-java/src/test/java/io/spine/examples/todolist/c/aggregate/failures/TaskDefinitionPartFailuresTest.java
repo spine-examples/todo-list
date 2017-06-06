@@ -62,8 +62,8 @@ class TaskDefinitionPartFailuresTest {
         final CommandContext ctx = CommandContext.getDefaultInstance();
 
         final CannotCreateDraft failure = assertThrows(CannotCreateDraft.class,
-                                                       () -> throwCannotCreateDraftFailure(cmd,
-                                                                                           ctx));
+                                                       () -> throwCannotCreateDraftFailure(cmd
+                                                       ));
         final TaskId actual = failure.getFailureMessage()
                                      .getCreateDraftFailed()
                                      .getFailureDetails()
@@ -81,7 +81,7 @@ class TaskDefinitionPartFailuresTest {
 
         final CannotUpdateTaskDescription failure =
                 assertThrows(CannotUpdateTaskDescription.class,
-                             () -> throwCannotUpdateTaskDescription(cmd, ctx));
+                             () -> throwCannotUpdateTaskDescription(cmd));
         final FailedTaskCommandDetails failedCommand = failure.getFailureMessage()
                                                               .getUpdateFailed()
                                                               .getFailureDetails();
@@ -99,8 +99,8 @@ class TaskDefinitionPartFailuresTest {
 
         final CannotCreateTaskWithInappropriateDescription failure =
                 assertThrows(CannotCreateTaskWithInappropriateDescription.class,
-                             () -> throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd,
-                                                                                            ctx));
+                             () -> throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd
+                             ));
         final TaskId actual = failure.getFailureMessage()
                                      .getCreateTaskFailed()
                                      .getFailureDetails()

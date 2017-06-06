@@ -22,17 +22,11 @@ package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
 import io.grpc.stub.StreamObserver;
-import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
-import io.spine.examples.todolist.c.aggregate.TaskDefinitionPart;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import io.spine.base.Command;
-import io.spine.base.Commands;
 import io.spine.base.Event;
 import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
+import io.spine.examples.todolist.c.aggregate.TaskDefinitionPart;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -48,14 +42,15 @@ import io.spine.protobuf.AnyPacker;
 import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
 import io.spine.server.event.EventStreamQuery;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.examples.todolist.TaskStatus.DELETED;
 import static io.spine.examples.todolist.TaskStatus.OPEN;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
@@ -67,6 +62,11 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.restoreDeletedTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Illia Shepilov
@@ -140,7 +140,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         createBasicTask();
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(deleteTask));
+        dispatch(aggregate, envelopeOf(deleteTask));
 
         restoreDeletedTask();
 
@@ -155,7 +155,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         createDraft();
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(deleteTask));
+        dispatch(aggregate, envelopeOf(deleteTask));
 
         TaskDefinition state = aggregate.getState();
         assertEquals(taskId, state.getId());
@@ -175,7 +175,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         createBasicTask();
 
         final CompleteTask completeTask = completeTaskInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(completeTask));
+        dispatch(aggregate, envelopeOf(completeTask));
 
         final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotRestoreDeletedTask.class));
@@ -201,17 +201,17 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
 
     private void createBasicTask() {
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(envelopeOf(createTask));
+        dispatch(aggregate, envelopeOf(createTask));
     }
 
     private void createDraft() {
         final CreateDraft createDraft = createDraftInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(createDraft));
+        dispatch(aggregate, envelopeOf(createDraft));
     }
 
     private void restoreDeletedTask() {
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(restoreDeletedTask));
+        dispatch(aggregate, envelopeOf(restoreDeletedTask));
     }
 
     private static class EventStreamObserver implements StreamObserver<Event> {

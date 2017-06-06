@@ -21,13 +21,13 @@
 package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
-import io.spine.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures;
 import io.spine.base.CommandContext;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdsList;
 import io.spine.examples.todolist.TaskDefinition;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
+import io.spine.examples.todolist.TaskLabelsValidatingBuilder;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
 import io.spine.examples.todolist.c.events.LabelAssignedToTask;
@@ -38,9 +38,11 @@ import io.spine.server.aggregate.AggregatePart;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static io.spine.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotAssignLabelToTaskFailure;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotRemoveLabelFromTaskFailure;
+import static java.util.Collections.singletonList;
 
 /**
  * The aggregate managing the state of a {@link TaskLabels}.
@@ -50,7 +52,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unused") // The methods annotated with {@link Apply}
                             // are declared {@code private} by design.
 public class TaskLabelsPart
-        extends AggregatePart<TaskId, TaskLabels, TaskLabels.Builder, TaskAggregateRoot> {
+        extends AggregatePart<TaskId, TaskLabels, TaskLabelsValidatingBuilder, TaskAggregateRoot> {
 
     /**
      * {@inheritDoc}
@@ -72,18 +74,18 @@ public class TaskLabelsPart
                                                   .getIdsList()
                                                   .contains(labelId);
         final boolean isValidTaskStatus =
-                TaskFlowValidator.isValidTaskStatusToRemoveLabel(taskDefinitionState.getTaskStatus());
+                TaskFlowValidator.isValidTaskStatusToRemoveLabel(
+                        taskDefinitionState.getTaskStatus());
 
         if (!isLabelAssigned || !isValidTaskStatus) {
-            TaskLabelsPartFailures.throwCannotRemoveLabelFromTaskFailure(cmd, ctx);
+            throwCannotRemoveLabelFromTaskFailure(cmd);
         }
 
         final LabelRemovedFromTask labelRemoved = LabelRemovedFromTask.newBuilder()
                                                                       .setTaskId(taskId)
                                                                       .setLabelId(labelId)
                                                                       .build();
-        final List<LabelRemovedFromTask> result = Collections.singletonList(labelRemoved);
-        return result;
+        return singletonList(labelRemoved);
     }
 
     @Assign
@@ -93,46 +95,39 @@ public class TaskLabelsPart
         final LabelId labelId = cmd.getLabelId();
 
         final TaskDefinition state = getPartState(TaskDefinition.class);
-        final boolean isValid = TaskFlowValidator.isValidAssignLabelToTaskCommand(state.getTaskStatus());
+        final boolean isValid = TaskFlowValidator.isValidAssignLabelToTaskCommand(
+                state.getTaskStatus());
 
         if (!isValid) {
-            TaskLabelsPartFailures.throwCannotAssignLabelToTaskFailure(cmd, ctx);
+            throwCannotAssignLabelToTaskFailure(cmd);
         }
 
         final LabelAssignedToTask labelAssigned = LabelAssignedToTask.newBuilder()
                                                                      .setTaskId(taskId)
                                                                      .setLabelId(labelId)
                                                                      .build();
-        final List<LabelAssignedToTask> result = Collections.singletonList(labelAssigned);
-        return result;
+        return singletonList(labelAssigned);
     }
 
     @Apply
     private void labelAssignedToTask(LabelAssignedToTask event) {
         List<LabelId> list = getState().getLabelIdsList()
-                                       .getIdsList()
-                                       .stream()
-                                       .collect(Collectors.toList());
-
+                                       .getIdsList();
         list.add(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
                                                       .addAllIds(list)
                                                       .build();
-        getBuilder().clearLabelIdsList()
-                    .setLabelIdsList(labelIdsList);
+        getBuilder().setLabelIdsList(labelIdsList);
     }
 
     @Apply
     private void labelRemovedFromTask(LabelRemovedFromTask event) {
         List<LabelId> list = getState().getLabelIdsList()
-                                       .getIdsList()
-                                       .stream()
-                                       .collect(Collectors.toList());
+                                       .getIdsList();
         list.remove(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
                                                       .addAllIds(list)
                                                       .build();
-        getBuilder().clearLabelIdsList()
-                    .setLabelIdsList(labelIdsList);
+        getBuilder().setLabelIdsList(labelIdsList);
     }
 }

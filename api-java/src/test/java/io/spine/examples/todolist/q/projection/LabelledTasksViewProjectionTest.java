@@ -52,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static io.spine.base.Identifiers.newUuid;
 import static io.spine.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
-import static io.spine.examples.todolist.testdata.TestEventBusFactory.eventBusInstance;
+import static io.spine.examples.todolist.testdata.TestEventBusFactory.newEventBusBuilder;
 import static io.spine.examples.todolist.testdata.TestEventEnricherFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestEventEnricherFactory.eventEnricherInstance;
 import static io.spine.examples.todolist.testdata.TestLabelEventFactory.labelDetailsUpdatedInstance;
@@ -85,10 +85,11 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         final StorageFactorySwitch storageFactorySwitch = StorageFactorySwitch.getInstance(false);
         final StorageFactory storageFactory = storageFactorySwitch.get();
         final EventEnricher eventEnricher = eventEnricherInstance();
-        eventBus = eventBusInstance(storageFactory, eventEnricher);
-        final BoundedContext boundedContext = boundedContextInstance(eventBus,
+        final EventBus.Builder eventBusBuilder = newEventBusBuilder(storageFactory, eventEnricher);
+        eventBus = eventBusBuilder.build();
+        final BoundedContext boundedContext = boundedContextInstance(eventBusBuilder,
                                                                      storageFactorySwitch);
-        repository = new LabelledTasksViewRepository(boundedContext);
+        repository = new LabelledTasksViewRepository();
         repository.initStorage(storageFactory);
         boundedContext.register(repository);
     }

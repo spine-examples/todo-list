@@ -41,8 +41,7 @@ import java.util.Collections;
 public class MyListViewRepository
         extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {
 
-    public MyListViewRepository(BoundedContext boundedContext) {
-        super(boundedContext);
+    public MyListViewRepository() {
         addIdSetFunctions();
     }
 

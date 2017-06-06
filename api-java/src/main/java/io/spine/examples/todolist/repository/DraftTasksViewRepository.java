@@ -41,8 +41,8 @@ import static io.spine.examples.todolist.repository.RepositoryHelper.addCommonId
  */
 public class DraftTasksViewRepository
         extends ProjectionRepository<TaskListId, DraftTasksViewProjection, DraftTasksView> {
-    public DraftTasksViewRepository(BoundedContext boundedContext) {
-        super(boundedContext);
+
+    public DraftTasksViewRepository() {
         addIdSetFunctions();
     }
 

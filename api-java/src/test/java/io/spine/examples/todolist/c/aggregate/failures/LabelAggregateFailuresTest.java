@@ -50,6 +50,6 @@ class LabelAggregateFailuresTest {
         final CommandContext ctx = CommandContext.getDefaultInstance();
         final ValueMismatch valueMismatch = ValueMismatch.getDefaultInstance();
         assertThrows(CannotUpdateLabelDetails.class, () ->
-                throwCannotUpdateLabelDetailsFailure(cmd, ctx, valueMismatch));
+                throwCannotUpdateLabelDetailsFailure(cmd, valueMismatch));
     }
 }

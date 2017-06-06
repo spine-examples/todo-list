@@ -35,6 +35,7 @@ import io.spine.examples.todolist.c.failures.CannotCreateDraft;
 
 import java.util.List;
 
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.examples.todolist.TaskStatus.DRAFT;
@@ -59,13 +60,10 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
     @DisplayName("produce TaskDraftCreated event")
     void produceEvent() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
-
-        final List<? extends Message> messageList =
-                aggregate.dispatchForTest(envelopeOf(createDraftCmd));
+        final List<? extends Message> messageList = dispatch(aggregate, envelopeOf(createDraftCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDraftCreated.class, messageList.get(0)
                                                         .getClass());
-
         final TaskDraftCreated taskDraftCreated = (TaskDraftCreated) messageList.get(0);
         assertEquals(taskId, taskDraftCreated.getId());
     }
@@ -74,7 +72,7 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
     @DisplayName("create the draft")
     void createDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(createDraftCmd));
+        dispatch(aggregate, envelopeOf(createDraftCmd));
         final TaskDefinition state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -86,15 +84,14 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
             "an attempt to create draft with deleted task ID")
     void notCreateDraft() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(envelopeOf(createTaskCmd));
+        dispatch(aggregate, envelopeOf(createTaskCmd));
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
+        dispatch(aggregate, envelopeOf(deleteTaskCmd));
 
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(
-                                                 envelopeOf(createDraftCmd)));
+                                         () -> dispatch(aggregate, envelopeOf(createDraftCmd)));
         final Throwable cause = Throwables.getRootCause(t);
         final CannotCreateDraft failure = (CannotCreateDraft) cause;
         final TaskId actualId = failure.getFailureMessage()

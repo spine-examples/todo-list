@@ -25,7 +25,7 @@ import io.spine.server.event.enrich.EventEnricher;
 import io.spine.server.storage.StorageFactory;
 
 /**
- * Provides the {@link EventBus} instances for the test needs.
+ * Provides the {@link EventBus.Builder} instances for the test needs.
  *
  * @author Illia Shepilov
  */
@@ -35,18 +35,16 @@ public class TestEventBusFactory {
     }
 
     /**
-     * Returns a pre-configured {@link EventBus} instance.
+     * Returns a pre-configured {@link EventBus.Builder} instance.
      *
      * @param storageFactory the {@link StorageFactory} to set
      * @param eventEnricher  the {@link EventEnricher} to set
-     * @return the {@code EventBus} instance
+     * @return the {@code EventBus.Builder} instance
      */
-    public static EventBus eventBusInstance(StorageFactory storageFactory,
-            EventEnricher eventEnricher) {
-        final EventBus result = EventBus.newBuilder()
-                                        .setStorageFactory(storageFactory)
-                                        .setEnricher(eventEnricher)
-                                        .build();
-        return result;
+    public static EventBus.Builder newEventBusBuilder(StorageFactory storageFactory,
+                                                      EventEnricher eventEnricher) {
+        return EventBus.newBuilder()
+                       .setStorageFactory(storageFactory)
+                       .setEnricher(eventEnricher);
     }
 }

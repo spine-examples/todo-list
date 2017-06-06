@@ -36,18 +36,16 @@ public class TestBoundedContextFactory {
 
     /**
      * Provides a new {@link BoundedContext} instance
-     * built with the specified {@link EventBus} and {@link StorageFactorySwitch}.
+     * built with the specified {@link EventBus.Builder} and {@link StorageFactorySwitch}.
      *
-     * @param eventBus {@code EventBus} instance
+     * @param eventBus {@code EventBus.Builder} instance
      * @return the {@code BoundedContext} instance
      */
-    public static BoundedContext boundedContextInstance(EventBus eventBus,
+    public static BoundedContext boundedContextInstance(EventBus.Builder eventBus,
                                                         StorageFactorySwitch storageFactory) {
-        final BoundedContext result = BoundedContext.newBuilder()
-                                                    .setEventBus(eventBus)
-                                                    .setStorageFactorySupplier(storageFactory)
-                                                    .build();
-
-        return result;
+        return BoundedContext.newBuilder()
+                             .setEventBus(eventBus)
+                             .setStorageFactorySupplier(storageFactory)
+                             .build();
     }
 }

@@ -31,6 +31,7 @@ import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.c.failures.CannotFinalizeDraft;
 
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -59,7 +60,7 @@ public class FinalizeDraftTest extends TaskDefinitionCommandTest<FinalizeDraft> 
     @DisplayName("finalize the task")
     void finalizeTask() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(createDraftCmd));
+        dispatch(aggregate, envelopeOf(createDraftCmd));
 
         final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
         TaskDefinition state = aggregate.getState();
@@ -67,7 +68,7 @@ public class FinalizeDraftTest extends TaskDefinitionCommandTest<FinalizeDraft> 
         assertEquals(taskId, state.getId());
         assertEquals(DRAFT, state.getTaskStatus());
 
-        aggregate.dispatchForTest(envelopeOf(finalizeDraftCmd));
+        dispatch(aggregate, envelopeOf(finalizeDraftCmd));
         state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -78,15 +79,14 @@ public class FinalizeDraftTest extends TaskDefinitionCommandTest<FinalizeDraft> 
     @DisplayName("throw CannotFinalizeDraft failure upon an attempt to finalize the deleted task")
     void cannotFinalizeDeletedTask() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(envelopeOf(createTaskCmd));
+        dispatch(aggregate, envelopeOf(createTaskCmd));
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
+        dispatch(aggregate, envelopeOf(deleteTaskCmd));
 
         final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(
-                                                 envelopeOf(finalizeDraftCmd)));
+                                         () -> dispatch(aggregate, envelopeOf(finalizeDraftCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotFinalizeDraft.class));
     }
 
@@ -96,8 +96,7 @@ public class FinalizeDraftTest extends TaskDefinitionCommandTest<FinalizeDraft> 
     void cannotFinalizeNotDraftTask() {
         final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(
-                                                 envelopeOf(finalizeDraftCmd)));
+                                         () -> dispatch(aggregate, envelopeOf(finalizeDraftCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotFinalizeDraft.class));
     }
 }

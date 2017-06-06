@@ -28,6 +28,7 @@ import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelDetailsChange;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskLabel;
+import io.spine.examples.todolist.TaskLabelValidatingBuilder;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.events.LabelCreated;
@@ -50,7 +51,7 @@ import static io.spine.examples.todolist.c.aggregate.failures.LabelAggregateFail
  */
 @SuppressWarnings("unused") // The methods annotated with {@link Apply}
                             // are declared {@code private} by design.
-public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Builder> {
+public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelValidatingBuilder> {
 
     /**
      * {@inheritDoc}
@@ -90,7 +91,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabel.Buil
             final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
             final ValueMismatch mismatch = of(expectedLabelDetails, actualLabelDetails,
                                               newLabelDetails, getVersion());
-            throwCannotUpdateLabelDetailsFailure(cmd, ctx, mismatch);
+            throwCannotUpdateLabelDetailsFailure(cmd, mismatch);
         }
 
         final LabelDetailsUpdated labelDetailsUpdated =

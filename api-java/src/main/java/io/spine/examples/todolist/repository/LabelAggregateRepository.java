@@ -31,13 +31,4 @@ import io.spine.server.aggregate.AggregateRepository;
  * @author Illia Shepilov
  */
 public class LabelAggregateRepository extends AggregateRepository<LabelId, LabelAggregate> {
-
-    /**
-     * Creates a new repository instance.
-     *
-     * @param boundedContext the bounded context to which this repository belongs
-     */
-    public LabelAggregateRepository(BoundedContext boundedContext) {
-        super(boundedContext);
-    }
 }

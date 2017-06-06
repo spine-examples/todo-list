@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.c.aggregate.failures;
 
-import io.spine.base.CommandContext;
 import io.spine.examples.todolist.AssignLabelToTaskFailed;
 import io.spine.examples.todolist.FailedTaskCommandDetails;
 import io.spine.examples.todolist.RemoveLabelFromTaskFailed;
@@ -45,11 +44,9 @@ public class TaskLabelsPartFailures {
      * the passed parameters.
      *
      * @param cmd the {@code AssignLabelToTask} command which thrown the failure
-     * @param ctx the {@code CommandContext}
      * @throws CannotAssignLabelToTask the failure to throw
      */
-    public static void throwCannotAssignLabelToTaskFailure(AssignLabelToTask cmd,
-            CommandContext ctx)
+    public static void throwCannotAssignLabelToTaskFailure(AssignLabelToTask cmd)
             throws CannotAssignLabelToTask {
         final FailedTaskCommandDetails commandFailed =
                 FailedTaskCommandDetails.newBuilder()
@@ -60,7 +57,7 @@ public class TaskLabelsPartFailures {
                                        .setFailureDetails(commandFailed)
                                        .setLabelId(cmd.getLabelId())
                                        .build();
-        throw new CannotAssignLabelToTask(cmd, ctx, assignLabelToTaskFailed);
+        throw new CannotAssignLabelToTask(assignLabelToTaskFailed);
     }
 
     /**
@@ -68,11 +65,9 @@ public class TaskLabelsPartFailures {
      * the passed parameters.
      *
      * @param cmd the {@code AssignLabelToTask} command which thrown the failure
-     * @param ctx the {@code CommandContext}
      * @throws CannotRemoveLabelFromTask the failure to throw
      */
-    public static void throwCannotRemoveLabelFromTaskFailure(RemoveLabelFromTask cmd,
-            CommandContext ctx)
+    public static void throwCannotRemoveLabelFromTaskFailure(RemoveLabelFromTask cmd)
             throws CannotRemoveLabelFromTask {
         final FailedTaskCommandDetails commandFailed =
                 FailedTaskCommandDetails.newBuilder()
@@ -83,6 +78,6 @@ public class TaskLabelsPartFailures {
                                          .setLabelId(cmd.getLabelId())
                                          .setFailureDetails(commandFailed)
                                          .build();
-        throw new CannotRemoveLabelFromTask(cmd, ctx, removeLabelFromTaskFailed);
+        throw new CannotRemoveLabelFromTask(removeLabelFromTaskFailed);
     }
 }

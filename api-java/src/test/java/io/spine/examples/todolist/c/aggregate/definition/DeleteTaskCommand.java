@@ -34,6 +34,7 @@ import io.spine.examples.todolist.c.failures.CannotDeleteTask;
 
 import java.util.List;
 
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,7 +62,7 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
+        dispatch(aggregate, envelopeOf(deleteTaskCmd));
         final TaskDefinition state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -76,10 +77,10 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         final CommandEnvelope deleteTaskEnvelope = envelopeOf(deleteTaskCmd);
-        aggregate.dispatchForTest(deleteTaskEnvelope);
+        dispatch(aggregate, deleteTaskEnvelope);
 
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> aggregate.dispatchForTest(deleteTaskEnvelope));
+                                         () -> dispatch(aggregate, deleteTaskEnvelope));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotDeleteTask.class));
     }
 
@@ -89,8 +90,7 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
         dispatchCreateTaskCmd();
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
 
-        final List<? extends Message> messageList =
-                aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
+        final List<? extends Message> messageList = dispatch(aggregate, envelopeOf(deleteTaskCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDeleted.class, messageList.get(0)
                                                    .getClass());
@@ -100,6 +100,6 @@ public class DeleteTaskCommand extends TaskDefinitionCommandTest<DeleteTask> {
 
     private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(envelopeOf(createTaskCmd));
+        dispatch(aggregate, envelopeOf(createTaskCmd));
     }
 }

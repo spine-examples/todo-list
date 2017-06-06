@@ -61,7 +61,7 @@ class TaskLabelsPartFailuresTest {
 
         final CannotRemoveLabelFromTask failure =
                 assertThrows(CannotRemoveLabelFromTask.class,
-                             () -> TaskLabelsPartFailures.throwCannotRemoveLabelFromTaskFailure(cmd, ctx));
+                             () -> TaskLabelsPartFailures.throwCannotRemoveLabelFromTaskFailure(cmd));
         final TaskId actual = failure.getFailureMessage()
                                      .getRemoveLabelFailed()
                                      .getFailureDetails()
@@ -80,7 +80,7 @@ class TaskLabelsPartFailuresTest {
 
         final CannotAssignLabelToTask failure =
                 assertThrows(CannotAssignLabelToTask.class,
-                             () -> TaskLabelsPartFailures.throwCannotAssignLabelToTaskFailure(cmd, ctx));
+                             () -> TaskLabelsPartFailures.throwCannotAssignLabelToTaskFailure(cmd));
         final FailedTaskCommandDetails failedCommand = failure.getFailureMessage()
                                                               .getAssignLabelFailed()
                                                               .getFailureDetails();

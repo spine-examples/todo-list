@@ -22,6 +22,7 @@ package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
+import io.spine.server.aggregate.AggregateCommandDispatcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,6 +36,7 @@ import io.spine.examples.todolist.c.failures.CannotCompleteTask;
 
 import java.util.List;
 
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -91,7 +93,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(deleteTaskCmd));
+        dispatch(aggregate, envelopeOf(deleteTaskCmd));
 
         final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
@@ -102,7 +104,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
             "an attempt to complete the task in draft state")
     void cannotCompleteDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
-        aggregate.dispatchForTest(envelopeOf(createDraftCmd));
+        dispatch(aggregate, envelopeOf(createDraftCmd));
 
         final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
@@ -110,11 +112,11 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
 
     private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        aggregate.dispatchForTest(envelopeOf(createTaskCmd));
+        dispatch(aggregate, envelopeOf(createTaskCmd));
     }
 
     private List<? extends Message> dispatchCompleteTaskCmd() {
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-        return aggregate.dispatchForTest(envelopeOf(completeTaskCmd));
+        return dispatch(aggregate, envelopeOf(completeTaskCmd));
     }
 }

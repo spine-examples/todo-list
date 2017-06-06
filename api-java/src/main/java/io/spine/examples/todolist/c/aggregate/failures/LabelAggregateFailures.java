@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.c.aggregate.failures;
 
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
-import io.spine.base.CommandContext;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.FailedLabelCommandDetails;
 import io.spine.examples.todolist.LabelDetailsUpdateFailed;
@@ -43,13 +42,11 @@ public class LabelAggregateFailures {
      * the passed parameters.
      *
      * @param cmd      the failed command
-     * @param ctx      the {@code CommandContext}
      * @param mismatch the {@link ValueMismatch}
      * @throws CannotUpdateLabelDetails the failure to throw
      */
     public static void throwCannotUpdateLabelDetailsFailure(UpdateLabelDetails cmd,
-            CommandContext ctx,
-            ValueMismatch mismatch)
+                                                            ValueMismatch mismatch)
             throws CannotUpdateLabelDetails {
         final FailedLabelCommandDetails labelCommandFailed =
                 FailedLabelCommandDetails.newBuilder()
@@ -60,6 +57,6 @@ public class LabelAggregateFailures {
                                         .setFailureDetails(labelCommandFailed)
                                         .setLabelDetailsMismatch(mismatch)
                                         .build();
-        throw new CannotUpdateLabelDetails(cmd, ctx, labelDetailsUpdateFailed);
+        throw new CannotUpdateLabelDetails(labelDetailsUpdateFailed);
     }
 }
