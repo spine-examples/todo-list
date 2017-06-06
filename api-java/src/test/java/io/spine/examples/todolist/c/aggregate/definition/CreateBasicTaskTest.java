@@ -25,12 +25,12 @@ import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.examples.todolist.TaskDefinition;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskStatus;
-import org.spine3.examples.todolist.c.commands.CreateBasicTask;
-import org.spine3.examples.todolist.c.events.TaskCreated;
-import org.spine3.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
+import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskStatus;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.events.TaskCreated;
+import io.spine.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
 
 import java.util.List;
 

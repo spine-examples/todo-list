@@ -20,30 +20,29 @@
 
 package io.spine.examples.todolist.q.projection;
 
-import org.spine3.base.EventContext;
-import org.spine3.base.Subscribe;
-import org.spine3.examples.todolist.TaskDefinition;
-import org.spine3.examples.todolist.TaskDetails;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskListId;
-import org.spine3.examples.todolist.c.enrichments.TaskEnrichment;
-import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
-import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
-import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
-import org.spine3.examples.todolist.c.events.TaskCompleted;
-import org.spine3.examples.todolist.c.events.TaskCreated;
-import org.spine3.examples.todolist.c.events.TaskDeleted;
-import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
-import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
-import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
-import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
-import org.spine3.examples.todolist.c.events.TaskReopened;
-import org.spine3.server.projection.Projection;
+import io.spine.annotation.Subscribe;
+import io.spine.base.EventContext;
+import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.TaskDetails;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskListId;
+import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
+import io.spine.examples.todolist.c.events.LabelAssignedToTask;
+import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
+import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
+import io.spine.examples.todolist.c.events.TaskCompleted;
+import io.spine.examples.todolist.c.events.TaskCreated;
+import io.spine.examples.todolist.c.events.TaskDeleted;
+import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
+import io.spine.examples.todolist.c.events.TaskDraftFinalized;
+import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
+import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
+import io.spine.examples.todolist.c.events.TaskReopened;
+import io.spine.server.projection.Projection;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static org.spine3.base.Identifiers.newUuid;
+import static io.spine.base.Identifiers.newUuid;
 import static io.spine.examples.todolist.EnrichmentHelper.getEnrichment;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskViewList;
@@ -57,7 +56,8 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
  * @author Illia Shepilov
  */
 @SuppressWarnings("OverlyCoupledClass")
-public class MyListViewProjection extends Projection<TaskListId, MyListView> {
+public class MyListViewProjection extends
+                                  Projection<TaskListId, MyListView, MyListViewValidatingBuilder> {
 
     /**
      * As long as there is just a single end-user in the app,
@@ -86,26 +86,15 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
                                           .setPriority(taskDetails.getPriority())
                                           .setCompleted(taskDetails.getCompleted())
                                           .build();
-        final List<TaskView> views = getState().getMyList()
-                                               .getItemsList()
-                                               .stream()
-                                               .collect(Collectors.toList());
-        views.add(taskView);
-        final MyListView state = constructMyListViewState(views);
-        incrementState(state);
+        addTaskView(taskView);
     }
 
     @Subscribe
     public void on(TaskDeleted event) {
         final List<TaskView> views = getState().getMyList()
-                                               .getItemsList()
-                                               .stream()
-                                               .collect(Collectors.toList());
+                                               .getItemsList();
         final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
-        final MyListView state = getState().newBuilderForType()
-                                           .setMyList(taskListView)
-                                           .build();
-        incrementState(state);
+        getBuilder().setMyList(taskListView);
     }
 
     @Subscribe
@@ -113,8 +102,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final MyListView state = constructMyListViewState(updatedList);
-        incrementState(state);
+        updateMyListView(updatedList);
     }
 
     @Subscribe
@@ -122,8 +110,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final MyListView state = constructMyListViewState(updatedList);
-        incrementState(state);
+        updateMyListView(updatedList);
     }
 
     @Subscribe
@@ -131,8 +118,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final MyListView state = constructMyListViewState(updatedList);
-        incrementState(state);
+        updateMyListView(updatedList);
     }
 
     @Subscribe
@@ -140,8 +126,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final MyListView state = constructMyListViewState(updatedList);
-        incrementState(state);
+        updateMyListView(updatedList);
     }
 
     @Subscribe
@@ -149,8 +134,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final MyListView state = constructMyListViewState(updatedList);
-        incrementState(state);
+        updateMyListView(updatedList);
     }
 
     @Subscribe
@@ -158,8 +142,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final MyListView state = constructMyListViewState(updatedList);
-        incrementState(state);
+        updateMyListView(updatedList);
     }
 
     @Subscribe
@@ -167,8 +150,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final MyListView state = constructMyListViewState(updatedList);
-        incrementState(state);
+        updateMyListView(updatedList);
     }
 
     @Subscribe
@@ -176,8 +158,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
         final List<TaskView> views = getState().getMyList()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final MyListView state = constructMyListViewState(updatedList);
-        incrementState(state);
+        updateMyListView(updatedList);
     }
 
     @Subscribe
@@ -191,22 +172,19 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView> {
                                       .setDueDate(taskDefinition.getDueDate())
                                       .setPriority(taskDefinition.getPriority())
                                       .build();
-        final List<TaskView> views = getState().getMyList()
-                                               .getItemsList()
-                                               .stream()
-                                               .collect(Collectors.toList());
-        views.add(view);
-        final MyListView state = constructMyListViewState(views);
-        incrementState(state);
+        addTaskView(view);
     }
 
-    private MyListView constructMyListViewState(List<TaskView> updatedList) {
+    private void updateMyListView(List<TaskView> updatedList) {
         final TaskListView listView = TaskListView.newBuilder()
                                                   .addAllItems(updatedList)
                                                   .build();
-        final MyListView result = getState().newBuilderForType()
-                                            .setMyList(listView)
-                                            .build();
-        return result;
+        getBuilder().setMyList(listView);
+    }
+
+    private void addTaskView(TaskView taskView) {
+        getState().getMyList()
+                  .getItemsList()
+                  .add(taskView);
     }
 }

@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.q.projection;
 
-import org.spine3.examples.todolist.LabelColor;
+import io.spine.examples.todolist.LabelColor;
 
 /**
  * Supplies {@link LabelColor} with hexadecimal representation of color.

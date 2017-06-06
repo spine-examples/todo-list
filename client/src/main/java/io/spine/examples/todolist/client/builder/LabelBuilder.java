@@ -20,10 +20,10 @@
 
 package io.spine.examples.todolist.client.builder;
 
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 
-import static org.spine3.base.Identifiers.newUuid;
+import static io.spine.base.Identifiers.newUuid;
 
 /**
  * Provides label command builders.

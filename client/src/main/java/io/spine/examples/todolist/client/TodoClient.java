@@ -20,23 +20,23 @@
 
 package io.spine.examples.todolist.client;
 
-import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
-import org.spine3.examples.todolist.c.commands.CompleteTask;
-import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
-import org.spine3.examples.todolist.c.commands.CreateBasicTask;
-import org.spine3.examples.todolist.c.commands.CreateDraft;
-import org.spine3.examples.todolist.c.commands.DeleteTask;
-import org.spine3.examples.todolist.c.commands.FinalizeDraft;
-import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
-import org.spine3.examples.todolist.c.commands.ReopenTask;
-import org.spine3.examples.todolist.c.commands.RestoreDeletedTask;
-import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
-import org.spine3.examples.todolist.c.commands.UpdateTaskDescription;
-import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
-import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
-import org.spine3.examples.todolist.q.projection.DraftTasksView;
-import org.spine3.examples.todolist.q.projection.LabelledTasksView;
-import org.spine3.examples.todolist.q.projection.MyListView;
+import io.spine.examples.todolist.c.commands.AssignLabelToTask;
+import io.spine.examples.todolist.c.commands.CompleteTask;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.CreateDraft;
+import io.spine.examples.todolist.c.commands.DeleteTask;
+import io.spine.examples.todolist.c.commands.FinalizeDraft;
+import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
+import io.spine.examples.todolist.c.commands.ReopenTask;
+import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
+import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
+import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
+import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
+import io.spine.examples.todolist.q.projection.DraftTasksView;
+import io.spine.examples.todolist.q.projection.LabelledTasksView;
+import io.spine.examples.todolist.q.projection.MyListView;
 
 import java.util.List;
 

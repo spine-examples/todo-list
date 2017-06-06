@@ -20,14 +20,14 @@
 
 package io.spine.examples.todolist.testdata;
 
-import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelDetailsChange;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
-import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
+import io.spine.examples.todolist.LabelColor;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelDetailsChange;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
+import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 
-import static org.spine3.base.Identifiers.newUuid;
+import static io.spine.base.Identifiers.newUuid;
 
 /**
  * A factory of the label commands for the test needs.

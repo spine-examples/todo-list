@@ -21,21 +21,21 @@
 package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
-import org.spine3.base.CommandContext;
-import org.spine3.change.ValueMismatch;
-import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelDetailsChange;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.TaskLabel;
-import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
-import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
-import org.spine3.examples.todolist.c.events.LabelCreated;
-import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
-import org.spine3.examples.todolist.c.failures.CannotUpdateLabelDetails;
-import org.spine3.server.aggregate.Aggregate;
-import org.spine3.server.aggregate.Apply;
-import org.spine3.server.command.Assign;
+import io.spine.base.CommandContext;
+import io.spine.change.ValueMismatch;
+import io.spine.examples.todolist.LabelColor;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelDetailsChange;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskLabel;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
+import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
+import io.spine.examples.todolist.c.events.LabelCreated;
+import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
+import io.spine.examples.todolist.c.failures.CannotUpdateLabelDetails;
+import io.spine.server.aggregate.Aggregate;
+import io.spine.server.aggregate.Apply;
+import io.spine.server.command.Assign;
 
 import java.util.Collections;
 import java.util.List;

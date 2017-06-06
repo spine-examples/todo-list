@@ -20,25 +20,25 @@
 
 package io.spine.examples.todolist.repository;
 
-import org.spine3.base.EventContext;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.LabelIdsList;
-import org.spine3.examples.todolist.c.enrichments.LabelsListEnrichment;
-import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
-import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
-import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
-import org.spine3.examples.todolist.c.events.LabelledTaskRestored;
-import org.spine3.examples.todolist.c.events.TaskCompleted;
-import org.spine3.examples.todolist.c.events.TaskDeleted;
-import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
-import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
-import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
-import org.spine3.examples.todolist.c.events.TaskReopened;
-import org.spine3.examples.todolist.q.projection.LabelledTasksView;
+import io.spine.base.EventContext;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.LabelIdsList;
+import io.spine.examples.todolist.c.enrichments.LabelsListEnrichment;
+import io.spine.examples.todolist.c.events.LabelAssignedToTask;
+import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
+import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
+import io.spine.examples.todolist.c.events.LabelledTaskRestored;
+import io.spine.examples.todolist.c.events.TaskCompleted;
+import io.spine.examples.todolist.c.events.TaskDeleted;
+import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
+import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
+import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
+import io.spine.examples.todolist.c.events.TaskReopened;
+import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksViewProjection;
-import org.spine3.server.BoundedContext;
-import org.spine3.server.entity.idfunc.IdSetEventFunction;
-import org.spine3.server.projection.ProjectionRepository;
+import io.spine.server.BoundedContext;
+import io.spine.server.entity.idfunc.IdSetEventFunction;
+import io.spine.server.projection.ProjectionRepository;
 
 import java.util.Collections;
 import java.util.Set;

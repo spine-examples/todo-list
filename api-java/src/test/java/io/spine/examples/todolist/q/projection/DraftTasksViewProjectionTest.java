@@ -25,20 +25,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskListId;
-import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
-import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
-import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
-import org.spine3.examples.todolist.c.events.TaskDeleted;
-import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
-import org.spine3.examples.todolist.c.events.TaskDraftCreated;
-import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
-import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
-import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
+import io.spine.examples.todolist.LabelColor;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskListId;
+import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.c.events.LabelAssignedToTask;
+import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
+import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
+import io.spine.examples.todolist.c.events.TaskDeleted;
+import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
+import io.spine.examples.todolist.c.events.TaskDraftCreated;
+import io.spine.examples.todolist.c.events.TaskDraftFinalized;
+import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
+import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 
 import java.util.List;
 
@@ -60,7 +60,7 @@ import static io.spine.examples.todolist.testdata.TestTaskEventFactory.UpdateEve
 import static io.spine.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskPriorityUpdatedInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsEventFactory.labelAssignedToTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsEventFactory.labelRemovedFromTaskInstance;
-import static org.spine3.time.Time.getCurrentTime;
+import static io.spine.time.Time.getCurrentTime;
 
 /**
  * @author Illia Shepilov

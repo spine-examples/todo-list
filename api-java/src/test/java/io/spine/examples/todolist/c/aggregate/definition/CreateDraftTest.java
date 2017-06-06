@@ -25,19 +25,19 @@ import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.examples.todolist.TaskDefinition;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.commands.CreateBasicTask;
-import org.spine3.examples.todolist.c.commands.CreateDraft;
-import org.spine3.examples.todolist.c.commands.DeleteTask;
-import org.spine3.examples.todolist.c.events.TaskDraftCreated;
-import org.spine3.examples.todolist.c.failures.CannotCreateDraft;
+import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.CreateDraft;
+import io.spine.examples.todolist.c.commands.DeleteTask;
+import io.spine.examples.todolist.c.events.TaskDraftCreated;
+import io.spine.examples.todolist.c.failures.CannotCreateDraft;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.spine3.examples.todolist.TaskStatus.DRAFT;
+import static io.spine.examples.todolist.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;

@@ -21,10 +21,10 @@
 package io.spine.examples.todolist.repository;
 
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
-import org.spine3.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskDefinitionPart;
-import org.spine3.server.BoundedContext;
-import org.spine3.server.aggregate.AggregatePartRepository;
+import io.spine.server.BoundedContext;
+import io.spine.server.aggregate.AggregatePartRepository;
 
 /**
  * Repository for the {@link TaskDefinitionPart}

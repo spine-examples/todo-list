@@ -21,9 +21,9 @@
 package io.spine.examples.todolist.repository;
 
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.server.BoundedContext;
-import org.spine3.server.aggregate.AggregateRepository;
+import io.spine.examples.todolist.LabelId;
+import io.spine.server.BoundedContext;
+import io.spine.server.aggregate.AggregateRepository;
 
 /**
  * Repository for the {@link LabelAggregate}.

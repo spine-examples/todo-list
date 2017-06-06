@@ -20,15 +20,15 @@
 
 package io.spine.examples.todolist.c.aggregate.failures;
 
-import org.spine3.base.CommandContext;
-import org.spine3.examples.todolist.AssignLabelToTaskFailed;
-import org.spine3.examples.todolist.FailedTaskCommandDetails;
-import org.spine3.examples.todolist.RemoveLabelFromTaskFailed;
+import io.spine.base.CommandContext;
+import io.spine.examples.todolist.AssignLabelToTaskFailed;
+import io.spine.examples.todolist.FailedTaskCommandDetails;
+import io.spine.examples.todolist.RemoveLabelFromTaskFailed;
 import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
-import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
-import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
-import org.spine3.examples.todolist.c.failures.CannotAssignLabelToTask;
-import org.spine3.examples.todolist.c.failures.CannotRemoveLabelFromTask;
+import io.spine.examples.todolist.c.commands.AssignLabelToTask;
+import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
+import io.spine.examples.todolist.c.failures.CannotAssignLabelToTask;
+import io.spine.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 
 /**
  * Utility class for working with {@link TaskLabelsPart} failures.

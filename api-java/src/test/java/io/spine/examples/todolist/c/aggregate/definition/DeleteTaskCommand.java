@@ -25,12 +25,12 @@ import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.envelope.CommandEnvelope;
-import org.spine3.examples.todolist.TaskDefinition;
-import org.spine3.examples.todolist.c.commands.CreateBasicTask;
-import org.spine3.examples.todolist.c.commands.DeleteTask;
-import org.spine3.examples.todolist.c.events.TaskDeleted;
-import org.spine3.examples.todolist.c.failures.CannotDeleteTask;
+import io.spine.envelope.CommandEnvelope;
+import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.DeleteTask;
+import io.spine.examples.todolist.c.events.TaskDeleted;
+import io.spine.examples.todolist.c.failures.CannotDeleteTask;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.spine3.examples.todolist.TaskStatus.DELETED;
+import static io.spine.examples.todolist.TaskStatus.DELETED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;

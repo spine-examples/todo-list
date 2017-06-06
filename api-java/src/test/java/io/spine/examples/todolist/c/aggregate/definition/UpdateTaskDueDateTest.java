@@ -26,17 +26,17 @@ import com.google.protobuf.Timestamp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.change.ValueMismatch;
-import org.spine3.examples.todolist.TaskDefinition;
-import org.spine3.examples.todolist.TaskDueDateUpdateFailed;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.commands.CompleteTask;
-import org.spine3.examples.todolist.c.commands.CreateBasicTask;
-import org.spine3.examples.todolist.c.commands.DeleteTask;
-import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
-import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
-import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDueDate;
-import org.spine3.examples.todolist.c.failures.Failures;
+import io.spine.change.ValueMismatch;
+import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.TaskDueDateUpdateFailed;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.CompleteTask;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.DeleteTask;
+import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
+import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
+import io.spine.examples.todolist.c.failures.CannotUpdateTaskDueDate;
+import io.spine.examples.todolist.c.failures.Failures;
 
 import java.util.List;
 
@@ -50,8 +50,8 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.complet
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
-import static org.spine3.protobuf.AnyPacker.unpack;
-import static org.spine3.time.Time.getCurrentTime;
+import static io.spine.protobuf.AnyPacker.unpack;
+import static io.spine.time.Time.getCurrentTime;
 
 /**
  * @author Illia Shepilov

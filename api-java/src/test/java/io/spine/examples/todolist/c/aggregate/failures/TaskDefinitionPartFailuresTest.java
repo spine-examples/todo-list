@@ -22,22 +22,22 @@ package io.spine.examples.todolist.c.aggregate.failures;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.base.CommandContext;
-import org.spine3.examples.todolist.FailedTaskCommandDetails;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.commands.CreateBasicTask;
-import org.spine3.examples.todolist.c.commands.CreateDraft;
-import org.spine3.examples.todolist.c.commands.UpdateTaskDescription;
-import org.spine3.examples.todolist.c.failures.CannotCreateDraft;
-import org.spine3.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
-import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDescription;
+import io.spine.base.CommandContext;
+import io.spine.examples.todolist.FailedTaskCommandDetails;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.CreateDraft;
+import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
+import io.spine.examples.todolist.c.failures.CannotCreateDraft;
+import io.spine.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
+import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
-import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov

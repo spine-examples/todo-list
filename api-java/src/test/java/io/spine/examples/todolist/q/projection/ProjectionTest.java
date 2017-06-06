@@ -21,12 +21,12 @@
 package io.spine.examples.todolist.q.projection;
 
 import com.google.protobuf.Message;
-import org.spine3.base.Event;
-import org.spine3.examples.todolist.TaskListId;
-import org.spine3.server.command.EventFactory;
-import org.spine3.test.TestEventFactory;
+import io.spine.base.Event;
+import io.spine.examples.todolist.TaskListId;
+import io.spine.server.command.EventFactory;
+import io.spine.test.TestEventFactory;
 
-import static org.spine3.base.Identifiers.newUuid;
+import static io.spine.base.Identifiers.newUuid;
 
 /**
  * The parent class for the projection test classes.

@@ -22,18 +22,18 @@ package io.spine.examples.todolist.c.aggregate.failures;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.base.CommandContext;
-import org.spine3.examples.todolist.FailedTaskCommandDetails;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
-import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
-import org.spine3.examples.todolist.c.failures.CannotAssignLabelToTask;
-import org.spine3.examples.todolist.c.failures.CannotRemoveLabelFromTask;
+import io.spine.base.CommandContext;
+import io.spine.examples.todolist.FailedTaskCommandDetails;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.AssignLabelToTask;
+import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
+import io.spine.examples.todolist.c.failures.CannotAssignLabelToTask;
+import io.spine.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov

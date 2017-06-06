@@ -21,12 +21,12 @@
 package io.spine.examples.todolist.c.aggregate.failures;
 
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
-import org.spine3.base.CommandContext;
-import org.spine3.change.ValueMismatch;
-import org.spine3.examples.todolist.FailedLabelCommandDetails;
-import org.spine3.examples.todolist.LabelDetailsUpdateFailed;
-import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
-import org.spine3.examples.todolist.c.failures.CannotUpdateLabelDetails;
+import io.spine.base.CommandContext;
+import io.spine.change.ValueMismatch;
+import io.spine.examples.todolist.FailedLabelCommandDetails;
+import io.spine.examples.todolist.LabelDetailsUpdateFailed;
+import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
+import io.spine.examples.todolist.c.failures.CannotUpdateLabelDetails;
 
 /**
  * Utility class for working with {@link LabelAggregate} failures.

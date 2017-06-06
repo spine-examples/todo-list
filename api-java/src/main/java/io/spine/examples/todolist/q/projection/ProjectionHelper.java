@@ -21,25 +21,25 @@
 package io.spine.examples.todolist.q.projection;
 
 import com.google.protobuf.Timestamp;
-import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
-import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
-import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
-import org.spine3.examples.todolist.c.events.TaskCompleted;
-import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
-import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
-import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
-import org.spine3.examples.todolist.c.events.TaskReopened;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.c.events.LabelAssignedToTask;
+import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
+import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
+import io.spine.examples.todolist.c.events.TaskCompleted;
+import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
+import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
+import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
+import io.spine.examples.todolist.c.events.TaskReopened;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.spine3.examples.todolist.q.projection.TaskView.newBuilder;
+import static io.spine.examples.todolist.q.projection.TaskView.newBuilder;
 
 /**
  * Class provides methods to manipulate and handle views.
@@ -63,8 +63,7 @@ class ProjectionHelper {
                                               .filter(t -> t.getId()
                                                             .equals(id))
                                               .collect(Collectors.toList());
-        final TaskListView result = removeTaskViews(views, taskViews);
-        return result;
+        return removeTaskViews(views, taskViews);
     }
 
     /**
@@ -79,16 +78,12 @@ class ProjectionHelper {
                                               .filter(t -> t.getLabelId()
                                                             .equals(id))
                                               .collect(Collectors.toList());
-        final TaskListView result = removeTaskViews(views, taskViews);
-        return result;
+        return removeTaskViews(views, taskViews);
     }
 
     private static TaskListView removeTaskViews(List<TaskView> views, List<TaskView> taskViews) {
         views.removeAll(taskViews);
-        final TaskListView result = TaskListView.newBuilder()
-                                                .addAllItems(views)
-                                                .build();
-        return result;
+        return newTaskListView(views);
     }
 
     /**
@@ -133,8 +128,7 @@ class ProjectionHelper {
 
         final TaskTransformation updateFn =
                 builder -> builder.setLabelId(LabelId.getDefaultInstance());
-        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
-        return result;
+        return transformWithUpdate(views, targetTaskId, updateFn);
     }
 
     /**
@@ -148,8 +142,7 @@ class ProjectionHelper {
         final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> builder.setLabelId(event.getLabelId());
-        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
-        return result;
+        return transformWithUpdate(views, targetTaskId, updateFn);
     }
 
     /**
@@ -163,8 +156,7 @@ class ProjectionHelper {
         final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> builder.setCompleted(false);
-        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
-        return result;
+        return transformWithUpdate(views, targetTaskId, updateFn);
     }
 
     /**
@@ -178,8 +170,7 @@ class ProjectionHelper {
         final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> builder.setCompleted(true);
-        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
-        return result;
+        return transformWithUpdate(views, targetTaskId, updateFn);
     }
 
     /**
@@ -195,11 +186,9 @@ class ProjectionHelper {
         final TaskTransformation updateFn = builder -> {
             final Timestamp newDueDate = event.getDueDateChange()
                                               .getNewValue();
-            final TaskView.Builder result = builder.setDueDate(newDueDate);
-            return result;
+            return builder.setDueDate(newDueDate);
         };
-        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
-        return result;
+        return transformWithUpdate(views, targetTaskId, updateFn);
     }
 
     /**
@@ -215,11 +204,9 @@ class ProjectionHelper {
         final TaskTransformation updateFn = builder -> {
             final TaskPriority newPriority = event.getPriorityChange()
                                                   .getNewValue();
-            final TaskView.Builder result = builder.setPriority(newPriority);
-            return result;
+            return builder.setPriority(newPriority);
         };
-        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
-        return result;
+        return transformWithUpdate(views, targetTaskId, updateFn);
     }
 
     /**
@@ -235,18 +222,16 @@ class ProjectionHelper {
         final TaskTransformation updateFn = builder -> {
             final String newDescription = event.getDescriptionChange()
                                                .getNewValue();
-            final TaskView.Builder result = builder.setDescription(newDescription);
-            return result;
+            return builder.setDescription(newDescription);
         };
-        final List<TaskView> result = transformWithUpdate(views, targetTaskId, updateFn);
-        return result;
+        return transformWithUpdate(views, targetTaskId, updateFn);
     }
 
     @SuppressWarnings("MethodWithMultipleLoops") // It's fine, as there aren't a
                                                  // lot of transformations per task.
     private static List<TaskView> transformWithUpdate(List<TaskView> views,
-            TaskId targetTaskId,
-            TaskTransformation transformation) {
+                                                      TaskId targetTaskId,
+                                                      TaskTransformation transformation) {
         final int listSize = views.size();
         final List<TaskView> updatedList = new ArrayList<>(listSize);
         for (TaskView view : views) {
@@ -264,6 +249,12 @@ class ProjectionHelper {
             updatedList.add(addedView);
         }
         return updatedList;
+    }
+
+    static TaskListView newTaskListView(List<TaskView> tasks) {
+        return TaskListView.newBuilder()
+                           .addAllItems(tasks)
+                           .build();
     }
 
     /**

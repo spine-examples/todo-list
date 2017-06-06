@@ -27,7 +27,7 @@ import io.spine.examples.todolist.repository.MyListViewRepository;
 import io.spine.examples.todolist.repository.TaskDefinitionRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
-import org.spine3.server.BoundedContext;
+import io.spine.server.BoundedContext;
 
 /**
  * Serves for creation the {@link BoundedContext} instances.

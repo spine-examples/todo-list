@@ -21,11 +21,11 @@
 package io.spine.examples.todolist.c.aggregate;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.spine3.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.context.TodoListBoundedContext;
-import org.spine3.server.BoundedContext;
-import org.spine3.server.aggregate.AggregateRoot;
-import org.spine3.util.Environment;
+import io.spine.server.BoundedContext;
+import io.spine.server.Environment;
+import io.spine.server.aggregate.AggregateRoot;
 
 /**
  * Aggregate root for the tasks.

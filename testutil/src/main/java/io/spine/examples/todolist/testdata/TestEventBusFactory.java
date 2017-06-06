@@ -20,9 +20,9 @@
 
 package io.spine.examples.todolist.testdata;
 
-import org.spine3.server.event.EventBus;
-import org.spine3.server.event.enrich.EventEnricher;
-import org.spine3.server.storage.StorageFactory;
+import io.spine.server.event.EventBus;
+import io.spine.server.event.enrich.EventEnricher;
+import io.spine.server.storage.StorageFactory;
 
 /**
  * Provides the {@link EventBus} instances for the test needs.

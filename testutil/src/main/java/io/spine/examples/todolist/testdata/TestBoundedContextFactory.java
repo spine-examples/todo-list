@@ -20,9 +20,9 @@
 
 package io.spine.examples.todolist.testdata;
 
-import org.spine3.server.BoundedContext;
-import org.spine3.server.event.EventBus;
-import org.spine3.server.storage.StorageFactorySwitch;
+import io.spine.server.BoundedContext;
+import io.spine.server.event.EventBus;
+import io.spine.server.storage.StorageFactorySwitch;
 
 /**
  * Provides bounded context for the test needs.

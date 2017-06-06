@@ -20,15 +20,15 @@
 
 package io.spine.examples.todolist.server;
 
-import org.spine3.server.BoundedContext;
-import org.spine3.server.CommandService;
-import org.spine3.server.QueryService;
-import org.spine3.server.transport.GrpcContainer;
+import io.spine.server.BoundedContext;
+import io.spine.server.CommandService;
+import io.spine.server.QueryService;
+import io.spine.server.transport.GrpcContainer;
 
 import java.io.IOException;
 
-import static org.spine3.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static org.spine3.server.event.EventStore.log;
+import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.server.event.EventStore.log;
 
 /**
  * Sample gRPC server implementation.

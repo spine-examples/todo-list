@@ -20,19 +20,19 @@
 
 package io.spine.examples.todolist.testdata;
 
-import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.LabelIdsList;
-import org.spine3.examples.todolist.TaskDefinition;
-import org.spine3.examples.todolist.TaskDetails;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.server.event.enrich.EventEnricher;
+import io.spine.examples.todolist.LabelColor;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.LabelIdsList;
+import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.TaskDetails;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskPriority;
+import io.spine.server.event.enrich.EventEnricher;
 
 import java.util.function.Function;
 
-import static org.spine3.time.Time.getCurrentTime;
+import static io.spine.time.Time.getCurrentTime;
 
 /**
  * Provides event enricher for the test needs.

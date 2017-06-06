@@ -21,26 +21,26 @@
 package io.spine.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
-import org.spine3.change.StringChange;
-import org.spine3.change.TimestampChange;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.PriorityChange;
-import org.spine3.examples.todolist.TaskDetails;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.examples.todolist.c.events.LabelledTaskRestored;
-import org.spine3.examples.todolist.c.events.TaskCompleted;
-import org.spine3.examples.todolist.c.events.TaskCreated;
-import org.spine3.examples.todolist.c.events.TaskDeleted;
-import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
-import org.spine3.examples.todolist.c.events.TaskDraftCreated;
-import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
-import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
-import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
-import org.spine3.examples.todolist.c.events.TaskReopened;
+import io.spine.change.StringChange;
+import io.spine.change.TimestampChange;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.PriorityChange;
+import io.spine.examples.todolist.TaskDetails;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.c.events.LabelledTaskRestored;
+import io.spine.examples.todolist.c.events.TaskCompleted;
+import io.spine.examples.todolist.c.events.TaskCreated;
+import io.spine.examples.todolist.c.events.TaskDeleted;
+import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
+import io.spine.examples.todolist.c.events.TaskDraftCreated;
+import io.spine.examples.todolist.c.events.TaskDraftFinalized;
+import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
+import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
+import io.spine.examples.todolist.c.events.TaskReopened;
 
-import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.time.Time.getCurrentTime;
+import static io.spine.base.Identifiers.newUuid;
+import static io.spine.time.Time.getCurrentTime;
 
 /**
  * A factory of the task events for the test needs.

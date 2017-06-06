@@ -20,24 +20,25 @@
 
 package io.spine.examples.todolist.q.projection;
 
-import org.spine3.base.Subscribe;
-import org.spine3.examples.todolist.TaskDetails;
-import org.spine3.examples.todolist.TaskListId;
-import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
-import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
-import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
-import org.spine3.examples.todolist.c.events.TaskDeleted;
-import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
-import org.spine3.examples.todolist.c.events.TaskDraftCreated;
-import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
-import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
-import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
-import org.spine3.server.projection.Projection;
+import io.spine.annotation.Subscribe;
+import io.spine.examples.todolist.TaskDetails;
+import io.spine.examples.todolist.TaskListId;
+import io.spine.examples.todolist.c.events.LabelAssignedToTask;
+import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
+import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
+import io.spine.examples.todolist.c.events.TaskDeleted;
+import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
+import io.spine.examples.todolist.c.events.TaskDraftCreated;
+import io.spine.examples.todolist.c.events.TaskDraftFinalized;
+import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
+import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
+import io.spine.server.projection.Projection;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static org.spine3.base.Identifiers.newUuid;
+import static io.spine.base.Identifiers.newUuid;
+import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskListView;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskViewList;
 
@@ -48,7 +49,9 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
  *
  * @author Illia Shepilov
  */
-public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksView> {
+public class DraftTasksViewProjection extends Projection<TaskListId,
+                                                         DraftTasksView,
+                                                         DraftTasksViewValidatingBuilder> {
 
     /**
      * As long as there is just a single end-user in the app, the {@link DraftTasksViewProjection}
@@ -77,44 +80,29 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
                                           .setPriority(taskDetails.getPriority())
                                           .setCompleted(taskDetails.getCompleted())
                                           .build();
-        final List<TaskView> views = getState().getDraftTasks()
-                                               .getItemsList()
-                                               .stream()
-                                               .collect(Collectors.toList());
+        final List<TaskView> views = new ArrayList<>(getState().getDraftTasks()
+                                                               .getItemsList());
         views.add(taskView);
         final TaskListView taskListView = TaskListView.newBuilder()
                                                       .addAllItems(views)
                                                       .build();
-        final DraftTasksView state = getState().newBuilderForType()
-                                               .setDraftTasks(taskListView)
-                                               .build();
-        incrementState(state);
+        getBuilder().setDraftTasks(taskListView);
     }
 
     @Subscribe
     public void on(TaskDraftFinalized event) {
-        final List<TaskView> views = getState().getDraftTasks()
-                                               .getItemsList()
-                                               .stream()
-                                               .collect(Collectors.toList());
+        final List<TaskView> views = new ArrayList<>(getState().getDraftTasks()
+                                                               .getItemsList());
         final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
-        final DraftTasksView state = getState().newBuilderForType()
-                                               .setDraftTasks(taskListView)
-                                               .build();
-        incrementState(state);
+        getBuilder().setDraftTasks(taskListView);
     }
 
     @Subscribe
     public void on(TaskDeleted event) {
-        final List<TaskView> views = getState().getDraftTasks()
-                                               .getItemsList()
-                                               .stream()
-                                               .collect(Collectors.toList());
+        final List<TaskView> views = new ArrayList<>(getState().getDraftTasks()
+                                                               .getItemsList());
         final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
-        final DraftTasksView state = getState().newBuilderForType()
-                                               .setDraftTasks(taskListView)
-                                               .build();
-        incrementState(state);
+        getBuilder().setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -122,8 +110,8 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
         final List<TaskView> views = getState().getDraftTasks()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final DraftTasksView state = constructDraftTasksViewState(updatedList);
-        incrementState(state);
+        final TaskListView taskListView = newTaskListView(updatedList);
+        getBuilder().setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -131,8 +119,8 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
         final List<TaskView> views = getState().getDraftTasks()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final DraftTasksView state = constructDraftTasksViewState(updatedList);
-        incrementState(state);
+        final TaskListView taskListView = newTaskListView(updatedList);
+        getBuilder().setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -140,8 +128,8 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
         final List<TaskView> views = getState().getDraftTasks()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final DraftTasksView state = constructDraftTasksViewState(updatedList);
-        incrementState(state);
+        final TaskListView taskListView = newTaskListView(updatedList);
+        getBuilder().setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -149,8 +137,8 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
         final List<TaskView> views = getState().getDraftTasks()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final DraftTasksView state = constructDraftTasksViewState(updatedList);
-        incrementState(state);
+        final TaskListView taskListView = newTaskListView(updatedList);
+        getBuilder().setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -158,8 +146,8 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
         final List<TaskView> views = getState().getDraftTasks()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final DraftTasksView state = constructDraftTasksViewState(updatedList);
-        incrementState(state);
+        final TaskListView taskListView = newTaskListView(updatedList);
+        getBuilder().setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -167,17 +155,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId, DraftTasksV
         final List<TaskView> views = getState().getDraftTasks()
                                                .getItemsList();
         final List<TaskView> updatedList = updateTaskViewList(views, event);
-        final DraftTasksView state = constructDraftTasksViewState(updatedList);
-        incrementState(state);
-    }
-
-    private DraftTasksView constructDraftTasksViewState(List<TaskView> updatedList) {
-        final TaskListView listView = TaskListView.newBuilder()
-                                                  .addAllItems(updatedList)
-                                                  .build();
-        final DraftTasksView result = getState().newBuilderForType()
-                                                .setDraftTasks(listView)
-                                                .build();
-        return result;
+        final TaskListView taskListView = newTaskListView(updatedList);
+        getBuilder().setDraftTasks(taskListView);
     }
 }

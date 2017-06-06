@@ -21,17 +21,17 @@
 package io.spine.examples.todolist.repository;
 
 import com.google.protobuf.Message;
-import org.spine3.examples.todolist.TaskListId;
-import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
-import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
-import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
-import org.spine3.examples.todolist.c.events.TaskDeleted;
-import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
-import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
-import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
-import org.spine3.server.entity.AbstractVersionableEntity;
-import org.spine3.server.entity.EventDispatchingRepository;
-import org.spine3.server.entity.idfunc.IdSetEventFunction;
+import io.spine.examples.todolist.TaskListId;
+import io.spine.examples.todolist.c.events.LabelAssignedToTask;
+import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
+import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
+import io.spine.examples.todolist.c.events.TaskDeleted;
+import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
+import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
+import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
+import io.spine.server.entity.AbstractVersionableEntity;
+import io.spine.server.entity.EventDispatchingRepository;
+import io.spine.server.entity.idfunc.IdSetEventFunction;
 
 import java.util.Collections;
 

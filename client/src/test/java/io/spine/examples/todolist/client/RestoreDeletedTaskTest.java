@@ -23,16 +23,16 @@ package io.spine.examples.todolist.client;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
-import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
-import org.spine3.examples.todolist.c.commands.CreateBasicTask;
-import org.spine3.examples.todolist.c.commands.DeleteTask;
-import org.spine3.examples.todolist.c.commands.RestoreDeletedTask;
-import org.spine3.examples.todolist.q.projection.LabelledTasksView;
-import org.spine3.examples.todolist.q.projection.TaskListView;
-import org.spine3.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.AssignLabelToTask;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.DeleteTask;
+import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
+import io.spine.examples.todolist.q.projection.LabelledTasksView;
+import io.spine.examples.todolist.q.projection.TaskListView;
+import io.spine.examples.todolist.q.projection.TaskView;
 
 import java.util.List;
 

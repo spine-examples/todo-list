@@ -20,10 +20,10 @@
 
 package io.spine.examples.todolist.testdata;
 
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
-import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.AssignLabelToTask;
+import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
 
 /**
  * A factory of the task label commands for the test needs.

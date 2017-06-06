@@ -23,18 +23,18 @@ package io.spine.examples.todolist.context;
 import com.google.common.base.Function;
 import io.spine.examples.todolist.c.aggregate.TaskDefinitionPart;
 import io.spine.examples.todolist.repository.TaskDefinitionRepository;
-import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.LabelIdsList;
-import org.spine3.examples.todolist.TaskDefinition;
-import org.spine3.examples.todolist.TaskDetails;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskLabel;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.LabelIdsList;
+import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.TaskDetails;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
-import org.spine3.server.event.EventBus;
+import io.spine.server.event.EventBus;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

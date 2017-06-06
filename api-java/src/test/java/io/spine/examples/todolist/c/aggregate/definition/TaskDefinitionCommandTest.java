@@ -23,13 +23,13 @@ package io.spine.examples.todolist.c.aggregate.definition;
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.aggregate.TaskDefinitionPart;
-import org.spine3.envelope.CommandEnvelope;
-import org.spine3.examples.todolist.TaskId;
+import io.spine.envelope.CommandEnvelope;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.context.TodoListBoundedContext;
-import org.spine3.test.AggregatePartCommandTest;
-import org.spine3.test.TestActorRequestFactory;
+import io.spine.test.AggregatePartCommandTest;
+import io.spine.test.TestActorRequestFactory;
 
-import static org.spine3.base.Identifiers.newUuid;
+import static io.spine.base.Identifiers.newUuid;
 
 /**
  * The parent class for the {@link TaskDefinitionPart} test classes.

@@ -26,18 +26,18 @@ import com.google.protobuf.StringValue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.change.ValueMismatch;
-import org.spine3.examples.todolist.DescriptionUpdateFailed;
-import org.spine3.examples.todolist.TaskDefinition;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.commands.CompleteTask;
-import org.spine3.examples.todolist.c.commands.CreateBasicTask;
-import org.spine3.examples.todolist.c.commands.DeleteTask;
-import org.spine3.examples.todolist.c.commands.UpdateTaskDescription;
-import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
-import org.spine3.examples.todolist.c.failures.CannotUpdateTaskDescription;
-import org.spine3.examples.todolist.c.failures.CannotUpdateTaskWithInappropriateDescription;
-import org.spine3.examples.todolist.c.failures.Failures;
+import io.spine.change.ValueMismatch;
+import io.spine.examples.todolist.DescriptionUpdateFailed;
+import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.CompleteTask;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.DeleteTask;
+import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
+import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
+import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
+import io.spine.examples.todolist.c.failures.CannotUpdateTaskWithInappropriateDescription;
+import io.spine.examples.todolist.c.failures.Failures;
 
 import java.util.List;
 
@@ -50,8 +50,8 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.complet
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
-import static org.spine3.protobuf.AnyPacker.unpack;
-import static org.spine3.protobuf.Wrapper.forString;
+import static io.spine.protobuf.AnyPacker.unpack;
+import static io.spine.protobuf.Wrapper.forString;
 
 /**
  * @author Illia Shepilov

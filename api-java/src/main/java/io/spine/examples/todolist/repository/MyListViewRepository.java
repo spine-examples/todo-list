@@ -21,15 +21,15 @@
 package io.spine.examples.todolist.repository;
 
 import io.spine.examples.todolist.q.projection.MyListViewProjection;
-import org.spine3.examples.todolist.TaskListId;
-import org.spine3.examples.todolist.c.events.TaskCompleted;
-import org.spine3.examples.todolist.c.events.TaskCreated;
-import org.spine3.examples.todolist.c.events.TaskDraftFinalized;
-import org.spine3.examples.todolist.c.events.TaskReopened;
-import org.spine3.examples.todolist.q.projection.MyListView;
-import org.spine3.server.BoundedContext;
-import org.spine3.server.entity.idfunc.IdSetEventFunction;
-import org.spine3.server.projection.ProjectionRepository;
+import io.spine.examples.todolist.TaskListId;
+import io.spine.examples.todolist.c.events.TaskCompleted;
+import io.spine.examples.todolist.c.events.TaskCreated;
+import io.spine.examples.todolist.c.events.TaskDraftFinalized;
+import io.spine.examples.todolist.c.events.TaskReopened;
+import io.spine.examples.todolist.q.projection.MyListView;
+import io.spine.server.BoundedContext;
+import io.spine.server.entity.idfunc.IdSetEventFunction;
+import io.spine.server.projection.ProjectionRepository;
 
 import java.util.Collections;
 

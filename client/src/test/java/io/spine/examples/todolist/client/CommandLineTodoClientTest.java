@@ -22,26 +22,26 @@ package io.spine.examples.todolist.client;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.TaskId;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
-import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
-import org.spine3.examples.todolist.c.commands.CreateBasicTask;
-import org.spine3.examples.todolist.c.commands.CreateDraft;
-import org.spine3.examples.todolist.client.builder.CommandBuilder;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.CreateDraft;
+import io.spine.examples.todolist.client.builder.CommandBuilder;
 import io.spine.examples.todolist.context.TodoListBoundedContext;
-import org.spine3.examples.todolist.q.projection.LabelledTasksView;
+import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.server.Server;
-import org.spine3.server.BoundedContext;
-import org.spine3.util.Exceptions;
+import io.spine.server.BoundedContext;
+import io.spine.util.Exceptions;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.base.Identifiers.newUuid;
+import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 

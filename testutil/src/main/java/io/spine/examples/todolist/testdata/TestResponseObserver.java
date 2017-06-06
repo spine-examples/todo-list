@@ -21,7 +21,7 @@
 package io.spine.examples.todolist.testdata;
 
 import io.grpc.stub.StreamObserver;
-import org.spine3.base.Response;
+import io.spine.base.Response;
 
 import java.util.List;
 

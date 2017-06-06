@@ -20,31 +20,34 @@
 
 package io.spine.examples.todolist.q.projection;
 
-import org.spine3.base.EventContext;
-import org.spine3.base.Subscribe;
-import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.TaskDetails;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.enrichments.DetailsEnrichment;
-import org.spine3.examples.todolist.c.events.LabelAssignedToTask;
-import org.spine3.examples.todolist.c.events.LabelDetailsUpdated;
-import org.spine3.examples.todolist.c.events.LabelRemovedFromTask;
-import org.spine3.examples.todolist.c.events.LabelledTaskRestored;
-import org.spine3.examples.todolist.c.events.TaskCompleted;
-import org.spine3.examples.todolist.c.events.TaskDeleted;
-import org.spine3.examples.todolist.c.events.TaskDescriptionUpdated;
-import org.spine3.examples.todolist.c.events.TaskDueDateUpdated;
-import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
-import org.spine3.examples.todolist.c.events.TaskReopened;
-import org.spine3.server.projection.Projection;
+import io.spine.annotation.Subscribe;
+import io.spine.base.EventContext;
+import io.spine.examples.todolist.LabelColor;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskDetails;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.enrichments.DetailsEnrichment;
+import io.spine.examples.todolist.c.events.LabelAssignedToTask;
+import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
+import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
+import io.spine.examples.todolist.c.events.LabelledTaskRestored;
+import io.spine.examples.todolist.c.events.TaskCompleted;
+import io.spine.examples.todolist.c.events.TaskDeleted;
+import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
+import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
+import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
+import io.spine.examples.todolist.c.events.TaskReopened;
+import io.spine.server.projection.Projection;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static io.spine.examples.todolist.EnrichmentHelper.getEnrichment;
 import static io.spine.examples.todolist.q.projection.LabelColorView.valueOf;
+import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskListView;
+import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByLabelId;
+import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskViewList;
 
 /**
@@ -56,7 +59,9 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
  * @author Illia Shepilov
  */
 @SuppressWarnings("OverlyCoupledClass")
-public class LabelledTasksViewProjection extends Projection<LabelId, LabelledTasksView> {
+public class LabelledTasksViewProjection extends Projection<LabelId,
+                                                            LabelledTasksView,
+                                                            LabelledTasksViewValidatingBuilder> {
 
     /**
      * Creates a new instance.
@@ -77,9 +82,9 @@ public class LabelledTasksViewProjection extends Projection<LabelId, LabelledTas
 
         final TaskView taskView = viewFor(taskDetails, labelId, taskId);
         final LabelDetails labelDetails = enrichment.getLabelDetails();
-        final LabelledTasksView state = addLabel(taskView, labelDetails).setLabelId(labelId)
-                                                                        .build();
-        incrementState(state);
+
+        addTaskView(taskView);
+        updateLabelDetails(labelDetails);
     }
 
     @Subscribe
@@ -91,9 +96,9 @@ public class LabelledTasksViewProjection extends Projection<LabelId, LabelledTas
 
         final TaskView taskView = viewFor(taskDetails, labelId, taskId);
         final LabelDetails labelDetails = enrichment.getLabelDetails();
-        final LabelledTasksView state = addLabel(taskView, labelDetails).setLabelId(labelId)
-                                                                        .build();
-        incrementState(state);
+
+        addTaskView(taskView);
+        updateLabelDetails(labelDetails);
     }
 
     @Subscribe
@@ -104,9 +109,8 @@ public class LabelledTasksViewProjection extends Projection<LabelId, LabelledTas
         if (isEquals) {
             final List<TaskView> views = new ArrayList<>(getState().getLabelledTasks()
                                                                    .getItemsList());
-            final TaskListView updatedView = ProjectionHelper.removeViewsByLabelId(views, labelId);
-            final LabelledTasksView state = toViewState(updatedView.getItemsList());
-            incrementState(state);
+            final TaskListView updatedView = removeViewsByLabelId(views, labelId);
+            getBuilder().setLabelledTasks(updatedView);
         }
     }
 
@@ -114,121 +118,90 @@ public class LabelledTasksViewProjection extends Projection<LabelId, LabelledTas
     public void on(TaskDeleted event) {
         final List<TaskView> views = new ArrayList<>(getState().getLabelledTasks()
                                                                .getItemsList());
-        final TaskListView updatedView = ProjectionHelper.removeViewsByTaskId(views, event.getTaskId());
-        final LabelledTasksView state = toViewState(updatedView.getItemsList());
-        incrementState(state);
+        final TaskListView updatedView = removeViewsByTaskId(views, event.getTaskId());
+        getBuilder().setLabelledTasks(updatedView);
     }
 
     @Subscribe
     public void on(TaskDescriptionUpdated event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = ProjectionHelper.updateTaskViewList(views, event);
-        final LabelledTasksView state = toViewState(updatedList);
-        incrementState(state);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final TaskListView taskListView = newTaskListView(updatedList);
+        getBuilder().setLabelledTasks(taskListView);
     }
 
     @Subscribe
     public void on(TaskPriorityUpdated event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = ProjectionHelper.updateTaskViewList(views, event);
-        final LabelledTasksView state = toViewState(updatedList);
-        incrementState(state);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final TaskListView taskListView = newTaskListView(updatedList);
+        getBuilder().setLabelledTasks(taskListView);
     }
 
     @Subscribe
     public void on(TaskDueDateUpdated event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = ProjectionHelper.updateTaskViewList(views, event);
-        final LabelledTasksView state = toViewState(updatedList);
-        incrementState(state);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final TaskListView taskListView = newTaskListView(updatedList);
+        getBuilder().setLabelledTasks(taskListView);
     }
 
     @Subscribe
     public void on(TaskCompleted event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = ProjectionHelper.updateTaskViewList(views, event);
-        final LabelledTasksView state = toViewState(updatedList);
-        incrementState(state);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final TaskListView taskListView = newTaskListView(updatedList);
+        getBuilder().setLabelledTasks(taskListView);
     }
 
     @Subscribe
     public void on(TaskReopened event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = ProjectionHelper.updateTaskViewList(views, event);
-        final LabelledTasksView state = toViewState(updatedList);
-        incrementState(state);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final TaskListView taskListView = newTaskListView(updatedList);
+        getBuilder().setLabelledTasks(taskListView);
     }
 
     @Subscribe
     public void on(LabelDetailsUpdated event) {
         final List<TaskView> views = getState().getLabelledTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = ProjectionHelper.updateTaskViewList(views, event);
+        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final TaskListView taskListView = newTaskListView(updatedList);
         final LabelDetails newDetails = event.getLabelDetailsChange()
                                              .getNewDetails();
-        final LabelledTasksView state = toViewState(newDetails, updatedList);
-        incrementState(state);
+
+        getBuilder().setLabelColor(valueOf(newDetails.getColor()))
+                    .setLabelTitle(newDetails.getTitle())
+                    .setLabelledTasks(taskListView);
     }
 
     private static TaskView viewFor(TaskDetails taskDetails, LabelId labelId, TaskId taskId) {
-        final TaskView result = TaskView.newBuilder()
-                                        .setId(taskId)
-                                        .setLabelId(labelId)
-                                        .setDescription(taskDetails.getDescription())
-                                        .setPriority(taskDetails.getPriority())
-                                        .build();
-        return result;
+        return TaskView.newBuilder()
+                       .setId(taskId)
+                       .setLabelId(labelId)
+                       .setDescription(taskDetails.getDescription())
+                       .setPriority(taskDetails.getPriority())
+                       .build();
     }
 
-    private LabelledTasksView toViewState(LabelDetails labelDetails, List<TaskView> updatedList) {
-        final LabelledTasksView state = getState();
-        final TaskListView listView = TaskListView.newBuilder()
-                                                  .addAllItems(updatedList)
-                                                  .build();
-        final LabelledTasksView result = getState().newBuilderForType()
-                                                   .setLabelId(state.getLabelId())
-                                                   .setLabelColor(valueOf(labelDetails.getColor()))
-                                                   .setLabelTitle(labelDetails.getTitle())
-                                                   .setLabelledTasks(listView)
-                                                   .build();
-        return result;
+    private void addTaskView(TaskView taskView) {
+        getState().getLabelledTasks()
+                  .getItemsList()
+                  .add(taskView);
     }
 
-    private LabelledTasksView toViewState(List<TaskView> updatedList) {
-        final LabelledTasksView state = getState();
-        final TaskListView listView = TaskListView.newBuilder()
-                                                  .addAllItems(updatedList)
-                                                  .build();
-        final LabelledTasksView result = getState().newBuilderForType()
-                                                   .setLabelId(state.getLabelId())
-                                                   .setLabelColor(state.getLabelColor())
-                                                   .setLabelTitle(state.getLabelTitle())
-                                                   .setLabelledTasks(listView)
-                                                   .build();
-        return result;
-    }
+    private void updateLabelDetails(LabelDetails newDetails) {
+        getBuilder().setLabelTitle(newDetails.getTitle());
 
-    private LabelledTasksView.Builder addLabel(TaskView taskView, LabelDetails labelDetails) {
-        final List<TaskView> views = new ArrayList<>(getState().getLabelledTasks()
-                                                               .getItemsList());
-        views.add(taskView);
-        final TaskListView taskListView = TaskListView.newBuilder()
-                                                      .addAllItems(views)
-                                                      .build();
-        final LabelledTasksView.Builder result = getState().newBuilderForType()
-                                                           .setLabelledTasks(taskListView)
-                                                           .setLabelTitle(labelDetails.getTitle());
-
-        if (labelDetails.getColor() != LabelColor.LC_UNDEFINED) {
-            final String hexColor = valueOf(labelDetails.getColor());
-            result.setLabelColor(hexColor);
+        if (newDetails.getColor() != LabelColor.LC_UNDEFINED) {
+            final String hexColor = valueOf(newDetails.getColor());
+            getBuilder().setLabelColor(hexColor);
         }
-
-        return result;
     }
 }

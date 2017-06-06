@@ -25,20 +25,20 @@ import com.google.protobuf.Message;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.change.ValueMismatch;
-import org.spine3.examples.todolist.PriorityChange;
-import org.spine3.examples.todolist.PriorityUpdateFailed;
-import org.spine3.examples.todolist.TaskDefinition;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.examples.todolist.TaskPriorityValue;
-import org.spine3.examples.todolist.c.commands.CompleteTask;
-import org.spine3.examples.todolist.c.commands.CreateBasicTask;
-import org.spine3.examples.todolist.c.commands.DeleteTask;
-import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
-import org.spine3.examples.todolist.c.events.TaskPriorityUpdated;
-import org.spine3.examples.todolist.c.failures.CannotUpdateTaskPriority;
-import org.spine3.examples.todolist.c.failures.Failures;
+import io.spine.change.ValueMismatch;
+import io.spine.examples.todolist.PriorityChange;
+import io.spine.examples.todolist.PriorityUpdateFailed;
+import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.TaskPriorityValue;
+import io.spine.examples.todolist.c.commands.CompleteTask;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.DeleteTask;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
+import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
+import io.spine.examples.todolist.c.failures.CannotUpdateTaskPriority;
+import io.spine.examples.todolist.c.failures.Failures;
 
 import java.util.List;
 
@@ -46,15 +46,15 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.spine3.examples.todolist.TaskPriority.HIGH;
-import static org.spine3.examples.todolist.TaskPriority.LOW;
-import static org.spine3.examples.todolist.TaskPriority.TP_UNDEFINED;
+import static io.spine.examples.todolist.TaskPriority.HIGH;
+import static io.spine.examples.todolist.TaskPriority.LOW;
+import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;
-import static org.spine3.protobuf.AnyPacker.unpack;
+import static io.spine.protobuf.AnyPacker.unpack;
 
 /**
  * @author Illia Shepilov

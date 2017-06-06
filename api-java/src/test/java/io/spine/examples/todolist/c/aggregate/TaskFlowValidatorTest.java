@@ -23,7 +23,7 @@ package io.spine.examples.todolist.c.aggregate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov

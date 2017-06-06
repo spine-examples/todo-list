@@ -22,14 +22,14 @@ package io.spine.examples.todolist.c.aggregate.failures;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.base.CommandContext;
-import org.spine3.change.ValueMismatch;
-import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
-import org.spine3.examples.todolist.c.failures.CannotUpdateLabelDetails;
+import io.spine.base.CommandContext;
+import io.spine.change.ValueMismatch;
+import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
+import io.spine.examples.todolist.c.failures.CannotUpdateLabelDetails;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.examples.todolist.c.aggregate.failures.LabelAggregateFailures.throwCannotUpdateLabelDetailsFailure;
-import static org.spine3.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
