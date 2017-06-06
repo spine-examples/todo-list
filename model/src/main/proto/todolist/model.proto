@@ -23,15 +23,14 @@ syntax = "proto3";
 package spine.examples.todolist;
 
 option (type_url_prefix) = "type.spine.examples.todolist";
-option java_package = "org.spine3.examples.todolist";
+option java_package = "io.spine.examples.todolist";
 option java_outer_classname = "ModelProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
 import "google/protobuf/timestamp.proto";
 
-import "spine/annotations.proto";
-import "spine/validate.proto";
+import "spine/options.proto";
 
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
