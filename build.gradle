@@ -25,7 +25,7 @@ buildscript {
         spineRepository = 'http://maven.teamdev.com/repository/spine'
         spineSnapshotsRepository = 'http://maven.teamdev.com/repository/spine-snapshots'
         appEngineGradlePlugin = 'com.google.cloud.tools:appengine-gradle-plugin:+'
-        spinePluginVersion = '0.8.9-SNAPSHOT'
+        spinePluginVersion = '0.9.8-SNAPSHOT'
         guavaVersion = '20.0'
         jUnitPlatformVersion = '1.0.0-M3'
         jUnitVersion = '5.0.0-M3'
@@ -49,7 +49,7 @@ buildscript {
         }
         classpath appEngineGradlePlugin
         classpath 'org.akhikhl.gretty:gretty:+'
-        classpath group: 'org.spine3.tools', name: 'protobuf-plugin', version: spinePluginVersion, changing: true
+        classpath group: 'io.spine.tools', name: 'spine-model-compiler', version: spinePluginVersion, changing: true
         classpath "org.junit.platform:junit-platform-gradle-plugin:${jUnitPlatformVersion}"
     }
 
@@ -90,7 +90,7 @@ allprojects {
     apply plugin: 'jacoco'
     apply plugin: 'idea'
 
-    group = 'org.spine3.examples.todolist'       // Generated output GroupId
+    group = 'io.spine.examples.todolist'       // Generated output GroupId
     version = '0.6.5-SNAPSHOT'  // Version in generated output. This is the version of the code.
     // For the deployment version see `project.ext.getDeploymentVersion`.
 
@@ -122,12 +122,12 @@ ext {
     slf4jVersion = '1.7.21'
     servletApiVersion = '3.1.0'
     gcloudJavaVersion = '0.2.8'
-    spineProtobufPluginId = 'org.spine3.tools.protobuf-plugin'
+    spineProtobufPluginId = 'io.spine.tools.spine-model-compiler'
 
     // Take latest snapshot of Spine from the repo.
     // See: http://stackoverflow.com/questions/22372508/use-latest-snapshot-version-from-the-remote-repo
 //    spineVersion = 'latest.integration'
-    spineVersion = '0.8.39-SNAPSHOT'
+    spineVersion = '0.9.16-SNAPSHOT'
 
 }
 
@@ -174,13 +174,13 @@ subprojects {
         }
         compile group: 'com.google.protobuf', name: 'protobuf-java-util', version: protobufVersion
 
-        compile group: 'org.spine3', name: 'spine-client-core', version: spineVersion
-        compile group: 'org.spine3', name: 'spine-server-core', version: spineVersion
-        compile group: 'org.spine3', name: 'spine-users', version: spineVersion
-        compile group: 'org.spine3', name: 'spine-values', version: spineVersion
+        compile group: 'io.spine', name: 'spine-client-core', version: spineVersion
+        compile group: 'io.spine', name: 'spine-server-core', version: spineVersion
+        compile group: 'io.spine', name: 'spine-users', version: spineVersion
+        compile group: 'io.spine', name: 'spine-values', version: spineVersion
 
         testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-        testCompile("org.spine3:spine-testutil-core:${spineVersion}") {
+        testCompile("io.spine:spine-testutil-core:${spineVersion}") {
             // We are using JUnit 5.x instead of 4.x dependency of Spine testing framework.
             exclude group: 'junit'
         }
@@ -239,7 +239,7 @@ subprojects {
 
         selectors {
             directory '${sourceRootDir}/test/java'
-            aPackage 'org.spine3.examples.todolist'
+            aPackage 'io.spine.examples.todolist'
         }
 
         filters {
