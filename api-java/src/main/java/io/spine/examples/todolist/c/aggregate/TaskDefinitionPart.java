@@ -84,11 +84,21 @@ import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidCr
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidTransition;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskPriorityCommand;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotCompleteTask;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotDeleteTask;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotFinalizeDraft;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotReopenTask;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotRestoreDeletedTask;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateDescription;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriority;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTooShortDescription;
 import static io.spine.time.Time.getCurrentTime;
 import static io.spine.time.Timestamps2.compare;
+import static java.util.Collections.singletonList;
 
 /**
  * The aggregate managing the state of a {@link TaskDefinition}.
@@ -132,7 +142,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
                                               .setId(taskId)
                                               .setDetails(taskDetails)
                                               .build();
-        return Collections.singletonList(result);
+        return singletonList(result);
     }
 
     @Assign
@@ -151,7 +161,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
             final String newDescription = change.getNewValue();
             final ValueMismatch mismatch = of(expectedDescription, actualDescription,
                                               newDescription, getVersion());
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateDescription(cmd, mismatch);
+            throwCannotUpdateDescription(cmd, mismatch);
         }
 
         final TaskDescriptionUpdated taskDescriptionUpdated =
@@ -159,8 +169,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
                                       .setTaskId(taskId)
                                       .setDescriptionChange(change)
                                       .build();
-        final List<? extends Message> result = Collections.singletonList(taskDescriptionUpdated);
-        return result;
+        return singletonList(taskDescriptionUpdated);
     }
 
     @Assign
@@ -173,7 +182,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate(cmd);
+            throwCannotUpdateTaskDueDate(cmd);
         }
 
         final TimestampChange change = cmd.getDueDateChange();
@@ -186,7 +195,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
             final Timestamp newDueDate = change.getNewValue();
             final ValueMismatch mismatch = of(expectedDueDate, actualDueDate,
                                               newDueDate, getVersion());
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate(cmd, mismatch);
+            throwCannotUpdateTaskDueDate(cmd, mismatch);
         }
 
         final TaskDueDateUpdated taskDueDateUpdated =
@@ -194,8 +203,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
                                   .setTaskId(taskId)
                                   .setDueDateChange(cmd.getDueDateChange())
                                   .build();
-        final List<? extends Message> result = Collections.singletonList(taskDueDateUpdated);
-        return result;
+        return singletonList(taskDueDateUpdated);
     }
 
     @Assign
@@ -207,7 +215,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriority(cmd);
+            throwCannotUpdateTaskPriority(cmd);
         }
 
         final PriorityChange priorityChange = cmd.getPriorityChange();
@@ -220,7 +228,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
             final TaskPriority newPriority = priorityChange.getNewValue();
             final ValueMismatch mismatch = of(expectedPriority, actualPriority, newPriority,
                                               getVersion());
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriority(cmd, mismatch);
+            throwCannotUpdateTaskPriority(cmd, mismatch);
         }
 
         final TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated.newBuilder()
@@ -228,8 +236,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
                                                                            .setPriorityChange(
                                                                                    priorityChange)
                                                                            .build();
-        final List<? extends Message> result = Collections.singletonList(taskPriorityUpdated);
-        return result;
+        return singletonList(taskPriorityUpdated);
     }
 
     @Assign
@@ -240,14 +247,13 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
         final TaskId taskId = cmd.getId();
 
         if (!isValid) {
-            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotReopenTask(cmd);
+            throwCannotReopenTask(cmd);
         }
 
         final TaskReopened taskReopened = TaskReopened.newBuilder()
                                                       .setTaskId(taskId)
                                                       .build();
-        final List<TaskReopened> result = Collections.singletonList(taskReopened);
-        return result;
+        return singletonList(taskReopened);
     }
 
     @Assign
@@ -259,14 +265,13 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotDeleteTask(cmd);
+            throwCannotDeleteTask(cmd);
         }
 
         final TaskDeleted taskDeleted = TaskDeleted.newBuilder()
                                                    .setTaskId(taskId)
                                                    .build();
-        final List<TaskDeleted> result = Collections.singletonList(taskDeleted);
-        return result;
+        return singletonList(taskDeleted);
     }
 
     @Assign
@@ -278,14 +283,13 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotCompleteTask(cmd);
+            throwCannotCompleteTask(cmd);
         }
 
         final TaskCompleted taskCompleted = TaskCompleted.newBuilder()
                                                          .setTaskId(taskId)
                                                          .build();
-        final List<TaskCompleted> result = Collections.singletonList(taskCompleted);
-        return result;
+        return singletonList(taskCompleted);
     }
 
     @Assign
@@ -294,7 +298,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
         final boolean isValid = isValidCreateDraftCommand(getState().getTaskStatus());
 
         if (!isValid) {
-            TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure(cmd);
+            throwCannotCreateDraftFailure(cmd);
         }
 
         final TaskDraftCreated draftCreated =
@@ -304,8 +308,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
                                 .setDetails(TaskDetails.newBuilder()
                                                        .setDescription(DEFAULT_DRAFT_DESCRIPTION))
                                 .build();
-        final List<TaskDraftCreated> result = Collections.singletonList(draftCreated);
-        return result;
+        return singletonList(draftCreated);
     }
 
     @Assign
@@ -317,14 +320,13 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
         final boolean isValid = isValidTransition(currentStatus, newStatus);
 
         if (!isValid) {
-            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotFinalizeDraft(cmd);
+            throwCannotFinalizeDraft(cmd);
         }
 
         final TaskDraftFinalized taskDraftFinalized = TaskDraftFinalized.newBuilder()
                                                                         .setTaskId(taskId)
                                                                         .build();
-        final List<TaskDraftFinalized> result = Collections.singletonList(taskDraftFinalized);
-        return result;
+        return singletonList(taskDraftFinalized);
     }
 
     @Assign
@@ -334,7 +336,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
         final TaskId taskId = cmd.getId();
         final boolean isValid = ensureDeleted(currentStatus);
         if (!isValid) {
-            TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotRestoreDeletedTask(cmd);
+            throwCannotRestoreDeletedTask(cmd);
         }
 
         final DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored.newBuilder()
@@ -435,7 +437,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
             throws CannotCreateTaskWithInappropriateDescription {
         final String description = cmd.getDescription();
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
-            TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd);
+            throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd);
         }
     }
 
@@ -445,13 +447,13 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
                                       .getNewValue();
 
         if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTooShortDescription(cmd);
+            throwCannotUpdateTooShortDescription(cmd);
         }
 
         boolean isValid = ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
 
         if (!isValid) {
-            TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescription(cmd);
+            throwCannotUpdateTaskDescription(cmd);
         }
     }
 }
