@@ -39,6 +39,7 @@ import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidAssignLabelToTaskCommand;
@@ -52,8 +53,8 @@ import static java.util.Collections.singletonList;
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings("unused") // The methods annotated with {@link Apply}
-                            // are declared {@code private} by design.
+@SuppressWarnings("unused" /* The methods annotated with {@link Apply}
+                              are declared {@code private} by design. */)
 public class TaskLabelsPart
         extends AggregatePart<TaskId, TaskLabels, TaskLabelsValidatingBuilder, TaskAggregateRoot> {
 
@@ -112,8 +113,8 @@ public class TaskLabelsPart
 
     @Apply
     private void labelAssignedToTask(LabelAssignedToTask event) {
-        List<LabelId> list = new ArrayList<>(getState().getLabelIdsList()
-                                                       .getIdsList());
+        final Collection<LabelId> list = new ArrayList<>(getState().getLabelIdsList()
+                                                                   .getIdsList());
         list.add(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
                                                       .addAllIds(list)
@@ -123,8 +124,8 @@ public class TaskLabelsPart
 
     @Apply
     private void labelRemovedFromTask(LabelRemovedFromTask event) {
-        List<LabelId> list = new ArrayList<>(getState().getLabelIdsList()
-                                                       .getIdsList());
+        final Collection<LabelId> list = new ArrayList<>(getState().getLabelIdsList()
+                                                                   .getIdsList());
         list.remove(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
                                                       .addAllIds(list)

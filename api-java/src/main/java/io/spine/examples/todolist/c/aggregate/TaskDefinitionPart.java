@@ -22,8 +22,6 @@ package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
-import io.spine.examples.todolist.TaskDefinitionValidatingBuilder;
-import io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures;
 import io.spine.base.CommandContext;
 import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
@@ -31,6 +29,7 @@ import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.TaskDefinitionValidatingBuilder;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
@@ -72,7 +71,6 @@ import io.spine.server.aggregate.AggregatePart;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
-import java.util.Collections;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newLinkedList;

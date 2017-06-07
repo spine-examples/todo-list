@@ -21,10 +21,6 @@
 package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import io.spine.base.Command;
 import io.spine.envelope.CommandEnvelope;
 import io.spine.examples.todolist.LabelId;
@@ -44,12 +40,13 @@ import io.spine.examples.todolist.testdata.TestResponseObserver;
 import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
 import io.spine.test.AggregatePartCommandTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.base.Identifiers.newUuid;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
@@ -58,6 +55,9 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.removeLabelFromTaskInstance;
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Illia Shepilov
