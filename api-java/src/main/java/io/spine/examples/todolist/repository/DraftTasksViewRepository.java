@@ -43,6 +43,7 @@ public class DraftTasksViewRepository
         extends ProjectionRepository<TaskListId, DraftTasksViewProjection, DraftTasksView> {
 
     public DraftTasksViewRepository() {
+        super();
         addIdSetFunctions();
     }
 

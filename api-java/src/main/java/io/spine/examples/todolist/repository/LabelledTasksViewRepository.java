@@ -55,6 +55,7 @@ public class LabelledTasksViewRepository
         extends ProjectionRepository<LabelId, LabelledTasksViewProjection, LabelledTasksView> {
 
     public LabelledTasksViewRepository() {
+        super();
         addIdSetFunctions();
     }
 

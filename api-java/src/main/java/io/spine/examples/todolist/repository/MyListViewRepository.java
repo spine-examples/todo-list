@@ -42,6 +42,7 @@ public class MyListViewRepository
         extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {
 
     public MyListViewRepository() {
+        super();
         addIdSetFunctions();
     }
 
