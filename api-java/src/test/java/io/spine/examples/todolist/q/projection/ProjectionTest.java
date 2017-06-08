@@ -23,7 +23,9 @@ package io.spine.examples.todolist.q.projection;
 import com.google.protobuf.Message;
 import io.spine.base.Event;
 import io.spine.examples.todolist.TaskListId;
+import io.spine.examples.todolist.testdata.TestEventEnricherFactory;
 import io.spine.server.command.EventFactory;
+import io.spine.server.event.enrich.EventEnricher;
 import io.spine.test.TestEventFactory;
 
 import static io.spine.base.Identifier.newUuid;
@@ -37,9 +39,16 @@ import static io.spine.base.Identifier.newUuid;
 abstract class ProjectionTest {
 
     private final EventFactory eventFactory = TestEventFactory.newInstance(getClass());
+    private final EventEnricher enricher = TestEventEnricherFactory.eventEnricherInstance();
 
     Event createEvent(Message messageOrAny) {
-        return eventFactory.createEvent(messageOrAny, null);
+        final Event event = eventFactory.createEvent(messageOrAny, null);
+
+        if (!enricher.canBeEnriched(event)) {
+            return event;
+        }
+
+        return enricher.enrich(event);
     }
 
     TaskListId createTaskListId() {
