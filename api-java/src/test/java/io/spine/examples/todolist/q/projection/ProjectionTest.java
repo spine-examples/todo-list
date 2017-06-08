@@ -26,7 +26,7 @@ import io.spine.examples.todolist.TaskListId;
 import io.spine.server.command.EventFactory;
 import io.spine.test.TestEventFactory;
 
-import static io.spine.base.Identifiers.newUuid;
+import static io.spine.base.Identifier.newUuid;
 
 /**
  * The parent class for the projection test classes.

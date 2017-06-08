@@ -46,7 +46,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.base.Identifiers.newUuid;
+import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
 import static io.spine.examples.todolist.testdata.TestEventBusFactory.newEventBusBuilder;
 import static io.spine.examples.todolist.testdata.TestEventEnricherFactory.LABEL_TITLE;

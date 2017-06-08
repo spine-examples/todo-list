@@ -91,7 +91,7 @@ allprojects {
     apply plugin: 'idea'
 
     group = 'io.spine.examples.todolist'       // Generated output GroupId
-    version = '0.6.5-SNAPSHOT'  // Version in generated output. This is the version of the code.
+    version = '0.9.18-SNAPSHOT'  // Version in generated output. This is the version of the code.
     // For the deployment version see `project.ext.getDeploymentVersion`.
 
     repositories {
@@ -127,7 +127,7 @@ ext {
     // Take latest snapshot of Spine from the repo.
     // See: http://stackoverflow.com/questions/22372508/use-latest-snapshot-version-from-the-remote-repo
 //    spineVersion = 'latest.integration'
-    spineVersion = '0.9.16-SNAPSHOT'
+    spineVersion = '0.9.18-SNAPSHOT'
 
 }
 

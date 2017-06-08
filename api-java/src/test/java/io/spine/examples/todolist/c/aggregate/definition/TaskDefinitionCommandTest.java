@@ -29,7 +29,7 @@ import io.spine.examples.todolist.context.TodoListBoundedContext;
 import io.spine.test.AggregatePartCommandTest;
 import io.spine.test.TestActorRequestFactory;
 
-import static io.spine.base.Identifiers.newUuid;
+import static io.spine.base.Identifier.newUuid;
 
 /**
  * The parent class for the {@link TaskDefinitionPart} test classes.
