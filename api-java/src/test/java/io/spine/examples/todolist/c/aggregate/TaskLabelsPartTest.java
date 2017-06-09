@@ -25,6 +25,7 @@ import io.spine.base.Command;
 import io.spine.envelope.CommandEnvelope;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -58,6 +59,7 @@ import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.r
 import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Illia Shepilov
@@ -90,6 +92,18 @@ class TaskLabelsPartTest {
 
             assertEquals(taskId, labelAssignedToTask.getTaskId());
             assertEquals(labelId, labelAssignedToTask.getLabelId());
+        }
+
+        @Test
+        @DisplayName("apply LabelAssignedToTask event")
+        void applyEvent() {
+            dispatch(taskLabelsPart, CommandEnvelope.of(command().get()));
+
+            final TaskLabels state = taskLabelsPart.getState();
+            final List<LabelId> labelIds = state.getLabelIdsList()
+                                                .getIdsList();
+            assertEquals(taskId, state.getTaskId());
+            assertTrue(labelIds.contains(labelId));
         }
 
         @Test
@@ -145,6 +159,23 @@ class TaskLabelsPartTest {
 
             assertEquals(taskId, labelRemovedFromTask.getTaskId());
             assertEquals(labelId, labelRemovedFromTask.getLabelId());
+        }
+
+        @Test
+        @DisplayName("apply LabelRemovedFromTask event")
+        void applyEvent() {
+            createBasicTask();
+            dispatchAssignLabelToTask();
+            final List<LabelId> labelIdsBeforeRemove = taskLabelsPart.getState()
+                                                                     .getLabelIdsList()
+                                                                     .getIdsList();
+            assertTrue(labelIdsBeforeRemove.contains(labelId));
+
+            dispatch(taskLabelsPart, CommandEnvelope.of(command().get()));
+            final List<LabelId> labelIdsAfterRemove = taskLabelsPart.getState()
+                                                                    .getLabelIdsList()
+                                                                    .getIdsList();
+            assertTrue(labelIdsAfterRemove.isEmpty());
         }
 
         @Test

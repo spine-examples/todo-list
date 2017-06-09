@@ -116,6 +116,7 @@ public class TaskLabelsPart
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
                                                       .addAllIds(list)
                                                       .build();
+        getBuilder().setTaskId(event.getTaskId());
         getBuilder().setLabelIdsList(labelIdsList);
     }
 
