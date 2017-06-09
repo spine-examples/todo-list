@@ -22,7 +22,6 @@ package io.spine.examples.todolist.c.aggregate.failures;
 
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.CompleteTaskFailed;
-import io.spine.examples.todolist.CreateBasicTaskFailed;
 import io.spine.examples.todolist.CreateDraftFailed;
 import io.spine.examples.todolist.DeleteTaskFailed;
 import io.spine.examples.todolist.DescriptionUpdateFailed;
@@ -32,9 +31,9 @@ import io.spine.examples.todolist.PriorityUpdateFailed;
 import io.spine.examples.todolist.ReopenTaskFailed;
 import io.spine.examples.todolist.RestoreDeletedTaskFailed;
 import io.spine.examples.todolist.TaskDueDateUpdateFailed;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskDefinitionPart;
 import io.spine.examples.todolist.c.commands.CompleteTask;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
@@ -70,26 +69,6 @@ public class TaskDefinitionPartFailures {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure
-         * according to the passed parameters.
-         *
-         * @param cmd the {@code UpdateTaskDueDate} command which thrown the failure
-         * @throws CannotUpdateTaskDueDate the failure to throw
-         */
-        public static void throwCannotUpdateTaskDueDate(UpdateTaskDueDate cmd)
-                throws CannotUpdateTaskDueDate {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
-            final TaskDueDateUpdateFailed dueDateUpdateFailed =
-                    TaskDueDateUpdateFailed.newBuilder()
-                                           .setFailureDetails(commandFailed)
-                                           .build();
-            throw new CannotUpdateTaskDueDate(dueDateUpdateFailed);
-        }
-
-        /**
          * Constructs and throws the {@link CannotUpdateTaskDescription} failure
          * according to the passed parameters.
          *
@@ -98,15 +77,29 @@ public class TaskDefinitionPartFailures {
          */
         public static void throwCannotUpdateTaskDescription(UpdateTaskDescription cmd)
                 throws CannotUpdateTaskDescription {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
+            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final DescriptionUpdateFailed descriptionUpdateFailed =
                     DescriptionUpdateFailed.newBuilder()
                                            .setFailureDetails(commandFailed)
                                            .build();
             throw new CannotUpdateTaskDescription(descriptionUpdateFailed);
+        }
+
+        /**
+         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure
+         * according to the passed parameters.
+         *
+         * @param cmd the {@code UpdateTaskDueDate} command which thrown the failure
+         * @throws CannotUpdateTaskDueDate the failure to throw
+         */
+        public static void throwCannotUpdateTaskDueDate(UpdateTaskDueDate cmd)
+                throws CannotUpdateTaskDueDate {
+            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
+            final TaskDueDateUpdateFailed dueDateUpdateFailed =
+                    TaskDueDateUpdateFailed.newBuilder()
+                                           .setFailureDetails(commandFailed)
+                                           .build();
+            throw new CannotUpdateTaskDueDate(dueDateUpdateFailed);
         }
 
         /**
@@ -119,10 +112,7 @@ public class TaskDefinitionPartFailures {
          */
         public static void throwCannotUpdateTaskDueDate(
                 UpdateTaskDueDate cmd, ValueMismatch mismatch) throws CannotUpdateTaskDueDate {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
+            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final TaskDueDateUpdateFailed dueDateUpdateFailed =
                     TaskDueDateUpdateFailed.newBuilder()
                                            .setFailureDetails(commandFailed)
@@ -142,10 +132,7 @@ public class TaskDefinitionPartFailures {
         public static void throwCannotUpdateDescription(
                 UpdateTaskDescription cmd, ValueMismatch mismatch)
                 throws CannotUpdateTaskDescription {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
+            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final DescriptionUpdateFailed descriptionUpdateFailed =
                     DescriptionUpdateFailed.newBuilder()
                                            .setFailureDetails(commandFailed)
@@ -164,10 +151,7 @@ public class TaskDefinitionPartFailures {
          */
         public static void throwCannotUpdateTaskPriority(
                 UpdateTaskPriority cmd, ValueMismatch mismatch) throws CannotUpdateTaskPriority {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
+            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final PriorityUpdateFailed priorityUpdateFailed =
                     PriorityUpdateFailed.newBuilder()
                                         .setFailureDetails(commandFailed)
@@ -185,10 +169,7 @@ public class TaskDefinitionPartFailures {
          */
         public static void throwCannotUpdateTaskPriority(UpdateTaskPriority cmd)
                 throws CannotUpdateTaskPriority {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
+            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final PriorityUpdateFailed priorityUpdateFailed =
                     PriorityUpdateFailed.newBuilder()
                                         .setFailureDetails(commandFailed)
@@ -205,10 +186,7 @@ public class TaskDefinitionPartFailures {
          */
         public static void throwCannotUpdateTooShortDescription(
                 UpdateTaskDescription cmd) throws CannotUpdateTaskWithInappropriateDescription {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
+            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final DescriptionUpdateFailed updateFailed =
                     DescriptionUpdateFailed.newBuilder()
                                            .setFailureDetails(commandFailed)
@@ -230,10 +208,7 @@ public class TaskDefinitionPartFailures {
          * @throws CannotCreateDraft the failure to throw
          */
         public static void throwCannotCreateDraftFailure(CreateDraft cmd) throws CannotCreateDraft {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
+            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final CreateDraftFailed createDraftFailed =
                     CreateDraftFailed.newBuilder()
                                      .setFailureDetails(commandFailed)
@@ -255,10 +230,7 @@ public class TaskDefinitionPartFailures {
          * @throws CannotReopenTask the failure to throw
          */
         public static void throwCannotReopenTask(ReopenTask cmd) throws CannotReopenTask {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
+            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final ReopenTaskFailed reopenTaskFailed =
                     ReopenTaskFailed.newBuilder()
                                     .setFailureDetails(commandFailed)
@@ -274,10 +246,7 @@ public class TaskDefinitionPartFailures {
          * @throws CannotFinalizeDraft the failure to throw
          */
         public static void throwCannotFinalizeDraft(FinalizeDraft cmd) throws CannotFinalizeDraft {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
+            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final FinalizeDraftFailed finalizeDraftFailed =
                     FinalizeDraftFailed.newBuilder()
                                        .setFailureDetails(commandFailed)
@@ -293,10 +262,7 @@ public class TaskDefinitionPartFailures {
          * @throws CannotDeleteTask the failure to throw
          */
         public static void throwCannotDeleteTask(DeleteTask cmd) throws CannotDeleteTask {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
+            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final DeleteTaskFailed deleteTaskFailed =
                     DeleteTaskFailed.newBuilder()
                                     .setFailureDetails(commandFailed)
@@ -312,10 +278,7 @@ public class TaskDefinitionPartFailures {
          * @throws CannotCompleteTask the failure to throw
          */
         public static void throwCannotCompleteTask(CompleteTask cmd) throws CannotCompleteTask {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
+            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final CompleteTaskFailed completeTaskFailed =
                     CompleteTaskFailed.newBuilder()
                                       .setFailureDetails(commandFailed)
@@ -332,15 +295,18 @@ public class TaskDefinitionPartFailures {
          */
         public static void throwCannotRestoreDeletedTask(RestoreDeletedTask cmd)
                 throws CannotRestoreDeletedTask {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
+            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final RestoreDeletedTaskFailed restoreDeletedTaskFailed =
                     RestoreDeletedTaskFailed.newBuilder()
                                             .setFailureDetails(commandFailed)
                                             .build();
             throw new CannotRestoreDeletedTask(restoreDeletedTaskFailed);
         }
+    }
+
+    private static FailedTaskCommandDetails newFailedTaskCommandDetails(TaskId taskId) {
+        return FailedTaskCommandDetails.newBuilder()
+                                       .setTaskId(taskId)
+                                       .build();
     }
 }
