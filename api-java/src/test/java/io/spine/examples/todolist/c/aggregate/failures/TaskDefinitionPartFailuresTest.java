@@ -56,8 +56,7 @@ class TaskDefinitionPartFailuresTest {
                                            .setId(taskId)
                                            .build();
         final CannotCreateDraft failure = assertThrows(CannotCreateDraft.class,
-                                                       () -> throwCannotCreateDraftFailure(cmd
-                                                       ));
+                                                       () -> throwCannotCreateDraftFailure(cmd));
         final TaskId actual = failure.getFailureMessage()
                                      .getCreateDraftFailed()
                                      .getFailureDetails()

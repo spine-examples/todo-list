@@ -100,8 +100,7 @@ class TaskLabelsPartTest {
             deleteTask();
 
             assertThrows(CannotAssignLabelToTask.class,
-                         () -> taskLabelsPart.handle(commandMessage().get(),
-                                                     commandContext().get()));
+                         () -> taskLabelsPart.handle(commandMessage().get()));
         }
 
         @Test
@@ -112,8 +111,7 @@ class TaskLabelsPartTest {
             completeTask();
 
             assertThrows(CannotAssignLabelToTask.class,
-                         () -> taskLabelsPart.handle(commandMessage().get(),
-                                                     commandContext().get()));
+                         () -> taskLabelsPart.handle(commandMessage().get()));
         }
     }
 
@@ -136,8 +134,8 @@ class TaskLabelsPartTest {
             createBasicTask();
             dispatchAssignLabelToTask();
 
-            final List<? extends Message> messageList =
-                    taskLabelsPart.handle(commandMessage().get(), commandContext().get());
+            final List<? extends Message> messageList = taskLabelsPart.handle(
+                    commandMessage().get());
 
             assertEquals(1, messageList.size());
             assertEquals(LabelRemovedFromTask.class, messageList.get(0)
@@ -154,8 +152,7 @@ class TaskLabelsPartTest {
                 "upon an attempt to remove the not assigned label")
         void cannotRemoveNotExistingLabel() {
             assertThrows(CannotRemoveLabelFromTask.class,
-                         () -> taskLabelsPart.handle(commandMessage().get(),
-                                                     commandContext().get()));
+                         () -> taskLabelsPart.handle(commandMessage().get()));
         }
 
         @Test
@@ -167,8 +164,7 @@ class TaskLabelsPartTest {
             completeTask();
 
             assertThrows(CannotRemoveLabelFromTask.class,
-                         () -> taskLabelsPart.handle(commandMessage().get(),
-                                                     commandContext().get()));
+                         () -> taskLabelsPart.handle(commandMessage().get()));
         }
 
         @Test
@@ -180,8 +176,7 @@ class TaskLabelsPartTest {
             deleteTask();
 
             assertThrows(CannotRemoveLabelFromTask.class,
-                         () -> taskLabelsPart.handle(commandMessage().get(),
-                                                     commandContext().get()));
+                         () -> taskLabelsPart.handle(commandMessage().get()));
         }
 
         private void dispatchAssignLabelToTask() {

@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
-import io.spine.base.CommandContext;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdsList;
 import io.spine.examples.todolist.TaskDefinition;
@@ -68,8 +67,7 @@ public class TaskLabelsPart
     }
 
     @Assign
-    List<? extends Message> handle(RemoveLabelFromTask cmd, CommandContext ctx)
-            throws CannotRemoveLabelFromTask {
+    List<? extends Message> handle(RemoveLabelFromTask cmd) throws CannotRemoveLabelFromTask {
         final LabelId labelId = cmd.getLabelId();
         final TaskId taskId = cmd.getId();
 
@@ -92,8 +90,7 @@ public class TaskLabelsPart
     }
 
     @Assign
-    List<? extends Message> handle(AssignLabelToTask cmd, CommandContext ctx)
-            throws CannotAssignLabelToTask {
+    List<? extends Message> handle(AssignLabelToTask cmd) throws CannotAssignLabelToTask {
         final TaskId taskId = cmd.getId();
         final LabelId labelId = cmd.getLabelId();
 

@@ -84,7 +84,7 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
     @Test
     @DisplayName("does not pass command validation" +
             "upon an attempt to create task with too short description")
-    void notCreateTask() {
+    void notPassCommandValidation() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, "D");
 
         final Throwable t = assertThrows(Throwable.class,
