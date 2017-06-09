@@ -134,8 +134,8 @@ class TaskLabelsPartTest {
             createBasicTask();
             dispatchAssignLabelToTask();
 
-            final List<? extends Message> messageList = taskLabelsPart.handle(
-                    commandMessage().get());
+            final List<? extends Message> messageList =
+                    taskLabelsPart.handle(commandMessage().get());
 
             assertEquals(1, messageList.size());
             assertEquals(LabelRemovedFromTask.class, messageList.get(0)

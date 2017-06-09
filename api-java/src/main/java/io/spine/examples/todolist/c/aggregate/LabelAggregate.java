@@ -40,7 +40,6 @@ import io.spine.server.command.Assign;
 import java.util.Collections;
 import java.util.List;
 
-import static io.spine.examples.todolist.c.aggregate.MismatchHelper.of;
 import static io.spine.examples.todolist.c.aggregate.failures.LabelAggregateFailures.throwCannotUpdateLabelDetailsFailure;
 
 /**
@@ -88,8 +87,8 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelValid
 
         if (!isEquals) {
             final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
-            final ValueMismatch mismatch = of(expectedLabelDetails, actualLabelDetails,
-                                              newLabelDetails, getVersion());
+            final ValueMismatch mismatch = unexpectedValue(expectedLabelDetails,
+                                                           actualLabelDetails, newLabelDetails);
             throwCannotUpdateLabelDetailsFailure(cmd, mismatch);
         }
 

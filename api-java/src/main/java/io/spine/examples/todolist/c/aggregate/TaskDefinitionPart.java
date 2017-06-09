@@ -152,8 +152,8 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
 
         if (!isEquals) {
             final String newDescription = change.getNewValue();
-            final ValueMismatch mismatch = of(expectedDescription, actualDescription,
-                                              newDescription, getVersion());
+            final ValueMismatch mismatch = unexpectedValue(expectedDescription, actualDescription,
+                                                           newDescription);
             throwCannotUpdateDescription(cmd, mismatch);
         }
 
@@ -185,8 +185,8 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
 
         if (!isEquals) {
             final Timestamp newDueDate = change.getNewValue();
-            final ValueMismatch mismatch = of(expectedDueDate, actualDueDate,
-                                              newDueDate, getVersion());
+            final ValueMismatch mismatch = unexpectedValue(expectedDueDate, actualDueDate,
+                                                           newDueDate);
             throwCannotUpdateTaskDueDate(cmd, mismatch);
         }
 
