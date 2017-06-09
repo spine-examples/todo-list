@@ -163,6 +163,7 @@ class TaskLabelsPartTest {
                 "upon an attempt to remove the label from the completed task")
         void cannotRemoveLabelFromCompletedTask() {
             createBasicTask();
+            dispatchAssignLabelToTask();
             completeTask();
 
             assertThrows(CannotRemoveLabelFromTask.class,
@@ -175,6 +176,7 @@ class TaskLabelsPartTest {
                 "upon an attempt to remove the label from the deleted task")
         void cannotRemoveLabelFromDeletedTask() {
             createBasicTask();
+            dispatchAssignLabelToTask();
             deleteTask();
 
             assertThrows(CannotRemoveLabelFromTask.class,
