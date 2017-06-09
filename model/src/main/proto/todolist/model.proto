@@ -44,7 +44,7 @@ message TaskDefinition {
     // A description of the task.
     //
     // Cannot be empty; must contain at least 3 alphanumeric symbols.
-    string description = 2 [(required) = true];
+    string description = 2 [(pattern).regex = "(.*?[a-zA-Z0-9]){3,}.*"];
 
     // Task priority.
     //

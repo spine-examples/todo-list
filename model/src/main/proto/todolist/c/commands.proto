@@ -52,7 +52,9 @@ message CreateBasicTask {
     TaskId id = 1;
 
     // A description for the task created.
-    string description = 2 [(required) = true];
+    //
+    // Cannot be empty; must contain at least 3 alphanumeric symbols.
+    string description = 2 [(pattern).regex = "^(.*?[a-zA-Z0-9]){3,}.*"];
 
     // Reserved for future extension.
     reserved 3 to 10;
