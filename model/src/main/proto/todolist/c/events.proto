@@ -91,7 +91,7 @@ message TaskDescriptionUpdated {
     TaskId task_id = 1;
 
     // The change of the task description.
-    DescriptionChange description_change = 2 [(required) = true];
+    change.StringChange description_change = 2 [(required) = true];
 
     // Reserved for future extension.
     //

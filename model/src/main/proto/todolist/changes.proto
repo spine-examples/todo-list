@@ -52,13 +52,3 @@ message LabelDetailsChange {
     // The new value of the label details.
     LabelDetails new_details = 2;
 }
-
-// Definition of a change in a task desciption field.
-message DescriptionChange {
-
-    // The value of the task description that's changing.
-    string previous_value = 1;
-
-    // The new value of the task description.
-    string new_value = 2 [(required) = true, (pattern).regex = "^[A-Za-z0-9\\s-()\\.+]{3,}$"];
-}
