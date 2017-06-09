@@ -18,45 +18,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
+package io.spine.examples.todolist.validator;
+
+import io.spine.examples.todolist.TaskPriority;
 
 import javax.annotation.Nullable;
-
-import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
-import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
+import java.util.Map;
 
 /**
- * Serves as a validator for the user approve answer.
+ * Serves as validator class for the task priority.
  *
- * <p>Validation will be passed when:
- *    <li>input is `y`;
- *    <li>input is `n`.
- * <p>In other cases validation will be failed.
+ * <p>Validation will be successful if {@code priorityMap} contains the specified priority.
  *
  * @author Illia Shepilov
  */
-public class ApproveAnswerValidator implements Validator<String> {
+public class TaskPriorityValidator implements Validator<String> {
 
-    private static final String INVALID_INPUT = "Invalid input. Valid values: 'y' or 'n'";
-    private static final String NEGATIVE_ANSWER = "n";
-    private static final String POSITIVE_ANSWER = "y";
+    private static final String INCORRECT_INPUT = "Incorrect task priority";
+
+    private final Map<String, TaskPriority> priorityMap;
     private String message;
 
-    @Override
-    public boolean validate(String input) {
-
-        final boolean isNegativeOrPositiveAns = NEGATIVE_ANSWER.equals(input) || POSITIVE_ANSWER.equals(input);
-        final boolean invalidInput = isNull(input) || isEmpty(input) || !isNegativeOrPositiveAns;
-
-        if (invalidInput) {
-            this.message = INVALID_INPUT;
-            return false;
-        }
-        return true;
+    public TaskPriorityValidator(Map<String, TaskPriority> priorityMap) {
+        this.priorityMap = priorityMap;
     }
 
     @Override
+    public boolean validate(String input) {
+        final TaskPriority taskPriority = priorityMap.get(input);
+        final boolean passed = taskPriority != null;
+        if (!passed) {
+            message = INCORRECT_INPUT;
+        }
+        return passed;
+    }
+
     @Nullable
+    @Override
     public String getMessage() {
         return message;
     }

@@ -18,45 +18,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
-
-import org.spine3.examples.todolist.LabelColor;
+package io.spine.examples.todolist.validator;
 
 import javax.annotation.Nullable;
-import java.util.Map;
+
+import static io.spine.examples.todolist.validator.ValidatorHelper.isEmpty;
+import static io.spine.examples.todolist.validator.ValidatorHelper.isNull;
 
 /**
- * Serves as validator class for the label color input.
+ * Serves as a validator for the user approve answer.
  *
- * <p>Validation will be passed if {@code colorMap} contains the specified color.
+ * <p>Validation will be passed when:
+ * <li>input is `y`;
+ * <li>input is `n`.
+ * <p>In other cases validation will be failed.
  *
  * @author Illia Shepilov
  */
-public class LabelColorValidator implements Validator<String> {
+public class ApproveAnswerValidator implements Validator<String> {
 
-    private static final String INCORRECT_INPUT = "Incorrect label color";
-
-    private final Map<String, LabelColor> colorMap;
+    private static final String INVALID_INPUT = "Invalid input. Valid values: 'y' or 'n'";
+    private static final String NEGATIVE_ANSWER = "n";
+    private static final String POSITIVE_ANSWER = "y";
     private String message;
-
-    public LabelColorValidator(Map<String, LabelColor> colorMap) {
-        this.colorMap = colorMap;
-    }
 
     @Override
     public boolean validate(String input) {
-        final LabelColor labelColor = colorMap.get(input);
-        final boolean passed = labelColor != null;
-        if (!passed) {
-            message = INCORRECT_INPUT;
+
+        final boolean isNegativeOrPositiveAns =
+                NEGATIVE_ANSWER.equals(input) || POSITIVE_ANSWER.equals(input);
+        final boolean invalidInput = isNull(input) || isEmpty(input) || !isNegativeOrPositiveAns;
+
+        if (invalidInput) {
+            this.message = INVALID_INPUT;
+            return false;
         }
-        return passed;
+        return true;
     }
 
-    @Nullable
     @Override
+    @Nullable
     public String getMessage() {
         return message;
     }
-
 }

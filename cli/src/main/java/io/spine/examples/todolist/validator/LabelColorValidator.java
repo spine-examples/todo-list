@@ -18,23 +18,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
+package io.spine.examples.todolist.validator;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.spine.examples.todolist.LabelColor;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.test.Tests.hasPrivateParameterlessCtor;
+import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
+ * Serves as validator class for the label color input.
+ *
+ * <p>Validation will be passed if {@code colorMap} contains the specified color.
+ *
  * @author Illia Shepilov
  */
-@DisplayName("ValidatorHelper should")
-class ValidatorHelperTest {
+public class LabelColorValidator implements Validator<String> {
 
-    @Test
-    @DisplayName("have the private constructor")
-    public void havePrivateConstructor() {
-        assertTrue(hasPrivateParameterlessCtor(ValidatorHelper.class));
+    private static final String INCORRECT_INPUT = "Incorrect label color";
+
+    private final Map<String, LabelColor> colorMap;
+    private String message;
+
+    public LabelColorValidator(Map<String, LabelColor> colorMap) {
+        this.colorMap = colorMap;
     }
+
+    @Override
+    public boolean validate(String input) {
+        final LabelColor labelColor = colorMap.get(input);
+        final boolean passed = labelColor != null;
+        if (!passed) {
+            message = INCORRECT_INPUT;
+        }
+        return passed;
+    }
+
+    @Nullable
+    @Override
+    public String getMessage() {
+        return message;
+    }
+
 }

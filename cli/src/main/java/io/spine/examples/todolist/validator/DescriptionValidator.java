@@ -18,20 +18,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
+package io.spine.examples.todolist.validator;
 
 import javax.annotation.Nullable;
 
-import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
-import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
+import static io.spine.examples.todolist.validator.ValidatorHelper.isEmpty;
+import static io.spine.examples.todolist.validator.ValidatorHelper.isNull;
 
 /**
  * Serves as a validator when is needed to validate the task description.
  *
  * <p>Validation will be successful when:
- *    <li>input is not {@code null};
- *    <li>input is not empty;
- *    <li>input has unless four symbols.
+ * <li>input is not {@code null};
+ * <li>input is not empty;
+ * <li>input has unless four symbols.
  * <p>In other cases validation will be failed.
  *
  * @author Illia Shepilov

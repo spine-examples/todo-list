@@ -18,48 +18,61 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
+package io.spine.examples.todolist.validator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.examples.todolist.TaskPriority;
 
-import java.util.Map;
-
-import static com.google.common.collect.Maps.newHashMap;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("TaskPriorityValidator should")
-class TaskPriorityValidatorTest {
+@DisplayName("DescriptionValidator should")
+class DescriptionValidatorTest {
 
-    private static final String TASK_PRIORITY_CORRECT_KEY = "1";
-    private static final String TASK_PRIORITY_INCORRECT_KEY = "2";
-
-    private Validator validator;
+    private DescriptionValidator validator;
 
     @BeforeEach
-    public void setUp() {
-        final Map<String, TaskPriority> priorityMap = newHashMap();
-        priorityMap.put(TASK_PRIORITY_CORRECT_KEY, TaskPriority.LOW);
-        validator = new TaskPriorityValidator(priorityMap);
+    void setUp() {
+        validator = new DescriptionValidator();
     }
 
     @Test
     @DisplayName("pass the validation")
-    public void passTheCheck() {
-        final boolean passed = validator.validate(TASK_PRIORITY_CORRECT_KEY);
+    void passValidation() {
+        final boolean passed = validator.validate("Description");
         assertTrue(passed);
     }
 
     @Test
-    @DisplayName("not pass the validation when priority map does not contain value by specified key")
-    public void notPassTheCheck() {
-        final boolean passed = validator.validate(TASK_PRIORITY_INCORRECT_KEY);
+    @DisplayName("not pass the validation when passed input is null")
+    void notPassValidationWhenInputIsNull() {
+        final boolean passed = validator.validate(null);
         assertFalse(passed);
+    }
+
+    @Test
+    @DisplayName("not pass the validation when passed input is empty")
+    void notPassValidationWhenInputIsEmpty() {
+        final boolean passed = validator.validate("");
+        assertFalse(passed);
+    }
+
+    @Test
+    @DisplayName("not pass the validation when passed input has less then three symbols")
+    void notPassValidationWhenInputHasLessThenThreeSymbols() {
+        final boolean passed = validator.validate("D");
+        assertFalse(passed);
+    }
+
+    @Test
+    @DisplayName("return non null message when validation is failed")
+    void getMessage() {
+        validator.validate(null);
+        assertNotNull(validator.getMessage());
     }
 }

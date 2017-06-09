@@ -18,66 +18,42 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
+package io.spine.examples.todolist.validator;
 
 import javax.annotation.Nullable;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
-import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
-import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
+import static io.spine.examples.todolist.validator.ValidatorHelper.isEmpty;
+import static io.spine.examples.todolist.validator.ValidatorHelper.isNull;
 
 /**
- * Serves as a validator class for the task due date input.
+ * Serves as a validator when is needed to validate the common cases.
  *
- * <p>Validation will be passed when:
- *    <li>input is not {@code null};
- *    <li>input is not empty;
- *    <li>input has correct format according to the {@code DATE_FORMAT}.
- * <p>
+ * <p>Validation will be failed when input is empty or {@code null}.
+ *
+ * <p>In other cases validation will pass successfully.
  *
  * @author Illia Shepilov
  */
-public class DueDateValidator implements Validator<String> {
+public class NeitherCompletedNorDeletedValidator implements Validator<String> {
 
-    private static final String DUE_DATE_IS_NULL = "The due date cannot be null.";
-    private static final String DUE_DATE_IS_EMPTY = "The due date cannot be empty.";
-
-    private final SimpleDateFormat dateFormat;
-    private final String incorrectDueDateMsg;
+    private static final String EMPTY_VALUE = "Inserted value cannot be empty.";
+    private static final String VALUE_IS_NULL = "Inserted value cannot be null.";
     private String message;
-
-    public DueDateValidator(SimpleDateFormat dateFormat) {
-        this.dateFormat = dateFormat;
-        incorrectDueDateMsg = "Incorrect due date format. Correct format: " + dateFormat.getDateFormatSymbols() + '.';
-    }
 
     @Override
     public boolean validate(String input) {
         final boolean isNull = isNull(input);
-
         if (isNull) {
-            message = DUE_DATE_IS_NULL;
+            message = VALUE_IS_NULL;
             return false;
         }
 
         final boolean empty = isEmpty(input);
         if (empty) {
-            message = DUE_DATE_IS_EMPTY;
+            message = EMPTY_VALUE;
             return false;
         }
 
-        final boolean result = isCorrectFormat(input);
-        return result;
-    }
-
-    private boolean isCorrectFormat(String input) {
-        try {
-            dateFormat.parse(input);
-        } catch (ParseException ignored) {
-            message = incorrectDueDateMsg;
-            return false;
-        }
         return true;
     }
 

@@ -18,55 +18,48 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
+package io.spine.examples.todolist.validator;
 
+import io.spine.examples.todolist.TaskPriority;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
+import static com.google.common.collect.Maps.newHashMap;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.spine3.base.Identifiers.newUuid;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("IdValidator should")
-class IdValidatorTest {
+@DisplayName("TaskPriorityValidator should")
+class TaskPriorityValidatorTest {
 
-    private IdValidator validator = new IdValidator();
+    private static final String TASK_PRIORITY_CORRECT_KEY = "1";
+    private static final String TASK_PRIORITY_INCORRECT_KEY = "2";
+
+    private Validator validator;
 
     @BeforeEach
-    public void setUp() {
-        validator = new IdValidator();
+    void setUp() {
+        final Map<String, TaskPriority> priorityMap = newHashMap();
+        priorityMap.put(TASK_PRIORITY_CORRECT_KEY, TaskPriority.LOW);
+        validator = new TaskPriorityValidator(priorityMap);
     }
 
     @Test
     @DisplayName("pass the validation")
-    public void passValidation() {
-        final boolean passed = validator.validate(newUuid());
+    void passTheCheck() {
+        final boolean passed = validator.validate(TASK_PRIORITY_CORRECT_KEY);
         assertTrue(passed);
     }
 
     @Test
-    @DisplayName("not pass the validation when passed value is null")
-    public void notPassValidationWhenIdIsNull() {
-        final boolean passed = validator.validate(null);
+    @DisplayName("not pass the validation when priority map does not contain value by specified key")
+    void notPassTheCheck() {
+        final boolean passed = validator.validate(TASK_PRIORITY_INCORRECT_KEY);
         assertFalse(passed);
-    }
-
-    @Test
-    @DisplayName("not pass the validation when passed value is empty")
-    public void notPassTheValidationWhenIdIsEmpty() {
-        final boolean passed = validator.validate("");
-        assertFalse(passed);
-    }
-
-    @Test
-    @DisplayName("return non null message when validation is failed")
-    public void getMessage() {
-        validator.validate(null);
-        assertNotNull(validator.getMessage());
     }
 }

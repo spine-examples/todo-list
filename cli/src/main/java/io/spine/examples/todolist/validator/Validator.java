@@ -18,49 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
+package io.spine.examples.todolist.validator;
 
 import javax.annotation.Nullable;
 
-import static org.spine3.examples.todolist.validator.ValidatorHelper.isEmpty;
-import static org.spine3.examples.todolist.validator.ValidatorHelper.isNull;
-
 /**
- * Serves as validator class for the validation ID input.
- *
- * <p>Validation will be passed if:
- *    <li>input is not {@code null};
- *    <li>input is not empty.
- * <p>In other cases validation will be failed.
+ * Serves as supertype for all `cli` validators.
  *
  * @author Illia Shepilov
  */
-public class IdValidator implements Validator <String>{
+public interface Validator<T> {
 
-    private static final String ID_IS_NULL = "Id cannot be null.";
-    private static final String ID_IS_EMPTY = "Id cannot be empty.";
-    private String message;
+    /**
+     * Validates the value text from the user.
+     *
+     * @param value the user value
+     * @return {@code true} if value is valid, otherwise {@code false}
+     */
+    boolean validate(T value);
 
-    @Override
-    public boolean validate(String input) {
-        final boolean isNull = isNull(input);
-
-        if (isNull) {
-            message = ID_IS_NULL;
-            return false;
-        }
-        final boolean empty = isEmpty(input);
-
-        if (empty) {
-            message = ID_IS_EMPTY;
-            return false;
-        }
-        return true;
-    }
-
+    /**
+     * Returns the message is indicated incorrect input by user.
+     *
+     * @return the warning message
+     */
     @Nullable
-    @Override
-    public String getMessage() {
-        return message;
-    }
+    public String getMessage();
 }

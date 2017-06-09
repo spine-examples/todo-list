@@ -18,12 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
+package io.spine.examples.todolist.validator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.base.Identifier.newUuid;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,57 +32,41 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("ApproveAnswerValidator should")
-class ApproveAnswerValidatorTest {
+@DisplayName("IdValidator should")
+class IdValidatorTest {
 
-    private static final String INVALID_INPUT = "O";
-
-    private ApproveAnswerValidator validator;
+    private IdValidator validator = new IdValidator();
 
     @BeforeEach
-    public void setUp() {
-        validator = new ApproveAnswerValidator();
+    void setUp() {
+        validator = new IdValidator();
     }
 
     @Test
-    @DisplayName("pass the validation when input is `n`")
-    public void passValidationWhenNegativeAnswer() {
-        final boolean passed = validator.validate("n");
+    @DisplayName("pass the validation")
+    void passValidation() {
+        final boolean passed = validator.validate(newUuid());
         assertTrue(passed);
     }
 
     @Test
-    @DisplayName("pass the validation when input is `y`")
-    public void passValidationWhenPositiveAnswer() {
-        final boolean passed = validator.validate("y");
-        assertTrue(passed);
-    }
-
-    @Test
-    @DisplayName("not pass the validation when input is null")
-    public void notPassValidationWhenInputIsNull() {
+    @DisplayName("not pass the validation when passed value is null")
+    void notPassValidationWhenIdIsNull() {
         final boolean passed = validator.validate(null);
         assertFalse(passed);
     }
 
     @Test
-    @DisplayName("not pass the validation when input is empty")
-    public void notPassTheValidationWhenInputIsEmpty() {
+    @DisplayName("not pass the validation when passed value is empty")
+    void notPassTheValidationWhenIdIsEmpty() {
         final boolean passed = validator.validate("");
         assertFalse(passed);
     }
 
     @Test
-    @DisplayName("not pass the validation when input neither positive neither negative")
-    public void notPassTheValidationWhenIsputIsIncorrect() {
-        final boolean passed = validator.validate(INVALID_INPUT);
-        assertFalse(passed);
-    }
-
-    @Test
-    @DisplayName("return non message when validation is failed")
-    public void getMessage() {
-        validator.validate(INVALID_INPUT);
+    @DisplayName("return non null message when validation is failed")
+    void getMessage() {
+        validator.validate(null);
         assertNotNull(validator.getMessage());
     }
 }

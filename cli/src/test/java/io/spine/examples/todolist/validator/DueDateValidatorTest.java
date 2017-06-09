@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
+package io.spine.examples.todolist.validator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -47,35 +47,35 @@ class DueDateValidatorTest {
 
     @Test
     @DisplayName("pass the validation")
-    public void passValidation() {
+    void passValidation() {
         final boolean passed = validator.validate("2017-02-22");
         assertTrue(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when validated value is null")
-    public void notPassValidationWhenInputIsNull() {
+    void notPassValidationWhenInputIsNull() {
         final boolean passed = validator.validate(null);
         assertFalse(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when validated value is empty")
-    public void notPassValidationWhenInputIsEmpty() {
+    void notPassValidationWhenInputIsEmpty() {
         final boolean passed = validator.validate("");
         assertFalse(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when passed value has incorrect format")
-    public void notPassTheValidationWhenInputHasIncorrectFormat() {
+    void notPassTheValidationWhenInputHasIncorrectFormat() {
         final boolean passed = validator.validate("2017:02:22");
         assertFalse(passed);
     }
 
     @Test
     @DisplayName("return non null message when validation is failed")
-    public void getMessage() {
+    void getMessage() {
         validator.validate(null);
         assertNotNull(validator.getMessage());
     }

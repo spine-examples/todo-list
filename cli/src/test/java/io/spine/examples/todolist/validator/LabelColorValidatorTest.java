@@ -18,12 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
+package io.spine.examples.todolist.validator;
 
+import io.spine.examples.todolist.LabelColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.spine3.examples.todolist.LabelColor;
 
 import java.util.Map;
 
@@ -51,14 +51,14 @@ class LabelColorValidatorTest {
 
     @Test
     @DisplayName("pass the validation")
-    public void passValidation() {
+    void passValidation() {
         final boolean passed = validator.validate(CORRECT_LABEL_COLOR_KEY);
         assertTrue(passed);
     }
 
     @Test
     @DisplayName("not pass the validation when color map does not contain value by specified key")
-    public void notPassValidation() {
+    void notPassValidation() {
         final boolean passed = validator.validate(INCORRECT_LABEL_COLOR_KEY);
         assertFalse(passed);
     }

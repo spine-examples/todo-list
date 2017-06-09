@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
+package io.spine.examples.todolist.validator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,48 +31,57 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("DescriptionValidator should")
-class DescriptionValidatorTest {
+@DisplayName("ApproveAnswerValidator should")
+class ApproveAnswerValidatorTest {
 
-    private DescriptionValidator validator;
+    private static final String INVALID_INPUT = "O";
+
+    private ApproveAnswerValidator validator;
 
     @BeforeEach
-    public void setUp() {
-        validator = new DescriptionValidator();
+    void setUp() {
+        validator = new ApproveAnswerValidator();
     }
 
     @Test
-    @DisplayName("pass the validation")
-    public void passValidation() {
-        final boolean passed = validator.validate("Description");
+    @DisplayName("pass the validation when input is `n`")
+    void passValidationWhenNegativeAnswer() {
+        final boolean passed = validator.validate("n");
         assertTrue(passed);
     }
 
     @Test
-    @DisplayName("not pass the validation when passed input is null")
-    public void notPassValidationWhenInputIsNull() {
+    @DisplayName("pass the validation when input is `y`")
+    void passValidationWhenPositiveAnswer() {
+        final boolean passed = validator.validate("y");
+        assertTrue(passed);
+    }
+
+    @Test
+    @DisplayName("not pass the validation when input is null")
+    void notPassValidationWhenInputIsNull() {
         final boolean passed = validator.validate(null);
         assertFalse(passed);
     }
 
     @Test
-    @DisplayName("not pass the validation when passed input is empty")
-    public void notPassValidationWhenInputIsEmpty() {
+    @DisplayName("not pass the validation when input is empty")
+    void notPassTheValidationWhenInputIsEmpty() {
         final boolean passed = validator.validate("");
         assertFalse(passed);
     }
 
     @Test
-    @DisplayName("not pass the validation when passed input has less then three symbols")
-    public void notPassValidationWhenInputHasLessThenThreeSymbols() {
-        final boolean passed = validator.validate("D");
+    @DisplayName("not pass the validation when input neither positive neither negative")
+    void notPassTheValidationWhenIsputIsIncorrect() {
+        final boolean passed = validator.validate(INVALID_INPUT);
         assertFalse(passed);
     }
 
     @Test
-    @DisplayName("retrun non null message when validation is failed")
-    public void getMessage() {
-        validator.validate(null);
+    @DisplayName("return non message when validation is failed")
+    void getMessage() {
+        validator.validate(INVALID_INPUT);
         assertNotNull(validator.getMessage());
     }
 }

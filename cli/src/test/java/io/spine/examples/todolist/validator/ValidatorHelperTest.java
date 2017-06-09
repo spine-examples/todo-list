@@ -18,35 +18,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
+package io.spine.examples.todolist.validator;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
- * Serves as utility class for the {@link Validator} classes.
- *
  * @author Illia Shepilov
  */
-class ValidatorHelper {
+@DisplayName("ValidatorHelper should")
+class ValidatorHelperTest {
 
-    private ValidatorHelper() {
-    }
-
-    /**
-     * Checks whether input is {@code null} or not.
-     *
-     * @param input the value to check
-     * @return {@code true} if value is {@code null}, otherwise {@code false}
-     */
-    static boolean isNull(String input) {
-        return input == null;
-    }
-
-    /**
-     * Checks whether input is empty or not.
-     *
-     * @param input the value to check
-     * @return {@code true} if value is empty, otherwise {@code false}
-     */
-    static boolean isEmpty(String input) {
-        return input.isEmpty();
+    @Test
+    @DisplayName("have the private constructor")
+    void havePrivateConstructor() {
+        assertHasPrivateParameterlessCtor(ValidatorHelper.class);
     }
 }

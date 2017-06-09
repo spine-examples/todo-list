@@ -18,44 +18,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.validator;
-
-import org.spine3.examples.todolist.TaskPriority;
-
-import javax.annotation.Nullable;
-import java.util.Map;
+package io.spine.examples.todolist.validator;
 
 /**
- * Serves as validator class for the task priority.
- *
- * <p>Validation will be successful if {@code priorityMap} contains the specified priority.
+ * Serves as utility class for the {@link Validator} classes.
  *
  * @author Illia Shepilov
  */
-public class TaskPriorityValidator implements Validator<String> {
+class ValidatorHelper {
 
-    private static final String INCORRECT_INPUT = "Incorrect task priority";
-
-    private final Map<String, TaskPriority> priorityMap;
-    private String message;
-
-    public TaskPriorityValidator(Map<String, TaskPriority> priorityMap) {
-        this.priorityMap = priorityMap;
+    private ValidatorHelper() {
     }
 
-    @Override
-    public boolean validate(String input) {
-        final TaskPriority taskPriority = priorityMap.get(input);
-        final boolean passed = taskPriority != null;
-        if (!passed) {
-            message = INCORRECT_INPUT;
-        }
-        return passed;
+    /**
+     * Checks whether input is {@code null} or not.
+     *
+     * @param input the value to check
+     * @return {@code true} if value is {@code null}, otherwise {@code false}
+     */
+    static boolean isNull(String input) {
+        return input == null;
     }
 
-    @Nullable
-    @Override
-    public String getMessage() {
-        return message;
+    /**
+     * Checks whether input is empty or not.
+     *
+     * @param input the value to check
+     * @return {@code true} if value is empty, otherwise {@code false}
+     */
+    static boolean isEmpty(String input) {
+        return input.isEmpty();
     }
 }
