@@ -87,7 +87,6 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelValid
         final LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
 
         final boolean isEquals = actualLabelDetails.equals(expectedLabelDetails);
-        final LabelId labelId = cmd.getId();
 
         if (!isEquals) {
             final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
@@ -96,6 +95,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelValid
             throwCannotUpdateLabelDetailsFailure(cmd, mismatch);
         }
 
+        final LabelId labelId = cmd.getId();
         final LabelDetailsUpdated labelDetailsUpdated =
                 LabelDetailsUpdated.newBuilder()
                                    .setLabelId(labelId)
