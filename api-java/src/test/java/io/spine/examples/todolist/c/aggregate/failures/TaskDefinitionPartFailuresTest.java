@@ -20,24 +20,20 @@
 
 package io.spine.examples.todolist.c.aggregate.failures;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import io.spine.base.CommandContext;
 import io.spine.examples.todolist.FailedTaskCommandDetails;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.failures.CannotCreateDraft;
-import io.spine.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Illia Shepilov
@@ -59,8 +55,6 @@ class TaskDefinitionPartFailuresTest {
         final CreateDraft cmd = CreateDraft.newBuilder()
                                            .setId(taskId)
                                            .build();
-        final CommandContext ctx = CommandContext.getDefaultInstance();
-
         final CannotCreateDraft failure = assertThrows(CannotCreateDraft.class,
                                                        () -> throwCannotCreateDraftFailure(cmd
                                                        ));
@@ -77,8 +71,6 @@ class TaskDefinitionPartFailuresTest {
         final UpdateTaskDescription cmd = UpdateTaskDescription.newBuilder()
                                                                .setId(taskId)
                                                                .build();
-        final CommandContext ctx = CommandContext.getDefaultInstance();
-
         final CannotUpdateTaskDescription failure =
                 assertThrows(CannotUpdateTaskDescription.class,
                              () -> throwCannotUpdateTaskDescription(cmd));
@@ -87,24 +79,5 @@ class TaskDefinitionPartFailuresTest {
                                                               .getFailureDetails();
         final TaskId actualId = failedCommand.getTaskId();
         assertEquals(taskId, actualId);
-    }
-
-    @Test
-    @DisplayName("throw CannotCreateTaskWithInappropriateDescription failure")
-    void throwCannotCreateTaskWithInappropriateDescription() {
-        final CreateBasicTask cmd = CreateBasicTask.newBuilder()
-                                                   .setId(taskId)
-                                                   .build();
-        final CommandContext ctx = CommandContext.getDefaultInstance();
-
-        final CannotCreateTaskWithInappropriateDescription failure =
-                assertThrows(CannotCreateTaskWithInappropriateDescription.class,
-                             () -> throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd
-                             ));
-        final TaskId actual = failure.getFailureMessage()
-                                     .getCreateTaskFailed()
-                                     .getFailureDetails()
-                                     .getTaskId();
-        assertEquals(taskId, actual);
     }
 }

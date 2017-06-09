@@ -58,7 +58,6 @@ import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.events.TaskReopened;
 import io.spine.examples.todolist.c.failures.CannotCompleteTask;
 import io.spine.examples.todolist.c.failures.CannotCreateDraft;
-import io.spine.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
 import io.spine.examples.todolist.c.failures.CannotDeleteTask;
 import io.spine.examples.todolist.c.failures.CannotFinalizeDraft;
 import io.spine.examples.todolist.c.failures.CannotReopenTask;
@@ -88,7 +87,6 @@ import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPart
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotReopenTask;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotRestoreDeletedTask;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateDescription;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate;
@@ -129,9 +127,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
     }
 
     @Assign
-    List<? extends Message> handle(CreateBasicTask cmd, CommandContext ctx)
-            throws CannotCreateTaskWithInappropriateDescription {
-        validateCommand(cmd, ctx);
+    List<? extends Message> handle(CreateBasicTask cmd, CommandContext ctx) {
         final TaskId taskId = cmd.getId();
 
         final TaskDetails.Builder taskDetails = TaskDetails.newBuilder()
@@ -429,14 +425,6 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
                     .setDescription(event.getDetails()
                                          .getDescription())
                     .setTaskStatus(TaskStatus.DRAFT);
-    }
-
-    private static void validateCommand(CreateBasicTask cmd, CommandContext ctx)
-            throws CannotCreateTaskWithInappropriateDescription {
-        final String description = cmd.getDescription();
-        if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
-            throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd);
-        }
     }
 
     private void validateCommand(UpdateTaskDescription cmd, CommandContext ctx)

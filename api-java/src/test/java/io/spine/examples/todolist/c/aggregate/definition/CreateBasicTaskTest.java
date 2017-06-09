@@ -22,24 +22,23 @@ package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import io.spine.examples.todolist.TaskDefinition;
-import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.events.TaskCreated;
-import io.spine.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
+import io.spine.validate.ConstraintViolationThrowable;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 
 /**
  * @author Illia Shepilov
@@ -83,7 +82,7 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
     }
 
     @Test
-    @DisplayName("throw CannotCreateTaskWithInappropriateDescription failure " +
+    @DisplayName("does not pass command validation" +
             "upon an attempt to create task with too short description")
     void notCreateTask() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, "D");
@@ -91,12 +90,10 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatch(aggregate, envelopeOf(createBasicTask)));
         final Throwable rootCause = Throwables.getRootCause(t);
-        final CannotCreateTaskWithInappropriateDescription failure =
-                (CannotCreateTaskWithInappropriateDescription) rootCause;
-        final TaskId actualId = failure.getFailureMessage()
-                                       .getCreateTaskFailed()
-                                       .getFailureDetails()
-                                       .getTaskId();
-        assertEquals(this.taskId, actualId);
+        final ConstraintViolationThrowable constraintViolation =
+                (ConstraintViolationThrowable) rootCause;
+        final int violationCount = constraintViolation.getConstraintViolations()
+                                                      .size();
+        assertEquals(1, violationCount);
     }
 }

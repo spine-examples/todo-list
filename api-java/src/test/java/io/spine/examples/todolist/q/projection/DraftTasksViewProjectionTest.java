@@ -43,6 +43,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.UPDATED_LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestLabelEventFactory.labelDetailsUpdatedInstance;
 import static io.spine.examples.todolist.testdata.TestTaskEventFactory.ChangeStatusEvents.taskDeletedInstance;
@@ -324,9 +325,11 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
             dispatch(projection, createEvent(taskDraftCreatedEvent));
 
             final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
-
+            final LabelId wrongLabelId = LabelId.newBuilder()
+                                                .setValue(newUuid())
+                                                .build();
             final LabelAssignedToTask labelAssignedToTaskEvent =
-                    labelAssignedToTaskInstance(expectedTaskId, LabelId.getDefaultInstance());
+                    labelAssignedToTaskInstance(expectedTaskId, wrongLabelId);
             dispatch(projection, createEvent(labelAssignedToTaskEvent));
 
             final LabelColor updatedColor = LabelColor.BLUE;

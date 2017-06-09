@@ -45,7 +45,6 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.failures.CannotCompleteTask;
 import io.spine.examples.todolist.c.failures.CannotCreateDraft;
-import io.spine.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
 import io.spine.examples.todolist.c.failures.CannotDeleteTask;
 import io.spine.examples.todolist.c.failures.CannotFinalizeDraft;
 import io.spine.examples.todolist.c.failures.CannotReopenTask;
@@ -263,26 +262,6 @@ public class TaskDefinitionPartFailures {
                                      .setFailureDetails(commandFailed)
                                      .build();
             throw new CannotCreateDraft(createDraftFailed);
-        }
-
-        /**
-         * Constructs and throws the {@link CannotCreateTaskWithInappropriateDescription} failure
-         * according to the passed parameters.
-         *
-         * @param cmd the {@code CreateBasicTask} command which thrown the failure
-         * @throws CannotCreateTaskWithInappropriateDescription the failure to throw
-         */
-        public static void throwCannotCreateTaskWithInappropriateDescriptionFailure(
-                CreateBasicTask cmd) throws CannotCreateTaskWithInappropriateDescription {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
-            final CreateBasicTaskFailed createBasicTaskFailed =
-                    CreateBasicTaskFailed.newBuilder()
-                                         .setFailureDetails(commandFailed)
-                                         .build();
-            throw new CannotCreateTaskWithInappropriateDescription(createBasicTaskFailed);
         }
     }
 
