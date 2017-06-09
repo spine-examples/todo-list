@@ -23,15 +23,14 @@ syntax = "proto3";
 package spine.examples.todolist;
 
 option (type_url_prefix) = "type.spine.examples.todolist";
-option java_package = "org.spine3.examples.todolist";
+option java_package = "io.spine.examples.todolist";
 option java_outer_classname = "ModelProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
 import "google/protobuf/timestamp.proto";
 
-import "spine/annotations.proto";
-import "spine/validate.proto";
+import "spine/options.proto";
 
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
@@ -44,13 +43,14 @@ message TaskDefinition {
 
     // A description of the task.
     //
-    // Cannot be empty; must contain at least 3 alphanumeric symbols.
-    string description = 2 [(required) = true];
+    // Must contain at least 3 alphanumeric symbols.
+    string description = 2 [(pattern).regex = "(.*?[a-zA-Z0-9]){3,}.*"];
 
     // Task priority.
     //
     // If a task is created in "Quick" mode, its priority is "NORMAL".
-    // If a task is created in scope of a wizard, the end-user is prompted to set the priority explicitly.
+    // If a task is created in scope of a wizard, the end-user is prompted to set
+    // the priority explicitly.
     TaskPriority priority = 3;
 
     // Task creation date.

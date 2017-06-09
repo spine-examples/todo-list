@@ -23,13 +23,12 @@ syntax = "proto3";
 package spine.examples.todolist;
 
 option (type_url_prefix) = "type.spine.examples.todolist";
-option java_package = "org.spine3.examples.todolist.c.commands";
+option java_package = "io.spine.examples.todolist.c.commands";
 option java_outer_classname = "CommandsProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
-import "spine/annotations.proto";
-import "spine/validate.proto";
+import "spine/options.proto";
 import "spine/change/change.proto";
 
 import "todolist/identifiers.proto";
@@ -53,7 +52,9 @@ message CreateBasicTask {
     TaskId id = 1;
 
     // A description for the task created.
-    string description = 2 [(required) = true, (pattern).regex = "^[A-Za-z0-9\\s-()\\.,+]{3,}$"];
+    //
+    // Must contain at least 3 alphanumeric symbols.
+    string description = 2 [(pattern).regex = "^(.*?[a-zA-Z0-9]){3,}.*"];
 
     // Reserved for future extension.
     reserved 3 to 10;
@@ -72,7 +73,7 @@ message UpdateTaskDescription {
 
     // The description change.
     // Contains the previous description and the description to set for the target task.
-    DescriptionChange description_change = 2 [(required) = true];
+    change.StringChange description_change = 2 [(required) = true];
 
     // Reserved for future extension.
     reserved 3 to 10;
@@ -247,7 +248,7 @@ message CreateBasicLabel {
     LabelId label_id = 1;
 
     // A title for the label.
-    string label_title = 2 [(required) = true, (pattern).regex = "^[A-Za-z0-9\\s-()\\.+]{3,}$"];
+    string label_title = 2 [(required) = true];
 
     // Reserved for future extension.
     reserved 3 to 10;
