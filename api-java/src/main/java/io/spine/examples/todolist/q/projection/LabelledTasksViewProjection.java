@@ -75,32 +75,16 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
 
     @Subscribe
     public void on(LabelAssignedToTask event, EventContext context) {
-        final DetailsEnrichment enrichment = getEnrichment(DetailsEnrichment.class, context);
-        final TaskDetails taskDetails = enrichment.getTaskDetails();
         final LabelId labelId = event.getLabelId();
         final TaskId taskId = event.getTaskId();
-
-        final TaskView taskView = viewFor(taskDetails, labelId, taskId);
-        final LabelDetails labelDetails = enrichment.getLabelDetails();
-
-        getBuilder().setLabelId(labelId);
-        addTaskView(taskView);
-        updateLabelDetails(labelDetails);
+        addTaskViewAndUpdateLabelDetails(labelId, taskId, context);
     }
 
     @Subscribe
     public void on(LabelledTaskRestored event, EventContext context) {
-        final DetailsEnrichment enrichment = getEnrichment(DetailsEnrichment.class, context);
-        final TaskDetails taskDetails = enrichment.getTaskDetails();
         final LabelId labelId = event.getLabelId();
         final TaskId taskId = event.getTaskId();
-
-        final TaskView taskView = viewFor(taskDetails, labelId, taskId);
-        final LabelDetails labelDetails = enrichment.getLabelDetails();
-
-        getBuilder().setLabelId(labelId);
-        addTaskView(taskView);
-        updateLabelDetails(labelDetails);
+        addTaskViewAndUpdateLabelDetails(labelId, taskId, context);
     }
 
     @Subscribe
@@ -181,6 +165,19 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         getBuilder().setLabelColor(valueOf(newDetails.getColor()))
                     .setLabelTitle(newDetails.getTitle())
                     .setLabelledTasks(taskListView);
+    }
+
+    private void addTaskViewAndUpdateLabelDetails(LabelId labelId, TaskId taskId,
+                                                  EventContext context) {
+        final DetailsEnrichment enrichment = getEnrichment(DetailsEnrichment.class, context);
+        final TaskDetails taskDetails = enrichment.getTaskDetails();
+
+        final TaskView taskView = viewFor(taskDetails, labelId, taskId);
+        final LabelDetails labelDetails = enrichment.getLabelDetails();
+
+        getBuilder().setLabelId(labelId);
+        addTaskView(taskView);
+        updateLabelDetails(labelDetails);
     }
 
     private static TaskView viewFor(TaskDetails taskDetails, LabelId labelId, TaskId taskId) {

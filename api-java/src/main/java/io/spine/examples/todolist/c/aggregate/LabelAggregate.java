@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.c.aggregate;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Message;
-import io.spine.base.CommandContext;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
@@ -41,7 +41,6 @@ import io.spine.server.command.Assign;
 import java.util.Collections;
 import java.util.List;
 
-import static io.spine.examples.todolist.c.aggregate.MismatchHelper.of;
 import static io.spine.examples.todolist.c.aggregate.failures.LabelAggregateFailures.throwCannotUpdateLabelDetailsFailure;
 
 /**
@@ -49,9 +48,12 @@ import static io.spine.examples.todolist.c.aggregate.failures.LabelAggregateFail
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings("unused") // The methods annotated with {@link Apply}
-                            // are declared {@code private} by design.
+@SuppressWarnings("unused" /* The methods annotated with {@link Apply}
+                              are declared {@code private} by design. */)
 public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelValidatingBuilder> {
+
+    @VisibleForTesting
+    static final LabelColor DEFAULT_LABEL_COLOR = LabelColor.GRAY;
 
     /**
      * {@inheritDoc}
@@ -74,7 +76,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelValid
     }
 
     @Assign
-    List<? extends Message> handle(UpdateLabelDetails cmd, CommandContext ctx)
+    List<? extends Message> handle(UpdateLabelDetails cmd)
             throws CannotUpdateLabelDetails {
         final TaskLabel state = getState();
         final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
@@ -85,15 +87,15 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelValid
         final LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
 
         final boolean isEquals = actualLabelDetails.equals(expectedLabelDetails);
-        final LabelId labelId = cmd.getId();
 
         if (!isEquals) {
             final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
-            final ValueMismatch mismatch = of(expectedLabelDetails, actualLabelDetails,
-                                              newLabelDetails, getVersion());
+            final ValueMismatch mismatch = unexpectedValue(expectedLabelDetails,
+                                                           actualLabelDetails, newLabelDetails);
             throwCannotUpdateLabelDetailsFailure(cmd, mismatch);
         }
 
+        final LabelId labelId = cmd.getId();
         final LabelDetailsUpdated labelDetailsUpdated =
                 LabelDetailsUpdated.newBuilder()
                                    .setLabelId(labelId)
@@ -108,7 +110,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelValid
         getBuilder().setId(event.getId())
                     .setTitle(event.getDetails()
                                    .getTitle())
-                    .setColor(LabelColor.GRAY);
+                    .setColor(DEFAULT_LABEL_COLOR);
     }
 
     @Apply

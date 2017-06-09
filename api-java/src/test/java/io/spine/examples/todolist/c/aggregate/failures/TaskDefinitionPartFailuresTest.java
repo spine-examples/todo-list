@@ -20,24 +20,27 @@
 
 package io.spine.examples.todolist.c.aggregate.failures;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import io.spine.base.CommandContext;
 import io.spine.examples.todolist.FailedTaskCommandDetails;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures;
+import io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures;
+import io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
+import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.failures.CannotCreateDraft;
-import io.spine.examples.todolist.c.failures.CannotCreateTaskWithInappropriateDescription;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
+import io.spine.examples.todolist.c.failures.CannotUpdateTaskDueDate;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateTaskWithInappropriateDescriptionFailure;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
@@ -53,58 +56,84 @@ class TaskDefinitionPartFailuresTest {
         assertHasPrivateParameterlessCtor(TaskDefinitionPartFailures.class);
     }
 
-    @Test
-    @DisplayName("throw CannotCreateDraft failure")
-    void throwCannotCreateDraft() {
-        final CreateDraft cmd = CreateDraft.newBuilder()
-                                           .setId(taskId)
-                                           .build();
-        final CommandContext ctx = CommandContext.getDefaultInstance();
+    @Nested
+    @DisplayName("ChangeStatusFailures should")
+    class ChangeStatusFailuresTest {
 
-        final CannotCreateDraft failure = assertThrows(CannotCreateDraft.class,
-                                                       () -> throwCannotCreateDraftFailure(cmd
-                                                       ));
-        final TaskId actual = failure.getFailureMessage()
-                                     .getCreateDraftFailed()
-                                     .getFailureDetails()
-                                     .getTaskId();
-        assertEquals(taskId, actual);
+        @Test
+        @DisplayName("have the private constructor")
+        void havePrivateConstructor() {
+            assertHasPrivateParameterlessCtor(ChangeStatusFailures.class);
+        }
     }
 
-    @Test
-    @DisplayName("throw CannotUpdateTaskDescription failure")
-    void throwCannotUpdateTaskDescriptionFailure() {
-        final UpdateTaskDescription cmd = UpdateTaskDescription.newBuilder()
-                                                               .setId(taskId)
-                                                               .build();
-        final CommandContext ctx = CommandContext.getDefaultInstance();
+    @Nested
+    @DisplayName("TaskCreationFailures should")
+    class TaskCreationFailuresTest {
 
-        final CannotUpdateTaskDescription failure =
-                assertThrows(CannotUpdateTaskDescription.class,
-                             () -> throwCannotUpdateTaskDescription(cmd));
-        final FailedTaskCommandDetails failedCommand = failure.getFailureMessage()
-                                                              .getUpdateFailed()
-                                                              .getFailureDetails();
-        final TaskId actualId = failedCommand.getTaskId();
-        assertEquals(taskId, actualId);
+        @Test
+        @DisplayName("have the private constructor")
+        void havePrivateConstructor() {
+            assertHasPrivateParameterlessCtor(TaskCreationFailures.class);
+        }
+
+        @Test
+        @DisplayName("throw CannotCreateDraft failure")
+        void throwCannotCreateDraft() {
+            final CreateDraft cmd = CreateDraft.newBuilder()
+                                               .setId(taskId)
+                                               .build();
+            final CannotCreateDraft failure = assertThrows(CannotCreateDraft.class,
+                                                           () -> throwCannotCreateDraftFailure(
+                                                                   cmd));
+            final TaskId actual = failure.getFailureMessage()
+                                         .getCreateDraftFailed()
+                                         .getFailureDetails()
+                                         .getTaskId();
+            assertEquals(taskId, actual);
+        }
     }
 
-    @Test
-    @DisplayName("throw CannotCreateTaskWithInappropriateDescription failure")
-    void throwCannotCreateTaskWithInappropriateDescription() {
-        final CreateBasicTask cmd = CreateBasicTask.newBuilder()
-                                                   .setId(taskId)
-                                                   .build();
-        final CommandContext ctx = CommandContext.getDefaultInstance();
+    @Nested
+    @DisplayName("UpdateFailures should")
+    class UpdateFailuresTest {
 
-        final CannotCreateTaskWithInappropriateDescription failure =
-                assertThrows(CannotCreateTaskWithInappropriateDescription.class,
-                             () -> throwCannotCreateTaskWithInappropriateDescriptionFailure(cmd
-                             ));
-        final TaskId actual = failure.getFailureMessage()
-                                     .getCreateTaskFailed()
-                                     .getFailureDetails()
-                                     .getTaskId();
-        assertEquals(taskId, actual);
+        @Test
+        @DisplayName("have the private constructor")
+        void havePrivateConstructor() {
+            assertHasPrivateParameterlessCtor(UpdateFailures.class);
+        }
+
+        @Test
+        @DisplayName("throw CannotUpdateTaskDueDate failure")
+        void throwCannotUpdateTaskDueDateFailure() {
+            final UpdateTaskDueDate cmd = UpdateTaskDueDate.newBuilder()
+                                                           .setId(taskId)
+                                                           .build();
+            final CannotUpdateTaskDueDate failure =
+                    assertThrows(CannotUpdateTaskDueDate.class,
+                                 () -> throwCannotUpdateTaskDueDate(cmd));
+            final FailedTaskCommandDetails failedCommand = failure.getFailureMessage()
+                                                                  .getUpdateFailed()
+                                                                  .getFailureDetails();
+            final TaskId actualId = failedCommand.getTaskId();
+            assertEquals(taskId, actualId);
+        }
+
+        @Test
+        @DisplayName("throw CannotUpdateTaskDescription failure")
+        void throwCannotUpdateTaskDescriptionFailure() {
+            final UpdateTaskDescription cmd = UpdateTaskDescription.newBuilder()
+                                                                   .setId(taskId)
+                                                                   .build();
+            final CannotUpdateTaskDescription failure =
+                    assertThrows(CannotUpdateTaskDescription.class,
+                                 () -> throwCannotUpdateTaskDescription(cmd));
+            final FailedTaskCommandDetails failedCommand = failure.getFailureMessage()
+                                                                  .getUpdateFailed()
+                                                                  .getFailureDetails();
+            final TaskId actualId = failedCommand.getTaskId();
+            assertEquals(taskId, actualId);
+        }
     }
 }

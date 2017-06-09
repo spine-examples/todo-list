@@ -21,11 +21,6 @@
 package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
-import io.spine.server.aggregate.AggregateCommandDispatcher;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import io.spine.base.Command;
 import io.spine.change.ValueMismatch;
 import io.spine.envelope.CommandEnvelope;
@@ -41,18 +36,23 @@ import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
 import io.spine.examples.todolist.c.failures.CannotUpdateLabelDetails;
 import io.spine.examples.todolist.c.failures.Failures;
 import io.spine.test.AggregateCommandTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.google.protobuf.Any.pack;
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.base.Identifier.newUuid;
+import static io.spine.examples.todolist.c.aggregate.LabelAggregate.DEFAULT_LABEL_COLOR;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.UPDATED_LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.updateLabelDetailsInstance;
+import static io.spine.protobuf.AnyPacker.pack;
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Illia Shepilov
@@ -87,7 +87,7 @@ class LabelAggregateTest {
             final TaskLabel state = aggregate.getState();
 
             assertEquals(getLabelId(), state.getId());
-            assertEquals(LabelColor.GRAY, state.getColor());
+            assertEquals(DEFAULT_LABEL_COLOR, state.getColor());
             assertEquals(LABEL_TITLE, state.getTitle());
         }
     }
@@ -111,7 +111,8 @@ class LabelAggregateTest {
         @DisplayName("produce LabelDetailsUpdated event")
         void produceEvent() {
             final UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(getLabelId());
-            final List<? extends Message> messageList = dispatchUpdateLabelDetails(updateLabelDetails);
+            final List<? extends Message> messageList =
+                    dispatchUpdateLabelDetails(updateLabelDetails);
 
             assertEquals(1, messageList.size());
             assertEquals(LabelDetailsUpdated.class, messageList.get(0)
@@ -175,8 +176,7 @@ class LabelAggregateTest {
             createCommand(updateLabelDetails);
             final CannotUpdateLabelDetails failure =
                     assertThrows(CannotUpdateLabelDetails.class,
-                                 () -> aggregate.handle(commandMessage().get(),
-                                                        commandContext().get()));
+                                 () -> aggregate.handle(commandMessage().get()));
             final Failures.CannotUpdateLabelDetails cannotUpdateLabelDetails =
                     failure.getFailureMessage();
             final LabelDetailsUpdateFailed labelDetailsUpdateFailed =

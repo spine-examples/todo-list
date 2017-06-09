@@ -153,13 +153,3 @@ message CannotUpdateTaskWithInappropriateDescription {
     // Failed the description update.
     DescriptionUpdateFailed update_failed = 1;
 }
-
-// The failure to create a task.
-//
-// It is thrown if an attempt is made to create the task
-// when the suggested description has less than three symbols.
-message CannotCreateTaskWithInappropriateDescription {
-
-    // Failed the task creation.
-    CreateBasicTaskFailed create_task_failed = 1;
-}

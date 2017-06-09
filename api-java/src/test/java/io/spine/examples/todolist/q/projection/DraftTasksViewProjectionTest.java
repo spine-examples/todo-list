@@ -43,6 +43,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.UPDATED_LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestLabelEventFactory.labelDetailsUpdatedInstance;
 import static io.spine.examples.todolist.testdata.TestTaskEventFactory.ChangeStatusEvents.taskDeletedInstance;
@@ -79,7 +80,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
 
     private void taskDraftCreated() {
         final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
-        dispatch(projection, taskDraftCreatedEvent, EventContext.getDefaultInstance());
+        dispatch(projection, createEvent(taskDraftCreatedEvent));
     }
 
     @Nested
@@ -112,7 +113,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
             taskDraftCreated();
 
             final TaskDraftFinalized taskDraftFinalizedEvent = taskDraftFinalizedInstance();
-            dispatch(projection, taskDraftFinalizedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(taskDraftFinalizedEvent));
 
             final List<TaskView> views = projection.getState()
                                                    .getDraftTasks()
@@ -131,7 +132,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
             taskDraftCreated();
 
             final TaskDeleted taskDeletedEvent = taskDeletedInstance();
-            dispatch(projection, taskDeletedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(taskDeletedEvent));
 
             final List<TaskView> views = projection.getState()
                                                    .getDraftTasks()
@@ -148,12 +149,12 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
         @DisplayName("update the task description in DraftTaskView")
         void updateDescription() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
-            dispatch(projection, taskDraftCreatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(taskDraftCreatedEvent));
 
             final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
             final TaskDescriptionUpdated descriptionUpdatedEvent =
                     taskDescriptionUpdatedInstance(expectedTaskId, UPDATED_DESCRIPTION);
-            dispatch(projection, descriptionUpdatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(descriptionUpdatedEvent));
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
@@ -174,7 +175,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskDescriptionUpdated descriptionUpdatedEvent =
                     taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), updatedDescription);
-            dispatch(projection, descriptionUpdatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(descriptionUpdatedEvent));
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
@@ -195,14 +196,14 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
         @DisplayName("update the task due date in DraftTaskView")
         void updateDueDate() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
-            dispatch(projection, taskDraftCreatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(taskDraftCreatedEvent));
 
             final Timestamp updatedDueDate = getCurrentTime();
             final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
 
             final TaskDueDateUpdated taskDueDateUpdatedEvent =
                     taskDueDateUpdatedInstance(expectedTaskId, updatedDueDate);
-            dispatch(projection, taskDueDateUpdatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(taskDueDateUpdatedEvent));
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
@@ -223,7 +224,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskDueDateUpdated taskDueDateUpdatedEvent =
                     taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), updatedDueDate);
-            dispatch(projection, taskDueDateUpdatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(taskDueDateUpdatedEvent));
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
@@ -244,14 +245,14 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
         @DisplayName("update the task priority in DraftTasksView")
         void updatesPriority() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
-            dispatch(projection, taskDraftCreatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(taskDraftCreatedEvent));
 
             final TaskPriority updatedTaskPriority = TaskPriority.LOW;
             final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
 
             final TaskPriorityUpdated taskPriorityUpdatedEvent =
                     taskPriorityUpdatedInstance(expectedTaskId, updatedTaskPriority);
-            dispatch(projection, taskPriorityUpdatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(taskPriorityUpdatedEvent));
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
@@ -272,7 +273,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskPriorityUpdated taskPriorityUpdatedEvent =
                     taskPriorityUpdatedInstance(TaskId.getDefaultInstance(), updatedTaskPriority);
-            dispatch(projection, taskPriorityUpdatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(taskPriorityUpdatedEvent));
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
@@ -293,19 +294,19 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
         @DisplayName("update the label details in DraftTasksView")
         void updateLabelDetails() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
-            dispatch(projection, taskDraftCreatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(taskDraftCreatedEvent));
 
             final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
 
             final LabelAssignedToTask labelAssignedToTaskEvent =
                     labelAssignedToTaskInstance(expectedTaskId, LABEL_ID);
-            dispatch(projection, labelAssignedToTaskEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(labelAssignedToTaskEvent));
 
             final LabelColor updatedColor = LabelColor.BLUE;
 
             final LabelDetailsUpdated labelDetailsUpdatedEvent =
                     labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
-            dispatch(projection, labelDetailsUpdatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(labelDetailsUpdatedEvent));
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
@@ -321,19 +322,21 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
         @DisplayName("not update label details in DraftTasksView by wrong label id")
         void doesNotUpdateLabelDetails() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
-            dispatch(projection, taskDraftCreatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(taskDraftCreatedEvent));
 
             final TaskId expectedTaskId = taskDraftCreatedEvent.getId();
-
+            final LabelId wrongLabelId = LabelId.newBuilder()
+                                                .setValue(newUuid())
+                                                .build();
             final LabelAssignedToTask labelAssignedToTaskEvent =
-                    labelAssignedToTaskInstance(expectedTaskId, LabelId.getDefaultInstance());
-            dispatch(projection, labelAssignedToTaskEvent, EventContext.getDefaultInstance());
+                    labelAssignedToTaskInstance(expectedTaskId, wrongLabelId);
+            dispatch(projection, createEvent(labelAssignedToTaskEvent));
 
             final LabelColor updatedColor = LabelColor.BLUE;
 
             final LabelDetailsUpdated labelDetailsUpdatedEvent =
                     labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
-            dispatch(projection, labelDetailsUpdatedEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(labelDetailsUpdatedEvent));
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
@@ -356,10 +359,10 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
             taskDraftCreated();
 
             final LabelAssignedToTask labelAssignedToTaskEvent = labelAssignedToTaskInstance();
-            dispatch(projection, labelAssignedToTaskEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(labelAssignedToTaskEvent));
 
             final LabelRemovedFromTask labelRemovedFromTaskEvent = labelRemovedFromTaskInstance();
-            dispatch(projection, labelRemovedFromTaskEvent, EventContext.getDefaultInstance());
+            dispatch(projection, createEvent(labelRemovedFromTaskEvent));
 
             final TaskListView taskListView = projection.getState()
                                                         .getDraftTasks();
