@@ -93,29 +93,6 @@ public class TaskDefinitionPartFailures {
          * Constructs and throws the {@link CannotUpdateTaskDescription} failure
          * according to the passed parameters.
          *
-         * @param cmd      the {@code UpdateTaskDescription} command which thrown the failure
-         * @param mismatch the {@link ValueMismatch}
-         * @throws CannotUpdateTaskDescription the failure to throw
-         */
-        public static void throwCannotUpdateTaskDescription(
-                UpdateTaskDescription cmd, ValueMismatch mismatch)
-                throws CannotUpdateTaskDescription {
-            final FailedTaskCommandDetails commandFailed =
-                    FailedTaskCommandDetails.newBuilder()
-                                            .setTaskId(cmd.getId())
-                                            .build();
-            final DescriptionUpdateFailed descriptionUpdateFailed =
-                    DescriptionUpdateFailed.newBuilder()
-                                           .setFailureDetails(commandFailed)
-                                           .setDescriptionMismatch(mismatch)
-                                           .build();
-            throw new CannotUpdateTaskDescription(descriptionUpdateFailed);
-        }
-
-        /**
-         * Constructs and throws the {@link CannotUpdateTaskDescription} failure
-         * according to the passed parameters.
-         *
          * @param cmd the {@code UpdateTaskDescription} command which thrown the failure
          * @throws CannotUpdateTaskDescription the failure to throw
          */

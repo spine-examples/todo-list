@@ -95,8 +95,8 @@ class TaskLabelsPartTest {
         }
 
         @Test
-        @DisplayName("apply LabelAssignedToTask event")
-        void applyEvent() {
+        @DisplayName("assign a label to the task")
+        void assignLabelToTask() {
             dispatch(taskLabelsPart, CommandEnvelope.of(command().get()));
 
             final TaskLabels state = taskLabelsPart.getState();
@@ -162,8 +162,8 @@ class TaskLabelsPartTest {
         }
 
         @Test
-        @DisplayName("apply LabelRemovedFromTask event")
-        void applyEvent() {
+        @DisplayName("remove a label from the task")
+        void removeLabelFromTask() {
             createBasicTask();
             dispatchAssignLabelToTask();
             final List<LabelId> labelIdsBeforeRemove = taskLabelsPart.getState()

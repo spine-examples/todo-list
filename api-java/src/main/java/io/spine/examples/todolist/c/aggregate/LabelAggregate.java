@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.c.aggregate;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Message;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.LabelColor;
@@ -50,6 +51,9 @@ import static io.spine.examples.todolist.c.aggregate.failures.LabelAggregateFail
 @SuppressWarnings("unused" /* The methods annotated with {@link Apply}
                               are declared {@code private} by design. */)
 public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelValidatingBuilder> {
+
+    @VisibleForTesting
+    static final LabelColor DEFAULT_LABEL_COLOR = LabelColor.GRAY;
 
     /**
      * {@inheritDoc}
@@ -106,7 +110,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelValid
         getBuilder().setId(event.getId())
                     .setTitle(event.getDetails()
                                    .getTitle())
-                    .setColor(LabelColor.GRAY);
+                    .setColor(DEFAULT_LABEL_COLOR);
     }
 
     @Apply

@@ -62,12 +62,12 @@ public class FinalizeDraftTest extends TaskDefinitionCommandTest<FinalizeDraft> 
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         dispatch(aggregate, envelopeOf(createDraftCmd));
 
-        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
         TaskDefinition state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
         assertEquals(DRAFT, state.getTaskStatus());
 
+        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
         dispatch(aggregate, envelopeOf(finalizeDraftCmd));
         state = aggregate.getState();
 

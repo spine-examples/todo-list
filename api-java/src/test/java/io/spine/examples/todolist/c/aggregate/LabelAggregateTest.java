@@ -44,6 +44,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static io.spine.base.Identifier.newUuid;
+import static io.spine.examples.todolist.c.aggregate.LabelAggregate.DEFAULT_LABEL_COLOR;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.UPDATED_LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
@@ -86,7 +87,7 @@ class LabelAggregateTest {
             final TaskLabel state = aggregate.getState();
 
             assertEquals(getLabelId(), state.getId());
-            assertEquals(LabelColor.GRAY, state.getColor());
+            assertEquals(DEFAULT_LABEL_COLOR, state.getColor());
             assertEquals(LABEL_TITLE, state.getTitle());
         }
     }
