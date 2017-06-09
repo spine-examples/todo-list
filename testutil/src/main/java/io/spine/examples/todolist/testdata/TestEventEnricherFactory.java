@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.testdata;
 
+import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
@@ -42,7 +43,9 @@ import static io.spine.time.Time.getCurrentTime;
 public class TestEventEnricherFactory {
 
     public static final String LABEL_TITLE = "title";
-    private static final String DESCRIPTION = "description";
+    private static final String DESCRIPTION = TestTaskEventFactory.DESCRIPTION;
+    private static final Timestamp TASK_DUE_DATE = TestTaskEventFactory.TASK_DUE_DATE;
+    private static final TaskPriority TASK_PRIORITY = TestTaskEventFactory.TASK_PRIORITY;
     private static final TaskDetails TASK_DETAILS = TaskDetails.newBuilder()
                                                                .setDescription(DESCRIPTION)
                                                                .setPriority(TaskPriority.LOW)
@@ -50,8 +53,8 @@ public class TestEventEnricherFactory {
     private static final TaskDefinition TASK_DEFINITION =
             TaskDefinition.newBuilder()
                           .setDescription(DESCRIPTION)
-                          .setDueDate(getCurrentTime())
-                          .setPriority(TaskPriority.NORMAL)
+                          .setDueDate(TASK_DUE_DATE)
+                          .setPriority(TASK_PRIORITY)
                           .build();
     private static final LabelDetails LABEL_DETAILS = LabelDetails.newBuilder()
                                                                   .setColor(LabelColor.BLUE)
