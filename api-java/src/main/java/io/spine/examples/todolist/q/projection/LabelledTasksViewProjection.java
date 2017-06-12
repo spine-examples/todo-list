@@ -61,7 +61,7 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
 @SuppressWarnings("OverlyCoupledClass")
 public class LabelledTasksViewProjection extends Projection<LabelId,
                                                             LabelledTasksView,
-                                                            LabelledTasksViewValidatingBuilder> {
+                                                            LabelledTasksViewVBuilder> {
 
     /**
      * Creates a new instance.

@@ -255,7 +255,7 @@ public abstract class Mode {
         return result;
     }
 
-    protected void sendMessageToUser(String message) throws IOException {
+    protected void sendMessageToUser(String message) {
         System.out.println(message);
     }
 

@@ -28,7 +28,7 @@ import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.TaskDefinition;
-import io.spine.examples.todolist.TaskDefinitionValidatingBuilder;
+import io.spine.examples.todolist.TaskDefinitionVBuilder;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
@@ -110,7 +110,7 @@ import static java.util.Collections.singletonList;
                                                  that class also overly coupled.*/
 public class TaskDefinitionPart extends AggregatePart<TaskId,
                                                       TaskDefinition,
-                                                      TaskDefinitionValidatingBuilder,
+                                                      TaskDefinitionVBuilder,
                                                       TaskAggregateRoot> {
 
     private static final int MIN_DESCRIPTION_LENGTH = 3;

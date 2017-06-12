@@ -26,7 +26,7 @@ import io.spine.examples.todolist.LabelIdsList;
 import io.spine.examples.todolist.TaskDefinition;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
-import io.spine.examples.todolist.TaskLabelsValidatingBuilder;
+import io.spine.examples.todolist.TaskLabelsVBuilder;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
 import io.spine.examples.todolist.c.events.LabelAssignedToTask;
@@ -55,7 +55,7 @@ import static java.util.Collections.singletonList;
 @SuppressWarnings("unused" /* The methods annotated with {@link Apply}
                               are declared {@code private} by design. */)
 public class TaskLabelsPart
-        extends AggregatePart<TaskId, TaskLabels, TaskLabelsValidatingBuilder, TaskAggregateRoot> {
+        extends AggregatePart<TaskId, TaskLabels, TaskLabelsVBuilder, TaskAggregateRoot> {
 
     /**
      * {@inheritDoc}
