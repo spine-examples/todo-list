@@ -102,7 +102,8 @@ public class LabelledTasksMode extends CommonMode {
                 "***************** Labelled tasks menu ****************" + LINE_SEPARATOR;
         static final String LABELLED_TASKS_PROMPT = "labelled-tasks>";
         static final String EMPTY_LABELLED_TASKS = "No labelled tasks.";
-        static final String HELP_MESSAGE = "0:    Help." + LINE_SEPARATOR +
+        static final String HELP_MESSAGE =
+                "0:    Help." + LINE_SEPARATOR +
                 "1:    Show the labelled tasks." + LINE_SEPARATOR +
                 CommonMode.CommonModeConstants.HELP_MESSAGE +
                 BACK_TO_THE_MENU_MESSAGE;

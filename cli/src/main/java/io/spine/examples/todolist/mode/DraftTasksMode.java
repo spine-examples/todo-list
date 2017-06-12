@@ -129,7 +129,8 @@ class DraftTasksMode extends CommonMode {
         static final String DRAFT_TASKS_PROMPT = "draft-tasks>";
         static final String EMPTY_DRAFT_TASKS = "No draft tasks.";
         static final String DRAFT_FINALIZED_MESSAGE = "Task with id value: %s is finalized.";
-        static final String HELP_MESSAGE = "0:    Help." + LINE_SEPARATOR +
+        static final String HELP_MESSAGE =
+                "0:    Help." + LINE_SEPARATOR +
                 "1:    Show the tasks in the draft state." + LINE_SEPARATOR +
                 CommonMode.CommonModeConstants.HELP_MESSAGE + LINE_SEPARATOR +
                 "12:   Finalize the draft." + LINE_SEPARATOR +

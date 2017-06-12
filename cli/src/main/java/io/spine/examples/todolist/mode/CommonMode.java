@@ -399,31 +399,25 @@ abstract class CommonMode extends Mode {
         static final String ENTER_ID_MESSAGE =
                 "Please enter the task ID: " + LINE_SEPARATOR + CANCEL_HINT;
         static final String ENTER_NEW_DESCRIPTION_MESSAGE =
-                "Please enter the new task description: " +
-                        LINE_SEPARATOR + CANCEL_HINT;
+                "Please enter the new task description: " + LINE_SEPARATOR + CANCEL_HINT;
         static final String ENTER_PREVIOUS_DESCRIPTION_MESSAGE =
-                "Please enter the previous task description: " +
-                        LINE_SEPARATOR + CANCEL_HINT;
-        static final String ENTER_NEW_PRIORITY_MESSAGE = "Please enter the new task priority: " +
-                LINE_SEPARATOR + CANCEL_HINT;
+                "Please enter the previous task description: " + LINE_SEPARATOR + CANCEL_HINT;
+        static final String ENTER_NEW_PRIORITY_MESSAGE =
+                "Please enter the new task priority: " + LINE_SEPARATOR + CANCEL_HINT;
         static final String ENTER_PREVIOUS_PRIORITY_MESSAGE =
-                "Please enter the previous task priority: " +
-                        LINE_SEPARATOR + CANCEL_HINT;
-        static final String ENTER_NEW_DATE_MESSAGE = "Please enter the new task due date: " +
-                LINE_SEPARATOR + CANCEL_HINT;
+                "Please enter the previous task priority: " + LINE_SEPARATOR + CANCEL_HINT;
+        static final String ENTER_NEW_DATE_MESSAGE =
+                "Please enter the new task due date: " + LINE_SEPARATOR + CANCEL_HINT;
         static final String ENTER_PREVIOUS_DATE_MESSAGE =
-                "Please enter the previous task due date: " +
-                        LINE_SEPARATOR + CANCEL_HINT;
-        static final String ENTER_NEW_TITLE_MESSAGE = "Please enter the new label title: " +
-                LINE_SEPARATOR + CANCEL_HINT;
+                "Please enter the previous task due date: " + LINE_SEPARATOR + CANCEL_HINT;
+        static final String ENTER_NEW_TITLE_MESSAGE =
+                "Please enter the new label title: " + LINE_SEPARATOR + CANCEL_HINT;
         static final String ENTER_PREVIOUS_TITLE_MESSAGE =
-                "Please enter the previous label title: " +
-                        LINE_SEPARATOR + CANCEL_HINT;
+                "Please enter the previous label title: " + LINE_SEPARATOR + CANCEL_HINT;
         static final String ENTER_NEW_COLOR_MESSAGE = "Please enter the new label color: " +
                 LINE_SEPARATOR + CANCEL_HINT;
         static final String ENTER_PREVIOUS_COLOR_MESSAGE =
-                "Please enter the previous label color: " +
-                        LINE_SEPARATOR + CANCEL_HINT;
+                "Please enter the previous label color: " + LINE_SEPARATOR + CANCEL_HINT;
         static final String UPDATED_DESCRIPTION_MESSAGE = "The task description updated. %s --> %s";
         static final String UPDATED_PRIORITY_MESSAGE = "The task priority updated. %s --> %s";
         static final String UPDATED_DUE_DATE_MESSAGE = "The task due date updated. %s --> %s";
@@ -431,7 +425,8 @@ abstract class CommonMode extends Mode {
                 "The label details updated." + LINE_SEPARATOR +
                         "The label color: %s --> %s." + LINE_SEPARATOR +
                         "The label title: %s --> %s";
-        static final String HELP_MESSAGE = "2:    Update the task description." + LINE_SEPARATOR +
+        static final String HELP_MESSAGE =
+                "2:    Update the task description." + LINE_SEPARATOR +
                 "3:    Update the task priority." + LINE_SEPARATOR +
                 "4:    Update the task due date." + LINE_SEPARATOR +
                 "5:    Update the label details." + LINE_SEPARATOR +
