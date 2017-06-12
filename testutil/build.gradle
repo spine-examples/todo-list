@@ -21,7 +21,7 @@
 dependencies {
     compile project(path: ':api-java')
     compile project(path: ':model')
-    compile("org.spine3:spine-testutil-core:${spineVersion}") {
+    compile("io.spine:spine-testutil-core:${spineVersion}") {
         // We are using JUnit 5.x instead of 4.x dependency of Spine testing framework.
         exclude group: 'junit'
     }

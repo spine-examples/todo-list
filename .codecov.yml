@@ -9,9 +9,9 @@ coverage:
   ignore:
   - generated/*
   - test/*
-  - testutil/src/main/java/org/spine3/examples/todolist/testdata/*
-  - cli/src/main/java/org/spine3/examples/todolist/mode/*
-  - cli/src/main/java/org/spine3/examples/todolist/CliEntryPoint.java
+  - testutil/src/main/java/io/spine/examples/todolist/testdata/*
+  - cli/src/main/java/io/spine/examples/todolist/mode/*
+  - cli/src/main/java/io/spine/examples/todolist/CliEntryPoint.java
 
   status:
     patch: false

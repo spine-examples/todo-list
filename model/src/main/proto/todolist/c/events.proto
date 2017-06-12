@@ -23,15 +23,14 @@ syntax = "proto3";
 package spine.examples.todolist;
 
 option (type_url_prefix) = "type.spine.examples.todolist";
-option java_package = "org.spine3.examples.todolist.c.events";
+option java_package = "io.spine.examples.todolist.c.events";
 option java_outer_classname = "EventsProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
 import "google/protobuf/timestamp.proto";
 
-import "spine/annotations.proto";
-import "spine/validate.proto";
+import "spine/options.proto";
 import "spine/change/change.proto";
 
 import "todolist/identifiers.proto";
@@ -71,7 +70,7 @@ message TaskDraftCreated {
     TaskId id = 1;
 
     // Details of the created task draft.
-    TaskDetails details = 2;
+    TaskDetails details = 2 [(required) = true];
 
     // The draft creation time.
     //
@@ -96,7 +95,8 @@ message TaskDescriptionUpdated {
 
     // Reserved for future extension.
     //
-    // For instance, to mark the start and end positions of the text changed (useful for huge task descriptions).
+    // For instance, to mark the start and end positions of the text changed (useful for
+    // huge task descriptions).
     reserved 3 to 10;
 }
 
@@ -114,7 +114,8 @@ message TaskPriorityUpdated {
 
     // Reserved for future extension.
     //
-    // For instance, to mark the start and end positions of the text changed (useful for huge task descriptions).
+    // For instance, to mark the start and end positions of the text changed (useful for
+    // huge task descriptions).
     reserved 3 to 10;
 }
 
