@@ -98,8 +98,8 @@ class CreateTaskMode extends Mode {
 
     private void initModeMap() {
         map.put("0", new HelpMode(reader, HELP_MESSAGE));
-        map.put("1", new CreateTaskDM(reader));
-        map.put("2", new CreateTaskFM(reader));
+        map.put("1", new CreateTaskFullMode(reader));
+        map.put("2", new CreateTaskDraftMode(reader));
     }
 
     @Override
@@ -183,9 +183,9 @@ class CreateTaskMode extends Mode {
         this.dueDate = Timestamp.getDefaultInstance();
     }
 
-    class CreateTaskFM extends Mode {
+    class CreateTaskFullMode extends Mode {
 
-        private CreateTaskFM(ConsoleReader reader) {
+        private CreateTaskFullMode(ConsoleReader reader) {
             super(reader);
         }
 
@@ -213,8 +213,8 @@ class CreateTaskMode extends Mode {
 
             final String userFriendlyDate = constructUserFriendlyDate(toMillis(dueDate));
             final String idValue = taskId.getValue();
-            final String result = format(CREATED_TASK_MESSAGE, idValue, description, priority,
-                                         userFriendlyDate);
+            final String result = format(CREATED_TASK_MESSAGE,
+                                         idValue, description, priority, userFriendlyDate);
             sendMessageToUser(result);
 
             clearValues();
@@ -235,9 +235,9 @@ class CreateTaskMode extends Mode {
         }
     }
 
-    class CreateTaskDM extends Mode {
+    class CreateTaskDraftMode extends Mode {
 
-        private CreateTaskDM(ConsoleReader reader) {
+        private CreateTaskDraftMode(ConsoleReader reader) {
             super(reader);
         }
 
@@ -267,8 +267,8 @@ class CreateTaskMode extends Mode {
 
             final String userFriendlyDate = constructUserFriendlyDate(toMillis(dueDate));
             final String idValue = taskId.getValue();
-            final String result = format(CREATED_DRAFT_MESSAGE, idValue, description, priority,
-                                         userFriendlyDate);
+            final String result = format(CREATED_DRAFT_MESSAGE,
+                                         idValue, description, priority, userFriendlyDate);
             sendMessageToUser(result);
 
             finalizeDraftIfNeeded(taskId);
