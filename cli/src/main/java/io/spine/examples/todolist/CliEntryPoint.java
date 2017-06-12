@@ -20,15 +20,16 @@
 
 package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.mode.Mode;
-import io.spine.server.BoundedContext;
-import io.spine.util.Exceptions;
-import jline.console.ConsoleReader;
 import io.spine.examples.todolist.client.CommandLineTodoClient;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.context.TodoListBoundedContext;
 import io.spine.examples.todolist.mode.GeneralMode;
+import io.spine.examples.todolist.mode.Mode;
 import io.spine.examples.todolist.server.Server;
+import io.spine.server.BoundedContext;
+import jline.TerminalFactory.Flavor;
+import jline.UnsupportedTerminal;
+import jline.console.ConsoleReader;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -36,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
+import static jline.TerminalFactory.registerFlavor;
 
 /**
  * @author Illia Shepilov
@@ -46,10 +48,16 @@ public class CliEntryPoint {
     }
 
     public static void main(String[] args) throws Exception {
+        // Need this to support IntelliJ console on Windows.
+        // See https://github.com/jline/jline2/issues/185.
+        registerFlavor(Flavor.WINDOWS, UnsupportedTerminal.class);
+
         final BoundedContext boundedContext = TodoListBoundedContext.getInstance();
         final Server server = new Server(boundedContext);
         startServer(server);
-        final TodoClient client = new CommandLineTodoClient("localhost", DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
+        final TodoClient client = new CommandLineTodoClient("localhost",
+                                                            DEFAULT_CLIENT_SERVICE_PORT,
+                                                            boundedContext);
         final ConsoleReader reader = new ConsoleReader();
         final Mode entryPoint = new GeneralMode(client, reader);
         entryPoint.start();
