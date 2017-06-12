@@ -20,14 +20,15 @@
 
 package io.spine.examples.todolist.mode;
 
-import jline.console.ConsoleReader;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
+import jline.console.ConsoleReader;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyLabelledTasks;
 import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
 import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksModeConstants.EMPTY_LABELLED_TASKS;
 import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksModeConstants.HELP_MESSAGE;
@@ -58,7 +59,8 @@ public class LabelledTasksMode extends CommonMode {
         reader.setPrompt(LABELLED_TASKS_PROMPT);
         sendMessageToUser(LABELLED_TASKS_MENU);
 
-        final ShowLabelledTasksMode showLabelledTasksMode = new ShowLabelledTasksMode(client, reader);
+        final ShowLabelledTasksMode showLabelledTasksMode = new ShowLabelledTasksMode(client,
+                                                                                      reader);
         initModeMap(showLabelledTasksMode);
 
         showLabelledTasksMode.start();
@@ -88,15 +90,16 @@ public class LabelledTasksMode extends CommonMode {
         @Override
         public void start() throws IOException {
             final List<LabelledTasksView> labelledTasks = client.getLabelledTasksView();
-            final String message = labelledTasks.isEmpty() ? EMPTY_LABELLED_TASKS :
-                                   DisplayHelper.constructUserFriendlyLabelledTasks(labelledTasks);
+            final String message = labelledTasks.isEmpty()
+                                   ? EMPTY_LABELLED_TASKS
+                                   : constructUserFriendlyLabelledTasks(labelledTasks);
             sendMessageToUser(message);
         }
     }
 
     static class LabelledTasksModeConstants {
-        static final String LABELLED_TASKS_MENU = "***************** Labelled tasks menu ****************" +
-                LINE_SEPARATOR;
+        static final String LABELLED_TASKS_MENU =
+                "***************** Labelled tasks menu ****************" + LINE_SEPARATOR;
         static final String LABELLED_TASKS_PROMPT = "labelled-tasks>";
         static final String EMPTY_LABELLED_TASKS = "No labelled tasks.";
         static final String HELP_MESSAGE = "0:    Help." + LINE_SEPARATOR +

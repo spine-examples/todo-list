@@ -20,13 +20,14 @@
 
 package io.spine.examples.todolist.mode;
 
-import jline.console.ConsoleReader;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.MyListView;
+import jline.console.ConsoleReader;
 
 import java.io.IOException;
 import java.util.Map;
 
+import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyMyList;
 import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
 import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK;
 import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
@@ -90,7 +91,9 @@ public class MyTasksMode extends CommonMode {
             final int itemsCount = myListView.getMyList()
                                              .getItemsCount();
             final boolean isEmpty = itemsCount == 0;
-            final String message = isEmpty ? EMPTY_MY_LIST_TASKS : DisplayHelper.constructUserFriendlyMyList(myListView);
+            final String message = isEmpty
+                                   ? EMPTY_MY_LIST_TASKS
+                                   : constructUserFriendlyMyList(myListView);
             sendMessageToUser(message);
 
         }
@@ -98,7 +101,8 @@ public class MyTasksMode extends CommonMode {
 
     static class MyTasksModeConstants {
 
-        static final String MY_TASKS_MENU = "******************** My tasks menu *******************" + LINE_SEPARATOR;
+        static final String MY_TASKS_MENU =
+                "******************** My tasks menu *******************" + LINE_SEPARATOR;
         static final String MY_TASKS_PROMPT = "my-tasks>";
         static final String EMPTY_MY_LIST_TASKS = "Task list is empty.";
         static final String HELP_MESSAGE = "0:    Help." + LINE_SEPARATOR +

@@ -21,8 +21,6 @@
 package io.spine.examples.todolist.mode;
 
 import com.google.protobuf.Timestamp;
-import com.google.protobuf.util.Timestamps;
-import jline.console.ConsoleReader;
 import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
 import io.spine.examples.todolist.LabelColor;
@@ -43,6 +41,7 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.client.TodoClient;
+import jline.console.ConsoleReader;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -77,6 +76,7 @@ import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateLabel
 import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateTaskDescriptionCmd;
 import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateTaskDueDateCmd;
 import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateTaskPriorityCmd;
+import static java.lang.String.format;
 
 /**
  * @author Illia Shepilov
@@ -129,10 +129,14 @@ abstract class CommonMode extends Mode {
                 return;
             }
             final StringChange change = createStringChange(newDescription, previousDescription);
-            final UpdateTaskDescription updateTaskDescription = createUpdateTaskDescriptionCmd(taskId, change);
+            final UpdateTaskDescription updateTaskDescription =
+                    createUpdateTaskDescriptionCmd(taskId, change);
             client.update(updateTaskDescription);
-            final String previousDescriptionValue = previousDescription.isEmpty() ? DEFAULT_VALUE : previousDescription;
-            final String message = String.format(UPDATED_DESCRIPTION_MESSAGE, previousDescriptionValue, newDescription);
+            final String previousDescriptionValue = previousDescription.isEmpty()
+                                                    ? DEFAULT_VALUE
+                                                    : previousDescription;
+            final String message = format(UPDATED_DESCRIPTION_MESSAGE, previousDescriptionValue,
+                                          newDescription);
             sendMessageToUser(message);
 
         }
@@ -156,10 +160,13 @@ abstract class CommonMode extends Mode {
             } catch (InputCancelledException ignored) {
                 return;
             }
-            final PriorityChange change = createPriorityChange(newTaskPriority, previousTaskPriority);
-            final UpdateTaskPriority updateTaskPriority = createUpdateTaskPriorityCmd(taskId, change);
+            final PriorityChange change = createPriorityChange(newTaskPriority,
+                                                               previousTaskPriority);
+            final UpdateTaskPriority updateTaskPriority = createUpdateTaskPriorityCmd(taskId,
+                                                                                      change);
             client.update(updateTaskPriority);
-            final String message = String.format(UPDATED_PRIORITY_MESSAGE, previousTaskPriority, newTaskPriority);
+            final String message = format(UPDATED_PRIORITY_MESSAGE, previousTaskPriority,
+                                          newTaskPriority);
             sendMessageToUser(message);
         }
     }
@@ -187,11 +194,13 @@ abstract class CommonMode extends Mode {
             final UpdateTaskDueDate updateTaskDueDate = createUpdateTaskDueDateCmd(taskId, change);
             client.update(updateTaskDueDate);
             final boolean isEmpty = previousDueDate.getSeconds() == 0;
-            final String previousDueDateForUser = isEmpty ? DEFAULT_VALUE :
-                                                  constructUserFriendlyDate(toMillis(previousDueDate));
-            final String message = String.format(UPDATED_DUE_DATE_MESSAGE,
-                                                 previousDueDateForUser,
-                                                 constructUserFriendlyDate(toMillis(newDueDate)));
+            final String previousDueDateForUser = isEmpty
+                                                  ? DEFAULT_VALUE
+                                                  : constructUserFriendlyDate(
+                                                          toMillis(previousDueDate));
+            final String message = format(UPDATED_DUE_DATE_MESSAGE,
+                                          previousDueDateForUser,
+                                          constructUserFriendlyDate(toMillis(newDueDate)));
             sendMessageToUser(message);
         }
     }
@@ -219,13 +228,16 @@ abstract class CommonMode extends Mode {
                 return;
             }
             final LabelDetails newLabelDetails = createLabelDetails(newTitle, newColor);
-            final LabelDetails previousLabelDetails = createLabelDetails(previousTitle, previousColor);
-            final LabelDetailsChange change = createLabelDetailsChange(newLabelDetails, previousLabelDetails);
-            final UpdateLabelDetails updateLabelDetails = createUpdateLabelDetailsCmd(labelId, change);
+            final LabelDetails previousLabelDetails = createLabelDetails(previousTitle,
+                                                                         previousColor);
+            final LabelDetailsChange change = createLabelDetailsChange(newLabelDetails,
+                                                                       previousLabelDetails);
+            final UpdateLabelDetails updateLabelDetails = createUpdateLabelDetailsCmd(labelId,
+                                                                                      change);
             client.update(updateLabelDetails);
 
-            final String message = String.format(UPDATED_LABEL_DETAILS_MESSAGE,
-                                                 previousColor, newColor, previousTitle, newTitle);
+            final String message = format(UPDATED_LABEL_DETAILS_MESSAGE,
+                                          previousColor, newColor, previousTitle, newTitle);
             sendMessageToUser(message);
         }
     }
@@ -249,10 +261,9 @@ abstract class CommonMode extends Mode {
         }
 
         private DeleteTask createDeleteTaskCmd(TaskId taskId) {
-            final DeleteTask result = DeleteTask.newBuilder()
-                                                .setId(taskId)
-                                                .build();
-            return result;
+            return DeleteTask.newBuilder()
+                             .setId(taskId)
+                             .build();
         }
     }
 
@@ -275,10 +286,9 @@ abstract class CommonMode extends Mode {
         }
 
         private ReopenTask createReopenTaskCmd(TaskId taskId) {
-            final ReopenTask result = ReopenTask.newBuilder()
-                                                .setId(taskId)
-                                                .build();
-            return result;
+            return ReopenTask.newBuilder()
+                             .setId(taskId)
+                             .build();
         }
     }
 
@@ -301,10 +311,9 @@ abstract class CommonMode extends Mode {
         }
 
         private RestoreDeletedTask createRestoreDeletedTaskCmd(TaskId taskId) {
-            final RestoreDeletedTask result = RestoreDeletedTask.newBuilder()
-                                                                .setId(taskId)
-                                                                .build();
-            return result;
+            return RestoreDeletedTask.newBuilder()
+                                     .setId(taskId)
+                                     .build();
         }
     }
 
@@ -350,11 +359,10 @@ abstract class CommonMode extends Mode {
         }
 
         private AssignLabelToTask createAssignLabelToTaskCmd(TaskId taskId, LabelId labelId) {
-            final AssignLabelToTask result = AssignLabelToTask.newBuilder()
-                                                              .setId(taskId)
-                                                              .setLabelId(labelId)
-                                                              .build();
-            return result;
+            return AssignLabelToTask.newBuilder()
+                                    .setId(taskId)
+                                    .setLabelId(labelId)
+                                    .build();
         }
     }
 
@@ -374,48 +382,57 @@ abstract class CommonMode extends Mode {
             } catch (InputCancelledException ignored) {
                 return;
             }
-            final RemoveLabelFromTask removeLabelFromTask = constructRemoveLabelFromTaskCmd(taskId, labelId);
+            final RemoveLabelFromTask removeLabelFromTask = constructRemoveLabelFromTaskCmd(taskId,
+                                                                                            labelId);
             client.removeLabel(removeLabelFromTask);
         }
 
-        private RemoveLabelFromTask constructRemoveLabelFromTaskCmd(TaskId taskId, LabelId labelId) {
-            final RemoveLabelFromTask result = RemoveLabelFromTask.newBuilder()
-                                                                  .setId(taskId)
-                                                                  .setLabelId(labelId)
-                                                                  .build();
-            return result;
+        private RemoveLabelFromTask constructRemoveLabelFromTaskCmd(TaskId taskId,
+                                                                    LabelId labelId) {
+            return RemoveLabelFromTask.newBuilder()
+                                      .setId(taskId)
+                                      .setLabelId(labelId)
+                                      .build();
         }
     }
 
     static class CommonModeConstants {
         static final String DEFAULT_VALUE = "default";
-        static final String ENTER_ID_MESSAGE = "Please enter the task ID: " + LINE_SEPARATOR + CANCEL_HINT;
-        static final String ENTER_NEW_DESCRIPTION_MESSAGE = "Please enter the new task description: " +
-                LINE_SEPARATOR + CANCEL_HINT;
-        static final String ENTER_PREVIOUS_DESCRIPTION_MESSAGE = "Please enter the previous task description: " +
-                LINE_SEPARATOR + CANCEL_HINT;
+        static final String ENTER_ID_MESSAGE =
+                "Please enter the task ID: " + LINE_SEPARATOR + CANCEL_HINT;
+        static final String ENTER_NEW_DESCRIPTION_MESSAGE =
+                "Please enter the new task description: " +
+                        LINE_SEPARATOR + CANCEL_HINT;
+        static final String ENTER_PREVIOUS_DESCRIPTION_MESSAGE =
+                "Please enter the previous task description: " +
+                        LINE_SEPARATOR + CANCEL_HINT;
         static final String ENTER_NEW_PRIORITY_MESSAGE = "Please enter the new task priority: " +
                 LINE_SEPARATOR + CANCEL_HINT;
-        static final String ENTER_PREVIOUS_PRIORITY_MESSAGE = "Please enter the previous task priority: " +
-                LINE_SEPARATOR + CANCEL_HINT;
+        static final String ENTER_PREVIOUS_PRIORITY_MESSAGE =
+                "Please enter the previous task priority: " +
+                        LINE_SEPARATOR + CANCEL_HINT;
         static final String ENTER_NEW_DATE_MESSAGE = "Please enter the new task due date: " +
                 LINE_SEPARATOR + CANCEL_HINT;
-        static final String ENTER_PREVIOUS_DATE_MESSAGE = "Please enter the previous task due date: " +
-                LINE_SEPARATOR + CANCEL_HINT;
+        static final String ENTER_PREVIOUS_DATE_MESSAGE =
+                "Please enter the previous task due date: " +
+                        LINE_SEPARATOR + CANCEL_HINT;
         static final String ENTER_NEW_TITLE_MESSAGE = "Please enter the new label title: " +
                 LINE_SEPARATOR + CANCEL_HINT;
-        static final String ENTER_PREVIOUS_TITLE_MESSAGE = "Please enter the previous label title: " +
-                LINE_SEPARATOR + CANCEL_HINT;
+        static final String ENTER_PREVIOUS_TITLE_MESSAGE =
+                "Please enter the previous label title: " +
+                        LINE_SEPARATOR + CANCEL_HINT;
         static final String ENTER_NEW_COLOR_MESSAGE = "Please enter the new label color: " +
                 LINE_SEPARATOR + CANCEL_HINT;
-        static final String ENTER_PREVIOUS_COLOR_MESSAGE = "Please enter the previous label color: " +
-                LINE_SEPARATOR + CANCEL_HINT;
+        static final String ENTER_PREVIOUS_COLOR_MESSAGE =
+                "Please enter the previous label color: " +
+                        LINE_SEPARATOR + CANCEL_HINT;
         static final String UPDATED_DESCRIPTION_MESSAGE = "The task description updated. %s --> %s";
         static final String UPDATED_PRIORITY_MESSAGE = "The task priority updated. %s --> %s";
         static final String UPDATED_DUE_DATE_MESSAGE = "The task due date updated. %s --> %s";
-        static final String UPDATED_LABEL_DETAILS_MESSAGE = "The label details updated." + LINE_SEPARATOR +
-                "The label color: %s --> %s." + LINE_SEPARATOR +
-                "The label title: %s --> %s";
+        static final String UPDATED_LABEL_DETAILS_MESSAGE =
+                "The label details updated." + LINE_SEPARATOR +
+                        "The label color: %s --> %s." + LINE_SEPARATOR +
+                        "The label title: %s --> %s";
         static final String HELP_MESSAGE = "2:    Update the task description." + LINE_SEPARATOR +
                 "3:    Update the task priority." + LINE_SEPARATOR +
                 "4:    Update the task due date." + LINE_SEPARATOR +

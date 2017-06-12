@@ -29,6 +29,7 @@ import io.spine.examples.todolist.q.projection.TaskView;
 import java.util.Date;
 import java.util.List;
 
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.DEFAULT_VALUE;
 import static io.spine.examples.todolist.mode.Mode.getDateFormat;
 
 /**
@@ -36,7 +37,7 @@ import static io.spine.examples.todolist.mode.Mode.getDateFormat;
  *
  * @author Illia Shepilov
  */
-public class DisplayHelper {
+class DisplayHelper {
 
     private static final String MY_LIST_TASKS = "My list tasks";
     private static final String DRAFT_TASKS = "Draft tasks";
@@ -54,9 +55,9 @@ public class DisplayHelper {
     }
 
     static String constructUserFriendlyDate(long millis) {
-        final String date = millis == 0 ? CommonMode.CommonModeConstants.DEFAULT_VALUE :
-                            getDateFormat().format(new Date(millis));
-        return date;
+        return millis == 0
+               ? DEFAULT_VALUE
+               : getDateFormat().format(new Date(millis));
     }
 
     static String constructUserFriendlyMyList(MyListView myListView) {
@@ -91,7 +92,8 @@ public class DisplayHelper {
         return builder.toString();
     }
 
-    private static void constructLabelledView(StringBuilder builder, LabelledTasksView labelledView) {
+    private static void constructLabelledView(StringBuilder builder,
+                                              LabelledTasksView labelledView) {
         builder.append(LABEL_ID_VALUE)
                .append(Mode.ModeConstants.LINE_SEPARATOR)
                .append(LABEL_TITLE_VALUE)

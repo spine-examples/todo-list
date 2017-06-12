@@ -21,8 +21,6 @@
 package io.spine.examples.todolist.mode;
 
 import com.google.protobuf.Timestamp;
-import com.google.protobuf.util.Timestamps;
-import jline.console.ConsoleReader;
 import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
 import io.spine.examples.todolist.PriorityChange;
@@ -35,6 +33,7 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.client.TodoClient;
+import jline.console.ConsoleReader;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -229,11 +228,10 @@ class CreateTaskMode extends Mode {
         }
 
         private CreateBasicTask createTaskCmd(TaskId taskId, String description) {
-            final CreateBasicTask result = CreateBasicTask.newBuilder()
-                                                          .setId(taskId)
-                                                          .setDescription(description)
-                                                          .build();
-            return result;
+            return CreateBasicTask.newBuilder()
+                                  .setId(taskId)
+                                  .setDescription(description)
+                                  .build();
         }
     }
 
@@ -301,10 +299,9 @@ class CreateTaskMode extends Mode {
         }
 
         private CreateDraft createDraftCmdInstance(TaskId taskId) {
-            final CreateDraft result = CreateDraft.newBuilder()
-                                                  .setId(taskId)
-                                                  .build();
-            return result;
+            return CreateDraft.newBuilder()
+                              .setId(taskId)
+                              .build();
         }
     }
 
@@ -315,27 +312,30 @@ class CreateTaskMode extends Mode {
         static final String CREATE_ONE_MORE_TASK_QUESTION = "Do you want to create one more task?(y/n)";
         static final String BACK_TO_THE_PREVIOUS_MENU_QUESTION = "Do you want go back to the main menu?(y/n)";
         static final String CREATE_TASK_PROMPT = "create-task>";
-        private static final String CREATE_TASK_MODE = "******************** Create task menu ********************" +
-                LINE_SEPARATOR;
+        private static final String CREATE_TASK_MODE =
+                "******************** Create task menu ********************" + LINE_SEPARATOR;
         static final String NEED_TO_FINALIZE_MESSAGE = "Do you want to finalize the created task draft?(y/n)";
         static final String DRAFT_FINALIZED_MESSAGE = "Task draft finalized.";
         static final String SET_DESCRIPTION_MESSAGE = "Please enter the task description " +
                 "(should contain at least 3 symbols): " + LINE_SEPARATOR + CANCEL_HINT;
-        static final String SET_DUE_DATE_MESSAGE = "Please enter the task due date." + LINE_SEPARATOR +
-                "The correct format is: " + DATE_FORMAT + LINE_SEPARATOR + CANCEL_HINT;
-        static final String SET_PRIORITY_MESSAGE = "Please enter the task priority." + LINE_SEPARATOR + CANCEL_HINT;
+        static final String SET_DUE_DATE_MESSAGE =
+                "Please enter the task due date." + LINE_SEPARATOR +
+                        "The correct format is: " + DATE_FORMAT + LINE_SEPARATOR + CANCEL_HINT;
+        static final String SET_PRIORITY_MESSAGE =
+                "Please enter the task priority." + LINE_SEPARATOR + CANCEL_HINT;
         static final String HELP_MESSAGE = "0:    Help." + LINE_SEPARATOR +
-                "1:    Create the task with specified parameters[description is required]." + LINE_SEPARATOR +
+                "1:    Create the task with specified parameters[description is required]." +
+                LINE_SEPARATOR +
                 "2:    Create the task with specified parameters[description is required][FAST MODE]." +
                 LINE_SEPARATOR + BACK_TO_THE_MENU_MESSAGE;
         static final String TASK_PARAMS_DESCRIPTION = "id: %s" + LINE_SEPARATOR +
                 "description: %s" + LINE_SEPARATOR +
                 "priority: %s" + LINE_SEPARATOR +
                 "due date: %s";
-        static final String CREATED_DRAFT_MESSAGE = "Created task draft with parameters:" + LINE_SEPARATOR +
-                TASK_PARAMS_DESCRIPTION;
-        static final String CREATED_TASK_MESSAGE = "Created task with parameters:" + LINE_SEPARATOR +
-                TASK_PARAMS_DESCRIPTION;
+        static final String CREATED_DRAFT_MESSAGE =
+                "Created task draft with parameters:" + LINE_SEPARATOR + TASK_PARAMS_DESCRIPTION;
+        static final String CREATED_TASK_MESSAGE =
+                "Created task with parameters:" + LINE_SEPARATOR + TASK_PARAMS_DESCRIPTION;
         static final String CREATE_TASK_TITLE = CREATE_TASK_MODE + HELP_ADVICE + HELP_MESSAGE;
 
         private CreateTaskModeConstants() {

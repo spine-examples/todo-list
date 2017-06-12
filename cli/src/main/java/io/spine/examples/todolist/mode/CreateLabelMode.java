@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.mode;
 
-import jline.console.ConsoleReader;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelDetailsChange;
@@ -28,6 +27,7 @@ import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.client.TodoClient;
+import jline.console.ConsoleReader;
 
 import java.io.IOException;
 
@@ -46,6 +46,7 @@ import static io.spine.examples.todolist.mode.TodoListCommands.createBasicLabelC
 import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetails;
 import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetailsChange;
 import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateLabelDetailsCmd;
+import static java.lang.String.format;
 
 /**
  * @author Illia Shepilov
@@ -84,11 +85,13 @@ class CreateLabelMode extends Mode {
         client.create(createBasicLabel);
 
         final LabelDetails labelDetails = updateLabelDetailsIfNeeded(labelId, title);
-        final String message = String.format(LABEL_CREATED_MESSAGE, labelId.getValue(), title, labelDetails.getColor());
+        final String message = format(LABEL_CREATED_MESSAGE,
+                                      labelId.getValue(), title, labelDetails.getColor());
         sendMessageToUser(message);
     }
 
-    private LabelDetails updateLabelDetailsIfNeeded(LabelId labelId, String title) throws IOException {
+    private LabelDetails updateLabelDetailsIfNeeded(LabelId labelId, String title) throws
+                                                                                   IOException {
         final String approveValue = obtainApproveValue(SET_LABEL_COLOR_QUESTION);
         final LabelDetails defaultInstance = LabelDetails.getDefaultInstance();
         if (approveValue.equals(NEGATIVE_ANSWER)) {
@@ -103,7 +106,8 @@ class CreateLabelMode extends Mode {
         }
         final LabelDetails newLabelDetails = createLabelDetails(title, labelColor);
         final LabelDetailsChange labelDetailsChange = createLabelDetailsChange(newLabelDetails);
-        final UpdateLabelDetails updateLabelDetails = createUpdateLabelDetailsCmd(labelId, labelDetailsChange);
+        final UpdateLabelDetails updateLabelDetails =
+                createUpdateLabelDetailsCmd(labelId, labelDetailsChange);
         client.update(updateLabelDetails);
         return newLabelDetails;
     }
@@ -113,8 +117,10 @@ class CreateLabelMode extends Mode {
         static final String CREATE_ONE_MORE_LABEL_QUESTION = "Do you want to create one more label?(y/n)";
         static final String SET_LABEL_COLOR_QUESTION = "Do you want to set the label color?(y/n)";
         static final String LABEL_CREATED_MESSAGE = "Created label with id: %s, title: %s, color: %s";
-        static final String ENTER_COLOR_MESSAGE = "Please enter the label color: " + LINE_SEPARATOR + CANCEL_HINT;
-        static final String ENTER_TITLE_MESSAGE = "Please enter the label title: " + LINE_SEPARATOR + CANCEL_HINT;
+        static final String ENTER_COLOR_MESSAGE =
+                "Please enter the label color: " + LINE_SEPARATOR + CANCEL_HINT;
+        static final String ENTER_TITLE_MESSAGE =
+                "Please enter the label title: " + LINE_SEPARATOR + CANCEL_HINT;
 
         private CreateLabelModeConstants() {
         }

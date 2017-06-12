@@ -25,7 +25,7 @@ package io.spine.examples.todolist.mode;
  */
 public class ParseDateException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 0L;
 
     ParseDateException(Throwable cause) {
         super(cause);

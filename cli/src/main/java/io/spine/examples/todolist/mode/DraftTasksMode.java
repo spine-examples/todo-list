@@ -20,11 +20,11 @@
 
 package io.spine.examples.todolist.mode;
 
-import jline.console.ConsoleReader;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
+import jline.console.ConsoleReader;
 
 import java.io.IOException;
 import java.util.Map;
@@ -78,7 +78,8 @@ class DraftTasksMode extends CommonMode {
         reader.setPrompt(TODO_PROMPT);
     }
 
-    private void initModeMap(ShowDraftTasksMode draftTasksMode, FinalizeDraftMode finalizeDraftMode) {
+    private void initModeMap(ShowDraftTasksMode draftTasksMode,
+                             FinalizeDraftMode finalizeDraftMode) {
         modeMap.put("1", draftTasksMode);
         modeMap.put("12", finalizeDraftMode);
     }
@@ -95,7 +96,9 @@ class DraftTasksMode extends CommonMode {
             final int itemsCount = draftTasksView.getDraftTasks()
                                                  .getItemsCount();
             final boolean isEmpty = itemsCount == 0;
-            final String message = isEmpty ? EMPTY_DRAFT_TASKS : constructUserFriendlyDraftTasks(draftTasksView);
+            final String message = isEmpty
+                                   ? EMPTY_DRAFT_TASKS
+                                   : constructUserFriendlyDraftTasks(draftTasksView);
             sendMessageToUser(message);
         }
     }
@@ -121,8 +124,8 @@ class DraftTasksMode extends CommonMode {
     }
 
     static class DraftTasksModeConstants {
-        static final String DRAFT_TASKS_MENU = "****************** Draft tasks menu ******************" +
-                LINE_SEPARATOR;
+        static final String DRAFT_TASKS_MENU =
+                "****************** Draft tasks menu ******************" + LINE_SEPARATOR;
         static final String DRAFT_TASKS_PROMPT = "draft-tasks>";
         static final String EMPTY_DRAFT_TASKS = "No draft tasks.";
         static final String DRAFT_FINALIZED_MESSAGE = "Task with id value: %s is finalized.";

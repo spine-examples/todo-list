@@ -51,119 +51,107 @@ class TodoListCommands {
 
     static LabelDetailsChange createLabelDetailsChange(LabelDetails newLabelDetails,
                                                        LabelDetails previousLabelDetails) {
-        final LabelDetailsChange result = LabelDetailsChange.newBuilder()
-                                                            .setNewDetails(newLabelDetails)
-                                                            .setPreviousDetails(previousLabelDetails)
-                                                            .build();
-        return result;
+        return LabelDetailsChange.newBuilder()
+                                 .setNewDetails(newLabelDetails)
+                                 .setPreviousDetails(previousLabelDetails)
+                                 .build();
     }
 
     static LabelDetailsChange createLabelDetailsChange(LabelDetails newLabelDetails) {
-        final LabelDetailsChange result = LabelDetailsChange.newBuilder()
-                                                            .setNewDetails(newLabelDetails)
-                                                            .build();
-        return result;
+        return LabelDetailsChange.newBuilder()
+                                 .setNewDetails(newLabelDetails)
+                                 .build();
     }
 
     static LabelDetails createLabelDetails(String title, LabelColor labelColor) {
-        final LabelDetails result = LabelDetails.newBuilder()
-                                                .setColor(labelColor)
-                                                .setTitle(title)
-                                                .build();
-        return result;
+        return LabelDetails.newBuilder()
+                           .setColor(labelColor)
+                           .setTitle(title)
+                           .build();
     }
 
     static CreateBasicLabel createBasicLabelCmd(LabelId labelId, String title) {
-        final CreateBasicLabel result = CreateBasicLabel.newBuilder()
-                                                        .setLabelTitle(title)
-                                                        .setLabelId(labelId)
-                                                        .build();
-        return result;
+        return CreateBasicLabel.newBuilder()
+                               .setLabelTitle(title)
+                               .setLabelId(labelId)
+                               .build();
     }
 
     static UpdateLabelDetails createUpdateLabelDetailsCmd(LabelId labelId,
                                                           LabelDetailsChange labelDetailsChange) {
-        final UpdateLabelDetails result = UpdateLabelDetails.newBuilder()
-                                                            .setLabelDetailsChange(labelDetailsChange)
-                                                            .setId(labelId)
-                                                            .build();
-        return result;
+        return UpdateLabelDetails.newBuilder()
+                                 .setLabelDetailsChange(labelDetailsChange)
+                                 .setId(labelId)
+                                 .build();
     }
 
-    static UpdateTaskDescription createUpdateTaskDescriptionCmd(TaskId taskId, StringChange change) {
-        final UpdateTaskDescription result = UpdateTaskDescription.newBuilder()
-                                                                  .setId(taskId)
-                                                                  .setDescriptionChange(change)
-                                                                  .build();
-        return result;
+    static UpdateTaskDescription createUpdateTaskDescriptionCmd(TaskId taskId,
+                                                                StringChange change) {
+        return UpdateTaskDescription.newBuilder()
+                                    .setId(taskId)
+                                    .setDescriptionChange(change)
+                                    .build();
     }
 
     static StringChange createStringChange(String newDescription, String previousDescription) {
-        final StringChange result = StringChange.newBuilder()
-                                                .setNewValue(newDescription)
-                                                .setPreviousValue(previousDescription)
-                                                .build();
-        return result;
+        return StringChange.newBuilder()
+                           .setNewValue(newDescription)
+                           .setPreviousValue(previousDescription)
+                           .build();
     }
 
     static StringChange createStringChange(String description) {
-        final StringChange result = StringChange.newBuilder()
-                                                .setPreviousValue(EMPTY)
-                                                .setNewValue(description)
-                                                .build();
-        return result;
+        return StringChange.newBuilder()
+                           .setPreviousValue(EMPTY)
+                           .setNewValue(description)
+                           .build();
     }
 
     static FinalizeDraft createFinalizeDraftCmd(TaskId taskId) {
-        final FinalizeDraft result = FinalizeDraft.newBuilder()
-                                                  .setId(taskId)
-                                                  .build();
-        return result;
+        return FinalizeDraft.newBuilder()
+                            .setId(taskId)
+                            .build();
     }
 
     static UpdateTaskDueDate createUpdateTaskDueDateCmd(TaskId taskId, TimestampChange change) {
-        final UpdateTaskDueDate result = UpdateTaskDueDate.newBuilder()
-                                                          .setId(taskId)
-                                                          .setDueDateChange(change)
-                                                          .build();
-        return result;
+        return UpdateTaskDueDate.newBuilder()
+                                .setId(taskId)
+                                .setDueDateChange(change)
+                                .build();
     }
 
     static TimestampChange createTimestampChange(Timestamp dueDate) {
-        final TimestampChange result = TimestampChange.newBuilder()
-                                                      .setNewValue(dueDate)
-                                                      .build();
-        return result;
+        return TimestampChange.newBuilder()
+                              .setNewValue(dueDate)
+                              .build();
     }
 
-    static TimestampChange createTimestampChangeMode(Timestamp newDueDate, Timestamp previousDueDate) {
-        final TimestampChange result = TimestampChange.newBuilder()
-                                                      .setPreviousValue(previousDueDate)
-                                                      .setNewValue(newDueDate)
-                                                      .build();
-        return result;
+    static TimestampChange createTimestampChangeMode(Timestamp newDueDate,
+                                                     Timestamp previousDueDate) {
+        return TimestampChange.newBuilder()
+                              .setPreviousValue(previousDueDate)
+                              .setNewValue(newDueDate)
+                              .build();
     }
 
     static UpdateTaskPriority createUpdateTaskPriorityCmd(TaskId taskId, PriorityChange change) {
-        final UpdateTaskPriority result = UpdateTaskPriority.newBuilder()
-                                                            .setId(taskId)
-                                                            .setPriorityChange(change)
-                                                            .build();
-        return result;
+        return UpdateTaskPriority.newBuilder()
+                                 .setId(taskId)
+                                 .setPriorityChange(change)
+                                 .build();
     }
 
     static PriorityChange createPriorityChange(TaskPriority priority) {
-        final PriorityChange result = PriorityChange.newBuilder()
-                                                    .setNewValue(priority)
-                                                    .build();
-        return result;
+        return PriorityChange.newBuilder()
+                             .setNewValue(priority)
+                             .build();
     }
 
-    static PriorityChange createPriorityChange(TaskPriority newTaskPriority, TaskPriority previousTaskPriority) {
-        final PriorityChange result = PriorityChange.newBuilder()
-                                                    .setPreviousValue(previousTaskPriority)
-                                                    .setNewValue(newTaskPriority)
-                                                    .build();
-        return result;
+    static PriorityChange createPriorityChange(TaskPriority newTaskPriority,
+                                               TaskPriority previousTaskPriority) {
+        return PriorityChange.newBuilder()
+                             .setPreviousValue(previousTaskPriority)
+                             .setNewValue(newTaskPriority)
+                             .build();
     }
 }

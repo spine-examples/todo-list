@@ -25,7 +25,7 @@ package io.spine.examples.todolist.mode;
  */
 public class InputCancelledException extends Exception {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 0L;
 
     public InputCancelledException(String message) {
         super(message);

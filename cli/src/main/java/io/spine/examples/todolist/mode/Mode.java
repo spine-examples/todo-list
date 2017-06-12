@@ -22,19 +22,19 @@ package io.spine.examples.todolist.mode;
 
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
-import io.spine.examples.todolist.validator.ApproveAnswerValidator;
-import io.spine.examples.todolist.validator.NeitherCompletedNorDeletedValidator;
-import jline.console.ConsoleReader;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.validator.ApproveAnswerValidator;
 import io.spine.examples.todolist.validator.DescriptionValidator;
 import io.spine.examples.todolist.validator.DueDateValidator;
 import io.spine.examples.todolist.validator.IdValidator;
 import io.spine.examples.todolist.validator.LabelColorValidator;
+import io.spine.examples.todolist.validator.NeitherCompletedNorDeletedValidator;
 import io.spine.examples.todolist.validator.TaskPriorityValidator;
 import io.spine.examples.todolist.validator.Validator;
+import jline.console.ConsoleReader;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -76,13 +76,15 @@ public abstract class Mode {
 
     public abstract void start() throws IOException;
 
-    protected LabelColor obtainLabelColor(String message) throws IOException, InputCancelledException {
+    protected LabelColor obtainLabelColor(String message) throws IOException,
+                                                                 InputCancelledException {
         final String labelColorValue = obtainLabelColorValue(message);
         final LabelColor result = colorMap.get(labelColorValue);
         return result;
     }
 
-    private String obtainLabelColorValue(String message) throws IOException, InputCancelledException {
+    private String obtainLabelColorValue(String message) throws IOException,
+                                                                InputCancelledException {
         sendMessageToUser(message + LABEL_COLOR_VALUE);
         String color = reader.readLine();
 
@@ -118,7 +120,8 @@ public abstract class Mode {
         return title;
     }
 
-    protected String obtainDescription(String message, boolean isNew) throws IOException, InputCancelledException {
+    protected String obtainDescription(String message, boolean isNew) throws IOException,
+                                                                             InputCancelledException {
         sendMessageToUser(message);
         String description = reader.readLine();
 
@@ -174,7 +177,8 @@ public abstract class Mode {
         return dueDateValue;
     }
 
-    protected TaskPriority obtainTaskPriority(String message) throws IOException, InputCancelledException {
+    protected TaskPriority obtainTaskPriority(String message) throws IOException,
+                                                                     InputCancelledException {
         final String priorityValue = obtainPriorityValue(message + TASK_PRIORITY_VALUE);
         final TaskPriority result = priorityMap.get(priorityValue);
         return result;
