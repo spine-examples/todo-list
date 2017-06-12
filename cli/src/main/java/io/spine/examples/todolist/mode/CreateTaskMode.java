@@ -18,62 +18,64 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.mode;
+package io.spine.examples.todolist.mode;
 
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 import jline.console.ConsoleReader;
-import org.spine3.change.StringChange;
-import org.spine3.change.TimestampChange;
-import org.spine3.examples.todolist.PriorityChange;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.examples.todolist.c.commands.CreateBasicTask;
-import org.spine3.examples.todolist.c.commands.CreateDraft;
-import org.spine3.examples.todolist.c.commands.FinalizeDraft;
-import org.spine3.examples.todolist.c.commands.UpdateTaskDescription;
-import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
-import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
-import org.spine3.examples.todolist.client.TodoClient;
+import io.spine.change.StringChange;
+import io.spine.change.TimestampChange;
+import io.spine.examples.todolist.PriorityChange;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.CreateDraft;
+import io.spine.examples.todolist.c.commands.FinalizeDraft;
+import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
+import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
+import io.spine.examples.todolist.client.TodoClient;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.BACK_TO_THE_PREVIOUS_MENU_QUESTION;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATED_DRAFT_MESSAGE;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATED_TASK_MESSAGE;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATE_ONE_MORE_TASK_QUESTION;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATE_TASK_PROMPT;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATE_TASK_TITLE;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.DRAFT_FINALIZED_MESSAGE;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.HELP_MESSAGE;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.NEED_TO_FINALIZE_MESSAGE;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_DESCRIPTION_MESSAGE;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_DUE_DATE_MESSAGE;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_DUE_DATE_QUESTION;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_PRIORITY_MESSAGE;
-import static org.spine3.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_PRIORITY_QUESTION;
-import static org.spine3.examples.todolist.mode.DisplayHelper.constructUserFriendlyDate;
-import static org.spine3.examples.todolist.mode.GeneralMode.MainModeConstants.HELP_ADVICE;
-import static org.spine3.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.BACK;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.CANCEL_HINT;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.DATE_FORMAT;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.INCORRECT_COMMAND;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.NEGATIVE_ANSWER;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.POSITIVE_ANSWER;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createFinalizeDraftCmd;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createPriorityChange;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createStringChange;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createTimestampChange;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createUpdateTaskDescriptionCmd;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createUpdateTaskDueDateCmd;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createUpdateTaskPriorityCmd;
+import static com.google.protobuf.util.Timestamps.toMillis;
+import static io.spine.base.Identifier.newUuid;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.BACK_TO_THE_PREVIOUS_MENU_QUESTION;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATED_DRAFT_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATED_TASK_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATE_ONE_MORE_TASK_QUESTION;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATE_TASK_PROMPT;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATE_TASK_TITLE;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.DRAFT_FINALIZED_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.HELP_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.NEED_TO_FINALIZE_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_DESCRIPTION_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_DUE_DATE_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_DUE_DATE_QUESTION;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_PRIORITY_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_PRIORITY_QUESTION;
+import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDate;
+import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.HELP_ADVICE;
+import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.CANCEL_HINT;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.DATE_FORMAT;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.INCORRECT_COMMAND;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.NEGATIVE_ANSWER;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.POSITIVE_ANSWER;
+import static io.spine.examples.todolist.mode.TodoListCommands.createFinalizeDraftCmd;
+import static io.spine.examples.todolist.mode.TodoListCommands.createPriorityChange;
+import static io.spine.examples.todolist.mode.TodoListCommands.createStringChange;
+import static io.spine.examples.todolist.mode.TodoListCommands.createTimestampChange;
+import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateTaskDescriptionCmd;
+import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateTaskDueDateCmd;
+import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateTaskPriorityCmd;
+import static java.lang.String.format;
 
 /**
  * @author Illia Shepilov
@@ -210,9 +212,10 @@ class CreateTaskMode extends Mode {
             }
             updateTaskValuesIfNeeded(taskId);
 
-            final String userFriendlyDate = DisplayHelper.constructUserFriendlyDate(Timestamps.toMillis(dueDate));
+            final String userFriendlyDate = constructUserFriendlyDate(toMillis(dueDate));
             final String idValue = taskId.getValue();
-            final String result = String.format(CREATED_TASK_MESSAGE, idValue, description, priority, userFriendlyDate);
+            final String result = format(CREATED_TASK_MESSAGE, idValue, description, priority,
+                                         userFriendlyDate);
             sendMessageToUser(result);
 
             clearValues();
@@ -264,9 +267,10 @@ class CreateTaskMode extends Mode {
             }
             updateTaskValuesIfNeeded(taskId);
 
-            final String userFriendlyDate = constructUserFriendlyDate(Timestamps.toMillis(dueDate));
+            final String userFriendlyDate = constructUserFriendlyDate(toMillis(dueDate));
             final String idValue = taskId.getValue();
-            final String result = String.format(CREATED_DRAFT_MESSAGE, idValue, description, priority, userFriendlyDate);
+            final String result = format(CREATED_DRAFT_MESSAGE, idValue, description, priority,
+                                         userFriendlyDate);
             sendMessageToUser(result);
 
             finalizeDraftIfNeeded(taskId);
@@ -280,7 +284,8 @@ class CreateTaskMode extends Mode {
             client.create(createTask);
 
             final StringChange change = createStringChange(description);
-            final UpdateTaskDescription updateTaskDescription = createUpdateTaskDescriptionCmd(taskId, change);
+            final UpdateTaskDescription updateTaskDescription =
+                    createUpdateTaskDescriptionCmd(taskId, change);
             client.update(updateTaskDescription);
             CreateTaskMode.this.description = description;
         }

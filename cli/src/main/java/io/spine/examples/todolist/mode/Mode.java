@@ -18,23 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.mode;
+package io.spine.examples.todolist.mode;
 
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
+import io.spine.examples.todolist.validator.ApproveAnswerValidator;
+import io.spine.examples.todolist.validator.NeitherCompletedNorDeletedValidator;
 import jline.console.ConsoleReader;
-import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.examples.todolist.validator.ApproveValidator;
-import org.spine3.examples.todolist.validator.CommonValidator;
-import org.spine3.examples.todolist.validator.DescriptionValidator;
-import org.spine3.examples.todolist.validator.DueDateValidator;
-import org.spine3.examples.todolist.validator.IdValidator;
-import org.spine3.examples.todolist.validator.LabelColorValidator;
-import org.spine3.examples.todolist.validator.TaskPriorityValidator;
-import org.spine3.examples.todolist.validator.Validator;
+import io.spine.examples.todolist.LabelColor;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.validator.DescriptionValidator;
+import io.spine.examples.todolist.validator.DueDateValidator;
+import io.spine.examples.todolist.validator.IdValidator;
+import io.spine.examples.todolist.validator.LabelColorValidator;
+import io.spine.examples.todolist.validator.TaskPriorityValidator;
+import io.spine.examples.todolist.validator.Validator;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -43,13 +43,13 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_ID_MESSAGE;
-import static org.spine3.examples.todolist.mode.GeneralMode.MainModeConstants.ENTER_LABEL_ID_MESSAGE;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.CANCEL_INPUT;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.DATE_FORMAT;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.INPUT_IS_CANCELED;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.LABEL_COLOR_VALUE;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.TASK_PRIORITY_VALUE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_ID_MESSAGE;
+import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.ENTER_LABEL_ID_MESSAGE;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.CANCEL_INPUT;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.DATE_FORMAT;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.INPUT_IS_CANCELED;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.LABEL_COLOR_VALUE;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.TASK_PRIORITY_VALUE;
 
 /**
  * @author Illia Shepilov
@@ -260,9 +260,9 @@ public abstract class Mode {
         dueDateValidator = new DueDateValidator(getDateFormat());
         idValidator = new IdValidator();
         priorityValidator = new TaskPriorityValidator(priorityMap);
-        commonValidator = new CommonValidator();
+        commonValidator = new NeitherCompletedNorDeletedValidator();
         colorValidator = new LabelColorValidator(colorMap);
-        approveValidator = new ApproveValidator();
+        approveValidator = new ApproveAnswerValidator();
     }
 
     private static Map<String, TaskPriority> initPriorityMap() {

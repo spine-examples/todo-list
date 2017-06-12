@@ -18,26 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.mode;
-
-import jline.console.ConsoleReader;
-
-import java.io.IOException;
+package io.spine.examples.todolist.mode;
 
 /**
  * @author Illia Shepilov
  */
-public class HelpMode extends Mode {
+public class InputCancelledException extends Exception {
 
-    private final String helpMessage;
+    private static final long serialVersionUID = 1L;
 
-    HelpMode(ConsoleReader reader, String helpMessage) {
-        super(reader);
-        this.helpMessage = helpMessage;
-    }
-
-    @Override
-    public void start() throws IOException {
-        sendMessageToUser(helpMessage);
+    public InputCancelledException(String message) {
+        super(message);
     }
 }

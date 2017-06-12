@@ -18,34 +18,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.mode;
+package io.spine.examples.todolist.mode;
 
 import jline.console.ConsoleReader;
-import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelDetailsChange;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.c.commands.CreateBasicLabel;
-import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
-import org.spine3.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.LabelColor;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelDetailsChange;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
+import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
+import io.spine.examples.todolist.client.TodoClient;
 
 import java.io.IOException;
 
-import static org.spine3.base.Identifiers.newUuid;
-import static org.spine3.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.CREATE_LABEL_PROMPT;
-import static org.spine3.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.CREATE_ONE_MORE_LABEL_QUESTION;
-import static org.spine3.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.ENTER_COLOR_MESSAGE;
-import static org.spine3.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.ENTER_TITLE_MESSAGE;
-import static org.spine3.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.LABEL_CREATED_MESSAGE;
-import static org.spine3.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.SET_LABEL_COLOR_QUESTION;
-import static org.spine3.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.CANCEL_HINT;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.NEGATIVE_ANSWER;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createBasicLabelCmd;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createLabelDetails;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createLabelDetailsChange;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createUpdateLabelDetailsCmd;
+import static io.spine.base.Identifier.newUuid;
+import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.CREATE_LABEL_PROMPT;
+import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.CREATE_ONE_MORE_LABEL_QUESTION;
+import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.ENTER_COLOR_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.ENTER_TITLE_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.LABEL_CREATED_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.SET_LABEL_COLOR_QUESTION;
+import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.CANCEL_HINT;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.NEGATIVE_ANSWER;
+import static io.spine.examples.todolist.mode.TodoListCommands.createBasicLabelCmd;
+import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetails;
+import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetailsChange;
+import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateLabelDetailsCmd;
 
 /**
  * @author Illia Shepilov

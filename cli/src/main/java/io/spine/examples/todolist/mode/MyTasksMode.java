@@ -18,23 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.mode;
+package io.spine.examples.todolist.mode;
 
 import jline.console.ConsoleReader;
-import org.spine3.examples.todolist.client.TodoClient;
-import org.spine3.examples.todolist.q.projection.MyListView;
+import io.spine.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.q.projection.MyListView;
 
 import java.io.IOException;
 import java.util.Map;
 
-import static org.spine3.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.BACK;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
-import static org.spine3.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.EMPTY_MY_LIST_TASKS;
-import static org.spine3.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.HELP_MESSAGE;
-import static org.spine3.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.MY_TASKS_MENU;
-import static org.spine3.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.MY_TASKS_PROMPT;
+import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.EMPTY_MY_LIST_TASKS;
+import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.HELP_MESSAGE;
+import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.MY_TASKS_MENU;
+import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.MY_TASKS_PROMPT;
 
 /**
  * @author Illia Shepilov

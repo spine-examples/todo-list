@@ -18,28 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.mode;
+package io.spine.examples.todolist.mode;
 
 import jline.console.ConsoleReader;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.c.commands.FinalizeDraft;
-import org.spine3.examples.todolist.client.TodoClient;
-import org.spine3.examples.todolist.q.projection.DraftTasksView;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.FinalizeDraft;
+import io.spine.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.q.projection.DraftTasksView;
 
 import java.io.IOException;
 import java.util.Map;
 
-import static org.spine3.examples.todolist.mode.DisplayHelper.constructUserFriendlyDraftTasks;
-import static org.spine3.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.DRAFT_FINALIZED_MESSAGE;
-import static org.spine3.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.DRAFT_TASKS_MENU;
-import static org.spine3.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.DRAFT_TASKS_PROMPT;
-import static org.spine3.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.EMPTY_DRAFT_TASKS;
-import static org.spine3.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.HELP_MESSAGE;
-import static org.spine3.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.BACK;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createFinalizeDraftCmd;
+import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDraftTasks;
+import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.DRAFT_FINALIZED_MESSAGE;
+import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.DRAFT_TASKS_MENU;
+import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.DRAFT_TASKS_PROMPT;
+import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.EMPTY_DRAFT_TASKS;
+import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.HELP_MESSAGE;
+import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.TodoListCommands.createFinalizeDraftCmd;
 
 /**
  * @author Illia Shepilov

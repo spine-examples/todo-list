@@ -18,18 +18,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.mode;
+package io.spine.examples.todolist.mode;
 
 import com.google.protobuf.util.Timestamps;
-import org.spine3.examples.todolist.q.projection.DraftTasksView;
-import org.spine3.examples.todolist.q.projection.LabelledTasksView;
-import org.spine3.examples.todolist.q.projection.MyListView;
-import org.spine3.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.q.projection.DraftTasksView;
+import io.spine.examples.todolist.q.projection.LabelledTasksView;
+import io.spine.examples.todolist.q.projection.MyListView;
+import io.spine.examples.todolist.q.projection.TaskView;
 
 import java.util.Date;
 import java.util.List;
 
-import static org.spine3.examples.todolist.mode.Mode.getDateFormat;
+import static io.spine.examples.todolist.mode.Mode.getDateFormat;
 
 /**
  * Serves as utility class for creating user friendly representation of the information.

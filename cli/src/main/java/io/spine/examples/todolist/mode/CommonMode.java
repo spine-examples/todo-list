@@ -18,64 +18,65 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist.mode;
+package io.spine.examples.todolist.mode;
 
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 import jline.console.ConsoleReader;
-import org.spine3.change.StringChange;
-import org.spine3.change.TimestampChange;
-import org.spine3.examples.todolist.LabelColor;
-import org.spine3.examples.todolist.LabelDetails;
-import org.spine3.examples.todolist.LabelDetailsChange;
-import org.spine3.examples.todolist.LabelId;
-import org.spine3.examples.todolist.PriorityChange;
-import org.spine3.examples.todolist.TaskId;
-import org.spine3.examples.todolist.TaskPriority;
-import org.spine3.examples.todolist.c.commands.AssignLabelToTask;
-import org.spine3.examples.todolist.c.commands.CompleteTask;
-import org.spine3.examples.todolist.c.commands.DeleteTask;
-import org.spine3.examples.todolist.c.commands.RemoveLabelFromTask;
-import org.spine3.examples.todolist.c.commands.ReopenTask;
-import org.spine3.examples.todolist.c.commands.RestoreDeletedTask;
-import org.spine3.examples.todolist.c.commands.UpdateLabelDetails;
-import org.spine3.examples.todolist.c.commands.UpdateTaskDescription;
-import org.spine3.examples.todolist.c.commands.UpdateTaskDueDate;
-import org.spine3.examples.todolist.c.commands.UpdateTaskPriority;
-import org.spine3.examples.todolist.client.TodoClient;
+import io.spine.change.StringChange;
+import io.spine.change.TimestampChange;
+import io.spine.examples.todolist.LabelColor;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelDetailsChange;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.PriorityChange;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.c.commands.AssignLabelToTask;
+import io.spine.examples.todolist.c.commands.CompleteTask;
+import io.spine.examples.todolist.c.commands.DeleteTask;
+import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
+import io.spine.examples.todolist.c.commands.ReopenTask;
+import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
+import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
+import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
+import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
+import io.spine.examples.todolist.client.TodoClient;
 
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.DEFAULT_VALUE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_NEW_COLOR_MESSAGE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_NEW_DATE_MESSAGE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_NEW_DESCRIPTION_MESSAGE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_NEW_PRIORITY_MESSAGE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_NEW_TITLE_MESSAGE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_PREVIOUS_COLOR_MESSAGE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_PREVIOUS_DATE_MESSAGE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_PREVIOUS_DESCRIPTION_MESSAGE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_PREVIOUS_PRIORITY_MESSAGE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_PREVIOUS_TITLE_MESSAGE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.UPDATED_DESCRIPTION_MESSAGE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.UPDATED_DUE_DATE_MESSAGE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.UPDATED_LABEL_DETAILS_MESSAGE;
-import static org.spine3.examples.todolist.mode.CommonMode.CommonModeConstants.UPDATED_PRIORITY_MESSAGE;
-import static org.spine3.examples.todolist.mode.DisplayHelper.constructUserFriendlyDate;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.CANCEL_HINT;
-import static org.spine3.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createLabelDetails;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createLabelDetailsChange;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createPriorityChange;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createStringChange;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createTimestampChangeMode;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createUpdateLabelDetailsCmd;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createUpdateTaskDescriptionCmd;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createUpdateTaskDueDateCmd;
-import static org.spine3.examples.todolist.mode.TodoListCommands.createUpdateTaskPriorityCmd;
+import static com.google.protobuf.util.Timestamps.toMillis;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.DEFAULT_VALUE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_NEW_COLOR_MESSAGE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_NEW_DATE_MESSAGE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_NEW_DESCRIPTION_MESSAGE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_NEW_PRIORITY_MESSAGE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_NEW_TITLE_MESSAGE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_PREVIOUS_COLOR_MESSAGE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_PREVIOUS_DATE_MESSAGE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_PREVIOUS_DESCRIPTION_MESSAGE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_PREVIOUS_PRIORITY_MESSAGE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_PREVIOUS_TITLE_MESSAGE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.UPDATED_DESCRIPTION_MESSAGE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.UPDATED_DUE_DATE_MESSAGE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.UPDATED_LABEL_DETAILS_MESSAGE;
+import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.UPDATED_PRIORITY_MESSAGE;
+import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDate;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.CANCEL_HINT;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetails;
+import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetailsChange;
+import static io.spine.examples.todolist.mode.TodoListCommands.createPriorityChange;
+import static io.spine.examples.todolist.mode.TodoListCommands.createStringChange;
+import static io.spine.examples.todolist.mode.TodoListCommands.createTimestampChangeMode;
+import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateLabelDetailsCmd;
+import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateTaskDescriptionCmd;
+import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateTaskDueDateCmd;
+import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateTaskPriorityCmd;
 
 /**
  * @author Illia Shepilov
@@ -187,10 +188,10 @@ abstract class CommonMode extends Mode {
             client.update(updateTaskDueDate);
             final boolean isEmpty = previousDueDate.getSeconds() == 0;
             final String previousDueDateForUser = isEmpty ? DEFAULT_VALUE :
-                                                  constructUserFriendlyDate(Timestamps.toMillis(previousDueDate));
+                                                  constructUserFriendlyDate(toMillis(previousDueDate));
             final String message = String.format(UPDATED_DUE_DATE_MESSAGE,
                                                  previousDueDateForUser,
-                                                 constructUserFriendlyDate(Timestamps.toMillis(newDueDate)));
+                                                 constructUserFriendlyDate(toMillis(newDueDate)));
             sendMessageToUser(message);
         }
     }

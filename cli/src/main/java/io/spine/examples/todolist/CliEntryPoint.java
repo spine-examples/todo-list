@@ -18,24 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.spine3.examples.todolist;
+package io.spine.examples.todolist;
 
+import io.spine.examples.todolist.mode.Mode;
+import io.spine.server.BoundedContext;
+import io.spine.util.Exceptions;
 import jline.console.ConsoleReader;
-import org.spine3.examples.todolist.client.CommandLineTodoClient;
-import org.spine3.examples.todolist.client.TodoClient;
-import org.spine3.examples.todolist.context.TodoListBoundedContext;
-import org.spine3.examples.todolist.mode.GeneralMode;
-import org.spine3.examples.todolist.mode.Mode;
-import org.spine3.examples.todolist.server.Server;
-import org.spine3.server.BoundedContext;
-import org.spine3.server.storage.memory.InMemoryStorageFactory;
-import org.spine3.util.Exceptions;
+import io.spine.examples.todolist.client.CommandLineTodoClient;
+import io.spine.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.context.TodoListBoundedContext;
+import io.spine.examples.todolist.mode.GeneralMode;
+import io.spine.examples.todolist.server.Server;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.spine3.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
  * @author Illia Shepilov
@@ -65,7 +65,7 @@ public class CliEntryPoint {
                 server.start();
                 serverStartLatch.countDown();
             } catch (IOException e) {
-                throw Exceptions.wrappedCause(e);
+                throw illegalStateWithCauseOf(e);
             }
         });
 
