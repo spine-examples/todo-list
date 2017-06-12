@@ -40,7 +40,6 @@ import java.text.ParseException;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.protobuf.util.Timestamps.toMillis;
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.BACK_TO_THE_PREVIOUS_MENU_QUESTION;
 import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATED_DRAFT_MESSAGE;
@@ -203,7 +202,7 @@ class CreateTaskMode extends Mode {
         }
 
         private void createTask() throws IOException {
-            final TaskId taskId = createTaskId(newUuid());
+            final TaskId taskId = newTaskId(newUuid());
             try {
                 createTask(taskId);
             } catch (InputCancelledException ignored) {
@@ -211,7 +210,7 @@ class CreateTaskMode extends Mode {
             }
             updateTaskValuesIfNeeded(taskId);
 
-            final String userFriendlyDate = constructUserFriendlyDate(toMillis(dueDate));
+            final String userFriendlyDate = constructUserFriendlyDate(dueDate);
             final String idValue = taskId.getValue();
             final String result = format(CREATED_TASK_MESSAGE,
                                          idValue, description, priority, userFriendlyDate);
@@ -255,9 +254,7 @@ class CreateTaskMode extends Mode {
         }
 
         private void createTaskDraft() throws IOException {
-            final TaskId taskId = TaskId.newBuilder()
-                                        .setValue(newUuid())
-                                        .build();
+            final TaskId taskId = newTaskId(newUuid());
             try {
                 createTaskDraft(taskId);
             } catch (InputCancelledException ignored) {
@@ -265,7 +262,7 @@ class CreateTaskMode extends Mode {
             }
             updateTaskValuesIfNeeded(taskId);
 
-            final String userFriendlyDate = constructUserFriendlyDate(toMillis(dueDate));
+            final String userFriendlyDate = constructUserFriendlyDate(dueDate);
             final String idValue = taskId.getValue();
             final String result = format(CREATED_DRAFT_MESSAGE,
                                          idValue, description, priority, userFriendlyDate);

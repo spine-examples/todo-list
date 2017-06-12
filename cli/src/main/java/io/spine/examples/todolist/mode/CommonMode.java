@@ -48,7 +48,6 @@ import java.text.ParseException;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static com.google.protobuf.util.Timestamps.toMillis;
 import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.DEFAULT_VALUE;
 import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_NEW_COLOR_MESSAGE;
 import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_NEW_DATE_MESSAGE;
@@ -196,11 +195,10 @@ abstract class CommonMode extends Mode {
             final boolean isEmpty = previousDueDate.getSeconds() == 0;
             final String previousDueDateForUser = isEmpty
                                                   ? DEFAULT_VALUE
-                                                  : constructUserFriendlyDate(
-                                                          toMillis(previousDueDate));
+                                                  : constructUserFriendlyDate(previousDueDate);
             final String message = format(UPDATED_DUE_DATE_MESSAGE,
                                           previousDueDateForUser,
-                                          constructUserFriendlyDate(toMillis(newDueDate)));
+                                          constructUserFriendlyDate(newDueDate));
             sendMessageToUser(message);
         }
     }

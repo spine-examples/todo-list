@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.mode;
 
-import com.google.protobuf.util.Timestamps;
+import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
@@ -29,6 +29,7 @@ import io.spine.examples.todolist.q.projection.TaskView;
 import java.util.Date;
 import java.util.List;
 
+import static com.google.protobuf.util.Timestamps.toMillis;
 import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.DEFAULT_VALUE;
 import static io.spine.examples.todolist.mode.Mode.getDateFormat;
 
@@ -54,7 +55,8 @@ class DisplayHelper {
     private DisplayHelper() {
     }
 
-    static String constructUserFriendlyDate(long millis) {
+    static String constructUserFriendlyDate(Timestamp timestamp) {
+        final long millis = toMillis(timestamp);
         return millis == 0
                ? DEFAULT_VALUE
                : getDateFormat().format(new Date(millis));
@@ -110,7 +112,7 @@ class DisplayHelper {
     }
 
     private static void constructUserFriendlyTaskView(StringBuilder builder, TaskView view) {
-        final String date = constructUserFriendlyDate(Timestamps.toMillis(view.getDueDate()));
+        final String date = constructUserFriendlyDate(view.getDueDate());
         final String taskIdValue = view.getId()
                                        .getValue();
         builder.append(TASK)

@@ -204,13 +204,13 @@ public abstract class Mode {
 
     protected LabelId obtainLabelId() throws IOException, InputCancelledException {
         final String idValue = obtainIdValue(ENTER_LABEL_ID_MESSAGE);
-        final LabelId result = createLabelId(idValue);
+        final LabelId result = newLabelId(idValue);
         return result;
     }
 
     protected TaskId obtainTaskId() throws IOException, InputCancelledException {
         final String idValue = obtainIdValue(ENTER_ID_MESSAGE);
-        final TaskId result = createTaskId(idValue);
+        final TaskId result = newTaskId(idValue);
         return result;
     }
 
@@ -241,14 +241,14 @@ public abstract class Mode {
         return approveValue;
     }
 
-    protected static LabelId createLabelId(String labelIdValue) {
+    protected static LabelId newLabelId(String labelIdValue) {
         final LabelId result = LabelId.newBuilder()
                                       .setValue(labelIdValue)
                                       .build();
         return result;
     }
 
-    protected static TaskId createTaskId(String taskIdValue) {
+    protected static TaskId newTaskId(String taskIdValue) {
         final TaskId result = TaskId.newBuilder()
                                     .setValue(taskIdValue)
                                     .build();

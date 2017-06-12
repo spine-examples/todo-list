@@ -74,7 +74,7 @@ class CreateLabelMode extends Mode {
     }
 
     private void createLabel() throws IOException {
-        final LabelId labelId = createLabelId(newUuid());
+        final LabelId labelId = newLabelId(newUuid());
         final String title;
         try {
             title = obtainLabelTitle(ENTER_TITLE_MESSAGE);
