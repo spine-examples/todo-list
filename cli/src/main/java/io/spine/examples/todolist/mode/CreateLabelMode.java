@@ -51,24 +51,19 @@ import static java.lang.String.format;
  */
 class CreateLabelMode extends InteractiveMode {
 
-    private final TodoClient client;
-    private final ConsoleReader reader;
-
     CreateLabelMode(TodoClient client, ConsoleReader reader) {
-        super(reader);
-        this.reader = reader;
-        this.client = client;
+        super(reader, client);
     }
 
     @Override
     public void start() {
-        reader.setPrompt(CREATE_LABEL_PROMPT);
+        getReader().setPrompt(CREATE_LABEL_PROMPT);
         String line = "";
         while (!line.equals(NEGATIVE_ANSWER)) {
             createLabel();
             line = obtainApproveValue(CREATE_ONE_MORE_LABEL_QUESTION);
         }
-        reader.setPrompt(TODO_PROMPT);
+        getReader().setPrompt(TODO_PROMPT);
     }
 
     private void createLabel() {
@@ -80,7 +75,7 @@ class CreateLabelMode extends InteractiveMode {
             return;
         }
         final CreateBasicLabel createBasicLabel = createBasicLabelCmd(labelId, title);
-        client.create(createBasicLabel);
+        getClient().create(createBasicLabel);
 
         final LabelDetails labelDetails = updateLabelDetailsIfNeeded(labelId, title);
         final String message = format(LABEL_CREATED_MESSAGE,
@@ -105,7 +100,7 @@ class CreateLabelMode extends InteractiveMode {
         final LabelDetailsChange labelDetailsChange = createLabelDetailsChange(newLabelDetails);
         final UpdateLabelDetails updateLabelDetails =
                 createUpdateLabelDetailsCmd(labelId, labelDetailsChange);
-        client.update(updateLabelDetails);
+        getClient().update(updateLabelDetails);
         return newLabelDetails;
     }
 

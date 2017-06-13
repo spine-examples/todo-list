@@ -41,22 +41,18 @@ import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.M
  */
 public class MyTasksMode extends CommonMode {
 
-    private final TodoClient client;
-    private final ConsoleReader reader;
     private final Map<String, Mode> modeMap = getModeMap();
 
     MyTasksMode(TodoClient client, ConsoleReader reader) {
         super(client, reader);
-        this.client = client;
-        this.reader = reader;
     }
 
     @Override
     public void start() {
-        reader.setPrompt(MY_TASKS_PROMPT);
+        getReader().setPrompt(MY_TASKS_PROMPT);
         sendMessageToUser(MY_TASKS_MENU);
 
-        final ShowMyTasksMode showMyTasksMode = new ShowMyTasksMode(reader);
+        final ShowMyTasksMode showMyTasksMode = new ShowMyTasksMode(getReader(), getClient());
         initModeMap(showMyTasksMode);
 
         showMyTasksMode.start();
@@ -71,22 +67,22 @@ public class MyTasksMode extends CommonMode {
             line = readLine();
         }
 
-        reader.setPrompt(TODO_PROMPT);
+        getReader().setPrompt(TODO_PROMPT);
     }
 
     private void initModeMap(ShowMyTasksMode showMyTasksMode) {
         modeMap.put("1", showMyTasksMode);
     }
 
-    private class ShowMyTasksMode extends InteractiveMode {
+    private static class ShowMyTasksMode extends InteractiveMode {
 
-        private ShowMyTasksMode(ConsoleReader reader) {
-            super(reader);
+        private ShowMyTasksMode(ConsoleReader reader, TodoClient client) {
+            super(reader, client);
         }
 
         @Override
         public void start() {
-            final MyListView myListView = client.getMyListView();
+            final MyListView myListView = getClient().getMyListView();
             final int itemsCount = myListView.getMyList()
                                              .getItemsCount();
             final boolean isEmpty = itemsCount == 0;

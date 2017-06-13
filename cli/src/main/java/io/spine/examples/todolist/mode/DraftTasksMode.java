@@ -46,22 +46,18 @@ import static io.spine.examples.todolist.mode.TodoListCommands.createFinalizeDra
 @SuppressWarnings("unused")
 class DraftTasksMode extends CommonMode {
 
-    private final TodoClient client;
-    private final ConsoleReader reader;
     private final Map<String, Mode> modeMap = getModeMap();
 
     DraftTasksMode(TodoClient client, ConsoleReader reader) {
         super(client, reader);
-        this.client = client;
-        this.reader = reader;
     }
 
     @Override
     public void start() {
-        reader.setPrompt(DRAFT_TASKS_PROMPT);
+        getReader().setPrompt(DRAFT_TASKS_PROMPT);
         sendMessageToUser(DRAFT_TASKS_MENU);
-        final ShowDraftTasksMode draftTasksMode = new ShowDraftTasksMode(client, reader);
-        final FinalizeDraftMode finalizeDraftMode = new FinalizeDraftMode(client, reader);
+        final ShowDraftTasksMode draftTasksMode = new ShowDraftTasksMode(getClient(), getReader());
+        final FinalizeDraftMode finalizeDraftMode = new FinalizeDraftMode(getClient(), getReader());
         initModeMap(draftTasksMode, finalizeDraftMode);
 
         draftTasksMode.start();
@@ -74,7 +70,7 @@ class DraftTasksMode extends CommonMode {
                 mode.start();
             }
         }
-        reader.setPrompt(TODO_PROMPT);
+        getReader().setPrompt(TODO_PROMPT);
     }
 
     private void initModeMap(ShowDraftTasksMode draftTasksMode,
@@ -86,12 +82,12 @@ class DraftTasksMode extends CommonMode {
     private class ShowDraftTasksMode extends InteractiveMode {
 
         private ShowDraftTasksMode(TodoClient client, ConsoleReader reader) {
-            super(reader);
+            super(reader, client);
         }
 
         @Override
         public void start() {
-            final DraftTasksView draftTasksView = client.getDraftTasksView();
+            final DraftTasksView draftTasksView = getClient().getDraftTasksView();
             final boolean isEmpty = draftTasksView.getDraftTasks()
                                                   .getItemsList()
                                                   .isEmpty();
@@ -104,7 +100,7 @@ class DraftTasksMode extends CommonMode {
 
     private class FinalizeDraftMode extends InteractiveMode {
         private FinalizeDraftMode(TodoClient client, ConsoleReader reader) {
-            super(reader);
+            super(reader, client);
         }
 
         @Override
@@ -116,7 +112,7 @@ class DraftTasksMode extends CommonMode {
                 return;
             }
             final FinalizeDraft finalizeDraft = createFinalizeDraftCmd(taskId);
-            client.finalize(finalizeDraft);
+            getClient().finalize(finalizeDraft);
             final String message = String.format(DRAFT_FINALIZED_MESSAGE, taskId.getValue());
             sendMessageToUser(message);
         }

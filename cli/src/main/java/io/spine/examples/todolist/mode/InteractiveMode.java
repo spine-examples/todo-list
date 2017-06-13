@@ -26,6 +26,7 @@ import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.validator.ApproveAnswerValidator;
 import io.spine.examples.todolist.validator.DescriptionValidator;
 import io.spine.examples.todolist.validator.DueDateValidator;
@@ -69,9 +70,11 @@ public abstract class InteractiveMode extends Mode {
     private final Map<String, TaskPriority> priorityMap;
     private final Map<String, LabelColor> colorMap;
     private final ConsoleReader reader;
+    private final TodoClient client;
 
-    InteractiveMode(ConsoleReader reader) {
+    InteractiveMode(ConsoleReader reader, TodoClient client) {
         this.reader = reader;
+        this.client = client;
         priorityMap = initPriorityMap();
         colorMap = initColorMap();
         initValidators();
@@ -284,7 +287,7 @@ public abstract class InteractiveMode extends Mode {
 
     protected String readLine() {
         try {
-            return reader.readLine();
+            return getReader().readLine();
         } catch (IOException e) {
             throw illegalStateWithCauseOf(e);
         }
@@ -293,6 +296,14 @@ public abstract class InteractiveMode extends Mode {
     static SimpleDateFormat getDateFormat() {
         final SimpleDateFormat result = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
         return result;
+    }
+
+    public ConsoleReader getReader() {
+        return reader;
+    }
+
+    public TodoClient getClient() {
+        return client;
     }
 
     static class ModeConstants {

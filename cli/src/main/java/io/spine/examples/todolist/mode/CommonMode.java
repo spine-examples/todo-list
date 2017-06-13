@@ -82,36 +82,34 @@ import static java.lang.String.format;
 abstract class CommonMode extends InteractiveMode {
 
     private Map<String, Mode> modeMap;
-    private final TodoClient client;
 
     CommonMode(TodoClient client, ConsoleReader reader) {
-        super(reader);
-        this.client = client;
-        initModeMap(reader);
+        super(reader, client);
+        initModeMap(reader, client);
     }
 
-    private void initModeMap(ConsoleReader reader) {
+    private void initModeMap(ConsoleReader reader, TodoClient client) {
         modeMap = newHashMap();
-        modeMap.put("2", new UpdateTaskDescriptionMode(reader));
-        modeMap.put("3", new UpdateTaskPriorityMode(reader));
-        modeMap.put("4", new UpdateTaskDueDateMode(reader));
-        modeMap.put("5", new UpdateLabelDetailsMode(reader));
-        modeMap.put("6", new DeleteTaskMode(reader));
-        modeMap.put("7", new ReopenTaskMode(reader));
-        modeMap.put("8", new RestoreTaskMode(reader));
-        modeMap.put("9", new CompleteTaskMode(reader));
-        modeMap.put("10", new AssignLabelToTaskMode(reader));
-        modeMap.put("11", new RemoveLabelFromTaskMode(reader));
+        modeMap.put("2", new UpdateTaskDescriptionMode(reader, client));
+        modeMap.put("3", new UpdateTaskPriorityMode(reader, client));
+        modeMap.put("4", new UpdateTaskDueDateMode(reader, client));
+        modeMap.put("5", new UpdateLabelDetailsMode(reader, client));
+        modeMap.put("6", new DeleteTaskMode(reader, client));
+        modeMap.put("7", new ReopenTaskMode(reader, client));
+        modeMap.put("8", new RestoreTaskMode(reader, client));
+        modeMap.put("9", new CompleteTaskMode(reader, client));
+        modeMap.put("10", new AssignLabelToTaskMode(reader, client));
+        modeMap.put("11", new RemoveLabelFromTaskMode(reader, client));
     }
 
     Map<String, Mode> getModeMap() {
         return newHashMap(modeMap);
     }
 
-    private class UpdateTaskDescriptionMode extends InteractiveMode {
+    private static class UpdateTaskDescriptionMode extends InteractiveMode {
 
-        private UpdateTaskDescriptionMode(ConsoleReader reader) {
-            super(reader);
+        private UpdateTaskDescriptionMode(ConsoleReader reader, TodoClient client) {
+            super(reader, client);
         }
 
         @Override
@@ -129,7 +127,7 @@ abstract class CommonMode extends InteractiveMode {
             final StringChange change = createStringChange(newDescription, previousDescription);
             final UpdateTaskDescription updateTaskDescription =
                     createUpdateTaskDescriptionCmd(taskId, change);
-            client.update(updateTaskDescription);
+            getClient().update(updateTaskDescription);
             final String previousDescriptionValue = previousDescription.isEmpty()
                                                     ? DEFAULT_VALUE
                                                     : previousDescription;
@@ -139,10 +137,10 @@ abstract class CommonMode extends InteractiveMode {
         }
     }
 
-    private class UpdateTaskPriorityMode extends InteractiveMode {
+    private static class UpdateTaskPriorityMode extends InteractiveMode {
 
-        private UpdateTaskPriorityMode(ConsoleReader reader) {
-            super(reader);
+        private UpdateTaskPriorityMode(ConsoleReader reader, TodoClient client) {
+            super(reader, client);
         }
 
         @Override
@@ -161,16 +159,17 @@ abstract class CommonMode extends InteractiveMode {
                                                                previousTaskPriority);
             final UpdateTaskPriority updateTaskPriority = createUpdateTaskPriorityCmd(taskId,
                                                                                       change);
-            client.update(updateTaskPriority);
+            getClient().update(updateTaskPriority);
             final String message = format(UPDATED_PRIORITY_MESSAGE,
                                           previousTaskPriority, newTaskPriority);
             sendMessageToUser(message);
         }
     }
 
-    private class UpdateTaskDueDateMode extends InteractiveMode {
-        private UpdateTaskDueDateMode(ConsoleReader reader) {
-            super(reader);
+    private static class UpdateTaskDueDateMode extends InteractiveMode {
+
+        private UpdateTaskDueDateMode(ConsoleReader reader, TodoClient client) {
+            super(reader, client);
         }
 
         @Override
@@ -189,7 +188,7 @@ abstract class CommonMode extends InteractiveMode {
             }
             final TimestampChange change = createTimestampChangeMode(newDueDate, previousDueDate);
             final UpdateTaskDueDate updateTaskDueDate = createUpdateTaskDueDateCmd(taskId, change);
-            client.update(updateTaskDueDate);
+            getClient().update(updateTaskDueDate);
             final boolean isEmpty = previousDueDate.getSeconds() == 0;
             final String previousDueDateForUser = isEmpty
                                                   ? DEFAULT_VALUE
@@ -201,10 +200,10 @@ abstract class CommonMode extends InteractiveMode {
         }
     }
 
-    private class UpdateLabelDetailsMode extends InteractiveMode {
+    private static class UpdateLabelDetailsMode extends InteractiveMode {
 
-        private UpdateLabelDetailsMode(ConsoleReader reader) {
-            super(reader);
+        private UpdateLabelDetailsMode(ConsoleReader reader, TodoClient client) {
+            super(reader, client);
         }
 
         @Override
@@ -230,7 +229,7 @@ abstract class CommonMode extends InteractiveMode {
                                                                        previousLabelDetails);
             final UpdateLabelDetails updateLabelDetails = createUpdateLabelDetailsCmd(labelId,
                                                                                       change);
-            client.update(updateLabelDetails);
+            getClient().update(updateLabelDetails);
 
             final String message = format(UPDATED_LABEL_DETAILS_MESSAGE,
                                           previousColor, newColor, previousTitle, newTitle);
@@ -238,10 +237,10 @@ abstract class CommonMode extends InteractiveMode {
         }
     }
 
-    private class DeleteTaskMode extends InteractiveMode {
+    private static class DeleteTaskMode extends InteractiveMode {
 
-        private DeleteTaskMode(ConsoleReader reader) {
-            super(reader);
+        private DeleteTaskMode(ConsoleReader reader, TodoClient client) {
+            super(reader, client);
         }
 
         @Override
@@ -253,20 +252,20 @@ abstract class CommonMode extends InteractiveMode {
                 return;
             }
             final DeleteTask deleteTask = createDeleteTaskCmd(taskId);
-            client.delete(deleteTask);
+            getClient().delete(deleteTask);
         }
 
-        private DeleteTask createDeleteTaskCmd(TaskId taskId) {
+        private static DeleteTask createDeleteTaskCmd(TaskId taskId) {
             return DeleteTask.newBuilder()
                              .setId(taskId)
                              .build();
         }
     }
 
-    private class ReopenTaskMode extends InteractiveMode {
+    private static class ReopenTaskMode extends InteractiveMode {
 
-        private ReopenTaskMode(ConsoleReader reader) {
-            super(reader);
+        private ReopenTaskMode(ConsoleReader reader, TodoClient client) {
+            super(reader, client);
         }
 
         @Override
@@ -278,20 +277,20 @@ abstract class CommonMode extends InteractiveMode {
                 return;
             }
             final ReopenTask reopenTask = createReopenTaskCmd(taskId);
-            client.reopen(reopenTask);
+            getClient().reopen(reopenTask);
         }
 
-        private ReopenTask createReopenTaskCmd(TaskId taskId) {
+        private static ReopenTask createReopenTaskCmd(TaskId taskId) {
             return ReopenTask.newBuilder()
                              .setId(taskId)
                              .build();
         }
     }
 
-    private class RestoreTaskMode extends InteractiveMode {
+    private static class RestoreTaskMode extends InteractiveMode {
 
-        private RestoreTaskMode(ConsoleReader reader) {
-            super(reader);
+        private RestoreTaskMode(ConsoleReader reader, TodoClient client) {
+            super(reader, client);
         }
 
         @Override
@@ -303,20 +302,20 @@ abstract class CommonMode extends InteractiveMode {
                 return;
             }
             final RestoreDeletedTask restoreDeletedTask = createRestoreDeletedTaskCmd(taskId);
-            client.restore(restoreDeletedTask);
+            getClient().restore(restoreDeletedTask);
         }
 
-        private RestoreDeletedTask createRestoreDeletedTaskCmd(TaskId taskId) {
+        private static RestoreDeletedTask createRestoreDeletedTaskCmd(TaskId taskId) {
             return RestoreDeletedTask.newBuilder()
                                      .setId(taskId)
                                      .build();
         }
     }
 
-    private class CompleteTaskMode extends InteractiveMode {
+    private static class CompleteTaskMode extends InteractiveMode {
 
-        private CompleteTaskMode(ConsoleReader reader) {
-            super(reader);
+        private CompleteTaskMode(ConsoleReader reader, TodoClient client) {
+            super(reader, client);
         }
 
         @Override
@@ -330,14 +329,14 @@ abstract class CommonMode extends InteractiveMode {
             final CompleteTask completeTask = CompleteTask.newBuilder()
                                                           .setId(taskId)
                                                           .build();
-            client.complete(completeTask);
+            getClient().complete(completeTask);
         }
     }
 
-    private class AssignLabelToTaskMode extends InteractiveMode {
+    private static class AssignLabelToTaskMode extends InteractiveMode {
 
-        private AssignLabelToTaskMode(ConsoleReader reader) {
-            super(reader);
+        private AssignLabelToTaskMode(ConsoleReader reader, TodoClient client) {
+            super(reader, client);
         }
 
         @Override
@@ -351,10 +350,11 @@ abstract class CommonMode extends InteractiveMode {
                 return;
             }
             final AssignLabelToTask assignLabelToTask = createAssignLabelToTaskCmd(taskId, labelId);
-            client.assignLabel(assignLabelToTask);
+            getClient().assignLabel(assignLabelToTask);
         }
 
-        private AssignLabelToTask createAssignLabelToTaskCmd(TaskId taskId, LabelId labelId) {
+        private static AssignLabelToTask createAssignLabelToTaskCmd(TaskId taskId,
+                                                                    LabelId labelId) {
             return AssignLabelToTask.newBuilder()
                                     .setId(taskId)
                                     .setLabelId(labelId)
@@ -362,10 +362,10 @@ abstract class CommonMode extends InteractiveMode {
         }
     }
 
-    private class RemoveLabelFromTaskMode extends InteractiveMode {
+    private static class RemoveLabelFromTaskMode extends InteractiveMode {
 
-        private RemoveLabelFromTaskMode(ConsoleReader reader) {
-            super(reader);
+        private RemoveLabelFromTaskMode(ConsoleReader reader, TodoClient client) {
+            super(reader, client);
         }
 
         @Override
@@ -380,11 +380,11 @@ abstract class CommonMode extends InteractiveMode {
             }
             final RemoveLabelFromTask removeLabelFromTask = constructRemoveLabelFromTaskCmd(taskId,
                                                                                             labelId);
-            client.removeLabel(removeLabelFromTask);
+            getClient().removeLabel(removeLabelFromTask);
         }
 
-        private RemoveLabelFromTask constructRemoveLabelFromTaskCmd(TaskId taskId,
-                                                                    LabelId labelId) {
+        private static RemoveLabelFromTask constructRemoveLabelFromTaskCmd(TaskId taskId,
+                                                                           LabelId labelId) {
             return RemoveLabelFromTask.newBuilder()
                                       .setId(taskId)
                                       .setLabelId(labelId)

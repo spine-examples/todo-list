@@ -39,29 +39,24 @@ public class GeneralMode extends InteractiveMode {
 
     private final Map<String, Mode> modeMap = Maps.newHashMap();
 
-    private final TodoClient client;
-    private final ConsoleReader reader;
-
     public GeneralMode(TodoClient client, ConsoleReader reader) {
-        super(reader);
-        this.client = client;
-        this.reader = reader;
+        super(reader, client);
         initModeMap();
     }
 
     private void initModeMap() {
         modeMap.put("0", new HelpMode(HELP_MESSAGE));
-        modeMap.put("1", new CreateTaskMode(client, reader));
-        modeMap.put("2", new CreateLabelMode(client, reader));
-        modeMap.put("3", new DraftTasksMode(client, reader));
-        modeMap.put("4", new LabelledTasksMode(client, reader));
-        modeMap.put("5", new MyTasksMode(client, reader));
+        modeMap.put("1", new CreateTaskMode(getClient(), getReader()));
+        modeMap.put("2", new CreateLabelMode(getClient(), getReader()));
+        modeMap.put("3", new DraftTasksMode(getClient(), getReader()));
+        modeMap.put("4", new LabelledTasksMode(getClient(), getReader()));
+        modeMap.put("5", new MyTasksMode(getClient(), getReader()));
     }
 
     @Override
     public void start() {
         sendMessageToUser(HELP_MESSAGE);
-        reader.setPrompt(TODO_PROMPT);
+        getReader().setPrompt(TODO_PROMPT);
         String line = "";
         while (!line.equals(EXIT)) {
             line = readLine();

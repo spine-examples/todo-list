@@ -43,23 +43,19 @@ import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksMod
 @SuppressWarnings("unused")
 public class LabelledTasksMode extends CommonMode {
 
-    private final TodoClient client;
-    private final ConsoleReader reader;
     private final Map<String, Mode> modeMap = getModeMap();
 
     LabelledTasksMode(TodoClient client, ConsoleReader reader) {
         super(client, reader);
-        this.client = client;
-        this.reader = reader;
     }
 
     @Override
     public void start() {
-        reader.setPrompt(LABELLED_TASKS_PROMPT);
+        getReader().setPrompt(LABELLED_TASKS_PROMPT);
         sendMessageToUser(LABELLED_TASKS_MENU);
 
-        final ShowLabelledTasksMode showLabelledTasksMode = new ShowLabelledTasksMode(client,
-                                                                                      reader);
+        final ShowLabelledTasksMode showLabelledTasksMode = new ShowLabelledTasksMode(getClient(),
+                                                                                      getReader());
         initModeMap(showLabelledTasksMode);
 
         showLabelledTasksMode.start();
@@ -73,7 +69,7 @@ public class LabelledTasksMode extends CommonMode {
                 mode.start();
             }
         }
-        reader.setPrompt(TODO_PROMPT);
+        getReader().setPrompt(TODO_PROMPT);
     }
 
     private void initModeMap(ShowLabelledTasksMode labelledTasksMode) {
@@ -83,12 +79,12 @@ public class LabelledTasksMode extends CommonMode {
     private class ShowLabelledTasksMode extends InteractiveMode {
 
         private ShowLabelledTasksMode(TodoClient client, ConsoleReader reader) {
-            super(reader);
+            super(reader, client);
         }
 
         @Override
         public void start() {
-            final List<LabelledTasksView> labelledTasks = client.getLabelledTasksView();
+            final List<LabelledTasksView> labelledTasks = getClient().getLabelledTasksView();
             final String message = labelledTasks.isEmpty()
                                    ? EMPTY_LABELLED_TASKS
                                    : constructUserFriendlyLabelledTasks(labelledTasks);

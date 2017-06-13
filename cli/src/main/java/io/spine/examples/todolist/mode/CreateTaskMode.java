@@ -84,26 +84,21 @@ class CreateTaskMode extends InteractiveMode {
     private String description;
     private final Map<String, Mode> modeMap = newHashMap();
 
-    private final TodoClient client;
-    private final ConsoleReader reader;
-
     CreateTaskMode(TodoClient client, ConsoleReader reader) {
-        super(reader);
-        this.reader = reader;
-        this.client = client;
+        super(reader, client);
         initModeMap();
     }
 
     private void initModeMap() {
         modeMap.put("0", new HelpMode(HELP_MESSAGE));
-        modeMap.put("1", new CreateTaskFullMode(reader));
-        modeMap.put("2", new CreateTaskDraftMode(reader));
+        modeMap.put("1", new CreateTaskFullMode(getReader(), getClient()));
+        modeMap.put("2", new CreateTaskDraftMode(getReader(), getClient()));
     }
 
     @Override
     public void start() {
         sendMessageToUser(CREATE_TASK_TITLE);
-        reader.setPrompt(CREATE_TASK_PROMPT);
+        getReader().setPrompt(CREATE_TASK_PROMPT);
         String line = "";
 
         while (!line.equals(BACK)) {
@@ -126,7 +121,7 @@ class CreateTaskMode extends InteractiveMode {
             }
         }
 
-        reader.setPrompt(TODO_PROMPT);
+        getReader().setPrompt(TODO_PROMPT);
     }
 
     private void updateDueDateIfNeeded(TaskId taskId) throws ParseException {
@@ -143,7 +138,7 @@ class CreateTaskMode extends InteractiveMode {
         }
         final TimestampChange change = createTimestampChange(dueDate);
         final UpdateTaskDueDate updateTaskDueDate = createUpdateTaskDueDateCmd(taskId, change);
-        client.update(updateTaskDueDate);
+        getClient().update(updateTaskDueDate);
         this.dueDate = dueDate;
     }
 
@@ -171,7 +166,7 @@ class CreateTaskMode extends InteractiveMode {
 
         final PriorityChange change = createPriorityChange(priority);
         final UpdateTaskPriority updateTaskPriority = createUpdateTaskPriorityCmd(taskId, change);
-        client.update(updateTaskPriority);
+        getClient().update(updateTaskPriority);
         this.priority = priority;
     }
 
@@ -183,8 +178,8 @@ class CreateTaskMode extends InteractiveMode {
 
     class CreateTaskFullMode extends InteractiveMode {
 
-        private CreateTaskFullMode(ConsoleReader reader) {
-            super(reader);
+        private CreateTaskFullMode(ConsoleReader reader, TodoClient client) {
+            super(reader, client);
         }
 
         @Override
@@ -221,7 +216,7 @@ class CreateTaskMode extends InteractiveMode {
         private void createTask(TaskId taskId) throws InputCancelledException {
             final String description = obtainDescription(SET_DESCRIPTION_MESSAGE, true);
             final CreateBasicTask createTask = createTaskCmd(taskId, description);
-            client.create(createTask);
+            getClient().create(createTask);
             CreateTaskMode.this.description = description;
         }
 
@@ -235,8 +230,8 @@ class CreateTaskMode extends InteractiveMode {
 
     class CreateTaskDraftMode extends InteractiveMode {
 
-        private CreateTaskDraftMode(ConsoleReader reader) {
-            super(reader);
+        private CreateTaskDraftMode(ConsoleReader reader, TodoClient client) {
+            super(reader, client);
         }
 
         @Override
@@ -275,12 +270,12 @@ class CreateTaskMode extends InteractiveMode {
             final String description = obtainDescription(SET_DESCRIPTION_MESSAGE, true);
 
             final CreateDraft createTask = createDraftCmdInstance(taskId);
-            client.create(createTask);
+            getClient().create(createTask);
 
             final StringChange change = createStringChange(description);
             final UpdateTaskDescription updateTaskDescription =
                     createUpdateTaskDescriptionCmd(taskId, change);
-            client.update(updateTaskDescription);
+            getClient().update(updateTaskDescription);
             CreateTaskMode.this.description = description;
         }
 
@@ -290,7 +285,7 @@ class CreateTaskMode extends InteractiveMode {
                 return;
             }
             final FinalizeDraft finalizeDraft = createFinalizeDraftCmd(taskId);
-            client.finalize(finalizeDraft);
+            getClient().finalize(finalizeDraft);
             sendMessageToUser(DRAFT_FINALIZED_MESSAGE);
         }
 
