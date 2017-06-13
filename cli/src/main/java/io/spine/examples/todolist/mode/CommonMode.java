@@ -134,10 +134,9 @@ abstract class CommonMode extends Mode {
             final String previousDescriptionValue = previousDescription.isEmpty()
                                                     ? DEFAULT_VALUE
                                                     : previousDescription;
-            final String message = format(UPDATED_DESCRIPTION_MESSAGE, previousDescriptionValue,
-                                          newDescription);
+            final String message = format(UPDATED_DESCRIPTION_MESSAGE,
+                                          previousDescriptionValue, newDescription);
             sendMessageToUser(message);
-
         }
     }
 
@@ -164,8 +163,8 @@ abstract class CommonMode extends Mode {
             final UpdateTaskPriority updateTaskPriority = createUpdateTaskPriorityCmd(taskId,
                                                                                       change);
             client.update(updateTaskPriority);
-            final String message = format(UPDATED_PRIORITY_MESSAGE, previousTaskPriority,
-                                          newTaskPriority);
+            final String message = format(UPDATED_PRIORITY_MESSAGE,
+                                          previousTaskPriority, newTaskPriority);
             sendMessageToUser(message);
         }
     }

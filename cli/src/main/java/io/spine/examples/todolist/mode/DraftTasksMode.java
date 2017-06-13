@@ -93,9 +93,9 @@ class DraftTasksMode extends CommonMode {
         @Override
         public void start() throws IOException {
             final DraftTasksView draftTasksView = client.getDraftTasksView();
-            final int itemsCount = draftTasksView.getDraftTasks()
-                                                 .getItemsCount();
-            final boolean isEmpty = itemsCount == 0;
+            final boolean isEmpty = draftTasksView.getDraftTasks()
+                                                  .getItemsList()
+                                                  .isEmpty();
             final String message = isEmpty
                                    ? EMPTY_DRAFT_TASKS
                                    : constructUserFriendlyDraftTasks(draftTasksView);
