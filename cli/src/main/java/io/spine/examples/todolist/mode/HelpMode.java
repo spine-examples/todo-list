@@ -20,10 +20,6 @@
 
 package io.spine.examples.todolist.mode;
 
-import jline.console.ConsoleReader;
-
-import java.io.IOException;
-
 /**
  * @author Illia Shepilov
  */
@@ -31,13 +27,12 @@ public class HelpMode extends Mode {
 
     private final String helpMessage;
 
-    HelpMode(ConsoleReader reader, String helpMessage) {
-        super(reader);
+    HelpMode(String helpMessage) {
         this.helpMessage = helpMessage;
     }
 
     @Override
-    public void start() throws IOException {
+    public void start() {
         sendMessageToUser(helpMessage);
     }
 }

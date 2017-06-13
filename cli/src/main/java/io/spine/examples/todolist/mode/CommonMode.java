@@ -43,7 +43,6 @@ import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.client.TodoClient;
 import jline.console.ConsoleReader;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
@@ -64,8 +63,8 @@ import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.UPD
 import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.UPDATED_LABEL_DETAILS_MESSAGE;
 import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.UPDATED_PRIORITY_MESSAGE;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDate;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.CANCEL_HINT;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.CANCEL_HINT;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
 import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetails;
 import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetailsChange;
 import static io.spine.examples.todolist.mode.TodoListCommands.createPriorityChange;
@@ -80,7 +79,7 @@ import static java.lang.String.format;
 /**
  * @author Illia Shepilov
  */
-abstract class CommonMode extends Mode {
+abstract class CommonMode extends InteractiveMode {
 
     private Map<String, Mode> modeMap;
     private final TodoClient client;
@@ -109,14 +108,14 @@ abstract class CommonMode extends Mode {
         return newHashMap(modeMap);
     }
 
-    private class UpdateTaskDescriptionMode extends Mode {
+    private class UpdateTaskDescriptionMode extends InteractiveMode {
 
         private UpdateTaskDescriptionMode(ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final String newDescription;
             final String previousDescription;
             final TaskId taskId;
@@ -140,14 +139,14 @@ abstract class CommonMode extends Mode {
         }
     }
 
-    private class UpdateTaskPriorityMode extends Mode {
+    private class UpdateTaskPriorityMode extends InteractiveMode {
 
         private UpdateTaskPriorityMode(ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final TaskId taskId;
             final TaskPriority newTaskPriority;
             final TaskPriority previousTaskPriority;
@@ -169,13 +168,13 @@ abstract class CommonMode extends Mode {
         }
     }
 
-    private class UpdateTaskDueDateMode extends Mode {
+    private class UpdateTaskDueDateMode extends InteractiveMode {
         private UpdateTaskDueDateMode(ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final TaskId taskId;
             final Timestamp newDueDate;
             final Timestamp previousDueDate;
@@ -202,14 +201,14 @@ abstract class CommonMode extends Mode {
         }
     }
 
-    private class UpdateLabelDetailsMode extends Mode {
+    private class UpdateLabelDetailsMode extends InteractiveMode {
 
         private UpdateLabelDetailsMode(ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final LabelId labelId;
             final String newTitle;
             final String previousTitle;
@@ -239,14 +238,14 @@ abstract class CommonMode extends Mode {
         }
     }
 
-    private class DeleteTaskMode extends Mode {
+    private class DeleteTaskMode extends InteractiveMode {
 
         private DeleteTaskMode(ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final TaskId taskId;
             try {
                 taskId = obtainTaskId();
@@ -264,14 +263,14 @@ abstract class CommonMode extends Mode {
         }
     }
 
-    private class ReopenTaskMode extends Mode {
+    private class ReopenTaskMode extends InteractiveMode {
 
         private ReopenTaskMode(ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final TaskId taskId;
             try {
                 taskId = obtainTaskId();
@@ -289,14 +288,14 @@ abstract class CommonMode extends Mode {
         }
     }
 
-    private class RestoreTaskMode extends Mode {
+    private class RestoreTaskMode extends InteractiveMode {
 
         private RestoreTaskMode(ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final TaskId taskId;
             try {
                 taskId = obtainTaskId();
@@ -314,14 +313,14 @@ abstract class CommonMode extends Mode {
         }
     }
 
-    private class CompleteTaskMode extends Mode {
+    private class CompleteTaskMode extends InteractiveMode {
 
         private CompleteTaskMode(ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final TaskId taskId;
             try {
                 taskId = obtainTaskId();
@@ -335,14 +334,14 @@ abstract class CommonMode extends Mode {
         }
     }
 
-    private class AssignLabelToTaskMode extends Mode {
+    private class AssignLabelToTaskMode extends InteractiveMode {
 
         private AssignLabelToTaskMode(ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final TaskId taskId;
             final LabelId labelId;
             try {
@@ -363,14 +362,14 @@ abstract class CommonMode extends Mode {
         }
     }
 
-    private class RemoveLabelFromTaskMode extends Mode {
+    private class RemoveLabelFromTaskMode extends InteractiveMode {
 
         private RemoveLabelFromTaskMode(ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final TaskId taskId;
             final LabelId labelId;
             try {
@@ -426,15 +425,15 @@ abstract class CommonMode extends Mode {
                         "The label title: %s --> %s";
         static final String HELP_MESSAGE =
                 "2:    Update the task description." + LINE_SEPARATOR +
-                "3:    Update the task priority." + LINE_SEPARATOR +
-                "4:    Update the task due date." + LINE_SEPARATOR +
-                "5:    Update the label details." + LINE_SEPARATOR +
-                "6:    Delete the task." + LINE_SEPARATOR +
-                "7:    Reopen the task." + LINE_SEPARATOR +
-                "8:    Restore the task." + LINE_SEPARATOR +
-                "9:    Complete the task." + LINE_SEPARATOR +
-                "10:   Assign the label to task." + LINE_SEPARATOR +
-                "11:   Remove the label from task.";
+                        "3:    Update the task priority." + LINE_SEPARATOR +
+                        "4:    Update the task due date." + LINE_SEPARATOR +
+                        "5:    Update the label details." + LINE_SEPARATOR +
+                        "6:    Delete the task." + LINE_SEPARATOR +
+                        "7:    Reopen the task." + LINE_SEPARATOR +
+                        "8:    Restore the task." + LINE_SEPARATOR +
+                        "9:    Complete the task." + LINE_SEPARATOR +
+                        "10:   Assign the label to task." + LINE_SEPARATOR +
+                        "11:   Remove the label from task.";
 
         private CommonModeConstants() {
         }

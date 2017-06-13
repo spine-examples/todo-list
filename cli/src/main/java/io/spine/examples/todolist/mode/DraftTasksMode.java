@@ -26,7 +26,6 @@ import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import jline.console.ConsoleReader;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDraftTasks;
@@ -36,9 +35,9 @@ import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConst
 import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.EMPTY_DRAFT_TASKS;
 import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.HELP_MESSAGE;
 import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
 import static io.spine.examples.todolist.mode.TodoListCommands.createFinalizeDraftCmd;
 
 /**
@@ -58,7 +57,7 @@ class DraftTasksMode extends CommonMode {
     }
 
     @Override
-    public void start() throws IOException {
+    public void start() {
         reader.setPrompt(DRAFT_TASKS_PROMPT);
         sendMessageToUser(DRAFT_TASKS_MENU);
         final ShowDraftTasksMode draftTasksMode = new ShowDraftTasksMode(client, reader);
@@ -67,9 +66,9 @@ class DraftTasksMode extends CommonMode {
 
         draftTasksMode.start();
         sendMessageToUser(HELP_MESSAGE);
-        String line = reader.readLine();
+        String line = readLine();
         while (!line.equals(BACK)) {
-            line = reader.readLine();
+            line = readLine();
             final Mode mode = modeMap.get(line);
             if (mode != null) {
                 mode.start();
@@ -84,14 +83,14 @@ class DraftTasksMode extends CommonMode {
         modeMap.put("12", finalizeDraftMode);
     }
 
-    private class ShowDraftTasksMode extends Mode {
+    private class ShowDraftTasksMode extends InteractiveMode {
 
         private ShowDraftTasksMode(TodoClient client, ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final DraftTasksView draftTasksView = client.getDraftTasksView();
             final boolean isEmpty = draftTasksView.getDraftTasks()
                                                   .getItemsList()
@@ -103,13 +102,13 @@ class DraftTasksMode extends CommonMode {
         }
     }
 
-    private class FinalizeDraftMode extends Mode {
+    private class FinalizeDraftMode extends InteractiveMode {
         private FinalizeDraftMode(TodoClient client, ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final TaskId taskId;
             try {
                 taskId = obtainTaskId();
@@ -129,8 +128,7 @@ class DraftTasksMode extends CommonMode {
         static final String DRAFT_TASKS_PROMPT = "draft-tasks>";
         static final String EMPTY_DRAFT_TASKS = "No draft tasks.";
         static final String DRAFT_FINALIZED_MESSAGE = "Task with id value: %s is finalized.";
-        static final String HELP_MESSAGE =
-                "0:    Help." + LINE_SEPARATOR +
+        static final String HELP_MESSAGE = "0:    Help." + LINE_SEPARATOR +
                 "1:    Show the tasks in the draft state." + LINE_SEPARATOR +
                 CommonMode.CommonModeConstants.HELP_MESSAGE + LINE_SEPARATOR +
                 "12:   Finalize the draft." + LINE_SEPARATOR +

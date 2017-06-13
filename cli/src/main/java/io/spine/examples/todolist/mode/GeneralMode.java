@@ -24,19 +24,18 @@ import com.google.common.collect.Maps;
 import io.spine.examples.todolist.client.TodoClient;
 import jline.console.ConsoleReader;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.EXIT;
 import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.HELP_MESSAGE;
 import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.INCORRECT_COMMAND;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.INCORRECT_COMMAND;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
 
 /**
  * @author Illia Shepilov
  */
-public class GeneralMode extends Mode {
+public class GeneralMode extends InteractiveMode {
 
     private final Map<String, Mode> modeMap = Maps.newHashMap();
 
@@ -51,7 +50,7 @@ public class GeneralMode extends Mode {
     }
 
     private void initModeMap() {
-        modeMap.put("0", new HelpMode(reader, HELP_MESSAGE));
+        modeMap.put("0", new HelpMode(HELP_MESSAGE));
         modeMap.put("1", new CreateTaskMode(client, reader));
         modeMap.put("2", new CreateLabelMode(client, reader));
         modeMap.put("3", new DraftTasksMode(client, reader));
@@ -60,12 +59,12 @@ public class GeneralMode extends Mode {
     }
 
     @Override
-    public void start() throws IOException {
+    public void start() {
         sendMessageToUser(HELP_MESSAGE);
         reader.setPrompt(TODO_PROMPT);
         String line = "";
         while (!line.equals(EXIT)) {
-            line = reader.readLine();
+            line = readLine();
 
             final Mode mode = modeMap.get(line);
 
@@ -85,8 +84,7 @@ public class GeneralMode extends Mode {
         static final String HELP_ADVICE =
                 "Enter 'help' or '0' to view all commands." + LINE_SEPARATOR;
         static final String ENTER_LABEL_ID_MESSAGE = "Please enter the label id: ";
-        static final String HELP_MESSAGE =
-                "0:    Help." + LINE_SEPARATOR +
+        static final String HELP_MESSAGE = "0:    Help." + LINE_SEPARATOR +
                 "1:    Create the task." + LINE_SEPARATOR +
                 "2:    Create the label." + LINE_SEPARATOR +
                 "3:    Show the tasks in the draft state." + LINE_SEPARATOR +

@@ -24,19 +24,18 @@ import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import jline.console.ConsoleReader;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyLabelledTasks;
 import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
 import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksModeConstants.EMPTY_LABELLED_TASKS;
 import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksModeConstants.HELP_MESSAGE;
 import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksModeConstants.LABELLED_TASKS_MENU;
 import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksModeConstants.LABELLED_TASKS_PROMPT;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
 
 /**
  * @author Illia Shepilov
@@ -55,7 +54,7 @@ public class LabelledTasksMode extends CommonMode {
     }
 
     @Override
-    public void start() throws IOException {
+    public void start() {
         reader.setPrompt(LABELLED_TASKS_PROMPT);
         sendMessageToUser(LABELLED_TASKS_MENU);
 
@@ -68,7 +67,7 @@ public class LabelledTasksMode extends CommonMode {
         String line = "";
 
         while (!line.equals(BACK)) {
-            line = reader.readLine();
+            line = readLine();
             final Mode mode = modeMap.get(line);
             if (mode != null) {
                 mode.start();
@@ -81,14 +80,14 @@ public class LabelledTasksMode extends CommonMode {
         modeMap.put("1", labelledTasksMode);
     }
 
-    private class ShowLabelledTasksMode extends Mode {
+    private class ShowLabelledTasksMode extends InteractiveMode {
 
         private ShowLabelledTasksMode(TodoClient client, ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final List<LabelledTasksView> labelledTasks = client.getLabelledTasksView();
             final String message = labelledTasks.isEmpty()
                                    ? EMPTY_LABELLED_TASKS
@@ -102,8 +101,7 @@ public class LabelledTasksMode extends CommonMode {
                 "***************** Labelled tasks menu ****************" + LINE_SEPARATOR;
         static final String LABELLED_TASKS_PROMPT = "labelled-tasks>";
         static final String EMPTY_LABELLED_TASKS = "No labelled tasks.";
-        static final String HELP_MESSAGE =
-                "0:    Help." + LINE_SEPARATOR +
+        static final String HELP_MESSAGE = "0:    Help." + LINE_SEPARATOR +
                 "1:    Show the labelled tasks." + LINE_SEPARATOR +
                 CommonMode.CommonModeConstants.HELP_MESSAGE +
                 BACK_TO_THE_MENU_MESSAGE;

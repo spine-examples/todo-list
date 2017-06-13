@@ -35,7 +35,6 @@ import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.client.TodoClient;
 import jline.console.ConsoleReader;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.Map;
 
@@ -58,14 +57,14 @@ import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConst
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDate;
 import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.HELP_ADVICE;
 import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.CANCEL_HINT;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.DATE_FORMAT;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.INCORRECT_COMMAND;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.NEGATIVE_ANSWER;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.POSITIVE_ANSWER;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.CANCEL_HINT;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.DATE_FORMAT;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.INCORRECT_COMMAND;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.NEGATIVE_ANSWER;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.POSITIVE_ANSWER;
 import static io.spine.examples.todolist.mode.TodoListCommands.createFinalizeDraftCmd;
 import static io.spine.examples.todolist.mode.TodoListCommands.createPriorityChange;
 import static io.spine.examples.todolist.mode.TodoListCommands.createStringChange;
@@ -78,12 +77,12 @@ import static java.lang.String.format;
 /**
  * @author Illia Shepilov
  */
-class CreateTaskMode extends Mode {
+class CreateTaskMode extends InteractiveMode {
 
     private Timestamp dueDate = Timestamp.getDefaultInstance();
     private TaskPriority priority = TaskPriority.TP_UNDEFINED;
     private String description;
-    private final Map<String, Mode> map = newHashMap();
+    private final Map<String, Mode> modeMap = newHashMap();
 
     private final TodoClient client;
     private final ConsoleReader reader;
@@ -96,20 +95,20 @@ class CreateTaskMode extends Mode {
     }
 
     private void initModeMap() {
-        map.put("0", new HelpMode(reader, HELP_MESSAGE));
-        map.put("1", new CreateTaskFullMode(reader));
-        map.put("2", new CreateTaskDraftMode(reader));
+        modeMap.put("0", new HelpMode(HELP_MESSAGE));
+        modeMap.put("1", new CreateTaskFullMode(reader));
+        modeMap.put("2", new CreateTaskDraftMode(reader));
     }
 
     @Override
-    public void start() throws IOException {
+    public void start() {
         sendMessageToUser(CREATE_TASK_TITLE);
         reader.setPrompt(CREATE_TASK_PROMPT);
         String line = "";
 
         while (!line.equals(BACK)) {
-            line = reader.readLine();
-            final Mode mode = map.get(line);
+            line = readLine();
+            final Mode mode = modeMap.get(line);
 
             if (mode == null) {
                 sendMessageToUser(INCORRECT_COMMAND);
@@ -130,7 +129,7 @@ class CreateTaskMode extends Mode {
         reader.setPrompt(TODO_PROMPT);
     }
 
-    private void updateDueDateIfNeeded(TaskId taskId) throws IOException, ParseException {
+    private void updateDueDateIfNeeded(TaskId taskId) throws ParseException {
         final String approveValue = obtainApproveValue(SET_DUE_DATE_QUESTION);
         if (approveValue.equals(NEGATIVE_ANSWER)) {
             return;
@@ -148,7 +147,7 @@ class CreateTaskMode extends Mode {
         this.dueDate = dueDate;
     }
 
-    private void updateTaskValuesIfNeeded(TaskId taskId) throws IOException {
+    private void updateTaskValuesIfNeeded(TaskId taskId) {
         try {
             updatePriorityIfNeeded(taskId);
             updateDueDateIfNeeded(taskId);
@@ -157,7 +156,7 @@ class CreateTaskMode extends Mode {
         }
     }
 
-    private void updatePriorityIfNeeded(TaskId taskId) throws IOException {
+    private void updatePriorityIfNeeded(TaskId taskId) {
         final String approveValue = obtainApproveValue(SET_PRIORITY_QUESTION);
         if (approveValue.equals(NEGATIVE_ANSWER)) {
             return;
@@ -182,14 +181,14 @@ class CreateTaskMode extends Mode {
         this.dueDate = Timestamp.getDefaultInstance();
     }
 
-    class CreateTaskFullMode extends Mode {
+    class CreateTaskFullMode extends InteractiveMode {
 
         private CreateTaskFullMode(ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             String line = "";
             while (!line.equals(BACK)) {
                 createTask();
@@ -197,11 +196,11 @@ class CreateTaskMode extends Mode {
                 if (approveValue.equals(NEGATIVE_ANSWER)) {
                     return;
                 }
-                line = reader.readLine();
+                line = readLine();
             }
         }
 
-        private void createTask() throws IOException {
+        private void createTask() {
             final TaskId taskId = newTaskId(newUuid());
             try {
                 createTask(taskId);
@@ -219,7 +218,7 @@ class CreateTaskMode extends Mode {
             clearValues();
         }
 
-        private void createTask(TaskId taskId) throws IOException, InputCancelledException {
+        private void createTask(TaskId taskId) throws InputCancelledException {
             final String description = obtainDescription(SET_DESCRIPTION_MESSAGE, true);
             final CreateBasicTask createTask = createTaskCmd(taskId, description);
             client.create(createTask);
@@ -234,14 +233,14 @@ class CreateTaskMode extends Mode {
         }
     }
 
-    class CreateTaskDraftMode extends Mode {
+    class CreateTaskDraftMode extends InteractiveMode {
 
         private CreateTaskDraftMode(ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             String line = "";
             while (!line.equals(BACK)) {
                 createTaskDraft();
@@ -249,11 +248,11 @@ class CreateTaskMode extends Mode {
                 if (approveValue.equals(NEGATIVE_ANSWER)) {
                     return;
                 }
-                line = reader.readLine();
+                line = readLine();
             }
         }
 
-        private void createTaskDraft() throws IOException {
+        private void createTaskDraft() {
             final TaskId taskId = newTaskId(newUuid());
             try {
                 createTaskDraft(taskId);
@@ -272,7 +271,7 @@ class CreateTaskMode extends Mode {
             clearValues();
         }
 
-        private void createTaskDraft(TaskId taskId) throws IOException, InputCancelledException {
+        private void createTaskDraft(TaskId taskId) throws InputCancelledException {
             final String description = obtainDescription(SET_DESCRIPTION_MESSAGE, true);
 
             final CreateDraft createTask = createDraftCmdInstance(taskId);
@@ -285,7 +284,7 @@ class CreateTaskMode extends Mode {
             CreateTaskMode.this.description = description;
         }
 
-        private void finalizeDraftIfNeeded(TaskId taskId) throws IOException {
+        private void finalizeDraftIfNeeded(TaskId taskId) {
             final String approveValue = obtainApproveValue(NEED_TO_FINALIZE_MESSAGE);
             if (approveValue.equals(NEGATIVE_ANSWER)) {
                 return;

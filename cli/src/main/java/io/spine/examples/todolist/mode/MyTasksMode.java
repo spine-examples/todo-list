@@ -24,14 +24,13 @@ import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.MyListView;
 import jline.console.ConsoleReader;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyMyList;
 import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
 import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.EMPTY_MY_LIST_TASKS;
 import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.HELP_MESSAGE;
 import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.MY_TASKS_MENU;
@@ -53,7 +52,7 @@ public class MyTasksMode extends CommonMode {
     }
 
     @Override
-    public void start() throws IOException {
+    public void start() {
         reader.setPrompt(MY_TASKS_PROMPT);
         sendMessageToUser(MY_TASKS_MENU);
 
@@ -62,14 +61,14 @@ public class MyTasksMode extends CommonMode {
 
         showMyTasksMode.start();
         sendMessageToUser(HELP_MESSAGE);
-        String line = reader.readLine();
+        String line = readLine();
         while (!line.equals(BACK)) {
             final Mode mode = modeMap.get(line);
             if (mode != null) {
                 mode.start();
             }
 
-            line = reader.readLine();
+            line = readLine();
         }
 
         reader.setPrompt(TODO_PROMPT);
@@ -79,14 +78,14 @@ public class MyTasksMode extends CommonMode {
         modeMap.put("1", showMyTasksMode);
     }
 
-    private class ShowMyTasksMode extends Mode {
+    private class ShowMyTasksMode extends InteractiveMode {
 
         private ShowMyTasksMode(ConsoleReader reader) {
             super(reader);
         }
 
         @Override
-        public void start() throws IOException {
+        public void start() {
             final MyListView myListView = client.getMyListView();
             final int itemsCount = myListView.getMyList()
                                              .getItemsCount();
@@ -105,8 +104,7 @@ public class MyTasksMode extends CommonMode {
                 "******************** My tasks menu *******************" + LINE_SEPARATOR;
         static final String MY_TASKS_PROMPT = "my-tasks>";
         static final String EMPTY_MY_LIST_TASKS = "Task list is empty.";
-        static final String HELP_MESSAGE =
-                "0:    Help." + LINE_SEPARATOR +
+        static final String HELP_MESSAGE = "0:    Help." + LINE_SEPARATOR +
                 "1:    Show all my tasks." + LINE_SEPARATOR +
                 CommonMode.CommonModeConstants.HELP_MESSAGE +
                 BACK_TO_THE_MENU_MESSAGE;

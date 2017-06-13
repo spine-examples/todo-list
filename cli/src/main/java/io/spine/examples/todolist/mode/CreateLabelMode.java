@@ -29,8 +29,6 @@ import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.client.TodoClient;
 import jline.console.ConsoleReader;
 
-import java.io.IOException;
-
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.CREATE_LABEL_PROMPT;
 import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.CREATE_ONE_MORE_LABEL_QUESTION;
@@ -39,9 +37,9 @@ import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeCon
 import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.LABEL_CREATED_MESSAGE;
 import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.SET_LABEL_COLOR_QUESTION;
 import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.CANCEL_HINT;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.NEGATIVE_ANSWER;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.CANCEL_HINT;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.NEGATIVE_ANSWER;
 import static io.spine.examples.todolist.mode.TodoListCommands.createBasicLabelCmd;
 import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetails;
 import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetailsChange;
@@ -51,7 +49,7 @@ import static java.lang.String.format;
 /**
  * @author Illia Shepilov
  */
-class CreateLabelMode extends Mode {
+class CreateLabelMode extends InteractiveMode {
 
     private final TodoClient client;
     private final ConsoleReader reader;
@@ -63,7 +61,7 @@ class CreateLabelMode extends Mode {
     }
 
     @Override
-    public void start() throws IOException {
+    public void start() {
         reader.setPrompt(CREATE_LABEL_PROMPT);
         String line = "";
         while (!line.equals(NEGATIVE_ANSWER)) {
@@ -73,7 +71,7 @@ class CreateLabelMode extends Mode {
         reader.setPrompt(TODO_PROMPT);
     }
 
-    private void createLabel() throws IOException {
+    private void createLabel() {
         final LabelId labelId = newLabelId(newUuid());
         final String title;
         try {
@@ -90,8 +88,7 @@ class CreateLabelMode extends Mode {
         sendMessageToUser(message);
     }
 
-    private LabelDetails updateLabelDetailsIfNeeded(LabelId labelId, String title) throws
-                                                                                   IOException {
+    private LabelDetails updateLabelDetailsIfNeeded(LabelId labelId, String title) {
         final String approveValue = obtainApproveValue(SET_LABEL_COLOR_QUESTION);
         final LabelDetails defaultInstance = LabelDetails.getDefaultInstance();
         if (approveValue.equals(NEGATIVE_ANSWER)) {
