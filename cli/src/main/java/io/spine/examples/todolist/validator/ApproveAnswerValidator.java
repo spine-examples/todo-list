@@ -22,8 +22,7 @@ package io.spine.examples.todolist.validator;
 
 import javax.annotation.Nullable;
 
-import static io.spine.examples.todolist.validator.ValidatorHelper.isEmpty;
-import static io.spine.examples.todolist.validator.ValidatorHelper.isNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * Serves as a validator for the user approve answer.
@@ -37,22 +36,26 @@ import static io.spine.examples.todolist.validator.ValidatorHelper.isNull;
  */
 public class ApproveAnswerValidator implements Validator<String> {
 
-    private static final String INVALID_INPUT = "Invalid input. Valid values: 'y' or 'n'";
     private static final String NEGATIVE_ANSWER = "n";
     private static final String POSITIVE_ANSWER = "y";
+    private static final String INVALID_INPUT_MSG =
+            "Invalid input. Valid values: '" + POSITIVE_ANSWER + "' or '" + NEGATIVE_ANSWER + "'.";
+
     private String message;
 
     @Override
     public boolean validate(String input) {
+        if (isNullOrEmpty(input)) {
+            return false;
+        }
 
         final boolean isNegativeOrPositiveAns =
                 NEGATIVE_ANSWER.equals(input) || POSITIVE_ANSWER.equals(input);
-        final boolean invalidInput = isNull(input) || isEmpty(input) || !isNegativeOrPositiveAns;
-
-        if (invalidInput) {
-            this.message = INVALID_INPUT;
+        if (!isNegativeOrPositiveAns) {
+            this.message = INVALID_INPUT_MSG;
             return false;
         }
+
         return true;
     }
 
