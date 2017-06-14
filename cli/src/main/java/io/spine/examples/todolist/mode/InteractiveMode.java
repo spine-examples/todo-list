@@ -26,7 +26,6 @@ import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
-import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.validator.ApproveAnswerValidator;
 import io.spine.examples.todolist.validator.DescriptionValidator;
 import io.spine.examples.todolist.validator.DueDateValidator;
@@ -35,9 +34,7 @@ import io.spine.examples.todolist.validator.LabelColorValidator;
 import io.spine.examples.todolist.validator.NeitherCompletedNorDeletedValidator;
 import io.spine.examples.todolist.validator.TaskPriorityValidator;
 import io.spine.examples.todolist.validator.Validator;
-import jline.console.ConsoleReader;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -51,7 +48,6 @@ import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.INPU
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LABEL_COLOR_VALUE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.TASK_PRIORITY_VALUE;
 import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.ENTER_LABEL_ID_MESSAGE;
-import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
  * A {@code Mode}, that requires user input.
@@ -69,21 +65,11 @@ public abstract class InteractiveMode extends Mode {
     private Validator approveValidator;
     private final Map<String, TaskPriority> priorityMap;
     private final Map<String, LabelColor> colorMap;
-    private final ConsoleReader reader;
-    private final TodoClient client;
 
-    protected InteractiveMode(ConsoleReader reader, TodoClient client) {
-        this.reader = reader;
-        this.client = client;
+    protected InteractiveMode() {
         priorityMap = initPriorityMap();
         colorMap = initColorMap();
         initValidators();
-    }
-
-    protected String askUser(String question) {
-        println(question);
-        final String answer = readLine();
-        return answer;
     }
 
     protected LabelColor obtainLabelColor(String message) throws InputCancelledException {
@@ -291,25 +277,9 @@ public abstract class InteractiveMode extends Mode {
         return colorMap;
     }
 
-    protected String readLine() {
-        try {
-            return getReader().readLine();
-        } catch (IOException e) {
-            throw illegalStateWithCauseOf(e);
-        }
-    }
-
     static SimpleDateFormat getDateFormat() {
         final SimpleDateFormat result = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
         return result;
-    }
-
-    public ConsoleReader getReader() {
-        return reader;
-    }
-
-    public TodoClient getClient() {
-        return client;
     }
 
     static class ModeConstants {
@@ -330,10 +300,8 @@ public abstract class InteractiveMode extends Mode {
                 "4: BLUE.";
         static final String BACK_TO_THE_MENU_MESSAGE = "Back to the previous menu.";
         static final String BACK = "back";
-        static final String POSITIVE_ANSWER = "y";
         static final String NEGATIVE_ANSWER = "n";
         static final String CANCEL_INPUT = "c";
-        static final String INCORRECT_COMMAND = "Incorrect command.";
 
         private ModeConstants() {
         }

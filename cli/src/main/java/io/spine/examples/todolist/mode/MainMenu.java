@@ -20,35 +20,27 @@
 
 package io.spine.examples.todolist.mode;
 
-import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.mode.menu.Menu;
-import jline.console.ConsoleReader;
 
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
 
 /**
  * @author Illia Shepilov
  */
 public class MainMenu extends Menu {
 
-    public MainMenu(TodoClient client, ConsoleReader reader) {
+    public MainMenu() {
         super(Menu.newBuilder()
-                  .setClient(client)
-                  .setReader(reader)
                   .setMenuExit(BACK_TO_THE_MENU_MESSAGE)
-                  .addMenuItem("Create the task.", new CreateTaskMenu(client, reader))
-                  .addMenuItem("Create the label.", new CreateLabelMode(client, reader))
-                  .addMenuItem("Show the tasks in the draft state.",
-                               new DraftTasksMode(client, reader))
-                  .addMenuItem("Show the labelled tasks.",
-                               new LabelledTasksMode(client, reader))
-                  .addMenuItem("Show my tasks.", new MyTasksMode(client, reader)));
+                  .addMenuItem("Create the task.", new CreateTaskMenu())
+                  .addMenuItem("Create the label.", new CreateLabelMode())
+                  .addMenuItem("Show the tasks in the draft state.", new DraftTasksMode())
+                  .addMenuItem("Show the labelled tasks.", new LabelledTasksMode())
+                  .addMenuItem("Show my tasks.", new MyTasksMode()));
     }
 
     static class MainModeConstants {
 
-        static final String TODO_PROMPT = "todo>";
         static final String ENTER_LABEL_ID_MESSAGE = "Please enter the label id: ";
 
         private MainModeConstants() {

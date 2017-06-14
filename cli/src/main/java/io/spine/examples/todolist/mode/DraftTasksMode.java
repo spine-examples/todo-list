@@ -22,22 +22,18 @@ package io.spine.examples.todolist.mode;
 
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
-import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
-import jline.console.ConsoleReader;
 
 import java.util.Map;
 
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDraftTasks;
 import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.DRAFT_FINALIZED_MESSAGE;
 import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.DRAFT_TASKS_MENU;
-import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.DRAFT_TASKS_PROMPT;
 import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.EMPTY_DRAFT_TASKS;
 import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.HELP_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
-import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.TODO_PROMPT;
 import static io.spine.examples.todolist.mode.TodoListCommands.createFinalizeDraftCmd;
 
 /**
@@ -48,16 +44,11 @@ class DraftTasksMode extends CommonMode {
 
     private final Map<String, Mode> modeMap = getModeMap();
 
-    DraftTasksMode(TodoClient client, ConsoleReader reader) {
-        super(client, reader);
-    }
-
     @Override
     public void start() {
-        getReader().setPrompt(DRAFT_TASKS_PROMPT);
         println(DRAFT_TASKS_MENU);
-        final ShowDraftTasksMode draftTasksMode = new ShowDraftTasksMode(getClient(), getReader());
-        final FinalizeDraftMode finalizeDraftMode = new FinalizeDraftMode(getClient(), getReader());
+        final ShowDraftTasksMode draftTasksMode = new ShowDraftTasksMode();
+        final FinalizeDraftMode finalizeDraftMode = new FinalizeDraftMode();
         initModeMap(draftTasksMode, finalizeDraftMode);
 
         draftTasksMode.start();
@@ -70,7 +61,6 @@ class DraftTasksMode extends CommonMode {
                 mode.start();
             }
         }
-        getReader().setPrompt(TODO_PROMPT);
     }
 
     private void initModeMap(ShowDraftTasksMode draftTasksMode,
@@ -79,11 +69,7 @@ class DraftTasksMode extends CommonMode {
         modeMap.put("12", finalizeDraftMode);
     }
 
-    private class ShowDraftTasksMode extends InteractiveMode {
-
-        private ShowDraftTasksMode(TodoClient client, ConsoleReader reader) {
-            super(reader, client);
-        }
+    private static class ShowDraftTasksMode extends InteractiveMode {
 
         @Override
         public void start() {
@@ -98,10 +84,7 @@ class DraftTasksMode extends CommonMode {
         }
     }
 
-    private class FinalizeDraftMode extends InteractiveMode {
-        private FinalizeDraftMode(TodoClient client, ConsoleReader reader) {
-            super(reader, client);
-        }
+    private static class FinalizeDraftMode extends InteractiveMode {
 
         @Override
         public void start() {

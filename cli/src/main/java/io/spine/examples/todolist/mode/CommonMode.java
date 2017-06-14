@@ -40,8 +40,6 @@ import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
-import io.spine.examples.todolist.client.TodoClient;
-import jline.console.ConsoleReader;
 
 import java.text.ParseException;
 import java.util.Map;
@@ -83,23 +81,22 @@ abstract class CommonMode extends InteractiveMode {
 
     private Map<String, Mode> modeMap;
 
-    CommonMode(TodoClient client, ConsoleReader reader) {
-        super(reader, client);
-        initModeMap(reader, client);
+    CommonMode() {
+        initModeMap();
     }
 
-    private void initModeMap(ConsoleReader reader, TodoClient client) {
+    private void initModeMap() {
         modeMap = newHashMap();
-        modeMap.put("2", new UpdateTaskDescriptionMode(reader, client));
-        modeMap.put("3", new UpdateTaskPriorityMode(reader, client));
-        modeMap.put("4", new UpdateTaskDueDateMode(reader, client));
-        modeMap.put("5", new UpdateLabelDetailsMode(reader, client));
-        modeMap.put("6", new DeleteTaskMode(reader, client));
-        modeMap.put("7", new ReopenTaskMode(reader, client));
-        modeMap.put("8", new RestoreTaskMode(reader, client));
-        modeMap.put("9", new CompleteTaskMode(reader, client));
-        modeMap.put("10", new AssignLabelToTaskMode(reader, client));
-        modeMap.put("11", new RemoveLabelFromTaskMode(reader, client));
+        modeMap.put("2", new UpdateTaskDescriptionMode());
+        modeMap.put("3", new UpdateTaskPriorityMode());
+        modeMap.put("4", new UpdateTaskDueDateMode());
+        modeMap.put("5", new UpdateLabelDetailsMode());
+        modeMap.put("6", new DeleteTaskMode());
+        modeMap.put("7", new ReopenTaskMode());
+        modeMap.put("8", new RestoreTaskMode());
+        modeMap.put("9", new CompleteTaskMode());
+        modeMap.put("10", new AssignLabelToTaskMode());
+        modeMap.put("11", new RemoveLabelFromTaskMode());
     }
 
     Map<String, Mode> getModeMap() {
@@ -107,10 +104,6 @@ abstract class CommonMode extends InteractiveMode {
     }
 
     private static class UpdateTaskDescriptionMode extends InteractiveMode {
-
-        private UpdateTaskDescriptionMode(ConsoleReader reader, TodoClient client) {
-            super(reader, client);
-        }
 
         @Override
         public void start() {
@@ -139,10 +132,6 @@ abstract class CommonMode extends InteractiveMode {
 
     private static class UpdateTaskPriorityMode extends InteractiveMode {
 
-        private UpdateTaskPriorityMode(ConsoleReader reader, TodoClient client) {
-            super(reader, client);
-        }
-
         @Override
         public void start() {
             final TaskId taskId;
@@ -167,10 +156,6 @@ abstract class CommonMode extends InteractiveMode {
     }
 
     private static class UpdateTaskDueDateMode extends InteractiveMode {
-
-        private UpdateTaskDueDateMode(ConsoleReader reader, TodoClient client) {
-            super(reader, client);
-        }
 
         @Override
         public void start() {
@@ -201,10 +186,6 @@ abstract class CommonMode extends InteractiveMode {
     }
 
     private static class UpdateLabelDetailsMode extends InteractiveMode {
-
-        private UpdateLabelDetailsMode(ConsoleReader reader, TodoClient client) {
-            super(reader, client);
-        }
 
         @Override
         public void start() {
@@ -239,10 +220,6 @@ abstract class CommonMode extends InteractiveMode {
 
     private static class DeleteTaskMode extends InteractiveMode {
 
-        private DeleteTaskMode(ConsoleReader reader, TodoClient client) {
-            super(reader, client);
-        }
-
         @Override
         public void start() {
             final TaskId taskId;
@@ -263,10 +240,6 @@ abstract class CommonMode extends InteractiveMode {
     }
 
     private static class ReopenTaskMode extends InteractiveMode {
-
-        private ReopenTaskMode(ConsoleReader reader, TodoClient client) {
-            super(reader, client);
-        }
 
         @Override
         public void start() {
@@ -289,10 +262,6 @@ abstract class CommonMode extends InteractiveMode {
 
     private static class RestoreTaskMode extends InteractiveMode {
 
-        private RestoreTaskMode(ConsoleReader reader, TodoClient client) {
-            super(reader, client);
-        }
-
         @Override
         public void start() {
             final TaskId taskId;
@@ -314,10 +283,6 @@ abstract class CommonMode extends InteractiveMode {
 
     private static class CompleteTaskMode extends InteractiveMode {
 
-        private CompleteTaskMode(ConsoleReader reader, TodoClient client) {
-            super(reader, client);
-        }
-
         @Override
         public void start() {
             final TaskId taskId;
@@ -334,10 +299,6 @@ abstract class CommonMode extends InteractiveMode {
     }
 
     private static class AssignLabelToTaskMode extends InteractiveMode {
-
-        private AssignLabelToTaskMode(ConsoleReader reader, TodoClient client) {
-            super(reader, client);
-        }
 
         @Override
         public void start() {
@@ -363,10 +324,6 @@ abstract class CommonMode extends InteractiveMode {
     }
 
     private static class RemoveLabelFromTaskMode extends InteractiveMode {
-
-        private RemoveLabelFromTaskMode(ConsoleReader reader, TodoClient client) {
-            super(reader, client);
-        }
 
         @Override
         public void start() {

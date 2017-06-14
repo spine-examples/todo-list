@@ -20,9 +20,7 @@
 
 package io.spine.examples.todolist.mode;
 
-import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import jline.console.ConsoleReader;
 
 import java.util.List;
 import java.util.Map;
@@ -34,8 +32,6 @@ import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE
 import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksModeConstants.EMPTY_LABELLED_TASKS;
 import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksModeConstants.HELP_MESSAGE;
 import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksModeConstants.LABELLED_TASKS_MENU;
-import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksModeConstants.LABELLED_TASKS_PROMPT;
-import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.TODO_PROMPT;
 
 /**
  * @author Illia Shepilov
@@ -45,17 +41,11 @@ public class LabelledTasksMode extends CommonMode {
 
     private final Map<String, Mode> modeMap = getModeMap();
 
-    LabelledTasksMode(TodoClient client, ConsoleReader reader) {
-        super(client, reader);
-    }
-
     @Override
     public void start() {
-        getReader().setPrompt(LABELLED_TASKS_PROMPT);
         println(LABELLED_TASKS_MENU);
 
-        final ShowLabelledTasksMode showLabelledTasksMode = new ShowLabelledTasksMode(getClient(),
-                                                                                      getReader());
+        final ShowLabelledTasksMode showLabelledTasksMode = new ShowLabelledTasksMode();
         initModeMap(showLabelledTasksMode);
 
         showLabelledTasksMode.start();
@@ -69,18 +59,13 @@ public class LabelledTasksMode extends CommonMode {
                 mode.start();
             }
         }
-        getReader().setPrompt(TODO_PROMPT);
     }
 
     private void initModeMap(ShowLabelledTasksMode labelledTasksMode) {
         modeMap.put("1", labelledTasksMode);
     }
 
-    private class ShowLabelledTasksMode extends InteractiveMode {
-
-        private ShowLabelledTasksMode(TodoClient client, ConsoleReader reader) {
-            super(reader, client);
-        }
+    private static class ShowLabelledTasksMode extends InteractiveMode {
 
         @Override
         public void start() {

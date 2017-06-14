@@ -24,9 +24,7 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.mode.menu.Menu;
-import jline.console.ConsoleReader;
 
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.CREATE_ONE_MORE_TASK_QUESTION;
@@ -40,21 +38,14 @@ import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.NEGA
  */
 class CreateTaskMenu extends Menu {
 
-    CreateTaskMenu(TodoClient client, ConsoleReader reader) {
+    CreateTaskMenu() {
         super(Menu.newBuilder()
-                  .setClient(client)
-                  .setReader(reader)
                   .setMenuExit(BACK_TO_THE_MENU_MESSAGE)
-                  .addMenuItem("Create the task.", new CreateTaskFullMode(reader, client))
-                  .addMenuItem("Create the draft task.",
-                               new CreateTaskDraftMode(reader, client)));
+                  .addMenuItem("Create the task.", new CreateTaskFullMode())
+                  .addMenuItem("Create the draft task.", new CreateTaskDraftMode()));
     }
 
     static class CreateTaskFullMode extends InteractiveMode {
-
-        private CreateTaskFullMode(ConsoleReader reader, TodoClient client) {
-            super(reader, client);
-        }
 
         @Override
         public void start() {
@@ -85,10 +76,6 @@ class CreateTaskMenu extends Menu {
     }
 
     static class CreateTaskDraftMode extends InteractiveMode {
-
-        private CreateTaskDraftMode(ConsoleReader reader, TodoClient client) {
-            super(reader, client);
-        }
 
         @Override
         public void start() {

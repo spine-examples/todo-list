@@ -20,10 +20,9 @@
 
 package io.spine.examples.todolist.mode.menu;
 
-import io.spine.examples.todolist.client.TodoClient;
+import com.google.common.base.Preconditions;
 import io.spine.examples.todolist.mode.InteractiveMode;
 import io.spine.examples.todolist.mode.Mode;
-import jline.console.ConsoleReader;
 
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,6 @@ public class Menu extends InteractiveMode {
     private final List<AbstractMenuItem> items = newLinkedList();
 
     protected Menu(Builder builder) {
-        super(builder.reader, builder.client);
         for (Map.Entry<String, Mode> mode : builder.modeMap.entrySet()) {
             addMenuItem(mode.getKey(), mode.getValue());
         }
@@ -107,20 +105,8 @@ public class Menu extends InteractiveMode {
 
     public static class Builder {
 
-        private ConsoleReader reader;
-        private TodoClient client;
         private MenuExit menuExit;
         private final Map<String, Mode> modeMap = newLinkedHashMap();
-
-        public Builder setReader(ConsoleReader reader) {
-            this.reader = reader;
-            return this;
-        }
-
-        public Builder setClient(TodoClient client) {
-            this.client = client;
-            return this;
-        }
 
         public Builder setMenuExit(String name) {
             this.menuExit = new MenuExit(name);

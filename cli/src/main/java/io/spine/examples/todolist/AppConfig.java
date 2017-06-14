@@ -18,45 +18,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode;
+package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.AppConfig;
+import io.spine.examples.todolist.client.CommandLineTodoClient;
 import io.spine.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.context.TodoListBoundedContext;
+import io.spine.server.BoundedContext;
 import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
 
-import java.io.PrintStream;
+import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
 /**
  * @author Dmytro Grankin
  */
-public abstract class Mode {
+public class AppConfig {
 
-    @SuppressWarnings("UseOfSystemOutOrSystemErr" /* OK for command-line app. */)
-    private final PrintStream printStream = System.out;
-    private final LineReader reader = AppConfig.newLineReader();
-    private final TodoClient client = AppConfig.getClient();
+    private static final TodoClient CLIENT =
+            new CommandLineTodoClient("localhost",
+                                      DEFAULT_CLIENT_SERVICE_PORT,
+                                      TodoListBoundedContext.getInstance());
 
-    public abstract void start();
-
-    protected void println(String message) {
-        printStream.println(message);
+    private AppConfig() {
+        // Prevent instantiation of this utility class.
     }
 
-    protected void println() {
-        printStream.println();
+    public static LineReader newLineReader() {
+        return LineReaderBuilder.builder()
+                                .build();
     }
 
-    protected String askUser(String question) {
-        println(question);
-        final String answer = readLine();
-        return answer;
+    public static TodoClient getClient() {
+        return CLIENT;
     }
 
-    protected String readLine() {
-        return reader.readLine();
-    }
-
-    protected TodoClient getClient() {
-        return client;
+    public static BoundedContext getBoundedContext() {
+        return TodoListBoundedContext.getInstance();
     }
 }

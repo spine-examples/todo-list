@@ -26,11 +26,8 @@ import io.spine.examples.todolist.LabelDetailsChange;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
-import io.spine.examples.todolist.client.TodoClient;
-import jline.console.ConsoleReader;
 
 import static io.spine.base.Identifier.newUuid;
-import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.CREATE_LABEL_PROMPT;
 import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.CREATE_ONE_MORE_LABEL_QUESTION;
 import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.ENTER_COLOR_MESSAGE;
 import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.ENTER_TITLE_MESSAGE;
@@ -39,7 +36,6 @@ import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeCon
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.CANCEL_HINT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.NEGATIVE_ANSWER;
-import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.TODO_PROMPT;
 import static io.spine.examples.todolist.mode.TodoListCommands.createBasicLabelCmd;
 import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetails;
 import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetailsChange;
@@ -51,19 +47,13 @@ import static java.lang.String.format;
  */
 class CreateLabelMode extends InteractiveMode {
 
-    CreateLabelMode(TodoClient client, ConsoleReader reader) {
-        super(reader, client);
-    }
-
     @Override
     public void start() {
-        getReader().setPrompt(CREATE_LABEL_PROMPT);
         String line = "";
         while (!line.equals(NEGATIVE_ANSWER)) {
             createLabel();
             line = obtainApproveValue(CREATE_ONE_MORE_LABEL_QUESTION);
         }
-        getReader().setPrompt(TODO_PROMPT);
     }
 
     private void createLabel() {
@@ -105,7 +95,6 @@ class CreateLabelMode extends InteractiveMode {
     }
 
     static class CreateLabelModeConstants {
-        static final String CREATE_LABEL_PROMPT = "create-label>";
         static final String CREATE_ONE_MORE_LABEL_QUESTION = "Do you want to create one more label?(y/n)";
         static final String SET_LABEL_COLOR_QUESTION = "Do you want to set the label color?(y/n)";
         static final String LABEL_CREATED_MESSAGE = "Created label with id: %s, title: %s, color: %s";

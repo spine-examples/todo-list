@@ -20,9 +20,7 @@
 
 package io.spine.examples.todolist.mode;
 
-import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.MyListView;
-import jline.console.ConsoleReader;
 
 import java.util.Map;
 
@@ -30,11 +28,9 @@ import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendl
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
-import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.TODO_PROMPT;
 import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.EMPTY_MY_LIST_TASKS;
 import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.HELP_MESSAGE;
 import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.MY_TASKS_MENU;
-import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.MY_TASKS_PROMPT;
 
 /**
  * @author Illia Shepilov
@@ -43,16 +39,11 @@ public class MyTasksMode extends CommonMode {
 
     private final Map<String, Mode> modeMap = getModeMap();
 
-    MyTasksMode(TodoClient client, ConsoleReader reader) {
-        super(client, reader);
-    }
-
     @Override
     public void start() {
-        getReader().setPrompt(MY_TASKS_PROMPT);
         println(MY_TASKS_MENU);
 
-        final ShowMyTasksMode showMyTasksMode = new ShowMyTasksMode(getReader(), getClient());
+        final ShowMyTasksMode showMyTasksMode = new ShowMyTasksMode();
         initModeMap(showMyTasksMode);
 
         showMyTasksMode.start();
@@ -66,8 +57,6 @@ public class MyTasksMode extends CommonMode {
 
             line = readLine();
         }
-
-        getReader().setPrompt(TODO_PROMPT);
     }
 
     private void initModeMap(ShowMyTasksMode showMyTasksMode) {
@@ -75,10 +64,6 @@ public class MyTasksMode extends CommonMode {
     }
 
     private static class ShowMyTasksMode extends InteractiveMode {
-
-        private ShowMyTasksMode(ConsoleReader reader, TodoClient client) {
-            super(reader, client);
-        }
 
         @Override
         public void start() {
@@ -98,7 +83,6 @@ public class MyTasksMode extends CommonMode {
 
         static final String MY_TASKS_MENU =
                 "******************** My tasks menu *******************" + LINE_SEPARATOR;
-        static final String MY_TASKS_PROMPT = "my-tasks>";
         static final String EMPTY_MY_LIST_TASKS = "Task list is empty.";
         static final String HELP_MESSAGE = "0:    Help." + LINE_SEPARATOR +
                 "1:    Show all my tasks." + LINE_SEPARATOR +

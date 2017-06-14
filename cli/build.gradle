@@ -19,7 +19,7 @@
  */
 
 dependencies {
-    compile group: 'jline', name: 'jline', version: '2.14.2'
+    compile group: 'org.jline', name: 'jline', version: '3.3.0'
 
     compile project(path: ':api-java')
     compile project(path: ':client')
