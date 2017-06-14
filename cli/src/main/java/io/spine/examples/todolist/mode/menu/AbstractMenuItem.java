@@ -18,25 +18,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode;
+package io.spine.examples.todolist.mode.menu;
 
-import java.io.PrintStream;
+import io.spine.examples.todolist.mode.Mode;
 
 /**
  * @author Dmytro Grankin
  */
-public abstract class Mode {
+abstract class AbstractMenuItem extends Mode {
 
-    @SuppressWarnings("UseOfSystemOutOrSystemErr" /* OK for command-line app. */)
-    private final PrintStream printStream = System.out;
+    private final String name;
 
-    public abstract void start();
-
-    protected void println(String message) {
-        printStream.println(message);
+    AbstractMenuItem(String name) {
+        this.name = name;
     }
 
-    protected void println() {
-        printStream.println();
+    String getName() {
+        return name;
     }
 }

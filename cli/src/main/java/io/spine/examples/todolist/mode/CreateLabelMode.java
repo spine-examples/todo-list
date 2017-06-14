@@ -36,10 +36,10 @@ import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeCon
 import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.ENTER_TITLE_MESSAGE;
 import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.LABEL_CREATED_MESSAGE;
 import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.SET_LABEL_COLOR_QUESTION;
-import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.CANCEL_HINT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.NEGATIVE_ANSWER;
+import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.TODO_PROMPT;
 import static io.spine.examples.todolist.mode.TodoListCommands.createBasicLabelCmd;
 import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetails;
 import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetailsChange;
@@ -80,7 +80,7 @@ class CreateLabelMode extends InteractiveMode {
         final LabelDetails labelDetails = updateLabelDetailsIfNeeded(labelId, title);
         final String message = format(LABEL_CREATED_MESSAGE,
                                       labelId.getValue(), title, labelDetails.getColor());
-        sendMessageToUser(message);
+        println(message);
     }
 
     private LabelDetails updateLabelDetailsIfNeeded(LabelId labelId, String title) {

@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyLabelledTasks;
-import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
@@ -36,6 +35,7 @@ import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksMod
 import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksModeConstants.HELP_MESSAGE;
 import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksModeConstants.LABELLED_TASKS_MENU;
 import static io.spine.examples.todolist.mode.LabelledTasksMode.LabelledTasksModeConstants.LABELLED_TASKS_PROMPT;
+import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.TODO_PROMPT;
 
 /**
  * @author Illia Shepilov
@@ -52,14 +52,14 @@ public class LabelledTasksMode extends CommonMode {
     @Override
     public void start() {
         getReader().setPrompt(LABELLED_TASKS_PROMPT);
-        sendMessageToUser(LABELLED_TASKS_MENU);
+        println(LABELLED_TASKS_MENU);
 
         final ShowLabelledTasksMode showLabelledTasksMode = new ShowLabelledTasksMode(getClient(),
                                                                                       getReader());
         initModeMap(showLabelledTasksMode);
 
         showLabelledTasksMode.start();
-        sendMessageToUser(HELP_MESSAGE);
+        println(HELP_MESSAGE);
         String line = "";
 
         while (!line.equals(BACK)) {
@@ -88,7 +88,7 @@ public class LabelledTasksMode extends CommonMode {
             final String message = labelledTasks.isEmpty()
                                    ? EMPTY_LABELLED_TASKS
                                    : constructUserFriendlyLabelledTasks(labelledTasks);
-            sendMessageToUser(message);
+            println(message);
         }
     }
 

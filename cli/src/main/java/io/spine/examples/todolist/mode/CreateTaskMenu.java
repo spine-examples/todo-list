@@ -33,38 +33,30 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.mode.menu.Menu;
 import jline.console.ConsoleReader;
 
 import java.text.ParseException;
-import java.util.Map;
 
-import static com.google.common.collect.Maps.newHashMap;
 import static io.spine.base.Identifier.newUuid;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.BACK_TO_THE_PREVIOUS_MENU_QUESTION;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATED_DRAFT_MESSAGE;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATED_TASK_MESSAGE;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATE_ONE_MORE_TASK_QUESTION;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATE_TASK_PROMPT;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.CREATE_TASK_TITLE;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.DRAFT_FINALIZED_MESSAGE;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.HELP_MESSAGE;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.NEED_TO_FINALIZE_MESSAGE;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_DESCRIPTION_MESSAGE;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_DUE_DATE_MESSAGE;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_DUE_DATE_QUESTION;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_PRIORITY_MESSAGE;
-import static io.spine.examples.todolist.mode.CreateTaskMode.CreateTaskModeConstants.SET_PRIORITY_QUESTION;
+import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.CREATED_DRAFT_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.CREATED_TASK_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.CREATE_ONE_MORE_TASK_QUESTION;
+import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.DRAFT_FINALIZED_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.NEED_TO_FINALIZE_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.SET_DESCRIPTION_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.SET_DUE_DATE_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.SET_DUE_DATE_QUESTION;
+import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.SET_PRIORITY_MESSAGE;
+import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.SET_PRIORITY_QUESTION;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDate;
-import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.HELP_ADVICE;
-import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.CANCEL_HINT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.DATE_FORMAT;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.INCORRECT_COMMAND;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.NEGATIVE_ANSWER;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.POSITIVE_ANSWER;
+import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.HELP_ADVICE;
 import static io.spine.examples.todolist.mode.TodoListCommands.createFinalizeDraftCmd;
 import static io.spine.examples.todolist.mode.TodoListCommands.createPriorityChange;
 import static io.spine.examples.todolist.mode.TodoListCommands.createStringChange;
@@ -77,106 +69,26 @@ import static java.lang.String.format;
 /**
  * @author Illia Shepilov
  */
-class CreateTaskMode extends InteractiveMode {
+class CreateTaskMenu extends Menu {
 
-    private Timestamp dueDate = Timestamp.getDefaultInstance();
-    private TaskPriority priority = TaskPriority.TP_UNDEFINED;
-    private String description;
-    private final Map<String, Mode> modeMap = newHashMap();
-
-    CreateTaskMode(TodoClient client, ConsoleReader reader) {
-        super(reader, client);
-        initModeMap();
+    CreateTaskMenu(TodoClient client, ConsoleReader reader) {
+        super(Menu.newBuilder()
+                  .setClient(client)
+                  .setReader(reader)
+                  .setMenuExit(BACK_TO_THE_MENU_MESSAGE)
+                  .addMenuItem(
+                          "Create the task with specified parameters[description is required].",
+                          new CreateTaskFullMode(reader, client))
+                  .addMenuItem(
+                          "Create the task with specified parameters[description is required][FAST MODE].",
+                          new CreateTaskDraftMode(reader, client)));
     }
 
-    private void initModeMap() {
-        modeMap.put("0", new HelpMode(HELP_MESSAGE));
-        modeMap.put("1", new CreateTaskFullMode(getReader(), getClient()));
-        modeMap.put("2", new CreateTaskDraftMode(getReader(), getClient()));
-    }
+    static class CreateTaskFullMode extends InteractiveMode {
 
-    @Override
-    public void start() {
-        sendMessageToUser(CREATE_TASK_TITLE);
-        getReader().setPrompt(CREATE_TASK_PROMPT);
-        String line = "";
-
-        while (!line.equals(BACK)) {
-            line = readLine();
-            final Mode mode = modeMap.get(line);
-
-            if (mode == null) {
-                sendMessageToUser(INCORRECT_COMMAND);
-                continue;
-            }
-
-            mode.start();
-            final String approve = obtainApproveValue(BACK_TO_THE_PREVIOUS_MENU_QUESTION);
-            if (approve.equals(NEGATIVE_ANSWER)) {
-                sendMessageToUser(HELP_MESSAGE);
-            }
-
-            if (approve.equals(POSITIVE_ANSWER)) {
-                line = BACK;
-            }
-        }
-
-        getReader().setPrompt(TODO_PROMPT);
-    }
-
-    private void updateDueDateIfNeeded(TaskId taskId) throws ParseException {
-        final String approveValue = obtainApproveValue(SET_DUE_DATE_QUESTION);
-        if (approveValue.equals(NEGATIVE_ANSWER)) {
-            return;
-        }
-
-        final Timestamp dueDate;
-        try {
-            dueDate = obtainDueDate(SET_DUE_DATE_MESSAGE, true);
-        } catch (InputCancelledException ignored) {
-            return;
-        }
-        final TimestampChange change = createTimestampChange(dueDate);
-        final UpdateTaskDueDate updateTaskDueDate = createUpdateTaskDueDateCmd(taskId, change);
-        getClient().update(updateTaskDueDate);
-        this.dueDate = dueDate;
-    }
-
-    private void updateTaskValuesIfNeeded(TaskId taskId) {
-        try {
-            updatePriorityIfNeeded(taskId);
-            updateDueDateIfNeeded(taskId);
-        } catch (ParseException e) {
-            throw new ParseDateException(e);
-        }
-    }
-
-    private void updatePriorityIfNeeded(TaskId taskId) {
-        final String approveValue = obtainApproveValue(SET_PRIORITY_QUESTION);
-        if (approveValue.equals(NEGATIVE_ANSWER)) {
-            return;
-        }
-
-        final TaskPriority priority;
-        try {
-            priority = obtainTaskPriority(SET_PRIORITY_MESSAGE);
-        } catch (InputCancelledException ignored) {
-            return;
-        }
-
-        final PriorityChange change = createPriorityChange(priority);
-        final UpdateTaskPriority updateTaskPriority = createUpdateTaskPriorityCmd(taskId, change);
-        getClient().update(updateTaskPriority);
-        this.priority = priority;
-    }
-
-    private void clearValues() {
-        this.description = "";
-        this.priority = TaskPriority.TP_UNDEFINED;
-        this.dueDate = Timestamp.getDefaultInstance();
-    }
-
-    class CreateTaskFullMode extends InteractiveMode {
+        private Timestamp dueDate = Timestamp.getDefaultInstance();
+        private TaskPriority priority = TaskPriority.TP_UNDEFINED;
+        private String description;
 
         private CreateTaskFullMode(ConsoleReader reader, TodoClient client) {
             super(reader, client);
@@ -208,7 +120,7 @@ class CreateTaskMode extends InteractiveMode {
             final String idValue = taskId.getValue();
             final String result = format(CREATED_TASK_MESSAGE,
                                          idValue, description, priority, userFriendlyDate);
-            sendMessageToUser(result);
+            println(result);
 
             clearValues();
         }
@@ -217,7 +129,54 @@ class CreateTaskMode extends InteractiveMode {
             final String description = obtainDescription(SET_DESCRIPTION_MESSAGE, true);
             final CreateBasicTask createTask = createTaskCmd(taskId, description);
             getClient().create(createTask);
-            CreateTaskMode.this.description = description;
+            this.description = description;
+        }
+
+        private void updateDueDateIfNeeded(TaskId taskId) throws ParseException {
+            final String approveValue = obtainApproveValue(SET_DUE_DATE_QUESTION);
+            if (approveValue.equals(NEGATIVE_ANSWER)) {
+                return;
+            }
+
+            final Timestamp dueDate;
+            try {
+                dueDate = obtainDueDate(SET_DUE_DATE_MESSAGE, true);
+            } catch (InputCancelledException ignored) {
+                return;
+            }
+            final TimestampChange change = createTimestampChange(dueDate);
+            final UpdateTaskDueDate updateTaskDueDate = createUpdateTaskDueDateCmd(taskId, change);
+            getClient().update(updateTaskDueDate);
+            this.dueDate = dueDate;
+        }
+
+        private void updateTaskValuesIfNeeded(TaskId taskId) {
+            try {
+                updatePriorityIfNeeded(taskId);
+                updateDueDateIfNeeded(taskId);
+            } catch (ParseException e) {
+                throw new ParseDateException(e);
+            }
+        }
+
+        private void updatePriorityIfNeeded(TaskId taskId) {
+            final String approveValue = obtainApproveValue(SET_PRIORITY_QUESTION);
+            if (approveValue.equals(NEGATIVE_ANSWER)) {
+                return;
+            }
+
+            final TaskPriority priority;
+            try {
+                priority = obtainTaskPriority(SET_PRIORITY_MESSAGE);
+            } catch (InputCancelledException ignored) {
+                return;
+            }
+
+            final PriorityChange change = createPriorityChange(priority);
+            final UpdateTaskPriority updateTaskPriority = createUpdateTaskPriorityCmd(taskId,
+                                                                                      change);
+            getClient().update(updateTaskPriority);
+            this.priority = priority;
         }
 
         private CreateBasicTask createTaskCmd(TaskId taskId, String description) {
@@ -226,9 +185,19 @@ class CreateTaskMode extends InteractiveMode {
                                   .setDescription(description)
                                   .build();
         }
+
+        private void clearValues() {
+            this.description = "";
+            this.priority = TaskPriority.TP_UNDEFINED;
+            this.dueDate = Timestamp.getDefaultInstance();
+        }
     }
 
-    class CreateTaskDraftMode extends InteractiveMode {
+    static class CreateTaskDraftMode extends InteractiveMode {
+
+        private Timestamp dueDate = Timestamp.getDefaultInstance();
+        private TaskPriority priority = TaskPriority.TP_UNDEFINED;
+        private String description;
 
         private CreateTaskDraftMode(ConsoleReader reader, TodoClient client) {
             super(reader, client);
@@ -260,7 +229,7 @@ class CreateTaskMode extends InteractiveMode {
             final String idValue = taskId.getValue();
             final String result = format(CREATED_DRAFT_MESSAGE,
                                          idValue, description, priority, userFriendlyDate);
-            sendMessageToUser(result);
+            println(result);
 
             finalizeDraftIfNeeded(taskId);
             clearValues();
@@ -276,7 +245,7 @@ class CreateTaskMode extends InteractiveMode {
             final UpdateTaskDescription updateTaskDescription =
                     createUpdateTaskDescriptionCmd(taskId, change);
             getClient().update(updateTaskDescription);
-            CreateTaskMode.this.description = description;
+            this.description = description;
         }
 
         private void finalizeDraftIfNeeded(TaskId taskId) {
@@ -286,13 +255,66 @@ class CreateTaskMode extends InteractiveMode {
             }
             final FinalizeDraft finalizeDraft = createFinalizeDraftCmd(taskId);
             getClient().finalize(finalizeDraft);
-            sendMessageToUser(DRAFT_FINALIZED_MESSAGE);
+            println(DRAFT_FINALIZED_MESSAGE);
+        }
+
+        private void updateDueDateIfNeeded(TaskId taskId) throws ParseException {
+            final String approveValue = obtainApproveValue(SET_DUE_DATE_QUESTION);
+            if (approveValue.equals(NEGATIVE_ANSWER)) {
+                return;
+            }
+
+            final Timestamp dueDate;
+            try {
+                dueDate = obtainDueDate(SET_DUE_DATE_MESSAGE, true);
+            } catch (InputCancelledException ignored) {
+                return;
+            }
+            final TimestampChange change = createTimestampChange(dueDate);
+            final UpdateTaskDueDate updateTaskDueDate = createUpdateTaskDueDateCmd(taskId, change);
+            getClient().update(updateTaskDueDate);
+            this.dueDate = dueDate;
+        }
+
+        private void updateTaskValuesIfNeeded(TaskId taskId) {
+            try {
+                updatePriorityIfNeeded(taskId);
+                updateDueDateIfNeeded(taskId);
+            } catch (ParseException e) {
+                throw new ParseDateException(e);
+            }
+        }
+
+        private void updatePriorityIfNeeded(TaskId taskId) {
+            final String approveValue = obtainApproveValue(SET_PRIORITY_QUESTION);
+            if (approveValue.equals(NEGATIVE_ANSWER)) {
+                return;
+            }
+
+            final TaskPriority priority;
+            try {
+                priority = obtainTaskPriority(SET_PRIORITY_MESSAGE);
+            } catch (InputCancelledException ignored) {
+                return;
+            }
+
+            final PriorityChange change = createPriorityChange(priority);
+            final UpdateTaskPriority updateTaskPriority = createUpdateTaskPriorityCmd(taskId,
+                                                                                      change);
+            getClient().update(updateTaskPriority);
+            this.priority = priority;
         }
 
         private CreateDraft createDraftCmdInstance(TaskId taskId) {
             return CreateDraft.newBuilder()
                               .setId(taskId)
                               .build();
+        }
+
+        private void clearValues() {
+            this.description = "";
+            this.priority = TaskPriority.TP_UNDEFINED;
+            this.dueDate = Timestamp.getDefaultInstance();
         }
     }
 

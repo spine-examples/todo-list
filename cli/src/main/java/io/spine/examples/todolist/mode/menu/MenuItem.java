@@ -18,21 +18,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode;
+package io.spine.examples.todolist.mode.menu;
+
+import io.spine.examples.todolist.mode.Mode;
 
 /**
- * @author Illia Shepilov
+ * A {@code MenuItem}, that executes {@link #mode} and after starts {@link #parent}.
+ *
+ * @author Dmytro Grankin
  */
-public class HelpMode extends Mode {
+class MenuItem extends AbstractMenuItem {
 
-    private final String helpMessage;
+    private final Mode mode;
+    private final Mode parent;
 
-    HelpMode(String helpMessage) {
-        this.helpMessage = helpMessage;
+    MenuItem(String name, Mode mode, Mode parent) {
+        super(name);
+        this.mode = mode;
+        this.parent = parent;
     }
 
     @Override
     public void start() {
-        sendMessageToUser(helpMessage);
+        mode.start();
+        parent.start();
     }
 }

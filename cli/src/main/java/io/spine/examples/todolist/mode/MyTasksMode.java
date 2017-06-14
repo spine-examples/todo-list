@@ -27,10 +27,10 @@ import jline.console.ConsoleReader;
 import java.util.Map;
 
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyMyList;
-import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.TODO_PROMPT;
 import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.EMPTY_MY_LIST_TASKS;
 import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.HELP_MESSAGE;
 import static io.spine.examples.todolist.mode.MyTasksMode.MyTasksModeConstants.MY_TASKS_MENU;
@@ -50,13 +50,13 @@ public class MyTasksMode extends CommonMode {
     @Override
     public void start() {
         getReader().setPrompt(MY_TASKS_PROMPT);
-        sendMessageToUser(MY_TASKS_MENU);
+        println(MY_TASKS_MENU);
 
         final ShowMyTasksMode showMyTasksMode = new ShowMyTasksMode(getReader(), getClient());
         initModeMap(showMyTasksMode);
 
         showMyTasksMode.start();
-        sendMessageToUser(HELP_MESSAGE);
+        println(HELP_MESSAGE);
         String line = readLine();
         while (!line.equals(BACK)) {
             final Mode mode = modeMap.get(line);
@@ -89,7 +89,7 @@ public class MyTasksMode extends CommonMode {
             final String message = isEmpty
                                    ? EMPTY_MY_LIST_TASKS
                                    : constructUserFriendlyMyList(myListView);
-            sendMessageToUser(message);
+            println(message);
 
         }
     }

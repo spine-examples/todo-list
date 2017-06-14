@@ -20,57 +20,30 @@
 
 package io.spine.examples.todolist.mode;
 
-import com.google.common.collect.Maps;
 import io.spine.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.mode.menu.Menu;
 import jline.console.ConsoleReader;
 
-import java.util.Map;
-
-import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.EXIT;
-import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.HELP_MESSAGE;
-import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.INCORRECT_COMMAND;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
 
 /**
  * @author Illia Shepilov
  */
-public class GeneralMode extends InteractiveMode {
+public class MainMenu extends Menu {
 
-    private final Map<String, Mode> modeMap = Maps.newHashMap();
-
-    public GeneralMode(TodoClient client, ConsoleReader reader) {
-        super(reader, client);
-        initModeMap();
-    }
-
-    private void initModeMap() {
-        modeMap.put("0", new HelpMode(HELP_MESSAGE));
-        modeMap.put("1", new CreateTaskMode(getClient(), getReader()));
-        modeMap.put("2", new CreateLabelMode(getClient(), getReader()));
-        modeMap.put("3", new DraftTasksMode(getClient(), getReader()));
-        modeMap.put("4", new LabelledTasksMode(getClient(), getReader()));
-        modeMap.put("5", new MyTasksMode(getClient(), getReader()));
-    }
-
-    @Override
-    public void start() {
-        sendMessageToUser(HELP_MESSAGE);
-        getReader().setPrompt(TODO_PROMPT);
-        String line = "";
-        while (!line.equals(EXIT)) {
-            line = readLine();
-
-            final Mode mode = modeMap.get(line);
-
-            if (mode == null) {
-                sendMessageToUser(INCORRECT_COMMAND);
-                continue;
-            }
-
-            mode.start();
-            sendMessageToUser(HELP_MESSAGE);
-        }
+    public MainMenu(TodoClient client, ConsoleReader reader) {
+        super(Menu.newBuilder()
+                  .setClient(client)
+                  .setReader(reader)
+                  .setMenuExit(BACK_TO_THE_MENU_MESSAGE)
+                  .addMenuItem("Create the task.", new CreateTaskMenu(client, reader))
+                  .addMenuItem("Create the label.", new CreateLabelMode(client, reader))
+                  .addMenuItem("Show the tasks in the draft state.",
+                               new DraftTasksMode(client, reader))
+                  .addMenuItem("Show the labelled tasks.",
+                               new LabelledTasksMode(client, reader))
+                  .addMenuItem("Show my tasks.", new MyTasksMode(client, reader)));
     }
 
     static class MainModeConstants {

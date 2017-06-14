@@ -23,7 +23,7 @@ package io.spine.examples.todolist;
 import io.spine.examples.todolist.client.CommandLineTodoClient;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.context.TodoListBoundedContext;
-import io.spine.examples.todolist.mode.GeneralMode;
+import io.spine.examples.todolist.mode.MainMenu;
 import io.spine.examples.todolist.mode.Mode;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
@@ -59,7 +59,7 @@ public class CliEntryPoint {
                                                             DEFAULT_CLIENT_SERVICE_PORT,
                                                             boundedContext);
         final ConsoleReader reader = new ConsoleReader();
-        final Mode entryPoint = new GeneralMode(client, reader);
+        final Mode entryPoint = new MainMenu(client, reader);
         entryPoint.start();
         reader.close();
         client.shutdown();

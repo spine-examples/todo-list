@@ -133,7 +133,7 @@ abstract class CommonMode extends InteractiveMode {
                                                     : previousDescription;
             final String message = format(UPDATED_DESCRIPTION_MESSAGE,
                                           previousDescriptionValue, newDescription);
-            sendMessageToUser(message);
+            println(message);
         }
     }
 
@@ -162,7 +162,7 @@ abstract class CommonMode extends InteractiveMode {
             getClient().update(updateTaskPriority);
             final String message = format(UPDATED_PRIORITY_MESSAGE,
                                           previousTaskPriority, newTaskPriority);
-            sendMessageToUser(message);
+            println(message);
         }
     }
 
@@ -196,7 +196,7 @@ abstract class CommonMode extends InteractiveMode {
             final String message = format(UPDATED_DUE_DATE_MESSAGE,
                                           previousDueDateForUser,
                                           constructUserFriendlyDate(newDueDate));
-            sendMessageToUser(message);
+            println(message);
         }
     }
 
@@ -233,7 +233,7 @@ abstract class CommonMode extends InteractiveMode {
 
             final String message = format(UPDATED_LABEL_DETAILS_MESSAGE,
                                           previousColor, newColor, previousTitle, newTitle);
-            sendMessageToUser(message);
+            println(message);
         }
     }
 

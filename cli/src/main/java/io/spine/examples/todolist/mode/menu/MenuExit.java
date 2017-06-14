@@ -18,25 +18,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode;
-
-import java.io.PrintStream;
+package io.spine.examples.todolist.mode.menu;
 
 /**
+ * A menu item, that is used to exit a menu.
+ *
+ * <p>Simply does nothing.
+ *
  * @author Dmytro Grankin
  */
-public abstract class Mode {
+class MenuExit extends AbstractMenuItem {
 
-    @SuppressWarnings("UseOfSystemOutOrSystemErr" /* OK for command-line app. */)
-    private final PrintStream printStream = System.out;
-
-    public abstract void start();
-
-    protected void println(String message) {
-        printStream.println(message);
+    MenuExit(String name) {
+        super(name);
     }
 
-    protected void println() {
-        printStream.println();
+    @Override
+    public void start() {
     }
 }

@@ -34,10 +34,10 @@ import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConst
 import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.DRAFT_TASKS_PROMPT;
 import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.EMPTY_DRAFT_TASKS;
 import static io.spine.examples.todolist.mode.DraftTasksMode.DraftTasksModeConstants.HELP_MESSAGE;
-import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.TODO_PROMPT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.TODO_PROMPT;
 import static io.spine.examples.todolist.mode.TodoListCommands.createFinalizeDraftCmd;
 
 /**
@@ -55,13 +55,13 @@ class DraftTasksMode extends CommonMode {
     @Override
     public void start() {
         getReader().setPrompt(DRAFT_TASKS_PROMPT);
-        sendMessageToUser(DRAFT_TASKS_MENU);
+        println(DRAFT_TASKS_MENU);
         final ShowDraftTasksMode draftTasksMode = new ShowDraftTasksMode(getClient(), getReader());
         final FinalizeDraftMode finalizeDraftMode = new FinalizeDraftMode(getClient(), getReader());
         initModeMap(draftTasksMode, finalizeDraftMode);
 
         draftTasksMode.start();
-        sendMessageToUser(HELP_MESSAGE);
+        println(HELP_MESSAGE);
         String line = readLine();
         while (!line.equals(BACK)) {
             line = readLine();
@@ -94,7 +94,7 @@ class DraftTasksMode extends CommonMode {
             final String message = isEmpty
                                    ? EMPTY_DRAFT_TASKS
                                    : constructUserFriendlyDraftTasks(draftTasksView);
-            sendMessageToUser(message);
+            println(message);
         }
     }
 
@@ -114,7 +114,7 @@ class DraftTasksMode extends CommonMode {
             final FinalizeDraft finalizeDraft = createFinalizeDraftCmd(taskId);
             getClient().finalize(finalizeDraft);
             final String message = String.format(DRAFT_FINALIZED_MESSAGE, taskId.getValue());
-            sendMessageToUser(message);
+            println(message);
         }
     }
 

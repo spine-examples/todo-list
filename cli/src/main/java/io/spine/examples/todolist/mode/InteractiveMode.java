@@ -45,12 +45,12 @@ import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
 import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_ID_MESSAGE;
-import static io.spine.examples.todolist.mode.GeneralMode.MainModeConstants.ENTER_LABEL_ID_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.CANCEL_INPUT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.DATE_FORMAT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.INPUT_IS_CANCELED;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LABEL_COLOR_VALUE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.TASK_PRIORITY_VALUE;
+import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.ENTER_LABEL_ID_MESSAGE;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
@@ -72,7 +72,7 @@ public abstract class InteractiveMode extends Mode {
     private final ConsoleReader reader;
     private final TodoClient client;
 
-    InteractiveMode(ConsoleReader reader, TodoClient client) {
+    protected InteractiveMode(ConsoleReader reader, TodoClient client) {
         this.reader = reader;
         this.client = client;
         priorityMap = initPriorityMap();
@@ -87,7 +87,7 @@ public abstract class InteractiveMode extends Mode {
     }
 
     private String obtainLabelColorValue(String message) throws InputCancelledException {
-        sendMessageToUser(message + LABEL_COLOR_VALUE);
+        println(message + LABEL_COLOR_VALUE);
         String color = readLine();
 
         if (CANCEL_INPUT.equals(color)) {
@@ -98,7 +98,7 @@ public abstract class InteractiveMode extends Mode {
         final boolean isValid = colorValidator.validate(color);
 
         if (!isValid) {
-            sendMessageToUser(colorValidator.getMessage());
+            println(colorValidator.getMessage());
             color = obtainLabelColorValue(message);
         }
 
@@ -106,7 +106,7 @@ public abstract class InteractiveMode extends Mode {
     }
 
     protected String obtainLabelTitle(String message) throws InputCancelledException {
-        sendMessageToUser(message);
+        println(message);
         String title = readLine();
 
         if (CANCEL_INPUT.equals(title)) {
@@ -116,7 +116,7 @@ public abstract class InteractiveMode extends Mode {
         boolean isValid = commonValidator.validate(title);
 
         if (!isValid) {
-            sendMessageToUser(commonValidator.getMessage());
+            println(commonValidator.getMessage());
             title = obtainLabelTitle(message);
         }
         return title;
@@ -124,7 +124,7 @@ public abstract class InteractiveMode extends Mode {
 
     protected String obtainDescription(String message, boolean isNew) throws
                                                                       InputCancelledException {
-        sendMessageToUser(message);
+        println(message);
         String description = readLine();
 
         if (CANCEL_INPUT.equals(description)) {
@@ -138,7 +138,7 @@ public abstract class InteractiveMode extends Mode {
         final boolean isValid = descriptionValidator.validate(description);
 
         if (!isValid) {
-            sendMessageToUser(descriptionValidator.getMessage());
+            println(descriptionValidator.getMessage());
             description = obtainDescription(message, isNew);
         }
         return description;
@@ -159,7 +159,7 @@ public abstract class InteractiveMode extends Mode {
 
     private String obtainDueDateValue(String message, boolean isNew)
             throws ParseException, InputCancelledException {
-        sendMessageToUser(message);
+        println(message);
         String dueDateValue = readLine();
 
         if (CANCEL_INPUT.equals(dueDateValue)) {
@@ -173,7 +173,7 @@ public abstract class InteractiveMode extends Mode {
         final boolean isValid = dueDateValidator.validate(dueDateValue);
 
         if (!isValid) {
-            sendMessageToUser(dueDateValidator.getMessage());
+            println(dueDateValidator.getMessage());
             dueDateValue = obtainDueDateValue(message, isNew);
         }
         return dueDateValue;
@@ -186,7 +186,7 @@ public abstract class InteractiveMode extends Mode {
     }
 
     private String obtainPriorityValue(String message) throws InputCancelledException {
-        sendMessageToUser(message);
+        println(message);
         String priority = readLine();
 
         if (CANCEL_INPUT.equals(priority)) {
@@ -197,7 +197,7 @@ public abstract class InteractiveMode extends Mode {
         final boolean isValid = priorityValidator.validate(priority);
 
         if (!isValid) {
-            sendMessageToUser(priorityValidator.getMessage());
+            println(priorityValidator.getMessage());
             priority = obtainPriorityValue(message);
         }
         return priority;
@@ -216,7 +216,7 @@ public abstract class InteractiveMode extends Mode {
     }
 
     private String obtainIdValue(String message) throws InputCancelledException {
-        sendMessageToUser(message);
+        println(message);
         String taskIdValue = readLine();
 
         if (CANCEL_INPUT.equals(taskIdValue)) {
@@ -225,18 +225,18 @@ public abstract class InteractiveMode extends Mode {
 
         final boolean isValid = idValidator.validate(taskIdValue);
         if (!isValid) {
-            sendMessageToUser(idValidator.getMessage());
+            println(idValidator.getMessage());
             taskIdValue = obtainIdValue(message);
         }
         return taskIdValue;
     }
 
     protected String obtainApproveValue(String message) {
-        sendMessageToUser(message);
+        println(message);
         String approveValue = readLine();
         final boolean isValid = approveValidator.validate(approveValue);
         if (!isValid) {
-            sendMessageToUser(approveValidator.getMessage());
+            println(approveValidator.getMessage());
             approveValue = obtainApproveValue(message);
         }
         return approveValue;
@@ -322,7 +322,7 @@ public abstract class InteractiveMode extends Mode {
                 "2: RED;" + LINE_SEPARATOR +
                 "3: GREEN;" + LINE_SEPARATOR +
                 "4: BLUE.";
-        static final String BACK_TO_THE_MENU_MESSAGE = "back: Back to the previous menu.";
+        static final String BACK_TO_THE_MENU_MESSAGE = "Back to the previous menu.";
         static final String BACK = "back";
         static final String POSITIVE_ANSWER = "y";
         static final String NEGATIVE_ANSWER = "n";
