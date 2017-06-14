@@ -56,7 +56,6 @@ import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.CANC
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.DATE_FORMAT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.NEGATIVE_ANSWER;
-import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.HELP_ADVICE;
 import static io.spine.examples.todolist.mode.TodoListCommands.createFinalizeDraftCmd;
 import static io.spine.examples.todolist.mode.TodoListCommands.createPriorityChange;
 import static io.spine.examples.todolist.mode.TodoListCommands.createStringChange;
@@ -324,9 +323,6 @@ class CreateTaskMenu extends Menu {
         static final String SET_DUE_DATE_QUESTION = "Do you want to set the task due date?(y/n)";
         static final String CREATE_ONE_MORE_TASK_QUESTION = "Do you want to create one more task?(y/n)";
         static final String BACK_TO_THE_PREVIOUS_MENU_QUESTION = "Do you want go back to the main menu?(y/n)";
-        static final String CREATE_TASK_PROMPT = "create-task>";
-        private static final String CREATE_TASK_MODE =
-                "******************** Create task menu ********************" + LINE_SEPARATOR;
         static final String NEED_TO_FINALIZE_MESSAGE = "Do you want to finalize the created task draft?(y/n)";
         static final String DRAFT_FINALIZED_MESSAGE = "Task draft finalized.";
         static final String SET_DESCRIPTION_MESSAGE = "Please enter the task description " +
@@ -336,11 +332,6 @@ class CreateTaskMenu extends Menu {
                         "The correct format is: " + DATE_FORMAT + LINE_SEPARATOR + CANCEL_HINT;
         static final String SET_PRIORITY_MESSAGE =
                 "Please enter the task priority." + LINE_SEPARATOR + CANCEL_HINT;
-        static final String HELP_MESSAGE = "0:    Help." + LINE_SEPARATOR +
-                "1:    Create the task with specified parameters[description is required]." +
-                LINE_SEPARATOR +
-                "2:    Create the task with specified parameters[description is required][FAST MODE]." +
-                LINE_SEPARATOR + BACK_TO_THE_MENU_MESSAGE;
         static final String TASK_PARAMS_DESCRIPTION = "id: %s" + LINE_SEPARATOR +
                 "description: %s" + LINE_SEPARATOR +
                 "priority: %s" + LINE_SEPARATOR +
@@ -349,7 +340,6 @@ class CreateTaskMenu extends Menu {
                 "Created task draft with parameters:" + LINE_SEPARATOR + TASK_PARAMS_DESCRIPTION;
         static final String CREATED_TASK_MESSAGE =
                 "Created task with parameters:" + LINE_SEPARATOR + TASK_PARAMS_DESCRIPTION;
-        static final String CREATE_TASK_TITLE = CREATE_TASK_MODE + HELP_ADVICE + HELP_MESSAGE;
 
         private CreateTaskModeConstants() {
         }

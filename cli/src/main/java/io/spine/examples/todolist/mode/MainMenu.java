@@ -47,18 +47,9 @@ public class MainMenu extends Menu {
     }
 
     static class MainModeConstants {
-        static final String EXIT = "exit";
+
         static final String TODO_PROMPT = "todo>";
-        static final String HELP_ADVICE =
-                "Enter 'help' or '0' to view all commands." + LINE_SEPARATOR;
         static final String ENTER_LABEL_ID_MESSAGE = "Please enter the label id: ";
-        static final String HELP_MESSAGE = "0:    Help." + LINE_SEPARATOR +
-                "1:    Create the task." + LINE_SEPARATOR +
-                "2:    Create the label." + LINE_SEPARATOR +
-                "3:    Show the tasks in the draft state." + LINE_SEPARATOR +
-                "4:    Show the labelled tasks." + LINE_SEPARATOR +
-                "5:    Show my tasks." + LINE_SEPARATOR +
-                "exit: Exit from the application.";
 
         private MainModeConstants() {
         }
