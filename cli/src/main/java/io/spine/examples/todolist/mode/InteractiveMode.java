@@ -80,6 +80,12 @@ public abstract class InteractiveMode extends Mode {
         initValidators();
     }
 
+    protected String askUser(String question) {
+        println(question);
+        final String answer = readLine();
+        return answer;
+    }
+
     protected LabelColor obtainLabelColor(String message) throws InputCancelledException {
         final String labelColorValue = obtainLabelColorValue(message);
         final LabelColor result = colorMap.get(labelColorValue);
