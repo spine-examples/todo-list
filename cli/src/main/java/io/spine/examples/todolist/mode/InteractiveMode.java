@@ -26,7 +26,6 @@ import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
-import io.spine.examples.todolist.validator.ApproveAnswerValidator;
 import io.spine.examples.todolist.validator.DescriptionValidator;
 import io.spine.examples.todolist.validator.DueDateValidator;
 import io.spine.examples.todolist.validator.IdValidator;
@@ -56,13 +55,12 @@ import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.ENTER_L
  */
 public abstract class InteractiveMode extends Mode {
 
-    private Validator priorityValidator;
-    private Validator colorValidator;
-    private Validator dueDateValidator;
-    private Validator commonValidator;
-    private Validator idValidator;
-    private Validator descriptionValidator;
-    private Validator approveValidator;
+    private Validator<String> priorityValidator;
+    private Validator<String> colorValidator;
+    private Validator<String> dueDateValidator;
+    private Validator<String> commonValidator;
+    private Validator<String> idValidator;
+    private Validator<String> descriptionValidator;
     private final Map<String, TaskPriority> priorityMap;
     private final Map<String, LabelColor> colorMap;
 
@@ -223,17 +221,6 @@ public abstract class InteractiveMode extends Mode {
         return taskIdValue;
     }
 
-    protected String obtainApproveValue(String message) {
-        println(message);
-        String approveValue = readLine();
-        final boolean isValid = approveValidator.validate(approveValue);
-        if (!isValid) {
-            println(approveValidator.getMessage());
-            approveValue = obtainApproveValue(message);
-        }
-        return approveValue;
-    }
-
     protected static LabelId newLabelId(String labelIdValue) {
         final LabelId result = LabelId.newBuilder()
                                       .setValue(labelIdValue)
@@ -255,7 +242,6 @@ public abstract class InteractiveMode extends Mode {
         priorityValidator = new TaskPriorityValidator(priorityMap);
         commonValidator = new NeitherCompletedNorDeletedValidator();
         colorValidator = new LabelColorValidator(colorMap);
-        approveValidator = new ApproveAnswerValidator();
     }
 
     private static Map<String, TaskPriority> initPriorityMap() {
@@ -300,7 +286,6 @@ public abstract class InteractiveMode extends Mode {
                 "4: BLUE.";
         static final String BACK_TO_THE_MENU_MESSAGE = "Back to the previous menu.";
         static final String BACK = "back";
-        static final String NEGATIVE_ANSWER = "n";
         static final String CANCEL_INPUT = "c";
 
         private ModeConstants() {

@@ -37,8 +37,6 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 
-import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.EMPTY;
-
 /**
  * Serves as utility class which provides methods for commands constructing.
  *
@@ -102,7 +100,7 @@ class TodoListCommands {
 
     static StringChange createStringChange(String description) {
         return StringChange.newBuilder()
-                           .setPreviousValue(EMPTY)
+                           .setPreviousValue("")
                            .setNewValue(description)
                            .build();
     }

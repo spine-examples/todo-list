@@ -27,16 +27,14 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.mode.menu.Menu;
 
 import static io.spine.base.Identifier.newUuid;
-import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.CREATE_ONE_MORE_TASK_QUESTION;
-import static io.spine.examples.todolist.mode.CreateTaskMenu.CreateTaskModeConstants.SET_DESCRIPTION_MESSAGE;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.NEGATIVE_ANSWER;
 
 /**
  * @author Illia Shepilov
  */
 class CreateTaskMenu extends Menu {
+
+    private static final String CREATE_ONE_MORE_TASK_QUESTION = "Do you want to create one more task?";
 
     CreateTaskMenu() {
         super(Menu.newBuilder()
@@ -45,22 +43,16 @@ class CreateTaskMenu extends Menu {
                   .addMenuItem("Create the draft task.", new CreateTaskDraftMode()));
     }
 
-    static class CreateTaskFullMode extends InteractiveMode {
+    private static class CreateTaskFullMode extends RepeatableAction {
 
-        @Override
-        public void start() {
-            String line = "";
-            while (!line.equals(BACK)) {
-                createTask();
-                final String approveValue = obtainApproveValue(CREATE_ONE_MORE_TASK_QUESTION);
-                if (approveValue.equals(NEGATIVE_ANSWER)) {
-                    return;
-                }
-                line = readLine();
-            }
+        private static final String SET_DESCRIPTION_MESSAGE = "Please enter the task description";
+
+        private CreateTaskFullMode() {
+            super(CREATE_ONE_MORE_TASK_QUESTION);
         }
 
-        private void createTask() {
+        @Override
+        public void doAction() {
             final TaskId taskId = newTaskId(newUuid());
             final String description = askUser(SET_DESCRIPTION_MESSAGE);
             final CreateBasicTask createTask = createTaskCmd(taskId, description);
@@ -75,22 +67,14 @@ class CreateTaskMenu extends Menu {
         }
     }
 
-    static class CreateTaskDraftMode extends InteractiveMode {
+    private static class CreateTaskDraftMode extends RepeatableAction {
 
-        @Override
-        public void start() {
-            String line = "";
-            while (!line.equals(BACK)) {
-                createTaskDraft();
-                final String approveValue = obtainApproveValue(CREATE_ONE_MORE_TASK_QUESTION);
-                if (approveValue.equals(NEGATIVE_ANSWER)) {
-                    return;
-                }
-                line = readLine();
-            }
+        private CreateTaskDraftMode() {
+            super(CREATE_ONE_MORE_TASK_QUESTION);
         }
 
-        private void createTaskDraft() {
+        @Override
+        public void doAction() {
             final TaskId taskId = newTaskId(newUuid());
             final CreateDraft createTask = createDraftCmdInstance(taskId);
             getClient().create(createTask);
@@ -100,15 +84,6 @@ class CreateTaskMenu extends Menu {
             return CreateDraft.newBuilder()
                               .setId(taskId)
                               .build();
-        }
-    }
-
-    static class CreateTaskModeConstants {
-        static final String EMPTY = "";
-        static final String CREATE_ONE_MORE_TASK_QUESTION = "Do you want to create one more task?(y/n)";
-        static final String SET_DESCRIPTION_MESSAGE = "Please enter the task description";
-
-        private CreateTaskModeConstants() {
         }
     }
 }

@@ -20,42 +20,25 @@
 
 package io.spine.examples.todolist.mode;
 
-import io.spine.examples.todolist.AppConfig;
-import io.spine.examples.todolist.client.TodoClient;
-import org.jline.reader.LineReader;
-
-import java.io.PrintStream;
+import io.spine.examples.todolist.validator.ApproveQuestion;
 
 /**
  * @author Dmytro Grankin
  */
-public abstract class Mode {
+abstract class RepeatableAction extends Mode {
 
-    private final PrintStream printStream = AppConfig.getPrintStream();
-    private final LineReader reader = AppConfig.newLineReader();
-    private final TodoClient client = AppConfig.getClient();
+    private final String questionAboutRepeat;
 
-    public abstract void start();
-
-    protected void println(String message) {
-        printStream.println(message);
+    RepeatableAction(String questionAboutRepeat) {
+        this.questionAboutRepeat = questionAboutRepeat;
     }
 
-    protected void println() {
-        printStream.println();
+    @Override
+    public final void start() {
+        do {
+            doAction();
+        } while (ApproveQuestion.ask(questionAboutRepeat));
     }
 
-    protected String askUser(String question) {
-        println(question);
-        final String answer = readLine();
-        return answer;
-    }
-
-    protected String readLine() {
-        return reader.readLine();
-    }
-
-    protected TodoClient getClient() {
-        return client;
-    }
+    abstract void doAction();
 }

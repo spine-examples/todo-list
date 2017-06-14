@@ -20,90 +20,30 @@
 
 package io.spine.examples.todolist.mode;
 
-import io.spine.examples.todolist.LabelColor;
-import io.spine.examples.todolist.LabelDetails;
-import io.spine.examples.todolist.LabelDetailsChange;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
-import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 
 import static io.spine.base.Identifier.newUuid;
-import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.CREATE_ONE_MORE_LABEL_QUESTION;
-import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.ENTER_COLOR_MESSAGE;
-import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.ENTER_TITLE_MESSAGE;
-import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.LABEL_CREATED_MESSAGE;
-import static io.spine.examples.todolist.mode.CreateLabelMode.CreateLabelModeConstants.SET_LABEL_COLOR_QUESTION;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.CANCEL_HINT;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.NEGATIVE_ANSWER;
+import static io.spine.examples.todolist.mode.InteractiveMode.newLabelId;
 import static io.spine.examples.todolist.mode.TodoListCommands.createBasicLabelCmd;
-import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetails;
-import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetailsChange;
-import static io.spine.examples.todolist.mode.TodoListCommands.createUpdateLabelDetailsCmd;
-import static java.lang.String.format;
 
 /**
  * @author Illia Shepilov
  */
-class CreateLabelMode extends InteractiveMode {
+class CreateLabelMode extends RepeatableAction {
+
+    private static final String CREATE_ONE_MORE_LABEL_QUESTION = "Do you want to create one more label?";
+    private static final String ENTER_TITLE_MESSAGE = "Please enter the label title";
+
+    CreateLabelMode() {
+        super(CREATE_ONE_MORE_LABEL_QUESTION);
+    }
 
     @Override
-    public void start() {
-        String line = "";
-        while (!line.equals(NEGATIVE_ANSWER)) {
-            createLabel();
-            line = obtainApproveValue(CREATE_ONE_MORE_LABEL_QUESTION);
-        }
-    }
-
-    private void createLabel() {
+    public void doAction() {
         final LabelId labelId = newLabelId(newUuid());
-        final String title;
-        try {
-            title = obtainLabelTitle(ENTER_TITLE_MESSAGE);
-        } catch (InputCancelledException ignored) {
-            return;
-        }
+        final String title = askUser(ENTER_TITLE_MESSAGE);
         final CreateBasicLabel createBasicLabel = createBasicLabelCmd(labelId, title);
         getClient().create(createBasicLabel);
-
-        final LabelDetails labelDetails = updateLabelDetailsIfNeeded(labelId, title);
-        final String message = format(LABEL_CREATED_MESSAGE,
-                                      labelId.getValue(), title, labelDetails.getColor());
-        println(message);
-    }
-
-    private LabelDetails updateLabelDetailsIfNeeded(LabelId labelId, String title) {
-        final String approveValue = obtainApproveValue(SET_LABEL_COLOR_QUESTION);
-        final LabelDetails defaultInstance = LabelDetails.getDefaultInstance();
-        if (approveValue.equals(NEGATIVE_ANSWER)) {
-            return defaultInstance;
-        }
-
-        final LabelColor labelColor;
-        try {
-            labelColor = obtainLabelColor(ENTER_COLOR_MESSAGE);
-        } catch (InputCancelledException ignored) {
-            return defaultInstance;
-        }
-        final LabelDetails newLabelDetails = createLabelDetails(title, labelColor);
-        final LabelDetailsChange labelDetailsChange = createLabelDetailsChange(newLabelDetails);
-        final UpdateLabelDetails updateLabelDetails =
-                createUpdateLabelDetailsCmd(labelId, labelDetailsChange);
-        getClient().update(updateLabelDetails);
-        return newLabelDetails;
-    }
-
-    static class CreateLabelModeConstants {
-        static final String CREATE_ONE_MORE_LABEL_QUESTION = "Do you want to create one more label?(y/n)";
-        static final String SET_LABEL_COLOR_QUESTION = "Do you want to set the label color?(y/n)";
-        static final String LABEL_CREATED_MESSAGE = "Created label with id: %s, title: %s, color: %s";
-        static final String ENTER_COLOR_MESSAGE =
-                "Please enter the label color: " + LINE_SEPARATOR + CANCEL_HINT;
-        static final String ENTER_TITLE_MESSAGE =
-                "Please enter the label title: " + LINE_SEPARATOR + CANCEL_HINT;
-
-        private CreateLabelModeConstants() {
-        }
     }
 }

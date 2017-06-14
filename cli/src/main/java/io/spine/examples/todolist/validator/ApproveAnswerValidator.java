@@ -36,9 +36,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public class ApproveAnswerValidator implements Validator<String> {
 
-    private static final String NEGATIVE_ANSWER = "n";
-    private static final String POSITIVE_ANSWER = "y";
-    private static final String INVALID_INPUT_MSG =
+    static final String NEGATIVE_ANSWER = "n";
+    static final String POSITIVE_ANSWER = "y";
+    static final String INVALID_INPUT_MSG =
             "Invalid input. Valid values: '" + POSITIVE_ANSWER + "' or '" + NEGATIVE_ANSWER + "'.";
 
     private String message;

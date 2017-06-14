@@ -27,12 +27,17 @@ import io.spine.server.BoundedContext;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
 
+import java.io.PrintStream;
+
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
 /**
  * @author Dmytro Grankin
  */
 public class AppConfig {
+
+    @SuppressWarnings("UseOfSystemOutOrSystemErr" /* OK for command-line app. */)
+    private static final PrintStream PRINT_STREAM = System.out;
 
     private static final TodoClient CLIENT =
             new CommandLineTodoClient("localhost",
@@ -46,6 +51,10 @@ public class AppConfig {
     public static LineReader newLineReader() {
         return LineReaderBuilder.builder()
                                 .build();
+    }
+
+    public static PrintStream getPrintStream() {
+        return PRINT_STREAM;
     }
 
     public static TodoClient getClient() {

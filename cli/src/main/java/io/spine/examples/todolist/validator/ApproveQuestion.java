@@ -18,44 +18,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode;
+package io.spine.examples.todolist.validator;
 
 import io.spine.examples.todolist.AppConfig;
-import io.spine.examples.todolist.client.TodoClient;
 import org.jline.reader.LineReader;
 
-import java.io.PrintStream;
+import static io.spine.examples.todolist.validator.ApproveAnswerValidator.INVALID_INPUT_MSG;
+import static io.spine.examples.todolist.validator.ApproveAnswerValidator.NEGATIVE_ANSWER;
+import static io.spine.examples.todolist.validator.ApproveAnswerValidator.POSITIVE_ANSWER;
 
 /**
  * @author Dmytro Grankin
  */
-public abstract class Mode {
+public class ApproveQuestion {
 
-    private final PrintStream printStream = AppConfig.getPrintStream();
-    private final LineReader reader = AppConfig.newLineReader();
-    private final TodoClient client = AppConfig.getClient();
+    private static final LineReader reader = AppConfig.newLineReader();
+    private static final Validator<String> validator = new ApproveAnswerValidator();
 
-    public abstract void start();
-
-    protected void println(String message) {
-        printStream.println(message);
+    private ApproveQuestion() {
+        // Prevent instantiation of this utility class.
     }
 
-    protected void println() {
-        printStream.println();
-    }
+    public static boolean ask(String question) {
+        final String questionWithHelp =
+                question + " (" + POSITIVE_ANSWER + '/' + NEGATIVE_ANSWER + ") ";
+        String answer = reader.readLine(questionWithHelp);
+        boolean isValidAnswer = validator.validate(answer);
 
-    protected String askUser(String question) {
-        println(question);
-        final String answer = readLine();
-        return answer;
-    }
+        while (!isValidAnswer) {
+            answer = reader.readLine(INVALID_INPUT_MSG + ' ');
+            isValidAnswer = validator.validate(answer);
+        }
 
-    protected String readLine() {
-        return reader.readLine();
-    }
-
-    protected TodoClient getClient() {
-        return client;
+        return answer.equals(POSITIVE_ANSWER);
     }
 }
