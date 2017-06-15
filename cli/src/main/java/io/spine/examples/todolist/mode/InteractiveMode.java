@@ -40,11 +40,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.CANCEL_INPUT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.DATE_FORMAT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.ENTER_ID_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.ENTER_LABEL_ID_MESSAGE;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.INPUT_IS_CANCELED;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LABEL_COLOR_VALUE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.TASK_PRIORITY_VALUE;
 
@@ -70,19 +68,15 @@ public abstract class InteractiveMode extends Mode {
         initValidators();
     }
 
-    protected LabelColor obtainLabelColor(String message) throws InputCancelledException {
+    protected LabelColor obtainLabelColor(String message) {
         final String labelColorValue = obtainLabelColorValue(message);
         final LabelColor result = colorMap.get(labelColorValue);
         return result;
     }
 
-    private String obtainLabelColorValue(String message) throws InputCancelledException {
+    private String obtainLabelColorValue(String message) {
         println(message + LABEL_COLOR_VALUE);
         String color = readLine();
-
-        if (CANCEL_INPUT.equals(color)) {
-            throw new InputCancelledException(INPUT_IS_CANCELED);
-        }
 
         color = color == null ? null : color.toUpperCase();
         final boolean isValid = colorValidator.validate(color);
@@ -95,13 +89,9 @@ public abstract class InteractiveMode extends Mode {
         return color;
     }
 
-    protected String obtainLabelTitle(String message) throws InputCancelledException {
+    protected String obtainLabelTitle(String message) {
         println(message);
         String title = readLine();
-
-        if (CANCEL_INPUT.equals(title)) {
-            throw new InputCancelledException(INPUT_IS_CANCELED);
-        }
 
         boolean isValid = commonValidator.validate(title);
 
@@ -112,14 +102,9 @@ public abstract class InteractiveMode extends Mode {
         return title;
     }
 
-    protected String obtainDescription(String message, boolean isNew) throws
-                                                                      InputCancelledException {
+    protected String obtainDescription(String message, boolean isNew) {
         println(message);
         String description = readLine();
-
-        if (CANCEL_INPUT.equals(description)) {
-            throw new InputCancelledException(INPUT_IS_CANCELED);
-        }
 
         if (description.isEmpty() && !isNew) {
             return description;
@@ -134,8 +119,7 @@ public abstract class InteractiveMode extends Mode {
         return description;
     }
 
-    protected Timestamp obtainDueDate(String message, boolean isNew) throws ParseException,
-                                                                            InputCancelledException {
+    protected Timestamp obtainDueDate(String message, boolean isNew) throws ParseException {
         final String dueDateValue = obtainDueDateValue(message, isNew);
         if (dueDateValue.isEmpty()) {
             return Timestamp.getDefaultInstance();
@@ -147,14 +131,9 @@ public abstract class InteractiveMode extends Mode {
         return result;
     }
 
-    private String obtainDueDateValue(String message, boolean isNew)
-            throws ParseException, InputCancelledException {
+    private String obtainDueDateValue(String message, boolean isNew) throws ParseException {
         println(message);
         String dueDateValue = readLine();
-
-        if (CANCEL_INPUT.equals(dueDateValue)) {
-            throw new InputCancelledException(INPUT_IS_CANCELED);
-        }
 
         if (dueDateValue.isEmpty() && !isNew) {
             return dueDateValue;
@@ -169,19 +148,15 @@ public abstract class InteractiveMode extends Mode {
         return dueDateValue;
     }
 
-    protected TaskPriority obtainTaskPriority(String message) throws InputCancelledException {
+    protected TaskPriority obtainTaskPriority(String message) {
         final String priorityValue = obtainPriorityValue(message + TASK_PRIORITY_VALUE);
         final TaskPriority result = priorityMap.get(priorityValue);
         return result;
     }
 
-    private String obtainPriorityValue(String message) throws InputCancelledException {
+    private String obtainPriorityValue(String message) {
         println(message);
         String priority = readLine();
-
-        if (CANCEL_INPUT.equals(priority)) {
-            throw new InputCancelledException(INPUT_IS_CANCELED);
-        }
 
         priority = priority == null ? null : priority.toUpperCase();
         final boolean isValid = priorityValidator.validate(priority);
@@ -193,25 +168,21 @@ public abstract class InteractiveMode extends Mode {
         return priority;
     }
 
-    protected LabelId obtainLabelId() throws InputCancelledException {
+    protected LabelId obtainLabelId() {
         final String idValue = obtainIdValue(ENTER_LABEL_ID_MESSAGE);
         final LabelId result = newLabelId(idValue);
         return result;
     }
 
-    protected TaskId obtainTaskId() throws InputCancelledException {
+    protected TaskId obtainTaskId() {
         final String idValue = obtainIdValue(ENTER_ID_MESSAGE);
         final TaskId result = newTaskId(idValue);
         return result;
     }
 
-    private String obtainIdValue(String message) throws InputCancelledException {
+    private String obtainIdValue(String message) {
         println(message);
         String taskIdValue = readLine();
-
-        if (CANCEL_INPUT.equals(taskIdValue)) {
-            throw new InputCancelledException(INPUT_IS_CANCELED);
-        }
 
         final boolean isValid = idValidator.validate(taskIdValue);
         if (!isValid) {
@@ -272,7 +243,6 @@ public abstract class InteractiveMode extends Mode {
         static final String DATE_FORMAT = "yyyy-MM-dd";
         static final String ENTER_LABEL_ID_MESSAGE = "Please enter the label ID: ";
         static final String ENTER_ID_MESSAGE = "Please enter the task ID: ";
-        static final String INPUT_IS_CANCELED = "Input is canceled";
         static final String LINE_SEPARATOR = System.lineSeparator();
         static final String TASK_PRIORITY_VALUE = LINE_SEPARATOR +
                 "Valid task priority:" + LINE_SEPARATOR +
@@ -286,7 +256,6 @@ public abstract class InteractiveMode extends Mode {
                 "3: GREEN;" + LINE_SEPARATOR +
                 "4: BLUE.";
         static final String BACK_TO_THE_MENU_MESSAGE = "Back to the previous menu.";
-        static final String CANCEL_INPUT = "c";
         static final String DEFAULT_VALUE = "default";
 
         private ModeConstants() {

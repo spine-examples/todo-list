@@ -85,20 +85,12 @@ class TaskLabelsMenu extends Menu {
 
         @Override
         public void start() {
-            final LabelId labelId;
-            final String newTitle;
-            final String previousTitle;
-            final LabelColor newColor;
-            final LabelColor previousColor;
-            try {
-                labelId = obtainLabelId();
-                newTitle = obtainLabelTitle(ENTER_NEW_TITLE_MESSAGE);
-                previousTitle = obtainLabelTitle(ENTER_PREVIOUS_TITLE_MESSAGE);
-                newColor = obtainLabelColor(ENTER_NEW_COLOR_MESSAGE);
-                previousColor = obtainLabelColor(ENTER_PREVIOUS_COLOR_MESSAGE);
-            } catch (InputCancelledException ignored) {
-                return;
-            }
+            final LabelId labelId = obtainLabelId();
+            final String newTitle = obtainLabelTitle(ENTER_NEW_TITLE_MESSAGE);
+            final String previousTitle = obtainLabelTitle(ENTER_PREVIOUS_TITLE_MESSAGE);
+            final LabelColor newColor = obtainLabelColor(ENTER_NEW_COLOR_MESSAGE);
+            final LabelColor previousColor = obtainLabelColor(ENTER_PREVIOUS_COLOR_MESSAGE);
+
             final LabelDetails newLabelDetails = createLabelDetails(newTitle, newColor);
             final LabelDetails previousLabelDetails = createLabelDetails(previousTitle,
                                                                          previousColor);
@@ -118,14 +110,9 @@ class TaskLabelsMenu extends Menu {
 
         @Override
         public void start() {
-            final TaskId taskId;
-            final LabelId labelId;
-            try {
-                taskId = obtainTaskId();
-                labelId = obtainLabelId();
-            } catch (InputCancelledException ignored) {
-                return;
-            }
+            final TaskId taskId = obtainTaskId();
+            final LabelId labelId = obtainLabelId();
+
             final AssignLabelToTask assignLabelToTask = createAssignLabelToTaskCmd(taskId, labelId);
             getClient().assignLabel(assignLabelToTask);
         }
@@ -143,14 +130,9 @@ class TaskLabelsMenu extends Menu {
 
         @Override
         public void start() {
-            final TaskId taskId;
-            final LabelId labelId;
-            try {
-                taskId = obtainTaskId();
-                labelId = obtainLabelId();
-            } catch (InputCancelledException ignored) {
-                return;
-            }
+            final TaskId taskId = obtainTaskId();
+            final LabelId labelId = obtainLabelId();
+
             final RemoveLabelFromTask removeLabelFromTask = constructRemoveLabelFromTaskCmd(taskId,
                                                                                             labelId);
             getClient().removeLabel(removeLabelFromTask);

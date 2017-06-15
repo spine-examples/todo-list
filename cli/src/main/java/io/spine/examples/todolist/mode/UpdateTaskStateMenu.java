@@ -65,16 +65,11 @@ public class UpdateTaskStateMenu extends Menu {
 
         @Override
         public void start() {
-            final String newDescription;
-            final String previousDescription;
-            final TaskId taskId;
-            try {
-                taskId = obtainTaskId();
-                newDescription = obtainDescription(ENTER_NEW_DESCRIPTION_MESSAGE, true);
-                previousDescription = obtainDescription(ENTER_PREVIOUS_DESCRIPTION_MESSAGE, false);
-            } catch (InputCancelledException ignored) {
-                return;
-            }
+            final String newDescription = obtainDescription(ENTER_NEW_DESCRIPTION_MESSAGE, true);
+            final String previousDescription = obtainDescription(ENTER_PREVIOUS_DESCRIPTION_MESSAGE,
+                                                                 false);
+            final TaskId taskId = obtainTaskId();
+
             final StringChange change = createStringChange(newDescription, previousDescription);
             final UpdateTaskDescription updateTaskDescription =
                     createUpdateTaskDescriptionCmd(taskId, change);
@@ -98,16 +93,11 @@ public class UpdateTaskStateMenu extends Menu {
 
         @Override
         public void start() {
-            final TaskId taskId;
-            final TaskPriority newTaskPriority;
-            final TaskPriority previousTaskPriority;
-            try {
-                taskId = obtainTaskId();
-                newTaskPriority = obtainTaskPriority(ENTER_NEW_PRIORITY_MESSAGE);
-                previousTaskPriority = obtainTaskPriority(ENTER_PREVIOUS_PRIORITY_MESSAGE);
-            } catch (InputCancelledException ignored) {
-                return;
-            }
+            final TaskId taskId = obtainTaskId();
+            final TaskPriority newTaskPriority = obtainTaskPriority(ENTER_NEW_PRIORITY_MESSAGE);
+            final TaskPriority previousTaskPriority = obtainTaskPriority(
+                    ENTER_PREVIOUS_PRIORITY_MESSAGE);
+
             final PriorityChange change = createPriorityChange(newTaskPriority,
                                                                previousTaskPriority);
             final UpdateTaskPriority updateTaskPriority = createUpdateTaskPriorityCmd(taskId,
@@ -129,15 +119,13 @@ public class UpdateTaskStateMenu extends Menu {
 
         @Override
         public void start() {
-            final TaskId taskId;
+            final TaskId taskId = obtainTaskId();
+            ;
             final Timestamp newDueDate;
             final Timestamp previousDueDate;
             try {
-                taskId = obtainTaskId();
                 newDueDate = obtainDueDate(ENTER_NEW_DATE_MESSAGE, true);
                 previousDueDate = obtainDueDate(ENTER_PREVIOUS_DATE_MESSAGE, false);
-            } catch (InputCancelledException ignored) {
-                return;
             } catch (ParseException e) {
                 throw new ParseDateException(e);
             }

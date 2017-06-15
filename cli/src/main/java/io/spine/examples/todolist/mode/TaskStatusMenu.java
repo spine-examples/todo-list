@@ -50,12 +50,7 @@ class TaskStatusMenu extends Menu {
 
         @Override
         public void start() {
-            final TaskId taskId;
-            try {
-                taskId = obtainTaskId();
-            } catch (InputCancelledException ignored) {
-                return;
-            }
+            final TaskId taskId = obtainTaskId();
             final FinalizeDraft finalizeDraft = createFinalizeDraftCmd(taskId);
             getClient().finalize(finalizeDraft);
         }
@@ -65,12 +60,7 @@ class TaskStatusMenu extends Menu {
 
         @Override
         public void start() {
-            final TaskId taskId;
-            try {
-                taskId = obtainTaskId();
-            } catch (InputCancelledException ignored) {
-                return;
-            }
+            final TaskId taskId = obtainTaskId();
             final DeleteTask deleteTask = createDeleteTaskCmd(taskId);
             getClient().delete(deleteTask);
         }
@@ -86,12 +76,7 @@ class TaskStatusMenu extends Menu {
 
         @Override
         public void start() {
-            final TaskId taskId;
-            try {
-                taskId = obtainTaskId();
-            } catch (InputCancelledException ignored) {
-                return;
-            }
+            final TaskId taskId = obtainTaskId();
             final ReopenTask reopenTask = createReopenTaskCmd(taskId);
             getClient().reopen(reopenTask);
         }
@@ -107,12 +92,7 @@ class TaskStatusMenu extends Menu {
 
         @Override
         public void start() {
-            final TaskId taskId;
-            try {
-                taskId = obtainTaskId();
-            } catch (InputCancelledException ignored) {
-                return;
-            }
+            final TaskId taskId = obtainTaskId();
             final RestoreDeletedTask restoreDeletedTask = createRestoreDeletedTaskCmd(taskId);
             getClient().restore(restoreDeletedTask);
         }
@@ -128,12 +108,7 @@ class TaskStatusMenu extends Menu {
 
         @Override
         public void start() {
-            final TaskId taskId;
-            try {
-                taskId = obtainTaskId();
-            } catch (InputCancelledException ignored) {
-                return;
-            }
+            final TaskId taskId = obtainTaskId();
             final CompleteTask completeTask = CompleteTask.newBuilder()
                                                           .setId(taskId)
                                                           .build();
