@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.mode.menu;
 
-import com.google.common.base.Preconditions;
 import io.spine.examples.todolist.mode.InteractiveMode;
 import io.spine.examples.todolist.mode.Mode;
 
@@ -28,6 +27,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newLinkedHashMap;
 import static io.spine.util.Exceptions.newIllegalStateException;
@@ -43,6 +45,8 @@ public class Menu extends InteractiveMode {
         for (Map.Entry<String, Mode> mode : builder.modeMap.entrySet()) {
             addMenuItem(mode.getKey(), mode.getValue());
         }
+
+        checkNotNull(builder.menuExit);
         items.add(builder.menuExit);
     }
 
@@ -109,11 +113,14 @@ public class Menu extends InteractiveMode {
         private final Map<String, Mode> modeMap = newLinkedHashMap();
 
         public Builder setMenuExit(String name) {
+            checkArgument(!isNullOrEmpty(name));
             this.menuExit = new MenuExit(name);
             return this;
         }
 
         public Builder addMenuItem(String name, Mode mode) {
+            checkArgument(!isNullOrEmpty(name));
+            checkNotNull(mode);
             modeMap.put(name, mode);
             return this;
         }

@@ -30,6 +30,7 @@ import java.util.List;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDraftTasks;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyLabelledTasks;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyMyList;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 
 /**
  * @author Dmytro Grankin
@@ -42,6 +43,7 @@ class ShowMenu extends Menu {
 
     ShowMenu() {
         super(Menu.newBuilder()
+                  .setMenuExit(BACK_TO_THE_MENU_MESSAGE)
                   .addMenuItem("Show draft tasks.", new ShowDraftTasksMode())
                   .addMenuItem("Show labelled tasks.", new ShowLabelledTasksMode())
                   .addMenuItem("Show my tasks.", new ShowMyTasksMode()));

@@ -32,6 +32,7 @@ import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.mode.menu.Menu;
 
 import static io.spine.base.Identifier.newUuid;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
 import static io.spine.examples.todolist.mode.TodoListCommands.createBasicLabelCmd;
 import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetails;
@@ -46,6 +47,7 @@ class TaskLabelsMenu extends Menu {
 
     protected TaskLabelsMenu() {
         super(Menu.newBuilder()
+                  .setMenuExit(BACK_TO_THE_MENU_MESSAGE)
                   .addMenuItem("Create the label.", new CreateLabelMode())
                   .addMenuItem("Update the label details.", new UpdateLabelDetailsMode())
                   .addMenuItem("Assign a label to a task", new AssignLabelToTaskMode())

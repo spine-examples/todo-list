@@ -34,6 +34,7 @@ import io.spine.examples.todolist.mode.menu.Menu;
 import java.text.ParseException;
 
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDate;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static io.spine.examples.todolist.mode.TodoListCommands.createPriorityChange;
 import static io.spine.examples.todolist.mode.TodoListCommands.createStringChange;
 import static io.spine.examples.todolist.mode.TodoListCommands.createTimestampChangeMode;
@@ -49,6 +50,7 @@ public class UpdateTaskStateMenu extends Menu {
 
     public UpdateTaskStateMenu() {
         super(Menu.newBuilder()
+                  .setMenuExit(BACK_TO_THE_MENU_MESSAGE)
                   .addMenuItem("Update the task description.", new UpdateTaskDescriptionMode())
                   .addMenuItem("Update the task priority.", new UpdateTaskPriorityMode())
                   .addMenuItem("Update the task due date.", new UpdateTaskDueDateMode()));
@@ -65,11 +67,10 @@ public class UpdateTaskStateMenu extends Menu {
 
         @Override
         public void start() {
+            final TaskId taskId = obtainTaskId();
             final String newDescription = obtainDescription(ENTER_NEW_DESCRIPTION_MESSAGE, true);
             final String previousDescription = obtainDescription(ENTER_PREVIOUS_DESCRIPTION_MESSAGE,
                                                                  false);
-            final TaskId taskId = obtainTaskId();
-
             final StringChange change = createStringChange(newDescription, previousDescription);
             final UpdateTaskDescription updateTaskDescription =
                     createUpdateTaskDescriptionCmd(taskId, change);
@@ -95,8 +96,8 @@ public class UpdateTaskStateMenu extends Menu {
         public void start() {
             final TaskId taskId = obtainTaskId();
             final TaskPriority newTaskPriority = obtainTaskPriority(ENTER_NEW_PRIORITY_MESSAGE);
-            final TaskPriority previousTaskPriority = obtainTaskPriority(
-                    ENTER_PREVIOUS_PRIORITY_MESSAGE);
+            final TaskPriority previousTaskPriority =
+                    obtainTaskPriority(ENTER_PREVIOUS_PRIORITY_MESSAGE);
 
             final PriorityChange change = createPriorityChange(newTaskPriority,
                                                                previousTaskPriority);
@@ -120,7 +121,6 @@ public class UpdateTaskStateMenu extends Menu {
         @Override
         public void start() {
             final TaskId taskId = obtainTaskId();
-            ;
             final Timestamp newDueDate;
             final Timestamp previousDueDate;
             try {
