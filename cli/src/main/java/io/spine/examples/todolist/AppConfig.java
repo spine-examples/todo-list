@@ -26,10 +26,14 @@ import io.spine.examples.todolist.context.TodoListBoundedContext;
 import io.spine.server.BoundedContext;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
+import java.io.IOException;
 import java.io.PrintStream;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
  * @author Dmytro Grankin
@@ -50,6 +54,7 @@ public class AppConfig {
 
     public static LineReader newLineReader() {
         return LineReaderBuilder.builder()
+                                .terminal(createDumbTerminal())
                                 .build();
     }
 
@@ -63,5 +68,15 @@ public class AppConfig {
 
     public static BoundedContext getBoundedContext() {
         return TodoListBoundedContext.getInstance();
+    }
+
+    private static Terminal createDumbTerminal() {
+        try {
+            return TerminalBuilder.builder()
+                                  .dumb(true)
+                                  .build();
+        } catch (IOException e) {
+            throw illegalStateWithCauseOf(e);
+        }
     }
 }

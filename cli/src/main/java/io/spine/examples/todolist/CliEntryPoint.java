@@ -47,8 +47,6 @@ public class CliEntryPoint {
         final Server server = new Server(boundedContext);
         startServer(server);
         final TodoClient client = AppConfig.getClient();
-        final LineReader reader = LineReaderBuilder.builder()
-                                                   .build();
         final Mode entryPoint = new MainMenu();
         entryPoint.start();
         client.shutdown();
