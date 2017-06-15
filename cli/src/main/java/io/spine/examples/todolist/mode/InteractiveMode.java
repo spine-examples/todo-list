@@ -40,13 +40,13 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
-import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.ENTER_ID_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.CANCEL_INPUT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.DATE_FORMAT;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.ENTER_ID_MESSAGE;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.ENTER_LABEL_ID_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.INPUT_IS_CANCELED;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LABEL_COLOR_VALUE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.TASK_PRIORITY_VALUE;
-import static io.spine.examples.todolist.mode.MainMenu.MainModeConstants.ENTER_LABEL_ID_MESSAGE;
 
 /**
  * A {@code Mode}, that requires user input.
@@ -270,7 +270,8 @@ public abstract class InteractiveMode extends Mode {
 
     static class ModeConstants {
         static final String DATE_FORMAT = "yyyy-MM-dd";
-        static final String CANCEL_HINT = "Enter `c` to cancel the input.";
+        static final String ENTER_LABEL_ID_MESSAGE = "Please enter the label ID: ";
+        static final String ENTER_ID_MESSAGE = "Please enter the task ID: ";
         static final String INPUT_IS_CANCELED = "Input is canceled";
         static final String LINE_SEPARATOR = System.lineSeparator();
         static final String TASK_PRIORITY_VALUE = LINE_SEPARATOR +
@@ -285,8 +286,8 @@ public abstract class InteractiveMode extends Mode {
                 "3: GREEN;" + LINE_SEPARATOR +
                 "4: BLUE.";
         static final String BACK_TO_THE_MENU_MESSAGE = "Back to the previous menu.";
-        static final String BACK = "back";
         static final String CANCEL_INPUT = "c";
+        static final String DEFAULT_VALUE = "default";
 
         private ModeConstants() {
         }

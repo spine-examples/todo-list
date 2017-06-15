@@ -52,18 +52,17 @@ class CreateTaskMenu extends Menu {
         }
 
         @Override
-        public void doAction() {
-            final TaskId taskId = newTaskId(newUuid());
-            final String description = askUser(SET_DESCRIPTION_MESSAGE);
-            final CreateBasicTask createTask = createTaskCmd(taskId, description);
-            getClient().create(createTask);
-        }
+        void doAction() {
+            final CreateBasicTaskVBuilder builder = CreateBasicTaskVBuilder.newBuilder();
 
-        private static CreateBasicTask createTaskCmd(TaskId taskId, String description) {
-            return CreateBasicTaskVBuilder.newBuilder()
-                                          .setId(taskId)
-                                          .setDescription(description)
-                                          .build();
+            final TaskId taskId = newTaskId(newUuid());
+            builder.setId(taskId);
+
+            final String description = askUser(SET_DESCRIPTION_MESSAGE);
+            builder.setDescription(description);
+
+            final CreateBasicTask createTask = builder.build();
+            getClient().create(createTask);
         }
     }
 
@@ -74,7 +73,7 @@ class CreateTaskMenu extends Menu {
         }
 
         @Override
-        public void doAction() {
+        void doAction() {
             final TaskId taskId = newTaskId(newUuid());
             final CreateDraft createTask = createDraftCmdInstance(taskId);
             getClient().create(createTask);

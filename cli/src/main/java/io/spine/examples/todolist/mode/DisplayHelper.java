@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.google.protobuf.util.Timestamps.toMillis;
-import static io.spine.examples.todolist.mode.CommonMode.CommonModeConstants.DEFAULT_VALUE;
+import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.DEFAULT_VALUE;
 import static io.spine.examples.todolist.mode.InteractiveMode.getDateFormat;
 
 /**

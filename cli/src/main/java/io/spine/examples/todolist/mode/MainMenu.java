@@ -22,8 +22,6 @@ package io.spine.examples.todolist.mode;
 
 import io.spine.examples.todolist.mode.menu.Menu;
 
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
-
 /**
  * @author Illia Shepilov
  */
@@ -31,19 +29,11 @@ public class MainMenu extends Menu {
 
     public MainMenu() {
         super(Menu.newBuilder()
-                  .setMenuExit(BACK_TO_THE_MENU_MESSAGE)
+                  .setMenuExit("Quit from application.")
                   .addMenuItem("Create the task.", new CreateTaskMenu())
-                  .addMenuItem("Create the label.", new CreateLabelMode())
-                  .addMenuItem("Show the tasks in the draft state.", new DraftTasksMode())
-                  .addMenuItem("Show the labelled tasks.", new LabelledTasksMode())
-                  .addMenuItem("Show my tasks.", new MyTasksMode()));
-    }
-
-    static class MainModeConstants {
-
-        static final String ENTER_LABEL_ID_MESSAGE = "Please enter the label id: ";
-
-        private MainModeConstants() {
-        }
+                  .addMenuItem("Change the task status.", new TaskStatusMenu())
+                  .addMenuItem("Update the task state.", new UpdateTaskStateMenu())
+                  .addMenuItem("Show the tasks.", new ShowMenu())
+                  .addMenuItem("Manage task labels.", new TaskLabelsMenu()));
     }
 }
