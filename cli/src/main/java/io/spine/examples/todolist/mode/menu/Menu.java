@@ -32,12 +32,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newLinkedHashMap;
+import static io.spine.examples.todolist.UserIO.askUser;
+import static io.spine.examples.todolist.UserIO.println;
 import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
  * @author Dmytro Grankin
  */
 public class Menu extends InteractiveMode {
+
+    private static final String SELECT_MENU_ITEM_MSG = "Select menu item";
+    private static final String INVALID_SELECTION_MSG = "Invalid selected item.";
 
     private final List<AbstractMenuItem> items = newLinkedList();
 
@@ -56,7 +61,7 @@ public class Menu extends InteractiveMode {
         final Optional<AbstractMenuItem> selectedItem = selectItem();
 
         if (!selectedItem.isPresent()) {
-            println("Invalid selected item.");
+            println(INVALID_SELECTION_MSG);
         }
 
         selectedItem.get()
@@ -69,7 +74,6 @@ public class Menu extends InteractiveMode {
     }
 
     private void display() {
-        println();
         for (AbstractMenuItem item : items) {
             final String itemAsString = toString(item);
             println(itemAsString);
@@ -77,7 +81,7 @@ public class Menu extends InteractiveMode {
     }
 
     private Optional<AbstractMenuItem> selectItem() {
-        final String answer = readLine();
+        final String answer = askUser(SELECT_MENU_ITEM_MSG);
         for (AbstractMenuItem item : items) {
             final String itemOption = getOptionForItem(item);
             if (itemOption.equals(answer)) {

@@ -27,6 +27,7 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.mode.menu.Menu;
 
 import static io.spine.base.Identifier.newUuid;
+import static io.spine.examples.todolist.UserIO.askUser;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 
 /**

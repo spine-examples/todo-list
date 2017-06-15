@@ -40,6 +40,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMap;
+import static io.spine.examples.todolist.UserIO.askUser;
+import static io.spine.examples.todolist.UserIO.println;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.DATE_FORMAT;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.ENTER_ID_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.ENTER_LABEL_ID_MESSAGE;
@@ -75,8 +77,7 @@ public abstract class InteractiveMode extends Mode {
     }
 
     private String obtainLabelColorValue(String message) {
-        println(message + LABEL_COLOR_VALUE);
-        String color = readLine();
+        String color = askUser(message + LABEL_COLOR_VALUE);
 
         color = color == null ? null : color.toUpperCase();
         final boolean isValid = colorValidator.validate(color);
@@ -90,8 +91,7 @@ public abstract class InteractiveMode extends Mode {
     }
 
     protected String obtainLabelTitle(String message) {
-        println(message);
-        String title = readLine();
+        String title = askUser(message);
 
         boolean isValid = commonValidator.validate(title);
 
@@ -103,8 +103,7 @@ public abstract class InteractiveMode extends Mode {
     }
 
     protected String obtainDescription(String message, boolean isNew) {
-        println(message);
-        String description = readLine();
+        String description = askUser(message);
 
         if (description.isEmpty() && !isNew) {
             return description;
@@ -132,8 +131,7 @@ public abstract class InteractiveMode extends Mode {
     }
 
     private String obtainDueDateValue(String message, boolean isNew) throws ParseException {
-        println(message);
-        String dueDateValue = readLine();
+        String dueDateValue = askUser(message);
 
         if (dueDateValue.isEmpty() && !isNew) {
             return dueDateValue;
@@ -155,8 +153,7 @@ public abstract class InteractiveMode extends Mode {
     }
 
     private String obtainPriorityValue(String message) {
-        println(message);
-        String priority = readLine();
+        String priority = askUser(message);
 
         priority = priority == null ? null : priority.toUpperCase();
         final boolean isValid = priorityValidator.validate(priority);
@@ -181,8 +178,7 @@ public abstract class InteractiveMode extends Mode {
     }
 
     private String obtainIdValue(String message) {
-        println(message);
-        String taskIdValue = readLine();
+        String taskIdValue = askUser(message);
 
         final boolean isValid = idValidator.validate(taskIdValue);
         if (!isValid) {

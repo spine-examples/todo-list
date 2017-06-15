@@ -20,9 +20,7 @@
 
 package io.spine.examples.todolist.validator;
 
-import io.spine.examples.todolist.AppConfig;
-import org.jline.reader.LineReader;
-
+import static io.spine.examples.todolist.UserIO.askUser;
 import static io.spine.examples.todolist.validator.ApproveAnswerValidator.INVALID_INPUT_MSG;
 import static io.spine.examples.todolist.validator.ApproveAnswerValidator.NEGATIVE_ANSWER;
 import static io.spine.examples.todolist.validator.ApproveAnswerValidator.POSITIVE_ANSWER;
@@ -32,7 +30,6 @@ import static io.spine.examples.todolist.validator.ApproveAnswerValidator.POSITI
  */
 public class ApproveQuestion {
 
-    private static final LineReader reader = AppConfig.newLineReader();
     private static final Validator<String> validator = new ApproveAnswerValidator();
 
     private ApproveQuestion() {
@@ -42,11 +39,11 @@ public class ApproveQuestion {
     public static boolean ask(String question) {
         final String questionWithHelp =
                 question + " (" + POSITIVE_ANSWER + '/' + NEGATIVE_ANSWER + ") ";
-        String answer = reader.readLine(questionWithHelp);
+        String answer = askUser(questionWithHelp);
         boolean isValidAnswer = validator.validate(answer);
 
         while (!isValidAnswer) {
-            answer = reader.readLine(INVALID_INPUT_MSG + ' ');
+            answer = askUser(INVALID_INPUT_MSG + ' ');
             isValidAnswer = validator.validate(answer);
         }
 

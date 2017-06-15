@@ -32,6 +32,8 @@ import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.mode.menu.Menu;
 
 import static io.spine.base.Identifier.newUuid;
+import static io.spine.examples.todolist.UserIO.askUser;
+import static io.spine.examples.todolist.UserIO.println;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
 import static io.spine.examples.todolist.mode.TodoListCommands.createBasicLabelCmd;

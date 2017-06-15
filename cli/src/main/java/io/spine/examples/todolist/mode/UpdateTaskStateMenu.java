@@ -33,6 +33,7 @@ import io.spine.examples.todolist.mode.menu.Menu;
 
 import java.text.ParseException;
 
+import static io.spine.examples.todolist.UserIO.println;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDate;
 import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static io.spine.examples.todolist.mode.TodoListCommands.createPriorityChange;

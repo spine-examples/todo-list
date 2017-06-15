@@ -27,6 +27,7 @@ import io.spine.examples.todolist.q.projection.MyListView;
 
 import java.util.List;
 
+import static io.spine.examples.todolist.UserIO.println;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDraftTasks;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyLabelledTasks;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyMyList;

@@ -22,38 +22,15 @@ package io.spine.examples.todolist.mode;
 
 import io.spine.examples.todolist.AppConfig;
 import io.spine.examples.todolist.client.TodoClient;
-import org.jline.reader.LineReader;
-
-import java.io.PrintStream;
 
 /**
  * @author Dmytro Grankin
  */
 public abstract class Mode {
 
-    private final PrintStream printStream = AppConfig.getPrintStream();
-    private final LineReader reader = AppConfig.newLineReader();
     private final TodoClient client = AppConfig.getClient();
 
     public abstract void start();
-
-    protected void println(String message) {
-        printStream.println(message);
-    }
-
-    protected void println() {
-        printStream.println();
-    }
-
-    protected String askUser(String question) {
-        println(question);
-        final String answer = readLine();
-        return answer;
-    }
-
-    protected String readLine() {
-        return reader.readLine();
-    }
 
     protected TodoClient getClient() {
         return client;
