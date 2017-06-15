@@ -34,8 +34,8 @@ import io.spine.examples.todolist.mode.menu.Menu;
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.UserIO.askUser;
 import static io.spine.examples.todolist.UserIO.println;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.LINE_SEPARATOR;
 import static io.spine.examples.todolist.mode.TodoListCommands.createBasicLabelCmd;
 import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetails;
 import static io.spine.examples.todolist.mode.TodoListCommands.createLabelDetailsChange;
@@ -74,7 +74,7 @@ class TaskLabelsMenu extends Menu {
         }
     }
 
-    private static class UpdateLabelDetailsMode extends InteractiveMode {
+    private static class UpdateLabelDetailsMode extends Mode {
 
         private static final String ENTER_NEW_TITLE_MESSAGE = "Please enter the new label title:";
         private static final String ENTER_PREVIOUS_TITLE_MESSAGE =
@@ -110,7 +110,7 @@ class TaskLabelsMenu extends Menu {
         }
     }
 
-    private static class AssignLabelToTaskMode extends InteractiveMode {
+    private static class AssignLabelToTaskMode extends Mode {
 
         @Override
         public void start() {
@@ -130,7 +130,7 @@ class TaskLabelsMenu extends Menu {
         }
     }
 
-    private static class RemoveLabelFromTaskMode extends InteractiveMode {
+    private static class RemoveLabelFromTaskMode extends Mode {
 
         @Override
         public void start() {

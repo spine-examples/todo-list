@@ -30,8 +30,8 @@ import java.util.Date;
 import java.util.List;
 
 import static com.google.protobuf.util.Timestamps.toMillis;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.DEFAULT_VALUE;
-import static io.spine.examples.todolist.mode.InteractiveMode.getDateFormat;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.DEFAULT_VALUE;
+import static io.spine.examples.todolist.mode.Mode.getDateFormat;
 
 /**
  * Serves as utility class for creating user friendly representation of the information.
@@ -66,7 +66,7 @@ class DisplayHelper {
         final List<TaskView> viewList = myListView.getMyList()
                                                   .getItemsList();
         final StringBuilder builder = new StringBuilder(MY_LIST_TASKS);
-        builder.append(InteractiveMode.ModeConstants.LINE_SEPARATOR);
+        builder.append(Mode.ModeConstants.LINE_SEPARATOR);
         for (TaskView view : viewList) {
             constructUserFriendlyTaskView(builder, view);
         }
@@ -77,7 +77,7 @@ class DisplayHelper {
         final List<TaskView> viewList = draftTasksView.getDraftTasks()
                                                       .getItemsList();
         final StringBuilder builder = new StringBuilder(DRAFT_TASKS);
-        builder.append(InteractiveMode.ModeConstants.LINE_SEPARATOR);
+        builder.append(Mode.ModeConstants.LINE_SEPARATOR);
         for (TaskView view : viewList) {
             constructUserFriendlyTaskView(builder, view);
         }
@@ -86,7 +86,7 @@ class DisplayHelper {
 
     static String constructUserFriendlyLabelledTasks(List<LabelledTasksView> labelledTasksView) {
         final StringBuilder builder = new StringBuilder(LABELLED_TASKS);
-        builder.append(InteractiveMode.ModeConstants.LINE_SEPARATOR);
+        builder.append(Mode.ModeConstants.LINE_SEPARATOR);
         for (LabelledTasksView labelledView : labelledTasksView) {
             constructLabelledView(builder, labelledView);
         }
@@ -97,13 +97,13 @@ class DisplayHelper {
     private static void constructLabelledView(StringBuilder builder,
                                               LabelledTasksView labelledView) {
         builder.append(LABEL_ID_VALUE)
-               .append(InteractiveMode.ModeConstants.LINE_SEPARATOR)
+               .append(Mode.ModeConstants.LINE_SEPARATOR)
                .append(LABEL_TITLE_VALUE)
                .append(labelledView.getLabelTitle())
-               .append(InteractiveMode.ModeConstants.LINE_SEPARATOR)
+               .append(Mode.ModeConstants.LINE_SEPARATOR)
                .append(LABEL_COLOR_VALUE)
                .append(labelledView.getLabelColor())
-               .append(InteractiveMode.ModeConstants.LINE_SEPARATOR);
+               .append(Mode.ModeConstants.LINE_SEPARATOR);
         final List<TaskView> viewList = labelledView.getLabelledTasks()
                                                     .getItemsList();
         for (TaskView view : viewList) {
@@ -116,21 +116,21 @@ class DisplayHelper {
         final String taskIdValue = view.getId()
                                        .getValue();
         builder.append(TASK)
-               .append(InteractiveMode.ModeConstants.LINE_SEPARATOR)
+               .append(Mode.ModeConstants.LINE_SEPARATOR)
                .append(TASK_ID_VALUE)
                .append(taskIdValue)
-               .append(InteractiveMode.ModeConstants.LINE_SEPARATOR)
+               .append(Mode.ModeConstants.LINE_SEPARATOR)
                .append(DESCRIPTION_VALUE)
                .append(view.getDescription())
-               .append(InteractiveMode.ModeConstants.LINE_SEPARATOR)
+               .append(Mode.ModeConstants.LINE_SEPARATOR)
                .append(PRIORITY_VALUE)
                .append(view.getPriority())
-               .append(InteractiveMode.ModeConstants.LINE_SEPARATOR)
+               .append(Mode.ModeConstants.LINE_SEPARATOR)
                .append(DUE_DATE_VALUE)
                .append(date)
-               .append(InteractiveMode.ModeConstants.LINE_SEPARATOR)
+               .append(Mode.ModeConstants.LINE_SEPARATOR)
                .append(LABEL_ID_VALUE)
                .append(view.getLabelId())
-               .append(InteractiveMode.ModeConstants.LINE_SEPARATOR);
+               .append(Mode.ModeConstants.LINE_SEPARATOR);
     }
 }

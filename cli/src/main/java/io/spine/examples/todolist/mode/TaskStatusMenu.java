@@ -28,7 +28,7 @@ import io.spine.examples.todolist.c.commands.ReopenTask;
 import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
 import io.spine.examples.todolist.mode.menu.Menu;
 
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static io.spine.examples.todolist.mode.TodoListCommands.createFinalizeDraftCmd;
 
 /**
@@ -46,7 +46,7 @@ class TaskStatusMenu extends Menu {
                   .addMenuItem("Restore the task.", new RestoreTaskMode()));
     }
 
-    private static class FinalizeDraftMode extends InteractiveMode {
+    private static class FinalizeDraftMode extends Mode {
 
         @Override
         public void start() {
@@ -56,7 +56,7 @@ class TaskStatusMenu extends Menu {
         }
     }
 
-    private static class DeleteTaskMode extends InteractiveMode {
+    private static class DeleteTaskMode extends Mode {
 
         @Override
         public void start() {
@@ -72,7 +72,7 @@ class TaskStatusMenu extends Menu {
         }
     }
 
-    private static class ReopenTaskMode extends InteractiveMode {
+    private static class ReopenTaskMode extends Mode {
 
         @Override
         public void start() {
@@ -88,7 +88,7 @@ class TaskStatusMenu extends Menu {
         }
     }
 
-    private static class RestoreTaskMode extends InteractiveMode {
+    private static class RestoreTaskMode extends Mode {
 
         @Override
         public void start() {
@@ -104,7 +104,7 @@ class TaskStatusMenu extends Menu {
         }
     }
 
-    private static class CompleteTaskMode extends InteractiveMode {
+    private static class CompleteTaskMode extends Mode {
 
         @Override
         public void start() {

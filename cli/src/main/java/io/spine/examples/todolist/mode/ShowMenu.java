@@ -31,7 +31,7 @@ import static io.spine.examples.todolist.UserIO.println;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDraftTasks;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyLabelledTasks;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyMyList;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 
 /**
  * @author Dmytro Grankin
@@ -50,7 +50,7 @@ class ShowMenu extends Menu {
                   .addMenuItem("Show my tasks.", new ShowMyTasksMode()));
     }
 
-    private static class ShowDraftTasksMode extends InteractiveMode {
+    private static class ShowDraftTasksMode extends Mode {
 
         @Override
         public void start() {
@@ -65,7 +65,7 @@ class ShowMenu extends Menu {
         }
     }
 
-    private static class ShowLabelledTasksMode extends InteractiveMode {
+    private static class ShowLabelledTasksMode extends Mode {
 
         @Override
         public void start() {
@@ -77,7 +77,7 @@ class ShowMenu extends Menu {
         }
     }
 
-    private static class ShowMyTasksMode extends InteractiveMode {
+    private static class ShowMyTasksMode extends Mode {
 
         @Override
         public void start() {

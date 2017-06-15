@@ -35,7 +35,7 @@ import java.text.ParseException;
 
 import static io.spine.examples.todolist.UserIO.println;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyDate;
-import static io.spine.examples.todolist.mode.InteractiveMode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 import static io.spine.examples.todolist.mode.TodoListCommands.createPriorityChange;
 import static io.spine.examples.todolist.mode.TodoListCommands.createStringChange;
 import static io.spine.examples.todolist.mode.TodoListCommands.createTimestampChangeMode;
@@ -57,7 +57,7 @@ public class UpdateTaskStateMenu extends Menu {
                   .addMenuItem("Update the task due date.", new UpdateTaskDueDateMode()));
     }
 
-    private static class UpdateTaskDescriptionMode extends InteractiveMode {
+    private static class UpdateTaskDescriptionMode extends Mode {
 
         private static final String ENTER_NEW_DESCRIPTION_MESSAGE =
                 "Please enter the new task description:";
@@ -85,7 +85,7 @@ public class UpdateTaskStateMenu extends Menu {
         }
     }
 
-    private static class UpdateTaskPriorityMode extends InteractiveMode {
+    private static class UpdateTaskPriorityMode extends Mode {
 
         private static final String ENTER_NEW_PRIORITY_MESSAGE =
                 "Please enter the new task priority:";
@@ -111,7 +111,7 @@ public class UpdateTaskStateMenu extends Menu {
         }
     }
 
-    private static class UpdateTaskDueDateMode extends InteractiveMode {
+    private static class UpdateTaskDueDateMode extends Mode {
 
         private static final String ENTER_NEW_DATE_MESSAGE =
                 "Please enter the new task due date:";

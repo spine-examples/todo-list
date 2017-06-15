@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.mode.menu;
 
-import io.spine.examples.todolist.mode.InteractiveMode;
 import io.spine.examples.todolist.mode.Mode;
 
 import java.util.List;
@@ -39,10 +38,10 @@ import static io.spine.util.Exceptions.newIllegalStateException;
 /**
  * @author Dmytro Grankin
  */
-public class Menu extends InteractiveMode {
+public class Menu extends Mode {
 
-    private static final String SELECT_MENU_ITEM_MSG = "Select menu item";
-    private static final String INVALID_SELECTION_MSG = "Invalid selected item.";
+    private static final String SELECT_MENU_ITEM_MSG = "Select a menu item";
+    private static final String INVALID_SELECTION_MSG = "The selected item is invalid.";
 
     private final List<AbstractMenuItem> items = newLinkedList();
 
