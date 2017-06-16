@@ -44,42 +44,21 @@ public class QuickTaskCreation extends Mode {
 
     @Override
     public void start() {
-        final TaskId taskId = newTaskId(newUuid());
-        set(taskId);
+        final TaskId taskId = newTaskId();
+        builder.setId(taskId);
 
-        inputDescription();
+        inputDescription(SET_DESCRIPTION_MESSAGE);
 
-        execute();
+        buildAndPost();
     }
 
-    private void set(TaskId taskId) {
-        try {
-            builder.setId(taskId);
-        } catch (ValidationException e) {
-            throw illegalStateWithCauseOf(e);
-        }
+    private void inputDescription(String message) {
+        final String description = askUser(message);
+        final Optional<String> errMsg = trySet(() -> builder.setDescription(description));
+        errMsg.ifPresent(this::inputDescription);
     }
 
-    private void inputDescription() {
-        String description = askUser(SET_DESCRIPTION_MESSAGE);
-        Optional<String> errMsg = trySet(description);
-        while (errMsg.isPresent()) {
-            description = askUser(errMsg.get());
-            errMsg = trySet(description);
-        }
-    }
-
-    private Optional<String> trySet(String description) {
-        try {
-            builder.setDescription(description);
-            return Optional.empty();
-        } catch (ValidationException e) {
-            final String errMsg = format(e);
-            return Optional.of(errMsg);
-        }
-    }
-
-    private void execute() {
+    private void buildAndPost() {
         try {
             final CreateBasicTask createTask = builder.build();
             getClient().create(createTask);
@@ -88,9 +67,19 @@ public class QuickTaskCreation extends Mode {
         }
     }
 
-    private static TaskId newTaskId(String taskIdValue) {
+    private static Optional<String> trySet(Runnable r) {
+        try {
+            r.run();
+            return Optional.empty();
+        } catch (ValidationException e) {
+            final String errMsg = format(e);
+            return Optional.of(errMsg);
+        }
+    }
+
+    private static TaskId newTaskId() {
         final TaskId result = TaskId.newBuilder()
-                                    .setValue(taskIdValue)
+                                    .setValue(newUuid())
                                     .build();
         return result;
     }
