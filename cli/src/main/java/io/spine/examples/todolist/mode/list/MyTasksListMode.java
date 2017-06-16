@@ -18,23 +18,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode;
+package io.spine.examples.todolist.mode.list;
 
-import io.spine.examples.todolist.mode.list.DraftTasksListMode;
-import io.spine.examples.todolist.mode.list.MyTasksListMode;
-import io.spine.examples.todolist.mode.menu.Menu;
+import io.spine.examples.todolist.q.projection.MyListView;
+import io.spine.examples.todolist.q.projection.TaskView;
 
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
+import java.util.List;
+
+import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyTaskView;
 
 /**
  * @author Dmytro Grankin
  */
-class ShowMenu extends Menu {
+public class MyTasksListMode extends ListMode<TaskView> {
 
-    ShowMenu() {
-        super(Menu.newBuilder()
-                  .setMenuExit(BACK_TO_THE_MENU_MESSAGE)
-                  .addMenuItem("Show draft tasks.", new DraftTasksListMode())
-                  .addMenuItem("Show my tasks.", new MyTasksListMode()));
+    private static final String EMPTY_MY_LIST_TASKS = "Task list is empty.";
+
+    @Override
+    protected List<TaskView> receiveRecentState() {
+        final MyListView myListView = getClient().getMyListView();
+        return myListView.getMyList()
+                         .getItemsList();
+    }
+
+    @Override
+    protected String getEmptyView() {
+        return EMPTY_MY_LIST_TASKS;
+    }
+
+    @Override
+    protected String getItemView(TaskView item) {
+        return constructUserFriendlyTaskView(item);
     }
 }

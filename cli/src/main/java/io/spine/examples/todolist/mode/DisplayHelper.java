@@ -21,13 +21,9 @@
 package io.spine.examples.todolist.mode;
 
 import com.google.protobuf.Timestamp;
-import io.spine.examples.todolist.q.projection.DraftTasksView;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskView;
 
 import java.util.Date;
-import java.util.List;
 
 import static com.google.protobuf.util.Timestamps.toMillis;
 import static io.spine.examples.todolist.mode.Mode.ModeConstants.DEFAULT_VALUE;
@@ -38,16 +34,11 @@ import static io.spine.examples.todolist.mode.Mode.getDateFormat;
  *
  * @author Illia Shepilov
  */
-class DisplayHelper {
+public class DisplayHelper {
 
-    private static final String MY_LIST_TASKS = "My list tasks";
-    private static final String DRAFT_TASKS = "Draft tasks";
-    private static final String LABELLED_TASKS = "Labelled tasks";
     private static final String TASK = "Task: ";
     private static final String LABEL_ID_VALUE = "Label id: ";
     private static final String TASK_ID_VALUE = "Task id: ";
-    private static final String LABEL_TITLE_VALUE = "Label title: ";
-    private static final String LABEL_COLOR_VALUE = "Label color: ";
     private static final String DESCRIPTION_VALUE = "Description: ";
     private static final String PRIORITY_VALUE = "Priority: ";
     private static final String DUE_DATE_VALUE = "Due date: ";
@@ -62,56 +53,8 @@ class DisplayHelper {
                : getDateFormat().format(new Date(millis));
     }
 
-    static String constructUserFriendlyMyList(MyListView myListView) {
-        final List<TaskView> viewList = myListView.getMyList()
-                                                  .getItemsList();
-        final StringBuilder builder = new StringBuilder(MY_LIST_TASKS);
-        builder.append(Mode.ModeConstants.LINE_SEPARATOR);
-        for (TaskView view : viewList) {
-            constructUserFriendlyTaskView(builder, view);
-        }
-        return builder.toString();
-    }
-
-    static String constructUserFriendlyDraftTasks(DraftTasksView draftTasksView) {
-        final List<TaskView> viewList = draftTasksView.getDraftTasks()
-                                                      .getItemsList();
-        final StringBuilder builder = new StringBuilder(DRAFT_TASKS);
-        builder.append(Mode.ModeConstants.LINE_SEPARATOR);
-        for (TaskView view : viewList) {
-            constructUserFriendlyTaskView(builder, view);
-        }
-        return builder.toString();
-    }
-
-    static String constructUserFriendlyLabelledTasks(List<LabelledTasksView> labelledTasksView) {
-        final StringBuilder builder = new StringBuilder(LABELLED_TASKS);
-        builder.append(Mode.ModeConstants.LINE_SEPARATOR);
-        for (LabelledTasksView labelledView : labelledTasksView) {
-            constructLabelledView(builder, labelledView);
-        }
-
-        return builder.toString();
-    }
-
-    private static void constructLabelledView(StringBuilder builder,
-                                              LabelledTasksView labelledView) {
-        builder.append(LABEL_ID_VALUE)
-               .append(Mode.ModeConstants.LINE_SEPARATOR)
-               .append(LABEL_TITLE_VALUE)
-               .append(labelledView.getLabelTitle())
-               .append(Mode.ModeConstants.LINE_SEPARATOR)
-               .append(LABEL_COLOR_VALUE)
-               .append(labelledView.getLabelColor())
-               .append(Mode.ModeConstants.LINE_SEPARATOR);
-        final List<TaskView> viewList = labelledView.getLabelledTasks()
-                                                    .getItemsList();
-        for (TaskView view : viewList) {
-            constructUserFriendlyTaskView(builder, view);
-        }
-    }
-
-    private static void constructUserFriendlyTaskView(StringBuilder builder, TaskView view) {
+    public static String constructUserFriendlyTaskView(TaskView view) {
+        final StringBuilder builder = new StringBuilder();
         final String date = constructUserFriendlyDate(view.getDueDate());
         final String taskIdValue = view.getId()
                                        .getValue();
@@ -132,5 +75,6 @@ class DisplayHelper {
                .append(LABEL_ID_VALUE)
                .append(view.getLabelId())
                .append(Mode.ModeConstants.LINE_SEPARATOR);
+        return builder.toString();
     }
 }
