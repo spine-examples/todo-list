@@ -18,24 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode;
-
-import io.spine.examples.todolist.mode.list.MyTasksListMode;
-import io.spine.examples.todolist.mode.menu.Menu;
+package io.spine.examples.todolist.mode.menu;
 
 /**
- * @author Dmytro Grankin
+ * @author Illia Shepilov
  */
-class MyTasksMenu extends Menu {
+public class MainMenu extends Menu {
 
-    MyTasksMenu() {
+    public MainMenu() {
         super(Menu.newBuilder()
-                  .setMenuExit(BACK_TO_THE_MENU_MESSAGE));
-    }
-
-    @Override
-    protected void display() {
-        new MyTasksListMode().start();
-        super.display();
+                  .setMenuExit("Quit from application.")
+                  .addMenuItem("My tasks", new MyTasksMenu()));
     }
 }

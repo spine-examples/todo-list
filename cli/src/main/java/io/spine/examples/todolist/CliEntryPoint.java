@@ -21,7 +21,7 @@
 package io.spine.examples.todolist;
 
 import io.spine.examples.todolist.client.TodoClient;
-import io.spine.examples.todolist.mode.MainMenu;
+import io.spine.examples.todolist.mode.menu.MainMenu;
 import io.spine.examples.todolist.mode.Mode;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;

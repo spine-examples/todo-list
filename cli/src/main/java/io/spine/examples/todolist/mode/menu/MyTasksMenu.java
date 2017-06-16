@@ -18,27 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode;
+package io.spine.examples.todolist.mode.menu;
 
-import io.spine.examples.todolist.validator.ApproveQuestion;
+import io.spine.examples.todolist.mode.action.QuickTaskCreation;
+import io.spine.examples.todolist.mode.list.MyTasksListMode;
 
 /**
  * @author Dmytro Grankin
  */
-abstract class RepeatableAction extends Mode {
+class MyTasksMenu extends Menu {
 
-    private final String questionAboutRepeat;
-
-    RepeatableAction(String questionAboutRepeat) {
-        this.questionAboutRepeat = questionAboutRepeat;
+    MyTasksMenu() {
+        super(Menu.newBuilder()
+                  .addMenuItem("Quick create", new QuickTaskCreation())
+                  .setMenuExit(BACK_TO_THE_MENU_MSG));
     }
 
     @Override
-    public final void start() {
-        do {
-            doAction();
-        } while (ApproveQuestion.ask(questionAboutRepeat));
+    protected void display() {
+        new MyTasksListMode().start();
+        super.display();
     }
-
-    abstract void doAction();
 }

@@ -18,18 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode;
+package io.spine.examples.todolist.mode.action;
 
-import io.spine.examples.todolist.mode.menu.Menu;
+import io.spine.examples.todolist.mode.Mode;
+import io.spine.examples.todolist.validator.ApproveQuestion;
 
 /**
- * @author Illia Shepilov
+ * @author Dmytro Grankin
  */
-public class MainMenu extends Menu {
+abstract class RepeatableAction extends Mode {
 
-    public MainMenu() {
-        super(Menu.newBuilder()
-                  .setMenuExit("Quit from application.")
-                  .addMenuItem("My tasks", new MyTasksMenu()));
+    private final String questionAboutRepeat;
+
+    RepeatableAction(String questionAboutRepeat) {
+        this.questionAboutRepeat = questionAboutRepeat;
     }
+
+    @Override
+    public final void start() {
+        do {
+            doAction();
+        } while (ApproveQuestion.ask(questionAboutRepeat));
+    }
+
+    abstract void doAction();
 }
