@@ -49,6 +49,10 @@ public class DisplayHelper {
     private DisplayHelper() {
     }
 
+    public static String getLineSeparator() {
+        return LINE_SEPARATOR;
+    }
+
     static String constructUserFriendlyDate(Timestamp timestamp) {
         final long millis = toMillis(timestamp);
         return millis == 0

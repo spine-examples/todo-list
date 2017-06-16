@@ -55,7 +55,8 @@ public class UserIO {
 
     public static String askUser(String question) {
         checkArgument(!isNullOrEmpty(question));
-        final String answer = READER.readLine(question);
+        println(question);
+        final String answer = READER.readLine();
         return answer;
     }
 

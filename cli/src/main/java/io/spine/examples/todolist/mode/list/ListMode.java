@@ -27,7 +27,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.examples.todolist.UserIO.println;
-import static java.lang.Character.LINE_SEPARATOR;
+import static io.spine.examples.todolist.mode.DisplayHelper.getLineSeparator;
 
 /**
  * @author Dmytro Grankin
@@ -68,7 +68,7 @@ public abstract class ListMode<E extends Message> extends Mode {
         for (E item : state) {
             final String itemView = getItemView(item);
             builder.append(itemView)
-                   .append(LINE_SEPARATOR);
+                   .append(getLineSeparator());
         }
 
         return builder.toString();
