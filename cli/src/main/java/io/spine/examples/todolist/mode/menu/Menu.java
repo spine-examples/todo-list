@@ -41,7 +41,8 @@ import static io.spine.util.Exceptions.newIllegalStateException;
 public class Menu extends Mode {
 
     static final String BACK_TO_THE_MENU_MSG = "Back to the previous menu.";
-    private static final String SELECT_MENU_ITEM_MSG = "Select a menu item";
+    private static final String DEFAULT_EXIT_MSG = "Exit from the menu.";
+    private static final String SELECT_MENU_ITEM_MSG = "Select a menu item:";
     private static final String INVALID_SELECTION_MSG = "The selected item is invalid.";
 
     private final List<AbstractMenuItem> items = newLinkedList();
@@ -51,8 +52,8 @@ public class Menu extends Mode {
             addMenuItem(mode.getKey(), mode.getValue());
         }
 
-        checkNotNull(builder.menuExit);
-        items.add(builder.menuExit);
+        final MenuExit menuExit = new MenuExit(builder.exitMessage);
+        items.add(menuExit);
     }
 
     @Override
@@ -113,12 +114,12 @@ public class Menu extends Mode {
 
     public static class Builder {
 
-        private MenuExit menuExit;
+        private String exitMessage = DEFAULT_EXIT_MSG;
         private final Map<String, Mode> modeMap = newLinkedHashMap();
 
-        public Builder setMenuExit(String name) {
-            checkArgument(!isNullOrEmpty(name));
-            this.menuExit = new MenuExit(name);
+        public Builder setExitMessage(String message) {
+            checkArgument(!isNullOrEmpty(message));
+            this.exitMessage = message;
             return this;
         }
 

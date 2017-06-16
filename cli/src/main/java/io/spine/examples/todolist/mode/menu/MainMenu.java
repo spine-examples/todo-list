@@ -27,7 +27,7 @@ public class MainMenu extends Menu {
 
     public MainMenu() {
         super(Menu.newBuilder()
-                  .setMenuExit("Quit from application.")
+                  .setExitMessage("Quit from application.")
                   .addMenuItem("My tasks", new MyTasksMenu()));
     }
 }

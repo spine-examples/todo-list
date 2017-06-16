@@ -31,7 +31,7 @@ class MyTasksMenu extends Menu {
     MyTasksMenu() {
         super(Menu.newBuilder()
                   .addMenuItem("Quick create", new QuickTaskCreation())
-                  .setMenuExit(BACK_TO_THE_MENU_MSG));
+                  .setExitMessage(BACK_TO_THE_MENU_MSG));
     }
 
     @Override
