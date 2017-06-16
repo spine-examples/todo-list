@@ -40,6 +40,7 @@ import static io.spine.util.Exceptions.newIllegalStateException;
  */
 public class Menu extends Mode {
 
+    protected static final String BACK_TO_THE_MENU_MESSAGE = "Back to the previous menu.";
     private static final String SELECT_MENU_ITEM_MSG = "Select a menu item";
     private static final String INVALID_SELECTION_MSG = "The selected item is invalid.";
 

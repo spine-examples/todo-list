@@ -23,8 +23,6 @@ package io.spine.examples.todolist.mode;
 import io.spine.examples.todolist.mode.list.MyTasksListMode;
 import io.spine.examples.todolist.mode.menu.Menu;
 
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
-
 /**
  * @author Dmytro Grankin
  */

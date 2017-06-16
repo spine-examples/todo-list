@@ -23,11 +23,11 @@ package io.spine.examples.todolist.mode;
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.q.projection.TaskView;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import static com.google.protobuf.util.Timestamps.toMillis;
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.DEFAULT_VALUE;
-import static io.spine.examples.todolist.mode.Mode.getDateFormat;
 
 /**
  * Serves as utility class for creating user friendly representation of the information.
@@ -36,6 +36,9 @@ import static io.spine.examples.todolist.mode.Mode.getDateFormat;
  */
 public class DisplayHelper {
 
+    private static final String LINE_SEPARATOR = System.lineSeparator();
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
+    private static final String DEFAULT_VALUE = "default";
     private static final String TASK = "Task: ";
     private static final String LABEL_ID_VALUE = "Label id: ";
     private static final String TASK_ID_VALUE = "Task id: ";
@@ -59,22 +62,27 @@ public class DisplayHelper {
         final String taskIdValue = view.getId()
                                        .getValue();
         builder.append(TASK)
-               .append(Mode.ModeConstants.LINE_SEPARATOR)
+               .append(LINE_SEPARATOR)
                .append(TASK_ID_VALUE)
                .append(taskIdValue)
-               .append(Mode.ModeConstants.LINE_SEPARATOR)
+               .append(LINE_SEPARATOR)
                .append(DESCRIPTION_VALUE)
                .append(view.getDescription())
-               .append(Mode.ModeConstants.LINE_SEPARATOR)
+               .append(LINE_SEPARATOR)
                .append(PRIORITY_VALUE)
                .append(view.getPriority())
-               .append(Mode.ModeConstants.LINE_SEPARATOR)
+               .append(LINE_SEPARATOR)
                .append(DUE_DATE_VALUE)
                .append(date)
-               .append(Mode.ModeConstants.LINE_SEPARATOR)
+               .append(LINE_SEPARATOR)
                .append(LABEL_ID_VALUE)
                .append(view.getLabelId())
-               .append(Mode.ModeConstants.LINE_SEPARATOR);
+               .append(LINE_SEPARATOR);
         return builder.toString();
+    }
+
+    private static SimpleDateFormat getDateFormat() {
+        final SimpleDateFormat result = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+        return result;
     }
 }

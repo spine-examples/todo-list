@@ -23,11 +23,6 @@ package io.spine.examples.todolist.mode;
 import io.spine.examples.todolist.AppConfig;
 import io.spine.examples.todolist.client.TodoClient;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
-import static io.spine.examples.todolist.mode.Mode.ModeConstants.DATE_FORMAT;
-
 /**
  * @author Dmytro Grankin
  */
@@ -39,20 +34,5 @@ public abstract class Mode {
 
     protected TodoClient getClient() {
         return client;
-    }
-
-    static SimpleDateFormat getDateFormat() {
-        final SimpleDateFormat result = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
-        return result;
-    }
-
-    static class ModeConstants {
-        static final String DATE_FORMAT = "yyyy-MM-dd";
-        static final String LINE_SEPARATOR = System.lineSeparator();
-        static final String BACK_TO_THE_MENU_MESSAGE = "Back to the previous menu.";
-        static final String DEFAULT_VALUE = "default";
-
-        private ModeConstants() {
-        }
     }
 }
