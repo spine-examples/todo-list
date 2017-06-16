@@ -25,8 +25,6 @@ import io.spine.examples.todolist.mode.MainMenu;
 import io.spine.examples.todolist.mode.Mode;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
-import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;

@@ -20,8 +20,6 @@
 
 package io.spine.examples.todolist.validator;
 
-import javax.annotation.Nullable;
-
 /**
  * Serves as supertype for all `cli` validators.
  *

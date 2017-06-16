@@ -20,8 +20,6 @@
 
 package io.spine.examples.todolist.validator;
 
-import javax.annotation.Nullable;
-
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
