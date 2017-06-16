@@ -36,10 +36,6 @@ public class QuickTaskCreation extends UserCommand<CreateBasicTask, CreateBasicT
 
     private static final String SET_DESCRIPTION_MESSAGE = "Please enter the task description:";
 
-    public QuickTaskCreation() {
-        super(CreateBasicTaskVBuilder.newBuilder());
-    }
-
     @Override
     protected void inputCommandParams() {
         final TaskId taskId = newTaskId();

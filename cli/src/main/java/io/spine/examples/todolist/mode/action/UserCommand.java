@@ -22,11 +22,15 @@ package io.spine.examples.todolist.mode.action;
 
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.mode.Mode;
+import io.spine.reflect.GenericTypeIndex;
 import io.spine.validate.ValidatingBuilder;
+import io.spine.validate.ValidatingBuilders;
 import io.spine.validate.ValidationException;
 
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.examples.todolist.mode.action.UserCommand.GenericParameter.STATE_BUILDER;
 import static io.spine.examples.todolist.mode.action.ValidationExceptionFormatter.format;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
@@ -37,11 +41,7 @@ abstract class UserCommand<M extends Message,
                            B extends ValidatingBuilder<M, ? extends Message.Builder>>
         extends Mode {
 
-    private final B builder;
-
-    UserCommand(B builder) {
-        this.builder = builder;
-    }
+    private final B builder = newBuilder();
 
     @Override
     public final void start() {
@@ -82,5 +82,64 @@ abstract class UserCommand<M extends Message,
 
     protected B getBuilder() {
         return builder;
+    }
+
+    private B newBuilder() {
+        @SuppressWarnings("unchecked")   // it's safe, as we rely on the definition of this class.
+        final Class<? extends UserCommand<M, B>> aClass =
+                (Class<? extends UserCommand<M, B>>) getClass();
+        final Class<B> builderClass = TypeInfo.getBuilderClass(aClass);
+        return ValidatingBuilders.newInstance(builderClass);
+    }
+
+    /**
+     * Enumeration of generic type parameters of this class.
+     */
+    enum GenericParameter implements GenericTypeIndex<UserCommand> {
+
+        /** The index of the generic type {@code <M>}. */
+        STATE(0),
+
+        /** The index of the generic type {@code <B>}. */
+        STATE_BUILDER(1);
+
+        private final int index;
+
+        GenericParameter(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public int getIndex() {
+            return this.index;
+        }
+
+        @Override
+        public Class<?> getArgumentIn(Class<? extends UserCommand> cls) {
+            return Default.getArgument(this, cls);
+        }
+    }
+
+    /**
+     * Provides type information on classes extending {@code UserCommand}.
+     */
+    private static class TypeInfo {
+
+        private TypeInfo() {
+            // Prevent instantiation of this utility class.
+        }
+
+        /**
+         * Obtains the class of the {@linkplain ValidatingBuilder} for the given
+         * {@code EventPlayingEntity} descendant class {@code entityClass}.
+         */
+        private static <M extends Message,
+                B extends ValidatingBuilder<M, ? extends Message.Builder>>
+        Class<B> getBuilderClass(Class<? extends UserCommand<M, B>> entityClass) {
+            checkNotNull(entityClass);
+            @SuppressWarnings("unchecked") // The type is ensured by this class declaration.
+            final Class<B> builderClass = (Class<B>) STATE_BUILDER.getArgumentIn(entityClass);
+            return builderClass;
+        }
     }
 }
