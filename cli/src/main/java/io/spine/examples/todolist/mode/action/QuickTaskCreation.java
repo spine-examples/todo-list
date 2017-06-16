@@ -26,9 +26,10 @@ import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import io.spine.examples.todolist.mode.Mode;
 import io.spine.validate.ValidationException;
 
+import java.util.Optional;
+
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.UserIO.askUser;
-import static io.spine.examples.todolist.UserIO.println;
 import static io.spine.examples.todolist.mode.action.ValidationExceptionFormatter.format;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
@@ -46,8 +47,7 @@ public class QuickTaskCreation extends Mode {
         final TaskId taskId = newTaskId(newUuid());
         set(taskId);
 
-        final String description = askUser(SET_DESCRIPTION_MESSAGE);
-        set(description);
+        inputDescription();
 
         execute();
     }
@@ -60,12 +60,22 @@ public class QuickTaskCreation extends Mode {
         }
     }
 
-    private void set(String description) {
+    private void inputDescription() {
+        String description = askUser(SET_DESCRIPTION_MESSAGE);
+        Optional<String> errMsg = trySet(description);
+        while (errMsg.isPresent()) {
+            description = askUser(errMsg.get());
+            errMsg = trySet(description);
+        }
+    }
+
+    private Optional<String> trySet(String description) {
         try {
             builder.setDescription(description);
+            return Optional.empty();
         } catch (ValidationException e) {
             final String errMsg = format(e);
-            println(errMsg);
+            return Optional.of(errMsg);
         }
     }
 

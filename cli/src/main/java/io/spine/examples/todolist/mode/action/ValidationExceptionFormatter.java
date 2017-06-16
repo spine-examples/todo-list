@@ -24,6 +24,8 @@ import io.spine.base.FieldPath;
 import io.spine.validate.ConstraintViolation;
 import io.spine.validate.ValidationException;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 /**
  * @author Dmytro Grankin
  */
@@ -34,11 +36,13 @@ class ValidationExceptionFormatter {
     }
 
     static String format(ValidationException e) {
+        checkArgument(e.getConstraintViolations()
+                       .size() == 1);
         final ConstraintViolation violation = e.getConstraintViolations()
                                                .get(0);
         final FieldPath fieldPath = violation.getFieldPath();
         final int fieldPathSize = fieldPath.getFieldNameCount();
         final String unqualifiedName = fieldPath.getFieldName(fieldPathSize - 1);
-        return String.format("Invalid field `%s`.", unqualifiedName);
+        return String.format("Invalid `%s`.", unqualifiedName);
     }
 }
