@@ -32,9 +32,9 @@ import static java.lang.Character.LINE_SEPARATOR;
 /**
  * @author Dmytro Grankin
  */
-public abstract class ListMode<S extends Message> extends Mode {
+public abstract class ListMode<E extends Message> extends Mode {
 
-    private List<S> state;
+    private List<E> state;
 
     @Override
     public void start() {
@@ -48,11 +48,11 @@ public abstract class ListMode<S extends Message> extends Mode {
     }
 
     private void updateState() {
-        final List<S> newState = receiveRecentState();
+        final List<E> newState = receiveRecentState();
         setState(newState);
     }
 
-    protected abstract List<S> receiveRecentState();
+    protected abstract List<E> receiveRecentState();
 
     private String getView() {
         return state.isEmpty()
@@ -65,7 +65,7 @@ public abstract class ListMode<S extends Message> extends Mode {
     protected String getNonEmptyView() {
         final StringBuilder builder = new StringBuilder();
 
-        for (S item : state) {
+        for (E item : state) {
             final String itemView = getItemView(item);
             builder.append(itemView)
                    .append(LINE_SEPARATOR);
@@ -74,9 +74,9 @@ public abstract class ListMode<S extends Message> extends Mode {
         return builder.toString();
     }
 
-    protected abstract String getItemView(S item);
+    protected abstract String getItemView(E item);
 
-    protected void setState(List<S> state) {
+    protected void setState(List<E> state) {
         checkNotNull(state);
         this.state = state;
     }

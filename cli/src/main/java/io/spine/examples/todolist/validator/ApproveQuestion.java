@@ -21,9 +21,8 @@
 package io.spine.examples.todolist.validator;
 
 import static io.spine.examples.todolist.UserIO.askUser;
-import static io.spine.examples.todolist.validator.ApproveAnswerValidator.INVALID_INPUT_MSG;
-import static io.spine.examples.todolist.validator.ApproveAnswerValidator.NEGATIVE_ANSWER;
-import static io.spine.examples.todolist.validator.ApproveAnswerValidator.POSITIVE_ANSWER;
+import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getNegativeAnswer;
+import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getPositiveAnswer;
 
 /**
  * @author Dmytro Grankin
@@ -38,15 +37,15 @@ public class ApproveQuestion {
 
     public static boolean ask(String question) {
         final String questionWithHelp =
-                question + " (" + POSITIVE_ANSWER + '/' + NEGATIVE_ANSWER + ") ";
+                question + " (" + getPositiveAnswer() + '/' + getNegativeAnswer() + ") ";
         String answer = askUser(questionWithHelp);
         boolean isValidAnswer = validator.validate(answer);
 
         while (!isValidAnswer) {
-            answer = askUser(INVALID_INPUT_MSG + ' ');
+            answer = askUser(validator.getAdvice());
             isValidAnswer = validator.validate(answer);
         }
 
-        return answer.equals(POSITIVE_ANSWER);
+        return answer.equals(getPositiveAnswer());
     }
 }

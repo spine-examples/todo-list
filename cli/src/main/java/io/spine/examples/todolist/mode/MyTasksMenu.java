@@ -18,45 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.validator;
+package io.spine.examples.todolist.mode;
 
-import io.spine.examples.todolist.LabelColor;
+import io.spine.examples.todolist.mode.list.MyTasksListMode;
+import io.spine.examples.todolist.mode.menu.Menu;
 
-import javax.annotation.Nullable;
-import java.util.Map;
+import static io.spine.examples.todolist.mode.Mode.ModeConstants.BACK_TO_THE_MENU_MESSAGE;
 
 /**
- * Serves as validator class for the label color input.
- *
- * <p>Validation will be passed if {@code colorMap} contains the specified color.
- *
- * @author Illia Shepilov
+ * @author Dmytro Grankin
  */
-public class LabelColorValidator implements Validator<String> {
+class MyTasksMenu extends Menu {
 
-    private static final String INCORRECT_INPUT = "Incorrect label color";
-
-    private final Map<String, LabelColor> colorMap;
-    private String message;
-
-    public LabelColorValidator(Map<String, LabelColor> colorMap) {
-        this.colorMap = colorMap;
+    MyTasksMenu() {
+        super(Menu.newBuilder()
+                  .setMenuExit(BACK_TO_THE_MENU_MESSAGE));
     }
 
     @Override
-    public boolean validate(String input) {
-        final LabelColor labelColor = colorMap.get(input);
-        final boolean passed = labelColor != null;
-        if (!passed) {
-            message = INCORRECT_INPUT;
-        }
-        return passed;
+    protected void display() {
+        new MyTasksListMode().start();
+        super.display();
     }
-
-    @Nullable
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
 }

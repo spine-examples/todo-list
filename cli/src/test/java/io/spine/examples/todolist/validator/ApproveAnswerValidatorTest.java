@@ -25,7 +25,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -76,12 +75,5 @@ class ApproveAnswerValidatorTest {
     void notPassTheValidationWhenIsputIsIncorrect() {
         final boolean passed = validator.validate(INVALID_INPUT);
         assertFalse(passed);
-    }
-
-    @Test
-    @DisplayName("return non message when validation is failed")
-    void getMessage() {
-        validator.validate(INVALID_INPUT);
-        assertNotNull(validator.getMessage());
     }
 }

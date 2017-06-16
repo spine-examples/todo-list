@@ -38,10 +38,9 @@ public interface Validator<T> {
     boolean validate(T value);
 
     /**
-     * Returns the message is indicated incorrect input by user.
+     * Provides the advice about valid values.
      *
-     * @return the warning message
+     * @return the advice message
      */
-    @Nullable
-    public String getMessage();
+    String getAdvice();
 }

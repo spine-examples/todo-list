@@ -86,4 +86,11 @@ class CreateTaskMenu extends Menu {
                               .build();
         }
     }
+
+    private static TaskId newTaskId(String taskIdValue) {
+        final TaskId result = TaskId.newBuilder()
+                                    .setValue(taskIdValue)
+                                    .build();
+        return result;
+    }
 }

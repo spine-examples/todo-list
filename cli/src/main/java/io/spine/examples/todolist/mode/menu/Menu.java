@@ -72,7 +72,7 @@ public class Menu extends Mode {
         items.add(menuItem);
     }
 
-    private void display() {
+    protected void display() {
         for (AbstractMenuItem item : items) {
             final String itemAsString = toString(item);
             println(itemAsString);

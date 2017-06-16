@@ -28,20 +28,19 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  * Serves as a validator for the user approve answer.
  *
  * <p>Validation will be passed when:
- * <li>input is `y`;
- * <li>input is `n`.
- * <p>In other cases validation will be failed.
+ * <ul>
+ *     <li>input is `y`;
+ *     <li>input is `n`.
+ * </ul>
  *
  * @author Illia Shepilov
  */
 public class ApproveAnswerValidator implements Validator<String> {
 
-    static final String NEGATIVE_ANSWER = "n";
-    static final String POSITIVE_ANSWER = "y";
-    static final String INVALID_INPUT_MSG =
+    private static final String NEGATIVE_ANSWER = "n";
+    private static final String POSITIVE_ANSWER = "y";
+    private static final String INVALID_INPUT_MSG =
             "Invalid input. Valid values: '" + POSITIVE_ANSWER + "' or '" + NEGATIVE_ANSWER + "'.";
-
-    private String message;
 
     @Override
     public boolean validate(String input) {
@@ -51,17 +50,20 @@ public class ApproveAnswerValidator implements Validator<String> {
 
         final boolean isNegativeOrPositiveAns =
                 NEGATIVE_ANSWER.equals(input) || POSITIVE_ANSWER.equals(input);
-        if (!isNegativeOrPositiveAns) {
-            this.message = INVALID_INPUT_MSG;
-            return false;
-        }
 
-        return true;
+        return isNegativeOrPositiveAns;
     }
 
     @Override
-    @Nullable
-    public String getMessage() {
-        return message;
+    public String getAdvice() {
+        return INVALID_INPUT_MSG;
+    }
+
+    public static String getNegativeAnswer() {
+        return NEGATIVE_ANSWER;
+    }
+
+    public static String getPositiveAnswer() {
+        return POSITIVE_ANSWER;
     }
 }

@@ -30,10 +30,6 @@ public class MainMenu extends Menu {
     public MainMenu() {
         super(Menu.newBuilder()
                   .setMenuExit("Quit from application.")
-                  .addMenuItem("Create the task.", new CreateTaskMenu())
-                  .addMenuItem("Change the task status.", new TaskStatusMenu())
-                  .addMenuItem("Update the task state.", new UpdateTaskStateMenu())
-                  .addMenuItem("Show the tasks.", new ShowMenu())
-                  .addMenuItem("Manage task labels.", new TaskLabelsMenu()));
+                  .addMenuItem("My tasks", new MyTasksMenu()));
     }
 }
