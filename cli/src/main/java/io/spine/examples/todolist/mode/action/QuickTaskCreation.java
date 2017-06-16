@@ -23,58 +23,40 @@ package io.spine.examples.todolist.mode.action;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
-import io.spine.examples.todolist.mode.Mode;
-import io.spine.validate.ValidationException;
 
 import java.util.Optional;
 
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.UserIO.askUser;
-import static io.spine.examples.todolist.mode.action.ValidationExceptionFormatter.format;
-import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
  * @author Dmytro Grankin
  */
-public class QuickTaskCreation extends Mode {
+public class QuickTaskCreation extends UserCommand<CreateBasicTask, CreateBasicTaskVBuilder> {
 
-    private static final String SET_DESCRIPTION_MESSAGE = "Please enter the task description";
+    private static final String SET_DESCRIPTION_MESSAGE = "Please enter the task description:";
 
-    private final CreateBasicTaskVBuilder builder = CreateBasicTaskVBuilder.newBuilder();
+    public QuickTaskCreation() {
+        super(CreateBasicTaskVBuilder.newBuilder());
+    }
 
     @Override
-    public void start() {
+    protected void inputCommandParams() {
         final TaskId taskId = newTaskId();
-        builder.setId(taskId);
+        checkNotThrowsValidationEx(() -> getBuilder().setId(taskId));
 
         inputDescription(SET_DESCRIPTION_MESSAGE);
+    }
 
-        buildAndPost();
+    @Override
+    protected void postCommand(CreateBasicTask commandMessage) {
+        getClient().create(commandMessage);
     }
 
     private void inputDescription(String message) {
         final String description = askUser(message);
-        final Optional<String> errMsg = trySet(() -> builder.setDescription(description));
+        final Optional<String> errMsg = trySet(() -> getBuilder().setDescription(description));
         errMsg.ifPresent(this::inputDescription);
-    }
-
-    private void buildAndPost() {
-        try {
-            final CreateBasicTask createTask = builder.build();
-            getClient().create(createTask);
-        } catch (ValidationException e) {
-            throw illegalStateWithCauseOf(e);
-        }
-    }
-
-    private static Optional<String> trySet(Runnable r) {
-        try {
-            r.run();
-            return Optional.empty();
-        } catch (ValidationException e) {
-            final String errMsg = format(e);
-            return Optional.of(errMsg);
-        }
     }
 
     private static TaskId newTaskId() {
