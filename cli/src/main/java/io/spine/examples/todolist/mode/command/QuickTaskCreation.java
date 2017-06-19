@@ -37,11 +37,11 @@ public class QuickTaskCreation extends UserCommand<CreateBasicTask, CreateBasicT
     private static final String SET_DESCRIPTION_MESSAGE = "Please enter the task description:";
 
     @Override
-    protected void inputCommandParams() {
+    protected void prepareBuilder() {
         final TaskId taskId = newTaskId();
         checkNotThrowsValidationEx(() -> getBuilder().setId(taskId));
 
-        inputDescription(SET_DESCRIPTION_MESSAGE);
+        setDescription(SET_DESCRIPTION_MESSAGE);
     }
 
     @Override
@@ -49,11 +49,11 @@ public class QuickTaskCreation extends UserCommand<CreateBasicTask, CreateBasicT
         getClient().create(commandMessage);
     }
 
-    private void inputDescription(String message) {
+    private void setDescription(String message) {
         final String description = askUser(message);
         final Optional<String> errMsg =
                 getErrorMessage(() -> getBuilder().setDescription(description));
-        errMsg.ifPresent(this::inputDescription);
+        errMsg.ifPresent(this::setDescription);
     }
 
     private static TaskId newTaskId() {

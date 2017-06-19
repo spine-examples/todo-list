@@ -35,23 +35,37 @@ import static io.spine.examples.todolist.mode.command.ValidationExceptionFormatt
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
+ * Abstract base class for user commands.
+ *
+ * <p>An {@code UserCommand} includes formation of a command message and its sending to a server.
+ *
+ * @param <M> the message type for the user command
+ * @param <B> the validating builder type for the message type
  * @author Dmytro Grankin
  */
 abstract class UserCommand<M extends Message,
-        B extends ValidatingBuilder<M, ? extends Message.Builder>>
+                           B extends ValidatingBuilder<M, ? extends Message.Builder>>
         extends Mode {
 
     private final B builder = newBuilder();
 
     @Override
     public final void start() {
-        inputCommandParams();
+        prepareBuilder();
         final M commandMessage = buildCommandMessage();
         postCommand(commandMessage);
     }
 
-    protected abstract void inputCommandParams();
+    /**
+     * Sets all fields of the {@link #builder} to pass its future build.
+     */
+    protected abstract void prepareBuilder();
 
+    /**
+     * Posts the specified command message to a server.
+     *
+     * @param commandMessage the command message to post
+     */
     protected abstract void postCommand(M commandMessage);
 
     private M buildCommandMessage() {
