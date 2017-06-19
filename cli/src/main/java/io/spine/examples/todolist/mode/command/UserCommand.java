@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode.action;
+package io.spine.examples.todolist.mode.command;
 
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.mode.Mode;
@@ -30,15 +30,15 @@ import io.spine.validate.ValidationException;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.examples.todolist.mode.action.UserCommand.GenericParameter.STATE_BUILDER;
-import static io.spine.examples.todolist.mode.action.ValidationExceptionFormatter.format;
+import static io.spine.examples.todolist.mode.command.UserCommand.GenericParameter.STATE_BUILDER;
+import static io.spine.examples.todolist.mode.command.ValidationExceptionFormatter.format;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
  * @author Dmytro Grankin
  */
 abstract class UserCommand<M extends Message,
-                           B extends ValidatingBuilder<M, ? extends Message.Builder>>
+        B extends ValidatingBuilder<M, ? extends Message.Builder>>
         extends Mode {
 
     private final B builder = newBuilder();
@@ -68,7 +68,7 @@ abstract class UserCommand<M extends Message,
      *
      * @param buildStep the build step to execute
      * @return an error message
-     *         or {@code Optional.empty()} if a validation exception was not raised.
+     * or {@code Optional.empty()} if a validation exception was not raised.
      */
     protected Optional<String> getErrorMessage(BuildStep buildStep) {
         try {

@@ -18,31 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode.action;
+package io.spine.examples.todolist.mode.command;
 
-import io.spine.base.FieldPath;
-import io.spine.validate.ConstraintViolation;
+import io.spine.validate.ValidatingBuilder;
 import io.spine.validate.ValidationException;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 /**
+ * A build step of a {@link ValidatingBuilder}.
+ *
+ * <p>A build step updates a state of a {@link ValidatingBuilder} and returns it.
+ *
+ * <p>The purpose of this interface is to provide narrow interface
+ * for a step of a {@link ValidatingBuilder}.
+ *
+ * <p>The interface may be used for wrapping {@code ValidationException}, for instance.
+ *
  * @author Dmytro Grankin
  */
-class ValidationExceptionFormatter {
+@FunctionalInterface
+public interface BuildStep<B extends ValidatingBuilder> {
 
-    private ValidationExceptionFormatter() {
-        // Prevent instantiation of this utility class.
-    }
-
-    static String format(ValidationException e) {
-        checkArgument(e.getConstraintViolations()
-                       .size() == 1);
-        final ConstraintViolation violation = e.getConstraintViolations()
-                                               .get(0);
-        final FieldPath fieldPath = violation.getFieldPath();
-        final int fieldPathSize = fieldPath.getFieldNameCount();
-        final String unqualifiedName = fieldPath.getFieldName(fieldPathSize - 1);
-        return String.format("Invalid `%s`.", unqualifiedName);
-    }
+    B execute() throws ValidationException;
 }

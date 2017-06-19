@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.mode.menu;
 
-import io.spine.examples.todolist.mode.action.QuickTaskCreation;
+import io.spine.examples.todolist.mode.command.QuickTaskCreation;
 import io.spine.examples.todolist.mode.list.MyTasksListMode;
 
 /**
