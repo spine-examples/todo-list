@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.mode.command;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.FieldPath;
 import io.spine.validate.ConstraintViolation;
 import io.spine.validate.ValidationException;
@@ -27,14 +28,31 @@ import io.spine.validate.ValidationException;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
+ * Utilities for working with {@code ValidationException} formatting.
+ *
  * @author Dmytro Grankin
  */
 class ValidationExceptionFormatter {
+
+    @VisibleForTesting
+    static final String ERROR_MSG_FORMAT = "Invalid `%s`.";
 
     private ValidationExceptionFormatter() {
         // Prevent instantiation of this utility class.
     }
 
+    /**
+     * Obtains a formatted representation of the specified {@code ValidationException}.
+     *
+     * <p>The representation tells name of an invalid field.
+     *
+     * <p>If the specified {@code ValidationException} has two
+     * or more {@linkplain ConstraintViolation constraint violations},
+     * throws {@code IllegalArgumentException}.
+     *
+     * @param e the {@code ValidationException}
+     * @return a formatted string representation
+     */
     static String format(ValidationException e) {
         checkArgument(e.getConstraintViolations()
                        .size() == 1);
@@ -43,6 +61,6 @@ class ValidationExceptionFormatter {
         final FieldPath fieldPath = violation.getFieldPath();
         final int fieldPathSize = fieldPath.getFieldNameCount();
         final String unqualifiedName = fieldPath.getFieldName(fieldPathSize - 1);
-        return String.format("Invalid `%s`.", unqualifiedName);
+        return String.format(ERROR_MSG_FORMAT, unqualifiedName);
     }
 }
