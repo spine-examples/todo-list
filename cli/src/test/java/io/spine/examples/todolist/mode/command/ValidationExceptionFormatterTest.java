@@ -21,8 +21,8 @@
 package io.spine.examples.todolist.mode.command;
 
 import com.google.protobuf.Descriptors.FieldDescriptor;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
+import io.spine.test.formatter.NaturalNumber;
+import io.spine.test.formatter.NaturalNumberVBuilder;
 import io.spine.validate.ConstraintViolation;
 import io.spine.validate.ValidationException;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +46,7 @@ class ValidationExceptionFormatterTest {
 
     @Test
     @DisplayName("have the private constructor")
-    void hasPrivateCtor() {
+    void havePrivateCtor() {
         assertHasPrivateParameterlessCtor(ValidationExceptionFormatter.class);
     }
 
@@ -61,18 +61,18 @@ class ValidationExceptionFormatterTest {
     @Test
     @DisplayName("format `ValidationException` as expected")
     void returnProperMessage() {
-        final CreateBasicTaskVBuilder builder = CreateBasicTaskVBuilder.newBuilder();
-        final int fieldIndexToBeUpdated = CreateBasicTask.DESCRIPTION_FIELD_NUMBER - 1;
-        final FieldDescriptor fieldDescriptor = CreateBasicTask.getDescriptor()
-                                                               .getFields()
-                                                               .get(fieldIndexToBeUpdated);
+        final NaturalNumberVBuilder builder = NaturalNumberVBuilder.newBuilder();
+        final int fieldIndexToBeUpdated = NaturalNumber.VALUE_FIELD_NUMBER - 1;
+        final FieldDescriptor fieldDescriptor = NaturalNumber.getDescriptor()
+                                                             .getFields()
+                                                             .get(fieldIndexToBeUpdated);
         final String fieldNameToBeUpdated = fieldDescriptor.getName();
         final String expectedErrorMsg = format(ERROR_MSG_FORMAT, fieldNameToBeUpdated);
-        final String invalidFieldValue = "";
 
+        final int invalidFieldValue = -1;
         final ValidationException ex =
                 assertThrows(ValidationException.class,
-                             () -> builder.setDescription(invalidFieldValue));
+                             () -> builder.setValue(invalidFieldValue));
         assertEquals(expectedErrorMsg, format(ex));
     }
 }

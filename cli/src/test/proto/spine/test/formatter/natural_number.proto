@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, TeamDev Ltd. All rights reserved.
+ * Copyright 2017, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,19 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    compile group: 'org.jline', name: 'jline', version: '3.3.0'
+syntax = "proto3";
 
-    compile project(path: ':api-java')
-    compile project(path: ':client')
-}
+package spine.test.formatter;
 
-apply from: generateDescriptorSetPlugin
+option (type_url_prefix) = "type.spine.io";
+option java_package = "io.spine.test.formatter";
+option java_multiple_files = true;
 
-apply plugin: spineProtobufPluginId
+import "spine/options.proto";
 
-task runTodoList(dependsOn: jar, type: JavaExec) {
-    standardInput = System.in
-    main = 'io.spine.examples.todolist.CliEntryPoint'
-    classpath = sourceSets.main.runtimeClasspath
+// A natural number.
+//
+// Zero is considered a natural number.
+//
+message NaturalNumber {
+
+    // Natural number value.
+    //
+    // Must be greater than or equal to zero.
+    int32 value = 1 [(min).value = "0"];
 }
