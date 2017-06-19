@@ -51,7 +51,8 @@ public class QuickTaskCreation extends UserCommand<CreateBasicTask, CreateBasicT
 
     private void inputDescription(String message) {
         final String description = askUser(message);
-        final Optional<String> errMsg = trySet(() -> getBuilder().setDescription(description));
+        final Optional<String> errMsg =
+                getErrorMessage(() -> getBuilder().setDescription(description));
         errMsg.ifPresent(this::inputDescription);
     }
 

@@ -62,9 +62,17 @@ abstract class UserCommand<M extends Message,
         }
     }
 
-    protected Optional<String> trySet(Runnable runnable) {
+    /**
+     * Executes the specified {@link BuildStep} and returns a formatted message of
+     * an occurred {@link ValidationException}, if any.
+     *
+     * @param buildStep the build step to execute
+     * @return an error message
+     *         or {@code Optional.empty()} if a validation exception was not raised.
+     */
+    protected Optional<String> getErrorMessage(BuildStep buildStep) {
         try {
-            runnable.run();
+            buildStep.execute();
             return Optional.empty();
         } catch (ValidationException e) {
             final String errMsg = format(e);
@@ -85,7 +93,7 @@ abstract class UserCommand<M extends Message,
     }
 
     private B newBuilder() {
-        @SuppressWarnings("unchecked")   // it's safe, as we rely on the definition of this class.
+        @SuppressWarnings("unchecked")   // It's safe, as we rely on the definition of this class.
         final Class<? extends UserCommand<M, B>> aClass =
                 (Class<? extends UserCommand<M, B>>) getClass();
         final Class<B> builderClass = TypeInfo.getBuilderClass(aClass);
