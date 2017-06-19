@@ -20,22 +20,15 @@
 
 syntax = "proto3";
 
-package spine.test.formatter;
+package spine.examples.todolist.test;
 
-option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.test.formatter";
+option (type_url_prefix) = "type.spine.examples.todolist";
+option java_package = "io.spine.examples.todolist.test";
 option java_multiple_files = true;
 
 import "spine/options.proto";
 
-// A natural number.
-//
-// Zero is considered a natural number.
-//
-message NaturalNumber {
+message CreateComment {
 
-    // Natural number value.
-    //
-    // Must be greater than or equal to zero.
-    int32 value = 1 [(min).value = "0"];
+    string value = 1 [(required) = true];
 }

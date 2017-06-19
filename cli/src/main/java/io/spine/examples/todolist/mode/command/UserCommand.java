@@ -82,9 +82,9 @@ abstract class UserCommand<M extends Message,
      *
      * @param buildStep the build step to execute
      * @return an error message
-     * or {@code Optional.empty()} if a validation exception was not raised.
+     *         or {@code Optional.empty()} if a validation exception was not raised.
      */
-    protected Optional<String> getErrorMessage(BuildStep buildStep) {
+    protected static Optional<String> getErrorMessage(BuildStep buildStep) {
         try {
             buildStep.execute();
             return Optional.empty();
@@ -94,7 +94,7 @@ abstract class UserCommand<M extends Message,
         }
     }
 
-    protected void checkNotThrowsValidationEx(Runnable runnable) {
+    protected static void checkNotThrowsValidationEx(Runnable runnable) {
         try {
             runnable.run();
         } catch (ValidationException e) {
