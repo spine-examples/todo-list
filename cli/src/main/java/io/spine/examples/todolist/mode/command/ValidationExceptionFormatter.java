@@ -28,7 +28,7 @@ import io.spine.validate.ValidationException;
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
- * Utilities for working with {@code ValidationException} formatting.
+ * Utilities for {@code ValidationException} formatting.
  *
  * @author Dmytro Grankin
  */
@@ -44,7 +44,7 @@ class ValidationExceptionFormatter {
     /**
      * Obtains a formatted representation of the specified {@code ValidationException}.
      *
-     * <p>The representation tells name of an invalid field.
+     * <p>The representation tells about a name of an invalid field.
      *
      * <p>If the specified {@code ValidationException} has two
      * or more {@linkplain ConstraintViolation constraint violations},

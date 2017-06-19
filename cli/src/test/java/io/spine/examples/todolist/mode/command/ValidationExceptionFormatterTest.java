@@ -21,10 +21,8 @@
 package io.spine.examples.todolist.mode.command;
 
 import com.google.protobuf.Descriptors.FieldDescriptor;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
-import io.spine.examples.todolist.c.commands.UpdateTaskDescriptionVBuilder;
 import io.spine.validate.ConstraintViolation;
 import io.spine.validate.ValidationException;
 import org.junit.jupiter.api.DisplayName;
@@ -57,14 +55,14 @@ class ValidationExceptionFormatterTest {
     void notAcceptValidationExceptionWithToManyViolations() {
         final List<ConstraintViolation> violations = asList(null, null);
         final ValidationException validationException = new ValidationException(violations);
-        assertThrows(InvalidArgumentException.class, () -> format(validationException));
+        assertThrows(IllegalArgumentException.class, () -> format(validationException));
     }
 
     @Test
     @DisplayName("format `ValidationException` as expected")
     void returnProperMessage() {
-        final CreateBasicTaskVBuilder builder = UpdateTaskDescriptionVBuilder.newBuilder();
-        final int fieldIndexToBeUpdated = CreateBasicTask.DESCRIPTION_FIELD_NUMBER;
+        final CreateBasicTaskVBuilder builder = CreateBasicTaskVBuilder.newBuilder();
+        final int fieldIndexToBeUpdated = CreateBasicTask.DESCRIPTION_FIELD_NUMBER - 1;
         final FieldDescriptor fieldDescriptor = CreateBasicTask.getDescriptor()
                                                                .getFields()
                                                                .get(fieldIndexToBeUpdated);
