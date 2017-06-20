@@ -10,7 +10,6 @@ coverage:
   - generated/*
   - test/*
   - testutil/src/main/java/io/spine/examples/todolist/testdata/*
-  - cli/src/main/java/io/spine/examples/todolist/mode/*
   - cli/src/main/java/io/spine/examples/todolist/CliEntryPoint.java
 
   status:
