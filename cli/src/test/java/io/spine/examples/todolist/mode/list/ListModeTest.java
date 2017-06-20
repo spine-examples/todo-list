@@ -28,7 +28,8 @@ import java.util.List;
 
 import static com.google.protobuf.StringValue.getDefaultInstance;
 import static io.spine.examples.todolist.mode.list.ListModeTest.StringListMode.EMPTY_VIEW;
-import static io.spine.examples.todolist.mode.list.ListModeTest.StringListMode.recentState;
+import static io.spine.examples.todolist.mode.list.ListModeTest.StringListMode.RECENT_STATE;
+import static io.spine.protobuf.Wrapper.forString;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
@@ -44,11 +45,11 @@ class ListModeTest {
     private final ListMode<StringValue> stringListMode = new StringListMode();
 
     @Test
-    @DisplayName("update state")
-    void updateState() {
-        assertNotEquals(recentState, stringListMode.getState());
-        stringListMode.updateState();
-        assertEquals(recentState, stringListMode.getState());
+    @DisplayName("display recent state")
+    void displayState() {
+        assertNotEquals(RECENT_STATE, stringListMode.getState());
+        stringListMode.start();
+        assertEquals(RECENT_STATE, stringListMode.getState());
     }
 
     @Test
@@ -70,12 +71,13 @@ class ListModeTest {
 
     static class StringListMode extends ListMode<StringValue> {
 
+        private static final StringValue VALUE = forString("list item");
+        static final List<StringValue> RECENT_STATE = singletonList(VALUE);
         static final String EMPTY_VIEW = "Empty";
-        static final List<StringValue> recentState = singletonList(getDefaultInstance());
 
         @Override
         protected List<StringValue> receiveRecentState() {
-            return unmodifiableList(recentState);
+            return unmodifiableList(RECENT_STATE);
         }
 
         @Override
