@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static com.google.protobuf.StringValue.getDefaultInstance;
 import static io.spine.examples.todolist.mode.list.ListModeTest.StringListMode.EMPTY_VIEW;
 import static io.spine.examples.todolist.mode.list.ListModeTest.StringListMode.recentState;
 import static java.util.Collections.emptyList;
@@ -33,7 +34,6 @@ import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * @author Dmytro Grankin
@@ -46,7 +46,7 @@ class ListModeTest {
     @Test
     @DisplayName("update state")
     void updateState() {
-        assertNull(stringListMode.getState());
+        assertNotEquals(recentState, stringListMode.getState());
         stringListMode.updateState();
         assertEquals(recentState, stringListMode.getState());
     }
@@ -62,7 +62,7 @@ class ListModeTest {
     @Test
     @DisplayName("return non-empty view if state is not empty")
     void returnNonEmptyView() {
-        final StringValue item = StringValue.getDefaultInstance();
+        final StringValue item = getDefaultInstance();
         final List<StringValue> nonEmptyState = singletonList(item);
         stringListMode.setState(nonEmptyState);
         assertNotEquals(EMPTY_VIEW, stringListMode.getView());
@@ -71,7 +71,7 @@ class ListModeTest {
     static class StringListMode extends ListMode<StringValue> {
 
         static final String EMPTY_VIEW = "Empty";
-        static final List<StringValue> recentState = emptyList();
+        static final List<StringValue> recentState = singletonList(getDefaultInstance());
 
         @Override
         protected List<StringValue> receiveRecentState() {

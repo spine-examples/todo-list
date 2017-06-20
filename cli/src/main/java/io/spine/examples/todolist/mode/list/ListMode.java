@@ -29,6 +29,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.examples.todolist.UserIO.println;
 import static io.spine.examples.todolist.mode.DisplayHelper.getLineSeparator;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 
 /**
@@ -87,6 +88,8 @@ public abstract class ListMode<E extends Message> extends Mode {
 
     @VisibleForTesting
     List<E> getState() {
-        return unmodifiableList(state);
+        return state == null
+               ? emptyList()
+               : unmodifiableList(state);
     }
 }
