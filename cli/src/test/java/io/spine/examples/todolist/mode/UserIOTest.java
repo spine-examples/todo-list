@@ -18,42 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.mode;
 
-import static io.spine.examples.todolist.mode.DisplayHelper.getLineSeparator;
+import io.spine.examples.todolist.TestUserCommunicator;
+import org.junit.jupiter.api.BeforeEach;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Dmytro Grankin
  */
-public class TestUserCommunicator implements UserCommunicator {
+public class UserIOTest {
 
-    @SuppressWarnings("StringBufferField") // Used to collect all output of the class.
-    private static final StringBuilder builder = new StringBuilder();
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>Just returns the question to make testing easier.
-     *
-     * @param question {@inheritDoc}
-     * @return {@inheritDoc}
-     */
-    @Override
-    public String askUser(String question) {
-        return question;
+    @BeforeEach
+    void setUp() {
+        TestUserCommunicator.clearOutput();
     }
 
-    @Override
-    public void println(String message) {
-        builder.append(message)
-               .append(getLineSeparator());
-    }
-
-    public static String getOutput() {
-        return builder.toString();
-    }
-
-    public static void clearOutput() {
-        builder.setLength(0);
+    protected void assertOutput(String expected) {
+        assertEquals(expected, TestUserCommunicator.getOutput());
     }
 }

@@ -25,6 +25,13 @@ package io.spine.examples.todolist;
  */
 public interface UserCommunicator {
 
+    /**
+     * Asks the question and obtains an answer for it.
+     *
+     * @param question the question to ask
+     * @return user answer
+     */
     String askUser(String question);
+
     void println(String message);
 }

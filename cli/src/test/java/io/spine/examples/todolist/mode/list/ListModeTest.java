@@ -21,12 +21,15 @@
 package io.spine.examples.todolist.mode.list;
 
 import com.google.protobuf.StringValue;
+import io.spine.examples.todolist.TestUserCommunicator;
+import io.spine.examples.todolist.mode.UserIOTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static com.google.protobuf.StringValue.getDefaultInstance;
+import static io.spine.examples.todolist.mode.DisplayHelper.getLineSeparator;
 import static io.spine.examples.todolist.mode.list.ListModeTest.StringListMode.EMPTY_VIEW;
 import static io.spine.examples.todolist.mode.list.ListModeTest.StringListMode.RECENT_STATE;
 import static io.spine.protobuf.Wrapper.forString;
@@ -40,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  * @author Dmytro Grankin
  */
 @DisplayName("ListMode should")
-class ListModeTest {
+class ListModeTest extends UserIOTest {
 
     private final ListMode<StringValue> stringListMode = new StringListMode();
 
@@ -50,6 +53,7 @@ class ListModeTest {
         assertNotEquals(RECENT_STATE, stringListMode.getState());
         stringListMode.start();
         assertEquals(RECENT_STATE, stringListMode.getState());
+        assertOutput(stringListMode.getView() + getLineSeparator());
     }
 
     @Test
@@ -74,6 +78,10 @@ class ListModeTest {
         private static final StringValue VALUE = forString("list item");
         static final List<StringValue> RECENT_STATE = singletonList(VALUE);
         static final String EMPTY_VIEW = "Empty";
+
+        private StringListMode() {
+            setUserCommunicator(new TestUserCommunicator());
+        }
 
         @Override
         protected List<StringValue> receiveRecentState() {

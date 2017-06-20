@@ -43,6 +43,9 @@ public class UserCommunicatorImpl implements UserCommunicator {
 
     private final LineReader reader = newLineReader();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String askUser(String question) {
         checkArgument(!isNullOrEmpty(question));
@@ -51,6 +54,9 @@ public class UserCommunicatorImpl implements UserCommunicator {
         return answer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void println(String message) {
         PRINT_STREAM.println(message);
