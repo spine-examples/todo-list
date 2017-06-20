@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.mode.list;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.mode.Mode;
 
@@ -28,6 +29,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.examples.todolist.UserIO.println;
 import static io.spine.examples.todolist.mode.DisplayHelper.getLineSeparator;
+import static java.util.Collections.unmodifiableList;
 
 /**
  * @author Dmytro Grankin
@@ -47,14 +49,16 @@ public abstract class ListMode<E extends Message> extends Mode {
         println(view);
     }
 
-    private void updateState() {
+    @VisibleForTesting
+    void updateState() {
         final List<E> newState = receiveRecentState();
         setState(newState);
     }
 
     protected abstract List<E> receiveRecentState();
 
-    private String getView() {
+    @VisibleForTesting
+    String getView() {
         return state.isEmpty()
                ? getEmptyView()
                : getNonEmptyView();
@@ -79,5 +83,10 @@ public abstract class ListMode<E extends Message> extends Mode {
     protected void setState(List<E> state) {
         checkNotNull(state);
         this.state = state;
+    }
+
+    @VisibleForTesting
+    List<E> getState() {
+        return unmodifiableList(state);
     }
 }
