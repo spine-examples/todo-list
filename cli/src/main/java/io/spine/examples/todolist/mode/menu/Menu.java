@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.mode.menu;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.mode.Mode;
 
 import java.util.List;
@@ -34,14 +35,29 @@ import static com.google.common.collect.Maps.newLinkedHashMap;
 import static io.spine.examples.todolist.UserIO.askUser;
 import static io.spine.examples.todolist.UserIO.println;
 import static io.spine.util.Exceptions.newIllegalStateException;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
 
 /**
+ * An {@code Menu}, that consists of the {@linkplain AbstractMenuItem menu items}.
+ *
+ * <p>Has the following structure:
+ * <ol>
+ *     <li>common menu items</li>
+ *     <li>menu exit</li>
+ * </ol>
+ *
  * @author Dmytro Grankin
  */
 public class Menu extends Mode {
 
     static final String BACK_TO_THE_MENU_MSG = "Back to the previous menu.";
-    private static final String DEFAULT_EXIT_MSG = "Exit from the menu.";
+
+    @VisibleForTesting
+    static final String DEFAULT_EXIT_MSG = "Exit from the menu.";
+
+    @VisibleForTesting
+    static final String ID_NAME_SEPARATOR = ". ";
     private static final String SELECT_MENU_ITEM_MSG = "Select a menu item:";
     private static final String INVALID_SELECTION_MSG = "The selected item is invalid.";
 
@@ -61,22 +77,17 @@ public class Menu extends Mode {
         display();
         final Optional<AbstractMenuItem> selectedItem = selectItem();
 
-        if (!selectedItem.isPresent()) {
+        if (selectedItem.isPresent()) {
+            selectedItem.get()
+                        .start();
+        } else {
             println(INVALID_SELECTION_MSG);
         }
-
-        selectedItem.get()
-                    .start();
-    }
-
-    private void addMenuItem(String name, Mode item) {
-        final MenuItem menuItem = new MenuItem(name, item, this);
-        items.add(menuItem);
     }
 
     protected void display() {
         for (AbstractMenuItem item : items) {
-            final String itemAsString = toString(item);
+            final String itemAsString = stringRepresentationOf(item);
             println(itemAsString);
         }
     }
@@ -84,21 +95,33 @@ public class Menu extends Mode {
     private Optional<AbstractMenuItem> selectItem() {
         final String answer = askUser(SELECT_MENU_ITEM_MSG);
         for (AbstractMenuItem item : items) {
-            final String itemOption = getOptionForItem(item);
-            if (itemOption.equals(answer)) {
+            final String itemIdentifier = identifierOf(item);
+            if (itemIdentifier.equals(answer)) {
                 return Optional.of(item);
             }
         }
         return Optional.empty();
     }
 
-    private String toString(AbstractMenuItem item) {
-        final String option = getOptionForItem(item);
-        final String name = item.getName();
-        return option + ". " + name;
+    @VisibleForTesting
+    String stringRepresentationOf(AbstractMenuItem item) {
+        final String identifier = identifierOf(item);
+        final String itemName = item.getName();
+        return identifier + ID_NAME_SEPARATOR + itemName;
     }
 
-    private String getOptionForItem(AbstractMenuItem item) {
+    /**
+     * Obtains an identifier for the specified menu item.
+     *
+     * <p>The identifier is purposed for an user of application and
+     * has no relation to internal structure of a menu.
+     *
+     * @param item the menu item
+     * @return a menu item identifier
+     * @see #selectItem()
+     */
+    @VisibleForTesting
+    String identifierOf(AbstractMenuItem item) {
         final int index = items.indexOf(item);
 
         if (index == -1) {
@@ -106,6 +129,16 @@ public class Menu extends Mode {
         }
 
         return String.valueOf(index);
+    }
+
+    private void addMenuItem(String name, Mode item) {
+        final MenuItem menuItem = new MenuItem(name, item, this);
+        items.add(menuItem);
+    }
+
+    @VisibleForTesting
+    List<AbstractMenuItem> getItems() {
+        return unmodifiableList(items);
     }
 
     public static Builder newBuilder() {
@@ -128,6 +161,14 @@ public class Menu extends Mode {
             checkNotNull(mode);
             modeMap.put(name, mode);
             return this;
+        }
+
+        public String getExitMessage() {
+            return exitMessage;
+        }
+
+        public Map<String, Mode> getModeMap() {
+            return unmodifiableMap(modeMap);
         }
     }
 }
