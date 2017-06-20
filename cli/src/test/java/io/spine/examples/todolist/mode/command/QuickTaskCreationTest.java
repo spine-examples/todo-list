@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 @DisplayName("QuickTaskCreation should")
 class QuickTaskCreationTest extends UserIOTest {
 
+    private static final String QUESTION = "?";
     private static final String INVALID_DESCRIPTION = "";
     private static final String VALID_DESCRIPTION = "123";
 
@@ -46,7 +47,7 @@ class QuickTaskCreationTest extends UserIOTest {
     void askDescription() {
         addAnswer(INVALID_DESCRIPTION);
         addAnswer(VALID_DESCRIPTION);
-        quickTaskCreation.start();
+        quickTaskCreation.setDescription(QUESTION);
         assertAllAnswersWereGiven();
     }
 }
