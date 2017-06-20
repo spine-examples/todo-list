@@ -20,7 +20,12 @@
 
 package io.spine.examples.todolist;
 
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Queue;
+
 import static io.spine.examples.todolist.mode.DisplayHelper.getLineSeparator;
+import static java.util.Collections.unmodifiableCollection;
 
 /**
  * @author Dmytro Grankin
@@ -30,23 +35,29 @@ public class TestUserCommunicator implements UserCommunicator {
     @SuppressWarnings("StringBufferField") // Used to collect all output of the class.
     private static final StringBuilder builder = new StringBuilder();
 
-    /**
-     * {@inheritDoc}
-     *
-     * <p>Just returns the question to make testing easier.
-     *
-     * @param question {@inheritDoc}
-     * @return {@inheritDoc}
-     */
+    private final Queue<String> answers = new ArrayDeque<>();
+
     @Override
     public String askUser(String question) {
-        return question;
+        if (answers.isEmpty()) {
+            throw new IllegalStateException("Not enough answers were specified.");
+        }
+
+        return answers.remove();
     }
 
     @Override
     public void println(String message) {
         builder.append(message)
                .append(getLineSeparator());
+    }
+
+    public void addAnswer(String answer) {
+        answers.add(answer);
+    }
+
+    public Collection<String> getAnswers() {
+        return unmodifiableCollection(answers);
     }
 
     public static String getOutput() {

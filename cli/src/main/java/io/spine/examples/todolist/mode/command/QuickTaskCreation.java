@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.mode.command;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
@@ -27,21 +28,21 @@ import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import java.util.Optional;
 
 import static io.spine.base.Identifier.newUuid;
-import static io.spine.examples.todolist.UserIO.askUser;
 
 /**
  * @author Dmytro Grankin
  */
 public class QuickTaskCreation extends UserCommand<CreateBasicTask, CreateBasicTaskVBuilder> {
 
-    private static final String SET_DESCRIPTION_MESSAGE = "Please enter the task description:";
+    @VisibleForTesting
+    static final String SET_DESCRIPTION_MSG = "Please enter the task description:";
 
     @Override
     protected void prepareBuilder() {
         final TaskId taskId = newTaskId();
         checkNotThrowsValidationEx(() -> getBuilder().setId(taskId));
 
-        setDescription(SET_DESCRIPTION_MESSAGE);
+        setDescription(SET_DESCRIPTION_MSG);
     }
 
     @Override
@@ -49,7 +50,8 @@ public class QuickTaskCreation extends UserCommand<CreateBasicTask, CreateBasicT
         getClient().create(commandMessage);
     }
 
-    private void setDescription(String message) {
+    @VisibleForTesting
+    void setDescription(String message) {
         final String description = askUser(message);
         final Optional<String> errMsg =
                 getErrorMessage(() -> getBuilder().setDescription(description));

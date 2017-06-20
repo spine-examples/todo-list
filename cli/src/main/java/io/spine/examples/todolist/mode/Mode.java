@@ -49,7 +49,7 @@ public abstract class Mode {
     }
 
     @VisibleForTesting
-    protected void setUserCommunicator(UserCommunicator userCommunicator) {
+    public void setUserCommunicator(UserCommunicator userCommunicator) {
         this.userCommunicator = userCommunicator;
     }
 }

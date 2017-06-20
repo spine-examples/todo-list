@@ -18,40 +18,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode;
+package io.spine.examples.todolist.mode.command;
 
-import io.spine.examples.todolist.TestUserCommunicator;
+import io.spine.examples.todolist.mode.UserIOTest;
 import org.junit.jupiter.api.BeforeEach;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Dmytro Grankin
  */
-public class UserIOTest {
+@DisplayName("QuickTaskCreation should")
+class QuickTaskCreationTest extends UserIOTest {
 
-    private final TestUserCommunicator communicator = new TestUserCommunicator();
+    private static final String INVALID_DESCRIPTION = "";
+    private static final String VALID_DESCRIPTION = "123";
+
+    private final QuickTaskCreation quickTaskCreation = new QuickTaskCreation();
 
     @BeforeEach
     void setUp() {
-        TestUserCommunicator.clearOutput();
+        quickTaskCreation.setUserCommunicator(getCommunicator());
     }
 
-    protected void assertOutput(String expected) {
-        assertEquals(expected, TestUserCommunicator.getOutput());
-    }
-
-    protected void assertAllAnswersWereGiven() {
-        assertTrue(communicator.getAnswers()
-                               .isEmpty());
-    }
-
-    protected void addAnswer(String answer) {
-        communicator.addAnswer(answer);
-    }
-
-    protected TestUserCommunicator getCommunicator() {
-        return communicator;
+    @Test
+    @DisplayName("ask description while it is not valid")
+    void askDescription() {
+        addAnswer(INVALID_DESCRIPTION);
+        addAnswer(VALID_DESCRIPTION);
+        quickTaskCreation.start();
+        assertAllAnswersWereGiven();
     }
 }
