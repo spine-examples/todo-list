@@ -20,7 +20,9 @@
 
 package io.spine.examples.todolist.validator;
 
-import static io.spine.examples.todolist.UserIO.askUser;
+import io.spine.examples.todolist.UserCommunicator;
+import io.spine.examples.todolist.UserCommunicatorImpl;
+
 import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getNegativeAnswer;
 import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getPositiveAnswer;
 
@@ -30,6 +32,7 @@ import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getPos
 public class ApproveQuestion {
 
     private static final Validator<String> validator = new ApproveAnswerValidator();
+    private static final UserCommunicator communicator = new UserCommunicatorImpl();
 
     private ApproveQuestion() {
         // Prevent instantiation of this utility class.
@@ -38,11 +41,11 @@ public class ApproveQuestion {
     public static boolean ask(String question) {
         final String questionWithHelp =
                 question + " (" + getPositiveAnswer() + '/' + getNegativeAnswer() + ") ";
-        String answer = askUser(questionWithHelp);
+        String answer = communicator.askUser(questionWithHelp);
         boolean isValidAnswer = validator.validate(answer);
 
         while (!isValidAnswer) {
-            answer = askUser(validator.getAdvice());
+            answer = communicator.askUser(validator.getAdvice());
             isValidAnswer = validator.validate(answer);
         }
 

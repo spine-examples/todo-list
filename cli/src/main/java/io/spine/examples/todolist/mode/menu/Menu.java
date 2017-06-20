@@ -32,8 +32,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.common.collect.Maps.newLinkedHashMap;
-import static io.spine.examples.todolist.UserIO.askUser;
-import static io.spine.examples.todolist.UserIO.println;
 import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;

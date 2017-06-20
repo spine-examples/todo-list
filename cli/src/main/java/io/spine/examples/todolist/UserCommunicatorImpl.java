@@ -34,30 +34,26 @@ import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static org.jline.reader.LineReader.Option.AUTO_FRESH_LINE;
 
 /**
- * Utilities for working with command-line input/output.
- *
  * @author Dmytro Grankin
  */
-public class UserIO {
+public class UserCommunicatorImpl implements UserCommunicator {
 
     @SuppressWarnings("UseOfSystemOutOrSystemErr" /* OK for command-line app. */)
     private static final PrintStream PRINT_STREAM = System.out;
 
-    private static final LineReader READER = newLineReader();
+    private final LineReader reader = newLineReader();
 
-    private UserIO() {
-        // Prevent instantiation of this utility class.
-    }
-
-    public static void println(String message) {
-        PRINT_STREAM.println(message);
-    }
-
-    public static String askUser(String question) {
+    @Override
+    public String askUser(String question) {
         checkArgument(!isNullOrEmpty(question));
         println(question);
-        final String answer = READER.readLine();
+        final String answer = reader.readLine();
         return answer;
+    }
+
+    @Override
+    public void println(String message) {
+        PRINT_STREAM.println(message);
     }
 
     private static LineReader newLineReader() {

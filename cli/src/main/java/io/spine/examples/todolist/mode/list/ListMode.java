@@ -27,7 +27,6 @@ import io.spine.examples.todolist.mode.Mode;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.examples.todolist.UserIO.println;
 import static io.spine.examples.todolist.mode.DisplayHelper.getLineSeparator;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;

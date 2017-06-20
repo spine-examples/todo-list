@@ -18,38 +18,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode;
-
-import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.AppConfig;
-import io.spine.examples.todolist.UserCommunicator;
-import io.spine.examples.todolist.UserCommunicatorImpl;
-import io.spine.examples.todolist.client.TodoClient;
+package io.spine.examples.todolist;
 
 /**
  * @author Dmytro Grankin
  */
-public abstract class Mode {
+public class TestUserCommunicator implements UserCommunicator {
 
-    private final TodoClient client = AppConfig.getClient();
-    private UserCommunicator userCommunicator = new UserCommunicatorImpl();
-
-    public abstract void start();
-
-    protected String askUser(String question) {
-        return userCommunicator.askUser(question);
+    @Override
+    public String askUser(String question) {
+        return question;
     }
 
-    protected void println(String message) {
-        userCommunicator.println(message);
-    }
+    @Override
+    public void println(String message) {
 
-    protected TodoClient getClient() {
-        return client;
-    }
-
-    @VisibleForTesting
-    protected void setUserCommunicator(UserCommunicator userCommunicator) {
-        this.userCommunicator = userCommunicator;
     }
 }
