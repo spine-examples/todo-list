@@ -20,48 +20,36 @@
 
 package io.spine.examples.todolist;
 
-import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
-import java.io.PrintStream;
+import java.io.IOException;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static io.spine.examples.todolist.Terminals.newDumbTerminal;
+import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
- * The class provides relatively high-level facilities for user I/O in a command-line.
+ * Utilities for creating {@linkplain Terminal terminals}.
  *
  * @author Dmytro Grankin
  */
-public class UserCommunicatorImpl implements UserCommunicator {
+class Terminals {
 
-    @SuppressWarnings("UseOfSystemOutOrSystemErr" /* OK for command-line app. */)
-    private static final PrintStream PRINT_STREAM = System.out;
-
-    private final LineReader reader = newLineReader();
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String promptUser(String prompt) {
-        checkArgument(!isNullOrEmpty(prompt));
-        println(prompt);
-        final String answer = reader.readLine();
-        return answer;
+    private Terminals() {
+        // Prevent instantiation of this utility class.
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a {@linkplain org.jline.terminal.impl.DumbTerminal DumbTerminal}.
+     *
+     * @return the new terminal
      */
-    @Override
-    public void println(String message) {
-        PRINT_STREAM.println(message);
-    }
-
-    private static LineReader newLineReader() {
-        final Terminal terminal = newDumbTerminal();
-        return Readers.newLineReader(terminal);
+    static Terminal newDumbTerminal() {
+        try {
+            return TerminalBuilder.builder()
+                                  .dumb(true)
+                                  .build();
+        } catch (IOException e) {
+            throw illegalStateWithCauseOf(e);
+        }
     }
 }

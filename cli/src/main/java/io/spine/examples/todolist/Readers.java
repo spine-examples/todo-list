@@ -21,47 +21,30 @@
 package io.spine.examples.todolist;
 
 import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 
-import java.io.PrintStream;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static io.spine.examples.todolist.Terminals.newDumbTerminal;
-
 /**
- * The class provides relatively high-level facilities for user I/O in a command-line.
+ * Utilities for creating {@linkplain LineReader line readers}.
  *
  * @author Dmytro Grankin
  */
-public class UserCommunicatorImpl implements UserCommunicator {
+class Readers {
 
-    @SuppressWarnings("UseOfSystemOutOrSystemErr" /* OK for command-line app. */)
-    private static final PrintStream PRINT_STREAM = System.out;
-
-    private final LineReader reader = newLineReader();
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String promptUser(String prompt) {
-        checkArgument(!isNullOrEmpty(prompt));
-        println(prompt);
-        final String answer = reader.readLine();
-        return answer;
+    private Readers() {
+        // Prevent instantiation of this utility class.
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a {@link LineReader} with the specified {@link Terminal}.
+     *
+     * @param terminal the terminal to use in the line reader
+     * @return new line reader
      */
-    @Override
-    public void println(String message) {
-        PRINT_STREAM.println(message);
-    }
-
-    private static LineReader newLineReader() {
-        final Terminal terminal = newDumbTerminal();
-        return Readers.newLineReader(terminal);
+    static LineReader newLineReader(Terminal terminal) {
+        final LineReader reader = LineReaderBuilder.builder()
+                                                   .terminal(terminal)
+                                                   .build();
+        return reader;
     }
 }
