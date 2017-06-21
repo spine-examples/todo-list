@@ -37,7 +37,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 
 /**
- * An {@code Menu}, that consists of the {@linkplain AbstractMenuItem menu items}.
+ * A {@code Menu}, that consists of the {@linkplain AbstractMenuItem menu items}.
  *
  * <p>Has the following structure:
  * <ol>

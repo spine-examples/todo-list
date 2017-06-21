@@ -32,6 +32,9 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 
 /**
+ * Abstract base for displaying lists of elements.
+ *
+ * @param <E> the type of the elements for displaying
  * @author Dmytro Grankin
  */
 public abstract class ListMode<E extends Message> extends Mode {
@@ -43,14 +46,13 @@ public abstract class ListMode<E extends Message> extends Mode {
         display();
     }
 
-    protected void display() {
+    private void display() {
         updateState();
         final String view = getView();
         println(view);
     }
 
-    @VisibleForTesting
-    void updateState() {
+    private void updateState() {
         final List<E> newState = receiveRecentState();
         setState(newState);
     }
@@ -66,7 +68,7 @@ public abstract class ListMode<E extends Message> extends Mode {
 
     protected abstract String getEmptyView();
 
-    protected String getNonEmptyView() {
+    private String getNonEmptyView() {
         final StringBuilder builder = new StringBuilder();
 
         for (E item : state) {

@@ -21,6 +21,8 @@
 package io.spine.examples.todolist.mode.menu;
 
 /**
+ * Entry {@code Mode} to the application.
+ *
  * @author Illia Shepilov
  */
 public class MainMenu extends Menu {

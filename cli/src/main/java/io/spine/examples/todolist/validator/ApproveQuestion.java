@@ -27,6 +27,8 @@ import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getNeg
 import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getPositiveAnswer;
 
 /**
+ * Utilities for asking an approve question.
+ *
  * @author Dmytro Grankin
  */
 public class ApproveQuestion {
@@ -38,6 +40,12 @@ public class ApproveQuestion {
         // Prevent instantiation of this utility class.
     }
 
+    /**
+     * Obtains an answer for the specified question.
+     *
+     * @param question the question to ask
+     * @return {@code true} if the positive answer was given, {@code false} otherwise
+     */
     public static boolean ask(String question) {
         final String questionWithHelp =
                 question + " (" + getPositiveAnswer() + '/' + getNegativeAnswer() + ") ";

@@ -34,6 +34,11 @@ import static io.spine.examples.todolist.AppConfig.getServer;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
+ * Entry point to the command-line application.
+ *
+ * <p>To run this, use the following command:
+ * <pre>{@code gradle runTodoList}</pre>
+ *
  * @author Illia Shepilov
  */
 public class CliEntryPoint {

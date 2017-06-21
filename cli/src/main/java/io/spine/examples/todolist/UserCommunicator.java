@@ -21,6 +21,8 @@
 package io.spine.examples.todolist;
 
 /**
+ * Interface, that provides base methods for communication with an user of a command-line app.
+ *
  * @author Dmytro Grankin
  */
 public interface UserCommunicator {

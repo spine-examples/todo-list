@@ -30,11 +30,14 @@ import java.util.Optional;
 import static io.spine.base.Identifier.newUuid;
 
 /**
+ * A {@code Mode}, that allows to create a task in the quick mode.
+ *
+ * <p>To create a task in the way, user should specify a task description only.
+ *
  * @author Dmytro Grankin
  */
 public class QuickTaskCreation extends UserCommand<CreateBasicTask, CreateBasicTaskVBuilder> {
 
-    @VisibleForTesting
     static final String SET_DESCRIPTION_MSG = "Please enter the task description:";
 
     @Override

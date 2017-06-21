@@ -34,6 +34,8 @@ import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static org.jline.reader.LineReader.Option.AUTO_FRESH_LINE;
 
 /**
+ * The class provides relatively high-level facilities for user I/O in a command-line.
+ *
  * @author Dmytro Grankin
  */
 public class UserCommunicatorImpl implements UserCommunicator {

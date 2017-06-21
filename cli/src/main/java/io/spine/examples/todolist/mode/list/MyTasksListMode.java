@@ -28,6 +28,8 @@ import java.util.List;
 import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyTaskView;
 
 /**
+ * A {@code Mode} for displaying {@link MyListView}.
+ *
  * @author Dmytro Grankin
  */
 public class MyTasksListMode extends ListMode<TaskView> {
