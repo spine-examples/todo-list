@@ -49,10 +49,20 @@ public class AppConfig {
         // Prevent instantiation of this utility class.
     }
 
+    /**
+     * Obtains {@link Server}, which is initially not started.
+     *
+     * @return the server
+     */
     static Server getServer() {
         return SERVER;
     }
 
+    /**
+     * Obtains {@link TodoClient} for communication with the {@linkplain #getServer() server}.
+     *
+     * @return the client interface
+     */
     public static TodoClient getClient() {
         return CLIENT;
     }
