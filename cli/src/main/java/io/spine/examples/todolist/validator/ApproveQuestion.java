@@ -49,11 +49,11 @@ public class ApproveQuestion {
     public static boolean ask(String question) {
         final String questionWithHelp =
                 question + " (" + getPositiveAnswer() + '/' + getNegativeAnswer() + ") ";
-        String answer = communicator.askUser(questionWithHelp);
+        String answer = communicator.promptUser(questionWithHelp);
         boolean isValidAnswer = validator.validate(answer);
 
         while (!isValidAnswer) {
-            answer = communicator.askUser(validator.getAdvice());
+            answer = communicator.promptUser(validator.getAdvice());
             isValidAnswer = validator.validate(answer);
         }
 

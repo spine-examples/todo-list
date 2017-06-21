@@ -38,7 +38,7 @@ public class TestUserCommunicator implements UserCommunicator {
     private final Queue<String> answers = new ArrayDeque<>();
 
     @Override
-    public String askUser(String question) {
+    public String promptUser(String prompt) {
         if (answers.isEmpty()) {
             throw new IllegalStateException("Not enough answers were specified.");
         }

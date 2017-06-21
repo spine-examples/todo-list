@@ -36,8 +36,8 @@ public abstract class Mode {
 
     public abstract void start();
 
-    protected String askUser(String question) {
-        return userCommunicator.askUser(question);
+    protected String promptUser(String question) {
+        return userCommunicator.promptUser(question);
     }
 
     protected void println(String message) {

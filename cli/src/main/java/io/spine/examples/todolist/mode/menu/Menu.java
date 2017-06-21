@@ -91,7 +91,7 @@ public class Menu extends Mode {
     }
 
     private Optional<AbstractMenuItem> selectItem() {
-        final String answer = askUser(SELECT_MENU_ITEM_MSG);
+        final String answer = promptUser(SELECT_MENU_ITEM_MSG);
         for (AbstractMenuItem item : items) {
             final String itemIdentifier = identifierOf(item);
             if (itemIdentifier.equals(answer)) {

@@ -49,9 +49,9 @@ public class UserCommunicatorImpl implements UserCommunicator {
      * {@inheritDoc}
      */
     @Override
-    public String askUser(String question) {
-        checkArgument(!isNullOrEmpty(question));
-        println(question);
+    public String promptUser(String prompt) {
+        checkArgument(!isNullOrEmpty(prompt));
+        println(prompt);
         final String answer = reader.readLine();
         return answer;
     }
