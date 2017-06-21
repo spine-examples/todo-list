@@ -24,12 +24,13 @@ import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.mode.Mode;
 import io.spine.examples.todolist.mode.menu.MainMenu;
 import io.spine.examples.todolist.server.Server;
-import io.spine.server.BoundedContext;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static io.spine.examples.todolist.AppConfig.getClient;
+import static io.spine.examples.todolist.AppConfig.getServer;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
@@ -41,10 +42,9 @@ public class CliEntryPoint {
     }
 
     public static void main(String[] args) throws Exception {
-        final BoundedContext boundedContext = AppConfig.getBoundedContext();
-        final Server server = new Server(boundedContext);
+        final Server server = getServer();
         startServer(server);
-        final TodoClient client = AppConfig.getClient();
+        final TodoClient client = getClient();
         final Mode entryPoint = new MainMenu();
         entryPoint.start();
         client.shutdown();
