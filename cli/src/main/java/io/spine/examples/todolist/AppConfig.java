@@ -26,16 +26,19 @@ import io.spine.examples.todolist.context.TodoListBoundedContext;
 import io.spine.server.BoundedContext;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.examples.todolist.client.CommandLineTodoClient.LOCALHOST;
 
 /**
+ * 
+ *
  * @author Dmytro Grankin
  */
 public class AppConfig {
 
     private static final TodoClient CLIENT =
-            new CommandLineTodoClient("localhost",
+            new CommandLineTodoClient(LOCALHOST,
                                       DEFAULT_CLIENT_SERVICE_PORT,
-                                      TodoListBoundedContext.getInstance());
+                                      getBoundedContext());
 
     private AppConfig() {
         // Prevent instantiation of this utility class.

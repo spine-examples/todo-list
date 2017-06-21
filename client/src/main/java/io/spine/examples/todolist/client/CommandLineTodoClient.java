@@ -69,7 +69,9 @@ import static io.spine.base.Identifier.newUuid;
 @SuppressWarnings("OverlyCoupledClass")
 public class CommandLineTodoClient implements TodoClient {
 
+    public static final String LOCALHOST = "localhost";
     private static final int TIMEOUT = 10;
+
     private final ManagedChannel channel;
     private final QueryService queryService;
     private final CommandServiceGrpc.CommandServiceBlockingStub commandService;
