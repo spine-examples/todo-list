@@ -20,11 +20,17 @@
 
 package io.spine.examples.todolist.view;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.UserCommunicator;
 import io.spine.examples.todolist.UserCommunicatorImpl;
 import io.spine.examples.todolist.action.Action;
 
 import javax.annotation.Nullable;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
  * Abstract base class for views.
@@ -33,32 +39,61 @@ import javax.annotation.Nullable;
  */
 public abstract class View {
 
+    private final boolean rootView;
+
     /**
-     * An {@link Action}, that led to the {@code View}.
+     * An {@link Action}, that caused first {@link #display()} of the {@code View}.
      *
-     * <p>Source action is {@code null} for root {@code View}.
+     * <p>If the {@code View} is {@link #rootView}, this field is always {@code null}.
      */
     @Nullable
-    private final Action sourceAction;
+    private Action firstDisplayCause;
     private final UserCommunicator userCommunicator = new UserCommunicatorImpl();
 
-    protected View(@Nullable Action sourceAction) {
-        this.sourceAction = sourceAction;
+    protected View(boolean rootView) {
+        this.rootView = rootView;
     }
 
-    public abstract void display();
+    public void display(@Nullable Action displayCause) {
+        setFirstDisplayCause(displayCause);
+        display();
+    }
+
+    private void setFirstDisplayCause(@Nullable Action displayCause) {
+        if (!rootView) {
+            checkNotNull(displayCause);
+            final boolean notDisplayedBefore = firstDisplayCause == null;
+            if (notDisplayedBefore) {
+                firstDisplayCause = displayCause;
+            }
+        }
+    }
+
+    protected abstract void display();
 
     protected void back() {
-        if (sourceAction != null) {
-            sourceAction.back();
+        if (!rootView) {
+            if (firstDisplayCause == null) {
+                throw newIllegalStateException("Cannot get back, `firstDisplayCause` is unknown.");
+            }
+
+            firstDisplayCause.back();
         }
     }
 
     protected String promptUser(String question) {
+        checkArgument(!isNullOrEmpty(question));
         return userCommunicator.promptUser(question);
     }
 
     protected void println(String message) {
+        checkArgument(!isNullOrEmpty(message));
         userCommunicator.println(message);
+    }
+
+    @VisibleForTesting
+    @Nullable
+    Action getFirstDisplayCause() {
+        return firstDisplayCause;
     }
 }

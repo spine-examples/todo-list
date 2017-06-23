@@ -24,8 +24,6 @@ import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nullable;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -59,6 +57,12 @@ class ActionTest {
         assertNull(action.getSource());
         action.execute(view);
         assertSame(view, action.getSource());
+    }
+
+    @Test
+    @DisplayName("not accept null view to `execute()`")
+    void notAcceptNullToExecute() {
+        assertThrows(NullPointerException.class, () -> action.execute(null));
     }
 
     @Test
@@ -108,7 +112,7 @@ class ActionTest {
         private int count = 0;
 
         private DisplayCounterView() {
-            super(null);
+            super(true);
         }
 
         @Override

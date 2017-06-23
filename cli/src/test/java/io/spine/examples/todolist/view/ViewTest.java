@@ -24,9 +24,10 @@ import io.spine.examples.todolist.action.Action;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import javax.annotation.Nullable;
-
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Dmytro Grankin
@@ -34,24 +35,75 @@ import static org.junit.jupiter.api.Assertions.fail;
 @DisplayName("View should")
 public class ViewTest {
 
-    private final View rootView = new RootView();
+    private final RootView rootView = new RootView();
+    private final View childView = new ChildView();
+    private final Action displayChild = newAction(childView);
 
     @Test
-    @DisplayName("handle `back()` for root view")
-    void handleRootView() {
-        rootView.back();
+    @DisplayName("not set first display cause for root view")
+    void notSetFirstDisplayCause() {
+        final Action displayRoot = newAction(rootView);
+        displayRoot.execute(childView);
+        assertNull(rootView.getFirstDisplayCause());
     }
 
     @Test
-    @DisplayName("display a root view for a branch view")
-    void displayPreviousView() {
-        fail("Not implemented.");
+    @DisplayName("set first display cause for NON-root")
+    void setFirstDisplayCause() {
+        assertNull(childView.getFirstDisplayCause());
+        displayChild.execute(rootView);
+        assertSame(displayChild, childView.getFirstDisplayCause());
+    }
+
+    @Test
+    @DisplayName("not overwrite first display cause")
+    void notOverwriteFirstDisplayCause() {
+        displayChild.execute(rootView);
+        assertSame(displayChild, childView.getFirstDisplayCause());
+
+        final Action secondDisplayCause = newAction(childView);
+        secondDisplayCause.execute(rootView);
+        assertSame(displayChild, childView.getFirstDisplayCause());
+    }
+
+    @Test
+    @DisplayName("throw ISE if first display cause is unknown for child view and `back()` was called")
+    void throwIllegalStateOnBack() {
+        assertThrows(IllegalStateException.class, childView::back);
+    }
+
+    @Test
+    @DisplayName("display source view on `back()`")
+    void displaySourceViewOnBack() {
+        displayChild.execute(rootView);
+        childView.back();
+        assertTrue(rootView.wasDisplayed);
+    }
+
+    @Test
+    @DisplayName("allow call `back()` for root view")
+    void handleBackOnRootView() {
+        rootView.back();
     }
 
     private static class RootView extends View {
 
+        private boolean wasDisplayed = false;
+
         private RootView() {
-            super(null);
+            super(true);
+        }
+
+        @Override
+        public void display() {
+            wasDisplayed = true;
+        }
+    }
+
+    private static class ChildView extends View {
+
+        private ChildView() {
+            super(false);
         }
 
         @Override
@@ -59,14 +111,7 @@ public class ViewTest {
         }
     }
 
-    private static class BranchView extends View {
-
-        private BranchView(@Nullable Action sourceAction) {
-            super(sourceAction);
-        }
-
-        @Override
-        public void display() {
-        }
+    private static Action newAction(View destination) {
+        return new Action("a", "a", destination);
     }
 }

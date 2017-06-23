@@ -65,8 +65,9 @@ public class Action {
     }
 
     public void execute(View source) {
+        checkNotNull(source);
         this.source = source;
-        destination.display();
+        destination.display(this);
     }
 
     public void back() {
@@ -74,7 +75,7 @@ public class Action {
             throw newIllegalStateException("There is no source view for the action");
         }
 
-        source.display();
+        source.display(this);
     }
 
     @VisibleForTesting
