@@ -97,26 +97,6 @@ public class ViewTest {
         assertTrue(rootView.wasDisplayed);
     }
 
-    @Test
-    @DisplayName("throw ISE if first display cause is unknown for child view and `back()` was called")
-    void throwIllegalStateOnBack() {
-        assertThrows(IllegalStateException.class, childView::back);
-    }
-
-    @Test
-    @DisplayName("display source view on `back()`")
-    void displaySourceViewOnBack() {
-        displayChild.execute(rootView);
-        childView.back();
-        assertTrue(rootView.wasDisplayed);
-    }
-
-    @Test
-    @DisplayName("allow call `back()` for root view")
-    void handleBackOnRootView() {
-        rootView.back();
-    }
-
     private static class RootView extends View {
 
         private boolean wasDisplayed = false;

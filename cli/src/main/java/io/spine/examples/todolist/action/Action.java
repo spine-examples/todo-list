@@ -74,14 +74,6 @@ public class Action {
         destination.display(this);
     }
 
-    public void back() {
-        if (source == null) {
-            throw newIllegalStateException("There is no source view for the action.");
-        }
-
-        source.display(this);
-    }
-
     public Action createReverseAction(String name, String shortcut) {
         if (source == null) {
             throw newIllegalStateException("There is no source view for the action, " +

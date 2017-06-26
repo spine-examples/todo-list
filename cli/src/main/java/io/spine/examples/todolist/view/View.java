@@ -84,16 +84,6 @@ public abstract class View {
         return firstDisplayCause.createReverseAction(name, shortcut);
     }
 
-    protected void back() {
-        if (!rootView) {
-            if (firstDisplayCause == null) {
-                throw newIllegalStateException("Cannot get back, `firstDisplayCause` is unknown.");
-            }
-
-            firstDisplayCause.back();
-        }
-    }
-
     protected String promptUser(String question) {
         checkArgument(!isNullOrEmpty(question));
         return userCommunicator.promptUser(question);
@@ -124,11 +114,6 @@ public abstract class View {
 
         @Override
         public void execute(View source) {
-            // Do nothing.
-        }
-
-        @Override
-        public void back() {
             // Do nothing.
         }
     }

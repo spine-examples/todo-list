@@ -77,23 +77,6 @@ class ActionTest {
     }
 
     @Test
-    @DisplayName("throw ISE on `back()` if source is null")
-    void throwIllegalStateIfSourceNull() {
-        assertNull(action.getSource());
-        assertThrows(IllegalStateException.class, action::back);
-    }
-
-    @Test
-    @DisplayName("display source view on `back()`")
-    void displaySourceView() {
-        assertEquals(0, view.count);
-        action.execute(view);
-        assertEquals(1, view.count);
-        action.back();
-        assertEquals(2, view.count);
-    }
-
-    @Test
     @DisplayName("not create reverse action if source view for the action is unknown")
     void notCreateReverseAction() {
         assertThrows(IllegalStateException.class,
