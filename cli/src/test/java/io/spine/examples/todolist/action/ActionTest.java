@@ -94,6 +94,28 @@ class ActionTest {
     }
 
     @Test
+    @DisplayName("not create reverse action if source view for the action is unknown")
+    void notCreateReverseAction() {
+        assertThrows(IllegalStateException.class,
+                     () -> action.createReverseAction("r", "r"));
+    }
+
+    @Test
+    @DisplayName("create reverse action")
+    void createReverseAction() {
+        final String reverseName = "Reverse";
+        final String reverseShortcut = "r";
+        final View sourceOfAction = new DisplayCounterView();
+        action.execute(sourceOfAction);
+
+        final Action reverse = action.createReverseAction(reverseName, reverseShortcut);
+
+        assertEquals(reverseName, reverse.getName());
+        assertEquals(reverseShortcut, reverse.getShortcut());
+        assertSame(action.getSource(), reverse.getDestination());
+    }
+
+    @Test
     @DisplayName("consider an action with same shortcut equal")
     void overrideEqualsAndHashCode() {
         final Action firstAction = new Action(ACTION_NAME, SHORTCUT, view);

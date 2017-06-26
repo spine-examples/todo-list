@@ -76,24 +76,43 @@ public class Action {
 
     public void back() {
         if (source == null) {
-            throw newIllegalStateException("There is no source view for the action");
+            throw newIllegalStateException("There is no source view for the action.");
         }
 
         source.display(this);
+    }
+
+    public Action createReverseAction(String name, String shortcut) {
+        if (source == null) {
+            throw newIllegalStateException("There is no source view for the action, " +
+                                                   "cannot create reverse action.");
+        }
+
+        final View destination = source;
+        return new Action(name, shortcut, destination);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getShortcut() {
         return shortcut;
     }
 
-    public static String getShortcutFormat() {
-        return SHORTCUT_FORMAT;
-    }
-
     @VisibleForTesting
     @Nullable
     View getSource() {
         return source;
+    }
+
+    @VisibleForTesting
+    View getDestination() {
+        return destination;
+    }
+
+    public static String getShortcutFormat() {
+        return SHORTCUT_FORMAT;
     }
 
     @VisibleForTesting
