@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.mode.command;
 
-import io.spine.examples.todolist.mode.UserIOTest;
+import io.spine.examples.todolist.mode.UserIoTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ import org.junit.jupiter.api.Test;
  * @author Dmytro Grankin
  */
 @DisplayName("QuickTaskCreation should")
-class QuickTaskCreationTest extends UserIOTest {
+class QuickTaskCreationTest extends UserIoTest {
 
     private static final String QUESTION = "?";
     private static final String INVALID_DESCRIPTION = "";

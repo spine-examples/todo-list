@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Dmytro Grankin
  */
-public class UserIOTest {
+public class UserIoTest {
 
     private final TestUserCommunicator communicator = new TestUserCommunicator();
 

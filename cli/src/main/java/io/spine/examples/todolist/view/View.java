@@ -48,7 +48,7 @@ public abstract class View {
      */
     @Nullable
     private Action firstDisplayCause;
-    private final UserCommunicator userCommunicator = new UserCommunicatorImpl();
+    private UserCommunicator userCommunicator = new UserCommunicatorImpl();
 
     protected View(boolean rootView) {
         this.rootView = rootView;
@@ -92,6 +92,10 @@ public abstract class View {
     protected void println(String message) {
         checkArgument(!isNullOrEmpty(message));
         userCommunicator.println(message);
+    }
+
+    public void setUserCommunicator(UserCommunicator userCommunicator) {
+        this.userCommunicator = userCommunicator;
     }
 
     @VisibleForTesting

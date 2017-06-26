@@ -22,7 +22,7 @@ package io.spine.examples.todolist.mode.list;
 
 import com.google.protobuf.StringValue;
 import io.spine.examples.todolist.TestUserCommunicator;
-import io.spine.examples.todolist.mode.UserIOTest;
+import io.spine.examples.todolist.mode.UserIoTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  * @author Dmytro Grankin
  */
 @DisplayName("ListMode should")
-class ListModeTest extends UserIOTest {
+class ListModeTest extends UserIoTest {
 
     private final ListMode<StringValue> stringListMode = new StringListMode();
 
