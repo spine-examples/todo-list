@@ -24,6 +24,9 @@ import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.action.Action.getShortcutFormat;
+import static io.spine.examples.todolist.action.Action.getShortcutNameSeparator;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -103,7 +106,8 @@ class ActionTest {
     @Test
     @DisplayName("override `toString`")
     void overrideToString() {
-        final String expectedString = '(' + SHORTCUT + ") " + ACTION_NAME;
+        final String formattedShortcut = format(getShortcutFormat(), SHORTCUT);
+        final String expectedString = formattedShortcut + getShortcutNameSeparator() + ACTION_NAME;
         assertEquals(expectedString, action.toString());
     }
 

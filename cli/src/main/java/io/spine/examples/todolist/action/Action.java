@@ -30,6 +30,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static io.spine.util.Exceptions.newIllegalStateException;
+import static java.lang.String.format;
 
 /**
  * An {@code Action} represents transition from a {@linkplain #source source view}
@@ -38,6 +39,9 @@ import static io.spine.util.Exceptions.newIllegalStateException;
  * @author Dmytro Grankin
  */
 public class Action {
+
+    private static final String SHORTCUT_FORMAT = "(%s)";
+    private static final String SHORTCUT_NAME_SEPARATOR = " ";
 
     private final String name;
     private final String shortcut;
@@ -78,10 +82,23 @@ public class Action {
         source.display(this);
     }
 
+    public String getShortcut() {
+        return shortcut;
+    }
+
+    public static String getShortcutFormat() {
+        return SHORTCUT_FORMAT;
+    }
+
     @VisibleForTesting
     @Nullable
     View getSource() {
         return source;
+    }
+
+    @VisibleForTesting
+    static String getShortcutNameSeparator() {
+        return SHORTCUT_NAME_SEPARATOR;
     }
 
     @Override
@@ -104,6 +121,7 @@ public class Action {
 
     @Override
     public String toString() {
-        return '(' + shortcut + ") " + name;
+        final String formattedShortcut = format(SHORTCUT_FORMAT, shortcut);
+        return formattedShortcut + SHORTCUT_NAME_SEPARATOR + name;
     }
 }
