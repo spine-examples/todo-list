@@ -24,6 +24,9 @@ import io.spine.examples.todolist.action.Action;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -64,6 +67,34 @@ public class ViewTest {
         final Action secondDisplayCause = newAction(childView);
         secondDisplayCause.execute(rootView);
         assertSame(displayChild, childView.getFirstDisplayCause());
+    }
+
+    @Test
+    @DisplayName("create pseudo back action for root view")
+    void createPseudoBackAction() {
+        final String backName = "Back";
+        final String backShortcut = "b";
+        final Action back = rootView.createBackAction(backName, backShortcut);
+
+        assertEquals(backName, back.getName());
+        assertEquals(backShortcut, back.getShortcut());
+        assertThat(back, instanceOf(View.PseudoAction.class));
+    }
+
+    @Test
+    @DisplayName("not create back action for child view if `firstDisplayCause` is unknown")
+    void notCreateBackAction() {
+        assertThrows(IllegalStateException.class,
+                     () -> childView.createBackAction("b", "b"));
+    }
+
+    @Test
+    @DisplayName("create usual back action for child view")
+    void createUsualBackAction() {
+        displayChild.execute(rootView);
+        final Action back = childView.createBackAction("b", "b");
+        back.execute(childView);
+        assertTrue(rootView.wasDisplayed);
     }
 
     @Test

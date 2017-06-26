@@ -71,6 +71,19 @@ public abstract class View {
 
     protected abstract void display();
 
+    protected Action createBackAction(String name, String shortcut) {
+        if (rootView) {
+            return new PseudoAction(name, shortcut, this);
+        }
+
+        if (firstDisplayCause == null) {
+            throw newIllegalStateException(
+                    "An action, that caused this view, should be known to create back action.");
+        }
+
+        return firstDisplayCause.createReverseAction(name, shortcut);
+    }
+
     protected void back() {
         if (!rootView) {
             if (firstDisplayCause == null) {
@@ -95,5 +108,28 @@ public abstract class View {
     @Nullable
     Action getFirstDisplayCause() {
         return firstDisplayCause;
+    }
+
+    /**
+     * Special kind of {@link Action}, that does nothing.
+     *
+     * <p>Should be used for boundary conditions, e.g. exit from root view.
+     */
+    @VisibleForTesting
+    static class PseudoAction extends Action {
+
+        private PseudoAction(String name, String shortcut, View destination) {
+            super(name, shortcut, destination);
+        }
+
+        @Override
+        public void execute(View source) {
+            // Do nothing.
+        }
+
+        @Override
+        public void back() {
+            // Do nothing.
+        }
     }
 }
