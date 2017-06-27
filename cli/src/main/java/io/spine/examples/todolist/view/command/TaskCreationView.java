@@ -41,7 +41,7 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
         super(false, newBuilder());
         getState().setId(generatedId());
         addAction(new EnterDescription("Enter description", "d"));
-        addAction(new ExecuteCommand(getState()));
+        addAction(new ExecuteCommand());
     }
 
     private static TaskId generatedId() {
@@ -72,10 +72,6 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
 
     private static class ExecuteCommand extends ExecuteCommandAction<CreateBasicTask,
                                                                      CreateBasicTaskVBuilder> {
-
-        private ExecuteCommand(CreateBasicTaskVBuilder state) {
-            super(state);
-        }
 
         @Override
         protected void executeCommand(CreateBasicTask commandMessage) {

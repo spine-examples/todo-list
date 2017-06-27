@@ -23,33 +23,38 @@ package io.spine.examples.todolist.action;
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.AppConfig;
 import io.spine.examples.todolist.client.TodoClient;
-import io.spine.examples.todolist.view.View;
+import io.spine.examples.todolist.view.command.CommandView;
 import io.spine.validate.ValidatingBuilder;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
+ * An {@code ExecuteCommandAction} executes a command prepared by {@link CommandView}.
+ *
+ * @param <M> the type of the command message
+ * @param <B> the validating builder for the command message
  * @author Dmytro Grankin
  */
 public abstract class ExecuteCommandAction<M extends Message,
                                            B extends ValidatingBuilder<M, ? extends Message.Builder>>
-        extends Action {
+        extends Action<CommandView<M, B>> {
 
     private static final String ACTION_NAME = "Finish";
     private static final String ACTION_SHORTCUT = "f";
 
     private final TodoClient client = AppConfig.getClient();
-    private final B state;
 
-    protected ExecuteCommandAction(B state) {
+    protected ExecuteCommandAction() {
         super(ACTION_NAME, ACTION_SHORTCUT);
-        checkNotNull(state);
-        this.state = state;
     }
 
+    /**
+     * Executes the obtained command from the specified source.
+     *
+     * @param source {@inheritDoc}
+     */
     @Override
-    public void execute(View source) {
-        final M commandMessage = state.build();
+    public void execute(CommandView<M, B> source) {
+        final M commandMessage = source.getState()
+                                       .build();
         executeCommand(commandMessage);
         source.display(this);
     }
