@@ -59,11 +59,6 @@ public abstract class ExecuteCommandAction<M extends Message,
         source.display(this);
     }
 
-    @Override
-    public Action createReverseAction(String name, String shortcut) {
-        throw new UnsupportedOperationException();
-    }
-
     protected abstract void executeCommand(M commandMessage);
 
     protected TodoClient getClient() {

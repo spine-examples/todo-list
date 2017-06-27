@@ -76,10 +76,5 @@ class ActionTest {
         @Override
         public void execute(View source) {
         }
-
-        @Override
-        public Action createReverseAction(String name, String shortcut) {
-            throw new UnsupportedOperationException();
-        }
     }
 }

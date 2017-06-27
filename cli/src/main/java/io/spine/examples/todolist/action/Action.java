@@ -58,8 +58,6 @@ public abstract class Action<S extends View> {
      */
     public abstract void execute(S source);
 
-    public abstract Action createReverseAction(String name, String shortcut);
-
     public String getName() {
         return name;
     }

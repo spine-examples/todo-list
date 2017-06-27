@@ -54,11 +54,6 @@ public abstract class CommandAction<M extends Message,
         source.display(this);
     }
 
-    @Override
-    public Action createReverseAction(String name, String shortcut) {
-        throw new UnsupportedOperationException();
-    }
-
     protected abstract void updateState(B state);
 
     protected String promptUser(String prompt) {

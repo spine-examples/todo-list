@@ -24,6 +24,7 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.UserCommunicator;
 import io.spine.examples.todolist.UserCommunicatorImpl;
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.TransitionAction;
 
 import javax.annotation.Nullable;
 
@@ -42,12 +43,12 @@ public abstract class View {
     private final boolean rootView;
 
     /**
-     * An {@link Action}, that caused first {@link #display()} of the {@code View}.
+     * An {@link TransitionAction}, that <b>initially</b> led to the {@code View}.
      *
      * <p>If the {@code View} is {@link #rootView}, this field is always {@code null}.
      */
     @Nullable
-    private Action firstDisplayCause;
+    private TransitionAction firstDisplayCause;
     private UserCommunicator userCommunicator = new UserCommunicatorImpl();
 
     protected View(boolean rootView) {
@@ -64,7 +65,7 @@ public abstract class View {
             checkNotNull(displayCause);
             final boolean notDisplayedBefore = firstDisplayCause == null;
             if (notDisplayedBefore) {
-                firstDisplayCause = displayCause;
+                firstDisplayCause = (TransitionAction) displayCause;
             }
         }
     }
@@ -119,11 +120,6 @@ public abstract class View {
         @Override
         public void execute(View source) {
             // Do nothing.
-        }
-
-        @Override
-        public Action createReverseAction(String name, String shortcut) {
-            throw new UnsupportedOperationException();
         }
     }
 }

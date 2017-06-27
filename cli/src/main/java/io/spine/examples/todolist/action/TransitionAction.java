@@ -65,7 +65,6 @@ public class TransitionAction extends Action {
         destination.display(this);
     }
 
-    @Override
     public TransitionAction createReverseAction(String name, String shortcut) {
         if (source == null) {
             throw newIllegalStateException("There is no source view for the action, " +
