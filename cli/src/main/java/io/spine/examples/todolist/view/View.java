@@ -51,6 +51,11 @@ public abstract class View {
     private TransitionAction firstDisplayCause;
     private UserCommunicator userCommunicator = new UserCommunicatorImpl();
 
+    /**
+     * Creates a new instance.
+     *
+     * @param rootView whether the view is root
+     */
     protected View(boolean rootView) {
         this.rootView = rootView;
     }
