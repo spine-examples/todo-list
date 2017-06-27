@@ -28,8 +28,6 @@ import static io.spine.examples.todolist.action.Action.getShortcutFormat;
 import static io.spine.examples.todolist.action.Action.getShortcutNameSeparator;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -40,70 +38,23 @@ class ActionTest {
 
     private static final String ACTION_NAME = "action";
     private static final String SHORTCUT = "s";
-
-    private final DisplayCounterView view = new DisplayCounterView();
-    private final Action action = new Action(ACTION_NAME, SHORTCUT, view);
+    private static final Action action = new ActionImpl(ACTION_NAME, SHORTCUT);
 
     @Test
-    @DisplayName("validate parameters are passed to the constructor")
-    void validateCtorParams() {
+    @DisplayName("not allow null or empty name or shortcut")
+    void notAllowEmptyStrings() {
         final String invalid = "";
         final String valid = "s";
-        assertThrows(IllegalArgumentException.class, () -> new Action(invalid, valid, view));
-        assertThrows(IllegalArgumentException.class, () -> new Action(valid, invalid, view));
-        assertThrows(NullPointerException.class, () -> new Action(valid, valid, null));
-    }
-
-    @Test
-    @DisplayName("update source view")
-    void updateSource() {
-        assertNull(action.getSource());
-        action.execute(view);
-        assertSame(view, action.getSource());
-    }
-
-    @Test
-    @DisplayName("not accept null view to `execute()`")
-    void notAcceptNullToExecute() {
-        assertThrows(NullPointerException.class, () -> action.execute(null));
-    }
-
-    @Test
-    @DisplayName("display a destination view")
-    void displayDestination() {
-        assertEquals(0, view.count);
-        action.execute(view);
-        assertEquals(1, view.count);
-    }
-
-    @Test
-    @DisplayName("not create reverse action if source view for the action is unknown")
-    void notCreateReverseAction() {
-        assertThrows(IllegalStateException.class,
-                     () -> action.createReverseAction("r", "r"));
-    }
-
-    @Test
-    @DisplayName("create reverse action")
-    void createReverseAction() {
-        final String reverseName = "Reverse";
-        final String reverseShortcut = "r";
-        final View sourceOfAction = new DisplayCounterView();
-        action.execute(sourceOfAction);
-
-        final Action reverse = action.createReverseAction(reverseName, reverseShortcut);
-
-        assertEquals(reverseName, reverse.getName());
-        assertEquals(reverseShortcut, reverse.getShortcut());
-        assertSame(action.getSource(), reverse.getDestination());
+        assertThrows(IllegalArgumentException.class, () -> new ActionImpl(invalid, valid));
+        assertThrows(IllegalArgumentException.class, () -> new ActionImpl(valid, invalid));
     }
 
     @Test
     @DisplayName("consider an action with same shortcut equal")
     void overrideEqualsAndHashCode() {
-        final Action firstAction = new Action(ACTION_NAME, SHORTCUT, view);
-        final Action secondAction = new Action(ACTION_NAME + " fast", SHORTCUT,
-                                               new DisplayCounterView());
+        final Action firstAction = action;
+        final String differentName = action.getName() + "difference";
+        final Action secondAction = new ActionImpl(differentName, action.getShortcut());
         assertEquals(firstAction, secondAction);
         assertEquals(firstAction.hashCode(), secondAction.hashCode());
     }
@@ -116,17 +67,19 @@ class ActionTest {
         assertEquals(expectedString, action.toString());
     }
 
-    private static class DisplayCounterView extends View {
+    private static class ActionImpl extends Action {
 
-        private int count = 0;
-
-        private DisplayCounterView() {
-            super(true);
+        private ActionImpl(String name, String shortcut) {
+            super(name, shortcut);
         }
 
         @Override
-        public void display() {
-            count++;
+        public void execute(View source) {
+        }
+
+        @Override
+        public Action createReverseAction(String name, String shortcut) {
+            throw new UnsupportedOperationException();
         }
     }
 }

@@ -73,7 +73,7 @@ public abstract class View {
 
     protected Action createBackAction(String name, String shortcut) {
         if (rootView) {
-            return new PseudoAction(name, shortcut, this);
+            return new PseudoAction(name, shortcut);
         }
 
         if (firstDisplayCause == null) {
@@ -112,13 +112,18 @@ public abstract class View {
     @VisibleForTesting
     static class PseudoAction extends Action {
 
-        private PseudoAction(String name, String shortcut, View destination) {
-            super(name, shortcut, destination);
+        private PseudoAction(String name, String shortcut) {
+            super(name, shortcut);
         }
 
         @Override
         public void execute(View source) {
             // Do nothing.
+        }
+
+        @Override
+        public Action createReverseAction(String name, String shortcut) {
+            throw new UnsupportedOperationException();
         }
     }
 }

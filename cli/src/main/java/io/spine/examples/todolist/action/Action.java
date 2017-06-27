@@ -23,22 +23,18 @@ package io.spine.examples.todolist.action;
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.view.View;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.String.format;
 
 /**
- * An {@code Action} represents transition from a {@linkplain #source source view}
- * to a {@linkplain #destination destination view}.
+ * An {@code Action} encapsulates navigation among {@linkplain View views}.
  *
  * @author Dmytro Grankin
  */
-public class Action {
+public abstract class Action {
 
     private static final String SHORTCUT_FORMAT = "(%s)";
     private static final String SHORTCUT_NAME_SEPARATOR = " ";
@@ -46,43 +42,21 @@ public class Action {
     private final String name;
     private final String shortcut;
 
-    /**
-     * A source {@code View} of the action.
-     *
-     * <p>The source is unknown until the action was not {@linkplain #execute(View) executed}.
-     */
-    @Nullable
-    private View source;
-
-    /**
-     * A destination {@code View} of the action.
-     */
-    private final View destination;
-
-    public Action(String name, String shortcut, View destination) {
+    protected Action(String name, String shortcut) {
         checkArgument(!isNullOrEmpty(name));
         checkArgument(!isNullOrEmpty(shortcut));
-        checkNotNull(destination);
         this.name = name;
         this.shortcut = shortcut;
-        this.destination = destination;
     }
 
-    public void execute(View source) {
-        checkNotNull(source);
-        this.source = source;
-        destination.display(this);
-    }
+    /**
+     * Executes the action.
+     *
+     * @param source the source {@link View} of the action
+     */
+    public abstract void execute(View source);
 
-    public Action createReverseAction(String name, String shortcut) {
-        if (source == null) {
-            throw newIllegalStateException("There is no source view for the action, " +
-                                                   "cannot create reverse action.");
-        }
-
-        final View destination = source;
-        return new Action(name, shortcut, destination);
-    }
+    public abstract Action createReverseAction(String name, String shortcut);
 
     public String getName() {
         return name;
@@ -90,17 +64,6 @@ public class Action {
 
     public String getShortcut() {
         return shortcut;
-    }
-
-    @VisibleForTesting
-    @Nullable
-    View getSource() {
-        return source;
-    }
-
-    @VisibleForTesting
-    View getDestination() {
-        return destination;
     }
 
     public static String getShortcutFormat() {

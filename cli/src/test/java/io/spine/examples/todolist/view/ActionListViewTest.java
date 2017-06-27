@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.TransitionAction;
 import io.spine.examples.todolist.mode.UserIoTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,7 +53,8 @@ class ActionListViewTest extends UserIoTest {
     @Test
     @DisplayName("not allow actions with back shortcut")
     void notAllowActionsWithBackShortcut() {
-        final Action action = new Action("action", getBackShortcut(), childView);
+        final String backShortcut = getBackShortcut();
+        final TransitionAction action = new TransitionAction("action", backShortcut, childView);
         final Set<Action> actions = singleton(action);
         assertThrows(IllegalArgumentException.class, () -> new MainMenu(actions));
     }
