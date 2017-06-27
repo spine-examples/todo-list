@@ -94,6 +94,11 @@ public class ActionListView extends View {
                       .findFirst();
     }
 
+    /**
+     * Executes the specified action.
+     *
+     * @param action the action to execute
+     */
     protected void executeAction(Action action) {
         action.execute(this);
     }
@@ -110,7 +115,7 @@ public class ActionListView extends View {
     }
 
     @VisibleForTesting
-    static String getBackShortcut() {
+    public static String getBackShortcut() {
         return BACK_SHORTCUT;
     }
 

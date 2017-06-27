@@ -27,7 +27,7 @@ import io.spine.examples.todolist.view.command.CommandView;
 import io.spine.validate.ValidatingBuilder;
 
 /**
- * An {@code ExecuteCommandAction} executes a command prepared by {@link CommandView}.
+ * An {@code ExecuteCommandAction} sends a command prepared by a {@link CommandView} to a server.
  *
  * @param <M> the type of the command message
  * @param <B> the validating builder for the command message

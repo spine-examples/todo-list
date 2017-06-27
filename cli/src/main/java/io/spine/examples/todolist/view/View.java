@@ -77,7 +77,7 @@ public abstract class View {
 
     protected abstract void display();
 
-    protected Action createBackAction(String name, String shortcut) {
+    protected Action<View> createBackAction(String name, String shortcut) {
         if (rootView) {
             return new PseudoAction(name, shortcut);
         }
@@ -116,7 +116,7 @@ public abstract class View {
      * <p>Should be used for boundary conditions, e.g. exit from root view.
      */
     @VisibleForTesting
-    static class PseudoAction extends Action {
+    static class PseudoAction extends Action<View> {
 
         private PseudoAction(String name, String shortcut) {
             super(name, shortcut);

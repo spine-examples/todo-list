@@ -30,5 +30,6 @@ import "spine/options.proto";
 
 message CreateComment {
 
-    string value = 1 [(required) = true];
+    string id = 1 [(required) = true];
+    string value = 2 [(required) = true];
 }

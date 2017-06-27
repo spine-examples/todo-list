@@ -36,6 +36,15 @@ import static io.spine.examples.todolist.view.command.ValidationExceptionFormatt
 import static java.util.Collections.emptySet;
 
 /**
+ * A {@code CommandView} is a abstract base for views where an user of the command-line application
+ * prepares and sends a command to a server.
+ *
+ * <p>Compared to the {@link ActionListView} provides handling of {@link ValidationException}.
+ *
+ * <p>The view must predominantly consist of
+ * {@linkplain io.spine.examples.todolist.action.CommandAction command actions} and
+ * an {@link io.spine.examples.todolist.action.ExecuteCommandAction ExecuteCommandAction}.
+ *
  * @author Dmytro Grankin
  */
 public abstract class CommandView<M extends Message,
@@ -49,6 +58,13 @@ public abstract class CommandView<M extends Message,
         this.state = newBuilderInstance();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>If {@link ValidationException} is occurred, prints errors and displays the view.
+     *
+     * @param action {@inheritDoc}
+     */
     @Override
     protected void executeAction(Action action) {
         try {
@@ -110,7 +126,7 @@ public abstract class CommandView<M extends Message,
     /**
      * Provides type information on {@link CommandView} descendants.
      */
-    private static class TypeInfo {
+    static class TypeInfo {
 
         private TypeInfo() {
             // Prevent instantiation of this utility class.
