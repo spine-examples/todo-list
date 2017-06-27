@@ -23,12 +23,15 @@ package io.spine.examples.todolist.view.command;
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.view.ActionListView;
+import io.spine.reflect.GenericTypeIndex;
 import io.spine.validate.ValidatingBuilder;
+import io.spine.validate.ValidatingBuilders;
 import io.spine.validate.ValidationException;
 
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.examples.todolist.view.command.CommandView.GenericParameter.STATE_BUILDER;
 import static io.spine.examples.todolist.view.command.ValidationExceptionFormatter.toErrorMessages;
 import static java.util.Collections.emptySet;
 
@@ -41,10 +44,9 @@ public abstract class CommandView<M extends Message,
 
     private final B state;
 
-    protected CommandView(boolean rootView, B state) {
+    protected CommandView(boolean rootView) {
         super(rootView, emptySet());
-        checkNotNull(state);
-        this.state = state;
+        this.state = newBuilderInstance();
     }
 
     @Override
@@ -66,5 +68,65 @@ public abstract class CommandView<M extends Message,
 
     public B getState() {
         return state;
+    }
+
+    private B newBuilderInstance() {
+        @SuppressWarnings("unchecked")   // It's safe, as we rely on the definition of this class.
+        final Class<? extends CommandView<M, B>> aClass =
+                (Class<? extends CommandView<M, B>>) getClass();
+        final Class<B> builderClass = TypeInfo.getBuilderClass(aClass);
+        final B builder = ValidatingBuilders.newInstance(builderClass);
+        return builder;
+    }
+
+    /**
+     * Enumeration of generic type parameters of this class.
+     */
+    enum GenericParameter implements GenericTypeIndex<CommandView> {
+
+        /** The index of the generic type {@code <M>}. */
+        COMMAND_MESSAGE(0),
+
+        /** The index of the generic type {@code <B>}. */
+        STATE_BUILDER(1);
+
+        private final int index;
+
+        GenericParameter(int index) {
+            this.index = index;
+        }
+
+        @Override
+        public int getIndex() {
+            return this.index;
+        }
+
+        @Override
+        public Class<?> getArgumentIn(Class<? extends CommandView> cls) {
+            return Default.getArgument(this, cls);
+        }
+    }
+
+    /**
+     * Provides type information on {@link CommandView} descendants.
+     */
+    private static class TypeInfo {
+
+        private TypeInfo() {
+            // Prevent instantiation of this utility class.
+        }
+
+        /**
+         * Obtains the class of the {@linkplain ValidatingBuilder} for the given
+         * {@link CommandView} descendant class.
+         */
+        private static <M extends Message,
+                B extends ValidatingBuilder<M, ? extends Message.Builder>>
+        Class<B> getBuilderClass(Class<? extends CommandView<M, B>> entityClass) {
+            checkNotNull(entityClass);
+            @SuppressWarnings("unchecked") // The type is ensured by this class declaration.
+            final Class<B> builderClass = (Class<B>) STATE_BUILDER.getArgumentIn(entityClass);
+            return builderClass;
+        }
     }
 }

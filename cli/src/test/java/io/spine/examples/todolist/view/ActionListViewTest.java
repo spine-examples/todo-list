@@ -60,6 +60,18 @@ class ActionListViewTest extends UserIoTest {
     }
 
     @Test
+    @DisplayName("not allow addition of action with occupied shortcut")
+    void notAllowActionWithOccupiedShortcut() {
+        final String shortcut = "s";
+        final Action firstAction = new TransitionAction("to child", shortcut, childView);
+        final Action secondAction = new TransitionAction("to second child", shortcut,
+                                                         new ChildView());
+        mainView.addAction(firstAction);
+
+        assertThrows(IllegalArgumentException.class, () -> mainView.addAction(secondAction));
+    }
+
+    @Test
     @DisplayName("add back action without duplications")
     void addBackAction() {
         final int actionCountBefore = mainView.getActions()

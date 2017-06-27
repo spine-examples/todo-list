@@ -38,7 +38,7 @@ import static io.spine.base.Identifier.newUuid;
 public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTaskVBuilder> {
 
     public TaskCreationView() {
-        super(false, newBuilder());
+        super(false);
         getState().setId(generatedId());
         addAction(new EnterDescription("Enter description", "d"));
         addAction(new ExecuteCommand());
@@ -48,10 +48,6 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
         return TaskId.newBuilder()
                      .setValue(newUuid())
                      .build();
-    }
-
-    private static CreateBasicTaskVBuilder newBuilder() {
-        return CreateBasicTaskVBuilder.newBuilder();
     }
 
     private static class EnterDescription extends CommandAction<CreateBasicTask,
