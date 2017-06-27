@@ -20,10 +20,13 @@
 
 package io.spine.examples.todolist.view.command;
 
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.action.CommandAction;
 import io.spine.examples.todolist.action.ExecuteCommandAction;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
+
+import static io.spine.base.Identifier.newUuid;
 
 /**
  * A {@code CommandView}, that allows to create a task in the quick mode.
@@ -36,8 +39,15 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
 
     public TaskCreationView() {
         super(false, newBuilder());
+        getState().setId(generatedId());
         addAction(new EnterDescription("Enter description", "d"));
         addAction(new ExecuteCommand(getState()));
+    }
+
+    private static TaskId generatedId() {
+        return TaskId.newBuilder()
+                     .setValue(newUuid())
+                     .build();
     }
 
     private static CreateBasicTaskVBuilder newBuilder() {
