@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.view.command;
 
+import io.spine.examples.todolist.action.CommandAction;
 import io.spine.examples.todolist.action.ExecuteCommandAction;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
@@ -35,11 +36,28 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
 
     public TaskCreationView() {
         super(false, newBuilder());
+        addAction(new EnterDescription("Enter description", "d"));
         addAction(new ExecuteCommand(getState()));
     }
 
     private static CreateBasicTaskVBuilder newBuilder() {
         return CreateBasicTaskVBuilder.newBuilder();
+    }
+
+    private static class EnterDescription extends CommandAction<CreateBasicTask,
+                                                                CreateBasicTaskVBuilder> {
+
+        private static final String PROMPT = "Please enter the task description";
+
+        private EnterDescription(String name, String shortcut) {
+            super(name, shortcut);
+        }
+
+        @Override
+        protected void updateState(CreateBasicTaskVBuilder state) {
+            final String description = promptUser(PROMPT);
+            state.setDescription(description);
+        }
     }
 
     private static class ExecuteCommand extends ExecuteCommandAction<CreateBasicTask,

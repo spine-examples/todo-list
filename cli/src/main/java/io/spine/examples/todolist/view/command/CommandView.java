@@ -64,7 +64,7 @@ public abstract class CommandView<M extends Message,
         display();
     }
 
-    protected B getState() {
+    public B getState() {
         return state;
     }
 }
