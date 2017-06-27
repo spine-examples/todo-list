@@ -20,9 +20,9 @@
 
 package io.spine.examples.todolist.view;
 
+import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.TransitionAction;
-import io.spine.examples.todolist.mode.UserIoTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

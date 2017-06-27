@@ -24,7 +24,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Queue;
 
-import static io.spine.examples.todolist.mode.DisplayHelper.getLineSeparator;
+import static io.spine.examples.todolist.DisplayHelper.getLineSeparator;
 import static java.util.Collections.unmodifiableCollection;
 
 /**

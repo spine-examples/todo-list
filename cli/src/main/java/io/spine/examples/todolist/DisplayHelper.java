@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode;
+package io.spine.examples.todolist;
 
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.q.projection.TaskView;

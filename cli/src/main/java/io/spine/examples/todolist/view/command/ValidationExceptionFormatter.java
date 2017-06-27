@@ -18,14 +18,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode.command;
+package io.spine.examples.todolist.view.command;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.FieldPath;
 import io.spine.validate.ConstraintViolation;
 import io.spine.validate.ValidationException;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import java.util.LinkedList;
+import java.util.List;
+
+import static java.lang.String.format;
 
 /**
  * Utilities for {@code ValidationException} formatting.
@@ -42,25 +45,22 @@ class ValidationExceptionFormatter {
     }
 
     /**
-     * Obtains a formatted representation of the specified {@code ValidationException}.
+     * Obtains error messages based on the specified {@code ValidationException}.
      *
-     * <p>The representation tells about a name of an invalid field.
-     *
-     * <p>If the specified {@code ValidationException} has two
-     * or more {@linkplain ConstraintViolation constraint violations},
-     * throws {@code IllegalArgumentException}.
+     * <p>The error message tells about a name of an invalid field.
      *
      * @param e the {@code ValidationException}
-     * @return a formatted string representation
+     * @return error messages
      */
-    static String format(ValidationException e) {
-        checkArgument(e.getConstraintViolations()
-                       .size() == 1);
-        final ConstraintViolation violation = e.getConstraintViolations()
-                                               .get(0);
-        final FieldPath fieldPath = violation.getFieldPath();
-        final int fieldPathSize = fieldPath.getFieldNameCount();
-        final String unqualifiedName = fieldPath.getFieldName(fieldPathSize - 1);
-        return String.format(ERROR_MSG_FORMAT, unqualifiedName);
+    static List<String> toErrorMessages(ValidationException e) {
+        final List<String> messages = new LinkedList<>();
+        for (ConstraintViolation violation : e.getConstraintViolations()) {
+            final FieldPath fieldPath = violation.getFieldPath();
+            final int fieldPathSize = fieldPath.getFieldNameCount();
+            final String unqualifiedName = fieldPath.getFieldName(fieldPathSize - 1);
+            final String errorMessage = format(ERROR_MSG_FORMAT, unqualifiedName);
+            messages.add(errorMessage);
+        }
+        return messages;
     }
 }

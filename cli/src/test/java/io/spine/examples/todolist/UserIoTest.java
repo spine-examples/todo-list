@@ -18,38 +18,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mode.list;
+package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.q.projection.MyListView;
-import io.spine.examples.todolist.q.projection.TaskView;
+import org.junit.jupiter.api.BeforeEach;
 
-import java.util.List;
-
-import static io.spine.examples.todolist.mode.DisplayHelper.constructUserFriendlyTaskView;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * A {@code Mode} for displaying {@link MyListView}.
- *
  * @author Dmytro Grankin
  */
-public class MyTasksListMode extends ListMode<TaskView> {
+public class UserIoTest {
 
-    private static final String EMPTY_MY_LIST_TASKS = "Task list is empty.";
+    private final TestUserCommunicator communicator = new TestUserCommunicator();
 
-    @Override
-    protected List<TaskView> receiveRecentState() {
-        final MyListView myListView = getClient().getMyListView();
-        return myListView.getMyList()
-                         .getItemsList();
+    @BeforeEach
+    void setUp() {
+        TestUserCommunicator.clearOutput();
     }
 
-    @Override
-    protected String getEmptyView() {
-        return EMPTY_MY_LIST_TASKS;
+    protected void assertOutput(String expected) {
+        assertEquals(expected, TestUserCommunicator.getOutput());
     }
 
-    @Override
-    protected String getItemView(TaskView item) {
-        return constructUserFriendlyTaskView(item);
+    protected void assertAllAnswersWereGiven() {
+        assertTrue(communicator.getAnswers()
+                               .isEmpty());
+    }
+
+    protected void addAnswer(String answer) {
+        communicator.addAnswer(answer);
+    }
+
+    protected TestUserCommunicator getCommunicator() {
+        return communicator;
     }
 }
