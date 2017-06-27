@@ -20,13 +20,9 @@
 
 package io.spine.examples.todolist.view.command;
 
-import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.ExecuteCommandAction;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * A {@code CommandView}, that allows to create a task in the quick mode.
@@ -38,32 +34,13 @@ import java.util.List;
 public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTaskVBuilder> {
 
     public TaskCreationView() {
-        super(false, getViewActions(), newBuilder());
-    }
-
-    private static List<Action> getViewActions() {
-        final CreateBasicTaskVBuilder builder = newBuilder();
-        return getViewActions(builder);
+        super(false, newBuilder());
+        addAction(new ExecuteCommand(getState()));
     }
 
     private static CreateBasicTaskVBuilder newBuilder() {
         return CreateBasicTaskVBuilder.newBuilder();
     }
-
-    private static List<Action> getViewActions(CreateBasicTaskVBuilder builder) {
-        return Arrays.asList(
-                new ExecuteCommand(builder)
-        );
-    }
-
-//    private class EnterDescription extends
-//                                   CommandAction<CreateBasicTask, CreateBasicTaskVBuilder> {
-//
-//        private EnterDescription(String name, String shortcut,
-//                                CreateBasicTaskVBuilder state) {
-//            super(name, shortcut, this, state);
-//        }
-//    }
 
     private static class ExecuteCommand extends ExecuteCommandAction<CreateBasicTask,
                                                                      CreateBasicTaskVBuilder> {

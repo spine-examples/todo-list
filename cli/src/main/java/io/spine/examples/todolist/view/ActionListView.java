@@ -29,6 +29,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.examples.todolist.action.Action.getShortcutFormat;
 import static io.spine.util.Exceptions.newIllegalArgumentException;
 import static java.lang.String.format;
@@ -92,8 +94,14 @@ public class ActionListView extends View {
                       .findFirst();
     }
 
-    private void executeAction(Action action) {
+    protected void executeAction(Action action) {
         action.execute(this);
+    }
+
+    protected void addAction(Action action) {
+        checkNotNull(action);
+        checkArgument(!actions.contains(action));
+        actions.add(action);
     }
 
     @VisibleForTesting

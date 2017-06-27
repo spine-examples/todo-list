@@ -21,9 +21,9 @@
 package io.spine.examples.todolist;
 
 import io.spine.examples.todolist.client.TodoClient;
-import io.spine.examples.todolist.mode.Mode;
-import io.spine.examples.todolist.mode.menu.MainMenu;
 import io.spine.examples.todolist.server.Server;
+import io.spine.examples.todolist.view.MainMenu;
+import io.spine.examples.todolist.view.View;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -36,7 +36,7 @@ import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 /**
  * Entry point to the command-line application.
  *
- * <p>To run this, use the following command:
+ * <p>To run application from command-line, use the following command:
  * <pre>{@code gradle runTodoList}</pre>
  *
  * @author Illia Shepilov
@@ -50,8 +50,8 @@ public class CliEntryPoint {
         final Server server = getServer();
         startServer(server);
         final TodoClient client = getClient();
-        final Mode entryPoint = new MainMenu();
-        entryPoint.start();
+        final View entryPoint = new MainMenu();
+        entryPoint.display(null);
         client.shutdown();
         server.shutdown();
     }
