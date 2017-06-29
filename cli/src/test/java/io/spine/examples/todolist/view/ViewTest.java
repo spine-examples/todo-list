@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.StaticTransitionAction;
 import io.spine.examples.todolist.action.TransitionAction;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,12 +42,12 @@ public class ViewTest {
 
     private final RootView rootView = new RootView();
     private final View childView = new ChildView();
-    private final TransitionAction displayChild = newAction(childView);
+    private final TransitionAction<View> displayChild = newAction(childView);
 
     @Test
     @DisplayName("not set first display cause for root view")
     void notSetFirstDisplayCause() {
-        final TransitionAction displayRoot = newAction(rootView);
+        final TransitionAction<View> displayRoot = newAction(rootView);
         displayRoot.execute(childView);
         assertNull(rootView.getFirstDisplayCause());
     }
@@ -65,7 +66,7 @@ public class ViewTest {
         displayChild.execute(rootView);
         assertSame(displayChild, childView.getFirstDisplayCause());
 
-        final TransitionAction secondDisplayCause = newAction(childView);
+        final TransitionAction<View> secondDisplayCause = newAction(childView);
         secondDisplayCause.execute(rootView);
         assertSame(displayChild, childView.getFirstDisplayCause());
     }
@@ -123,7 +124,7 @@ public class ViewTest {
         }
     }
 
-    private static TransitionAction newAction(View destination) {
-        return new TransitionAction("a", "a", destination);
+    private static TransitionAction<View> newAction(View destination) {
+        return new StaticTransitionAction<>("a", "a", destination);
     }
 }

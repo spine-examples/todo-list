@@ -18,28 +18,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.view;
+package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.StaticTransitionAction;
-import io.spine.examples.todolist.view.command.TaskCreationView;
+import io.spine.examples.todolist.view.View;
 
-import java.util.Arrays;
-import java.util.Collection;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * A {@link TransitionAction} without strictly known
+ * {@linkplain TransitionAction#destination destination}.
+ *
+ * <p>The destination view specifies a {@link #createDestination()} function.
+ *
+ * @param <V> {@inheritDoc}
  * @author Dmytro Grankin
  */
-public class MyTasksMenu extends ActionListView {
+public abstract class DynamicTransitionAction<V extends View> extends TransitionAction<V> {
 
-    public MyTasksMenu() {
-        super(false, getViewActions());
+    protected DynamicTransitionAction(String name, String shortcut) {
+        super(name, shortcut);
     }
 
-    private static Collection<Action> getViewActions() {
-        return Arrays.asList(
-                new StaticTransitionAction<>("Create task", "c", new TaskCreationView()),
-                MyTasksListView.newCreateAction("List tasks", "l")
-        );
+    /**
+     * Displays the {@linkplain #createDestination() destination view}.
+     *
+     * @param source {@inheritDoc}
+     */
+    @Override
+    public void execute(V source) {
+        checkNotNull(source);
+        setSource(source);
+        final V destination = createDestination();
+        setDestination(destination);
+        getDestination().display(this);
     }
+
+    protected abstract V createDestination();
 }

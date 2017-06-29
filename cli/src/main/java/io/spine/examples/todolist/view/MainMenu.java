@@ -21,10 +21,10 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.TransitionAction;
+import io.spine.examples.todolist.action.StaticTransitionAction;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 /**
  * Root view of the application.
@@ -37,8 +37,8 @@ public class MainMenu extends ActionListView {
         super(true, getViewActions());
     }
 
-    private static List<Action> getViewActions() {
+    private static Collection<Action> getViewActions() {
         return Collections.singletonList(
-                new TransitionAction("My tasks", "m", new MyTasksMenu()));
+                new StaticTransitionAction<>("My tasks", "m", new MyTasksMenu()));
     }
 }

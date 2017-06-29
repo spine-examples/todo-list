@@ -77,7 +77,7 @@ public abstract class View {
 
     protected abstract void display();
 
-    protected Action<View> createBackAction(String name, String shortcut) {
+    protected Action createBackAction(String name, String shortcut) {
         if (rootView) {
             return new PseudoAction(name, shortcut);
         }

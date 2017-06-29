@@ -20,26 +20,23 @@
 
 package io.spine.examples.todolist.view;
 
-import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.StaticTransitionAction;
-import io.spine.examples.todolist.view.command.TaskCreationView;
+import io.spine.examples.todolist.q.projection.TaskView;
 
-import java.util.Arrays;
-import java.util.Collection;
+import static io.spine.examples.todolist.DisplayHelper.constructUserFriendlyTaskView;
+import static java.util.Collections.emptySet;
 
 /**
  * @author Dmytro Grankin
  */
-public class MyTasksMenu extends ActionListView {
+class MyTaskDetailsView extends DetailsView<TaskView> {
 
-    public MyTasksMenu() {
-        super(false, getViewActions());
+    MyTaskDetailsView(TaskView state) {
+        super(false, emptySet(), state);
     }
 
-    private static Collection<Action> getViewActions() {
-        return Arrays.asList(
-                new StaticTransitionAction<>("Create task", "c", new TaskCreationView()),
-                MyTasksListView.newCreateAction("List tasks", "l")
-        );
+    @Override
+    protected void displayDetails() {
+        final String details = constructUserFriendlyTaskView(getState());
+        println(details);
     }
 }

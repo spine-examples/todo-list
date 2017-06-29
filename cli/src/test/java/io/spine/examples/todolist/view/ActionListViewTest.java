@@ -22,6 +22,7 @@ package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.StaticTransitionAction;
 import io.spine.examples.todolist.action.TransitionAction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -54,7 +55,7 @@ class ActionListViewTest extends UserIoTest {
     @DisplayName("not allow actions with back shortcut")
     void notAllowActionsWithBackShortcut() {
         final String backShortcut = getBackShortcut();
-        final TransitionAction action = new TransitionAction("action", backShortcut, childView);
+        final TransitionAction action = new StaticTransitionAction<>("action", backShortcut, childView);
         final Set<Action> actions = singleton(action);
         assertThrows(IllegalArgumentException.class, () -> new MainMenu(actions));
     }
@@ -63,8 +64,8 @@ class ActionListViewTest extends UserIoTest {
     @DisplayName("not allow addition of action with occupied shortcut")
     void notAllowActionWithOccupiedShortcut() {
         final String shortcut = "s";
-        final Action firstAction = new TransitionAction("to child", shortcut, childView);
-        final Action secondAction = new TransitionAction("to second child", shortcut,
+        final Action firstAction = new StaticTransitionAction<>("to child", shortcut, childView);
+        final Action secondAction = new StaticTransitionAction<>("to second child", shortcut,
                                                          new ChildView());
         mainView.addAction(firstAction);
 

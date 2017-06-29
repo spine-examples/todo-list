@@ -18,28 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.view;
+package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.StaticTransitionAction;
-import io.spine.examples.todolist.view.command.TaskCreationView;
-
-import java.util.Arrays;
-import java.util.Collection;
+import io.spine.examples.todolist.action.AbstractTransitionActionTestSuite.DisplayCounterView;
+import org.junit.jupiter.api.DisplayName;
 
 /**
  * @author Dmytro Grankin
  */
-public class MyTasksMenu extends ActionListView {
+@DisplayName("StaticTransitionAction should")
+class StaticTransitionActionTest
+        extends AbstractTransitionActionTestSuite<StaticTransitionAction<DisplayCounterView>> {
 
-    public MyTasksMenu() {
-        super(false, getViewActions());
+    StaticTransitionActionTest() {
+        super(newAction());
     }
 
-    private static Collection<Action> getViewActions() {
-        return Arrays.asList(
-                new StaticTransitionAction<>("Create task", "c", new TaskCreationView()),
-                MyTasksListView.newCreateAction("List tasks", "l")
-        );
+    private static StaticTransitionAction<DisplayCounterView> newAction() {
+        return new StaticTransitionAction<>(ACTION_NAME, SHORTCUT, newDisplayCounterView());
     }
 }

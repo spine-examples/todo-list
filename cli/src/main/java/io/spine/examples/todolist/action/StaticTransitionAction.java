@@ -18,28 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.view;
+package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.StaticTransitionAction;
-import io.spine.examples.todolist.view.command.TaskCreationView;
-
-import java.util.Arrays;
-import java.util.Collection;
+import io.spine.examples.todolist.view.View;
 
 /**
+ * A {@link TransitionAction}, that specifies
+ * {@linkplain TransitionAction#destination destination view} during
+ * {@linkplain #StaticTransitionAction(String, String, View) object creation}.
+ *
+ * @param <V> {@inheritDoc}
  * @author Dmytro Grankin
  */
-public class MyTasksMenu extends ActionListView {
+public class StaticTransitionAction<V extends View> extends TransitionAction<V> {
 
-    public MyTasksMenu() {
-        super(false, getViewActions());
+    public StaticTransitionAction(String name, String shortcut, V destination) {
+        super(name, shortcut);
+        setDestination(destination);
     }
 
-    private static Collection<Action> getViewActions() {
-        return Arrays.asList(
-                new StaticTransitionAction<>("Create task", "c", new TaskCreationView()),
-                MyTasksListView.newCreateAction("List tasks", "l")
-        );
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute(V source) {
+        setSource(source);
+        getDestination().display(this);
     }
 }

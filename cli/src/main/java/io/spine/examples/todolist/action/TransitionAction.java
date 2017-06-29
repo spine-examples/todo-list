@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.action;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.view.View;
 
 import javax.annotation.Nullable;
@@ -32,9 +31,10 @@ import static io.spine.util.Exceptions.newIllegalStateException;
  * An {@code TransitionAction} represents transition from a {@linkplain #source source view}
  * to a {@linkplain #destination destination view}.
  *
+ * @param <V> the type of the source and the destination view
  * @author Dmytro Grankin
  */
-public class TransitionAction extends Action {
+public abstract class TransitionAction<V extends View> extends Action<V> {
 
     /**
      * A source {@code View} of the action.
@@ -42,47 +42,50 @@ public class TransitionAction extends Action {
      * <p>The source is unknown until the action was not {@linkplain #execute(View) executed}.
      */
     @Nullable
-    private View source;
+    private V source;
 
     /**
      * A destination {@code View} of the action.
      */
-    private final View destination;
+    private V destination;
 
-    public TransitionAction(String name, String shortcut, View destination) {
+    protected TransitionAction(String name, String shortcut) {
         super(name, shortcut);
-        checkNotNull(destination);
-        this.destination = destination;
     }
 
     /**
-     * {@inheritDoc}
+     * Creates reverse action for the action with the specified name and the shortcut.
+     *
+     * @param name     the name of the reverse action
+     * @param shortcut the shortcut of the reverse action
+     * @return the reverse action
      */
-    @Override
-    public void execute(View source) {
-        checkNotNull(source);
-        this.source = source;
-        destination.display(this);
-    }
-
-    public TransitionAction createReverseAction(String name, String shortcut) {
-        if (source == null) {
+    public TransitionAction<V> createReverseAction(String name, String shortcut) {
+        if (getSource() == null) {
             throw newIllegalStateException("There is no source view for the action, " +
                                                    "cannot create reverse action.");
         }
 
-        final View destination = source;
-        return new TransitionAction(name, shortcut, destination);
+        final V destination = getSource();
+        return new StaticTransitionAction<>(name, shortcut, destination);
     }
 
-    @VisibleForTesting
+    public void setSource(V source) {
+        checkNotNull(source);
+        this.source = source;
+    }
+
+    public void setDestination(V destination) {
+        checkNotNull(destination);
+        this.destination = destination;
+    }
+
     @Nullable
-    View getSource() {
+    protected V getSource() {
         return source;
     }
 
-    @VisibleForTesting
-    View getDestination() {
+    protected V getDestination() {
         return destination;
     }
 }

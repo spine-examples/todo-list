@@ -20,26 +20,32 @@
 
 package io.spine.examples.todolist.view;
 
+import com.google.protobuf.Message;
 import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.StaticTransitionAction;
-import io.spine.examples.todolist.view.command.TaskCreationView;
 
-import java.util.Arrays;
 import java.util.Collection;
 
 /**
  * @author Dmytro Grankin
  */
-public class MyTasksMenu extends ActionListView {
+public abstract class DetailsView<S extends Message> extends ActionListView {
 
-    public MyTasksMenu() {
-        super(false, getViewActions());
+    private final S state;
+
+    protected DetailsView(boolean rootView, Collection<Action> actions, S state) {
+        super(rootView, actions);
+        this.state = state;
     }
 
-    private static Collection<Action> getViewActions() {
-        return Arrays.asList(
-                new StaticTransitionAction<>("Create task", "c", new TaskCreationView()),
-                MyTasksListView.newCreateAction("List tasks", "l")
-        );
+    @Override
+    protected void display() {
+        displayDetails();
+        super.display();
+    }
+
+    protected abstract void displayDetails();
+
+    protected S getState() {
+        return state;
     }
 }
