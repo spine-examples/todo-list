@@ -26,8 +26,6 @@ import io.spine.examples.todolist.view.MainMenu;
 import io.spine.examples.todolist.view.View;
 
 import java.io.IOException;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static io.spine.examples.todolist.AppConfig.getClient;
 import static io.spine.examples.todolist.AppConfig.getServer;
@@ -57,17 +55,14 @@ public class CliEntryPoint {
     }
 
     private static void startServer(Server server) throws InterruptedException {
-        final CountDownLatch serverStartLatch = new CountDownLatch(1);
         final Thread serverThread = new Thread(() -> {
             try {
                 server.start();
-                serverStartLatch.countDown();
             } catch (IOException e) {
                 throw illegalStateWithCauseOf(e);
             }
         });
 
         serverThread.start();
-        serverStartLatch.await(1500, TimeUnit.MILLISECONDS);
     }
 }
