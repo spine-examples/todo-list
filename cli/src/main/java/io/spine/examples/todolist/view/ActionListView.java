@@ -106,7 +106,8 @@ public class ActionListView extends View {
         action.execute(this);
     }
 
-    protected void addAction(Action action) {
+    @VisibleForTesting
+    void addAction(Action action) {
         checkNotNull(action);
         checkArgument(!actions.contains(action));
         actions.add(action);

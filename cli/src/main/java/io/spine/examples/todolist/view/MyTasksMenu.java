@@ -39,7 +39,6 @@ class MyTasksMenu extends ActionListView {
     private static Collection<Action> getViewActions() {
         return Arrays.asList(
                 new StaticTransitionAction<>("Create task", "c", new TaskCreationView()),
-                MyTasksListView.newTransitionAction("List tasks", "l")
-        );
+                MyTasksListView.newTransitionAction("List tasks", "l"));
     }
 }

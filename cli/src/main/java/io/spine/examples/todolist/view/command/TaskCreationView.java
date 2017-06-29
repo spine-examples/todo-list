@@ -21,10 +21,14 @@
 package io.spine.examples.todolist.view.command;
 
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.CommandAction;
 import io.spine.examples.todolist.action.ExecuteCommandAction;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 import static io.spine.base.Identifier.newUuid;
 
@@ -38,10 +42,14 @@ import static io.spine.base.Identifier.newUuid;
 public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTaskVBuilder> {
 
     public TaskCreationView() {
-        super(false);
+        super(false, getViewActions());
         getState().setId(generatedId());
-        addAction(new EnterDescription("Enter description", "d"));
-        addAction(new ExecuteCommand());
+    }
+
+    private static Collection<Action> getViewActions() {
+        return Arrays.asList(
+                new EnterDescription("Enter description", "d"),
+                new ExecuteCommand());
     }
 
     private static TaskId generatedId() {
@@ -51,7 +59,7 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
     }
 
     private static class EnterDescription extends CommandAction<CreateBasicTask,
-                                                                CreateBasicTaskVBuilder> {
+            CreateBasicTaskVBuilder> {
 
         private static final String PROMPT = "Please enter the task description";
 
@@ -67,7 +75,7 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
     }
 
     private static class ExecuteCommand extends ExecuteCommandAction<CreateBasicTask,
-                                                                     CreateBasicTaskVBuilder> {
+            CreateBasicTaskVBuilder> {
 
         @Override
         protected void executeCommand(CreateBasicTask commandMessage) {

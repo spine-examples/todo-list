@@ -28,6 +28,7 @@ import io.spine.validate.ValidatingBuilder;
 import io.spine.validate.ValidatingBuilders;
 import io.spine.validate.ValidationException;
 
+import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -53,8 +54,8 @@ public abstract class CommandView<M extends Message,
 
     private final B state;
 
-    protected CommandView(boolean rootView) {
-        super(rootView, emptySet());
+    protected CommandView(boolean rootView, Collection<Action> actions) {
+        super(rootView, actions);
         this.state = newBuilderInstance();
     }
 
