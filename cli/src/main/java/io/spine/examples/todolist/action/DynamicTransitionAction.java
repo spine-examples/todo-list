@@ -20,6 +20,8 @@
 
 package io.spine.examples.todolist.action;
 
+import io.spine.examples.todolist.AppConfig;
+import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.view.View;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -28,12 +30,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A {@link TransitionAction} without strictly known
  * {@linkplain TransitionAction#destination destination}.
  *
- * <p>The destination view specifies a {@link #createDestination()} function.
+ * <p>Use this action if a destination view should display a recent state of
+ * server-side objects.
  *
  * @param <V> {@inheritDoc}
  * @author Dmytro Grankin
  */
 public abstract class DynamicTransitionAction<V extends View> extends TransitionAction<V> {
+
+    private final TodoClient client = AppConfig.getClient();
 
     protected DynamicTransitionAction(String name, String shortcut) {
         super(name, shortcut);
@@ -54,4 +59,8 @@ public abstract class DynamicTransitionAction<V extends View> extends Transition
     }
 
     protected abstract V createDestination();
+
+    protected TodoClient getClient() {
+        return client;
+    }
 }
