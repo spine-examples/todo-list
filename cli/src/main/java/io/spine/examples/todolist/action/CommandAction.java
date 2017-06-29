@@ -29,8 +29,8 @@ import io.spine.validate.ValidatingBuilder;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A {@code CommandAction} is a small user action,
- * that updates {@linkplain CommandView#state state of the command view}.
+ * A {@code CommandAction} is a user action, that updates
+ * {@linkplain CommandView#state state of the command view}.
  *
  * @param <M> the type of the command message
  * @param <B> the validating builder for the command message

@@ -24,14 +24,16 @@ import io.spine.examples.todolist.AppConfig;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.view.View;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
- * A {@link TransitionAction} without strictly known
+ * A {@link TransitionAction} without a pre-defined
  * {@linkplain TransitionAction#destination destination}.
  *
- * <p>Use this action if a destination view should display a recent state of
- * server-side objects.
+ * <p>Actions are specified at compile time and there are data, that vary during runtime.
+ * So, if there is a {@link View} creation of which depends on a vary data,
+ * use {@code DynamicTransitionAction} to specify transition to such a view.
+ *
+ * <p>The destination is {@linkplain #refreshDestination() refreshed}
+ * during every {@linkplain #execute(View) action execution}.
  *
  * @param <V> {@inheritDoc}
  * @author Dmytro Grankin
@@ -45,19 +47,27 @@ public abstract class DynamicTransitionAction<V extends View> extends Transition
     }
 
     /**
-     * Displays the {@linkplain #createDestination() destination view}.
+     * Displays a {@linkplain #refreshDestination() refreshed destination view}.
      *
      * @param source {@inheritDoc}
      */
     @Override
     public void execute(V source) {
-        checkNotNull(source);
         setSource(source);
-        final V destination = createDestination();
-        setDestination(destination);
+        refreshDestination();
         getDestination().display(this);
     }
 
+    private void refreshDestination() {
+        final V destination = createDestination();
+        setDestination(destination);
+    }
+
+    /**
+     * Creates an instance of the destination view.
+     *
+     * @return the destination view
+     */
     protected abstract V createDestination();
 
     protected TodoClient getClient() {

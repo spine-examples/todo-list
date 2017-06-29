@@ -30,7 +30,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
 
 /**
- * An {@code Action} encapsulates navigation among {@linkplain View views}.
+ * An {@code Action} encapsulates navigation between {@linkplain View views}.
  *
  * @param <S> the type of source {@link View} for the action
  * @author Dmytro Grankin
