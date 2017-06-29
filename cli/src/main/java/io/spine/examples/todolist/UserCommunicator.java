@@ -28,10 +28,10 @@ package io.spine.examples.todolist;
 public interface UserCommunicator {
 
     /**
-     * Prompts an user and obtains an answer for it.
+     * Prompts a user for an input and receives the input value.
      *
      * @param prompt the prompt to display
-     * @return user answer
+     * @return the input value
      */
     String promptUser(String prompt);
 
