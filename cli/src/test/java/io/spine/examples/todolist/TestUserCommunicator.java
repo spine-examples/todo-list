@@ -24,7 +24,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Queue;
 
-import static io.spine.examples.todolist.DisplayHelper.getLineSeparator;
+import static java.lang.System.lineSeparator;
 import static java.util.Collections.unmodifiableCollection;
 
 /**
@@ -49,7 +49,7 @@ public class TestUserCommunicator implements UserCommunicator {
     @Override
     public void println(String message) {
         builder.append(message)
-               .append(getLineSeparator());
+               .append(lineSeparator());
     }
 
     public void addAnswer(String answer) {

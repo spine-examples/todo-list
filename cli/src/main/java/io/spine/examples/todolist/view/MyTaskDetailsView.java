@@ -22,7 +22,10 @@ package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.q.projection.TaskView;
 
-import static io.spine.examples.todolist.DisplayHelper.constructUserFriendlyTaskView;
+import static io.spine.examples.todolist.view.DisplayFormatter.DESCRIPTION_VALUE;
+import static io.spine.examples.todolist.view.DisplayFormatter.DUE_DATE_VALUE;
+import static io.spine.examples.todolist.view.DisplayFormatter.PRIORITY_VALUE;
+import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptySet;
 
 /**
@@ -36,7 +39,21 @@ class MyTaskDetailsView extends DetailsView<TaskView> {
 
     @Override
     protected void displayDetails() {
-        final String details = constructUserFriendlyTaskView(getState());
+        final String details = format(getState());
         println(details);
+    }
+
+    private static String format(TaskView view) {
+        final String date = DisplayFormatter.format(view.getDueDate());
+        return new StringBuilder().append(DESCRIPTION_VALUE)
+                                  .append(view.getDescription())
+                                  .append(lineSeparator())
+                                  .append(PRIORITY_VALUE)
+                                  .append(view.getPriority())
+                                  .append(lineSeparator())
+                                  .append(DUE_DATE_VALUE)
+                                  .append(date)
+                                  .append(lineSeparator())
+                                  .toString();
     }
 }
