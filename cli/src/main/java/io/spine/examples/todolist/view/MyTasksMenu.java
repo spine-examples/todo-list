@@ -30,16 +30,16 @@ import java.util.Collection;
 /**
  * @author Dmytro Grankin
  */
-public class MyTasksMenu extends ActionListView {
+class MyTasksMenu extends ActionListView {
 
-    public MyTasksMenu() {
+    MyTasksMenu() {
         super(false, getViewActions());
     }
 
     private static Collection<Action> getViewActions() {
         return Arrays.asList(
                 new StaticTransitionAction<>("Create task", "c", new TaskCreationView()),
-                MyTasksListView.newCreateAction("List tasks", "l")
+                MyTasksListView.newTransitionAction("List tasks", "l")
         );
     }
 }

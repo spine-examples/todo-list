@@ -46,6 +46,11 @@ public abstract class CommandAction<M extends Message,
         super(name, shortcut);
     }
 
+    /**
+     * Updates a state of the specified source and then displays it.
+     *
+     * @param source {@inheritDoc}
+     */
     @Override
     public void execute(CommandView<M, B> source) {
         checkNotNull(source);

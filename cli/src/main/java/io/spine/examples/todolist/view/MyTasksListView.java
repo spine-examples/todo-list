@@ -28,6 +28,7 @@ import io.spine.examples.todolist.action.TransitionAction;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskView;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,8 +41,8 @@ class MyTasksListView extends ActionListView {
         super(false, toActions(myListView));
     }
 
-    private static List<Action> toActions(MyListView myListView) {
-        final List<Action> actions = new LinkedList<>();
+    private static Collection<Action> toActions(MyListView myListView) {
+        final Collection<Action> actions = new LinkedList<>();
         final List<TaskView> taskViews = myListView.getMyList()
                                                    .getItemsList();
         for (int i = 0; i < taskViews.size(); i++) {
@@ -49,19 +50,20 @@ class MyTasksListView extends ActionListView {
             final String name = taskView.getDescription();
             final String shortcut = String.valueOf(i + 1);
             final View destination = new MyTaskDetailsView(taskView);
-            final TransitionAction action = new StaticTransitionAction<>(name, shortcut, destination);
+            final TransitionAction action = new StaticTransitionAction<>(name, shortcut,
+                                                                         destination);
             actions.add(action);
         }
         return actions;
     }
 
-    static CreateMyTasksListView newCreateAction(String name, String shortcut) {
-        return new CreateMyTasksListView(name, shortcut);
+    static OpenMyTasksListView newTransitionAction(String name, String shortcut) {
+        return new OpenMyTasksListView(name, shortcut);
     }
 
-    private static class CreateMyTasksListView extends DynamicTransitionAction {
+    private static class OpenMyTasksListView extends DynamicTransitionAction {
 
-        private CreateMyTasksListView(String name, String shortcut) {
+        private OpenMyTasksListView(String name, String shortcut) {
             super(name, shortcut);
         }
 

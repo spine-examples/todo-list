@@ -26,6 +26,9 @@ import io.spine.examples.todolist.action.Action;
 import java.util.Collection;
 
 /**
+ * Detailed view of a {@link #state}.
+ *
+ * @param <S> the type of the displayed state
  * @author Dmytro Grankin
  */
 public abstract class DetailsView<S extends Message> extends ActionListView {

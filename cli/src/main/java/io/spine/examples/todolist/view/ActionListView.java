@@ -37,6 +37,9 @@ import static java.lang.String.format;
 import static java.util.Collections.unmodifiableSet;
 
 /**
+ * An {@code ActionListView} displays the {@link #actions} and provides
+ * {@linkplain #selectAction() selection} mechanism for them.
+ *
  * @author Dmytro Grankin
  */
 public class ActionListView extends View {
