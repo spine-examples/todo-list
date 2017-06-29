@@ -49,7 +49,7 @@ public abstract class TransitionAction<V extends View> extends Action<V> {
      */
     private V destination;
 
-    protected TransitionAction(String name, String shortcut) {
+    protected TransitionAction(String name, Shortcut shortcut) {
         super(name, shortcut);
     }
 
@@ -60,7 +60,7 @@ public abstract class TransitionAction<V extends View> extends Action<V> {
      * @param shortcut the shortcut of the reverse action
      * @return the reverse action
      */
-    public TransitionAction<V> createReverseAction(String name, String shortcut) {
+    public TransitionAction<V> createReverseAction(String name, Shortcut shortcut) {
         if (getSource() == null) {
             throw newIllegalStateException("There is no source view for the action, " +
                                                    "cannot create reverse action.");

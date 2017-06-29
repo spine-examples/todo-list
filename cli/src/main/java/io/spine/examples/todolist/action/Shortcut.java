@@ -20,29 +20,52 @@
 
 package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.view.View;
+import com.google.common.base.Preconditions;
+
+import java.util.Objects;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
- * A {@link TransitionAction}, that specifies
- * {@linkplain TransitionAction#destination destination view} during
- * {@linkplain #StaticTransitionAction(String, Shortcut, View)} object creation}.
+ * Value object, that represents a shortcut for an {@link Action}.
  *
- * @param <V> {@inheritDoc}
  * @author Dmytro Grankin
  */
-public class StaticTransitionAction<V extends View> extends TransitionAction<V> {
+public class Shortcut {
 
-    public StaticTransitionAction(String name, Shortcut shortcut, V destination) {
-        super(name, shortcut);
-        setDestination(destination);
+    private final String value;
+
+    public Shortcut(String value) {
+        checkArgument(!isNullOrEmpty(value));
+        this.value = value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    public String getValue() {
+        return value;
+    }
+
     @Override
-    public void execute(V source) {
-        setSource(source);
-        getDestination().display(this);
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        final Shortcut other = (Shortcut) o;
+
+        return Objects.equals(value, other.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(value);
+    }
+
+    @Override
+    public String toString() {
+        return value;
     }
 }

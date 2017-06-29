@@ -42,11 +42,10 @@ public abstract class Action<S extends View> {
     private static final String SHORTCUT_NAME_SEPARATOR = " ";
 
     private final String name;
-    private final String shortcut;
+    private final Shortcut shortcut;
 
-    protected Action(String name, String shortcut) {
+    protected Action(String name, Shortcut shortcut) {
         checkArgument(!isNullOrEmpty(name));
-        checkArgument(!isNullOrEmpty(shortcut));
         this.name = name;
         this.shortcut = shortcut;
     }
@@ -62,7 +61,7 @@ public abstract class Action<S extends View> {
         return name;
     }
 
-    public String getShortcut() {
+    public Shortcut getShortcut() {
         return shortcut;
     }
 

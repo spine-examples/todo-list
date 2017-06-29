@@ -22,6 +22,7 @@ package io.spine.examples.todolist.view.command;
 
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.test.CreateComment;
 import io.spine.examples.todolist.test.CreateCommentVBuilder;
 import io.spine.validate.ValidationException;
@@ -45,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("CommandView should")
 class CommandViewTest extends UserIoTest {
 
-    private static final String BACK_SHORTCUT = getBackShortcut();
+    private static final Shortcut BACK_SHORTCUT = getBackShortcut();
 
     private final CreateCommentView view = new CreateCommentView();
     private final Action buildState = new BuildState();
@@ -63,7 +64,7 @@ class CommandViewTest extends UserIoTest {
                      () -> buildState.execute(view));
         assertFalse(view.wasDisplayed);
 
-        addAnswer(BACK_SHORTCUT);
+        addAnswer(BACK_SHORTCUT.getValue());
         view.executeAction(buildState);
 
         assertTrue(view.wasDisplayed);
@@ -99,7 +100,7 @@ class CommandViewTest extends UserIoTest {
     private static class BuildState extends Action<CreateCommentView> {
 
         private BuildState() {
-            super("b", "b");
+            super("b", new Shortcut("f"));
         }
 
         @Override

@@ -23,6 +23,7 @@ package io.spine.examples.todolist.view;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.DynamicTransitionAction;
+import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskView;
@@ -48,20 +49,21 @@ class MyTasksListView extends ActionListView {
         for (int i = 0; i < taskViews.size(); i++) {
             final TaskView taskView = taskViews.get(i);
             final String name = taskView.getDescription();
-            final String shortcut = String.valueOf(i + 1);
+            final String shortcutValue = String.valueOf(i + 1);
+            final Shortcut shortcut = new Shortcut(shortcutValue);
             final TransitionAction action = new OpenTaskDetails(name, shortcut, taskView.getId());
             actions.add(action);
         }
         return actions;
     }
 
-    static OpenMyTasksList newTransitionAction(String name, String shortcut) {
+    static OpenMyTasksList newTransitionAction(String name, Shortcut shortcut) {
         return new OpenMyTasksList(name, shortcut);
     }
 
     private static class OpenMyTasksList extends DynamicTransitionAction {
 
-        private OpenMyTasksList(String name, String shortcut) {
+        private OpenMyTasksList(String name, Shortcut shortcut) {
             super(name, shortcut);
         }
 
@@ -80,7 +82,7 @@ class MyTasksListView extends ActionListView {
 
         private final TaskId taskId;
 
-        private OpenTaskDetails(String name, String shortcut, TaskId taskId) {
+        private OpenTaskDetails(String name, Shortcut shortcut, TaskId taskId) {
             super(name, shortcut);
             this.taskId = taskId;
         }

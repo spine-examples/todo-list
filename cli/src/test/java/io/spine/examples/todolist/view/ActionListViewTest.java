@@ -22,6 +22,7 @@ package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.StaticTransitionAction;
 import io.spine.examples.todolist.action.TransitionAction;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,7 +55,7 @@ class ActionListViewTest extends UserIoTest {
     @Test
     @DisplayName("not allow actions with back shortcut")
     void notAllowActionsWithBackShortcut() {
-        final String backShortcut = getBackShortcut();
+        final Shortcut backShortcut = getBackShortcut();
         final TransitionAction action = new StaticTransitionAction<>("action", backShortcut, childView);
         final Set<Action> actions = singleton(action);
         assertThrows(IllegalArgumentException.class, () -> new MainMenu(actions));
@@ -63,7 +64,7 @@ class ActionListViewTest extends UserIoTest {
     @Test
     @DisplayName("not allow addition of action with occupied shortcut")
     void notAllowActionWithOccupiedShortcut() {
-        final String shortcut = "s";
+        final Shortcut shortcut = new Shortcut("s");
         final Action firstAction = new StaticTransitionAction<>("to child", shortcut, childView);
         final Action secondAction = new StaticTransitionAction<>("to second child", shortcut,
                                                          new ChildView());
@@ -89,7 +90,7 @@ class ActionListViewTest extends UserIoTest {
     @Test
     @DisplayName("ask about action selection while the shortcut is invalid")
     void askActionSelection() {
-        final String validAnswer = getBackShortcut();
+        final String validAnswer = getBackShortcut().getValue();
         addAnswer("invalid answer");
         addAnswer(validAnswer);
 

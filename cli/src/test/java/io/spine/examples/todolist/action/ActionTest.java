@@ -37,16 +37,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ActionTest {
 
     private static final String ACTION_NAME = "action";
-    private static final String SHORTCUT = "s";
+    private static final Shortcut SHORTCUT = new Shortcut("s");
     private static final Action action = new ActionImpl(ACTION_NAME, SHORTCUT);
 
     @Test
-    @DisplayName("not allow null or empty name or shortcut")
+    @DisplayName("not allow null or empty name")
     void notAllowEmptyStrings() {
-        final String invalid = "";
-        final String valid = "s";
-        assertThrows(IllegalArgumentException.class, () -> new ActionImpl(invalid, valid));
-        assertThrows(IllegalArgumentException.class, () -> new ActionImpl(valid, invalid));
+        final String emptyString = "";
+        assertThrows(IllegalArgumentException.class, () -> new ActionImpl(emptyString, SHORTCUT));
+        assertThrows(IllegalArgumentException.class, () -> new ActionImpl(null, SHORTCUT));
     }
 
     @Test
@@ -62,14 +61,14 @@ class ActionTest {
     @Test
     @DisplayName("override `toString`")
     void overrideToString() {
-        final String formattedShortcut = format(getShortcutFormat(), SHORTCUT);
+        final String formattedShortcut = format(getShortcutFormat(), SHORTCUT.getValue());
         final String expectedString = formattedShortcut + getShortcutNameSeparator() + ACTION_NAME;
         assertEquals(expectedString, action.toString());
     }
 
     private static class ActionImpl extends Action {
 
-        private ActionImpl(String name, String shortcut) {
+        private ActionImpl(String name, Shortcut shortcut) {
             super(name, shortcut);
         }
 

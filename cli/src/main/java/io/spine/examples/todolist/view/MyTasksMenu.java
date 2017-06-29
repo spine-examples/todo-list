@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.StaticTransitionAction;
 import io.spine.examples.todolist.view.command.TaskCreationView;
 
@@ -38,7 +39,8 @@ class MyTasksMenu extends ActionListView {
 
     private static Collection<Action> getViewActions() {
         return Arrays.asList(
-                new StaticTransitionAction<>("Create task", "c", new TaskCreationView()),
-                MyTasksListView.newTransitionAction("List tasks", "l"));
+                new StaticTransitionAction<>("Create task", new Shortcut("c"),
+                                             new TaskCreationView()),
+                MyTasksListView.newTransitionAction("List tasks", new Shortcut("l")));
     }
 }

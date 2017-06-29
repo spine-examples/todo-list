@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.StaticTransitionAction;
 import io.spine.examples.todolist.action.TransitionAction;
 import org.junit.jupiter.api.DisplayName;
@@ -39,6 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @DisplayName("View should")
 public class ViewTest {
+
+    private static final Shortcut SHORTCUT = new Shortcut("b");
 
     private final RootView rootView = new RootView();
     private final View childView = new ChildView();
@@ -75,11 +78,10 @@ public class ViewTest {
     @DisplayName("create pseudo back action for root view")
     void createPseudoBackAction() {
         final String backName = "Back";
-        final String backShortcut = "b";
-        final Action back = rootView.createBackAction(backName, backShortcut);
+        final Action back = rootView.createBackAction(backName, SHORTCUT);
 
         assertEquals(backName, back.getName());
-        assertEquals(backShortcut, back.getShortcut());
+        assertEquals(SHORTCUT, back.getShortcut());
         assertThat(back, instanceOf(View.PseudoAction.class));
     }
 
@@ -87,14 +89,14 @@ public class ViewTest {
     @DisplayName("not create back action for child view if `firstDisplayCause` is unknown")
     void notCreateBackAction() {
         assertThrows(IllegalStateException.class,
-                     () -> childView.createBackAction("b", "b"));
+                     () -> childView.createBackAction("b", SHORTCUT));
     }
 
     @Test
     @DisplayName("create usual back action for child view")
     void createUsualBackAction() {
         displayChild.execute(rootView);
-        final Action back = childView.createBackAction("b", "b");
+        final Action back = childView.createBackAction("b", SHORTCUT);
         back.execute(childView);
         assertTrue(rootView.wasDisplayed);
     }
@@ -125,6 +127,7 @@ public class ViewTest {
     }
 
     private static TransitionAction<View> newAction(View destination) {
-        return new StaticTransitionAction<>("a", "a", destination);
+        final Shortcut shortcut = new Shortcut("a");
+        return new StaticTransitionAction<>("a", shortcut, destination);
     }
 }

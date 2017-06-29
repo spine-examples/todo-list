@@ -58,7 +58,7 @@ class DynamicTransitionActionTest
 
         private static final DisplayCounterView INITIAL_DESTINATION = newDisplayCounterView(0);
 
-        private ADynamicTransitionAction(String name, String shortcut) {
+        private ADynamicTransitionAction(String name, Shortcut shortcut) {
             super(name, shortcut);
             setDestination(INITIAL_DESTINATION);
         }

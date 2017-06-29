@@ -22,6 +22,7 @@ package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.Shortcut;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -45,7 +46,7 @@ import static java.util.Collections.unmodifiableSet;
 public class ActionListView extends View {
 
     private static final String BACK_NAME = "Back";
-    private static final String BACK_SHORTCUT = "b";
+    private static final Shortcut BACK_SHORTCUT = new Shortcut("b");
     private static final String ACTION_SELECTION_TIP = format(getShortcutFormat(), "?");
     private static final String SELECT_ACTION_MSG = "Select an action " + ACTION_SELECTION_TIP;
     private static final String INVALID_SELECTION_MSG = "There is no action with specified shortcut.";
@@ -119,12 +120,12 @@ public class ActionListView extends View {
     }
 
     @VisibleForTesting
-    public static String getBackShortcut() {
+    public static Shortcut getBackShortcut() {
         return BACK_SHORTCUT;
     }
 
     private static void checkActions(Collection<Action> actions) {
-        final Predicate<Action> predicate = new ShortcutMatchPredicate(BACK_SHORTCUT);
+        final Predicate<Action> predicate = new ShortcutMatchPredicate(BACK_SHORTCUT.getValue());
         final boolean containsConflictAction = actions.stream()
                                                       .anyMatch(predicate);
         if (containsConflictAction) {
@@ -135,16 +136,17 @@ public class ActionListView extends View {
 
     private static class ShortcutMatchPredicate implements Predicate<Action> {
 
-        private final String shortcut;
+        private final String shortcutValue;
 
-        private ShortcutMatchPredicate(String shortcut) {
-            this.shortcut = shortcut;
+        private ShortcutMatchPredicate(String shortcutValue) {
+            this.shortcutValue = shortcutValue;
         }
 
         @Override
         public boolean test(Action action) {
             return action.getShortcut()
-                         .equals(shortcut);
+                         .getValue()
+                         .equals(shortcutValue);
         }
     }
 }

@@ -42,7 +42,7 @@ public abstract class DynamicTransitionAction<V extends View> extends Transition
 
     private final TodoClient client = AppConfig.getClient();
 
-    protected DynamicTransitionAction(String name, String shortcut) {
+    protected DynamicTransitionAction(String name, Shortcut shortcut) {
         super(name, shortcut);
     }
 

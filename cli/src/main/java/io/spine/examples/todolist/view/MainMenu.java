@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.StaticTransitionAction;
 
 import java.util.Collection;
@@ -39,6 +40,6 @@ public class MainMenu extends ActionListView {
 
     private static Collection<Action> getViewActions() {
         return Collections.singletonList(
-                new StaticTransitionAction<>("My tasks", "m", new MyTasksMenu()));
+                new StaticTransitionAction<>("My tasks", new Shortcut("m"), new MyTasksMenu()));
     }
 }

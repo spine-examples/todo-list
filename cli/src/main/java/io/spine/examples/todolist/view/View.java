@@ -24,6 +24,7 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.UserCommunicator;
 import io.spine.examples.todolist.UserCommunicatorImpl;
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
 
 import javax.annotation.Nullable;
@@ -77,7 +78,7 @@ public abstract class View {
 
     protected abstract void display();
 
-    protected Action createBackAction(String name, String shortcut) {
+    protected Action createBackAction(String name, Shortcut shortcut) {
         if (rootView) {
             return new PseudoAction(name, shortcut);
         }
@@ -118,7 +119,7 @@ public abstract class View {
     @VisibleForTesting
     static class PseudoAction extends Action<View> {
 
-        private PseudoAction(String name, String shortcut) {
+        private PseudoAction(String name, Shortcut shortcut) {
             super(name, shortcut);
         }
 

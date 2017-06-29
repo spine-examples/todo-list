@@ -38,7 +38,7 @@ abstract class AbstractTransitionActionTestSuite<T extends TransitionAction<
         AbstractTransitionActionTestSuite.DisplayCounterView>> {
 
     static final String ACTION_NAME = "static transition action";
-    static final String SHORTCUT = "s";
+    static final Shortcut SHORTCUT = new Shortcut("s");
 
     private final T action;
 
@@ -86,14 +86,14 @@ abstract class AbstractTransitionActionTestSuite<T extends TransitionAction<
     @DisplayName("not create reverse action if source view for the action is unknown")
     void notCreateReverseAction() {
         assertThrows(IllegalStateException.class,
-                     () -> action.createReverseAction("r", "r"));
+                     () -> action.createReverseAction("r", SHORTCUT));
     }
 
     @Test
     @DisplayName("create reverse action")
     void createReverseAction() {
         final String reverseName = "Reverse";
-        final String reverseShortcut = "r";
+        final Shortcut reverseShortcut = new Shortcut("r");
         final DisplayCounterView sourceOfAction = newDisplayCounterView();
         action.execute(sourceOfAction);
 

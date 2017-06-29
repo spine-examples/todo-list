@@ -38,7 +38,7 @@ public abstract class ExecuteCommandAction<M extends Message,
         extends Action<CommandView<M, B>> {
 
     private static final String ACTION_NAME = "Finish";
-    private static final String ACTION_SHORTCUT = "f";
+    private static final Shortcut ACTION_SHORTCUT = new Shortcut("f");
 
     private final TodoClient client = AppConfig.getClient();
 

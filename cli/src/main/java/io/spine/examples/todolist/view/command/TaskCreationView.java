@@ -24,6 +24,7 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.CommandAction;
 import io.spine.examples.todolist.action.ExecuteCommandAction;
+import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 
@@ -48,7 +49,7 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
 
     private static Collection<Action> getViewActions() {
         return Arrays.asList(
-                new EnterDescription("Enter description", "d"),
+                new EnterDescription("Enter description", new Shortcut("d")),
                 new ExecuteCommand());
     }
 
@@ -63,7 +64,7 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
 
         private static final String PROMPT = "Please enter the task description";
 
-        private EnterDescription(String name, String shortcut) {
+        private EnterDescription(String name, Shortcut shortcut) {
             super(name, shortcut);
         }
 

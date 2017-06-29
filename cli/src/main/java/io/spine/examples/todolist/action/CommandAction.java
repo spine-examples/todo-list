@@ -42,7 +42,7 @@ public abstract class CommandAction<M extends Message,
 
     private final UserCommunicator userCommunicator = new UserCommunicatorImpl();
 
-    protected CommandAction(String name, String shortcut) {
+    protected CommandAction(String name, Shortcut shortcut) {
         super(name, shortcut);
     }
 
