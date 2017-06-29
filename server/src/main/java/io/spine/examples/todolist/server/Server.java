@@ -37,10 +37,12 @@ import static io.spine.server.event.EventStore.log;
  */
 public class Server {
 
+    private final int port;
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
 
-    public Server(BoundedContext boundedContext) {
+    public Server(int port, BoundedContext boundedContext) {
+        this.port = port;
         this.boundedContext = boundedContext;
 
         final CommandService commandService = initCommandService();
@@ -62,12 +64,12 @@ public class Server {
         return result;
     }
 
-    private static GrpcContainer initGrpcContainer(CommandService commandService,
-            QueryService queryService) {
+    private GrpcContainer initGrpcContainer(CommandService commandService,
+                                            QueryService queryService) {
         final GrpcContainer result = GrpcContainer.newBuilder()
                                                   .addService(commandService)
                                                   .addService(queryService)
-                                                  .setPort(DEFAULT_CLIENT_SERVICE_PORT)
+                                                  .setPort(port)
                                                   .build();
         return result;
     }
@@ -80,7 +82,7 @@ public class Server {
     public void start() throws IOException {
         startServer();
         log().info(
-                "Server started, listening to commands on the port " + DEFAULT_CLIENT_SERVICE_PORT);
+                "Server started, listening to commands on the port " + port);
         awaitTermination();
     }
 

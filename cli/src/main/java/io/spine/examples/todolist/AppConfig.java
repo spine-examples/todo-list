@@ -27,23 +27,20 @@ import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.client.CommandLineTodoClient.LOCALHOST;
+import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
 
 /**
- * Utilities for obtaining pre-configured {@link Server} and {@link TodoClient}.
+ * Configuration of the application.
  *
  * @author Dmytro Grankin
  */
 public class AppConfig {
 
+    private static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
     private static final BoundedContext BOUNDED_CONTEXT = TodoListBoundedContext.getInstance();
 
-    private static final Server SERVER = new Server(BOUNDED_CONTEXT);
-
-    private static final TodoClient CLIENT =
-            new CommandLineTodoClient(LOCALHOST,
-                                      DEFAULT_CLIENT_SERVICE_PORT,
-                                      BOUNDED_CONTEXT);
+    private static final Server SERVER = new Server(PORT, BOUNDED_CONTEXT);
+    private static final TodoClient CLIENT = new CommandLineTodoClient(HOST, PORT, BOUNDED_CONTEXT);
 
     private AppConfig() {
         // Prevent instantiation of this utility class.

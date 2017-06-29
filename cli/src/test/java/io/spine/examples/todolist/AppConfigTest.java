@@ -32,7 +32,7 @@ import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 class AppConfigTest {
 
     @Test
-    @DisplayName("have private constructor")
+    @DisplayName("have the private constructor")
     void havePrivateCtor() {
         assertHasPrivateParameterlessCtor(AppConfig.class);
     }
