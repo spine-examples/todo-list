@@ -36,7 +36,7 @@ import java.util.Optional;
 /**
  * A view of {@link MyListView}.
  *
- * <p>Each item of {@link MyListView} represents an {@link Action} in this class.
+ * <p>Each item of {@link MyListView} is represented by an {@link Action}.
  * The action gives short info about the task and leads to a {@link DetailsView} for the task.
  *
  * @author Dmytro Grankin

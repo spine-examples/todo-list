@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.view;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Timestamp;
 
 import java.text.SimpleDateFormat;
@@ -36,7 +37,7 @@ import static com.google.protobuf.util.Timestamps.toMillis;
 class DisplayFormatter {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
-    private static final String DEFAULT_VALUE = "default";
+    static final String DEFAULT_TIMESTAMP_VALUE = "default";
 
     static final String LABEL_ID_VALUE = "Label id: ";
     static final String TASK_ID_VALUE = "Task id: ";
@@ -51,11 +52,12 @@ class DisplayFormatter {
     static String format(Timestamp timestamp) {
         final long millis = toMillis(timestamp);
         return millis == 0
-               ? DEFAULT_VALUE
+               ? DEFAULT_TIMESTAMP_VALUE
                : getDateFormat().format(new Date(millis));
     }
 
-    private static SimpleDateFormat getDateFormat() {
+    @VisibleForTesting
+    static SimpleDateFormat getDateFormat() {
         final SimpleDateFormat result = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
         return result;
     }
