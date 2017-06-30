@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.action;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.UserCommunicator;
 import io.spine.examples.todolist.UserCommunicatorImpl;
@@ -40,7 +41,7 @@ public abstract class CommandAction<M extends Message,
                                     B extends ValidatingBuilder<M, ? extends Message.Builder>>
         extends Action<CommandView<M, B>> {
 
-    private final UserCommunicator userCommunicator = new UserCommunicatorImpl();
+    private UserCommunicator userCommunicator = new UserCommunicatorImpl();
 
     protected CommandAction(String name, Shortcut shortcut) {
         super(name, shortcut);
@@ -67,5 +68,10 @@ public abstract class CommandAction<M extends Message,
 
     protected void println(String message) {
         userCommunicator.println(message);
+    }
+
+    @VisibleForTesting
+    public void setUserCommunicator(UserCommunicator userCommunicator) {
+        this.userCommunicator = userCommunicator;
     }
 }

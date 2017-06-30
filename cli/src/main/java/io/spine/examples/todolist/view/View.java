@@ -103,7 +103,7 @@ public abstract class View {
     }
 
     @VisibleForTesting
-    boolean isRootView() {
+    public boolean isRootView() {
         return rootView;
     }
 
