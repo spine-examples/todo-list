@@ -56,7 +56,7 @@ public class ActionListView extends View {
 
     private final Set<Action> actions;
 
-    public ActionListView(boolean rootView, Collection<Action> actions) {
+    public ActionListView(boolean rootView, Collection<? extends Action> actions) {
         super(rootView);
         checkHasNotEqualActions(actions);
         checkHasNotBackShortcut(actions);
@@ -145,7 +145,7 @@ public class ActionListView extends View {
                       .collect(joining(lineSeparator()));
     }
 
-    private static void checkHasNotEqualActions(Collection<Action> actions) {
+    private static void checkHasNotEqualActions(Collection<? extends Action> actions) {
         final Collection<Action> actionsWithoutEqual = new HashSet<>(actions);
         if (actionsWithoutEqual.size() != actions.size()) {
             final String errMsg = "Equal actions are found. The class doesn't allow this.";
@@ -153,7 +153,7 @@ public class ActionListView extends View {
         }
     }
 
-    private static void checkHasNotBackShortcut(Collection<Action> actions) {
+    private static void checkHasNotBackShortcut(Collection<? extends Action> actions) {
         final Predicate<Action> predicate = new ShortcutMatchPredicate(BACK_SHORTCUT.getValue());
         final boolean containsConflictAction = actions.stream()
                                                       .anyMatch(predicate);

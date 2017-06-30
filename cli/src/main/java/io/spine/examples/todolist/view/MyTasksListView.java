@@ -20,11 +20,11 @@
 
 package io.spine.examples.todolist.view;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.DynamicTransitionAction;
 import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.action.TransitionAction;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskView;
 
@@ -32,6 +32,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+
+import static java.lang.String.valueOf;
 
 /**
  * A view of {@link MyListView}.
@@ -43,23 +45,30 @@ import java.util.Optional;
  */
 class MyTasksListView extends ActionListView {
 
-    private MyTasksListView(MyListView myListView) {
+    @VisibleForTesting
+    MyTasksListView(MyListView myListView) {
         super(false, toActions(myListView));
     }
 
-    private static Collection<Action> toActions(MyListView myListView) {
-        final Collection<Action> actions = new LinkedList<>();
+    @VisibleForTesting
+    static Collection<OpenTaskDetails> toActions(MyListView myListView) {
+        final Collection<OpenTaskDetails> actions = new LinkedList<>();
         final List<TaskView> taskViews = myListView.getMyList()
                                                    .getItemsList();
-        for (int i = 0; i < taskViews.size(); i++) {
-            final TaskView taskView = taskViews.get(i);
-            final String name = taskView.getDescription();
-            final String shortcutValue = String.valueOf(i + 1);
-            final Shortcut shortcut = new Shortcut(shortcutValue);
-            final TransitionAction action = new OpenTaskDetails(name, shortcut, taskView.getId());
+        for (TaskView taskView : taskViews) {
+            final int index = taskViews.indexOf(taskView);
+            final OpenTaskDetails action = newOpenTaskDetailsAction(taskView, index);
             actions.add(action);
         }
         return actions;
+    }
+
+    @VisibleForTesting
+    static OpenTaskDetails newOpenTaskDetailsAction(TaskView taskView, int viewIndex) {
+        final String name = taskView.getDescription();
+        final String shortcutValue = valueOf(viewIndex + 1);
+        final Shortcut shortcut = new Shortcut(shortcutValue);
+        return new OpenTaskDetails(name, shortcut, taskView.getId());
     }
 
     static OpenMyTasksList newTransitionAction(String name, Shortcut shortcut) {
@@ -83,7 +92,7 @@ class MyTasksListView extends ActionListView {
         }
     }
 
-    private static class OpenTaskDetails extends DynamicTransitionAction<MyTaskDetailsView> {
+    static class OpenTaskDetails extends DynamicTransitionAction<MyTaskDetailsView> {
 
         private final TaskId taskId;
 

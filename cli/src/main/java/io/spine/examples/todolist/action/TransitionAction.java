@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.action;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.view.View;
 
 import javax.annotation.Nullable;
@@ -85,7 +86,8 @@ public abstract class TransitionAction<V extends View> extends Action<V> {
         return source;
     }
 
-    protected V getDestination() {
+    @VisibleForTesting
+    public V getDestination() {
         return destination;
     }
 }
