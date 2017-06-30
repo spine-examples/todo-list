@@ -29,7 +29,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
@@ -53,10 +56,21 @@ class ActionListViewTest extends UserIoTest {
     }
 
     @Test
+    @DisplayName("not accept equal actions to the constructor")
+    void notAcceptEqualActions() {
+        final Shortcut shortcut = new Shortcut("a");
+        final Action action = new StaticTransitionAction<>("a1", shortcut, childView);
+        final List<Action> actions = Arrays.asList(action, action);
+        assertThrows(IllegalArgumentException.class,
+                     () -> new ActionListView(true, actions));
+    }
+
+    @Test
     @DisplayName("not allow actions with back shortcut")
     void notAllowActionsWithBackShortcut() {
         final Shortcut backShortcut = getBackShortcut();
-        final TransitionAction action = new StaticTransitionAction<>("action", backShortcut, childView);
+        final TransitionAction action = new StaticTransitionAction<>("action", backShortcut,
+                                                                     childView);
         final Set<Action> actions = singleton(action);
         assertThrows(IllegalArgumentException.class, () -> new MainMenu(actions));
     }
@@ -67,7 +81,7 @@ class ActionListViewTest extends UserIoTest {
         final Shortcut shortcut = new Shortcut("s");
         final Action firstAction = new StaticTransitionAction<>("to child", shortcut, childView);
         final Action secondAction = new StaticTransitionAction<>("to second child", shortcut,
-                                                         new ChildView());
+                                                                 new ChildView());
         mainView.addAction(firstAction);
 
         assertThrows(IllegalArgumentException.class, () -> mainView.addAction(secondAction));

@@ -25,6 +25,7 @@ import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.Shortcut;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -55,7 +56,8 @@ public class ActionListView extends View {
 
     public ActionListView(boolean rootView, Collection<Action> actions) {
         super(rootView);
-        checkActions(actions);
+        checkHasNotEqualActions(actions);
+        checkHasNotBackShortcut(actions);
         this.actions = new LinkedHashSet<>(actions);
     }
 
@@ -124,7 +126,15 @@ public class ActionListView extends View {
         return BACK_SHORTCUT;
     }
 
-    private static void checkActions(Collection<Action> actions) {
+    private static void checkHasNotEqualActions(Collection<Action> actions) {
+        final Collection<Action> actionsWithoutEqual = new HashSet<>(actions);
+        if (actionsWithoutEqual.size() != actions.size()) {
+            final String errMsg = "Equal actions are found. The class doesn't allow this.";
+            throw newIllegalArgumentException(errMsg);
+        }
+    }
+
+    private static void checkHasNotBackShortcut(Collection<Action> actions) {
         final Predicate<Action> predicate = new ShortcutMatchPredicate(BACK_SHORTCUT.getValue());
         final boolean containsConflictAction = actions.stream()
                                                       .anyMatch(predicate);
