@@ -124,7 +124,7 @@ public class ActionListView extends View {
     }
 
     @VisibleForTesting
-    Set<Action> getActions() {
+    public Set<Action> getActions() {
         return unmodifiableSet(actions);
     }
 

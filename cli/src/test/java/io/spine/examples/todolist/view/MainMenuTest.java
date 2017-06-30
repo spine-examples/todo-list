@@ -20,29 +20,33 @@
 
 package io.spine.examples.todolist.view;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.action.StaticTransitionAction;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
-import static java.util.Collections.singletonList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Root view of the application.
- *
  * @author Dmytro Grankin
  */
-public class MainMenu extends ActionListView {
+@DisplayName("MainMenu should")
+class MainMenuTest {
 
-    public MainMenu() {
-        super(true, getViewActions());
+    private final MainMenu menu = new MainMenu();
+
+    @Test
+    @DisplayName("be root view")
+    void beRootView() {
+        assertTrue(menu.isRootView());
     }
 
-    @VisibleForTesting
-    static Collection<Action> getViewActions() {
-        return singletonList(
-                new StaticTransitionAction<>("My tasks", new Shortcut("m"), new MyTasksMenu()));
+    @Test
+    @DisplayName("have the actions")
+    void haveActions() {
+        final Collection<Action> expectedActions = MainMenu.getViewActions();
+        assertEquals(expectedActions, menu.getActions());
     }
 }

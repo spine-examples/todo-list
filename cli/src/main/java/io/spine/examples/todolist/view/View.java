@@ -107,6 +107,11 @@ public abstract class View {
     }
 
     @VisibleForTesting
+    boolean isRootView() {
+        return rootView;
+    }
+
+    @VisibleForTesting
     @Nullable
     Action getFirstDisplayCause() {
         return firstDisplayCause;
