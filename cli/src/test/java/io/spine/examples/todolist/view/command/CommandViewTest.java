@@ -52,7 +52,9 @@ class CommandViewTest extends UserIoTest {
     private final Action buildState = new BuildState();
 
     @BeforeEach
-    void setUp() {
+    @Override
+    protected void setUp() {
+        super.setUp();
         view.setUserCommunicator(getCommunicator());
     }
 

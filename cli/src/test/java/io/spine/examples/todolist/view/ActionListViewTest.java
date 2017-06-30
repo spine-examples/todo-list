@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -47,11 +46,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("ActionListView should")
 class ActionListViewTest extends UserIoTest {
 
-    private final ActionListView mainView = new MainMenu(emptySet());
+    private final ActionListView mainView = new RootView(emptySet());
     private final View childView = new ChildView();
 
     @BeforeEach
-    void setUp() {
+    @Override
+    protected void setUp() {
+        super.setUp();
         mainView.setUserCommunicator(getCommunicator());
     }
 
@@ -72,7 +73,7 @@ class ActionListViewTest extends UserIoTest {
         final TransitionAction action = new StaticTransitionAction<>("action", backShortcut,
                                                                      childView);
         final Set<Action> actions = singleton(action);
-        assertThrows(IllegalArgumentException.class, () -> new MainMenu(actions));
+        assertThrows(IllegalArgumentException.class, () -> new RootView(actions));
     }
 
     @Test
@@ -113,9 +114,9 @@ class ActionListViewTest extends UserIoTest {
         assertAllAnswersWereGiven();
     }
 
-    private static class MainMenu extends ActionListView {
+    private static class RootView extends ActionListView {
 
-        private MainMenu(Collection<Action> actions) {
+        private RootView(Collection<Action> actions) {
             super(true, actions);
         }
     }

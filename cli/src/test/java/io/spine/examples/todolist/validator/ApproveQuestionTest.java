@@ -41,7 +41,9 @@ class ApproveQuestionTest extends UserIoTest {
     private final ApproveQuestion approveQuestion = new ApproveQuestion();
 
     @BeforeEach
-    void setUp() {
+    @Override
+    protected void setUp() {
+        super.setUp();
         approveQuestion.setCommunicator(getCommunicator());
     }
 

@@ -26,7 +26,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.everyItem;
+import static org.hamcrest.Matchers.isIn;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -47,6 +49,6 @@ class MainMenuTest {
     @DisplayName("have the actions")
     void haveActions() {
         final Collection<Action> expectedActions = MainMenu.getViewActions();
-        assertEquals(expectedActions, menu.getActions());
+        assertThat(expectedActions, everyItem(isIn(menu.getActions())));
     }
 }

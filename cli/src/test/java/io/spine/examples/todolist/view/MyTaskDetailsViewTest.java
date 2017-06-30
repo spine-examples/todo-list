@@ -20,38 +20,47 @@
 
 package io.spine.examples.todolist.view;
 
+import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.q.projection.TaskView;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.TaskPriority.NORMAL;
 import static io.spine.examples.todolist.view.DisplayFormatter.DESCRIPTION_VALUE;
 import static io.spine.examples.todolist.view.DisplayFormatter.DUE_DATE_VALUE;
 import static io.spine.examples.todolist.view.DisplayFormatter.PRIORITY_VALUE;
 import static io.spine.examples.todolist.view.DisplayFormatter.format;
+import static io.spine.time.Time.getCurrentTime;
 import static java.lang.System.lineSeparator;
-import static java.util.Collections.emptySet;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
- * A {@link DetailsView} of the task from the
- * {@link io.spine.examples.todolist.q.projection.MyListView MyListView}.
- *
  * @author Dmytro Grankin
  */
-class MyTaskDetailsView extends DetailsView<TaskView> {
+@DisplayName("MyTaskDetailsView should")
+class MyTaskDetailsViewTest {
 
-    MyTaskDetailsView(TaskView state) {
-        super(false, emptySet(), state);
+    private final TaskView taskView = TaskView.newBuilder()
+                                              .setDescription("my task description")
+                                              .setPriority(NORMAL)
+                                              .setDueDate(getCurrentTime())
+                                              .build();
+    private final MyTaskDetailsView detailsView = new MyTaskDetailsView(taskView);
+
+    @Test
+    @DisplayName("not be root view")
+    void notBeRootView() {
+        assertFalse(detailsView.isRootView());
     }
 
-    @Override
-    protected String viewOf(TaskView state) {
-        final String date = format(state.getDueDate());
-        return new StringBuilder().append(DESCRIPTION_VALUE)
-                                  .append(state.getDescription())
-                                  .append(lineSeparator())
-                                  .append(PRIORITY_VALUE)
-                                  .append(state.getPriority())
-                                  .append(lineSeparator())
-                                  .append(DUE_DATE_VALUE)
-                                  .append(date)
-                                  .toString();
+    @Test
+    @DisplayName("format TaskView")
+    void formatTaskView() {
+        final String expectedResult =
+                DESCRIPTION_VALUE + taskView.getDescription() + lineSeparator() +
+                        PRIORITY_VALUE + taskView.getPriority() + lineSeparator() +
+                        DUE_DATE_VALUE + format(taskView.getDueDate());
+        assertEquals(expectedResult, detailsView.viewOf(taskView));
     }
 }

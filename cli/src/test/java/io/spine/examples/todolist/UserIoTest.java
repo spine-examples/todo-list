@@ -20,8 +20,14 @@
 
 package io.spine.examples.todolist;
 
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 
+import java.util.Arrays;
+
+import static io.spine.examples.todolist.TestUserCommunicator.getOutput;
+import static java.lang.System.lineSeparator;
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,15 +36,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class UserIoTest {
 
-    private final TestUserCommunicator communicator = new TestUserCommunicator();
+    private TestUserCommunicator communicator;
 
     @BeforeEach
-    void setUp() {
+    protected void setUp() {
         TestUserCommunicator.clearOutput();
+        this.communicator = new TestUserCommunicator();
     }
 
     protected void assertOutput(String expected) {
-        assertEquals(expected, TestUserCommunicator.getOutput());
+        assertEquals(expected, getOutput());
+    }
+
+    protected void assertOutput(Iterable<String> expectedLines) {
+        final String[] actualLines = getOutput().split(lineSeparator());
+        assertEquals(expectedLines, asList(actualLines));
     }
 
     protected void assertAllAnswersWereGiven() {

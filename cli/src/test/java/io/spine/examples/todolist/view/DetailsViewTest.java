@@ -51,7 +51,9 @@ class DetailsViewTest extends UserIoTest {
     private final DetailsView<StringValue> detailsView = new ADetailsView(actions, DETAILS_STATE);
 
     @BeforeEach
-    void setUp() {
+    @Override
+    protected void setUp() {
+        super.setUp();
         detailsView.setUserCommunicator(getCommunicator());
     }
 
