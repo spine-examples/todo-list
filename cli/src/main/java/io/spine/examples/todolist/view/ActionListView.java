@@ -36,7 +36,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.examples.todolist.action.Action.getShortcutFormat;
 import static io.spine.util.Exceptions.newIllegalArgumentException;
 import static java.lang.String.format;
+import static java.lang.System.lineSeparator;
 import static java.util.Collections.unmodifiableSet;
+import static java.util.stream.Collectors.joining;
 
 /**
  * An {@code ActionListView} displays the {@link #actions} and provides
@@ -61,10 +63,16 @@ public class ActionListView extends View {
         this.actions = new LinkedHashSet<>(actions);
     }
 
+    /**
+     * Displays the string representation of the view and ask to select an action to execute.
+     *
+     * <p>Override this method only to change the behavior.
+     * To change the visual representation, override {@code toString()}.
+     */
     @Override
     protected void display() {
         addBackAction();
-        displayActions();
+        displayStringRepresentation();
         final Action selectedAction = selectAction();
         executeAction(selectedAction);
     }
@@ -75,10 +83,9 @@ public class ActionListView extends View {
         actions.add(action);
     }
 
-    private void displayActions() {
-        for (Action action : actions) {
-            println(action.toString());
-        }
+    private void displayStringRepresentation() {
+        final String stringRepresentation = toString();
+        println(stringRepresentation);
     }
 
     private Action selectAction() {
@@ -124,6 +131,18 @@ public class ActionListView extends View {
     @VisibleForTesting
     public static Shortcut getBackShortcut() {
         return BACK_SHORTCUT;
+    }
+
+    @VisibleForTesting
+    public static String getSelectActionMsg() {
+        return SELECT_ACTION_MSG;
+    }
+
+    @Override
+    public String toString() {
+        return actions.stream()
+                      .map(Action::toString)
+                      .collect(joining(lineSeparator()));
     }
 
     private static void checkHasNotEqualActions(Collection<Action> actions) {

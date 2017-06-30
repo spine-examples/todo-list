@@ -38,18 +38,13 @@ class MyTaskDetailsView extends DetailsView<TaskView> {
     }
 
     @Override
-    protected void displayDetails() {
-        final String details = format(getState());
-        println(details);
-    }
-
-    private static String format(TaskView view) {
-        final String date = DisplayFormatter.format(view.getDueDate());
+    protected String viewOf(TaskView state) {
+        final String date = DisplayFormatter.format(state.getDueDate());
         return new StringBuilder().append(DESCRIPTION_VALUE)
-                                  .append(view.getDescription())
+                                  .append(state.getDescription())
                                   .append(lineSeparator())
                                   .append(PRIORITY_VALUE)
-                                  .append(view.getPriority())
+                                  .append(state.getPriority())
                                   .append(lineSeparator())
                                   .append(DUE_DATE_VALUE)
                                   .append(date)

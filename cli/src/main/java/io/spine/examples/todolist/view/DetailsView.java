@@ -25,6 +25,8 @@ import io.spine.examples.todolist.action.Action;
 
 import java.util.Collection;
 
+import static java.lang.System.lineSeparator;
+
 /**
  * Detailed view of a {@link #state}.
  *
@@ -40,15 +42,16 @@ public abstract class DetailsView<S extends Message> extends ActionListView {
         this.state = state;
     }
 
+    /**
+     * Obtains a string view of the specified state.
+     *
+     * @param state the state to obtain the view
+     * @return view of the state
+     */
+    protected abstract String viewOf(S state);
+
     @Override
-    protected void display() {
-        displayDetails();
-        super.display();
-    }
-
-    protected abstract void displayDetails();
-
-    protected S getState() {
-        return state;
+    public String toString() {
+        return viewOf(state) + lineSeparator() + super.toString();
     }
 }
