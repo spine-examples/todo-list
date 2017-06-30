@@ -36,9 +36,9 @@ public interface Validator<T> {
     boolean validate(T value);
 
     /**
-     * Provides the advice about valid values.
+     * Provides the hint about valid values.
      *
-     * @return the advice message
+     * @return the hint message
      */
-    String getAdvice();
+    String getHint();
 }

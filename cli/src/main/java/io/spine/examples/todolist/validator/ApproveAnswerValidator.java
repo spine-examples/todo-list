@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.validator;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.lang.String.format;
 
 /**
  * Serves as a validator for the user approve answer.
@@ -37,8 +38,9 @@ public class ApproveAnswerValidator implements Validator<String> {
 
     private static final String NEGATIVE_ANSWER = "n";
     private static final String POSITIVE_ANSWER = "y";
-    private static final String INVALID_INPUT_MSG =
-            "Invalid input. Valid values: '" + POSITIVE_ANSWER + "' or '" + NEGATIVE_ANSWER + "'.";
+
+    private static final String HINT_FORMAT = "Valid values: '%s' or '%s'.";
+    private static final String HINT_MSG = format(HINT_FORMAT, POSITIVE_ANSWER, NEGATIVE_ANSWER);
 
     @Override
     public boolean validate(String input) {
@@ -53,8 +55,8 @@ public class ApproveAnswerValidator implements Validator<String> {
     }
 
     @Override
-    public String getAdvice() {
-        return INVALID_INPUT_MSG;
+    public String getHint() {
+        return HINT_MSG;
     }
 
     public static String getNegativeAnswer() {

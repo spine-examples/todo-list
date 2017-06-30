@@ -37,7 +37,7 @@ import static java.lang.String.format;
  */
 public class ApproveQuestion {
 
-    private static final String TIP_FORMAT = "(%s/%s)";
+    private static final String HINT_FORMAT = "(%s/%s)";
 
     private final Validator<String> validator = new ApproveAnswerValidator();
     private UserCommunicator communicator = new UserCommunicatorImpl();
@@ -49,11 +49,11 @@ public class ApproveQuestion {
      * @return {@code true} if the positive answer was given, {@code false} otherwise
      */
     public boolean ask(String question) {
-        final String questionWithTip = question + getTip();
-        Optional<String> answer = getValidAnswer(questionWithTip);
+        final String questionWithHint = question + ' ' + getHint();
+        Optional<String> answer = getValidAnswer(questionWithHint);
 
         while (!answer.isPresent()) {
-            answer = getValidAnswer(getExtendedTip());
+            answer = getValidAnswer(getExtendedHint());
         }
 
         return answer.get()
@@ -75,12 +75,12 @@ public class ApproveQuestion {
                : Optional.empty();
     }
 
-    private String getExtendedTip() {
-        return validator.getAdvice();
+    private String getExtendedHint() {
+        return validator.getHint();
     }
 
-    private static String getTip() {
-        return format(TIP_FORMAT, getPositiveAnswer(), getNegativeAnswer());
+    private static String getHint() {
+        return format(HINT_FORMAT, getPositiveAnswer(), getNegativeAnswer());
     }
 
     @VisibleForTesting

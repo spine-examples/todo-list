@@ -24,6 +24,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getNegativeAnswer;
+import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getPositiveAnswer;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -33,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("ApproveAnswerValidator should")
 class ApproveAnswerValidatorTest {
 
-    private static final String INVALID_INPUT = "O";
+    private static final String INVALID_INPUT = getPositiveAnswer() + getNegativeAnswer();
 
     private ApproveAnswerValidator validator;
 
@@ -43,16 +45,16 @@ class ApproveAnswerValidatorTest {
     }
 
     @Test
-    @DisplayName("pass the validation when input is `n`")
+    @DisplayName("pass the validation when input is negative answer")
     void passValidationWhenNegativeAnswer() {
-        final boolean passed = validator.validate("n");
+        final boolean passed = validator.validate(getNegativeAnswer());
         assertTrue(passed);
     }
 
     @Test
-    @DisplayName("pass the validation when input is `y`")
+    @DisplayName("pass the validation when input is positive answer")
     void passValidationWhenPositiveAnswer() {
-        final boolean passed = validator.validate("y");
+        final boolean passed = validator.validate(getPositiveAnswer());
         assertTrue(passed);
     }
 
@@ -72,7 +74,7 @@ class ApproveAnswerValidatorTest {
 
     @Test
     @DisplayName("not pass the validation when input neither positive neither negative")
-    void notPassTheValidationWhenIsputIsIncorrect() {
+    void notPassTheValidationWhenInputIsIncorrect() {
         final boolean passed = validator.validate(INVALID_INPUT);
         assertFalse(passed);
     }
