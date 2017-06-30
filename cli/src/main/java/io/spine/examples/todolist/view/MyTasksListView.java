@@ -34,6 +34,11 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * A view of {@link MyListView}.
+ *
+ * <p>Each item of {@link MyListView} represents an {@link Action} in this class.
+ * The action gives short info about the task and leads to a {@link DetailsView} for the task.
+ *
  * @author Dmytro Grankin
  */
 class MyTasksListView extends ActionListView {

@@ -25,12 +25,13 @@ import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.StaticTransitionAction;
 
 import java.util.Collection;
-import java.util.Collections;
+
+import static java.util.Collections.singletonList;
 
 /**
  * Root view of the application.
  *
- * @author Illia Shepilov
+ * @author Dmytro Grankin
  */
 public class MainMenu extends ActionListView {
 
@@ -39,7 +40,7 @@ public class MainMenu extends ActionListView {
     }
 
     private static Collection<Action> getViewActions() {
-        return Collections.singletonList(
+        return singletonList(
                 new StaticTransitionAction<>("My tasks", new Shortcut("m"), new MyTasksMenu()));
     }
 }

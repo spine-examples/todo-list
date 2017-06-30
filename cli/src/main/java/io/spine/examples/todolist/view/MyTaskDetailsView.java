@@ -25,10 +25,14 @@ import io.spine.examples.todolist.q.projection.TaskView;
 import static io.spine.examples.todolist.view.DisplayFormatter.DESCRIPTION_VALUE;
 import static io.spine.examples.todolist.view.DisplayFormatter.DUE_DATE_VALUE;
 import static io.spine.examples.todolist.view.DisplayFormatter.PRIORITY_VALUE;
+import static io.spine.examples.todolist.view.DisplayFormatter.format;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptySet;
 
 /**
+ * A {@link DetailsView} of the task from the
+ * {@link io.spine.examples.todolist.q.projection.MyListView MyListView}.
+ *
  * @author Dmytro Grankin
  */
 class MyTaskDetailsView extends DetailsView<TaskView> {
@@ -39,7 +43,7 @@ class MyTaskDetailsView extends DetailsView<TaskView> {
 
     @Override
     protected String viewOf(TaskView state) {
-        final String date = DisplayFormatter.format(state.getDueDate());
+        final String date = format(state.getDueDate());
         return new StringBuilder().append(DESCRIPTION_VALUE)
                                   .append(state.getDescription())
                                   .append(lineSeparator())
