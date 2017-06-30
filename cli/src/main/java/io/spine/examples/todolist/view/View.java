@@ -24,6 +24,7 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.UserCommunicator;
 import io.spine.examples.todolist.UserCommunicatorImpl;
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.PseudoAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
 
@@ -109,23 +110,5 @@ public abstract class View {
     @Nullable
     Action getFirstDisplayCause() {
         return firstDisplayCause;
-    }
-
-    /**
-     * Special kind of {@link Action}, that does nothing.
-     *
-     * <p>Should be used for boundary conditions, e.g. exit from root view.
-     */
-    @VisibleForTesting
-    static class PseudoAction extends Action<View> {
-
-        private PseudoAction(String name, Shortcut shortcut) {
-            super(name, shortcut);
-        }
-
-        @Override
-        public void execute(View source) {
-            // Do nothing.
-        }
     }
 }

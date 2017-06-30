@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.PseudoAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.StaticTransitionAction;
 import io.spine.examples.todolist.action.TransitionAction;
@@ -82,7 +83,7 @@ public class ViewTest {
 
         assertEquals(backName, back.getName());
         assertEquals(SHORTCUT, back.getShortcut());
-        assertThat(back, instanceOf(View.PseudoAction.class));
+        assertThat(back, instanceOf(PseudoAction.class));
     }
 
     @Test
