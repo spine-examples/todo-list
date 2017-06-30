@@ -30,9 +30,7 @@ import io.spine.examples.todolist.action.TransitionAction;
 
 import javax.annotation.Nullable;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
@@ -93,12 +91,10 @@ public abstract class View {
     }
 
     protected String promptUser(String question) {
-        checkArgument(!isNullOrEmpty(question));
         return userCommunicator.promptUser(question);
     }
 
     protected void println(String message) {
-        checkArgument(!isNullOrEmpty(message));
         userCommunicator.println(message);
     }
 

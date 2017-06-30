@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("View should")
-public class ViewTest {
+class ViewTest {
 
     private static final Shortcut SHORTCUT = new Shortcut("b");
 
