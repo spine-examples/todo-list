@@ -20,11 +20,15 @@
 
 package io.spine.examples.todolist.validator;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.UserCommunicator;
 import io.spine.examples.todolist.UserCommunicatorImpl;
 
+import java.util.Optional;
+
 import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getNegativeAnswer;
 import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getPositiveAnswer;
+import static java.lang.String.format;
 
 /**
  * Utilities for asking an approve question.
@@ -33,12 +37,10 @@ import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getPos
  */
 public class ApproveQuestion {
 
-    private static final Validator<String> validator = new ApproveAnswerValidator();
-    private static final UserCommunicator communicator = new UserCommunicatorImpl();
+    private static final String TIP_FORMAT = "(%s/%s)";
 
-    private ApproveQuestion() {
-        // Prevent instantiation of this utility class.
-    }
+    private final Validator<String> validator = new ApproveAnswerValidator();
+    private UserCommunicator communicator = new UserCommunicatorImpl();
 
     /**
      * Obtains an answer for the specified question.
@@ -46,17 +48,43 @@ public class ApproveQuestion {
      * @param question the question to ask
      * @return {@code true} if the positive answer was given, {@code false} otherwise
      */
-    public static boolean ask(String question) {
-        final String questionWithHelp =
-                question + " (" + getPositiveAnswer() + '/' + getNegativeAnswer() + ") ";
-        String answer = communicator.promptUser(questionWithHelp);
-        boolean isValidAnswer = validator.validate(answer);
+    public boolean ask(String question) {
+        final String questionWithTip = question + getTip();
+        Optional<String> answer = getValidAnswer(questionWithTip);
 
-        while (!isValidAnswer) {
-            answer = communicator.promptUser(validator.getAdvice());
-            isValidAnswer = validator.validate(answer);
+        while (!answer.isPresent()) {
+            answer = getValidAnswer(getExtendedTip());
         }
 
-        return answer.equals(getPositiveAnswer());
+        return answer.get()
+                     .equals(getPositiveAnswer());
+    }
+
+    /**
+     * Obtains valid value of the answer for the specified question.
+     *
+     * @param question the question to ask
+     * @return a valid answer value
+     *         or {@code Optional.empty()} if the answer is not valid
+     */
+    private Optional<String> getValidAnswer(String question) {
+        final String answer = communicator.promptUser(question);
+        boolean isValidAnswer = validator.validate(answer);
+        return isValidAnswer
+               ? Optional.of(answer)
+               : Optional.empty();
+    }
+
+    private String getExtendedTip() {
+        return validator.getAdvice();
+    }
+
+    private static String getTip() {
+        return format(TIP_FORMAT, getPositiveAnswer(), getNegativeAnswer());
+    }
+
+    @VisibleForTesting
+    void setCommunicator(UserCommunicator communicator) {
+        this.communicator = communicator;
     }
 }

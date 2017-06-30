@@ -43,6 +43,7 @@ public class TestUserCommunicator implements UserCommunicator {
             throw new IllegalStateException("Not enough answers were specified.");
         }
 
+        println(prompt);
         return answers.remove();
     }
 
