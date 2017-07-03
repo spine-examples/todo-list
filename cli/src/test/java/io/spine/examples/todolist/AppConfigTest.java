@@ -23,7 +23,11 @@ package io.spine.examples.todolist;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.AppConfig.PORT;
+import static io.spine.examples.todolist.AppConfig.getClient;
+import static io.spine.examples.todolist.AppConfig.getServer;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Dmytro Grankin
@@ -35,5 +39,11 @@ class AppConfigTest {
     @DisplayName("have the private constructor")
     void havePrivateCtor() {
         assertHasPrivateParameterlessCtor(AppConfig.class);
+    }
+
+    @Test
+    @DisplayName("return server with the port")
+    void returnServer() {
+        assertEquals(PORT, getServer().getPort());
     }
 }

@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
@@ -107,5 +108,10 @@ public class Server {
      */
     public void shutdown() throws Exception {
         grpcContainer.shutdown();
+    }
+
+    @VisibleForTesting
+    public int getPort() {
+        return port;
     }
 }

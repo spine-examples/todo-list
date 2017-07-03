@@ -36,7 +36,7 @@ import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
  */
 public class AppConfig {
 
-    private static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
+    static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
     private static final BoundedContext BOUNDED_CONTEXT = TodoListBoundedContext.getInstance();
 
     private static final Server SERVER = new Server(PORT, BOUNDED_CONTEXT);
