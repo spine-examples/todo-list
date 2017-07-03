@@ -25,15 +25,16 @@ import io.spine.examples.todolist.view.View;
 /**
  * A {@link TransitionAction}, that specifies
  * {@linkplain TransitionAction#destination destination view} during
- * {@linkplain #StaticTransitionAction(String, Shortcut, View)} object creation}.
+ * {@linkplain #StaticTransitionAction(String, Shortcut, View, View)} object creation}.
  *
- * @param <V> {@inheritDoc}
+ * @param <S> {@inheritDoc}
+ * @param <D> {@inheritDoc}
  * @author Dmytro Grankin
  */
-public class StaticTransitionAction<V extends View> extends TransitionAction<V> {
+public class StaticTransitionAction<S extends View, D extends View> extends TransitionAction<S, D> {
 
-    public StaticTransitionAction(String name, Shortcut shortcut, V destination) {
-        super(name, shortcut);
+    public StaticTransitionAction(String name, Shortcut shortcut, S source, D destination) {
+        super(name, shortcut, source);
         setDestination(destination);
     }
 
@@ -41,8 +42,7 @@ public class StaticTransitionAction<V extends View> extends TransitionAction<V> 
      * {@inheritDoc}
      */
     @Override
-    public void execute(V source) {
-        setSource(source);
+    public void execute() {
         getDestination().display(this);
     }
 }

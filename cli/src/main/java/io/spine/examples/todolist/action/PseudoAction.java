@@ -20,8 +20,6 @@
 
 package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.view.View;
-
 /**
  * Special kind of {@link Action}, that does nothing.
  *
@@ -29,14 +27,14 @@ import io.spine.examples.todolist.view.View;
  *
  * <p>Also suits for usage in tests, where {@link Action} behavior does not play a role.
  */
-public class PseudoAction extends Action<View> {
+public class PseudoAction extends Action {
 
     public PseudoAction(String name, Shortcut shortcut) {
         super(name, shortcut);
     }
 
     @Override
-    public void execute(View source) {
+    public void execute() {
         // Do nothing.
     }
 }

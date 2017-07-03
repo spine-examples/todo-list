@@ -23,6 +23,7 @@ package io.spine.examples.todolist.view.command;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Shortcut;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import io.spine.examples.todolist.view.command.TaskCreationView.EnterDescription;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,7 +43,7 @@ class TaskCreationViewTest extends UserIoTest {
 
     private static final String VALID_DESCRIPTION = "to the task";
 
-    private final TaskCreationView view = new TaskCreationView();
+    private final CommandView<CreateBasicTask, CreateBasicTaskVBuilder> view = new TaskCreationView();
 
     @Test
     @DisplayName("not be root view")
@@ -71,7 +72,7 @@ class TaskCreationViewTest extends UserIoTest {
     class EnterDescriptionTest {
 
         private final EnterDescription enterDescription =
-                new EnterDescription("d", new Shortcut("d"));
+                new EnterDescription("d", new Shortcut("d"), view);
 
         @BeforeEach
         void setUp() {

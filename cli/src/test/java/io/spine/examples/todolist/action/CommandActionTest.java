@@ -22,7 +22,6 @@ package io.spine.examples.todolist.action;
 
 import com.google.protobuf.StringValue;
 import io.spine.examples.todolist.UserIoTest;
-import io.spine.examples.todolist.view.ActionListView;
 import io.spine.examples.todolist.view.command.CommandView;
 import io.spine.validate.StringValueVBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,9 +29,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.action.CommandActionTest.ACommandAction.VALUE_AFTER_UPDATE;
+import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Dmytro Grankin
@@ -41,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class CommandActionTest extends UserIoTest {
 
     private final CommandView<StringValue, StringValueVBuilder> view = new ACommandView();
-    private final ACommandAction action = new ACommandAction();
+    private final ACommandAction action = new ACommandAction(view);
 
     @Override
     @BeforeEach
@@ -51,17 +50,10 @@ class CommandActionTest extends UserIoTest {
     }
 
     @Test
-    @DisplayName("not allow null source")
-    void notAllowNullSource() {
-        assertThrows(NullPointerException.class, () -> action.execute(null));
-    }
-
-    @Test
     @DisplayName("update state of a view")
     void updateViewState() {
-        addAnswer(ActionListView.getBackShortcut()
-                                .getValue());
-        action.execute(view);
+        addAnswer(getBackShortcut().getValue());
+        action.execute();
         assertEquals(VALUE_AFTER_UPDATE, view.getState()
                                              .build()
                                              .getValue());
@@ -71,8 +63,8 @@ class CommandActionTest extends UserIoTest {
 
         static final String VALUE_AFTER_UPDATE = "updated";
 
-        private ACommandAction() {
-            super("name", new Shortcut("s"));
+        private ACommandAction(CommandView<StringValue, StringValueVBuilder> source) {
+            super("name", new Shortcut("s"), source);
         }
 
         @Override

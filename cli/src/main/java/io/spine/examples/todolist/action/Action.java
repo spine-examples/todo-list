@@ -32,11 +32,10 @@ import static java.lang.String.format;
 /**
  * An {@code Action} encapsulates navigation between {@linkplain View views}.
  *
- * @param <S> the type of source {@link View} for the action
  * @author Dmytro Grankin
- * @see #execute(View)
+ * @see #execute()
  */
-public abstract class Action<S extends View> {
+public abstract class Action {
 
     private static final String SHORTCUT_FORMAT = "(%s)";
     private static final String SHORTCUT_NAME_SEPARATOR = " ";
@@ -52,10 +51,8 @@ public abstract class Action<S extends View> {
 
     /**
      * Executes the action.
-     *
-     * @param source the source view of the action
      */
-    public abstract void execute(S source);
+    public abstract void execute();
 
     public String getName() {
         return name;

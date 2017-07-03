@@ -31,8 +31,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static java.util.Collections.emptySet;
@@ -49,7 +47,7 @@ class CommandViewTest extends UserIoTest {
     private static final Shortcut BACK_SHORTCUT = getBackShortcut();
 
     private final CreateCommentView view = new CreateCommentView();
-    private final Action buildState = new BuildState();
+    private final Action buildState = new BuildState(view);
 
     @BeforeEach
     @Override
@@ -62,8 +60,7 @@ class CommandViewTest extends UserIoTest {
     @Test
     @DisplayName("wrap ValidationException and display the source view")
     void displayViewOnValidationException() {
-        assertThrows(ValidationException.class,
-                     () -> buildState.execute(view));
+        assertThrows(ValidationException.class, buildState::execute);
         assertFalse(view.wasDisplayed);
 
         addAnswer(BACK_SHORTCUT.getValue());
@@ -99,16 +96,19 @@ class CommandViewTest extends UserIoTest {
         }
     }
 
-    private static class BuildState extends Action<CreateCommentView> {
+    private static class BuildState extends Action {
 
-        private BuildState() {
+        private final CreateCommentView view;
+
+        private BuildState(CreateCommentView view) {
             super("b", new Shortcut("f"));
+            this.view = view;
         }
 
         @Override
-        public void execute(CreateCommentView source) {
-            source.getState()
-                  .build();
+        public void execute() {
+            view.getState()
+                .build();
         }
     }
 }

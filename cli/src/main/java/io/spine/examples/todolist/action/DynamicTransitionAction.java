@@ -33,33 +33,32 @@ import io.spine.examples.todolist.view.View;
  * use {@code DynamicTransitionAction} to specify transition to such a view.
  *
  * <p>The destination is {@linkplain #refreshDestination() refreshed}
- * during every {@linkplain #execute(View) action execution}.
+ * during every {@linkplain Action#execute() action execution}.
  *
- * @param <V> {@inheritDoc}
+ * @param <S> {@inheritDoc}
+ * @param <D> {@inheritDoc}
  * @author Dmytro Grankin
  */
-public abstract class DynamicTransitionAction<V extends View> extends TransitionAction<V> {
+public abstract class DynamicTransitionAction<S extends View, D extends View> extends TransitionAction<S, D> {
 
     private final TodoClient client = AppConfig.getClient();
 
-    protected DynamicTransitionAction(String name, Shortcut shortcut) {
-        super(name, shortcut);
+    protected DynamicTransitionAction(String name, Shortcut shortcut, S source) {
+        super(name, shortcut, source);
     }
 
     /**
      * Displays a {@linkplain #refreshDestination() refreshed destination view}.
      *
-     * @param source {@inheritDoc}
      */
     @Override
-    public void execute(V source) {
-        setSource(source);
+    public void execute() {
         refreshDestination();
         getDestination().display(this);
     }
 
     private void refreshDestination() {
-        final V destination = createDestination();
+        final D destination = createDestination();
         setDestination(destination);
     }
 
@@ -68,7 +67,7 @@ public abstract class DynamicTransitionAction<V extends View> extends Transition
      *
      * @return the destination view
      */
-    protected abstract V createDestination();
+    protected abstract D createDestination();
 
     protected TodoClient getClient() {
         return client;

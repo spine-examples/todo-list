@@ -22,9 +22,8 @@ package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.PseudoAction;
 import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.action.StaticTransitionAction;
-import io.spine.examples.todolist.action.TransitionAction;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,21 +45,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("ActionListView should")
 class ActionListViewTest extends UserIoTest {
 
-    private final ActionListView mainView = new RootView(emptySet());
-    private final View childView = new ChildView();
+    private final ActionListView view = new RootView(emptySet());
 
     @BeforeEach
     @Override
     protected void setUp() {
         super.setUp();
-        mainView.setUserCommunicator(getCommunicator());
+        view.setUserCommunicator(getCommunicator());
     }
 
     @Test
     @DisplayName("not accept equal actions to the constructor")
     void notAcceptEqualActions() {
         final Shortcut shortcut = new Shortcut("a");
-        final Action action = new StaticTransitionAction<>("a1", shortcut, childView);
+        final Action action = new PseudoAction("a1", shortcut);
         final List<Action> actions = Arrays.asList(action, action);
         assertThrows(IllegalArgumentException.class,
                      () -> new ActionListView(true, actions));
@@ -70,8 +68,7 @@ class ActionListViewTest extends UserIoTest {
     @DisplayName("not allow actions with back shortcut")
     void notAllowActionsWithBackShortcut() {
         final Shortcut backShortcut = getBackShortcut();
-        final TransitionAction action = new StaticTransitionAction<>("action", backShortcut,
-                                                                     childView);
+        final Action action = new PseudoAction("action", backShortcut);
         final Set<Action> actions = singleton(action);
         assertThrows(IllegalArgumentException.class, () -> new RootView(actions));
     }
@@ -80,26 +77,25 @@ class ActionListViewTest extends UserIoTest {
     @DisplayName("not allow addition of action with occupied shortcut")
     void notAllowActionWithOccupiedShortcut() {
         final Shortcut shortcut = new Shortcut("s");
-        final Action firstAction = new StaticTransitionAction<>("to child", shortcut, childView);
-        final Action secondAction = new StaticTransitionAction<>("to second child", shortcut,
-                                                                 new ChildView());
-        mainView.addAction(firstAction);
+        final Action firstAction = new PseudoAction("to child", shortcut);
+        final Action secondAction = new PseudoAction("to second child", shortcut);
+        view.addAction(firstAction);
 
-        assertThrows(IllegalArgumentException.class, () -> mainView.addAction(secondAction));
+        assertThrows(IllegalArgumentException.class, () -> view.addAction(secondAction));
     }
 
     @Test
     @DisplayName("add back action without duplications")
     void addBackAction() {
-        final int actionCountBefore = mainView.getActions()
-                                              .size();
+        final int actionCountBefore = view.getActions()
+                                          .size();
         final int expectedCount = actionCountBefore + 1;
 
-        mainView.addBackAction();
-        mainView.addBackAction(); // To check that there are no duplications after second call.
+        view.addBackAction();
+        view.addBackAction(); // To check that there are no duplications after second call.
 
-        assertEquals(expectedCount, mainView.getActions()
-                                            .size());
+        assertEquals(expectedCount, view.getActions()
+                                        .size());
     }
 
     @Test
@@ -109,7 +105,7 @@ class ActionListViewTest extends UserIoTest {
         addAnswer("invalid answer");
         addAnswer(validAnswer);
 
-        mainView.display();
+        view.display();
 
         assertAllAnswersWereGiven();
     }
@@ -118,17 +114,6 @@ class ActionListViewTest extends UserIoTest {
 
         private RootView(Collection<Action> actions) {
             super(true, actions);
-        }
-    }
-
-    private static class ChildView extends View {
-
-        private ChildView() {
-            super(false);
-        }
-
-        @Override
-        public void display() {
         }
     }
 }

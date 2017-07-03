@@ -46,33 +46,33 @@ class ViewTest {
 
     private final RootView rootView = new RootView();
     private final View childView = new ChildView();
-    private final TransitionAction<View> displayChild = newAction(childView);
+    private final TransitionAction<View, View> displayChild = newAction(rootView, childView);
 
     @Test
     @DisplayName("not set first display cause for root view")
     void notSetFirstDisplayCause() {
-        final TransitionAction<View> displayRoot = newAction(rootView);
-        displayRoot.execute(childView);
-        assertNull(rootView.getFirstDisplayCause());
+        final TransitionAction<View, View> displayRoot = newAction(childView, rootView);
+        displayRoot.execute();
+        assertNull(rootView.getOriginAction());
     }
 
     @Test
     @DisplayName("set first display cause for NON-root")
     void setFirstDisplayCause() {
-        assertNull(childView.getFirstDisplayCause());
-        displayChild.execute(rootView);
-        assertSame(displayChild, childView.getFirstDisplayCause());
+        assertNull(childView.getOriginAction());
+        displayChild.execute();
+        assertSame(displayChild, childView.getOriginAction());
     }
 
     @Test
     @DisplayName("not overwrite first display cause")
     void notOverwriteFirstDisplayCause() {
-        displayChild.execute(rootView);
-        assertSame(displayChild, childView.getFirstDisplayCause());
+        displayChild.execute();
+        assertSame(displayChild, childView.getOriginAction());
 
-        final TransitionAction<View> secondDisplayCause = newAction(childView);
-        secondDisplayCause.execute(rootView);
-        assertSame(displayChild, childView.getFirstDisplayCause());
+        final TransitionAction<View, View> secondDisplayCause = newAction(rootView, childView);
+        secondDisplayCause.execute();
+        assertSame(displayChild, childView.getOriginAction());
     }
 
     @Test
@@ -96,9 +96,9 @@ class ViewTest {
     @Test
     @DisplayName("create usual back action for child view")
     void createUsualBackAction() {
-        displayChild.execute(rootView);
+        displayChild.execute();
         final Action back = childView.createBackAction("b", SHORTCUT);
-        back.execute(childView);
+        back.execute();
         assertTrue(rootView.wasDisplayed);
     }
 
@@ -127,8 +127,8 @@ class ViewTest {
         }
     }
 
-    private static TransitionAction<View> newAction(View destination) {
+    private static TransitionAction<View, View> newAction(View source, View destination) {
         final Shortcut shortcut = new Shortcut("a");
-        return new StaticTransitionAction<>("a", shortcut, destination);
+        return new StaticTransitionAction<>("a", shortcut, source, destination);
     }
 }

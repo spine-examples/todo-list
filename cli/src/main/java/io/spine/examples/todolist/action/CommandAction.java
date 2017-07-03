@@ -27,8 +27,6 @@ import io.spine.examples.todolist.UserCommunicatorImpl;
 import io.spine.examples.todolist.view.command.CommandView;
 import io.spine.validate.ValidatingBuilder;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * A {@code CommandAction} is a user action, that updates
  * {@linkplain CommandView#state state of the command view}.
@@ -39,35 +37,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public abstract class CommandAction<M extends Message,
                                     B extends ValidatingBuilder<M, ? extends Message.Builder>>
-        extends Action<CommandView<M, B>> {
+        extends TransitionAction<CommandView<M, B>, CommandView<M, B>> {
 
     private UserCommunicator userCommunicator = new UserCommunicatorImpl();
 
-    protected CommandAction(String name, Shortcut shortcut) {
-        super(name, shortcut);
+    protected CommandAction(String name, Shortcut shortcut, CommandView<M, B> source) {
+        super(name, shortcut, source);
     }
 
     /**
      * Updates a state of the specified source and then displays it.
-     *
-     * @param source {@inheritDoc}
      */
     @Override
-    public void execute(CommandView<M, B> source) {
-        checkNotNull(source);
-        final B commandViewState = source.getState();
+    public void execute() {
+        final B commandViewState = getSource().getState();
         updateState(commandViewState);
-        source.display(this);
+        getSource().display(this);
     }
 
     protected abstract void updateState(B state);
 
     protected String promptUser(String prompt) {
         return userCommunicator.promptUser(prompt);
-    }
-
-    protected void println(String message) {
-        userCommunicator.println(message);
     }
 
     @VisibleForTesting

@@ -48,7 +48,7 @@ public abstract class View {
      * <p>If the {@code View} is {@link #rootView}, this field is always {@code null}.
      */
     @Nullable
-    private TransitionAction firstDisplayCause;
+    private TransitionAction originAction;
     private UserCommunicator userCommunicator = new UserCommunicatorImpl();
 
     /**
@@ -61,16 +61,16 @@ public abstract class View {
     }
 
     public void display(@Nullable Action displayCause) {
-        setFirstDisplayCause(displayCause);
+        setOriginAction(displayCause);
         display();
     }
 
-    private void setFirstDisplayCause(@Nullable Action displayCause) {
+    private void setOriginAction(@Nullable Action displayCause) {
         if (!rootView) {
             checkNotNull(displayCause);
-            final boolean notDisplayedBefore = firstDisplayCause == null;
+            final boolean notDisplayedBefore = originAction == null;
             if (notDisplayedBefore) {
-                firstDisplayCause = (TransitionAction) displayCause;
+                originAction = (TransitionAction) displayCause;
             }
         }
     }
@@ -82,12 +82,12 @@ public abstract class View {
             return new PseudoAction(name, shortcut);
         }
 
-        if (firstDisplayCause == null) {
+        if (originAction == null) {
             throw newIllegalStateException(
                     "An action, that caused this view, should be known to create back action.");
         }
 
-        return firstDisplayCause.createReverseAction(name, shortcut);
+        return originAction.createReverseAction(name, shortcut);
     }
 
     protected String promptUser(String question) {
@@ -109,7 +109,7 @@ public abstract class View {
 
     @VisibleForTesting
     @Nullable
-    Action getFirstDisplayCause() {
-        return firstDisplayCause;
+    Action getOriginAction() {
+        return originAction;
     }
 }

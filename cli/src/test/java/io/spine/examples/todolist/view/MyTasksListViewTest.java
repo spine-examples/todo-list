@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
+import static io.spine.examples.todolist.q.projection.MyListView.getDefaultInstance;
 import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskDetailsAction;
 import static java.util.Collections.nCopies;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,6 +45,7 @@ class MyTasksListViewTest {
 
     private static final int VIEW_INDEX = 0;
 
+    private final MyTasksListView myTasksListView = new MyTasksListView(getDefaultInstance());
     private final TaskView taskView = TaskView.newBuilder()
                                               .setDescription("task desc")
                                               .build();
@@ -51,8 +53,7 @@ class MyTasksListViewTest {
     @Test
     @DisplayName("not be root view")
     void notBeRootView() {
-        final MyTasksListView view = new MyTasksListView(MyListView.getDefaultInstance());
-        assertFalse(view.isRootView());
+        assertFalse(myTasksListView.isRootView());
     }
 
     @Test
@@ -65,7 +66,8 @@ class MyTasksListViewTest {
         final MyListView myListView = MyListView.newBuilder()
                                                 .setMyList(taskListView)
                                                 .build();
-        final Collection<OpenTaskDetails> actions = MyTasksListView.toActions(myListView);
+        final Collection<OpenTaskDetails> actions = MyTasksListView.toActions(myListView,
+                                                                              myTasksListView);
         assertEquals(tasksCount, actions.size());
     }
 
@@ -75,7 +77,8 @@ class MyTasksListViewTest {
         final String shortcutValue = String.valueOf(VIEW_INDEX + 1);
         final Shortcut expectedShortcut = new Shortcut(shortcutValue);
 
-        final TransitionAction action = newOpenTaskDetailsAction(taskView, VIEW_INDEX);
+        final TransitionAction action = newOpenTaskDetailsAction(myTasksListView,
+                                                                 taskView, VIEW_INDEX);
 
         assertEquals(taskView.getDescription(), action.getName());
         assertEquals(expectedShortcut, action.getShortcut());

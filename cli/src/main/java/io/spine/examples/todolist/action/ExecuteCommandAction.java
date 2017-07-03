@@ -35,28 +35,26 @@ import io.spine.validate.ValidatingBuilder;
  */
 public abstract class ExecuteCommandAction<M extends Message,
                                            B extends ValidatingBuilder<M, ? extends Message.Builder>>
-        extends Action<CommandView<M, B>> {
+        extends TransitionAction<CommandView<M, B>, CommandView<M, B>> {
 
     private static final String ACTION_NAME = "Finish";
     private static final Shortcut ACTION_SHORTCUT = new Shortcut("f");
 
     private final TodoClient client = AppConfig.getClient();
 
-    protected ExecuteCommandAction() {
-        super(ACTION_NAME, ACTION_SHORTCUT);
+    public ExecuteCommandAction(CommandView<M, B> source) {
+        super(ACTION_NAME, ACTION_SHORTCUT, source);
     }
 
     /**
      * Executes the obtained command from the specified source.
-     *
-     * @param source {@inheritDoc}
      */
     @Override
-    public void execute(CommandView<M, B> source) {
-        final M commandMessage = source.getState()
-                                       .build();
+    public void execute() {
+        final M commandMessage = getSource().getState()
+                                            .build();
         executeCommand(commandMessage);
-        source.display(this);
+        getSource().display(this);
     }
 
     protected abstract void executeCommand(M commandMessage);

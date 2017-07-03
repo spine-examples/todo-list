@@ -20,13 +20,11 @@
 
 package io.spine.examples.todolist.view;
 
-import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.StaticTransitionAction;
 import io.spine.examples.todolist.view.command.TaskCreationView;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 
 /**
  * @author Dmytro Grankin
@@ -34,13 +32,9 @@ import java.util.Collection;
 class MyTasksMenu extends ActionListView {
 
     MyTasksMenu() {
-        super(false, getViewActions());
-    }
-
-    private static Collection<Action> getViewActions() {
-        return Arrays.asList(
-                new StaticTransitionAction<>("Create task", new Shortcut("c"),
-                                             new TaskCreationView()),
-                MyTasksListView.newTransitionAction("List tasks", new Shortcut("l")));
+        super(false, Collections.emptySet());
+        addAction(new StaticTransitionAction<>("Create task", new Shortcut("c"),
+                                               this, new TaskCreationView()));
+        addAction(MyTasksListView.newTransitionAction("List tasks", new Shortcut("l"), this));
     }
 }

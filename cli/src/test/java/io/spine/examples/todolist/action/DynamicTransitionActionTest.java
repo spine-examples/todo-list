@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
  */
 @DisplayName("DynamicTransitionAction should")
 class DynamicTransitionActionTest
-        extends AbstractTransitionActionTestSuite<DynamicTransitionAction<DisplayCounterView>> {
+        extends AbstractTransitionActionTestSuite<DynamicTransitionAction<View, DisplayCounterView>> {
 
     DynamicTransitionActionTest() {
         super(newAction());
@@ -43,23 +43,23 @@ class DynamicTransitionActionTest
     void updateDestinationView() {
         final View unexpectedView = getAction().getDestination();
 
-        getAction().execute(newDisplayCounterView());
+        getAction().execute();
 
         assertNotSame(unexpectedView, getAction().getDestination());
     }
 
-    private static DynamicTransitionAction<DisplayCounterView> newAction() {
-        final ADynamicTransitionAction action = new ADynamicTransitionAction(ACTION_NAME, SHORTCUT);
+    private static DynamicTransitionAction<View, DisplayCounterView> newAction() {
+        final ADynamicTransitionAction action = new ADynamicTransitionAction(ACTION_NAME, SHORTCUT, newSourceView());
         action.setDestination(newDisplayCounterView());
         return action;
     }
 
-    private static class ADynamicTransitionAction extends DynamicTransitionAction<DisplayCounterView> {
+    private static class ADynamicTransitionAction extends DynamicTransitionAction<View, DisplayCounterView> {
 
         private static final DisplayCounterView INITIAL_DESTINATION = newDisplayCounterView(0);
 
-        private ADynamicTransitionAction(String name, Shortcut shortcut) {
-            super(name, shortcut);
+        private ADynamicTransitionAction(String name, Shortcut shortcut, View source) {
+            super(name, shortcut, source);
             setDestination(INITIAL_DESTINATION);
         }
 

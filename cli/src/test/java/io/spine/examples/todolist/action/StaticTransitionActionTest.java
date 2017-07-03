@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.action;
 
 import io.spine.examples.todolist.action.AbstractTransitionActionTestSuite.DisplayCounterView;
+import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 
 /**
@@ -28,13 +29,14 @@ import org.junit.jupiter.api.DisplayName;
  */
 @DisplayName("StaticTransitionAction should")
 class StaticTransitionActionTest
-        extends AbstractTransitionActionTestSuite<StaticTransitionAction<DisplayCounterView>> {
+        extends AbstractTransitionActionTestSuite<StaticTransitionAction<View, DisplayCounterView>> {
 
     StaticTransitionActionTest() {
         super(newAction());
     }
 
-    private static StaticTransitionAction<DisplayCounterView> newAction() {
-        return new StaticTransitionAction<>(ACTION_NAME, SHORTCUT, newDisplayCounterView());
+    private static StaticTransitionAction<View, DisplayCounterView> newAction() {
+        return new StaticTransitionAction<>(ACTION_NAME, SHORTCUT,
+                                            newSourceView(), newDisplayCounterView());
     }
 }

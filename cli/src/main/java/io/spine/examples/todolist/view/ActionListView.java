@@ -113,18 +113,17 @@ public class ActionListView extends View {
      * @param action the action to execute
      */
     protected void executeAction(Action action) {
-        action.execute(this);
+        action.execute();
     }
 
-    @VisibleForTesting
-    void addAction(Action action) {
+    protected void addAction(Action action) {
         checkNotNull(action);
         checkArgument(!actions.contains(action));
         actions.add(action);
     }
 
     @VisibleForTesting
-    public Set<Action> getActions() {
+    Set<Action> getActions() {
         return unmodifiableSet(actions);
     }
 
@@ -134,7 +133,7 @@ public class ActionListView extends View {
     }
 
     @VisibleForTesting
-    public static String getSelectActionMsg() {
+    static String getSelectActionMsg() {
         return SELECT_ACTION_MSG;
     }
 

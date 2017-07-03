@@ -20,15 +20,9 @@
 
 package io.spine.examples.todolist.view;
 
-import io.spine.examples.todolist.action.Action;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.everyItem;
-import static org.hamcrest.Matchers.isIn;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -43,12 +37,5 @@ class MainMenuTest {
     @DisplayName("be root view")
     void beRootView() {
         assertTrue(menu.isRootView());
-    }
-
-    @Test
-    @DisplayName("have the actions")
-    void haveActions() {
-        final Collection<Action> expectedActions = MainMenu.getViewActions();
-        assertThat(expectedActions, everyItem(isIn(menu.getActions())));
     }
 }

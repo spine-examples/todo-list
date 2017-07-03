@@ -20,38 +20,33 @@
 
 package io.spine.examples.todolist.action;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.view.View;
 
-import javax.annotation.Nullable;
-
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
  * An {@code TransitionAction} represents transition from a {@linkplain #source source view}
  * to a {@linkplain #destination destination view}.
  *
- * @param <V> the type of the source and the destination view
+ * @param <S> the type of the source view
+ * @param <D> the type of the destination view
  * @author Dmytro Grankin
  */
-public abstract class TransitionAction<V extends View> extends Action<V> {
+public abstract class TransitionAction<S extends View, D extends View> extends Action {
 
     /**
      * A source {@code View} of the action.
-     *
-     * <p>The source is unknown until the action was not {@linkplain #execute(View) executed}.
      */
-    @Nullable
-    private V source;
+    private final S source;
 
     /**
      * A destination {@code View} of the action.
      */
-    private V destination;
+    private D destination;
 
-    protected TransitionAction(String name, Shortcut shortcut) {
+    protected TransitionAction(String name, Shortcut shortcut, S source) {
         super(name, shortcut);
+        this.source = source;
     }
 
     /**
@@ -61,33 +56,22 @@ public abstract class TransitionAction<V extends View> extends Action<V> {
      * @param shortcut the shortcut of the reverse action
      * @return the reverse action
      */
-    public TransitionAction<V> createReverseAction(String name, Shortcut shortcut) {
-        if (getSource() == null) {
-            throw newIllegalStateException("There is no source view for the action, " +
-                                                   "cannot create reverse action.");
-        }
-
-        final V destination = getSource();
-        return new StaticTransitionAction<>(name, shortcut, destination);
+    public TransitionAction<D, S> createReverseAction(String name, Shortcut shortcut) {
+        final S reverseDestination = getSource();
+        final D reserveSource = getDestination();
+        return new StaticTransitionAction<>(name, shortcut, reserveSource, reverseDestination);
     }
 
-    public void setSource(V source) {
-        checkNotNull(source);
-        this.source = source;
-    }
-
-    public void setDestination(V destination) {
+    protected void setDestination(D destination) {
         checkNotNull(destination);
         this.destination = destination;
     }
 
-    @Nullable
-    protected V getSource() {
+    protected S getSource() {
         return source;
     }
 
-    @VisibleForTesting
-    public V getDestination() {
+    protected D getDestination() {
         return destination;
     }
 }

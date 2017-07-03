@@ -22,15 +22,13 @@ package io.spine.examples.todolist.view.command;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.CommandAction;
 import io.spine.examples.todolist.action.ExecuteCommandAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 
 import static io.spine.base.Identifier.newUuid;
 
@@ -44,14 +42,10 @@ import static io.spine.base.Identifier.newUuid;
 public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTaskVBuilder> {
 
     public TaskCreationView() {
-        super(false, getViewActions());
+        super(false, Collections.emptySet());
         getState().setId(generatedId());
-    }
-
-    private static Collection<Action> getViewActions() {
-        return Arrays.asList(
-                new EnterDescription("Enter description", new Shortcut("d")),
-                new ExecuteCommand());
+        addAction(new EnterDescription("Enter description", new Shortcut("d"), this));
+        addAction(new ExecuteCommand(this));
     }
 
     private static TaskId generatedId() {
@@ -66,8 +60,9 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
 
         private static final String PROMPT = "Please enter the task description";
 
-        EnterDescription(String name, Shortcut shortcut) {
-            super(name, shortcut);
+        EnterDescription(String name, Shortcut shortcut,
+                         CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
+            super(name, shortcut, source);
         }
 
         @Override
@@ -79,6 +74,10 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
 
     private static class ExecuteCommand extends ExecuteCommandAction<CreateBasicTask,
                                                                      CreateBasicTaskVBuilder> {
+
+        private ExecuteCommand(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
+            super(source);
+        }
 
         @Override
         protected void executeCommand(CreateBasicTask commandMessage) {

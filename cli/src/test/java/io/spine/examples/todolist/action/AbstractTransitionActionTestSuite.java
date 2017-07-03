@@ -26,16 +26,14 @@ import org.junit.jupiter.api.Test;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Dmytro Grankin
  */
 @DisplayName("TransitionAction should")
-abstract class AbstractTransitionActionTestSuite<T extends TransitionAction<
-        AbstractTransitionActionTestSuite.DisplayCounterView>> {
+abstract class AbstractTransitionActionTestSuite<T extends TransitionAction<View,
+                                                 AbstractTransitionActionTestSuite.DisplayCounterView>> {
 
     static final String ACTION_NAME = "static transition action";
     static final Shortcut SHORTCUT = new Shortcut("s");
@@ -47,6 +45,10 @@ abstract class AbstractTransitionActionTestSuite<T extends TransitionAction<
         this.action = action;
     }
 
+    static RootView newSourceView() {
+        return new RootView();
+    }
+
     static DisplayCounterView newDisplayCounterView() {
         return new DisplayCounterView();
     }
@@ -56,37 +58,13 @@ abstract class AbstractTransitionActionTestSuite<T extends TransitionAction<
     }
 
     @Test
-    @DisplayName("not accept null view to `execute()`")
-    void notAcceptNullToExecute() {
-        assertThrows(NullPointerException.class, () -> action.execute(null));
-    }
-
-    @Test
-    @DisplayName("update source view")
-    void updateSource() {
-        assertNull(action.getSource());
-        final DisplayCounterView expectedView = newDisplayCounterView();
-
-        action.execute(expectedView);
-
-        assertSame(expectedView, action.getSource());
-    }
-
-    @Test
     @DisplayName("display a destination view")
     void displayDestination() {
         assertEquals(0, action.getDestination()
                               .getDisplayedTimes());
-        action.execute(newDisplayCounterView());
+        action.execute();
         assertEquals(1, action.getDestination()
                               .getDisplayedTimes());
-    }
-
-    @Test
-    @DisplayName("not create reverse action if source view for the action is unknown")
-    void notCreateReverseAction() {
-        assertThrows(IllegalStateException.class,
-                     () -> action.createReverseAction("r", SHORTCUT));
     }
 
     @Test
@@ -94,14 +72,13 @@ abstract class AbstractTransitionActionTestSuite<T extends TransitionAction<
     void createReverseAction() {
         final String reverseName = "Reverse";
         final Shortcut reverseShortcut = new Shortcut("r");
-        final DisplayCounterView sourceOfAction = newDisplayCounterView();
-        action.execute(sourceOfAction);
 
         final TransitionAction reverse = action.createReverseAction(reverseName, reverseShortcut);
 
         assertEquals(reverseName, reverse.getName());
         assertEquals(reverseShortcut, reverse.getShortcut());
         assertSame(action.getSource(), reverse.getDestination());
+        assertSame(action.getDestination(), reverse.getSource());
     }
 
     T getAction() {
@@ -128,6 +105,17 @@ abstract class AbstractTransitionActionTestSuite<T extends TransitionAction<
 
         public int getDisplayedTimes() {
             return displayedTimes;
+        }
+    }
+
+    private static class RootView extends View {
+
+        private RootView() {
+            super(true);
+        }
+
+        @Override
+        protected void display() {
         }
     }
 }

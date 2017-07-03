@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -73,7 +72,7 @@ class ActionTest {
         }
 
         @Override
-        public void execute(View source) {
+        public void execute() {
         }
     }
 }

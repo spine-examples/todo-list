@@ -20,14 +20,10 @@
 
 package io.spine.examples.todolist.view;
 
-import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.StaticTransitionAction;
 
-import java.util.Collection;
-
-import static java.util.Collections.singletonList;
+import java.util.Collections;
 
 /**
  * Root view of the application.
@@ -37,12 +33,7 @@ import static java.util.Collections.singletonList;
 public class MainMenu extends ActionListView {
 
     public MainMenu() {
-        super(true, getViewActions());
-    }
-
-    @VisibleForTesting
-    static Collection<Action> getViewActions() {
-        return singletonList(
-                new StaticTransitionAction<>("My tasks", new Shortcut("m"), new MyTasksMenu()));
+        super(true, Collections.emptySet());
+        addAction(new StaticTransitionAction<>("My tasks", new Shortcut("m"), this, new MyTasksMenu()));
     }
 }
