@@ -57,6 +57,7 @@ public class UserCommunicatorImpl implements UserCommunicator {
      */
     @Override
     public void println(String message) {
+        checkArgument(!isNullOrEmpty(message));
         PRINT_STREAM.println(message);
     }
 
