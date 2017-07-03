@@ -34,7 +34,6 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.examples.todolist.view.command.CommandView.GenericParameter.STATE_BUILDER;
 import static io.spine.examples.todolist.view.command.ValidationExceptionFormatter.toErrorMessages;
-import static java.util.Collections.emptySet;
 
 /**
  * A {@code CommandView} is a abstract base for views where an user of the command-line application

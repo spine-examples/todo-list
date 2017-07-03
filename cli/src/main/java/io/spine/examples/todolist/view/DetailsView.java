@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.view;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.action.Action;
 

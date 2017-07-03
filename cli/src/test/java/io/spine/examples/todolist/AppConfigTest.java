@@ -24,7 +24,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.AppConfig.PORT;
-import static io.spine.examples.todolist.AppConfig.getClient;
 import static io.spine.examples.todolist.AppConfig.getServer;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
