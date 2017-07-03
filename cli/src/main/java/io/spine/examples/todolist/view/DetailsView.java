@@ -42,6 +42,11 @@ public abstract class DetailsView<S extends Message> extends ActionListView {
         this.state = state;
     }
 
+    protected DetailsView(boolean rootView, S state) {
+        super(rootView);
+        this.state = state;
+    }
+
     /**
      * Obtains a string view of the specified state.
      *

@@ -24,15 +24,13 @@ import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.StaticTransitionAction;
 import io.spine.examples.todolist.view.command.TaskCreationView;
 
-import java.util.Collections;
-
 /**
  * @author Dmytro Grankin
  */
 class MyTasksMenu extends ActionListView {
 
     MyTasksMenu() {
-        super(false, Collections.emptySet());
+        super(false);
         addAction(new StaticTransitionAction<>("Create task", new Shortcut("c"),
                                                this, new TaskCreationView()));
         addAction(MyTasksListView.newTransitionAction("List tasks", new Shortcut("l"), this));

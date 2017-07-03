@@ -29,7 +29,6 @@ import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskView;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +47,7 @@ class MyTasksListView extends ActionListView {
 
     @VisibleForTesting
     MyTasksListView(MyListView myListView) {
-        super(false, Collections.emptySet());
+        super(false);
         toActions(myListView, this).forEach(this::addAction);
     }
 

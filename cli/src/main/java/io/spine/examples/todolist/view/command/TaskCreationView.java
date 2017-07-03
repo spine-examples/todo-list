@@ -28,8 +28,6 @@ import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 
-import java.util.Collections;
-
 import static io.spine.base.Identifier.newUuid;
 
 /**
@@ -42,7 +40,7 @@ import static io.spine.base.Identifier.newUuid;
 public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTaskVBuilder> {
 
     public TaskCreationView() {
-        super(false, Collections.emptySet());
+        super(false);
         getState().setId(generatedId());
         addAction(new EnterDescription("Enter description", new Shortcut("d"), this));
         addAction(new ExecuteCommand(this));

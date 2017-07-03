@@ -30,7 +30,6 @@ import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.action.CommandActionTest.ACommandAction.VALUE_AFTER_UPDATE;
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
-import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -76,7 +75,7 @@ class CommandActionTest extends UserIoTest {
     private static class ACommandView extends CommandView<StringValue, StringValueVBuilder> {
 
         private ACommandView() {
-            super(true, emptySet());
+            super(true);
         }
     }
 }

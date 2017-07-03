@@ -28,7 +28,6 @@ import io.spine.validate.ValidatingBuilder;
 import io.spine.validate.ValidatingBuilders;
 import io.spine.validate.ValidationException;
 
-import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -36,7 +35,7 @@ import static io.spine.examples.todolist.view.command.CommandView.GenericParamet
 import static io.spine.examples.todolist.view.command.ValidationExceptionFormatter.toErrorMessages;
 
 /**
- * A {@code CommandView} is a abstract base for views where an user of the command-line application
+ * A {@code CommandView} is a abstract base for views where a user of the command-line application
  * prepares and sends a command to a server.
  *
  * <p>Compared to the {@link ActionListView} provides handling of {@link ValidationException}.
@@ -53,8 +52,8 @@ public abstract class CommandView<M extends Message,
 
     private final B state;
 
-    protected CommandView(boolean rootView, Collection<Action> actions) {
-        super(rootView, actions);
+    protected CommandView(boolean rootView) {
+        super(rootView);
         this.state = newBuilderInstance();
     }
 

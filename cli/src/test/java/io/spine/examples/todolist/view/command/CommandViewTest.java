@@ -33,7 +33,6 @@ import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
-import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -86,7 +85,7 @@ class CommandViewTest extends UserIoTest {
         private boolean wasDisplayed = false;
 
         private CreateCommentView() {
-            super(true, emptySet());
+            super(true);
         }
 
         @Override

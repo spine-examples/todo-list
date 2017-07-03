@@ -27,7 +27,6 @@ import static io.spine.examples.todolist.view.DisplayFormatter.DUE_DATE_VALUE;
 import static io.spine.examples.todolist.view.DisplayFormatter.PRIORITY_VALUE;
 import static io.spine.examples.todolist.view.DisplayFormatter.format;
 import static java.lang.System.lineSeparator;
-import static java.util.Collections.emptySet;
 
 /**
  * A {@link DetailsView} of the task from the
@@ -38,7 +37,7 @@ import static java.util.Collections.emptySet;
 class MyTaskDetailsView extends DetailsView<TaskView> {
 
     MyTaskDetailsView(TaskView state) {
-        super(false, emptySet(), state);
+        super(false, state);
     }
 
     @Override

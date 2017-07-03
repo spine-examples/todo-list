@@ -56,7 +56,12 @@ public class ActionListView extends View {
 
     private final Set<Action> actions;
 
-    public ActionListView(boolean rootView, Collection<? extends Action> actions) {
+    public ActionListView(boolean rootView) {
+        super(rootView);
+        this.actions = new LinkedHashSet<>();
+    }
+
+    public ActionListView(boolean rootView, Collection<Action> actions) {
         super(rootView);
         checkHasNotEqualActions(actions);
         checkHasNotBackShortcut(actions);

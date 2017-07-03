@@ -26,7 +26,6 @@ import io.spine.validate.StringValueVBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -71,7 +70,7 @@ class ExecuteCommandActionTest {
         private boolean displayed;
 
         private UpdateStringValueView() {
-            super(true, emptySet());
+            super(true);
         }
 
         @Override
