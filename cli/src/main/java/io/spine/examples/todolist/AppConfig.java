@@ -42,6 +42,8 @@ public class AppConfig {
     private static final Server SERVER = new Server(PORT, BOUNDED_CONTEXT);
     private static final TodoClient CLIENT = new CommandLineTodoClient(HOST, PORT, BOUNDED_CONTEXT);
 
+    private static final IoFacadeFactory IO_FACADE_FACTORY = new IoFacadeFactory();
+
     private AppConfig() {
         // Prevent instantiation of this class.
     }
@@ -64,5 +66,14 @@ public class AppConfig {
      */
     public static TodoClient getClient() {
         return CLIENT;
+    }
+
+    /**
+     * Obtains the {@link IoFacadeFactory}.
+     *
+     * @return the factory
+     */
+    public static IoFacadeFactory getIoFacadeFactory() {
+        return IO_FACADE_FACTORY;
     }
 }

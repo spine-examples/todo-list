@@ -22,10 +22,11 @@ package io.spine.examples.todolist.action;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Message;
-import io.spine.examples.todolist.CommandLineFacade;
 import io.spine.examples.todolist.IoFacade;
 import io.spine.examples.todolist.view.command.CommandView;
 import io.spine.validate.ValidatingBuilder;
+
+import static io.spine.examples.todolist.AppConfig.getIoFacadeFactory;
 
 /**
  * A {@code CommandAction} is a user action, that updates
@@ -39,7 +40,7 @@ public abstract class CommandAction<M extends Message,
                                     B extends ValidatingBuilder<M, ? extends Message.Builder>>
         extends TransitionAction<CommandView<M, B>, CommandView<M, B>> {
 
-    private IoFacade ioFacade = new CommandLineFacade();
+    private IoFacade ioFacade = getIoFacadeFactory().newInstance();
 
     protected CommandAction(String name, Shortcut shortcut, CommandView<M, B> source) {
         super(name, shortcut, source);

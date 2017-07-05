@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.CommandLineFacade;
 import io.spine.examples.todolist.IoFacade;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.PseudoAction;
@@ -31,6 +30,7 @@ import io.spine.examples.todolist.action.TransitionAction;
 import javax.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.examples.todolist.AppConfig.getIoFacadeFactory;
 import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
@@ -49,7 +49,7 @@ public abstract class View {
      */
     @Nullable
     private TransitionAction originAction;
-    private IoFacade ioFacade = new CommandLineFacade();
+    private IoFacade ioFacade = getIoFacadeFactory().newInstance();
 
     /**
      * Creates a new instance.

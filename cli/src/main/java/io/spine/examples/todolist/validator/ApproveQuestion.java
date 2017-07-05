@@ -21,11 +21,11 @@
 package io.spine.examples.todolist.validator;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.CommandLineFacade;
 import io.spine.examples.todolist.IoFacade;
 
 import java.util.Optional;
 
+import static io.spine.examples.todolist.AppConfig.getIoFacadeFactory;
 import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getNegativeAnswer;
 import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getPositiveAnswer;
 import static java.lang.String.format;
@@ -35,12 +35,12 @@ import static java.lang.String.format;
  *
  * @author Dmytro Grankin
  */
-public class ApproveQuestion {
+class ApproveQuestion {
 
     private static final String HINT_FORMAT = "(%s/%s)";
 
     private final Validator<String> validator = new ApproveAnswerValidator();
-    private IoFacade ioFacade = new CommandLineFacade();
+    private IoFacade ioFacade = getIoFacadeFactory().newInstance();
 
     /**
      * Obtains an answer for the specified question.
@@ -48,7 +48,7 @@ public class ApproveQuestion {
      * @param question the question to ask
      * @return {@code true} if the positive answer was given, {@code false} otherwise
      */
-    public boolean ask(String question) {
+    boolean ask(String question) {
         final String questionWithHint = question + ' ' + getHint();
         Optional<String> answer = getValidAnswer(questionWithHint);
 
