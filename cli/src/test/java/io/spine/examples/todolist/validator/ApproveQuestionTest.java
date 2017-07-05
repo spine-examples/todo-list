@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.validator;
 
-import io.spine.examples.todolist.UserIOTest;
+import io.spine.examples.todolist.UserIoTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("ApproveQuestion should")
-class ApproveQuestionTest extends UserIOTest {
+class ApproveQuestionTest extends UserIoTest {
 
     private static final String QUESTION = "?";
 
@@ -44,7 +44,7 @@ class ApproveQuestionTest extends UserIOTest {
     @Override
     protected void setUp() {
         super.setUp();
-        approveQuestion.setIOFacade(getIoFacade());
+        approveQuestion.setIoFacade(getIoFacade());
     }
 
     @Test

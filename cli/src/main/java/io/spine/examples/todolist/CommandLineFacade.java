@@ -20,46 +20,46 @@
 
 package io.spine.examples.todolist;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.jline.reader.LineReader;
+import org.jline.terminal.Terminal;
 
-import static io.spine.examples.todolist.TestIOFacade.getOutput;
-import static java.lang.System.lineSeparator;
-import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static io.spine.examples.todolist.Terminals.newDumbTerminal;
 
 /**
+ * An {@link IoFacade} for a command-line application.
+ *
  * @author Dmytro Grankin
  */
-public class UserIOTest {
+public class CommandLineFacade implements IoFacade {
 
-    private TestIOFacade ioFacade;
+    private final LineReader reader = newLineReader();
 
-    @BeforeEach
-    protected void setUp() {
-        TestIOFacade.clearOutput();
-        this.ioFacade = new TestIOFacade();
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String promptUser(String prompt) {
+        checkArgument(!isNullOrEmpty(prompt));
+        println(prompt);
+        final String answer = reader.readLine();
+        return answer;
     }
 
-    protected void assertOutput(String expected) {
-        assertEquals(expected, getOutput());
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void println(String message) {
+        checkArgument(!isNullOrEmpty(message));
+        reader.getTerminal()
+              .writer()
+              .print(message);
     }
 
-    protected void assertOutput(Iterable<String> expectedLines) {
-        final String[] actualLines = getOutput().split(lineSeparator());
-        assertEquals(expectedLines, asList(actualLines));
-    }
-
-    protected void assertAllAnswersWereGiven() {
-        assertTrue(ioFacade.getAnswers()
-                           .isEmpty());
-    }
-
-    protected void addAnswer(String answer) {
-        ioFacade.addAnswer(answer);
-    }
-
-    protected TestIOFacade getIoFacade() {
-        return ioFacade;
+    private static LineReader newLineReader() {
+        final Terminal terminal = newDumbTerminal();
+        return Readers.newLineReader(terminal);
     }
 }

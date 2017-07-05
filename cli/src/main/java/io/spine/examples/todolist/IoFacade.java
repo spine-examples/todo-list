@@ -20,46 +20,25 @@
 
 package io.spine.examples.todolist;
 
-import org.jline.reader.LineReader;
-import org.jline.terminal.Terminal;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static io.spine.examples.todolist.Terminals.newDumbTerminal;
-
 /**
- * An {@link IOFacade} for a command-line application.
+ * A facade of an I/O system.
  *
  * @author Dmytro Grankin
  */
-public class CommandLineIOFacade implements IOFacade {
-
-    private final LineReader reader = newLineReader();
+public interface IoFacade {
 
     /**
-     * {@inheritDoc}
+     * Prompts a user for an input and receives the input value.
+     *
+     * @param prompt the prompt to display
+     * @return the input value
      */
-    @Override
-    public String promptUser(String prompt) {
-        checkArgument(!isNullOrEmpty(prompt));
-        println(prompt);
-        final String answer = reader.readLine();
-        return answer;
-    }
+    String promptUser(String prompt);
 
     /**
-     * {@inheritDoc}
+     * Prints the message and a new line after it.
+     *
+     * @param message the message to print
      */
-    @Override
-    public void println(String message) {
-        checkArgument(!isNullOrEmpty(message));
-        reader.getTerminal()
-              .writer()
-              .print(message);
-    }
-
-    private static LineReader newLineReader() {
-        final Terminal terminal = newDumbTerminal();
-        return Readers.newLineReader(terminal);
-    }
+    void println(String message);
 }

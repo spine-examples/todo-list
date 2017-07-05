@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.view.command;
 
-import io.spine.examples.todolist.UserIOTest;
+import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.test.CreateComment;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("CommandView should")
-class CommandViewTest extends UserIOTest {
+class CommandViewTest extends UserIoTest {
 
     private static final Shortcut BACK_SHORTCUT = getBackShortcut();
 
@@ -52,7 +52,7 @@ class CommandViewTest extends UserIOTest {
     @Override
     protected void setUp() {
         super.setUp();
-        view.setIOFacade(getIoFacade());
+        view.setIoFacade(getIoFacade());
     }
 
     @SuppressWarnings("unchecked")

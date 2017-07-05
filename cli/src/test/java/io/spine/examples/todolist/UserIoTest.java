@@ -20,30 +20,46 @@
 
 package io.spine.examples.todolist;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static io.spine.examples.todolist.TestIoFacade.getOutput;
+import static java.lang.System.lineSeparator;
+import static java.util.Arrays.asList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("CommandLineIOFacade should")
-class CommandLineIOFacadeTest {
+public class UserIoTest {
 
-    private static final String EMPTY_STRING = "";
+    private TestIoFacade ioFacade;
 
-    private final IOFacade ioFacade = new CommandLineIOFacade();
-
-    @Test
-    @DisplayName("not allow empty prompt")
-    void notAllowEmptyPrompt() {
-        assertThrows(IllegalArgumentException.class, () -> ioFacade.promptUser(EMPTY_STRING));
+    @BeforeEach
+    protected void setUp() {
+        TestIoFacade.clearOutput();
+        this.ioFacade = new TestIoFacade();
     }
 
-    @Test
-    @DisplayName("not allow empty string for printing")
-    void notAllowEmptyMessage() {
-        assertThrows(IllegalArgumentException.class, () -> ioFacade.println(EMPTY_STRING));
+    protected void assertOutput(String expected) {
+        assertEquals(expected, getOutput());
+    }
+
+    protected void assertOutput(Iterable<String> expectedLines) {
+        final String[] actualLines = getOutput().split(lineSeparator());
+        assertEquals(expectedLines, asList(actualLines));
+    }
+
+    protected void assertAllAnswersWereGiven() {
+        assertTrue(ioFacade.getAnswers()
+                           .isEmpty());
+    }
+
+    protected void addAnswer(String answer) {
+        ioFacade.addAnswer(answer);
+    }
+
+    protected TestIoFacade getIoFacade() {
+        return ioFacade;
     }
 }

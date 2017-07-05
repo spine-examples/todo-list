@@ -21,7 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import com.google.protobuf.StringValue;
-import io.spine.examples.todolist.UserIOTest;
+import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.PseudoAction;
 import io.spine.examples.todolist.action.Shortcut;
@@ -42,7 +42,7 @@ import static java.util.stream.Collectors.joining;
  * @author Dmytro Grankin
  */
 @DisplayName("DetailsView should")
-class DetailsViewTest extends UserIOTest {
+class DetailsViewTest extends UserIoTest {
 
     private static final StringValue DETAILS_STATE = forString("string");
 
@@ -54,7 +54,7 @@ class DetailsViewTest extends UserIOTest {
     @Override
     protected void setUp() {
         super.setUp();
-        detailsView.setIOFacade(getIoFacade());
+        detailsView.setIoFacade(getIoFacade());
     }
 
     @Test

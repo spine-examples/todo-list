@@ -28,11 +28,11 @@ import static java.lang.System.lineSeparator;
 import static java.util.Collections.unmodifiableCollection;
 
 /**
- * An {@code IOFacade} for the test needs.
+ * An {@code IoFacade} for the test needs.
  *
  * @author Dmytro Grankin
  */
-public class TestIOFacade implements IOFacade {
+public class TestIoFacade implements IoFacade {
 
     @SuppressWarnings("StringBufferField") // Used to collect all output of the class.
     private static final StringBuilder builder = new StringBuilder();

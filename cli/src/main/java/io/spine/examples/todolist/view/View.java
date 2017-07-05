@@ -21,8 +21,8 @@
 package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.CommandLineIOFacade;
-import io.spine.examples.todolist.IOFacade;
+import io.spine.examples.todolist.CommandLineFacade;
+import io.spine.examples.todolist.IoFacade;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.PseudoAction;
 import io.spine.examples.todolist.action.Shortcut;
@@ -49,7 +49,7 @@ public abstract class View {
      */
     @Nullable
     private TransitionAction originAction;
-    private IOFacade ioFacade = new CommandLineIOFacade();
+    private IoFacade ioFacade = new CommandLineFacade();
 
     /**
      * Creates a new instance.
@@ -98,7 +98,7 @@ public abstract class View {
         ioFacade.println(message);
     }
 
-    public void setIOFacade(IOFacade ioFacade) {
+    public void setIoFacade(IoFacade ioFacade) {
         this.ioFacade = ioFacade;
     }
 

@@ -21,8 +21,8 @@
 package io.spine.examples.todolist.validator;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.CommandLineIOFacade;
-import io.spine.examples.todolist.IOFacade;
+import io.spine.examples.todolist.CommandLineFacade;
+import io.spine.examples.todolist.IoFacade;
 
 import java.util.Optional;
 
@@ -40,7 +40,7 @@ public class ApproveQuestion {
     private static final String HINT_FORMAT = "(%s/%s)";
 
     private final Validator<String> validator = new ApproveAnswerValidator();
-    private IOFacade ioFacade = new CommandLineIOFacade();
+    private IoFacade ioFacade = new CommandLineFacade();
 
     /**
      * Obtains an answer for the specified question.
@@ -84,7 +84,7 @@ public class ApproveQuestion {
     }
 
     @VisibleForTesting
-    void setIOFacade(IOFacade ioFacade) {
+    void setIoFacade(IoFacade ioFacade) {
         this.ioFacade = ioFacade;
     }
 }

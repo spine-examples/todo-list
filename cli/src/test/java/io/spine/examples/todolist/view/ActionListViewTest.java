@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.view;
 
-import io.spine.examples.todolist.UserIOTest;
+import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.PseudoAction;
 import io.spine.examples.todolist.action.Shortcut;
@@ -41,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Dmytro Grankin
  */
 @DisplayName("ActionListView should")
-class ActionListViewTest extends UserIOTest {
+class ActionListViewTest extends UserIoTest {
 
     private static final String ACTION_NAME = "action";
     private static final Shortcut SHORTCUT = new Shortcut("a");
@@ -52,7 +52,7 @@ class ActionListViewTest extends UserIOTest {
     @Override
     protected void setUp() {
         super.setUp();
-        view.setIOFacade(getIoFacade());
+        view.setIoFacade(getIoFacade());
     }
 
     @Test

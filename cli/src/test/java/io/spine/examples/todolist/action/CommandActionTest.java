@@ -21,7 +21,7 @@
 package io.spine.examples.todolist.action;
 
 import com.google.protobuf.StringValue;
-import io.spine.examples.todolist.UserIOTest;
+import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.view.command.CommandView;
 import io.spine.validate.StringValueVBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @author Dmytro Grankin
  */
 @DisplayName("CommandAction should")
-class CommandActionTest extends UserIOTest {
+class CommandActionTest extends UserIoTest {
 
     private final CommandView<StringValue, StringValueVBuilder> view = new ACommandView();
     private final ACommandAction action = new ACommandAction(view);
@@ -46,7 +46,7 @@ class CommandActionTest extends UserIOTest {
     @BeforeEach
     protected void setUp() {
         super.setUp();
-        view.setIOFacade(getIoFacade());
+        view.setIoFacade(getIoFacade());
     }
 
     @Test
