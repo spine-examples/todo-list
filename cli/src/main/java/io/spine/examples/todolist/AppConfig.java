@@ -43,11 +43,13 @@ public class AppConfig {
     private static final TodoClient CLIENT = new CommandLineTodoClient(HOST, PORT, BOUNDED_CONTEXT);
 
     private AppConfig() {
-        // Prevent instantiation of this utility class.
+        // Prevent instantiation of this class.
     }
 
     /**
-     * Obtains {@link Server}, which is initially not started.
+     * Obtains the {@link Server} instance.
+     *
+     * <p>Initially is not started.
      *
      * @return the server
      */
