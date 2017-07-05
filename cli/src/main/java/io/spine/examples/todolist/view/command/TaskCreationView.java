@@ -32,7 +32,7 @@ import io.spine.examples.todolist.view.command.TaskCreationView.EnterDescription
 import static io.spine.base.Identifier.newUuid;
 
 /**
- * A {@code CommandView}, that allows to create a task in the quick mode.
+ * A {@code CommandView}, that allows to create a task in a quick mode.
  *
  * <p>To create a task in the way, user should specify a task description only.
  *
