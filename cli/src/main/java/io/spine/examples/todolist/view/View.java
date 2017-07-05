@@ -43,7 +43,7 @@ public abstract class View {
     private final boolean rootView;
 
     /**
-     * An {@link TransitionAction}, that <b>initially</b> led to the {@code View}.
+     * An {@link TransitionAction}, from which originates the {@code View}.
      *
      * <p>If the {@code View} is {@link #rootView}, this field is always {@code null}.
      */
