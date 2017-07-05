@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.action;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.view.View;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -102,11 +103,13 @@ public abstract class TransitionAction<S extends View, D extends View> extends A
 
         public abstract T create(S source);
 
-        protected String getName() {
+        @VisibleForTesting
+        public String getName() {
             return name;
         }
 
-        protected Shortcut getShortcut() {
+        @VisibleForTesting
+        public Shortcut getShortcut() {
             return shortcut;
         }
     }

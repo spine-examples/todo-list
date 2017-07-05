@@ -21,7 +21,8 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.action.StaticTransitionAction;
+
+import static io.spine.examples.todolist.action.StaticTransitionAction.newProducer;
 
 /**
  * Root view of the application.
@@ -30,8 +31,13 @@ import io.spine.examples.todolist.action.StaticTransitionAction;
  */
 public class MainMenu extends ActionListView {
 
-    public MainMenu() {
+    private MainMenu() {
         super(true);
-        addAction(new StaticTransitionAction<>("My tasks", new Shortcut("m"), this, new MyTasksMenu()));
+    }
+
+    public static MainMenu create() {
+        final MainMenu mainMenu = new MainMenu();
+        mainMenu.addAction(newProducer("My tasks", new Shortcut("m"), MyTasksMenu.create()));
+        return mainMenu;
     }
 }

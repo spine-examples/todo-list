@@ -43,7 +43,7 @@ class TaskCreationViewTest extends UserIoTest {
 
     private static final String VALID_DESCRIPTION = "to the task";
 
-    private final CommandView<CreateBasicTask, CreateBasicTaskVBuilder> view = new TaskCreationView();
+    private final CommandView<CreateBasicTask, CreateBasicTaskVBuilder> view = TaskCreationView.create();
 
     @Test
     @DisplayName("not be root view")

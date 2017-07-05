@@ -27,6 +27,7 @@ import io.spine.examples.todolist.action.ExecuteCommandAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
+import io.spine.examples.todolist.view.command.TaskCreationView.EnterDescription.EnterDescriptionProducer;
 
 import static io.spine.base.Identifier.newUuid;
 
@@ -39,11 +40,16 @@ import static io.spine.base.Identifier.newUuid;
  */
 public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTaskVBuilder> {
 
-    public TaskCreationView() {
+    private TaskCreationView() {
         super(false);
         getState().setId(generatedId());
-        addAction(new EnterDescription("Enter description", new Shortcut("d"), this));
-        addAction(new ExecuteCommand(this));
+    }
+
+    public static TaskCreationView create() {
+        final TaskCreationView view = new TaskCreationView();
+        view.addAction(new EnterDescriptionProducer("Enter description", new Shortcut("d")));
+        view.addAction(new ExecuteCommand.ExecuteCommandProducer());
+        return view;
     }
 
     private static TaskId generatedId() {
@@ -68,6 +74,21 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
             final String description = promptUser(PROMPT);
             state.setDescription(description);
         }
+
+        static class EnterDescriptionProducer extends CommandActionProducer<CreateBasicTask,
+                                                                          CreateBasicTaskVBuilder,
+                                                                          EnterDescription> {
+
+            private EnterDescriptionProducer(String name, Shortcut shortcut) {
+                super(name, shortcut);
+            }
+
+            @Override
+            public EnterDescription create(CommandView<CreateBasicTask,
+                                           CreateBasicTaskVBuilder> source) {
+                return new EnterDescription(getName(), getShortcut(), source);
+            }
+        }
     }
 
     private static class ExecuteCommand extends ExecuteCommandAction<CreateBasicTask,
@@ -80,6 +101,17 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
         @Override
         protected void executeCommand(CreateBasicTask commandMessage) {
             getClient().create(commandMessage);
+        }
+
+        static class ExecuteCommandProducer extends ExecuteCommandActionProducer<CreateBasicTask,
+                                                                                 CreateBasicTaskVBuilder,
+                                                                                 ExecuteCommand> {
+
+            @Override
+            public ExecuteCommand create(CommandView<CreateBasicTask,
+                                         CreateBasicTaskVBuilder> source) {
+                return new ExecuteCommand(source);
+            }
         }
     }
 }

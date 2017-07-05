@@ -21,18 +21,24 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.action.StaticTransitionAction;
 import io.spine.examples.todolist.view.command.TaskCreationView;
+
+import static io.spine.examples.todolist.action.StaticTransitionAction.newProducer;
+import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskListProducer;
 
 /**
  * @author Dmytro Grankin
  */
 class MyTasksMenu extends ActionListView {
 
-    MyTasksMenu() {
+    private MyTasksMenu() {
         super(false);
-        addAction(new StaticTransitionAction<>("Create task", new Shortcut("c"),
-                                               this, new TaskCreationView()));
-        addAction(MyTasksListView.newTransitionAction("List tasks", new Shortcut("l"), this));
+    }
+
+    static MyTasksMenu create() {
+        final MyTasksMenu view = new MyTasksMenu();
+        view.addAction(newProducer("Create task", new Shortcut("c"), TaskCreationView.create()));
+        view.addAction(newOpenTaskListProducer("List tasks", new Shortcut("l")));
+        return view;
     }
 }

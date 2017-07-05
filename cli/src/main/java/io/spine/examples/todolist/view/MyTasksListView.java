@@ -33,6 +33,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.valueOf;
 
 /**
@@ -45,55 +46,76 @@ import static java.lang.String.valueOf;
  */
 class MyTasksListView extends ActionListView {
 
-    @VisibleForTesting
-    MyTasksListView(MyListView myListView) {
+    private MyTasksListView() {
         super(false);
-        toActions(myListView, this).forEach(this::addAction);
+    }
+
+    static MyTasksListView create(MyListView myListView) {
+        final MyTasksListView view = new MyTasksListView();
+        detailProducersOf(myListView).forEach(view::addAction);
+        return view;
     }
 
     @VisibleForTesting
-    static Collection<OpenTaskDetails> toActions(MyListView myListView, MyTasksListView source) {
-        final Collection<OpenTaskDetails> actions = new LinkedList<>();
+    static Collection<OpenTaskDetails.Producer> detailProducersOf(MyListView myListView) {
+        final Collection<OpenTaskDetails.Producer> producers = new LinkedList<>();
         final List<TaskView> taskViews = myListView.getMyList()
                                                    .getItemsList();
         for (TaskView taskView : taskViews) {
             final int index = taskViews.indexOf(taskView);
-            final OpenTaskDetails action = newOpenTaskDetailsAction(source, taskView, index);
-            actions.add(action);
+            producers.add(newDetailsProducer(taskView, index));
         }
-        return actions;
+        return producers;
     }
 
     @VisibleForTesting
-    static OpenTaskDetails newOpenTaskDetailsAction(MyTasksListView source,
-                                                    TaskView taskView, int viewIndex) {
+    static OpenTaskDetails.Producer newDetailsProducer(TaskView taskView, int viewIndex) {
         final String name = taskView.getDescription();
         final String shortcutValue = valueOf(viewIndex + 1);
         final Shortcut shortcut = new Shortcut(shortcutValue);
-        return new OpenTaskDetails(name, shortcut, source, taskView.getId());
+        return new OpenTaskDetails.Producer(name, shortcut, taskView.getId());
     }
 
-    static OpenMyTasksList newTransitionAction(String name, Shortcut shortcut, View source) {
-        return new OpenMyTasksList(name, shortcut, source);
+    static <S extends View> OpenMyTasksList.Producer<S> newOpenTaskListProducer(String name,
+                                                                                Shortcut shortcut) {
+        return new OpenMyTasksList.Producer<>(name, shortcut);
     }
 
-    static class OpenMyTasksList extends DynamicTransitionAction<View, MyTasksListView> {
+    /**
+     * An {@code Action} for opening of {@code MyTasksListView}.
+     */
+    static class OpenMyTasksList<S extends View> extends DynamicTransitionAction<S, MyTasksListView> {
 
-        private OpenMyTasksList(String name, Shortcut shortcut, View source) {
+        private OpenMyTasksList(String name, Shortcut shortcut, S source) {
             super(name, shortcut, source);
         }
 
         @Override
         protected MyTasksListView createDestination() {
             final MyListView view = obtainMyTasks();
-            return new MyTasksListView(view);
+            return create(view);
         }
 
         private MyListView obtainMyTasks() {
             return getClient().getMyListView();
         }
+
+        static class Producer<S extends View> extends DynamicTransitionActionProducer<S, MyTasksListView> {
+
+            private Producer(String name, Shortcut shortcut) {
+                super(name, shortcut);
+            }
+
+            @Override
+            public DynamicTransitionAction<S, MyTasksListView> create(S source) {
+                return new OpenMyTasksList<>(getName(), getShortcut(), source);
+            }
+        }
     }
 
+    /**
+     * An {@code Action} for opening of {@link MyTaskDetailsView}.
+     */
     static class OpenTaskDetails extends DynamicTransitionAction<MyTasksListView, MyTaskDetailsView> {
 
         private final TaskId taskId;
@@ -114,6 +136,23 @@ class MyTasksListView extends ActionListView {
                                                                              .equals(taskId))
                                                          .findFirst();
             return new MyTaskDetailsView(taskView.get());
+        }
+
+        static class Producer extends DynamicTransitionActionProducer<MyTasksListView, MyTaskDetailsView> {
+
+            private final TaskId taskId;
+
+            private Producer(String name, Shortcut shortcut, TaskId taskId) {
+                super(name, shortcut);
+                checkNotNull(taskId);
+                this.taskId = taskId;
+            }
+
+            @Override
+            public DynamicTransitionAction<MyTasksListView, MyTaskDetailsView> create(
+                    MyTasksListView source) {
+                return new OpenTaskDetails(getName(), getShortcut(), source, taskId);
+            }
         }
     }
 }

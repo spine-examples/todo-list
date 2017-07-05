@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.action.TransitionAction;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskListView;
 import io.spine.examples.todolist.q.projection.TaskView;
@@ -32,7 +31,8 @@ import org.junit.jupiter.api.Test;
 import java.util.Collection;
 
 import static io.spine.examples.todolist.q.projection.MyListView.getDefaultInstance;
-import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskDetailsAction;
+import static io.spine.examples.todolist.view.MyTasksListView.detailProducersOf;
+import static io.spine.examples.todolist.view.MyTasksListView.newDetailsProducer;
 import static java.util.Collections.nCopies;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -45,7 +45,7 @@ class MyTasksListViewTest {
 
     private static final int VIEW_INDEX = 0;
 
-    private final MyTasksListView myTasksListView = new MyTasksListView(getDefaultInstance());
+    private final MyTasksListView myTasksListView = MyTasksListView.create(getDefaultInstance());
     private final TaskView taskView = TaskView.newBuilder()
                                               .setDescription("task desc")
                                               .build();
@@ -66,21 +66,19 @@ class MyTasksListViewTest {
         final MyListView myListView = MyListView.newBuilder()
                                                 .setMyList(taskListView)
                                                 .build();
-        final Collection<OpenTaskDetails> actions = MyTasksListView.toActions(myListView,
-                                                                              myTasksListView);
+        final Collection<OpenTaskDetails.Producer> actions = detailProducersOf(myListView);
         assertEquals(tasksCount, actions.size());
     }
 
     @Test
-    @DisplayName("create the OpenTaskDetails action")
+    @DisplayName("create producer for OpenTaskDetails action")
     void createOpenTaskDetailsAction() {
         final String shortcutValue = String.valueOf(VIEW_INDEX + 1);
         final Shortcut expectedShortcut = new Shortcut(shortcutValue);
 
-        final TransitionAction action = newOpenTaskDetailsAction(myTasksListView,
-                                                                 taskView, VIEW_INDEX);
+        final OpenTaskDetails.Producer producer = newDetailsProducer(taskView, VIEW_INDEX);
 
-        assertEquals(taskView.getDescription(), action.getName());
-        assertEquals(expectedShortcut, action.getShortcut());
+        assertEquals(taskView.getDescription(), producer.getName());
+        assertEquals(expectedShortcut, producer.getShortcut());
     }
 }

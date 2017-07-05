@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("MainMenu should")
 class MainMenuTest {
 
-    private final MainMenu menu = new MainMenu();
+    private final MainMenu menu = MainMenu.create();
 
     @Test
     @DisplayName("be root view")

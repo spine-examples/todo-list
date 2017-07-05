@@ -48,6 +48,11 @@ public class StaticTransitionAction<S extends View, D extends View> extends Tran
         getDestination().display(this);
     }
 
+    public static <S extends View, D extends View>
+    StaticTransitionActionProducer<S, D> newProducer(String name, Shortcut shortcut, D destination) {
+        return new StaticTransitionActionProducer<>(name, shortcut, destination);
+    }
+
     /**
      * {@inheritDoc}
      *
@@ -60,7 +65,7 @@ public class StaticTransitionAction<S extends View, D extends View> extends Tran
 
         private final D destination;
 
-        public StaticTransitionActionProducer(String name, Shortcut shortcut, D destination) {
+        private StaticTransitionActionProducer(String name, Shortcut shortcut, D destination) {
             super(name, shortcut);
             checkNotNull(destination);
             this.destination = destination;

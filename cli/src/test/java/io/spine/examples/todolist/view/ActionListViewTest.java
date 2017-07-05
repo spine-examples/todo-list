@@ -31,6 +31,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -51,6 +53,18 @@ class ActionListViewTest extends UserIoTest {
     protected void setUp() {
         super.setUp();
         view.setUserCommunicator(getCommunicator());
+    }
+
+    @Test
+    @DisplayName("add an action")
+    void addAction() {
+        final Set<Action> actions = view.getActions();
+        final int sizeBeforeAddition = actions.size();
+
+        view.addAction(newProducer(ACTION_NAME, SHORTCUT));
+
+        final int sizeAfterAddition = sizeBeforeAddition + 1;
+        assertEquals(sizeAfterAddition, actions.size());
     }
 
     @Test
@@ -106,7 +120,7 @@ class ActionListViewTest extends UserIoTest {
 
     private StaticTransitionActionProducer<ActionListView, View> newProducer(String name,
                                                                              Shortcut shortcut) {
-        return new StaticTransitionActionProducer<>(name, shortcut, view);
+        return StaticTransitionAction.newProducer(name, shortcut, view);
     }
 
     private static class NullProducer
