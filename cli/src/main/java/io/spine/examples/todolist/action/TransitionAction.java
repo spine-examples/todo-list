@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
- * An {@code TransitionAction} represents transition from a {@linkplain #source source view}
+ * An {@code Action} which takes the end-user from a {@linkplain #source source view}
  * to a {@linkplain #destination destination view}.
  *
  * @param <S> the type of the source view

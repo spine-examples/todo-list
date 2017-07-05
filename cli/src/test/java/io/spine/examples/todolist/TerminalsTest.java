@@ -25,7 +25,7 @@ import org.jline.terminal.impl.DumbTerminal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.Terminals.newDumbTerminal;
+import static io.spine.examples.todolist.Terminals.dumbTerminal;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
@@ -45,7 +45,7 @@ class TerminalsTest {
     @Test
     @DisplayName("Create a new dumb terminal")
     void createNewDumbTerminal() {
-        final Terminal terminal = newDumbTerminal();
+        final Terminal terminal = dumbTerminal();
         assertThat(terminal, instanceOf(DumbTerminal.class));
     }
 }

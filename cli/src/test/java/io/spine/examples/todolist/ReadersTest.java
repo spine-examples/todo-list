@@ -26,7 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.Readers.newLineReader;
-import static io.spine.examples.todolist.Terminals.newDumbTerminal;
+import static io.spine.examples.todolist.Terminals.dumbTerminal;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -45,7 +45,7 @@ class ReadersTest {
     @Test
     @DisplayName("Create `LineReader` with the specified `Terminal`")
     void createLineReader() {
-        final Terminal terminal = newDumbTerminal();
+        final Terminal terminal = dumbTerminal();
         final LineReader reader = newLineReader(terminal);
         assertSame(terminal, reader.getTerminal());
     }

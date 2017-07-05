@@ -30,10 +30,11 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
 
 /**
- * An {@code Action} encapsulates navigation between {@linkplain View views}.
+ * An {@code Action} which takes the end-user from one {@link View} to another.
+ *
+ * <p>Actions with same {@link Shortcut} are considered equals to avoid any confusion.
  *
  * @author Dmytro Grankin
- * @see #execute()
  */
 public abstract class Action {
 

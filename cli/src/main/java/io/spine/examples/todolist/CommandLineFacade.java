@@ -25,7 +25,7 @@ import org.jline.terminal.Terminal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static io.spine.examples.todolist.Terminals.newDumbTerminal;
+import static io.spine.examples.todolist.Terminals.dumbTerminal;
 
 /**
  * An {@link IoFacade} for a command-line application.
@@ -59,7 +59,7 @@ public class CommandLineFacade implements IoFacade {
     }
 
     private static LineReader newLineReader() {
-        final Terminal terminal = newDumbTerminal();
+        final Terminal terminal = dumbTerminal();
         return Readers.newLineReader(terminal);
     }
 }

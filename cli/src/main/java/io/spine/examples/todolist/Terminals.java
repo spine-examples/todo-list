@@ -43,7 +43,7 @@ class Terminals {
      *
      * @return the new terminal
      */
-    static Terminal newDumbTerminal() {
+    static Terminal dumbTerminal() {
         try {
             return TerminalBuilder.builder()
                                   .dumb(true)
