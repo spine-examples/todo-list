@@ -23,7 +23,7 @@ package io.spine.examples.todolist.view;
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.IoFacade;
 import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.PseudoAction;
+import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
 
@@ -79,7 +79,7 @@ public abstract class View {
 
     protected Action createBackAction(String name, Shortcut shortcut) {
         if (rootView) {
-            return new PseudoAction(name, shortcut);
+            return new NoOpAction(name, shortcut);
         }
 
         if (originAction == null) {

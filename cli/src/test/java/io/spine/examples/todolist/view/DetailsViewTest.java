@@ -23,7 +23,7 @@ package io.spine.examples.todolist.view;
 import com.google.protobuf.StringValue;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.PseudoAction;
+import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,8 +46,8 @@ class DetailsViewTest extends UserIoTest {
 
     private static final StringValue DETAILS_STATE = forString("string");
 
-    private final Collection<Action> actions = singletonList(
-            new PseudoAction("Act", new Shortcut("a")));
+    private final Collection<Action> actions = singletonList(new NoOpAction("Act",
+                                                                            new Shortcut("a")));
     private final DetailsView<StringValue> detailsView = new ADetailsView(actions, DETAILS_STATE);
 
     @BeforeEach

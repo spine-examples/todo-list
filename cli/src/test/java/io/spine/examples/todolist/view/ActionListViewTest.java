@@ -22,7 +22,7 @@ package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.PseudoAction;
+import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.StaticTransitionAction;
 import io.spine.examples.todolist.action.StaticTransitionAction.StaticTransitionActionProducer;
@@ -84,7 +84,7 @@ class ActionListViewTest extends UserIoTest {
     @Test
     @DisplayName("not add the action with an occupied shortcut")
     void notAddActionWithOccupiedShortcut() {
-        final Action firstAction = new PseudoAction(ACTION_NAME, SHORTCUT);
+        final Action firstAction = new NoOpAction(ACTION_NAME, SHORTCUT);
         view.addAction(firstAction);
 
         final String secondActionName = firstAction.getName() + " difference";

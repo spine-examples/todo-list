@@ -21,7 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.PseudoAction;
+import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.StaticTransitionAction;
 import io.spine.examples.todolist.action.TransitionAction;
@@ -76,14 +76,14 @@ class ViewTest {
     }
 
     @Test
-    @DisplayName("create pseudo back action for root view")
+    @DisplayName("create NoOpAction for return from a root view")
     void createPseudoBackAction() {
         final String backName = "Back";
         final Action back = rootView.createBackAction(backName, SHORTCUT);
 
         assertEquals(backName, back.getName());
         assertEquals(SHORTCUT, back.getShortcut());
-        assertThat(back, instanceOf(PseudoAction.class));
+        assertThat(back, instanceOf(NoOpAction.class));
     }
 
     @Test

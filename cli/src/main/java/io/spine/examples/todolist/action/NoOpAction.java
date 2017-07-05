@@ -27,9 +27,9 @@ package io.spine.examples.todolist.action;
  *
  * <p>Also suits for usage in tests, where {@link Action} behavior does not play a role.
  */
-public class PseudoAction extends Action {
+public class NoOpAction extends Action {
 
-    public PseudoAction(String name, Shortcut shortcut) {
+    public NoOpAction(String name, Shortcut shortcut) {
         super(name, shortcut);
     }
 
