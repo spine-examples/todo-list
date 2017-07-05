@@ -29,7 +29,7 @@ import io.spine.validate.ValidatingBuilder;
 
 /**
  * A {@code CommandAction} is a user action, that updates
- * {@linkplain CommandView#state state of the command view}.
+ * {@linkplain CommandView#state state of the command view} and displays the view again.
  *
  * @param <M> the type of the command message
  * @param <B> the validating builder type for the command message
@@ -43,6 +43,7 @@ public abstract class CommandAction<M extends Message,
 
     protected CommandAction(String name, Shortcut shortcut, CommandView<M, B> source) {
         super(name, shortcut, source);
+        setDestination(source);
     }
 
     /**

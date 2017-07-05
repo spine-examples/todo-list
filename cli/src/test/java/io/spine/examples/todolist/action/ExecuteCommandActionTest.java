@@ -26,6 +26,7 @@ import io.spine.validate.StringValueVBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -34,12 +35,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("ExecuteCommandAction should")
 class ExecuteCommandActionTest {
 
+    private final UpdateStringValueView view = new UpdateStringValueView();
+    private final UpdateStringValueAction action = new UpdateStringValueAction(view);
+
+    @Test
+    @DisplayName("have same source and destination view")
+    void haveSameSourceAndDestination() {
+        assertSame(action.getSource(), action.getDestination());
+    }
+
     @Test
     @DisplayName("execute command and display a source view")
     void executeCommandAndDisplaySource() {
-        final UpdateStringValueView view = new UpdateStringValueView();
-        final UpdateStringValueAction action = new UpdateStringValueAction(view);
-
         action.execute();
 
         assertTrue(action.isUpdated());

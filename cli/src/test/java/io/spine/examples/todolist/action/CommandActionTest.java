@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import static io.spine.examples.todolist.action.CommandActionTest.ACommandAction.VALUE_AFTER_UPDATE;
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * @author Dmytro Grankin
@@ -46,6 +47,12 @@ class CommandActionTest extends UserIoTest {
     protected void setUp() {
         super.setUp();
         view.setUserCommunicator(getCommunicator());
+    }
+
+    @Test
+    @DisplayName("have same source and destination view")
+    void haveSameSourceAndDestination() {
+        assertSame(action.getSource(), action.getDestination());
     }
 
     @Test

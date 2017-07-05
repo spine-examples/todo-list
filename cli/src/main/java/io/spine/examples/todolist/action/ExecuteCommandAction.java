@@ -44,6 +44,7 @@ public abstract class ExecuteCommandAction<M extends Message,
 
     public ExecuteCommandAction(CommandView<M, B> source) {
         super(ACTION_NAME, ACTION_SHORTCUT, source);
+        setDestination(source);
     }
 
     /**
