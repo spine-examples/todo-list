@@ -23,21 +23,16 @@ package io.spine.examples.todolist;
 import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
 
-import java.io.PrintStream;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static io.spine.examples.todolist.Terminals.newDumbTerminal;
 
 /**
- * The class provides relatively high-level facilities for user I/O in a command-line.
+ * An {@link IOFacade} for a command-line application.
  *
  * @author Dmytro Grankin
  */
-public class UserCommunicatorImpl implements UserCommunicator {
-
-    @SuppressWarnings("UseOfSystemOutOrSystemErr" /* OK for command-line app. */)
-    private static final PrintStream PRINT_STREAM = System.out;
+public class CommandLineIOFacade implements IOFacade {
 
     private final LineReader reader = newLineReader();
 
@@ -58,7 +53,9 @@ public class UserCommunicatorImpl implements UserCommunicator {
     @Override
     public void println(String message) {
         checkArgument(!isNullOrEmpty(message));
-        PRINT_STREAM.println(message);
+        reader.getTerminal()
+              .writer()
+              .print(message);
     }
 
     private static LineReader newLineReader() {

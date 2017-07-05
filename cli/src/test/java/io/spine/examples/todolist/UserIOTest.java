@@ -20,12 +20,9 @@
 
 package io.spine.examples.todolist;
 
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 
-import java.util.Arrays;
-
-import static io.spine.examples.todolist.TestUserCommunicator.getOutput;
+import static io.spine.examples.todolist.TestIOFacade.getOutput;
 import static java.lang.System.lineSeparator;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -34,14 +31,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Dmytro Grankin
  */
-public class UserIoTest {
+public class UserIOTest {
 
-    private TestUserCommunicator communicator;
+    private TestIOFacade ioFacade;
 
     @BeforeEach
     protected void setUp() {
-        TestUserCommunicator.clearOutput();
-        this.communicator = new TestUserCommunicator();
+        TestIOFacade.clearOutput();
+        this.ioFacade = new TestIOFacade();
     }
 
     protected void assertOutput(String expected) {
@@ -54,15 +51,15 @@ public class UserIoTest {
     }
 
     protected void assertAllAnswersWereGiven() {
-        assertTrue(communicator.getAnswers()
-                               .isEmpty());
+        assertTrue(ioFacade.getAnswers()
+                           .isEmpty());
     }
 
     protected void addAnswer(String answer) {
-        communicator.addAnswer(answer);
+        ioFacade.addAnswer(answer);
     }
 
-    protected TestUserCommunicator getCommunicator() {
-        return communicator;
+    protected TestIOFacade getIoFacade() {
+        return ioFacade;
     }
 }

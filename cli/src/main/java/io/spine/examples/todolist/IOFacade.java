@@ -20,30 +20,25 @@
 
 package io.spine.examples.todolist;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 /**
+ * A facade of an I/O system.
+ *
  * @author Dmytro Grankin
  */
-@DisplayName("UserCommunicatorImpl should")
-class UserCommunicatorImplTest {
+public interface IOFacade {
 
-    private static final String EMPTY_STRING = "";
+    /**
+     * Prompts a user for an input and receives the input value.
+     *
+     * @param prompt the prompt to display
+     * @return the input value
+     */
+    String promptUser(String prompt);
 
-    private final UserCommunicator communicator = new UserCommunicatorImpl();
-
-    @Test
-    @DisplayName("not allow empty prompt")
-    void notAllowEmptyPrompt() {
-        assertThrows(IllegalArgumentException.class, () -> communicator.promptUser(EMPTY_STRING));
-    }
-
-    @Test
-    @DisplayName("not allow empty string for printing")
-    void notAllowEmptyMessage() {
-        assertThrows(IllegalArgumentException.class, () -> communicator.println(EMPTY_STRING));
-    }
+    /**
+     * Prints the message and a new line after it.
+     *
+     * @param message the message to print
+     */
+    void println(String message);
 }

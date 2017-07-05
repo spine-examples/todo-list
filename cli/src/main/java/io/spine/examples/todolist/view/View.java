@@ -21,8 +21,8 @@
 package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.UserCommunicator;
-import io.spine.examples.todolist.UserCommunicatorImpl;
+import io.spine.examples.todolist.CommandLineIOFacade;
+import io.spine.examples.todolist.IOFacade;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.PseudoAction;
 import io.spine.examples.todolist.action.Shortcut;
@@ -49,7 +49,7 @@ public abstract class View {
      */
     @Nullable
     private TransitionAction originAction;
-    private UserCommunicator userCommunicator = new UserCommunicatorImpl();
+    private IOFacade ioFacade = new CommandLineIOFacade();
 
     /**
      * Creates a new instance.
@@ -91,15 +91,15 @@ public abstract class View {
     }
 
     protected String promptUser(String question) {
-        return userCommunicator.promptUser(question);
+        return ioFacade.promptUser(question);
     }
 
     protected void println(String message) {
-        userCommunicator.println(message);
+        ioFacade.println(message);
     }
 
-    public void setUserCommunicator(UserCommunicator userCommunicator) {
-        this.userCommunicator = userCommunicator;
+    public void setIOFacade(IOFacade ioFacade) {
+        this.ioFacade = ioFacade;
     }
 
     @VisibleForTesting

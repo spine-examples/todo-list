@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.view;
 
-import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

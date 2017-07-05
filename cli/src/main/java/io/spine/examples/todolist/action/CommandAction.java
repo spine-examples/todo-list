@@ -22,8 +22,8 @@ package io.spine.examples.todolist.action;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Message;
-import io.spine.examples.todolist.UserCommunicator;
-import io.spine.examples.todolist.UserCommunicatorImpl;
+import io.spine.examples.todolist.CommandLineIOFacade;
+import io.spine.examples.todolist.IOFacade;
 import io.spine.examples.todolist.view.command.CommandView;
 import io.spine.validate.ValidatingBuilder;
 
@@ -39,7 +39,7 @@ public abstract class CommandAction<M extends Message,
                                     B extends ValidatingBuilder<M, ? extends Message.Builder>>
         extends TransitionAction<CommandView<M, B>, CommandView<M, B>> {
 
-    private UserCommunicator userCommunicator = new UserCommunicatorImpl();
+    private IOFacade ioFacade = new CommandLineIOFacade();
 
     protected CommandAction(String name, Shortcut shortcut, CommandView<M, B> source) {
         super(name, shortcut, source);
@@ -59,12 +59,12 @@ public abstract class CommandAction<M extends Message,
     protected abstract void updateState(B state);
 
     protected String promptUser(String prompt) {
-        return userCommunicator.promptUser(prompt);
+        return ioFacade.promptUser(prompt);
     }
 
     @VisibleForTesting
-    public void setUserCommunicator(UserCommunicator userCommunicator) {
-        this.userCommunicator = userCommunicator;
+    public void setIOFacade(IOFacade ioFacade) {
+        this.ioFacade = ioFacade;
     }
 
     /**

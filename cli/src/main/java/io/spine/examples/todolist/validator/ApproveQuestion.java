@@ -21,8 +21,8 @@
 package io.spine.examples.todolist.validator;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.UserCommunicator;
-import io.spine.examples.todolist.UserCommunicatorImpl;
+import io.spine.examples.todolist.CommandLineIOFacade;
+import io.spine.examples.todolist.IOFacade;
 
 import java.util.Optional;
 
@@ -40,7 +40,7 @@ public class ApproveQuestion {
     private static final String HINT_FORMAT = "(%s/%s)";
 
     private final Validator<String> validator = new ApproveAnswerValidator();
-    private UserCommunicator communicator = new UserCommunicatorImpl();
+    private IOFacade ioFacade = new CommandLineIOFacade();
 
     /**
      * Obtains an answer for the specified question.
@@ -68,7 +68,7 @@ public class ApproveQuestion {
      *         or {@code Optional.empty()} if the answer is not valid
      */
     private Optional<String> getValidAnswer(String question) {
-        final String answer = communicator.promptUser(question);
+        final String answer = ioFacade.promptUser(question);
         boolean isValidAnswer = validator.validate(answer);
         return isValidAnswer
                ? Optional.of(answer)
@@ -84,7 +84,7 @@ public class ApproveQuestion {
     }
 
     @VisibleForTesting
-    void setCommunicator(UserCommunicator communicator) {
-        this.communicator = communicator;
+    void setIOFacade(IOFacade ioFacade) {
+        this.ioFacade = ioFacade;
     }
 }

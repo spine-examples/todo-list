@@ -21,7 +21,7 @@
 package io.spine.examples.todolist.view.command;
 
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.UserIoTest;
+import io.spine.examples.todolist.UserIOTest;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @author Dmytro Grankin
  */
 @DisplayName("TaskCreationView should")
-class TaskCreationViewTest extends UserIoTest {
+class TaskCreationViewTest extends UserIOTest {
 
     private static final String VALID_DESCRIPTION = "to the task";
 
@@ -76,7 +76,7 @@ class TaskCreationViewTest extends UserIoTest {
 
         @BeforeEach
         void setUp() {
-            enterDescription.setUserCommunicator(getCommunicator());
+            enterDescription.setIOFacade(getIoFacade());
         }
 
         @Test
