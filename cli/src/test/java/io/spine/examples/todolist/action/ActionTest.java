@@ -37,14 +37,14 @@ class ActionTest {
 
     private static final String ACTION_NAME = "action";
     private static final Shortcut SHORTCUT = new Shortcut("s");
-    private static final Action action = new ActionImpl(ACTION_NAME, SHORTCUT);
+    private static final Action action = new AnAction(ACTION_NAME, SHORTCUT);
 
     @Test
     @DisplayName("not allow null or empty name")
     void notAllowEmptyStrings() {
         final String emptyString = "";
-        assertThrows(IllegalArgumentException.class, () -> new ActionImpl(emptyString, SHORTCUT));
-        assertThrows(IllegalArgumentException.class, () -> new ActionImpl(null, SHORTCUT));
+        assertThrows(IllegalArgumentException.class, () -> new AnAction(emptyString, SHORTCUT));
+        assertThrows(IllegalArgumentException.class, () -> new AnAction(null, SHORTCUT));
     }
 
     @Test
@@ -52,7 +52,7 @@ class ActionTest {
     void overrideEqualsAndHashCode() {
         final Action firstAction = action;
         final String differentName = action.getName() + "difference";
-        final Action secondAction = new ActionImpl(differentName, action.getShortcut());
+        final Action secondAction = new AnAction(differentName, action.getShortcut());
         assertEquals(firstAction, secondAction);
         assertEquals(firstAction.hashCode(), secondAction.hashCode());
     }
@@ -65,9 +65,9 @@ class ActionTest {
         assertEquals(expectedString, action.toString());
     }
 
-    private static class ActionImpl extends Action {
+    private static class AnAction extends Action {
 
-        private ActionImpl(String name, Shortcut shortcut) {
+        private AnAction(String name, Shortcut shortcut) {
             super(name, shortcut);
         }
 
