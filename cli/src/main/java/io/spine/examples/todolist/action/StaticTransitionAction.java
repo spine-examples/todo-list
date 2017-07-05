@@ -22,6 +22,8 @@ package io.spine.examples.todolist.action;
 
 import io.spine.examples.todolist.view.View;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * A {@link TransitionAction}, that specifies
  * {@linkplain TransitionAction#destination destination view} during
@@ -44,5 +46,29 @@ public class StaticTransitionAction<S extends View, D extends View> extends Tran
     @Override
     public void execute() {
         getDestination().display(this);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param <S> {@inheritDoc}
+     * @param <D> {@inheritDoc}
+     */
+    public static class StaticTransitionActionProducer<S extends View,
+                                                       D extends View>
+            extends TransitionActionProducer<S, D, StaticTransitionAction<S, D>> {
+
+        private final D destination;
+
+        public StaticTransitionActionProducer(String name, Shortcut shortcut, D destination) {
+            super(name, shortcut);
+            checkNotNull(destination);
+            this.destination = destination;
+        }
+
+        @Override
+        public StaticTransitionAction<S, D> create(S source) {
+            return new StaticTransitionAction<>(getName(), getShortcut(), source, destination);
+        }
     }
 }

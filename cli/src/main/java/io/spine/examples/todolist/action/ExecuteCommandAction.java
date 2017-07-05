@@ -62,4 +62,14 @@ public abstract class ExecuteCommandAction<M extends Message,
     protected TodoClient getClient() {
         return client;
     }
+
+    public abstract static class ExecuteCommandActionProducer<M extends Message,
+                                                  B extends ValidatingBuilder<M, ? extends Message.Builder>,
+                                                  T extends ExecuteCommandAction<M, B>>
+            extends TransitionActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
+
+        protected ExecuteCommandActionProducer() {
+            super(ACTION_NAME, ACTION_SHORTCUT);
+        }
+    }
 }

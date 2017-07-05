@@ -23,9 +23,9 @@ package io.spine.examples.todolist.view;
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.Shortcut;
+import io.spine.examples.todolist.action.TransitionAction;
+import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
 
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -56,16 +56,14 @@ public class ActionListView extends View {
 
     private final Set<Action> actions;
 
+    /**
+     * Creates a new instance without some {@link #actions}.
+     *
+     * @param rootView {@inheritDoc}
+     */
     public ActionListView(boolean rootView) {
         super(rootView);
         this.actions = new LinkedHashSet<>();
-    }
-
-    public ActionListView(boolean rootView, Collection<Action> actions) {
-        super(rootView);
-        checkHasNotEqualActions(actions);
-        checkHasNotBackShortcut(actions);
-        this.actions = new LinkedHashSet<>(actions);
     }
 
     /**
@@ -121,10 +119,36 @@ public class ActionListView extends View {
         action.execute();
     }
 
+    /**
+     * Adds the {@link TransitionAction} created using
+     * the specified {@link TransitionActionProducer}.
+     *
+     * @param producer the producer of the action
+     * @param <S> the type of the source view
+     * @param <D> the type of the destination view
+     * @param <T> the type of the action
+     */
+    public <S extends ActionListView,
+            D extends View,
+            T extends TransitionAction<S, D>>
+    void addAction(TransitionActionProducer<S, D, T> producer) {
+        final S source = castThis();
+        final T action = producer.create(source);
+        addAction(action);
+    }
+
+    @VisibleForTesting
     protected void addAction(Action action) {
         checkNotNull(action);
+        checkHasNotReservedShortcut(action);
         checkArgument(!actions.contains(action));
         actions.add(action);
+    }
+
+    /** Casts this to generic type to provide type covariance in the derived classes. */
+    @SuppressWarnings("unchecked")
+    private <S extends ActionListView> S castThis() {
+        return (S) this;
     }
 
     @VisibleForTesting
@@ -149,19 +173,11 @@ public class ActionListView extends View {
                       .collect(joining(lineSeparator()));
     }
 
-    private static void checkHasNotEqualActions(Collection<? extends Action> actions) {
-        final Collection<Action> actionsWithoutEqual = new HashSet<>(actions);
-        if (actionsWithoutEqual.size() != actions.size()) {
-            final String errMsg = "Equal actions are found. The class doesn't allow this.";
-            throw newIllegalArgumentException(errMsg);
-        }
-    }
-
-    private static void checkHasNotBackShortcut(Collection<? extends Action> actions) {
+    private static void checkHasNotReservedShortcut(Action action) {
         final Predicate<Action> predicate = new ShortcutMatchPredicate(BACK_SHORTCUT.getValue());
-        final boolean containsConflictAction = actions.stream()
-                                                      .anyMatch(predicate);
-        if (containsConflictAction) {
+        final boolean hasReservedShortcut = predicate.test(action);
+
+        if (hasReservedShortcut) {
             throw newIllegalArgumentException("Action with reserved shortcut `%s` was specified.",
                                               BACK_SHORTCUT);
         }

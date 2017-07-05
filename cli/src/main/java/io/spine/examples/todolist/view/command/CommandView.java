@@ -46,8 +46,8 @@ import static io.spine.examples.todolist.view.command.ValidationExceptionFormatt
  *
  * @author Dmytro Grankin
  */
-public abstract class CommandView<M extends Message,
-                                  B extends ValidatingBuilder<M, ? extends Message.Builder>>
+public class CommandView<M extends Message,
+                         B extends ValidatingBuilder<M, ? extends Message.Builder>>
         extends ActionListView {
 
     private final B state;

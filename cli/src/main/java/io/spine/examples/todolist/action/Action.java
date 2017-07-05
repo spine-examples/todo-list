@@ -76,11 +76,12 @@ public abstract class Action {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Action)) {
             return false;
         }
 
-        final Action other = (Action) o;
+        Action other = (Action) o;
+
         return Objects.equals(shortcut, other.shortcut);
     }
 

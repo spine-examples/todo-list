@@ -32,7 +32,7 @@ import io.spine.validate.ValidatingBuilder;
  * {@linkplain CommandView#state state of the command view}.
  *
  * @param <M> the type of the command message
- * @param <B> the validating builder for the command message
+ * @param <B> the validating builder type for the command message
  * @author Dmytro Grankin
  */
 public abstract class CommandAction<M extends Message,
@@ -64,5 +64,22 @@ public abstract class CommandAction<M extends Message,
     @VisibleForTesting
     public void setUserCommunicator(UserCommunicator userCommunicator) {
         this.userCommunicator = userCommunicator;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param <M> the type of the command message
+     * @param <B> the validating builder type for the command message
+     * @param <T> {@inheritDoc}
+     */
+    public abstract static class CommandActionProducer<M extends Message,
+                                                       B extends ValidatingBuilder<M, ? extends Message.Builder>,
+                                                       T extends CommandAction<M, B>>
+            extends TransitionActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
+
+        protected CommandActionProducer(String name, Shortcut shortcut) {
+            super(name, shortcut);
+        }
     }
 }

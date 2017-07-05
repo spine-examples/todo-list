@@ -79,8 +79,9 @@ class DetailsViewTest extends UserIoTest {
 
     private static class ADetailsView extends DetailsView<StringValue> {
 
-        private ADetailsView(Collection<Action> actions, StringValue state) {
-            super(true, actions, state);
+        private ADetailsView(Iterable<Action> actions, StringValue state) {
+            super(true, state);
+            actions.forEach(this::addAction);
         }
 
         @Override

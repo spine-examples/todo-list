@@ -39,7 +39,8 @@ import io.spine.examples.todolist.view.View;
  * @param <D> {@inheritDoc}
  * @author Dmytro Grankin
  */
-public abstract class DynamicTransitionAction<S extends View, D extends View> extends TransitionAction<S, D> {
+public abstract class DynamicTransitionAction<S extends View,
+                                              D extends View> extends TransitionAction<S, D> {
 
     private final TodoClient client = AppConfig.getClient();
 
@@ -71,5 +72,20 @@ public abstract class DynamicTransitionAction<S extends View, D extends View> ex
 
     protected TodoClient getClient() {
         return client;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param <S> {@inheritDoc}
+     * @param <D> {@inheritDoc}
+     */
+    public abstract static class DynamicTransitionActionProducer<S extends View,
+                                                                 D extends View>
+            extends TransitionActionProducer<S, D, DynamicTransitionAction<S, D>> {
+
+        protected DynamicTransitionActionProducer(String name, Shortcut shortcut) {
+            super(name, shortcut);
+        }
     }
 }

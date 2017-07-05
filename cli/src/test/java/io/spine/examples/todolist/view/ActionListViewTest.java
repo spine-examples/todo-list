@@ -24,18 +24,14 @@ import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.PseudoAction;
 import io.spine.examples.todolist.action.Shortcut;
+import io.spine.examples.todolist.action.StaticTransitionAction;
+import io.spine.examples.todolist.action.StaticTransitionAction.StaticTransitionActionProducer;
+import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
-import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -45,7 +41,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("ActionListView should")
 class ActionListViewTest extends UserIoTest {
 
-    private final ActionListView view = new RootView(emptySet());
+    private static final String ACTION_NAME = "action";
+    private static final Shortcut SHORTCUT = new Shortcut("a");
+
+    private final ActionListView view = new ActionListView(true);
 
     @BeforeEach
     @Override
@@ -55,33 +54,28 @@ class ActionListViewTest extends UserIoTest {
     }
 
     @Test
-    @DisplayName("not accept equal actions to the constructor")
-    void notAcceptEqualActions() {
-        final Shortcut shortcut = new Shortcut("a");
-        final Action action = new PseudoAction("a1", shortcut);
-        final List<Action> actions = Arrays.asList(action, action);
+    @DisplayName("not add null action")
+    void notAddNullAction() {
+        final NullProducer producer = new NullProducer(ACTION_NAME, SHORTCUT);
+        assertThrows(NullPointerException.class, () -> view.addAction(producer));
+    }
+
+    @Test
+    @DisplayName("not add the action with the back shortcut")
+    void notAddActionWithBackShortcut() {
         assertThrows(IllegalArgumentException.class,
-                     () -> new ActionListView(true, actions));
+                     () -> view.addAction(newProducer(ACTION_NAME, getBackShortcut())));
     }
 
     @Test
-    @DisplayName("not allow actions with back shortcut")
-    void notAllowActionsWithBackShortcut() {
-        final Shortcut backShortcut = getBackShortcut();
-        final Action action = new PseudoAction("action", backShortcut);
-        final Set<Action> actions = singleton(action);
-        assertThrows(IllegalArgumentException.class, () -> new RootView(actions));
-    }
-
-    @Test
-    @DisplayName("not allow addition of action with occupied shortcut")
-    void notAllowActionWithOccupiedShortcut() {
-        final Shortcut shortcut = new Shortcut("s");
-        final Action firstAction = new PseudoAction("to child", shortcut);
-        final Action secondAction = new PseudoAction("to second child", shortcut);
+    @DisplayName("not add the action with an occupied shortcut")
+    void notAddActionWithOccupiedShortcut() {
+        final Action firstAction = new PseudoAction(ACTION_NAME, SHORTCUT);
         view.addAction(firstAction);
 
-        assertThrows(IllegalArgumentException.class, () -> view.addAction(secondAction));
+        final String secondActionName = firstAction.getName() + " difference";
+        assertThrows(IllegalArgumentException.class,
+                     () -> view.addAction(newProducer(secondActionName, SHORTCUT)));
     }
 
     @Test
@@ -110,10 +104,24 @@ class ActionListViewTest extends UserIoTest {
         assertAllAnswersWereGiven();
     }
 
-    private static class RootView extends ActionListView {
+    private StaticTransitionActionProducer<ActionListView, View> newProducer(String name,
+                                                                             Shortcut shortcut) {
+        return new StaticTransitionActionProducer<>(name, shortcut, view);
+    }
 
-        private RootView(Collection<Action> actions) {
-            super(true, actions);
+    private static class NullProducer
+            extends TransitionActionProducer<ActionListView,
+                                             View,
+                                             StaticTransitionAction<ActionListView, View>> {
+
+        private NullProducer(String name, Shortcut shortcut) {
+            super(name, shortcut);
+        }
+
+        @SuppressWarnings("ReturnOfNull") // Purpose of this class.
+        @Override
+        public StaticTransitionAction<ActionListView, View> create(ActionListView source) {
+            return null;
         }
     }
 }

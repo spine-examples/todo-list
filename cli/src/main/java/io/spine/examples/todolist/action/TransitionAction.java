@@ -22,7 +22,9 @@ package io.spine.examples.todolist.action;
 
 import io.spine.examples.todolist.view.View;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * An {@code TransitionAction} represents transition from a {@linkplain #source source view}
@@ -73,5 +75,39 @@ public abstract class TransitionAction<S extends View, D extends View> extends A
 
     protected D getDestination() {
         return destination;
+    }
+
+    /**
+     * Producer of the {@link TransitionAction}.
+     *
+     * <p>Encapsulates creation of the action.
+     *
+     * @param <S> the type of the source view
+     * @param <D> the type of the destination view
+     * @param <T> the type of the action to be created
+     */
+    public abstract static class TransitionActionProducer<S extends View,
+                                                          D extends View,
+                                                          T extends TransitionAction<S, D>> {
+
+        private final String name;
+        private final Shortcut shortcut;
+
+        protected TransitionActionProducer(String name, Shortcut shortcut) {
+            checkArgument(!isNullOrEmpty(name));
+            checkNotNull(shortcut);
+            this.name = name;
+            this.shortcut = shortcut;
+        }
+
+        public abstract T create(S source);
+
+        protected String getName() {
+            return name;
+        }
+
+        protected Shortcut getShortcut() {
+            return shortcut;
+        }
     }
 }

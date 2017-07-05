@@ -21,9 +21,6 @@
 package io.spine.examples.todolist.view;
 
 import com.google.protobuf.Message;
-import io.spine.examples.todolist.action.Action;
-
-import java.util.Collection;
 
 import static java.lang.System.lineSeparator;
 
@@ -36,11 +33,6 @@ import static java.lang.System.lineSeparator;
 public abstract class DetailsView<S extends Message> extends ActionListView {
 
     private final S state;
-
-    protected DetailsView(boolean rootView, Collection<Action> actions, S state) {
-        super(rootView, actions);
-        this.state = state;
-    }
 
     protected DetailsView(boolean rootView, S state) {
         super(rootView);
