@@ -20,12 +20,15 @@
 
 package io.spine.examples.todolist;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskView;
 
 import java.util.List;
 import java.util.Optional;
+
+import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
  * A {@code DataSource} of the application.
@@ -47,10 +50,20 @@ public class DataSource {
     public TaskView getMyTaskView(TaskId id) {
         final List<TaskView> taskViews = getMyListView().getMyList()
                                                         .getItemsList();
-        final Optional<TaskView> taskView = taskViews.stream()
-                                                     .filter(view -> view.getId()
-                                                                         .equals(id))
-                                                     .findFirst();
-        return taskView.get();
+        final TaskView taskView = getTaskViewById(taskViews, id);
+        return taskView;
+    }
+
+    @VisibleForTesting
+    static TaskView getTaskViewById(List<TaskView> taskViews, TaskId id) {
+        final Optional<TaskView> optionalView = taskViews.stream()
+                                                         .filter(view -> view.getId()
+                                                                             .equals(id))
+                                                         .findFirst();
+        if (optionalView.isPresent()) {
+            return optionalView.get();
+        }
+
+        throw newIllegalStateException("There is not task with ID `%s`.", id);
     }
 }
