@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.view;
 
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,6 @@ import static io.spine.examples.todolist.view.DisplayFormatter.format;
 import static io.spine.time.Time.getCurrentTime;
 import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * @author Dmytro Grankin
@@ -45,13 +45,7 @@ class MyTaskDetailsViewTest {
                                               .setPriority(NORMAL)
                                               .setDueDate(getCurrentTime())
                                               .build();
-    private final MyTaskDetailsView detailsView = new MyTaskDetailsView(taskView);
-
-    @Test
-    @DisplayName("not be root view")
-    void notBeRootView() {
-        assertFalse(detailsView.isRootView());
-    }
+    private final MyTaskDetailsView detailsView = new MyTaskDetailsView(TaskId.getDefaultInstance());
 
     @Test
     @DisplayName("format TaskView")

@@ -23,7 +23,6 @@ package io.spine.examples.todolist.view;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.action.StaticTransitionAction;
 import io.spine.examples.todolist.action.TransitionAction;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -129,6 +128,7 @@ class ViewTest {
 
     private static TransitionAction<View, View> newAction(View source, View destination) {
         final Shortcut shortcut = new Shortcut("a");
-        return new StaticTransitionAction<>("a", shortcut, source, destination);
+        return TransitionAction.newProducer("a name", shortcut, destination)
+                               .create(source);
     }
 }

@@ -22,7 +22,7 @@ package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.action.Shortcut;
 
-import static io.spine.examples.todolist.action.StaticTransitionAction.newProducer;
+import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 
 /**
  * Root view of the application.

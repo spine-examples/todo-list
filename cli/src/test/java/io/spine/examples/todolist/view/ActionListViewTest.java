@@ -24,8 +24,7 @@ import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.action.StaticTransitionAction;
-import io.spine.examples.todolist.action.StaticTransitionAction.StaticTransitionActionProducer;
+import io.spine.examples.todolist.action.TransitionAction;
 import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +32,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
+import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -61,7 +61,7 @@ class ActionListViewTest extends UserIoTest {
         final Set<Action> actions = view.getActions();
         final int sizeBeforeAddition = actions.size();
 
-        view.addAction(newProducer(ACTION_NAME, SHORTCUT));
+        view.addAction(newProducer(ACTION_NAME, SHORTCUT, view));
 
         final int sizeAfterAddition = sizeBeforeAddition + 1;
         assertEquals(sizeAfterAddition, actions.size());
@@ -70,7 +70,7 @@ class ActionListViewTest extends UserIoTest {
     @Test
     @DisplayName("not add null action")
     void notAddNullAction() {
-        final NullProducer producer = new NullProducer(ACTION_NAME, SHORTCUT);
+        final NullProducer producer = new NullProducer(ACTION_NAME, SHORTCUT, view);
         assertThrows(NullPointerException.class, () -> view.addAction(producer));
     }
 
@@ -78,7 +78,7 @@ class ActionListViewTest extends UserIoTest {
     @DisplayName("not add the action with the back shortcut")
     void notAddActionWithBackShortcut() {
         assertThrows(IllegalArgumentException.class,
-                     () -> view.addAction(newProducer(ACTION_NAME, getBackShortcut())));
+                     () -> view.addAction(newProducer(ACTION_NAME, getBackShortcut(), view)));
     }
 
     @Test
@@ -89,7 +89,7 @@ class ActionListViewTest extends UserIoTest {
 
         final String secondActionName = firstAction.getName() + " difference";
         assertThrows(IllegalArgumentException.class,
-                     () -> view.addAction(newProducer(secondActionName, SHORTCUT)));
+                     () -> view.addAction(newProducer(secondActionName, SHORTCUT, view)));
     }
 
     @Test
@@ -118,23 +118,16 @@ class ActionListViewTest extends UserIoTest {
         assertAllAnswersWereGiven();
     }
 
-    private StaticTransitionActionProducer<ActionListView, View> newProducer(String name,
-                                                                             Shortcut shortcut) {
-        return StaticTransitionAction.newProducer(name, shortcut, view);
-    }
-
     private static class NullProducer
-            extends TransitionActionProducer<ActionListView,
-                                             View,
-                                             StaticTransitionAction<ActionListView, View>> {
+            extends TransitionActionProducer<ActionListView, View> {
 
-        private NullProducer(String name, Shortcut shortcut) {
-            super(name, shortcut);
+        private NullProducer(String name, Shortcut shortcut, View destination) {
+            super(name, shortcut, destination);
         }
 
         @SuppressWarnings("ReturnOfNull") // Purpose of this class.
         @Override
-        public StaticTransitionAction<ActionListView, View> create(ActionListView source) {
+        public TransitionAction<ActionListView, View> create(ActionListView source) {
             return null;
         }
     }

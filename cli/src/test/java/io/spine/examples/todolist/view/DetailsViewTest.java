@@ -20,23 +20,27 @@
 
 package io.spine.examples.todolist.view;
 
+import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
+import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
+import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static io.spine.examples.todolist.view.ActionListView.getSelectActionMsg;
 import static io.spine.protobuf.Wrapper.forString;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * @author Dmytro Grankin
@@ -44,17 +48,21 @@ import static java.util.stream.Collectors.joining;
 @DisplayName("DetailsView should")
 class DetailsViewTest extends UserIoTest {
 
-    private static final StringValue DETAILS_STATE = forString("string");
-
     private final Collection<Action> actions = singletonList(new NoOpAction("Act",
                                                                             new Shortcut("a")));
-    private final DetailsView<StringValue> detailsView = new ADetailsView(actions, DETAILS_STATE);
+    private final ADetailsView view = new ADetailsView(actions, Int32Value.getDefaultInstance());
 
     @BeforeEach
     @Override
     protected void setUp() {
         super.setUp();
-        detailsView.setIoFacade(getIoFacade());
+        view.setIoFacade(getIoFacade());
+    }
+
+    @Test
+    @DisplayName("not be root view")
+    void notBeRootView() {
+        assertFalse(view.isRootView());
     }
 
     @Test
@@ -63,13 +71,16 @@ class DetailsViewTest extends UserIoTest {
         final Shortcut back = getBackShortcut();
         addAnswer(back.getValue());
 
-        detailsView.display();
+        final TransitionActionProducer<View, View> producer =
+                newProducer("Transition", new Shortcut("t"), view);
+        producer.create(new RootView())
+                .execute();
 
-        final String stateRepresentation = detailsView.viewOf(DETAILS_STATE);
-        final String actionsRepresentation = detailsView.getActions()
-                                                        .stream()
-                                                        .map(Action::toString)
-                                                        .collect(joining(lineSeparator()));
+        final String stateRepresentation = view.viewOf(ADetailsView.RECENT_STATE);
+        final String actionsRepresentation = view.getActions()
+                                                 .stream()
+                                                 .map(Action::toString)
+                                                 .collect(joining(lineSeparator()));
         final String expectedRepresentation =
                 stateRepresentation + lineSeparator() +
                         actionsRepresentation + lineSeparator() +
@@ -77,16 +88,34 @@ class DetailsViewTest extends UserIoTest {
         assertOutput(expectedRepresentation);
     }
 
-    private static class ADetailsView extends DetailsView<StringValue> {
+    private static class ADetailsView extends DetailsView<Int32Value, StringValue> {
 
-        private ADetailsView(Iterable<Action> actions, StringValue state) {
-            super(true, state);
+        private static final StringValue RECENT_STATE = forString("string");
+
+        private ADetailsView(Iterable<Action> actions, Int32Value id) {
+            super(id);
             actions.forEach(this::addAction);
+        }
+
+        @Override
+        protected StringValue getRecentState(Int32Value id) {
+            return RECENT_STATE;
         }
 
         @Override
         protected String viewOf(StringValue state) {
             return state.getValue();
+        }
+    }
+
+    private static class RootView extends View {
+
+        private RootView() {
+            super(true);
+        }
+
+        @Override
+        protected void display() {
         }
     }
 }

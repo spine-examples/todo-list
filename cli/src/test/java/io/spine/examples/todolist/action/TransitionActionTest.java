@@ -24,7 +24,6 @@ import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -32,30 +31,13 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @author Dmytro Grankin
  */
 @DisplayName("TransitionAction should")
-abstract class AbstractTransitionActionTestSuite<T extends TransitionAction<View,
-                                                 AbstractTransitionActionTestSuite.DisplayCounterView>> {
+class TransitionActionTest {
 
-    static final String ACTION_NAME = "static transition action";
-    static final Shortcut SHORTCUT = new Shortcut("s");
+    private static final String ACTION_NAME = "static transition action";
+    private static final Shortcut SHORTCUT = new Shortcut("s");
 
-    private final T action;
-
-    protected AbstractTransitionActionTestSuite(T action) {
-        checkArgument(action.getDestination().displayedTimes == 0);
-        this.action = action;
-    }
-
-    static RootView newSourceView() {
-        return new RootView();
-    }
-
-    static DisplayCounterView newDisplayCounterView() {
-        return new DisplayCounterView();
-    }
-
-    static DisplayCounterView newDisplayCounterView(int displayedTimes) {
-        return new DisplayCounterView(displayedTimes);
-    }
+    private final TransitionAction<RootView, DisplayCounterView> action =
+            new TransitionAction<>(ACTION_NAME, SHORTCUT, new RootView(), new DisplayCounterView());
 
     @Test
     @DisplayName("display a destination view")
@@ -79,10 +61,6 @@ abstract class AbstractTransitionActionTestSuite<T extends TransitionAction<View
         assertEquals(reverseShortcut, reverse.getShortcut());
         assertSame(action.getSource(), reverse.getDestination());
         assertSame(action.getDestination(), reverse.getSource());
-    }
-
-    T getAction() {
-        return action;
     }
 
     static class DisplayCounterView extends View {

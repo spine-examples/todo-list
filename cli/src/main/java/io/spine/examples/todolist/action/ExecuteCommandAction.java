@@ -42,9 +42,8 @@ public abstract class ExecuteCommandAction<M extends Message,
 
     private final TodoClient client = AppConfig.getClient();
 
-    public ExecuteCommandAction(CommandView<M, B> source) {
-        super(ACTION_NAME, ACTION_SHORTCUT, source);
-        setDestination(source);
+    protected ExecuteCommandAction(CommandView<M, B> source) {
+        super(ACTION_NAME, ACTION_SHORTCUT, source, source);
     }
 
     /**
@@ -67,7 +66,7 @@ public abstract class ExecuteCommandAction<M extends Message,
     public abstract static class ExecuteCommandActionProducer<M extends Message,
                                                   B extends ValidatingBuilder<M, ? extends Message.Builder>,
                                                   T extends ExecuteCommandAction<M, B>>
-            extends TransitionActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
+            extends AbstractTransitionActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
 
         protected ExecuteCommandActionProducer() {
             super(ACTION_NAME, ACTION_SHORTCUT);

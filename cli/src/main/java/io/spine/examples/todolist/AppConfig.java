@@ -41,6 +41,7 @@ public class AppConfig {
 
     private static final Server SERVER = new Server(PORT, BOUNDED_CONTEXT);
     private static final TodoClient CLIENT = new CommandLineTodoClient(HOST, PORT, BOUNDED_CONTEXT);
+    private static final DataSource DATA_SOURCE = new DataSource(CLIENT);
 
     private static final IoFacadeFactory IO_FACADE_FACTORY = new IoFacadeFactory();
 
@@ -66,6 +67,15 @@ public class AppConfig {
      */
     public static TodoClient getClient() {
         return CLIENT;
+    }
+
+    /**
+     * Obtains the {@link DataSource}.
+     *
+     * @return the data source
+     */
+    public static DataSource getDataSource() {
+        return DATA_SOURCE;
     }
 
     /**

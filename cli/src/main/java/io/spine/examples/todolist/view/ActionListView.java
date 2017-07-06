@@ -21,10 +21,10 @@
 package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.spine.examples.todolist.action.AbstractTransitionActionProducer;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
-import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
@@ -121,7 +121,7 @@ public class ActionListView extends View {
 
     /**
      * Adds the {@link TransitionAction} created using
-     * the specified {@link TransitionActionProducer}.
+     * the specified {@link AbstractTransitionActionProducer}.
      *
      * @param producer the producer of the action
      * @param <S> the type of the source view
@@ -131,7 +131,7 @@ public class ActionListView extends View {
     public <S extends ActionListView,
             D extends View,
             T extends TransitionAction<S, D>>
-    void addAction(TransitionActionProducer<S, D, T> producer) {
+    void addAction(AbstractTransitionActionProducer<S, D, T> producer) {
         final S source = castThis();
         final T action = producer.create(source);
         addAction(action);

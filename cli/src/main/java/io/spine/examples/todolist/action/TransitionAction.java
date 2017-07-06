@@ -20,12 +20,9 @@
 
 package io.spine.examples.todolist.action;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.view.View;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * An {@code Action} which takes the end-user from a {@linkplain #source source view}
@@ -35,7 +32,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  * @param <D> the type of the destination view
  * @author Dmytro Grankin
  */
-public abstract class TransitionAction<S extends View, D extends View> extends Action {
+public class TransitionAction<S extends View, D extends View> extends Action {
 
     /**
      * A source {@code View} of the action.
@@ -45,11 +42,22 @@ public abstract class TransitionAction<S extends View, D extends View> extends A
     /**
      * A destination {@code View} of the action.
      */
-    private D destination;
+    private final D destination;
 
-    protected TransitionAction(String name, Shortcut shortcut, S source) {
+    protected TransitionAction(String name, Shortcut shortcut, S source, D destination) {
         super(name, shortcut);
+        checkNotNull(source);
+        checkNotNull(destination);
         this.source = source;
+        this.destination = destination;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void execute() {
+        destination.display(this);
     }
 
     /**
@@ -62,12 +70,7 @@ public abstract class TransitionAction<S extends View, D extends View> extends A
     public TransitionAction<D, S> createReverseAction(String name, Shortcut shortcut) {
         final S reverseDestination = getSource();
         final D reserveSource = getDestination();
-        return new StaticTransitionAction<>(name, shortcut, reserveSource, reverseDestination);
-    }
-
-    protected void setDestination(D destination) {
-        checkNotNull(destination);
-        this.destination = destination;
+        return new TransitionAction<>(name, shortcut, reserveSource, reverseDestination);
     }
 
     protected S getSource() {
@@ -78,39 +81,27 @@ public abstract class TransitionAction<S extends View, D extends View> extends A
         return destination;
     }
 
-    /**
-     * Producer of the {@link TransitionAction}.
-     *
-     * <p>Encapsulates creation of the action.
-     *
-     * @param <S> the type of the source view
-     * @param <D> the type of the destination view
-     * @param <T> the type of the action to be created
-     */
-    public abstract static class TransitionActionProducer<S extends View,
-                                                          D extends View,
-                                                          T extends TransitionAction<S, D>> {
+    public static <S extends View, D extends View>
+    TransitionActionProducer<S, D> newProducer(String name, Shortcut shortcut, D destination) {
+        return new TransitionActionProducer<>(name, shortcut, destination);
+    }
 
-        private final String name;
-        private final Shortcut shortcut;
 
-        protected TransitionActionProducer(String name, Shortcut shortcut) {
-            checkArgument(!isNullOrEmpty(name));
-            checkNotNull(shortcut);
-            this.name = name;
-            this.shortcut = shortcut;
+    public static class TransitionActionProducer<S extends View,
+                                                 D extends View>
+            extends AbstractTransitionActionProducer<S, D, TransitionAction<S, D>> {
+
+        private final D destination;
+
+        protected TransitionActionProducer(String name, Shortcut shortcut, D destination) {
+            super(name, shortcut);
+            checkNotNull(destination);
+            this.destination = destination;
         }
 
-        public abstract T create(S source);
-
-        @VisibleForTesting
-        public String getName() {
-            return name;
-        }
-
-        @VisibleForTesting
-        public Shortcut getShortcut() {
-            return shortcut;
+        @Override
+        public TransitionAction<S, D> create(S source) {
+            return new TransitionAction<>(getName(), getShortcut(), source, destination);
         }
     }
 }

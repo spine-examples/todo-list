@@ -37,10 +37,8 @@ import static com.google.protobuf.util.Timestamps.toMillis;
 class DisplayFormatter {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
-    static final String DEFAULT_TIMESTAMP_VALUE = "default";
 
-    static final String LABEL_ID_VALUE = "Label id: ";
-    static final String TASK_ID_VALUE = "Task id: ";
+    static final String DEFAULT_TIMESTAMP_VALUE = "default";
     static final String DESCRIPTION_VALUE = "Description: ";
     static final String PRIORITY_VALUE = "Priority: ";
     static final String DUE_DATE_VALUE = "Due date: ";

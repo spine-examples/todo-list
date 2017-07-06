@@ -18,25 +18,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.action;
+package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.action.AbstractTransitionActionTestSuite.DisplayCounterView;
-import io.spine.examples.todolist.view.View;
-import org.junit.jupiter.api.DisplayName;
+import io.spine.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.q.projection.MyListView;
+import io.spine.examples.todolist.q.projection.TaskView;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
+ * A {@code DataSource} of the application.
+ *
  * @author Dmytro Grankin
  */
-@DisplayName("StaticTransitionAction should")
-class StaticTransitionActionTest
-        extends AbstractTransitionActionTestSuite<StaticTransitionAction<View, DisplayCounterView>> {
+public class DataSource {
 
-    StaticTransitionActionTest() {
-        super(newAction());
+    private final TodoClient client;
+
+    DataSource(TodoClient client) {
+        this.client = client;
     }
 
-    private static StaticTransitionAction<View, DisplayCounterView> newAction() {
-        return new StaticTransitionAction<>(ACTION_NAME, SHORTCUT,
-                                            newSourceView(), newDisplayCounterView());
+    public MyListView getMyListView() {
+        return client.getMyListView();
+    }
+
+    public TaskView getMyTaskView(TaskId id) {
+        final List<TaskView> taskViews = getMyListView().getMyList()
+                                                        .getItemsList();
+        final Optional<TaskView> taskView = taskViews.stream()
+                                                     .filter(view -> view.getId()
+                                                                         .equals(id))
+                                                     .findFirst();
+        return taskView.get();
     }
 }

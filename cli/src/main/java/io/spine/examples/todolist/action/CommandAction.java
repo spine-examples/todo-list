@@ -43,8 +43,7 @@ public abstract class CommandAction<M extends Message,
     private IoFacade ioFacade = getIoFacadeFactory().newInstance();
 
     protected CommandAction(String name, Shortcut shortcut, CommandView<M, B> source) {
-        super(name, shortcut, source);
-        setDestination(source);
+        super(name, shortcut, source, source);
     }
 
     /**
@@ -78,7 +77,7 @@ public abstract class CommandAction<M extends Message,
     public abstract static class CommandActionProducer<M extends Message,
                                                        B extends ValidatingBuilder<M, ? extends Message.Builder>,
                                                        T extends CommandAction<M, B>>
-            extends TransitionActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
+            extends AbstractTransitionActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
 
         protected CommandActionProducer(String name, Shortcut shortcut) {
             super(name, shortcut);

@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.view;
 
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.q.projection.TaskView;
 
 import static io.spine.examples.todolist.view.DisplayFormatter.DESCRIPTION_VALUE;
@@ -34,10 +35,15 @@ import static java.lang.System.lineSeparator;
  *
  * @author Dmytro Grankin
  */
-class MyTaskDetailsView extends DetailsView<TaskView> {
+class MyTaskDetailsView extends DetailsView<TaskId, TaskView> {
 
-    MyTaskDetailsView(TaskView state) {
-        super(false, state);
+    MyTaskDetailsView(TaskId id) {
+        super(id);
+    }
+
+    @Override
+    protected TaskView getRecentState(TaskId id) {
+        return getDataSource().getMyTaskView(id);
     }
 
     @Override

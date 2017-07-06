@@ -23,7 +23,7 @@ package io.spine.examples.todolist.view;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.view.command.TaskCreationView;
 
-import static io.spine.examples.todolist.action.StaticTransitionAction.newProducer;
+import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskListProducer;
 
 /**

@@ -21,23 +21,45 @@
 package io.spine.examples.todolist.view;
 
 import com.google.protobuf.Message;
+import io.spine.examples.todolist.AppConfig;
+import io.spine.examples.todolist.DataSource;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.System.lineSeparator;
 
 /**
  * Detailed view of a {@link #state}.
  *
+ * @param <I> the type of ID for the state
  * @param <S> the type of the displayed state
  * @author Dmytro Grankin
  */
-public abstract class DetailsView<S extends Message> extends ActionListView {
+public abstract class DetailsView<I extends Message, S extends Message> extends ActionListView {
 
-    private final S state;
+    private final I id;
+    private S state;
 
-    protected DetailsView(boolean rootView, S state) {
-        super(rootView);
-        this.state = state;
+    private final DataSource dataSource = AppConfig.getDataSource();
+
+    protected DetailsView(I id) {
+        super(false);
+        checkNotNull(id);
+        this.id = id;
     }
+
+    @Override
+    protected void display() {
+        state = getRecentState(id);
+        super.display();
+    }
+
+    /**
+     * Obtains recent state by the specified ID.
+     *
+     * @param id the ID of the state
+     * @return recent state
+     */
+    protected abstract S getRecentState(I id);
 
     /**
      * Obtains a string view of the specified state.
@@ -46,6 +68,10 @@ public abstract class DetailsView<S extends Message> extends ActionListView {
      * @return view of the state
      */
     protected abstract String viewOf(S state);
+
+    protected DataSource getDataSource() {
+        return dataSource;
+    }
 
     @Override
     public String toString() {
