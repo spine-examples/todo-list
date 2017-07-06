@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 @DisplayName("CommandAction should")
 class CommandActionTest extends UserIoTest {
 
-    private final CommandView<StringValue, StringValueVBuilder> view = new CommandView<>(true);
+    private final CommandView<StringValue, StringValueVBuilder> view = new ACommandView();
     private final ACommandAction action = new ACommandAction(view);
 
     @Override
@@ -76,6 +76,13 @@ class CommandActionTest extends UserIoTest {
         @Override
         protected void updateState(StringValueVBuilder state) {
             state.setValue(VALUE_AFTER_UPDATE);
+        }
+    }
+
+    private static class ACommandView extends CommandView<StringValue, StringValueVBuilder> {
+
+        private ACommandView() {
+            super(true);
         }
     }
 }

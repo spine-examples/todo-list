@@ -43,13 +43,13 @@ import static io.spine.examples.todolist.view.command.ValidationExceptionFormatt
  *
  * @author Dmytro Grankin
  */
-public class CommandView<M extends Message,
-                         B extends ValidatingBuilder<M, ? extends Message.Builder>>
+public abstract class CommandView<M extends Message,
+                                  B extends ValidatingBuilder<M, ? extends Message.Builder>>
         extends ActionListView {
 
     private final B state;
 
-    public CommandView(boolean rootView) {
+    protected CommandView(boolean rootView) {
         super(rootView);
         this.state = newBuilderInstance();
     }
@@ -133,7 +133,7 @@ public class CommandView<M extends Message,
          * {@link CommandView} descendant class.
          */
         private static <M extends Message,
-                B extends ValidatingBuilder<M, ? extends Message.Builder>>
+                        B extends ValidatingBuilder<M, ? extends Message.Builder>>
         Class<B> getBuilderClass(Class<? extends CommandView<M, B>> entityClass) {
             checkNotNull(entityClass);
             @SuppressWarnings("unchecked") // The type is ensured by this class declaration.
