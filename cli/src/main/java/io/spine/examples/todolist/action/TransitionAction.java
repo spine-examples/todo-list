@@ -86,7 +86,12 @@ public class TransitionAction<S extends View, D extends View> extends Action {
         return new TransitionActionProducer<>(name, shortcut, destination);
     }
 
-
+    /**
+     * Producer of transition actions.
+     *
+     * @param <S> {@inheritDoc}
+     * @param <D> {@inheritDoc}
+     */
     public static class TransitionActionProducer<S extends View,
                                                  D extends View>
             extends AbstractTransitionActionProducer<S, D, TransitionAction<S, D>> {
@@ -99,6 +104,9 @@ public class TransitionAction<S extends View, D extends View> extends Action {
             this.destination = destination;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public TransitionAction<S, D> create(S source) {
             return new TransitionAction<>(getName(), getShortcut(), source, destination);

@@ -59,10 +59,20 @@ public class ApproveAnswerValidator implements Validator<String> {
         return HINT_MSG;
     }
 
+    /**
+     * Obtains the value that is considered a negative answer.
+     *
+     * @return the negative answer value
+     */
     public static String getNegativeAnswer() {
         return NEGATIVE_ANSWER;
     }
 
+    /**
+     * Obtains the value that is considered a positive answer.
+     *
+     * @return the positive answer value
+     */
     public static String getPositiveAnswer() {
         return POSITIVE_ANSWER;
     }

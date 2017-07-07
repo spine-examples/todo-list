@@ -30,7 +30,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * Abstract producer of a {@link TransitionAction}.
  *
- * <p>Encapsulates creation of the action.
+ * <p>Allows to specify construction of the {@link TransitionAction} for an unknown source.
  *
  * @param <S> the type of the source view
  * @param <D> the type of the destination view
@@ -43,14 +43,19 @@ public abstract class AbstractTransitionActionProducer<S extends View,
     private final String name;
     private final Shortcut shortcut;
 
-
-    protected AbstractTransitionActionProducer(String name, Shortcut shortcut) {
+    AbstractTransitionActionProducer(String name, Shortcut shortcut) {
         checkArgument(!isNullOrEmpty(name));
         checkNotNull(shortcut);
         this.name = name;
         this.shortcut = shortcut;
     }
 
+    /**
+     * Creates the {@link TransitionAction} with the specified source.
+     *
+     * @param source the source {@link View}
+     * @return the action with the source
+     */
     public abstract T create(S source);
 
     @VisibleForTesting

@@ -30,9 +30,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
 
 /**
- * An {@code Action} which takes the end-user from one {@link View} to another.
+ * An {@code Action} which takes the an end-user from one {@link View} to another.
  *
- * <p>Actions with same {@link Shortcut} are considered equals to avoid any confusion.
+ * <p>Actions with same {@link Shortcut} are considered equal.
  *
  * @author Dmytro Grankin
  */
