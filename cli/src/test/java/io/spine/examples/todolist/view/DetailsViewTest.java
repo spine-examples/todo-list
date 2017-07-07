@@ -24,21 +24,17 @@ import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
-
 import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static io.spine.examples.todolist.view.ActionListView.getSelectActionMsg;
 import static io.spine.protobuf.Wrapper.forString;
 import static java.lang.System.lineSeparator;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.joining;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -48,9 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @DisplayName("DetailsView should")
 class DetailsViewTest extends UserIoTest {
 
-    private final Collection<Action> actions = singletonList(new NoOpAction("Act",
-                                                                            new Shortcut("a")));
-    private final ADetailsView view = new ADetailsView(actions, Int32Value.getDefaultInstance());
+    private final ADetailsView view = new ADetailsView(Int32Value.getDefaultInstance());
 
     @BeforeEach
     @Override
@@ -92,9 +86,8 @@ class DetailsViewTest extends UserIoTest {
 
         private static final StringValue RECENT_STATE = forString("string");
 
-        private ADetailsView(Iterable<Action> actions, Int32Value id) {
+        private ADetailsView(Int32Value id) {
             super(id);
-            actions.forEach(this::addAction);
         }
 
         @Override

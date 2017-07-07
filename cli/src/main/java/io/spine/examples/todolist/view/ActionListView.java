@@ -144,8 +144,7 @@ public class ActionListView extends View {
         actions.clear();
     }
 
-    @VisibleForTesting
-    protected void addAction(Action action) {
+    private void addAction(Action action) {
         checkNotNull(action);
         checkHasNotReservedShortcut(action);
         checkArgument(!actions.contains(action));

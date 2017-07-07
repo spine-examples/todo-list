@@ -22,7 +22,6 @@ package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
 import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
@@ -84,10 +83,11 @@ class ActionListViewTest extends UserIoTest {
     @Test
     @DisplayName("not add the action with an occupied shortcut")
     void notAddActionWithOccupiedShortcut() {
-        final Action firstAction = new NoOpAction(ACTION_NAME, SHORTCUT);
-        view.addAction(firstAction);
+        final TransitionActionProducer<ActionListView, View> firstActionProducer =
+                newProducer(ACTION_NAME, SHORTCUT, view);
+        view.addAction(firstActionProducer);
 
-        final String secondActionName = firstAction.getName() + " difference";
+        final String secondActionName = firstActionProducer.getName() + " difference";
         assertThrows(IllegalArgumentException.class,
                      () -> view.addAction(newProducer(secondActionName, SHORTCUT, view)));
     }
