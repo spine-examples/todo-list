@@ -30,7 +30,7 @@ import static io.spine.examples.todolist.AppConfig.getIoFacade;
 
 /**
  * A {@code CommandAction} is a user action, that updates
- * {@linkplain CommandView#state state of the command view} and displays the view again.
+ * {@linkplain CommandView#state state of the command view} and renders the view again.
  *
  * @param <M> the type of the command message
  * @param <B> the validating builder type for the command message
@@ -47,13 +47,13 @@ public abstract class CommandAction<M extends Message,
     }
 
     /**
-     * Updates a state of the specified source and then displays it.
+     * Updates a state of the specified source and then renders it.
      */
     @Override
     public void execute() {
         final B commandViewState = getSource().getState();
         updateState(commandViewState);
-        getDestination().display(this);
+        getDestination().render(this);
     }
 
     protected abstract void updateState(B state);

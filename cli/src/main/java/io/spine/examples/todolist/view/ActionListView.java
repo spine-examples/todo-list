@@ -40,7 +40,7 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.joining;
 
 /**
- * An {@code ActionListView} displays the {@link #actions} and provides
+ * An {@code ActionListView} renders the {@link #actions} and provides
  * {@linkplain #selectAction() selection} mechanism for them.
  *
  * @author Dmytro Grankin
@@ -67,15 +67,15 @@ public class ActionListView extends View {
     }
 
     /**
-     * Displays the string representation of the view and ask to select an action to execute.
+     * Renders the string representation of the view and ask to select an action to execute.
      *
      * <p>Override this method only to change the behavior.
      * To change the visual representation, override {@code toString()}.
      */
     @Override
-    protected void display() {
+    protected void render() {
         addBackAction();
-        displayStringRepresentation();
+        renderStringRepresentation();
         final Action selectedAction = selectAction();
         executeAction(selectedAction);
     }
@@ -86,7 +86,7 @@ public class ActionListView extends View {
         actions.add(action);
     }
 
-    private void displayStringRepresentation() {
+    private void renderStringRepresentation() {
         final String stringRepresentation = toString();
         println(stringRepresentation);
     }

@@ -50,7 +50,7 @@ public class CliEntryPoint {
         startServer(server);
         final TodoClient client = getClient();
         final View entryPoint = MainMenu.create();
-        entryPoint.display(null);
+        entryPoint.render(null);
         client.shutdown();
         server.shutdown();
     }

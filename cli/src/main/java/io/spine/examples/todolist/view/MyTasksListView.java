@@ -51,9 +51,9 @@ class MyTasksListView extends ActionListView {
     }
 
     @Override
-    protected void display() {
+    protected void render() {
         refreshActions();
-        super.display();
+        super.render();
     }
 
     private void refreshActions() {

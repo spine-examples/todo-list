@@ -30,7 +30,7 @@ public interface IoFacade {
     /**
      * Prompts a user for an input and receives the input value.
      *
-     * @param prompt the prompt to display
+     * @param prompt the prompt to render
      * @return the input value
      */
     String promptUser(String prompt);

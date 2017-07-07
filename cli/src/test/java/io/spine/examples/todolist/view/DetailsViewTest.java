@@ -60,7 +60,7 @@ class DetailsViewTest extends UserIoTest {
     }
 
     @Test
-    @DisplayName("display details before actions")
+    @DisplayName("render details before actions")
     void displayDetailsBeforeActions() {
         final Shortcut back = getBackShortcut();
         addAnswer(back.getValue());
@@ -108,7 +108,7 @@ class DetailsViewTest extends UserIoTest {
         }
 
         @Override
-        protected void display() {
+        protected void render() {
         }
     }
 }

@@ -57,7 +57,7 @@ public abstract class CommandView<M extends Message,
     /**
      * {@inheritDoc}
      *
-     * <p>If {@link ValidationException} is occurred, prints errors and displays the view.
+     * <p>If {@link ValidationException} is occurred, prints errors and renders the view.
      *
      * @param action {@inheritDoc}
      */
@@ -75,7 +75,7 @@ public abstract class CommandView<M extends Message,
         for (String message : errorMessages) {
             println(message);
         }
-        display();
+        render();
     }
 
     public B getState() {

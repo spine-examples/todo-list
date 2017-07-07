@@ -57,7 +57,7 @@ class CommandViewTest extends UserIoTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    @DisplayName("wrap ValidationException and display the source view")
+    @DisplayName("wrap ValidationException and render the source view")
     void displayViewOnValidationException() {
         assertThrows(ValidationException.class, buildState::execute);
         assertFalse(view.wasDisplayed);
@@ -89,9 +89,9 @@ class CommandViewTest extends UserIoTest {
         }
 
         @Override
-        protected void display() {
+        protected void render() {
             wasDisplayed = true;
-            super.display();
+            super.render();
         }
     }
 

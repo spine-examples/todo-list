@@ -40,7 +40,7 @@ class TransitionActionTest {
             new TransitionAction<>(ACTION_NAME, SHORTCUT, new RootView(), new DisplayCounterView());
 
     @Test
-    @DisplayName("display a destination view")
+    @DisplayName("render a destination view")
     void displayDestination() {
         assertEquals(0, action.getDestination()
                               .getDisplayedTimes());
@@ -77,7 +77,7 @@ class TransitionActionTest {
         }
 
         @Override
-        public void display() {
+        public void render() {
             displayedTimes++;
         }
 
@@ -93,7 +93,7 @@ class TransitionActionTest {
         }
 
         @Override
-        protected void display() {
+        protected void render() {
         }
     }
 }

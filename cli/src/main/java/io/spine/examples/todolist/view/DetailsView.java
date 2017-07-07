@@ -31,7 +31,7 @@ import static java.lang.System.lineSeparator;
  * Detailed view of a {@link #state}.
  *
  * @param <I> the type of ID for the state
- * @param <S> the type of the displayed state
+ * @param <S> the type of the rendered state
  * @author Dmytro Grankin
  */
 public abstract class DetailsView<I extends Message, S extends Message> extends ActionListView {
@@ -47,10 +47,13 @@ public abstract class DetailsView<I extends Message, S extends Message> extends 
         this.id = id;
     }
 
+    /**
+     * Updates {@link #state} and then renders the view.
+     */
     @Override
-    protected void display() {
+    protected void render() {
         state = getRecentState(id);
-        super.display();
+        super.render();
     }
 
     /**

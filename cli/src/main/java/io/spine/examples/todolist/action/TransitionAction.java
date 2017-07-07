@@ -57,7 +57,7 @@ public class TransitionAction<S extends View, D extends View> extends Action {
      */
     @Override
     public void execute() {
-        destination.display(this);
+        destination.render(this);
     }
 
     /**

@@ -60,22 +60,27 @@ public abstract class View {
         this.rootView = rootView;
     }
 
-    public void display(@Nullable Action displayCause) {
-        setOriginAction(displayCause);
-        display();
+    /**
+     * Renders the view.
+     *
+     * @param cause the action that caused render
+     */
+    public void render(@Nullable Action cause) {
+        setOriginAction(cause);
+        render();
     }
 
-    private void setOriginAction(@Nullable Action displayCause) {
+    private void setOriginAction(@Nullable Action cause) {
         if (!rootView) {
-            checkNotNull(displayCause);
-            final boolean notDisplayedBefore = originAction == null;
-            if (notDisplayedBefore) {
-                originAction = (TransitionAction) displayCause;
+            checkNotNull(cause);
+            final boolean notRenderedBefore = originAction == null;
+            if (notRenderedBefore) {
+                originAction = (TransitionAction) cause;
             }
         }
     }
 
-    protected abstract void display();
+    protected abstract void render();
 
     protected Action createBackAction(String name, Shortcut shortcut) {
         if (rootView) {

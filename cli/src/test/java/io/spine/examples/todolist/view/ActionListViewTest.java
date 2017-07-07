@@ -113,7 +113,7 @@ class ActionListViewTest extends UserIoTest {
         addAnswer("invalid answer");
         addAnswer(validAnswer);
 
-        view.display();
+        view.render();
 
         assertAllAnswersWereGiven();
     }

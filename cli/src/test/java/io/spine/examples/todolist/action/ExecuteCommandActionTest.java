@@ -45,12 +45,12 @@ class ExecuteCommandActionTest {
     }
 
     @Test
-    @DisplayName("execute command and display a source view")
-    void executeCommandAndDisplaySource() {
+    @DisplayName("execute command and render a source view")
+    void executeCommandAndRenderSource() {
         action.execute();
 
         assertTrue(action.isUpdated());
-        assertTrue(view.isDisplayed());
+        assertTrue(view.isRendered());
     }
 
     private static class UpdateStringValueAction
@@ -74,19 +74,19 @@ class ExecuteCommandActionTest {
 
     private static class UpdateStringValueView extends CommandView<StringValue, StringValueVBuilder> {
 
-        private boolean displayed;
+        private boolean rendered;
 
         private UpdateStringValueView() {
             super(true);
         }
 
         @Override
-        protected void display() {
-            displayed = true;
+        protected void render() {
+            rendered = true;
         }
 
-        private boolean isDisplayed() {
-            return displayed;
+        private boolean isRendered() {
+            return rendered;
         }
     }
 }

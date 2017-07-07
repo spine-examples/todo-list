@@ -48,7 +48,7 @@ class ViewTest {
     private final TransitionAction<View, View> displayChild = newAction(rootView, childView);
 
     @Test
-    @DisplayName("not set first display cause for root view")
+    @DisplayName("not set first render cause for root view")
     void notSetFirstDisplayCause() {
         final TransitionAction<View, View> displayRoot = newAction(childView, rootView);
         displayRoot.execute();
@@ -56,7 +56,7 @@ class ViewTest {
     }
 
     @Test
-    @DisplayName("set first display cause for NON-root")
+    @DisplayName("set first render cause for NON-root")
     void setFirstDisplayCause() {
         assertNull(childView.getOriginAction());
         displayChild.execute();
@@ -64,7 +64,7 @@ class ViewTest {
     }
 
     @Test
-    @DisplayName("not overwrite first display cause")
+    @DisplayName("not overwrite first render cause")
     void notOverwriteFirstDisplayCause() {
         displayChild.execute();
         assertSame(displayChild, childView.getOriginAction());
@@ -110,7 +110,7 @@ class ViewTest {
         }
 
         @Override
-        public void display() {
+        public void render() {
             wasDisplayed = true;
         }
     }
@@ -122,7 +122,7 @@ class ViewTest {
         }
 
         @Override
-        public void display() {
+        public void render() {
         }
     }
 
