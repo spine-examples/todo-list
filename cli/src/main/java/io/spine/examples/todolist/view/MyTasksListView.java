@@ -45,20 +45,25 @@ import static java.lang.String.valueOf;
  */
 class MyTasksListView extends ActionListView {
 
-    private MyTasksListView() {
+    @VisibleForTesting
+    MyTasksListView() {
         super(false);
     }
 
-    @VisibleForTesting
-    static MyTasksListView create() {
-        final MyTasksListView view = new MyTasksListView();
+    @Override
+    protected void display() {
+        refreshActions();
+        super.display();
+    }
+
+    private void refreshActions() {
+        clearActions();
         final MyListView myListView = getDataSource().getMyListView();
-        detailProducersFor(myListView).forEach(view::addAction);
-        return view;
+        producersFor(myListView).forEach(this::addAction);
     }
 
     @VisibleForTesting
-    static Collection<TransitionActionProducer> detailProducersFor(MyListView myListView) {
+    static Collection<TransitionActionProducer> producersFor(MyListView myListView) {
         final Collection<TransitionActionProducer> producers = new LinkedList<>();
         final List<TaskView> taskViews = myListView.getMyList()
                                                    .getItemsList();
@@ -81,6 +86,6 @@ class MyTasksListView extends ActionListView {
 
     static <S extends View> TransitionActionProducer<S, MyTasksListView>
     newOpenTaskListProducer(String name, Shortcut shortcut) {
-        return newProducer(name, shortcut, create());
+        return newProducer(name, shortcut, new MyTasksListView());
     }
 }

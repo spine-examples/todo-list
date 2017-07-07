@@ -55,7 +55,7 @@ public class CommandLineFacade implements IoFacade {
         checkArgument(!isNullOrEmpty(message));
         reader.getTerminal()
               .writer()
-              .print(message);
+              .println(message);
     }
 
     private static LineReader newLineReader() {

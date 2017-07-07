@@ -137,6 +137,13 @@ public class ActionListView extends View {
         addAction(action);
     }
 
+    /**
+     * Removes all elements from {@link #actions}.
+     */
+    protected void clearActions() {
+        actions.clear();
+    }
+
     @VisibleForTesting
     protected void addAction(Action action) {
         checkNotNull(action);
