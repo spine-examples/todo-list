@@ -21,18 +21,15 @@
 package io.spine.examples.todolist.view;
 
 import com.google.protobuf.Timestamp;
-import io.spine.test.Tests;
-import io.spine.time.Time;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import static com.google.protobuf.util.Timestamps.toMillis;
-import static io.spine.examples.todolist.view.DisplayFormatter.DEFAULT_TIMESTAMP_VALUE;
-import static io.spine.examples.todolist.view.DisplayFormatter.format;
-import static io.spine.examples.todolist.view.DisplayFormatter.getDateFormat;
+import static io.spine.examples.todolist.view.DateFormatter.DEFAULT_TIMESTAMP_VALUE;
+import static io.spine.examples.todolist.view.DateFormatter.format;
+import static io.spine.examples.todolist.view.DateFormatter.getDateFormat;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static io.spine.time.Time.getCurrentTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,13 +37,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("DisplayFormatter should")
-class DisplayFormatterTest {
+@DisplayName("DateFormatter should")
+class DateFormatterTest {
 
     @Test
     @DisplayName("have the private constructor")
     void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(DisplayFormatter.class);
+        assertHasPrivateParameterlessCtor(DateFormatter.class);
     }
 
     @Test

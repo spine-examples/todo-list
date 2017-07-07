@@ -26,10 +26,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
-import static io.spine.examples.todolist.view.DisplayFormatter.DESCRIPTION_VALUE;
-import static io.spine.examples.todolist.view.DisplayFormatter.DUE_DATE_VALUE;
-import static io.spine.examples.todolist.view.DisplayFormatter.PRIORITY_VALUE;
-import static io.spine.examples.todolist.view.DisplayFormatter.format;
+import static io.spine.examples.todolist.view.DateFormatter.format;
+import static io.spine.examples.todolist.view.MyTaskDetailsView.DESCRIPTION_VALUE;
+import static io.spine.examples.todolist.view.MyTaskDetailsView.DUE_DATE_VALUE;
+import static io.spine.examples.todolist.view.MyTaskDetailsView.PRIORITY_VALUE;
 import static io.spine.time.Time.getCurrentTime;
 import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
