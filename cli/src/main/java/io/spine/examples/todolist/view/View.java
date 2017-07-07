@@ -70,18 +70,25 @@ public abstract class View {
         render();
     }
 
-    private void setOriginAction(@Nullable Action cause) {
+    private void setOriginAction(@Nullable Action action) {
         if (!rootView) {
-            checkNotNull(cause);
+            checkNotNull(action);
             final boolean notRenderedBefore = originAction == null;
             if (notRenderedBefore) {
-                originAction = (TransitionAction) cause;
+                originAction = (TransitionAction) action;
             }
         }
     }
 
     protected abstract void render();
 
+    /**
+     * Obtains the action leading to the source view of {@link #originAction}.
+     *
+     * @param name the name for the action
+     * @param shortcut the shortcut for the action
+     * @return reverse action of {@link #originAction}
+     */
     protected Action createBackAction(String name, Shortcut shortcut) {
         if (rootView) {
             return new NoOpAction(name, shortcut);
@@ -95,10 +102,21 @@ public abstract class View {
         return originAction.createReverseAction(name, shortcut);
     }
 
-    protected String promptUser(String question) {
-        return ioFacade.promptUser(question);
+    /**
+     * Prompts a user for an input and receives the input value.
+     *
+     * @param prompt the prompt to display
+     * @return the input value
+     */
+    protected String promptUser(String prompt) {
+        return ioFacade.promptUser(prompt);
     }
 
+    /**
+     * Prints the specified message.
+     *
+     * @param message the message to print
+     */
     protected void println(String message) {
         ioFacade.println(message);
     }
