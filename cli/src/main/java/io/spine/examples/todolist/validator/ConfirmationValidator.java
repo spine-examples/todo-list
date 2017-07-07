@@ -24,7 +24,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
 
 /**
- * Serves as a validator for the user approve answer.
+ * A {@link Validator} for a confirmation.
  *
  * <p>Validation will be passed when:
  * <ul>
@@ -34,7 +34,7 @@ import static java.lang.String.format;
  *
  * @author Illia Shepilov
  */
-public class ApproveAnswerValidator implements Validator<String> {
+public class ConfirmationValidator implements Validator<String> {
 
     private static final String NEGATIVE_ANSWER = "n";
     private static final String POSITIVE_ANSWER = "y";

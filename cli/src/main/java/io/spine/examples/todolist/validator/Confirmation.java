@@ -26,24 +26,24 @@ import io.spine.examples.todolist.IoFacade;
 import java.util.Optional;
 
 import static io.spine.examples.todolist.AppConfig.getIoFacade;
-import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getNegativeAnswer;
-import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getPositiveAnswer;
+import static io.spine.examples.todolist.validator.ConfirmationValidator.getNegativeAnswer;
+import static io.spine.examples.todolist.validator.ConfirmationValidator.getPositiveAnswer;
 import static java.lang.String.format;
 
 /**
- * Utilities for asking an approve question.
+ * This class serves for asking a confirmation.
  *
  * @author Dmytro Grankin
  */
-class ApproveQuestion {
+class Confirmation {
 
     private static final String HINT_FORMAT = "(%s/%s)";
 
-    private final Validator<String> validator = new ApproveAnswerValidator();
+    private final Validator<String> validator = new ConfirmationValidator();
     private IoFacade ioFacade = getIoFacade();
 
     /**
-     * Obtains an answer for the specified question.
+     * Obtains a confirmation value for the specified question.
      *
      * @param question the question to ask
      * @return {@code true} if the positive answer was given, {@code false} otherwise

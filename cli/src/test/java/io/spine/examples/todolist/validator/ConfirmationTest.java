@@ -25,33 +25,33 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getNegativeAnswer;
-import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getPositiveAnswer;
+import static io.spine.examples.todolist.validator.ConfirmationValidator.getNegativeAnswer;
+import static io.spine.examples.todolist.validator.ConfirmationValidator.getPositiveAnswer;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("ApproveQuestion should")
-class ApproveQuestionTest extends UserIoTest {
+@DisplayName("Confirmation should")
+class ConfirmationTest extends UserIoTest {
 
     private static final String QUESTION = "?";
 
-    private final ApproveQuestion approveQuestion = new ApproveQuestion();
+    private final Confirmation confirmation = new Confirmation();
 
     @BeforeEach
     @Override
     protected void setUp() {
         super.setUp();
-        approveQuestion.setIoFacade(getIoFacade());
+        confirmation.setIoFacade(getIoFacade());
     }
 
     @Test
     @DisplayName("return true for a positive answer")
     void returnTrueForPositiveAnswer() {
         addAnswer(getPositiveAnswer());
-        final boolean result = approveQuestion.ask(QUESTION);
+        final boolean result = confirmation.ask(QUESTION);
         assertTrue(result);
     }
 
@@ -59,7 +59,7 @@ class ApproveQuestionTest extends UserIoTest {
     @DisplayName("return false for a negative answer")
     void returnFalseForNegativeAnswer() {
         addAnswer(getNegativeAnswer());
-        final boolean result = approveQuestion.ask(QUESTION);
+        final boolean result = confirmation.ask(QUESTION);
         assertFalse(result);
     }
 
@@ -70,7 +70,7 @@ class ApproveQuestionTest extends UserIoTest {
         addAnswer(invalidAnswer);
         addAnswer(getPositiveAnswer());
 
-        approveQuestion.ask(QUESTION);
+        confirmation.ask(QUESTION);
         assertAllAnswersWereGiven();
     }
 }

@@ -24,24 +24,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getNegativeAnswer;
-import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getPositiveAnswer;
+import static io.spine.examples.todolist.validator.ConfirmationValidator.getNegativeAnswer;
+import static io.spine.examples.todolist.validator.ConfirmationValidator.getPositiveAnswer;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("ApproveAnswerValidator should")
-class ApproveAnswerValidatorTest {
+@DisplayName("ConfirmationValidator should")
+class ConfirmationValidatorTest {
 
     private static final String INVALID_INPUT = getPositiveAnswer() + getNegativeAnswer();
 
-    private ApproveAnswerValidator validator;
+    private ConfirmationValidator validator;
 
     @BeforeEach
     void setUp() {
-        validator = new ApproveAnswerValidator();
+        validator = new ConfirmationValidator();
     }
 
     @Test
