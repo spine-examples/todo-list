@@ -58,6 +58,12 @@ public abstract class CommandAction<M extends Message,
 
     protected abstract void updateState(B state);
 
+    /**
+     * Prompts a user for an input and receives the input value.
+     *
+     * @param prompt the prompt to display
+     * @return the input value
+     */
     protected String promptUser(String prompt) {
         return ioFacade.promptUser(prompt);
     }
