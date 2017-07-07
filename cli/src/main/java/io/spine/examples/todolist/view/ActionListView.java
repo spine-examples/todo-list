@@ -33,9 +33,8 @@ import java.util.function.Predicate;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.examples.todolist.action.Action.getShortcutFormat;
+import static io.spine.examples.todolist.action.Action.formatShortcut;
 import static io.spine.util.Exceptions.newIllegalArgumentException;
-import static java.lang.String.format;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.joining;
@@ -50,7 +49,8 @@ public class ActionListView extends View {
 
     private static final String BACK_NAME = "Back";
     private static final Shortcut BACK_SHORTCUT = new Shortcut("b");
-    private static final String ACTION_SELECTION_TIP = format(getShortcutFormat(), "?");
+
+    private static final String ACTION_SELECTION_TIP = formatShortcut(new Shortcut("?"));
     private static final String SELECT_ACTION_MSG = "Select an action " + ACTION_SELECTION_TIP;
     private static final String INVALID_SELECTION_MSG = "There is no action with specified shortcut.";
 

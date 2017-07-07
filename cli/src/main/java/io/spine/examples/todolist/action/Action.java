@@ -55,16 +55,22 @@ public abstract class Action {
      */
     public abstract void execute();
 
+    /**
+     * Obtains formatted representation of the specified {@link Shortcut}.
+     *
+     * @param shortcut the shortcut to format
+     * @return the formatted representation
+     */
+    public static String formatShortcut(Shortcut shortcut) {
+        return format(SHORTCUT_FORMAT, shortcut);
+    }
+
     public String getName() {
         return name;
     }
 
     public Shortcut getShortcut() {
         return shortcut;
-    }
-
-    public static String getShortcutFormat() {
-        return SHORTCUT_FORMAT;
     }
 
     @VisibleForTesting
@@ -93,7 +99,6 @@ public abstract class Action {
 
     @Override
     public String toString() {
-        final String formattedShortcut = format(SHORTCUT_FORMAT, shortcut);
-        return formattedShortcut + SHORTCUT_NAME_SEPARATOR + name;
+        return formatShortcut(shortcut) + SHORTCUT_NAME_SEPARATOR + name;
     }
 }
