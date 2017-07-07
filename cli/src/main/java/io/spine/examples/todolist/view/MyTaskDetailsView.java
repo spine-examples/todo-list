@@ -23,7 +23,11 @@ package io.spine.examples.todolist.view;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.q.projection.TaskView;
 
+import java.util.List;
+import java.util.Optional;
+
 import static io.spine.examples.todolist.view.DateFormatter.format;
+import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.System.lineSeparator;
 
 /**
@@ -44,7 +48,18 @@ class MyTaskDetailsView extends DetailsView<TaskId, TaskView> {
 
     @Override
     protected TaskView getRecentState(TaskId id) {
-        return getDataSource().getMyTaskView(id);
+        final List<TaskView> views = getClient().getMyListView()
+                                                .getMyList()
+                                                .getItemsList();
+        final Optional<TaskView> optionalView = views.stream()
+                                                         .filter(view -> view.getId()
+                                                                             .equals(id))
+                                                         .findFirst();
+        if (optionalView.isPresent()) {
+            return optionalView.get();
+        }
+
+        throw newIllegalStateException("There is no task with ID `%s`.", id);
     }
 
     @Override

@@ -33,6 +33,7 @@ import static io.spine.examples.todolist.view.MyTaskDetailsView.PRIORITY_VALUE;
 import static io.spine.time.Time.getCurrentTime;
 import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Dmytro Grankin
@@ -48,6 +49,15 @@ class MyTaskDetailsViewTest {
     private final MyTaskDetailsView detailsView = new MyTaskDetailsView(TaskId.getDefaultInstance());
 
     @Test
+    @DisplayName("throw the exception if nonexistent task ID is specified")
+    void notAllowNonexistentTaskId() {
+        final TaskId id = TaskId.newBuilder()
+                                .setValue("invalid ID")
+                                .build();
+        assertThrows(IllegalStateException.class, () -> detailsView.getRecentState(id));
+    }
+
+    @Test
     @DisplayName("format TaskView")
     void formatTaskView() {
         final String expectedResult =
@@ -56,4 +66,5 @@ class MyTaskDetailsViewTest {
                         DUE_DATE_VALUE + format(taskView.getDueDate());
         assertEquals(expectedResult, detailsView.viewOf(taskView));
     }
+
 }

@@ -22,7 +22,7 @@ package io.spine.examples.todolist.view;
 
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.AppConfig;
-import io.spine.examples.todolist.DataSource;
+import io.spine.examples.todolist.client.TodoClient;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.System.lineSeparator;
@@ -39,7 +39,7 @@ public abstract class DetailsView<I extends Message, S extends Message> extends 
     private final I id;
     private S state;
 
-    private final DataSource dataSource = AppConfig.getDataSource();
+    private final TodoClient client = AppConfig.getClient();
 
     protected DetailsView(I id) {
         super(false);
@@ -72,8 +72,8 @@ public abstract class DetailsView<I extends Message, S extends Message> extends 
      */
     protected abstract String viewOf(S state);
 
-    protected DataSource getDataSource() {
-        return dataSource;
+    protected TodoClient getClient() {
+        return client;
     }
 
     @Override

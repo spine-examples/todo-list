@@ -31,7 +31,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import static io.spine.examples.todolist.AppConfig.getDataSource;
+import static io.spine.examples.todolist.AppConfig.getClient;
 import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 import static java.lang.String.valueOf;
 
@@ -58,7 +58,7 @@ class MyTasksListView extends ActionListView {
 
     private void refreshActions() {
         clearActions();
-        final MyListView myListView = getDataSource().getMyListView();
+        final MyListView myListView = getClient().getMyListView();
         producersFor(myListView).forEach(this::addAction);
     }
 
