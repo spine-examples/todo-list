@@ -81,6 +81,16 @@ public class TransitionAction<S extends View, D extends View> extends Action {
         return destination;
     }
 
+    /**
+     * Creates a new instance of the {@code TransitionAction}.
+     *
+     * @param name the name for the action
+     * @param shortcut the shortcut for the action
+     * @param destination the destination for the action
+     * @param <S> the type of the source view
+     * @param <D> the type of the destination view
+     * @return the new producer
+     */
     public static <S extends View, D extends View>
     TransitionActionProducer<S, D> newProducer(String name, Shortcut shortcut, D destination) {
         return new TransitionActionProducer<>(name, shortcut, destination);
