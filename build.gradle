@@ -27,8 +27,8 @@ buildscript {
         appEngineGradlePlugin = 'com.google.cloud.tools:appengine-gradle-plugin:+'
         spinePluginVersion = '0.9.10-SNAPSHOT'
         guavaVersion = '20.0'
-        jUnitPlatformVersion = '1.0.0-M5'
-        jUnitVersion = '5.0.0-M5'
+        jUnitPlatformVersion = '1.0.0-M4'
+        jUnitVersion = '5.0.0-M4'
     }
 
     repositories {
