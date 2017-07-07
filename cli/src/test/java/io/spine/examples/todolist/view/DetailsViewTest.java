@@ -22,6 +22,7 @@ package io.spine.examples.todolist.view;
 
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
+import io.spine.examples.todolist.RootView;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.Shortcut;
@@ -98,17 +99,6 @@ class DetailsViewTest extends UserIoTest {
         @Override
         protected String viewOf(StringValue state) {
             return state.getValue();
-        }
-    }
-
-    private static class RootView extends View {
-
-        private RootView() {
-            super(true);
-        }
-
-        @Override
-        protected void render() {
         }
     }
 }

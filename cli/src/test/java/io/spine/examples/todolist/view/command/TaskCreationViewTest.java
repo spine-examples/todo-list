@@ -20,20 +20,24 @@
 
 package io.spine.examples.todolist.view.command;
 
+import io.spine.examples.todolist.RootView;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
+import io.spine.examples.todolist.view.View;
 import io.spine.examples.todolist.view.command.TaskCreationView.EnterDescription;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.validate.Validate.checkNotDefault;
+import static io.spine.examples.todolist.action.TransitionAction.newProducer;
+import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * @author Dmytro Grankin
@@ -43,7 +47,14 @@ class TaskCreationViewTest extends UserIoTest {
 
     private static final String VALID_DESCRIPTION = "to the task";
 
-    private final CommandView<CreateBasicTask, CreateBasicTaskVBuilder> view = TaskCreationView.create();
+    private final TaskCreationView view = TaskCreationView.create();
+
+    @BeforeEach
+    @Override
+    protected void setUp() {
+        super.setUp();
+        view.setIoFacade(getIoFacade());
+    }
 
     @Test
     @DisplayName("not be root view")
@@ -52,19 +63,20 @@ class TaskCreationViewTest extends UserIoTest {
     }
 
     @Test
-    @DisplayName("generate the ID after creation")
-    void generateId() {
-        final TaskId taskId = view.getState()
-                                  .getId();
-        checkNotDefault(taskId);
-    }
+    @DisplayName("update the ID during rendering")
+    void updateId() {
+        final TaskId initialId = view.getState()
+                                     .getId();
 
-    @Test
-    @DisplayName("build state if valid description was set")
-    void buildStateIfDescriptionWasSet() {
-        final CreateBasicTaskVBuilder state = view.getState();
-        state.setDescription(VALID_DESCRIPTION);
-        state.build();
+        addAnswer(getBackShortcut().getValue());
+        final TransitionActionProducer<View, View> producer =
+                newProducer("a", new Shortcut("a"), view);
+        producer.create(new RootView())
+                .execute();
+
+        final TaskId idAfterRender = view.getState()
+                                         .getId();
+        assertNotEquals(initialId.getValue(), idAfterRender.getValue());
     }
 
     @Nested

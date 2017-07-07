@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.action;
 
+import io.spine.examples.todolist.RootView;
 import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -83,17 +84,6 @@ class TransitionActionTest {
 
         public int getDisplayedTimes() {
             return displayedTimes;
-        }
-    }
-
-    private static class RootView extends View {
-
-        private RootView() {
-            super(true);
-        }
-
-        @Override
-        protected void render() {
         }
     }
 }

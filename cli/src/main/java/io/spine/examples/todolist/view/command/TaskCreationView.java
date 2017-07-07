@@ -42,7 +42,6 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
 
     private TaskCreationView() {
         super(false);
-        getState().setId(generatedId());
     }
 
     public static TaskCreationView create() {
@@ -50,6 +49,12 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
         view.addAction(new EnterDescriptionProducer("Enter description", new Shortcut("d")));
         view.addAction(new ExecuteCommand.ExecuteCommandProducer());
         return view;
+    }
+
+    @Override
+    protected void render() {
+        getState().setId(generatedId());
+        super.render();
     }
 
     private static TaskId generatedId() {
