@@ -42,6 +42,7 @@ import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 public class CliEntryPoint {
 
     private CliEntryPoint() {
+        // Prevent instantiation of this class.
     }
 
     public static void main(String[] args) throws Exception {
