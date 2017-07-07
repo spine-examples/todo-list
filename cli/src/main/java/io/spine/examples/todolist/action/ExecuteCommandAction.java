@@ -54,7 +54,7 @@ public abstract class ExecuteCommandAction<M extends Message,
         final M commandMessage = getSource().getState()
                                             .build();
         executeCommand(commandMessage);
-        getSource().display(this);
+        getDestination().display(this);
     }
 
     protected abstract void executeCommand(M commandMessage);

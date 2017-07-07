@@ -53,7 +53,7 @@ public abstract class CommandAction<M extends Message,
     public void execute() {
         final B commandViewState = getSource().getState();
         updateState(commandViewState);
-        getSource().display(this);
+        getDestination().display(this);
     }
 
     protected abstract void updateState(B state);
