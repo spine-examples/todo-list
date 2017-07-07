@@ -128,11 +128,13 @@ public class ActionListView extends View {
      * @param <D> the type of the destination view
      * @param <T> the type of the action
      */
+    @SuppressWarnings("unchecked" /* Casts this to generic type to provide type covariance
+                                     in the derived classes. */)
     public <S extends ActionListView,
             D extends View,
             T extends TransitionAction<S, D>>
     void addAction(AbstractTransitionActionProducer<S, D, T> producer) {
-        final S source = castThis();
+        final S source = (S) this;
         final T action = producer.create(source);
         addAction(action);
     }
@@ -149,12 +151,6 @@ public class ActionListView extends View {
         checkHasNotReservedShortcut(action);
         checkArgument(!actions.contains(action));
         actions.add(action);
-    }
-
-    /** Casts this to generic type to provide type covariance in the derived classes. */
-    @SuppressWarnings("unchecked")
-    private <S extends ActionListView> S castThis() {
-        return (S) this;
     }
 
     @VisibleForTesting
