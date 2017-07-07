@@ -29,20 +29,22 @@ import io.spine.validate.ValidatingBuilder;
 import static io.spine.examples.todolist.AppConfig.getIoFacade;
 
 /**
- * A {@code CommandAction} is a user action, that updates
- * {@linkplain CommandView#state state of the command view} and renders the view again.
+ * Abstract base class for command actions.
+ *
+ * <p>Command action represents a user action, that updates
+ * {@linkplain CommandView#state state of the command view}.
  *
  * @param <M> the type of the command message
  * @param <B> the validating builder type for the command message
  * @author Dmytro Grankin
  */
-public abstract class CommandAction<M extends Message,
-                                    B extends ValidatingBuilder<M, ? extends Message.Builder>>
+public abstract class AbstractCommandAction<M extends Message,
+                                            B extends ValidatingBuilder<M, ? extends Message.Builder>>
         extends TransitionAction<CommandView<M, B>, CommandView<M, B>> {
 
     private IoFacade ioFacade = getIoFacade();
 
-    protected CommandAction(String name, Shortcut shortcut, CommandView<M, B> source) {
+    protected AbstractCommandAction(String name, Shortcut shortcut, CommandView<M, B> source) {
         super(name, shortcut, source, source);
     }
 
@@ -80,12 +82,12 @@ public abstract class CommandAction<M extends Message,
      * @param <B> the validating builder type for the command message
      * @param <T> {@inheritDoc}
      */
-    public abstract static class CommandActionProducer<M extends Message,
-                                                       B extends ValidatingBuilder<M, ? extends Message.Builder>,
-                                                       T extends CommandAction<M, B>>
+    public abstract static class AbstractCommandActionProducer<M extends Message,
+                                                               B extends ValidatingBuilder<M, ? extends Message.Builder>,
+                                                               T extends AbstractCommandAction<M, B>>
             extends AbstractTransitionActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
 
-        protected CommandActionProducer(String name, Shortcut shortcut) {
+        protected AbstractCommandActionProducer(String name, Shortcut shortcut) {
             super(name, shortcut);
         }
     }

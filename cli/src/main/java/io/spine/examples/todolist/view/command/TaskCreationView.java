@@ -22,7 +22,7 @@ package io.spine.examples.todolist.view.command;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.action.CommandAction;
+import io.spine.examples.todolist.action.AbstractCommandAction;
 import io.spine.examples.todolist.action.ExecuteCommandAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
@@ -59,8 +59,8 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
     }
 
     @VisibleForTesting
-    static class EnterDescription extends CommandAction<CreateBasicTask,
-                                                        CreateBasicTaskVBuilder> {
+    static class EnterDescription extends AbstractCommandAction<CreateBasicTask,
+                                                                CreateBasicTaskVBuilder> {
 
         private static final String PROMPT = "Please enter the task description";
 
@@ -75,9 +75,9 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
             state.setDescription(description);
         }
 
-        static class EnterDescriptionProducer extends CommandActionProducer<CreateBasicTask,
-                                                                          CreateBasicTaskVBuilder,
-                                                                          EnterDescription> {
+        static class EnterDescriptionProducer extends AbstractCommandActionProducer<CreateBasicTask,
+                                                                                    CreateBasicTaskVBuilder,
+                                                                                    EnterDescription> {
 
             private EnterDescriptionProducer(String name, Shortcut shortcut) {
                 super(name, shortcut);

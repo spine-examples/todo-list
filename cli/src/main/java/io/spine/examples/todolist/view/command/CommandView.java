@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.view.command;
 
 import com.google.protobuf.Message;
+import io.spine.examples.todolist.action.AbstractCommandAction;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.view.ActionListView;
 import io.spine.reflect.GenericTypeIndex;
@@ -38,7 +39,7 @@ import static io.spine.examples.todolist.view.command.ValidationExceptionFormatt
  * A {@code CommandView} is a view where end-user prepares and sends a command to a server.
  *
  * <p>The view must predominantly consist of
- * {@linkplain io.spine.examples.todolist.action.CommandAction command actions} and
+ * {@linkplain AbstractCommandAction command actions} and
  * an {@link io.spine.examples.todolist.action.ExecuteCommandAction ExecuteCommandAction}.
  *
  * @author Dmytro Grankin
