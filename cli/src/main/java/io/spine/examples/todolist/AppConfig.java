@@ -43,8 +43,6 @@ public class AppConfig {
     private static final TodoClient CLIENT = new CommandLineTodoClient(HOST, PORT, BOUNDED_CONTEXT);
     private static final DataSource DATA_SOURCE = new DataSource(CLIENT);
 
-    private static final IoFacadeFactory IO_FACADE_FACTORY = new IoFacadeFactory();
-
     private AppConfig() {
         // Prevent instantiation of this class.
     }
@@ -79,11 +77,11 @@ public class AppConfig {
     }
 
     /**
-     * Obtains the {@link IoFacadeFactory}.
+     * Obtains the {@link IoFacade}.
      *
-     * @return the factory
+     * @return the facade
      */
-    public static IoFacadeFactory getIoFacadeFactory() {
-        return IO_FACADE_FACTORY;
+    public static IoFacade getIoFacade() {
+        return IoFacadeFactory.newInstance();
     }
 }

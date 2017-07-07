@@ -25,7 +25,7 @@ import io.spine.examples.todolist.IoFacade;
 
 import java.util.Optional;
 
-import static io.spine.examples.todolist.AppConfig.getIoFacadeFactory;
+import static io.spine.examples.todolist.AppConfig.getIoFacade;
 import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getNegativeAnswer;
 import static io.spine.examples.todolist.validator.ApproveAnswerValidator.getPositiveAnswer;
 import static java.lang.String.format;
@@ -40,7 +40,7 @@ class ApproveQuestion {
     private static final String HINT_FORMAT = "(%s/%s)";
 
     private final Validator<String> validator = new ApproveAnswerValidator();
-    private IoFacade ioFacade = getIoFacadeFactory().newInstance();
+    private IoFacade ioFacade = getIoFacade();
 
     /**
      * Obtains an answer for the specified question.

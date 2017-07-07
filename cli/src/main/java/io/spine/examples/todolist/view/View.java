@@ -30,7 +30,7 @@ import io.spine.examples.todolist.action.TransitionAction;
 import javax.annotation.Nullable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.examples.todolist.AppConfig.getIoFacadeFactory;
+import static io.spine.examples.todolist.AppConfig.getIoFacade;
 import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
@@ -49,7 +49,7 @@ public abstract class View {
      */
     @Nullable
     private TransitionAction originAction;
-    private IoFacade ioFacade = getIoFacadeFactory().newInstance();
+    private IoFacade ioFacade = getIoFacade();
 
     /**
      * Creates a new instance.

@@ -25,14 +25,18 @@ package io.spine.examples.todolist;
  *
  * @author Dmytro Grankin
  */
-public class IoFacadeFactory {
+final class IoFacadeFactory {
+
+    private IoFacadeFactory() {
+        // Prevent instantiation of this class.
+    }
 
     /**
      * Creates a new {@link IoFacade} instance.
      *
      * @return new facade instance
      */
-    public IoFacade newInstance() {
+    static IoFacade newInstance() {
         return new CommandLineFacade();
     }
 }
