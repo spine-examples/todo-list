@@ -41,7 +41,7 @@ import static io.spine.base.Identifier.newUuid;
 public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTaskVBuilder> {
 
     private TaskCreationView() {
-        super(false);
+        super("New task", false);
     }
 
     public static TaskCreationView create() {

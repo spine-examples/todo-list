@@ -85,7 +85,7 @@ class CommandViewTest extends UserIoTest {
         private boolean wasDisplayed = false;
 
         private CreateCommentView() {
-            super(true);
+            super("View title", true);
         }
 
         @Override

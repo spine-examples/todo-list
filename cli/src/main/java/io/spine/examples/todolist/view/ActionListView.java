@@ -59,10 +59,11 @@ public class ActionListView extends View {
     /**
      * Creates a new instance without some {@link #actions}.
      *
+     * @param title    {@inheritDoc}
      * @param rootView {@inheritDoc}
      */
-    public ActionListView(boolean rootView) {
-        super(rootView);
+    public ActionListView(String title, boolean rootView) {
+        super(title, rootView);
         this.actions = new LinkedHashSet<>();
     }
 
@@ -124,9 +125,9 @@ public class ActionListView extends View {
      * the specified {@link AbstractTransitionActionProducer}.
      *
      * @param producer the producer of the action
-     * @param <S> the type of the source view
-     * @param <D> the type of the destination view
-     * @param <T> the type of the action
+     * @param <S>      the type of the source view
+     * @param <D>      the type of the destination view
+     * @param <T>      the type of the action
      */
     @SuppressWarnings("unchecked" /* Casts this to generic type to provide type covariance
                                      in the derived classes. */)

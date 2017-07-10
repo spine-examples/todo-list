@@ -69,7 +69,7 @@ class TransitionActionTest {
         private int displayedTimes = 0;
 
         private DisplayCounterView() {
-            super(true);
+            super("View title", true);
         }
 
         private DisplayCounterView(int displayedTimes) {

@@ -92,7 +92,7 @@ class ExecuteCommandActionTest {
         private boolean rendered;
 
         private UpdateStringValueView() {
-            super(true);
+            super("View title", true);
         }
 
         @Override

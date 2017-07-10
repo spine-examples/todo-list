@@ -32,7 +32,7 @@ import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 public class MainMenu extends ActionListView {
 
     private MainMenu() {
-        super(true);
+        super("Main menu", true);
     }
 
     public static MainMenu create() {

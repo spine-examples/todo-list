@@ -30,7 +30,7 @@ import io.spine.examples.todolist.view.View;
 public class RootView extends View {
 
     public RootView() {
-        super(true);
+        super("View title", true);
     }
 
     @Override

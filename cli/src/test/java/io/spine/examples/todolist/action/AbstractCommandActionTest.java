@@ -82,7 +82,7 @@ class AbstractCommandActionTest extends UserIoTest {
     private static class ACommandView extends CommandView<StringValue, StringValueVBuilder> {
 
         private ACommandView() {
-            super(true);
+            super("View title", true);
         }
     }
 }

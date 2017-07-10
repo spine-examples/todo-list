@@ -47,7 +47,7 @@ class MyTasksListView extends ActionListView {
 
     @VisibleForTesting
     MyTasksListView() {
-        super(false);
+        super("My tasks list", false);
     }
 
     @Override

@@ -41,8 +41,8 @@ public abstract class DetailsView<I extends Message, S extends Message> extends 
 
     private final TodoClient client = AppConfig.getClient();
 
-    protected DetailsView(I id) {
-        super(false);
+    protected DetailsView(I id, String title) {
+        super(title, false);
         checkNotNull(id);
         this.id = id;
     }

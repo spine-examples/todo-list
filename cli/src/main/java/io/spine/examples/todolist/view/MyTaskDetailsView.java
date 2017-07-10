@@ -43,7 +43,7 @@ class MyTaskDetailsView extends DetailsView<TaskId, TaskView> {
     static final String PRIORITY_VALUE = "Priority: ";
 
     MyTaskDetailsView(TaskId id) {
-        super(id);
+        super(id, "My task details");
     }
 
     @Override

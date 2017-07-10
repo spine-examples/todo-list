@@ -20,13 +20,16 @@
 
 package io.spine.examples.todolist.view;
 
+import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static java.lang.System.lineSeparator;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,13 +42,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("View should")
-class ViewTest {
+class ViewTest extends UserIoTest {
 
     private static final Shortcut SHORTCUT = new Shortcut("b");
 
     private final RootView rootView = new RootView();
     private final View childView = new ChildView();
     private final TransitionAction<View, View> displayChild = newAction(rootView, childView);
+
+    @Override
+    @BeforeEach
+    protected void setUp() {
+        super.setUp();
+        rootView.setIoFacade(getIoFacade());
+    }
+
+    @Test
+    @DisplayName("print formatted title")
+    void printFormattedTitle() {
+        rootView.render(null);
+        assertOutput(rootView.getFormattedTitle() + lineSeparator());
+    }
 
     @Test
     @DisplayName("not set first render cause for root view")
@@ -56,7 +73,7 @@ class ViewTest {
     }
 
     @Test
-    @DisplayName("set first render cause for NON-root")
+    @DisplayName("set first render cause for NON-root view")
     void setFirstDisplayCause() {
         assertNull(childView.getOriginAction());
         displayChild.execute();
@@ -106,7 +123,7 @@ class ViewTest {
         private boolean wasDisplayed = false;
 
         private RootView() {
-            super(true);
+            super("View title", true);
         }
 
         @Override
@@ -118,7 +135,7 @@ class ViewTest {
     private static class ChildView extends View {
 
         private ChildView() {
-            super(false);
+            super("View title", false);
         }
 
         @Override

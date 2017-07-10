@@ -77,7 +77,8 @@ class DetailsViewTest extends UserIoTest {
                                                  .map(Action::toString)
                                                  .collect(joining(lineSeparator()));
         final String expectedRepresentation =
-                stateRepresentation + lineSeparator() +
+                view.getFormattedTitle() + lineSeparator() +
+                        stateRepresentation + lineSeparator() +
                         actionsRepresentation + lineSeparator() +
                         getSelectActionMsg() + lineSeparator();
         assertOutput(expectedRepresentation);
@@ -88,7 +89,7 @@ class DetailsViewTest extends UserIoTest {
         private static final StringValue RECENT_STATE = forString("string");
 
         private ADetailsView(Int32Value id) {
-            super(id);
+            super(id, "View title");
         }
 
         @Override

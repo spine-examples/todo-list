@@ -50,8 +50,8 @@ public abstract class CommandView<M extends Message,
 
     private final B state;
 
-    protected CommandView(boolean rootView) {
-        super(rootView);
+    protected CommandView(String title, boolean rootView) {
+        super(title, rootView);
         this.state = newBuilderInstance();
     }
 

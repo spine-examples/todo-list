@@ -29,9 +29,13 @@ import io.spine.examples.todolist.action.TransitionAction;
 
 import javax.annotation.Nullable;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.repeat;
 import static io.spine.examples.todolist.AppConfig.getIoFacade;
 import static io.spine.util.Exceptions.newIllegalStateException;
+import static java.lang.System.lineSeparator;
 
 /**
  * Abstract base class for views.
@@ -41,6 +45,7 @@ import static io.spine.util.Exceptions.newIllegalStateException;
 public abstract class View {
 
     private final boolean rootView;
+    private final String title;
 
     /**
      * An {@link TransitionAction}, from which originates the {@code View}.
@@ -54,9 +59,12 @@ public abstract class View {
     /**
      * Creates a new instance.
      *
+     * @param title    the view title
      * @param rootView whether the view is root
      */
-    protected View(boolean rootView) {
+    protected View(String title, boolean rootView) {
+        checkArgument(!isNullOrEmpty(title));
+        this.title = title;
         this.rootView = rootView;
     }
 
@@ -67,6 +75,7 @@ public abstract class View {
      */
     public void render(@Nullable Action cause) {
         setOriginAction(cause);
+        println(getFormattedTitle());
         render();
     }
 
@@ -121,6 +130,12 @@ public abstract class View {
         ioFacade.println(message);
     }
 
+    public String getFormattedTitle() {
+        final String underline = repeat("-", title.length());
+        return title + lineSeparator() + underline;
+    }
+
+    @VisibleForTesting
     public void setIoFacade(IoFacade ioFacade) {
         this.ioFacade = ioFacade;
     }

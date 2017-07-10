@@ -45,7 +45,7 @@ class ActionListViewTest extends UserIoTest {
     private static final String ACTION_NAME = "action";
     private static final Shortcut SHORTCUT = new Shortcut("a");
 
-    private final ActionListView view = new ActionListView(true);
+    private final ActionListView view = new ActionListView("View title", true);
 
     @BeforeEach
     @Override
