@@ -85,7 +85,7 @@ public abstract class View {
     /**
      * Obtains the action leading to the source view of {@link #originAction}.
      *
-     * @param name the name for the action
+     * @param name     the name for the action
      * @param shortcut the shortcut for the action
      * @return reverse action of {@link #originAction}
      */

@@ -47,7 +47,8 @@ public abstract class ExecuteCommandAction<M extends Message,
     }
 
     /**
-     * Executes the obtained command from the specified source.
+     * Executes the obtained command from the source {@link CommandView}
+     * and then renders {@linkplain #getDestination() destination view}.
      */
     @Override
     public void execute() {
@@ -64,8 +65,8 @@ public abstract class ExecuteCommandAction<M extends Message,
     }
 
     public abstract static class ExecuteCommandActionProducer<M extends Message,
-                                                  B extends ValidatingBuilder<M, ? extends Message.Builder>,
-                                                  T extends ExecuteCommandAction<M, B>>
+                                                              B extends ValidatingBuilder<M, ? extends Message.Builder>,
+                                                              T extends ExecuteCommandAction<M, B>>
             extends AbstractTransitionActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
 
         protected ExecuteCommandActionProducer() {

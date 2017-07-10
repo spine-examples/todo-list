@@ -49,7 +49,7 @@ public abstract class AbstractCommandAction<M extends Message,
     }
 
     /**
-     * Updates a state of the specified source and then renders it.
+     * Updates a state of the source view and then renders destination view.
      */
     @Override
     public void execute() {
