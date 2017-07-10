@@ -45,6 +45,8 @@ import static java.lang.String.valueOf;
  */
 class MyTasksListView extends ActionListView {
 
+    private static final String EMPTY_TASKS_LIST_MSG = "<no tasks>";
+
     @VisibleForTesting
     MyTasksListView() {
         super("My tasks list", false);
@@ -52,14 +54,19 @@ class MyTasksListView extends ActionListView {
 
     @Override
     protected void render() {
-        refreshActions();
+        final MyListView myListView = getClient().getMyListView();
+        final Collection<TransitionActionProducer> producers = producersFor(myListView);
+        refreshActions(producers);
         super.render();
     }
 
-    private void refreshActions() {
+    private void refreshActions(Collection<TransitionActionProducer> newActionProducers) {
         clearActions();
-        final MyListView myListView = getClient().getMyListView();
-        producersFor(myListView).forEach(this::addAction);
+        if (newActionProducers.isEmpty()) {
+            println(EMPTY_TASKS_LIST_MSG);
+        } else {
+            newActionProducers.forEach(this::addAction);
+        }
     }
 
     @VisibleForTesting

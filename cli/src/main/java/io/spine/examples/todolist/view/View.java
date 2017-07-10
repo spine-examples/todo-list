@@ -73,7 +73,7 @@ public abstract class View {
      *
      * @param cause the action that caused render
      */
-    public void render(@Nullable Action cause) {
+    public final void render(@Nullable Action cause) {
         setOriginAction(cause);
         println(getFormattedTitle());
         render();
@@ -130,7 +130,8 @@ public abstract class View {
         ioFacade.println(message);
     }
 
-    public String getFormattedTitle() {
+    @VisibleForTesting
+    String getFormattedTitle() {
         final String underline = repeat("-", title.length());
         return title + lineSeparator() + underline;
     }
