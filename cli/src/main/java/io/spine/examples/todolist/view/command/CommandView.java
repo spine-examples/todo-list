@@ -34,6 +34,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.examples.todolist.view.command.CommandView.GenericParameter.STATE_BUILDER;
 import static io.spine.examples.todolist.view.command.ValidationExceptionFormatter.toErrorMessages;
+import static java.lang.System.lineSeparator;
 
 /**
  * A {@code CommandView} is a view where end-user prepares and sends a command to a server.
@@ -77,6 +78,21 @@ public abstract class CommandView<M extends Message,
             println(message);
         }
         render();
+    }
+
+    /**
+     * Obtains string representation of the specified state.
+     *
+     * <p>The representation will be displayed during view rendering.
+     *
+     * @param state the command state
+     * @return a string representation
+     */
+    protected abstract String representationOf(B state);
+
+    @Override
+    public String toString() {
+        return representationOf(state) + lineSeparator() + super.toString();
     }
 
     public B getState() {

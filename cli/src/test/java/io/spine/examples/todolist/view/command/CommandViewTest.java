@@ -55,7 +55,14 @@ class CommandViewTest extends UserIoTest {
         view.setIoFacade(getIoFacade());
     }
 
-    @SuppressWarnings("unchecked")
+    @Test
+    @DisplayName("render state representation firstly")
+    void renderStateRepresentation() {
+        final String stateRepresentation = view.representationOf(CreateCommentVBuilder.newBuilder());
+        final String viewRepresentation = view.toString();
+        assertTrue(viewRepresentation.startsWith(stateRepresentation));
+    }
+
     @Test
     @DisplayName("wrap ValidationException and render the source view")
     void displayViewOnValidationException() {
@@ -92,6 +99,11 @@ class CommandViewTest extends UserIoTest {
         protected void render() {
             wasDisplayed = true;
             super.render();
+        }
+
+        @Override
+        protected String representationOf(CreateCommentVBuilder state) {
+            return "Comment: " + getState().getValue();
         }
     }
 

@@ -100,6 +100,11 @@ class ExecuteCommandActionTest {
             rendered = true;
         }
 
+        @Override
+        protected String representationOf(StringValueVBuilder state) {
+            return String.valueOf(rendered);
+        }
+
         private boolean isRendered() {
             return rendered;
         }

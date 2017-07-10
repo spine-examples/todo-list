@@ -35,6 +35,8 @@ import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
+import static io.spine.examples.todolist.view.command.TaskCreationView.DESCRIPTION_LABEL;
+import static io.spine.examples.todolist.view.command.TaskCreationView.EMPTY_VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -60,6 +62,24 @@ class TaskCreationViewTest extends UserIoTest {
     @DisplayName("not be root view")
     void notBeRootView() {
         assertFalse(view.isRootView());
+    }
+
+    @Test
+    @DisplayName("handle empty description")
+    void handleEmptyDescription() {
+        final CreateBasicTaskVBuilder cleanBuilder = CreateBasicTaskVBuilder.newBuilder();
+        final String expectedRepresentation = DESCRIPTION_LABEL + ' ' + EMPTY_VALUE;
+        assertEquals(expectedRepresentation, view.representationOf(cleanBuilder));
+    }
+
+    @Test
+    @DisplayName("handle non-empty description")
+    void handleNonEmptyDescription() {
+        final String description = "task description";
+        final CreateBasicTaskVBuilder state = CreateBasicTaskVBuilder.newBuilder()
+                                                                     .setDescription(description);
+        final String expectedRepresentation = DESCRIPTION_LABEL + ' ' + description;
+        assertEquals(expectedRepresentation, view.representationOf(state));
     }
 
     @Test

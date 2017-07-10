@@ -84,5 +84,10 @@ class AbstractCommandActionTest extends UserIoTest {
         private ACommandView() {
             super("View title", true);
         }
+
+        @Override
+        protected String representationOf(StringValueVBuilder state) {
+            return "";
+        }
     }
 }

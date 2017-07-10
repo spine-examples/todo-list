@@ -40,6 +40,9 @@ import static io.spine.base.Identifier.newUuid;
  */
 public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTaskVBuilder> {
 
+    static final String EMPTY_VALUE = "empty";
+    static final String DESCRIPTION_LABEL = "Description:";
+
     private TaskCreationView() {
         super("New task", false);
     }
@@ -55,6 +58,15 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
     protected void render() {
         getState().setId(generatedId());
         super.render();
+    }
+
+    @Override
+    protected String representationOf(CreateBasicTaskVBuilder state) {
+        final String descriptionValue = state.getDescription()
+                                             .isEmpty()
+                                        ? EMPTY_VALUE
+                                        : state.getDescription();
+        return DESCRIPTION_LABEL + ' ' + descriptionValue;
     }
 
     private static TaskId generatedId() {
