@@ -50,8 +50,8 @@ public class ActionListView extends View {
     private static final String BACK_NAME = "Back";
     private static final Shortcut BACK_SHORTCUT = new Shortcut("b");
 
-    private static final String ACTION_SELECTION_TIP = formatShortcut(new Shortcut("?"));
-    private static final String SELECT_ACTION_MSG = "Select an action " + ACTION_SELECTION_TIP;
+    private static final String ACTION_SELECTION_HINT = formatShortcut(new Shortcut("?"));
+    private static final String SELECT_ACTION_MSG = "Select an action " + ACTION_SELECTION_HINT;
     private static final String INVALID_SELECTION_MSG = "There is no action with specified shortcut.";
 
     private final Set<Action> actions;

@@ -47,14 +47,18 @@ public abstract class ExecuteCommandAction<M extends Message,
     }
 
     /**
-     * Executes the obtained command from the source {@link CommandView}
-     * and then renders {@linkplain #getDestination() destination view}.
+     * Executes the obtained command from the source {@link CommandView}.
+     *
+     * <p>If {@linkplain #executeCommand(Message) command execution} is successful,
+     * clears state of the source view and renders {@linkplain #getDestination() destination view}.
      */
     @Override
     public void execute() {
-        final M commandMessage = getSource().getState()
-                                            .build();
+        final B sourceState = getSource().getState();
+        final M commandMessage = sourceState.build();
         executeCommand(commandMessage);
+
+        sourceState.clear();
         getDestination().render(this);
     }
 

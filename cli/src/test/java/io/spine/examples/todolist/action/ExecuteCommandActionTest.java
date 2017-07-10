@@ -26,6 +26,8 @@ import io.spine.validate.StringValueVBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.validate.Validate.isDefault;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -47,16 +49,29 @@ class ExecuteCommandActionTest {
     @Test
     @DisplayName("execute command and render a source view")
     void executeCommandAndRenderSource() {
+        final String expectedString = "A string value.";
+        final StringValueVBuilder viewState = view.getState();
+        viewState.setValue(expectedString);
         action.execute();
 
-        assertTrue(action.isUpdated());
+        assertEquals(expectedString, action.getCommandMessageBeforeExecution()
+                                           .getValue());
         assertTrue(view.isRendered());
+    }
+
+    @Test
+    @DisplayName("clear state of source view after successful execution")
+    void clearSourceState() {
+        final StringValueVBuilder viewState = view.getState();
+        viewState.setValue("Non-default value");
+        action.execute();
+        assertTrue(isDefault(viewState.internalBuild()));
     }
 
     private static class UpdateStringValueAction
             extends ExecuteCommandAction<StringValue, StringValueVBuilder> {
 
-        private boolean updated;
+        private StringValue commandMessageBeforeExecution;
 
         private UpdateStringValueAction(CommandView<StringValue, StringValueVBuilder> source) {
             super(source);
@@ -64,11 +79,11 @@ class ExecuteCommandActionTest {
 
         @Override
         protected void executeCommand(StringValue commandMessage) {
-            updated = true;
+            commandMessageBeforeExecution = commandMessage;
         }
 
-        private boolean isUpdated() {
-            return updated;
+        private StringValue getCommandMessageBeforeExecution() {
+            return commandMessageBeforeExecution;
         }
     }
 
