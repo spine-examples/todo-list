@@ -22,14 +22,15 @@ package io.spine.examples.todolist.view.command;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.action.AbstractCommandAction;
 import io.spine.examples.todolist.action.CommandAction;
+import io.spine.examples.todolist.action.EditCommandAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import io.spine.examples.todolist.view.command.TaskCreationView.EnterDescription.EnterDescriptionProducer;
 
 import static io.spine.base.Identifier.newUuid;
+import static io.spine.examples.todolist.AppConfig.getClient;
 
 /**
  * A {@code CommandView}, that allows to create a task in a quick mode.
@@ -76,8 +77,8 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
     }
 
     @VisibleForTesting
-    static class EnterDescription extends AbstractCommandAction<CreateBasicTask,
-                                                                CreateBasicTaskVBuilder> {
+    static class EnterDescription extends EditCommandAction<CreateBasicTask,
+                                                            CreateBasicTaskVBuilder> {
 
         private static final String PROMPT = "Please enter the task description";
 
@@ -87,9 +88,9 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
         }
 
         @Override
-        protected void updateState(CreateBasicTaskVBuilder state) {
+        protected void edit() {
             final String description = promptUser(PROMPT);
-            state.setDescription(description);
+            getBuilder().setDescription(description);
         }
 
         static class EnterDescriptionProducer extends AbstractCommandActionProducer<CreateBasicTask,
@@ -109,7 +110,7 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
     }
 
     private static class Command extends CommandAction<CreateBasicTask,
-                                                                             CreateBasicTaskVBuilder> {
+                                                       CreateBasicTaskVBuilder> {
 
         private Command(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
             super(source);
@@ -125,8 +126,7 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
                 Command> {
 
             @Override
-            public Command create(CommandView<CreateBasicTask,
-                                         CreateBasicTaskVBuilder> source) {
+            public Command create(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
                 return new Command(source);
             }
         }

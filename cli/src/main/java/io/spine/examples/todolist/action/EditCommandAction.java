@@ -29,36 +29,47 @@ import io.spine.validate.ValidatingBuilder;
 import static io.spine.examples.todolist.AppConfig.getIoFacade;
 
 /**
- * Abstract base class for command actions.
+ * Abstract base class for editing command actions.
  *
- * <p>Command action represents a user action, that updates
+ * <p>Represents a user action, that updates
  * {@linkplain CommandView#state state of the command view}.
  *
  * @param <M> the type of the command message
  * @param <B> the validating builder type for the command message
  * @author Dmytro Grankin
  */
-public abstract class AbstractCommandAction<M extends Message,
-                                            B extends ValidatingBuilder<M, ? extends Message.Builder>>
+public abstract class EditCommandAction<M extends Message,
+                                        B extends ValidatingBuilder<M, ? extends Message.Builder>>
         extends AbstractAction<CommandView<M, B>, CommandView<M, B>> {
 
     private IoFacade ioFacade = getIoFacade();
 
-    protected AbstractCommandAction(String name, Shortcut shortcut, CommandView<M, B> source) {
+    protected EditCommandAction(String name, Shortcut shortcut, CommandView<M, B> source) {
         super(name, shortcut, source, source);
     }
 
     /**
-     * Updates a state of the source view and then renders destination view.
+     * Edits a state of the source view and then renders destination view.
      */
     @Override
     public void execute() {
-        final B commandViewState = getSource().getState();
-        updateState(commandViewState);
+        edit();
         getDestination().render(this);
     }
 
-    protected abstract void updateState(B state);
+    /**
+     * Edits {@link #getBuilder() state of a the source view}.
+     */
+    protected abstract void edit();
+
+    /**
+     * Obtains state of the source view.
+     *
+     * @return source view state
+     */
+    protected B getBuilder() {
+        return getSource().getState();
+    }
 
     /**
      * Prompts a user for an input and receives the input value.
@@ -84,7 +95,7 @@ public abstract class AbstractCommandAction<M extends Message,
      */
     public abstract static class AbstractCommandActionProducer<M extends Message,
                                                                B extends ValidatingBuilder<M, ? extends Message.Builder>,
-                                                               T extends AbstractCommandAction<M, B>>
+                                                               T extends EditCommandAction<M, B>>
             extends AbstractActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
 
         protected AbstractCommandActionProducer(String name, Shortcut shortcut) {

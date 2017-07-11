@@ -28,7 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.action.AbstractCommandActionTest.ACommandAction.VALUE_AFTER_UPDATE;
+import static io.spine.examples.todolist.action.EditCommandActionTest.AnEditCommandAction.VALUE_AFTER_UPDATE;
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -36,11 +36,11 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("AbstractCommandAction should")
-class AbstractCommandActionTest extends UserIoTest {
+@DisplayName("EditCommandAction should")
+class EditCommandActionTest extends UserIoTest {
 
     private final CommandView<StringValue, StringValueVBuilder> view = new ACommandView();
-    private final ACommandAction action = new ACommandAction(view);
+    private final AnEditCommandAction action = new AnEditCommandAction(view);
 
     @Override
     @BeforeEach
@@ -65,17 +65,17 @@ class AbstractCommandActionTest extends UserIoTest {
                                              .getValue());
     }
 
-    static class ACommandAction extends AbstractCommandAction<StringValue, StringValueVBuilder> {
+    static class AnEditCommandAction extends EditCommandAction<StringValue, StringValueVBuilder> {
 
         static final String VALUE_AFTER_UPDATE = "updated";
 
-        private ACommandAction(CommandView<StringValue, StringValueVBuilder> source) {
+        private AnEditCommandAction(CommandView<StringValue, StringValueVBuilder> source) {
             super("name", new Shortcut("s"), source);
         }
 
         @Override
-        protected void updateState(StringValueVBuilder state) {
-            state.setValue(VALUE_AFTER_UPDATE);
+        protected void edit() {
+            getBuilder().setValue(VALUE_AFTER_UPDATE);
         }
     }
 

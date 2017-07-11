@@ -117,7 +117,7 @@ class TaskCreationViewTest extends UserIoTest {
             addAnswer(VALID_DESCRIPTION);
 
             final CreateBasicTaskVBuilder state = view.getState();
-            enterDescription.updateState(state);
+            enterDescription.edit();
 
             assertEquals(VALID_DESCRIPTION, state.getDescription());
         }

@@ -21,8 +21,6 @@
 package io.spine.examples.todolist.action;
 
 import com.google.protobuf.Message;
-import io.spine.examples.todolist.AppConfig;
-import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.view.command.CommandView;
 import io.spine.validate.ValidatingBuilder;
 
@@ -39,8 +37,6 @@ public abstract class CommandAction<M extends Message,
 
     private static final String ACTION_NAME = "Finish";
     private static final Shortcut ACTION_SHORTCUT = new Shortcut("f");
-
-    private final TodoClient client = AppConfig.getClient();
 
     protected CommandAction(CommandView<M, B> source) {
         super(ACTION_NAME, ACTION_SHORTCUT, source, source);
@@ -68,10 +64,6 @@ public abstract class CommandAction<M extends Message,
      * @param commandMessage the command message to post
      */
     protected abstract void post(M commandMessage);
-
-    protected TodoClient getClient() {
-        return client;
-    }
 
     public abstract static class ExecuteCommandActionProducer<M extends Message,
                                                               B extends ValidatingBuilder<M, ? extends Message.Builder>,
