@@ -22,7 +22,6 @@ package io.spine.examples.todolist.view;
 
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
-import io.spine.examples.todolist.RootView;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.Shortcut;
@@ -31,13 +30,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.Given.newNoOpView;
 import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static io.spine.examples.todolist.view.ActionListView.getSelectActionMsg;
 import static io.spine.protobuf.Wrapper.forString;
 import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.joining;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * @author Dmytro Grankin
@@ -51,13 +50,7 @@ class EntityViewTest extends UserIoTest {
     @Override
     protected void setUp() {
         super.setUp();
-        view.setIoFacade(getIoFacade());
-    }
-
-    @Test
-    @DisplayName("not be root view")
-    void notBeRootView() {
-        assertFalse(view.isRootView());
+        view.setScreen(getScreen());
     }
 
     @Test
@@ -66,9 +59,12 @@ class EntityViewTest extends UserIoTest {
         final Shortcut back = getBackShortcut();
         addAnswer(back.getValue());
 
-        final TransitionActionProducer<View, View> producer =
-                newProducer("Transition", new Shortcut("t"), view);
-        producer.create(new RootView())
+        final TransitionActionProducer<View, View> producer = newProducer("Transition",
+                                                                          new Shortcut("t"),
+                                                                          view);
+        final View source = newNoOpView();
+        source.setScreen(getScreen());
+        producer.create(source)
                 .execute();
 
         final String stateRepresentation = view.renderState(AnEntityView.RECENT_STATE);

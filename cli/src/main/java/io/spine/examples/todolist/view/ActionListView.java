@@ -60,11 +60,10 @@ public class ActionListView extends View {
     /**
      * Creates a new instance without some {@link #actions}.
      *
-     * @param title    {@inheritDoc}
-     * @param rootView {@inheritDoc}
+     * @param title the view title
      */
-    public ActionListView(String title, boolean rootView) {
-        super(title, rootView);
+    public ActionListView(String title) {
+        super(title);
         this.actions = new LinkedHashSet<>();
     }
 
@@ -90,14 +89,14 @@ public class ActionListView extends View {
 
     private void renderStringRepresentation() {
         final String stringRepresentation = toString();
-        println(stringRepresentation);
+        getScreen().println(stringRepresentation);
     }
 
     private Action selectAction() {
         do {
             final Optional<Action> selectedAction = trySelectAction();
             if (!selectedAction.isPresent()) {
-                println(INVALID_SELECTION_MSG);
+                getScreen().println(INVALID_SELECTION_MSG);
             } else {
                 return selectedAction.get();
             }
@@ -105,7 +104,7 @@ public class ActionListView extends View {
     }
 
     private Optional<Action> trySelectAction() {
-        final String answer = promptUser(SELECT_ACTION_MSG);
+        final String answer = getScreen().promptUser(SELECT_ACTION_MSG);
         final Predicate<Action> actionMatch = new ShortcutMatchPredicate(answer);
         return actions.stream()
                       .filter(actionMatch)

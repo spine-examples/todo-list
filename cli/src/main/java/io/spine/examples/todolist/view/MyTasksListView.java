@@ -47,9 +47,8 @@ class MyTasksListView extends ActionListView {
 
     private static final String EMPTY_TASKS_LIST_MSG = "<no tasks>";
 
-    @VisibleForTesting
-    MyTasksListView() {
-        super("My tasks list", false);
+    private MyTasksListView() {
+        super("My tasks list");
     }
 
     @Override
@@ -63,7 +62,7 @@ class MyTasksListView extends ActionListView {
     private void refreshActions(Collection<TransitionActionProducer> newActionProducers) {
         clearActions();
         if (newActionProducers.isEmpty()) {
-            println(EMPTY_TASKS_LIST_MSG);
+            getScreen().println(EMPTY_TASKS_LIST_MSG);
         } else {
             newActionProducers.forEach(this::addAction);
         }

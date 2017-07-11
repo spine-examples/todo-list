@@ -20,30 +20,23 @@
 
 package io.spine.examples.todolist;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 /**
+ * Factory for {@link Screen}.
+ *
  * @author Dmytro Grankin
  */
-@DisplayName("CommandLineFacade should")
-class CommandLineFacadeTest {
+final class ScreenFactory {
 
-    private static final String EMPTY_STRING = "";
-
-    private final IoFacade ioFacade = new CommandLineFacade();
-
-    @Test
-    @DisplayName("not allow empty prompt")
-    void notAllowEmptyPrompt() {
-        assertThrows(IllegalArgumentException.class, () -> ioFacade.promptUser(EMPTY_STRING));
+    private ScreenFactory() {
+        // Prevent instantiation of this class.
     }
 
-    @Test
-    @DisplayName("not allow empty string for printing")
-    void notAllowEmptyMessage() {
-        assertThrows(IllegalArgumentException.class, () -> ioFacade.println(EMPTY_STRING));
+    /**
+     * Creates a new {@link Screen} instance.
+     *
+     * @return the new instance
+     */
+    static Screen newInstance() {
+        return new CommandLineScreen();
     }
 }

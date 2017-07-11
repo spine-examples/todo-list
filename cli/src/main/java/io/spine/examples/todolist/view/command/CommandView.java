@@ -51,8 +51,8 @@ public abstract class CommandView<M extends Message,
 
     private final B state;
 
-    protected CommandView(String title, boolean rootView) {
-        super(title, rootView);
+    protected CommandView(String title) {
+        super(title);
         this.state = newBuilderInstance();
     }
 
@@ -74,9 +74,7 @@ public abstract class CommandView<M extends Message,
 
     private void handleValidationException(ValidationException ex) {
         final List<String> errorMessages = toErrorMessages(ex);
-        for (String message : errorMessages) {
-            println(message);
-        }
+        errorMessages.forEach(message -> getScreen().println(message));
         render();
     }
 

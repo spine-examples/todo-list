@@ -22,6 +22,10 @@ package io.spine.examples.todolist.action;
 
 import java.util.Objects;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 /**
  * Special kind of {@link Action}, that does nothing.
  *
@@ -35,6 +39,8 @@ public class NoOpAction implements Action {
     private final Shortcut shortcut;
 
     public NoOpAction(String name, Shortcut shortcut) {
+        checkArgument(!isNullOrEmpty(name));
+        checkNotNull(shortcut);
         this.name = name;
         this.shortcut = shortcut;
     }

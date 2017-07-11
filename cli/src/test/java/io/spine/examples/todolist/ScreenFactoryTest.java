@@ -20,20 +20,20 @@
 
 package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.view.View;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
- * Root view for test needs.
- *
  * @author Dmytro Grankin
  */
-public class RootView extends View {
+@DisplayName("ScreenFactory should")
+class ScreenFactoryTest {
 
-    public RootView() {
-        super("View title", true);
-    }
-
-    @Override
-    protected void render() {
+    @Test
+    @DisplayName("have the private constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(ScreenFactory.class);
     }
 }

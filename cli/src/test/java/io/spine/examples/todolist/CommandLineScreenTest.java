@@ -18,24 +18,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.view;
+package io.spine.examples.todolist;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("MainMenu should")
-class MainMenuTest {
+@DisplayName("CommandLineScreen should")
+class CommandLineScreenTest {
 
-    private final MainMenu menu = MainMenu.create();
+    private static final String EMPTY_STRING = "";
+
+    private final Screen screen = new CommandLineScreen();
 
     @Test
-    @DisplayName("be root view")
-    void beRootView() {
-        assertTrue(menu.isRootView());
+    @DisplayName("not allow empty prompt")
+    void notAllowEmptyPrompt() {
+        assertThrows(IllegalArgumentException.class, () -> screen.promptUser(EMPTY_STRING));
+    }
+
+    @Test
+    @DisplayName("not allow empty string for printing")
+    void notAllowEmptyMessage() {
+        assertThrows(IllegalArgumentException.class, () -> screen.println(EMPTY_STRING));
     }
 }

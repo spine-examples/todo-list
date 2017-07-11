@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.server.Server;
 import io.spine.examples.todolist.view.MainMenu;
 import io.spine.examples.todolist.view.View;
@@ -48,10 +47,12 @@ public class CliEntryPoint {
     public static void main(String[] args) throws Exception {
         final Server server = getServer();
         startServer(server);
-        final TodoClient client = getClient();
+
         final View entryPoint = MainMenu.create();
-        entryPoint.render(null);
-        client.shutdown();
+        final Screen screen = new CommandLineScreen();
+        entryPoint.render(screen);
+
+        getClient().shutdown();
         server.shutdown();
     }
 

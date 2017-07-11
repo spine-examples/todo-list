@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.action;
 
+import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.view.View;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -33,7 +34,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class TransitionAction<S extends View, D extends View> extends AbstractAction<S, D> {
 
-    protected TransitionAction(String name, Shortcut shortcut, S source, D destination) {
+    public TransitionAction(String name, Shortcut shortcut, S source, D destination) {
         super(name, shortcut, source, destination);
     }
 
@@ -42,20 +43,8 @@ public class TransitionAction<S extends View, D extends View> extends AbstractAc
      */
     @Override
     public void execute() {
-        getDestination().render(this);
-    }
-
-    /**
-     * Creates reverse action for the action with the specified name and the shortcut.
-     *
-     * @param name     the name of the reverse action
-     * @param shortcut the shortcut of the reverse action
-     * @return the reverse action
-     */
-    public TransitionAction<D, S> createReverseAction(String name, Shortcut shortcut) {
-        final S reverseDestination = getSource();
-        final D reserveSource = getDestination();
-        return new TransitionAction<>(name, shortcut, reserveSource, reverseDestination);
+        final Screen screen = getSource().getScreen();
+        screen.renderView(getDestination());
     }
 
     /**

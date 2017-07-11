@@ -67,11 +67,11 @@ public class AppConfig {
     }
 
     /**
-     * Obtains the {@link IoFacade}.
+     * Obtains the new {@link Screen}.
      *
-     * @return the facade
+     * @return the screen
      */
-    public static IoFacade getIoFacade() {
-        return IoFacadeFactory.newInstance();
+    public static Screen newScreen() {
+        return ScreenFactory.newInstance();
     }
 }

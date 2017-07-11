@@ -22,11 +22,9 @@ package io.spine.examples.todolist.action;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Message;
-import io.spine.examples.todolist.IoFacade;
+import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.view.command.CommandView;
 import io.spine.validate.ValidatingBuilder;
-
-import static io.spine.examples.todolist.AppConfig.getIoFacade;
 
 /**
  * Abstract base class for editing command actions.
@@ -42,7 +40,7 @@ public abstract class EditCommandAction<M extends Message,
                                         B extends ValidatingBuilder<M, ? extends Message.Builder>>
         extends AbstractAction<CommandView<M, B>, CommandView<M, B>> {
 
-    private IoFacade ioFacade = getIoFacade();
+    private Screen screen;
 
     protected EditCommandAction(String name, Shortcut shortcut, CommandView<M, B> source) {
         super(name, shortcut, source, source);
@@ -53,8 +51,9 @@ public abstract class EditCommandAction<M extends Message,
      */
     @Override
     public void execute() {
+        screen = getSource().getScreen();
         edit();
-        getDestination().render(this);
+        screen.renderView(getDestination());
     }
 
     /**
@@ -71,19 +70,13 @@ public abstract class EditCommandAction<M extends Message,
         return getSource().getState();
     }
 
-    /**
-     * Prompts a user for an input and receives the input value.
-     *
-     * @param prompt the prompt to display
-     * @return the input value
-     */
-    protected String promptUser(String prompt) {
-        return ioFacade.promptUser(prompt);
+    protected Screen getScreen() {
+        return screen;
     }
 
     @VisibleForTesting
-    public void setIoFacade(IoFacade ioFacade) {
-        this.ioFacade = ioFacade;
+    public void setScreen(Screen screen) {
+        this.screen = screen;
     }
 
     /**

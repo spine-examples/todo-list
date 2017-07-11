@@ -20,46 +20,30 @@
 
 package io.spine.examples.todolist;
 
-import org.jline.reader.LineReader;
-import org.jline.terminal.Terminal;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static io.spine.examples.todolist.Terminals.dumbTerminal;
+import io.spine.examples.todolist.view.View;
 
 /**
- * An {@link IoFacade} for a command-line application.
- *
  * @author Dmytro Grankin
  */
-public class CommandLineFacade implements IoFacade {
+public class Given {
 
-    private final LineReader reader = newLineReader();
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String promptUser(String prompt) {
-        checkArgument(!isNullOrEmpty(prompt));
-        println(prompt);
-        final String answer = reader.readLine();
-        return answer;
+    private Given() {
+        // Prevent instantiation of this utility class.
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void println(String message) {
-        checkArgument(!isNullOrEmpty(message));
-        reader.getTerminal()
-              .writer()
-              .println(message);
+    public static NoOpView newNoOpView() {
+        return new NoOpView();
     }
 
-    private static LineReader newLineReader() {
-        final Terminal terminal = dumbTerminal();
-        return Readers.newLineReader(terminal);
+    public static class NoOpView extends View {
+
+        private NoOpView() {
+            super("NoOpView");
+        }
+
+        @Override
+        protected void render() {
+            // Do nothing.
+        }
     }
 }

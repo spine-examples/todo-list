@@ -20,20 +20,45 @@
 
 package io.spine.examples.todolist;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import io.spine.examples.todolist.view.View;
 
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import java.util.Optional;
 
 /**
+ * A screen of an application.
+ *
  * @author Dmytro Grankin
  */
-@DisplayName("IoFacadeFactory should")
-class IoFacadeFactoryTest {
+public interface Screen {
 
-    @Test
-    @DisplayName("have the private constructor")
-    void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(IoFacadeFactory.class);
-    }
+    /**
+     * Renders specified view.
+     *
+     * @param view the view to render
+     */
+    void renderView(View view);
+
+    /**
+     * Obtains previous view for the specified view.
+     *
+     * @param view the view that was rendered after the previous view
+     * @return {@code Optional} of previous view,
+     *         or {@code Optional.empty} if the specified view is the first view that was rendered
+     */
+    Optional<View> getPreviousView(View view);
+
+    /**
+     * Prompts a user for an input and receives the input value.
+     *
+     * @param prompt the prompt to display
+     * @return the input value
+     */
+    String promptUser(String prompt);
+
+    /**
+     * Prints the message and a new line after it.
+     *
+     * @param message the message to print
+     */
+    void println(String message);
 }

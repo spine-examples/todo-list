@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.view.command;
 
-import io.spine.examples.todolist.RootView;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Shortcut;
@@ -33,12 +32,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.Given.newNoOpView;
 import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static io.spine.examples.todolist.view.command.TaskCreationView.DESCRIPTION_LABEL;
 import static io.spine.examples.todolist.view.command.TaskCreationView.EMPTY_VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
@@ -55,13 +54,7 @@ class TaskCreationViewTest extends UserIoTest {
     @Override
     protected void setUp() {
         super.setUp();
-        view.setIoFacade(getIoFacade());
-    }
-
-    @Test
-    @DisplayName("not be root view")
-    void notBeRootView() {
-        assertFalse(view.isRootView());
+        view.setScreen(getScreen());
     }
 
     @Test
@@ -89,9 +82,12 @@ class TaskCreationViewTest extends UserIoTest {
                                      .getId();
 
         addAnswer(getBackShortcut().getValue());
-        final TransitionActionProducer<View, View> producer =
-                newProducer("a", new Shortcut("a"), view);
-        producer.create(new RootView())
+        final TransitionActionProducer<View, View> producer = newProducer("a",
+                                                                          new Shortcut("a"),
+                                                                          view);
+        final View source = newNoOpView();
+        source.setScreen(getScreen());
+        producer.create(source)
                 .execute();
 
         final TaskId idAfterRender = view.getState()
@@ -108,7 +104,7 @@ class TaskCreationViewTest extends UserIoTest {
 
         @BeforeEach
         void setUp() {
-            enterDescription.setIoFacade(getIoFacade());
+            enterDescription.setScreen(getScreen());
         }
 
         @Test

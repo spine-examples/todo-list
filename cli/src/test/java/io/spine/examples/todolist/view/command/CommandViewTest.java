@@ -52,7 +52,7 @@ class CommandViewTest extends UserIoTest {
     @Override
     protected void setUp() {
         super.setUp();
-        view.setIoFacade(getIoFacade());
+        view.setScreen(getScreen());
     }
 
     @Test
@@ -92,7 +92,7 @@ class CommandViewTest extends UserIoTest {
         private boolean wasDisplayed = false;
 
         private CreateCommentView() {
-            super("View title", true);
+            super("View title");
         }
 
         @Override

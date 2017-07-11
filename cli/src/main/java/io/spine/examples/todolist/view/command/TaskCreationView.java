@@ -45,7 +45,7 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
     static final String DESCRIPTION_LABEL = "Description:";
 
     private TaskCreationView() {
-        super("New task", false);
+        super("New task");
     }
 
     public static TaskCreationView create() {
@@ -89,7 +89,7 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
 
         @Override
         protected void edit() {
-            final String description = promptUser(PROMPT);
+            final String description = getScreen().promptUser(PROMPT);
             getBuilder().setDescription(description);
         }
 

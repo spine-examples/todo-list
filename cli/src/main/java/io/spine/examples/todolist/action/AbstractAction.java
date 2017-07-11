@@ -72,12 +72,11 @@ public abstract class AbstractAction<S extends View, D extends View> implements 
         return shortcut;
     }
 
-
-    protected S getSource() {
+    public S getSource() {
         return source;
     }
 
-    protected D getDestination() {
+    public D getDestination() {
         return destination;
     }
 

@@ -44,7 +44,7 @@ class ConfirmationTest extends UserIoTest {
     @Override
     protected void setUp() {
         super.setUp();
-        confirmation.setIoFacade(getIoFacade());
+        confirmation.setScreen(getScreen());
     }
 
     @Test

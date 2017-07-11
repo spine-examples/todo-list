@@ -20,10 +20,11 @@
 
 package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.RootView;
+import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.Given.newNoOpView;
 import static io.spine.examples.todolist.action.ActionFormatter.format;
 import static io.spine.examples.todolist.action.ActionFormatter.getShortcutNameSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -65,10 +66,10 @@ class ActionTest {
         assertEquals(expectedString, action.toString());
     }
 
-    private static class AnAction extends AbstractAction<RootView, RootView> {
+    private static class AnAction extends AbstractAction<View, View> {
 
         private AnAction(String name, Shortcut shortcut) {
-            super(name, shortcut, new RootView(), new RootView());
+            super(name, shortcut, newNoOpView(), newNoOpView());
         }
 
         @Override

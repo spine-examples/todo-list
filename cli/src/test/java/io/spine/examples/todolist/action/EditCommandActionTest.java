@@ -46,7 +46,7 @@ class EditCommandActionTest extends UserIoTest {
     @BeforeEach
     protected void setUp() {
         super.setUp();
-        view.setIoFacade(getIoFacade());
+        view.setScreen(getScreen());
     }
 
     @Test
@@ -82,7 +82,7 @@ class EditCommandActionTest extends UserIoTest {
     private static class ACommandView extends CommandView<StringValue, StringValueVBuilder> {
 
         private ACommandView() {
-            super("View title", true);
+            super("View title");
         }
 
         @Override

@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.action;
 
 import com.google.protobuf.Message;
+import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.view.command.CommandView;
 import io.spine.validate.ValidatingBuilder;
 
@@ -55,7 +56,8 @@ public abstract class CommandAction<M extends Message,
         post(commandMessage);
 
         sourceState.clear();
-        getDestination().render(this);
+        final Screen screen = getSource().getScreen();
+        screen.renderView(getDestination());
     }
 
     /**

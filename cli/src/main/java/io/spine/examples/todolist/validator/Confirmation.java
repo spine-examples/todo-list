@@ -21,11 +21,11 @@
 package io.spine.examples.todolist.validator;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.IoFacade;
+import io.spine.examples.todolist.Screen;
 
 import java.util.Optional;
 
-import static io.spine.examples.todolist.AppConfig.getIoFacade;
+import static io.spine.examples.todolist.AppConfig.newScreen;
 import static io.spine.examples.todolist.validator.ConfirmationValidator.getNegativeAnswer;
 import static io.spine.examples.todolist.validator.ConfirmationValidator.getPositiveAnswer;
 import static java.lang.String.format;
@@ -40,7 +40,7 @@ class Confirmation {
     private static final String HINT_FORMAT = "(%s/%s)";
 
     private final Validator<String> validator = new ConfirmationValidator();
-    private IoFacade ioFacade = getIoFacade();
+    private Screen screen = newScreen();
 
     /**
      * Obtains a confirmation value for the specified question.
@@ -68,7 +68,7 @@ class Confirmation {
      *         or {@code Optional.empty()} if the answer is not valid
      */
     private Optional<String> getValidAnswer(String question) {
-        final String answer = ioFacade.promptUser(question);
+        final String answer = screen.promptUser(question);
         boolean isValidAnswer = validator.validate(answer);
         return isValidAnswer
                ? Optional.of(answer)
@@ -84,7 +84,7 @@ class Confirmation {
     }
 
     @VisibleForTesting
-    void setIoFacade(IoFacade ioFacade) {
-        this.ioFacade = ioFacade;
+    void setScreen(Screen screen) {
+        this.screen = screen;
     }
 }

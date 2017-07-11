@@ -20,23 +20,47 @@
 
 package io.spine.examples.todolist;
 
+import io.spine.examples.todolist.view.View;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
 /**
- * Factory for {@linkplain IoFacade I/O facades}.
+ * Abstract base class for {@link Screen}.
+ *
+ * <p>Implements common operation for all screens.
  *
  * @author Dmytro Grankin
  */
-final class IoFacadeFactory {
+abstract class AbstractScreen implements Screen {
 
-    private IoFacadeFactory() {
-        // Prevent instantiation of this class.
+    private View currentView;
+
+    /**
+     * A view to its previous view map.
+     */
+    private final Map<View, View> previousViews = new HashMap<>();
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void renderView(View view) {
+        if (!previousViews.containsKey(view)) {
+            previousViews.put(view, currentView);
+        }
+
+        currentView = view;
+        currentView.render(this);
     }
 
     /**
-     * Creates a new {@link IoFacade} instance.
-     *
-     * @return new facade instance
+     * {@inheritDoc}
      */
-    static IoFacade newInstance() {
-        return new CommandLineFacade();
+    @Override
+    public Optional<View> getPreviousView(View view) {
+        final View previousView = previousViews.get(view);
+        return Optional.ofNullable(previousView);
     }
 }

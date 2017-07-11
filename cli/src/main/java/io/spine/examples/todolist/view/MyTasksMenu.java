@@ -32,7 +32,7 @@ import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskListPro
 class MyTasksMenu extends ActionListView {
 
     private MyTasksMenu() {
-        super("My tasks", false);
+        super("My tasks");
     }
 
     static MyTasksMenu create() {

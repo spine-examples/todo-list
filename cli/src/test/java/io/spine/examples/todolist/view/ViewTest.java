@@ -25,7 +25,6 @@ import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -33,10 +32,7 @@ import static java.lang.System.lineSeparator;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Dmytro Grankin
@@ -44,108 +40,54 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("View should")
 class ViewTest extends UserIoTest {
 
+    private static final String BACK_ACTION_NAME = "back";
     private static final Shortcut SHORTCUT = new Shortcut("b");
 
-    private final RootView rootView = new RootView();
-    private final View childView = new ChildView();
-    private final TransitionAction<View, View> displayChild = newAction(rootView, childView);
-
-    @Override
-    @BeforeEach
-    protected void setUp() {
-        super.setUp();
-        rootView.setIoFacade(getIoFacade());
-    }
+    private final View view = new AView();
 
     @Test
     @DisplayName("print formatted title")
     void printFormattedTitle() {
-        rootView.render(null);
-        assertOutput(rootView.getFormattedTitle() + lineSeparator());
+        new AView().render(getScreen());
+        assertOutput(view.getFormattedTitle() + lineSeparator());
     }
 
     @Test
-    @DisplayName("not set first render cause for root view")
-    void notSetFirstDisplayCause() {
-        final TransitionAction<View, View> displayRoot = newAction(childView, rootView);
-        displayRoot.execute();
-        assertNull(rootView.getOriginAction());
-    }
+    @DisplayName("create NoOpAction as a back action for a root view")
+    void createNoOpBackAction() {
+        view.setScreen(getScreen());
+        final Action back = view.createBackAction(BACK_ACTION_NAME, SHORTCUT);
 
-    @Test
-    @DisplayName("set first render cause for NON-root view")
-    void setFirstDisplayCause() {
-        assertNull(childView.getOriginAction());
-        displayChild.execute();
-        assertSame(displayChild, childView.getOriginAction());
-    }
-
-    @Test
-    @DisplayName("not overwrite first render cause")
-    void notOverwriteFirstDisplayCause() {
-        displayChild.execute();
-        assertSame(displayChild, childView.getOriginAction());
-
-        final TransitionAction<View, View> secondDisplayCause = newAction(rootView, childView);
-        secondDisplayCause.execute();
-        assertSame(displayChild, childView.getOriginAction());
-    }
-
-    @Test
-    @DisplayName("create NoOpAction for return from a root view")
-    void createPseudoBackAction() {
-        final String backName = "Back";
-        final Action back = rootView.createBackAction(backName, SHORTCUT);
-
-        assertEquals(backName, back.getName());
+        assertEquals(BACK_ACTION_NAME, back.getName());
         assertEquals(SHORTCUT, back.getShortcut());
         assertThat(back, instanceOf(NoOpAction.class));
     }
 
     @Test
-    @DisplayName("not create back action for child view if `firstDisplayCause` is unknown")
-    void notCreateBackAction() {
-        assertThrows(IllegalStateException.class,
-                     () -> childView.createBackAction("b", SHORTCUT));
-    }
-
-    @Test
-    @DisplayName("create usual back action for child view")
+    @DisplayName("create usual back action for a child view")
     void createUsualBackAction() {
-        displayChild.execute();
-        final Action back = childView.createBackAction("b", SHORTCUT);
-        back.execute();
-        assertTrue(rootView.wasDisplayed);
+        final View rootView = new AView();
+        final View childView = new AView();
+        getScreen().renderView(rootView);
+        getScreen().renderView(childView);
+
+        final TransitionAction back =
+                (TransitionAction) childView.createBackAction(BACK_ACTION_NAME, SHORTCUT);
+
+        assertEquals(BACK_ACTION_NAME, back.getName());
+        assertEquals(SHORTCUT, back.getShortcut());
+        assertSame(rootView, back.getDestination());
+        assertSame(childView, back.getSource());
     }
 
-    private static class RootView extends View {
+    private static class AView extends View {
 
-        private boolean wasDisplayed = false;
-
-        private RootView() {
-            super("View title", true);
-        }
-
-        @Override
-        public void render() {
-            wasDisplayed = true;
-        }
-    }
-
-    private static class ChildView extends View {
-
-        private ChildView() {
-            super("View title", false);
+        private AView() {
+            super("View title");
         }
 
         @Override
         public void render() {
         }
-    }
-
-    private static TransitionAction<View, View> newAction(View source, View destination) {
-        final Shortcut shortcut = new Shortcut("a");
-        return TransitionAction.newProducer("a name", shortcut, destination)
-                               .create(source);
     }
 }

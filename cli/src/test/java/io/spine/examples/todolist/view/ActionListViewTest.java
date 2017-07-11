@@ -45,13 +45,13 @@ class ActionListViewTest extends UserIoTest {
     private static final String ACTION_NAME = "action";
     private static final Shortcut SHORTCUT = new Shortcut("a");
 
-    private final ActionListView view = new ActionListView("View title", true);
+    private final ActionListView view = new ActionListView("View title");
 
     @BeforeEach
     @Override
     protected void setUp() {
         super.setUp();
-        view.setIoFacade(getIoFacade());
+        view.setScreen(getScreen());
     }
 
     @Test

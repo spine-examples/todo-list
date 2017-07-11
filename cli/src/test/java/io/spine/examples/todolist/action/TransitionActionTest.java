@@ -20,13 +20,13 @@
 
 package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.RootView;
+import io.spine.examples.todolist.TestScreen;
 import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.Given.newNoOpView;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * @author Dmytro Grankin
@@ -37,12 +37,14 @@ class TransitionActionTest {
     private static final String ACTION_NAME = "static transition action";
     private static final Shortcut SHORTCUT = new Shortcut("s");
 
-    private final TransitionAction<RootView, DisplayCounterView> action =
-            new TransitionAction<>(ACTION_NAME, SHORTCUT, new RootView(), new DisplayCounterView());
-
     @Test
-    @DisplayName("render a destination view")
-    void displayDestination() {
+    @DisplayName("cause render of a destination view")
+    void causeDestinationViewRender() {
+        final View source = newNoOpView();
+        source.setScreen(new TestScreen());
+        final TransitionAction<View, DisplayCounterView> action =
+                new TransitionAction<>(ACTION_NAME, SHORTCUT, source, new DisplayCounterView());
+
         assertEquals(0, action.getDestination()
                               .getDisplayedTimes());
         action.execute();
@@ -50,31 +52,12 @@ class TransitionActionTest {
                               .getDisplayedTimes());
     }
 
-    @Test
-    @DisplayName("create reverse action")
-    void createReverseAction() {
-        final String reverseName = "Reverse";
-        final Shortcut reverseShortcut = new Shortcut("r");
-
-        final TransitionAction reverse = action.createReverseAction(reverseName, reverseShortcut);
-
-        assertEquals(reverseName, reverse.getName());
-        assertEquals(reverseShortcut, reverse.getShortcut());
-        assertSame(action.getSource(), reverse.getDestination());
-        assertSame(action.getDestination(), reverse.getSource());
-    }
-
     static class DisplayCounterView extends View {
 
         private int displayedTimes = 0;
 
         private DisplayCounterView() {
-            super("View title", true);
-        }
-
-        private DisplayCounterView(int displayedTimes) {
-            this();
-            this.displayedTimes = displayedTimes;
+            super("View title");
         }
 
         @Override
@@ -82,7 +65,7 @@ class TransitionActionTest {
             displayedTimes++;
         }
 
-        public int getDisplayedTimes() {
+        private int getDisplayedTimes() {
             return displayedTimes;
         }
     }

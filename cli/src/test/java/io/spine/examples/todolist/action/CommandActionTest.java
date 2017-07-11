@@ -21,8 +21,10 @@
 package io.spine.examples.todolist.action;
 
 import com.google.protobuf.StringValue;
+import io.spine.examples.todolist.TestScreen;
 import io.spine.examples.todolist.view.command.CommandView;
 import io.spine.validate.StringValueVBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -39,6 +41,11 @@ class CommandActionTest {
 
     private final UpdateStringValueView view = new UpdateStringValueView();
     private final UpdateStringValueAction action = new UpdateStringValueAction(view);
+
+    @BeforeEach
+    void setUp() {
+        view.setScreen(new TestScreen());
+    }
 
     @Test
     @DisplayName("have same source and destination view")
@@ -92,7 +99,7 @@ class CommandActionTest {
         private boolean rendered;
 
         private UpdateStringValueView() {
-            super("View title", true);
+            super("View title");
         }
 
         @Override

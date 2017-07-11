@@ -38,7 +38,7 @@ public abstract class EntityView<I extends Message, S extends Message> extends A
     private S state;
 
     protected EntityView(I id, String title) {
-        super(title, false);
+        super(title);
         checkNotNull(id);
         this.id = id;
     }

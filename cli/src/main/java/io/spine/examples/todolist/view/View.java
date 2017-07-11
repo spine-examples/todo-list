@@ -21,20 +21,18 @@
 package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.IoFacade;
+import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.repeat;
-import static io.spine.examples.todolist.AppConfig.getIoFacade;
-import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.System.lineSeparator;
 
 /**
@@ -44,111 +42,53 @@ import static java.lang.System.lineSeparator;
  */
 public abstract class View {
 
-    private final boolean rootView;
     private final String title;
+    private Screen screen;
 
-    /**
-     * An {@link TransitionAction}, from which originates the {@code View}.
-     *
-     * <p>If the {@code View} is {@link #rootView}, this field is always {@code null}.
-     */
-    @Nullable
-    private TransitionAction originAction;
-    private IoFacade ioFacade = getIoFacade();
-
-    /**
-     * Creates a new instance.
-     *
-     * @param title    the view title
-     * @param rootView whether the view is root
-     */
-    protected View(String title, boolean rootView) {
+    protected View(String title) {
         checkArgument(!isNullOrEmpty(title));
         this.title = title;
-        this.rootView = rootView;
     }
 
     /**
      * Renders the view.
      *
-     * @param cause the action that caused render
+     * @param screen the screen
      */
-    public final void render(@Nullable Action cause) {
-        setOriginAction(cause);
-        println(getFormattedTitle());
+    public final void render(Screen screen) {
+        setScreen(screen);
+        screen.println(getFormattedTitle());
         render();
-    }
-
-    private void setOriginAction(@Nullable Action action) {
-        if (!rootView) {
-            checkNotNull(action);
-            final boolean notRenderedBefore = originAction == null;
-            if (notRenderedBefore) {
-                originAction = (TransitionAction) action;
-            }
-        }
     }
 
     protected abstract void render();
 
     /**
-     * Obtains the action leading to the source view of {@link #originAction}.
+     * Obtains the action leading to the {@linkplain Screen#getPreviousView(View) previous view}.
      *
      * @param name     the name for the action
      * @param shortcut the shortcut for the action
-     * @return reverse action of {@link #originAction}
+     * @return the back action
      */
     protected Action createBackAction(String name, Shortcut shortcut) {
-        if (rootView) {
-            return new NoOpAction(name, shortcut);
-        }
-
-        if (originAction == null) {
-            throw newIllegalStateException(
-                    "An action, that caused this view, should be known to create back action.");
-        }
-
-        return originAction.createReverseAction(name, shortcut);
+        final Optional<View> previousView = screen.getPreviousView(this);
+        return previousView
+                .<Action>map(view -> new TransitionAction<>(name, shortcut, this, view))
+                .orElseGet(() -> new NoOpAction(name, shortcut));
     }
 
-    /**
-     * Prompts a user for an input and receives the input value.
-     *
-     * @param prompt the prompt to display
-     * @return the input value
-     */
-    protected String promptUser(String prompt) {
-        return ioFacade.promptUser(prompt);
+    public void setScreen(Screen screen) {
+        checkNotNull(screen);
+        this.screen = screen;
     }
 
-    /**
-     * Prints the specified message.
-     *
-     * @param message the message to print
-     */
-    protected void println(String message) {
-        ioFacade.println(message);
+    public Screen getScreen() {
+        return screen;
     }
 
     @VisibleForTesting
     String getFormattedTitle() {
         final String underline = repeat("-", title.length());
         return title + lineSeparator() + underline;
-    }
-
-    @VisibleForTesting
-    public void setIoFacade(IoFacade ioFacade) {
-        this.ioFacade = ioFacade;
-    }
-
-    @VisibleForTesting
-    public boolean isRootView() {
-        return rootView;
-    }
-
-    @VisibleForTesting
-    @Nullable
-    Action getOriginAction() {
-        return originAction;
     }
 }

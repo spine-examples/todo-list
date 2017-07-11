@@ -20,54 +20,46 @@
 
 package io.spine.examples.todolist;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Queue;
+import org.jline.reader.LineReader;
+import org.jline.terminal.Terminal;
 
-import static java.lang.System.lineSeparator;
-import static java.util.Collections.unmodifiableCollection;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static io.spine.examples.todolist.Terminals.dumbTerminal;
 
 /**
- * An {@code IoFacade} for the test needs.
+ * A {@link Screen} of a command-line application.
  *
  * @author Dmytro Grankin
  */
-public class TestIoFacade implements IoFacade {
+public class CommandLineScreen extends AbstractScreen {
 
-    @SuppressWarnings("StringBufferField") // Used to collect all output of the class.
-    private static final StringBuilder builder = new StringBuilder();
+    private final LineReader reader = newLineReader();
 
-    private final Queue<String> answers = new ArrayDeque<>();
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String promptUser(String prompt) {
-        if (answers.isEmpty()) {
-            throw new IllegalStateException("Not enough answers were specified.");
-        }
-
+        checkArgument(!isNullOrEmpty(prompt));
         println(prompt);
-        return answers.remove();
+        final String answer = reader.readLine();
+        return answer;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void println(String message) {
-        builder.append(message)
-               .append(lineSeparator());
+        checkArgument(!isNullOrEmpty(message));
+        reader.getTerminal()
+              .writer()
+              .println(message);
     }
 
-    public void addAnswer(String answer) {
-        answers.add(answer);
-    }
-
-    public Collection<String> getAnswers() {
-        return unmodifiableCollection(answers);
-    }
-
-    public static String getOutput() {
-        return builder.toString();
-    }
-
-    public static void clearOutput() {
-        builder.setLength(0);
+    private static LineReader newLineReader() {
+        final Terminal terminal = dumbTerminal();
+        return Readers.newLineReader(terminal);
     }
 }

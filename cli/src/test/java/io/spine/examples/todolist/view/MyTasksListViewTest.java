@@ -34,7 +34,6 @@ import static io.spine.examples.todolist.view.MyTasksListView.newDetailsProducer
 import static io.spine.examples.todolist.view.MyTasksListView.producersFor;
 import static java.util.Collections.nCopies;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * @author Dmytro Grankin
@@ -44,16 +43,9 @@ class MyTasksListViewTest {
 
     private static final int VIEW_INDEX = 0;
 
-    private final MyTasksListView myTasksListView = new MyTasksListView();
     private final TaskView taskView = TaskView.newBuilder()
                                               .setDescription("task desc")
                                               .build();
-
-    @Test
-    @DisplayName("not be root view")
-    void notBeRootView() {
-        assertFalse(myTasksListView.isRootView());
-    }
 
     @Test
     @DisplayName("create action for every task view")

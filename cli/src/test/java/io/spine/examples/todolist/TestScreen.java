@@ -20,46 +20,54 @@
 
 package io.spine.examples.todolist;
 
-import org.junit.jupiter.api.BeforeEach;
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Queue;
 
-import static io.spine.examples.todolist.TestScreen.getOutput;
 import static java.lang.System.lineSeparator;
-import static java.util.Arrays.asList;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static java.util.Collections.unmodifiableCollection;
 
 /**
+ * A {@code Screen} for the test needs.
+ *
  * @author Dmytro Grankin
  */
-public class UserIoTest {
+public class TestScreen extends AbstractScreen {
 
-    private TestScreen screen;
+    @SuppressWarnings("StringBufferField") // Used to collect all output of the class.
+    private static final StringBuilder builder = new StringBuilder();
 
-    @BeforeEach
-    protected void setUp() {
-        TestScreen.clearOutput();
-        this.screen = new TestScreen();
+    private final Queue<String> answers = new ArrayDeque<>();
+
+    @Override
+    public String promptUser(String prompt) {
+        if (answers.isEmpty()) {
+            throw new IllegalStateException("Not enough answers were specified.");
+        }
+
+        println(prompt);
+        return answers.remove();
     }
 
-    protected void assertOutput(String expected) {
-        assertEquals(expected, getOutput());
+    @Override
+    public void println(String message) {
+        builder.append(message)
+               .append(lineSeparator());
     }
 
-    protected void assertOutput(Iterable<String> expectedLines) {
-        final String[] actualLines = getOutput().split(lineSeparator());
-        assertEquals(expectedLines, asList(actualLines));
+    public void addAnswer(String answer) {
+        answers.add(answer);
     }
 
-    protected void assertAllAnswersWereGiven() {
-        assertTrue(screen.getAnswers()
-                         .isEmpty());
+    public Collection<String> getAnswers() {
+        return unmodifiableCollection(answers);
     }
 
-    protected void addAnswer(String answer) {
-        screen.addAnswer(answer);
+    public static String getOutput() {
+        return builder.toString();
     }
 
-    protected TestScreen getScreen() {
-        return screen;
+    public static void clearOutput() {
+        builder.setLength(0);
     }
 }
