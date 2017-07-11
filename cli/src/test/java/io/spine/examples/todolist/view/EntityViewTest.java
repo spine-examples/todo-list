@@ -62,7 +62,7 @@ class EntityViewTest extends UserIoTest {
         final TransitionActionProducer<View, View> producer = newProducer("Transition",
                                                                           new Shortcut("t"),
                                                                           view);
-        final View source = newNoOpView();
+        final AbstractView source = newNoOpView();
         source.setScreen(getScreen());
         producer.create(source)
                 .execute();
@@ -73,7 +73,7 @@ class EntityViewTest extends UserIoTest {
                                                  .map(Action::toString)
                                                  .collect(joining(lineSeparator()));
         final String expectedRepresentation =
-                view.getFormattedTitle() + lineSeparator() +
+                view.formatTitle() + lineSeparator() +
                         stateRepresentation + lineSeparator() +
                         actionsRepresentation + lineSeparator() +
                         getSelectActionMsg() + lineSeparator();

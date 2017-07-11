@@ -46,7 +46,7 @@ import static java.util.stream.Collectors.joining;
  *
  * @author Dmytro Grankin
  */
-public class ActionListView extends View {
+public class ActionListView extends AbstractView {
 
     private static final String BACK_NAME = "Back";
     private static final Shortcut BACK_SHORTCUT = new Shortcut("b");

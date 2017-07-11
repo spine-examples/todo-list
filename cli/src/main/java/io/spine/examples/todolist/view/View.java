@@ -20,75 +20,26 @@
 
 package io.spine.examples.todolist.view;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.Screen;
-import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.NoOpAction;
-import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.action.TransitionAction;
-
-import java.util.Optional;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.google.common.base.Strings.repeat;
-import static java.lang.System.lineSeparator;
 
 /**
- * Abstract base class for views.
+ * An interface for all views.
  *
  * @author Dmytro Grankin
  */
-public abstract class View {
-
-    private final String title;
-    private Screen screen;
-
-    protected View(String title) {
-        checkArgument(!isNullOrEmpty(title));
-        this.title = title;
-    }
+public interface View {
 
     /**
      * Renders the view.
      *
      * @param screen the screen
      */
-    public final void render(Screen screen) {
-        setScreen(screen);
-        screen.println(getFormattedTitle());
-        render();
-    }
-
-    protected abstract void render();
+    void render(Screen screen);
 
     /**
-     * Obtains the action leading to the {@linkplain Screen#getPreviousView(View) previous view}.
+     * Obtains {@link Screen}.
      *
-     * @param name     the name for the action
-     * @param shortcut the shortcut for the action
-     * @return the back action
+     * @return the screen
      */
-    protected Action createBackAction(String name, Shortcut shortcut) {
-        final Optional<View> previousView = screen.getPreviousView(this);
-        return previousView
-                .<Action>map(view -> new TransitionAction<>(name, shortcut, this, view))
-                .orElseGet(() -> new NoOpAction(name, shortcut));
-    }
-
-    public void setScreen(Screen screen) {
-        checkNotNull(screen);
-        this.screen = screen;
-    }
-
-    public Screen getScreen() {
-        return screen;
-    }
-
-    @VisibleForTesting
-    String getFormattedTitle() {
-        final String underline = repeat("-", title.length());
-        return title + lineSeparator() + underline;
-    }
+    Screen getScreen();
 }

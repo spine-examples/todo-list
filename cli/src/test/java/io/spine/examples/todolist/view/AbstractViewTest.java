@@ -37,19 +37,19 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("View should")
-class ViewTest extends UserIoTest {
+@DisplayName("AbstractView should")
+class AbstractViewTest extends UserIoTest {
 
     private static final String BACK_ACTION_NAME = "back";
     private static final Shortcut SHORTCUT = new Shortcut("b");
 
-    private final View view = new AView();
+    private final AbstractView view = new AView();
 
     @Test
     @DisplayName("print formatted title")
     void printFormattedTitle() {
         new AView().render(getScreen());
-        assertOutput(view.getFormattedTitle() + lineSeparator());
+        assertOutput(view.formatTitle() + lineSeparator());
     }
 
     @Test
@@ -67,7 +67,7 @@ class ViewTest extends UserIoTest {
     @DisplayName("create usual back action for a child view")
     void createUsualBackAction() {
         final View rootView = new AView();
-        final View childView = new AView();
+        final AbstractView childView = new AView();
         getScreen().renderView(rootView);
         getScreen().renderView(childView);
 
@@ -80,7 +80,7 @@ class ViewTest extends UserIoTest {
         assertSame(childView, back.getSource());
     }
 
-    private static class AView extends View {
+    private static class AView extends AbstractView {
 
         private AView() {
             super("View title");

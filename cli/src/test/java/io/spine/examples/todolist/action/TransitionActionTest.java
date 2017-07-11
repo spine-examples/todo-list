@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.action;
 
 import io.spine.examples.todolist.TestScreen;
+import io.spine.examples.todolist.view.AbstractView;
 import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +41,7 @@ class TransitionActionTest {
     @Test
     @DisplayName("cause render of a destination view")
     void causeDestinationViewRender() {
-        final View source = newNoOpView();
+        final AbstractView source = newNoOpView();
         source.setScreen(new TestScreen());
         final TransitionAction<View, DisplayCounterView> action =
                 new TransitionAction<>(ACTION_NAME, SHORTCUT, source, new DisplayCounterView());
@@ -52,7 +53,7 @@ class TransitionActionTest {
                               .getDisplayedTimes());
     }
 
-    static class DisplayCounterView extends View {
+    static class DisplayCounterView extends AbstractView {
 
         private int displayedTimes = 0;
 

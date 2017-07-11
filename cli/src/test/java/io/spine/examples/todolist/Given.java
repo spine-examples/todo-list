@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.view.View;
+import io.spine.examples.todolist.view.AbstractView;
 
 /**
  * @author Dmytro Grankin
@@ -35,7 +35,7 @@ public class Given {
         return new NoOpView();
     }
 
-    public static class NoOpView extends View {
+    public static class NoOpView extends AbstractView {
 
         private NoOpView() {
             super("NoOpView");

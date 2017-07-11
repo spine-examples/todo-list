@@ -25,6 +25,7 @@ import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
+import io.spine.examples.todolist.view.AbstractView;
 import io.spine.examples.todolist.view.View;
 import io.spine.examples.todolist.view.command.TaskCreationView.EnterDescription;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,7 +86,7 @@ class TaskCreationViewTest extends UserIoTest {
         final TransitionActionProducer<View, View> producer = newProducer("a",
                                                                           new Shortcut("a"),
                                                                           view);
-        final View source = newNoOpView();
+        final AbstractView source = newNoOpView();
         source.setScreen(getScreen());
         producer.create(source)
                 .execute();

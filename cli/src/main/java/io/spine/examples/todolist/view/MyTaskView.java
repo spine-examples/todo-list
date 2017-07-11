@@ -32,7 +32,7 @@ import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.System.lineSeparator;
 
 /**
- * A {@link View} of the {@link TaskView} from the
+ * An {@link EntityView} of the {@link TaskView} from the
  * {@link io.spine.examples.todolist.q.projection.MyListView MyListView}.
  *
  * @author Dmytro Grankin
