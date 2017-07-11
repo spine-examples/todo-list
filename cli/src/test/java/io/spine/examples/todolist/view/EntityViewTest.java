@@ -42,10 +42,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("DetailsView should")
-class DetailsViewTest extends UserIoTest {
+@DisplayName("EntityView should")
+class EntityViewTest extends UserIoTest {
 
-    private final ADetailsView view = new ADetailsView(Int32Value.getDefaultInstance());
+    private final AnEntityView view = new AnEntityView(Int32Value.getDefaultInstance());
 
     @BeforeEach
     @Override
@@ -71,7 +71,7 @@ class DetailsViewTest extends UserIoTest {
         producer.create(new RootView())
                 .execute();
 
-        final String stateRepresentation = view.viewOf(ADetailsView.RECENT_STATE);
+        final String stateRepresentation = view.renderState(AnEntityView.RECENT_STATE);
         final String actionsRepresentation = view.getActions()
                                                  .stream()
                                                  .map(Action::toString)
@@ -84,21 +84,21 @@ class DetailsViewTest extends UserIoTest {
         assertOutput(expectedRepresentation);
     }
 
-    private static class ADetailsView extends DetailsView<Int32Value, StringValue> {
+    private static class AnEntityView extends EntityView<Int32Value, StringValue> {
 
         private static final StringValue RECENT_STATE = forString("string");
 
-        private ADetailsView(Int32Value id) {
+        private AnEntityView(Int32Value id) {
             super(id, "View title");
         }
 
         @Override
-        protected StringValue getRecentState(Int32Value id) {
+        protected StringValue load(Int32Value id) {
             return RECENT_STATE;
         }
 
         @Override
-        protected String viewOf(StringValue state) {
+        protected String renderState(StringValue state) {
             return state.getValue();
         }
     }

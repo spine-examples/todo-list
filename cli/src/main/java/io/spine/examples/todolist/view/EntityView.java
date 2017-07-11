@@ -21,27 +21,23 @@
 package io.spine.examples.todolist.view;
 
 import com.google.protobuf.Message;
-import io.spine.examples.todolist.AppConfig;
-import io.spine.examples.todolist.client.TodoClient;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.System.lineSeparator;
 
 /**
- * Detailed view of a {@link #state}.
+ * A {@link View} of the entity.
  *
- * @param <I> the type of ID for the state
- * @param <S> the type of the rendered state
+ * @param <I> the type of entity identifier
+ * @param <S> the type of the entity state
  * @author Dmytro Grankin
  */
-public abstract class DetailsView<I extends Message, S extends Message> extends ActionListView {
+public abstract class EntityView<I extends Message, S extends Message> extends ActionListView {
 
     private final I id;
     private S state;
 
-    private final TodoClient client = AppConfig.getClient();
-
-    protected DetailsView(I id, String title) {
+    protected EntityView(I id, String title) {
         super(title, false);
         checkNotNull(id);
         this.id = id;
@@ -52,32 +48,28 @@ public abstract class DetailsView<I extends Message, S extends Message> extends 
      */
     @Override
     protected void render() {
-        state = getRecentState(id);
+        state = load(id);
         super.render();
     }
 
     /**
-     * Obtains recent state by the specified ID.
+     * Loads entity state by the specified ID.
      *
-     * @param id the ID of the state
-     * @return recent state
+     * @param id the ID of the entity
+     * @return loaded entity state
      */
-    protected abstract S getRecentState(I id);
+    protected abstract S load(I id);
 
     /**
-     * Obtains a string view of the specified state.
+     * Renders the specified entity state.
      *
-     * @param state the state to obtain the view
-     * @return view of the state
+     * @param state the entity state
+     * @return the rendered state
      */
-    protected abstract String viewOf(S state);
-
-    protected TodoClient getClient() {
-        return client;
-    }
+    protected abstract String renderState(S state);
 
     @Override
     public String toString() {
-        return viewOf(state) + lineSeparator() + super.toString();
+        return renderState(state) + lineSeparator() + super.toString();
     }
 }

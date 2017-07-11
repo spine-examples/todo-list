@@ -26,28 +26,29 @@ import io.spine.examples.todolist.q.projection.TaskView;
 import java.util.List;
 import java.util.Optional;
 
+import static io.spine.examples.todolist.AppConfig.getClient;
 import static io.spine.examples.todolist.view.DateFormatter.format;
 import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.System.lineSeparator;
 
 /**
- * A {@link DetailsView} of the task from the
+ * A {@link View} of the {@link TaskView} from the
  * {@link io.spine.examples.todolist.q.projection.MyListView MyListView}.
  *
  * @author Dmytro Grankin
  */
-class MyTaskDetailsView extends DetailsView<TaskId, TaskView> {
+class MyTaskView extends EntityView<TaskId, TaskView> {
 
     static final String DUE_DATE_VALUE = "Due date: ";
     static final String DESCRIPTION_VALUE = "Description: ";
     static final String PRIORITY_VALUE = "Priority: ";
 
-    MyTaskDetailsView(TaskId id) {
+    MyTaskView(TaskId id) {
         super(id, "My task details");
     }
 
     @Override
-    protected TaskView getRecentState(TaskId id) {
+    protected TaskView load(TaskId id) {
         final List<TaskView> views = getClient().getMyListView()
                                                 .getMyList()
                                                 .getItemsList();
@@ -63,7 +64,7 @@ class MyTaskDetailsView extends DetailsView<TaskId, TaskView> {
     }
 
     @Override
-    protected String viewOf(TaskView state) {
+    protected String renderState(TaskView state) {
         final String date = format(state.getDueDate());
         return new StringBuilder().append(DESCRIPTION_VALUE)
                                   .append(state.getDescription())

@@ -75,7 +75,7 @@ class MyTasksListViewTest {
         final String shortcutValue = String.valueOf(VIEW_INDEX + 1);
         final Shortcut expectedShortcut = new Shortcut(shortcutValue);
 
-        final TransitionActionProducer<MyTasksListView, MyTaskDetailsView> producer =
+        final TransitionActionProducer<MyTasksListView, MyTaskView> producer =
                 newDetailsProducer(taskView, VIEW_INDEX);
 
         assertEquals(taskView.getDescription(), producer.getName());

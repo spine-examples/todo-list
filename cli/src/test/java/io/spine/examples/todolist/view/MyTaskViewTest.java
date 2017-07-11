@@ -27,9 +27,9 @@ import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
 import static io.spine.examples.todolist.view.DateFormatter.format;
-import static io.spine.examples.todolist.view.MyTaskDetailsView.DESCRIPTION_VALUE;
-import static io.spine.examples.todolist.view.MyTaskDetailsView.DUE_DATE_VALUE;
-import static io.spine.examples.todolist.view.MyTaskDetailsView.PRIORITY_VALUE;
+import static io.spine.examples.todolist.view.MyTaskView.DESCRIPTION_VALUE;
+import static io.spine.examples.todolist.view.MyTaskView.DUE_DATE_VALUE;
+import static io.spine.examples.todolist.view.MyTaskView.PRIORITY_VALUE;
 import static io.spine.time.Time.getCurrentTime;
 import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,15 +38,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("MyTaskDetailsView should")
-class MyTaskDetailsViewTest {
+@DisplayName("MyTaskView should")
+class MyTaskViewTest {
 
     private final TaskView taskView = TaskView.newBuilder()
                                               .setDescription("my task description")
                                               .setPriority(NORMAL)
                                               .setDueDate(getCurrentTime())
                                               .build();
-    private final MyTaskDetailsView detailsView = new MyTaskDetailsView(TaskId.getDefaultInstance());
+    private final MyTaskView myTaskView = new MyTaskView(TaskId.getDefaultInstance());
 
     @Test
     @DisplayName("throw the exception if nonexistent task ID is specified")
@@ -54,17 +54,17 @@ class MyTaskDetailsViewTest {
         final TaskId id = TaskId.newBuilder()
                                 .setValue("invalid ID")
                                 .build();
-        assertThrows(IllegalStateException.class, () -> detailsView.getRecentState(id));
+        assertThrows(IllegalStateException.class, () -> myTaskView.load(id));
     }
 
     @Test
-    @DisplayName("format TaskView")
-    void formatTaskView() {
+    @DisplayName("render TaskView")
+    void renderTaskView() {
         final String expectedResult =
                 DESCRIPTION_VALUE + taskView.getDescription() + lineSeparator() +
                         PRIORITY_VALUE + taskView.getPriority() + lineSeparator() +
                         DUE_DATE_VALUE + format(taskView.getDueDate());
-        assertEquals(expectedResult, detailsView.viewOf(taskView));
+        assertEquals(expectedResult, myTaskView.renderState(taskView));
     }
 
 }
