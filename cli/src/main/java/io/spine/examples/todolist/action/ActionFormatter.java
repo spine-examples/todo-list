@@ -20,53 +20,38 @@
 
 package io.spine.examples.todolist.action;
 
+import com.google.common.annotations.VisibleForTesting;
+
 /**
- * An interface for all actions.
- *
- * <p>Actions with same {@link Shortcut} are considered equal.
+ * Provides formatting for {@link Action}.
  *
  * @author Dmytro Grankin
  */
-public interface Action {
+public class ActionFormatter {
+
+    private static final String SHORTCUT_NAME_SEPARATOR = " ";
+    private static final String SHORTCUT_FORMAT = "(%s)";
+
+    private ActionFormatter() {
+        // Prevent instantiation of this utility class.
+    }
+
+    public static String format(Action action) {
+        return format(action.getShortcut()) + SHORTCUT_NAME_SEPARATOR + action.getName();
+    }
 
     /**
-     * Executes the action.
+     * Obtains formatted representation of the specified {@link Shortcut}.
+     *
+     * @param shortcut the shortcut to format
+     * @return the formatted representation
      */
-    void execute();
+    public static String format(Shortcut shortcut) {
+        return String.format(SHORTCUT_FORMAT, shortcut);
+    }
 
-    /**
-     * Obtains name of the action.
-     *
-     * @return action name
-     */
-    String getName();
-
-    /**
-     * Obtains {@link Shortcut} of the action.
-     *
-      * @return action shortcut
-     */
-    Shortcut getShortcut();
-
-    /**
-     * Compares the specified object with this action for equality.
-     *
-     * <p>Returns {@code} true if the specified object is also an action and
-     * both actions have equal {@linkplain Shortcut shortcuts}.
-     *
-     * @param o the object to compare
-     * @return {@code true} if the specified object is equal to this, {@code false} otherwise
-     */
-    @Override
-    boolean equals(Object o);
-
-    /**
-     * Obtains the hash code of the action.
-     *
-     * <p>Implementation should return hash code for {@link Shortcut}.
-     *
-     * @return the hash code value
-     */
-    @Override
-    int hashCode();
+    @VisibleForTesting
+    static String getShortcutNameSeparator() {
+        return SHORTCUT_NAME_SEPARATOR;
+    }
 }

@@ -23,7 +23,7 @@ package io.spine.examples.todolist.view.command;
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.action.AbstractCommandAction;
-import io.spine.examples.todolist.action.ExecuteCommandAction;
+import io.spine.examples.todolist.action.CommandAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
@@ -50,7 +50,7 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
     public static TaskCreationView create() {
         final TaskCreationView view = new TaskCreationView();
         view.addAction(new EnterDescriptionProducer("Enter description", new Shortcut("d")));
-        view.addAction(new ExecuteCommand.ExecuteCommandProducer());
+        view.addAction(new Command.ExecuteCommandProducer());
         return view;
     }
 
@@ -108,26 +108,26 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
         }
     }
 
-    private static class ExecuteCommand extends ExecuteCommandAction<CreateBasicTask,
-                                                                     CreateBasicTaskVBuilder> {
+    private static class Command extends CommandAction<CreateBasicTask,
+                                                                             CreateBasicTaskVBuilder> {
 
-        private ExecuteCommand(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
+        private Command(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
             super(source);
         }
 
         @Override
-        protected void executeCommand(CreateBasicTask commandMessage) {
+        protected void post(CreateBasicTask commandMessage) {
             getClient().create(commandMessage);
         }
 
         static class ExecuteCommandProducer extends ExecuteCommandActionProducer<CreateBasicTask,
                                                                                  CreateBasicTaskVBuilder,
-                                                                                 ExecuteCommand> {
+                Command> {
 
             @Override
-            public ExecuteCommand create(CommandView<CreateBasicTask,
+            public Command create(CommandView<CreateBasicTask,
                                          CreateBasicTaskVBuilder> source) {
-                return new ExecuteCommand(source);
+                return new Command(source);
             }
         }
     }

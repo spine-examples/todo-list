@@ -21,7 +21,8 @@
 package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.action.AbstractTransitionActionProducer;
+import io.spine.examples.todolist.action.AbstractAction;
+import io.spine.examples.todolist.action.AbstractActionProducer;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
@@ -33,7 +34,7 @@ import java.util.function.Predicate;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.examples.todolist.action.Action.formatShortcut;
+import static io.spine.examples.todolist.action.ActionFormatter.format;
 import static io.spine.util.Exceptions.newIllegalArgumentException;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.unmodifiableSet;
@@ -50,7 +51,7 @@ public class ActionListView extends View {
     private static final String BACK_NAME = "Back";
     private static final Shortcut BACK_SHORTCUT = new Shortcut("b");
 
-    private static final String ACTION_SELECTION_HINT = formatShortcut(new Shortcut("?"));
+    private static final String ACTION_SELECTION_HINT = format(new Shortcut("?"));
     private static final String SELECT_ACTION_MSG = "Select an action " + ACTION_SELECTION_HINT;
     private static final String INVALID_SELECTION_MSG = "There is no action with specified shortcut.";
 
@@ -122,7 +123,7 @@ public class ActionListView extends View {
 
     /**
      * Adds the {@link TransitionAction} created using
-     * the specified {@link AbstractTransitionActionProducer}.
+     * the specified {@link AbstractActionProducer}.
      *
      * @param producer the producer of the action
      * @param <S>      the type of the source view
@@ -133,8 +134,8 @@ public class ActionListView extends View {
                                      in the derived classes. */)
     public <S extends ActionListView,
             D extends View,
-            T extends TransitionAction<S, D>>
-    void addAction(AbstractTransitionActionProducer<S, D, T> producer) {
+            T extends AbstractAction<S, D>>
+    void addAction(AbstractActionProducer<S, D, T> producer) {
         final S source = (S) this;
         final T action = producer.create(source);
         addAction(action);

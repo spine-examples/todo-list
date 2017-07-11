@@ -23,6 +23,7 @@ package io.spine.examples.todolist.view.command;
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.action.AbstractCommandAction;
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.CommandAction;
 import io.spine.examples.todolist.view.ActionListView;
 import io.spine.reflect.GenericTypeIndex;
 import io.spine.validate.ValidatingBuilder;
@@ -41,7 +42,7 @@ import static java.lang.System.lineSeparator;
  *
  * <p>The view must predominantly consist of
  * {@linkplain AbstractCommandAction command actions} and
- * an {@link io.spine.examples.todolist.action.ExecuteCommandAction ExecuteCommandAction}.
+ * an {@link CommandAction CommandAction}.
  *
  * @author Dmytro Grankin
  */

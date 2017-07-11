@@ -20,51 +20,88 @@
 
 package io.spine.examples.todolist.action;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.view.View;
+
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
- * Abstract producer of a {@link TransitionAction}.
- *
- * <p>Allows to specify construction of the {@link TransitionAction} for an unknown source.
+ * An {@code Action} which takes the end-user from a {@linkplain #source source view}
+ * to a {@linkplain #destination destination view}.
  *
  * @param <S> the type of the source view
  * @param <D> the type of the destination view
- * @param <T> the type of the action to be created
+ * @author Dmytro Grankin
  */
-public abstract class AbstractTransitionActionProducer<S extends View,
-                                                       D extends View,
-                                                       T extends TransitionAction<S, D>> {
+public abstract class AbstractAction<S extends View, D extends View> implements Action {
 
     private final String name;
     private final Shortcut shortcut;
 
-    AbstractTransitionActionProducer(String name, Shortcut shortcut) {
-        checkArgument(!isNullOrEmpty(name));
-        checkNotNull(shortcut);
-        this.name = name;
-        this.shortcut = shortcut;
-    }
+    /**
+     * A source {@code View} of the action.
+     */
+    private final S source;
 
     /**
-     * Creates the {@link TransitionAction} with the specified source.
-     *
-     * @param source the source {@link View}
-     * @return the action with the source
+     * A destination {@code View} of the action.
      */
-    public abstract T create(S source);
+    private final D destination;
 
-    @VisibleForTesting
+    AbstractAction(String name, Shortcut shortcut, S source, D destination) {
+        checkArgument(!isNullOrEmpty(name));
+        checkNotNull(shortcut);
+        checkNotNull(source);
+        checkNotNull(destination);
+        this.name = name;
+        this.shortcut = shortcut;
+        this.source = source;
+        this.destination = destination;
+    }
+
+    @Override
     public String getName() {
         return name;
     }
 
-    @VisibleForTesting
+    @Override
     public Shortcut getShortcut() {
         return shortcut;
+    }
+
+
+    protected S getSource() {
+        return source;
+    }
+
+    protected D getDestination() {
+        return destination;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Action)) {
+            return false;
+        }
+
+        Action other = (Action) o;
+
+        return Objects.equals(shortcut, other.getShortcut());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(shortcut);
+    }
+
+    @Override
+    public String toString() {
+        return ActionFormatter.format(this);
     }
 }

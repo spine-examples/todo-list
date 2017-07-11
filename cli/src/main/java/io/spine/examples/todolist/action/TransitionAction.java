@@ -25,39 +25,24 @@ import io.spine.examples.todolist.view.View;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * An {@code Action} which takes the end-user from a {@linkplain #source source view}
- * to a {@linkplain #destination destination view}.
+ * {@inheritDoc}
  *
- * @param <S> the type of the source view
- * @param <D> the type of the destination view
+ * @param <S> {@inheritDoc}
+ * @param <D> {@inheritDoc}
  * @author Dmytro Grankin
  */
-public class TransitionAction<S extends View, D extends View> extends Action {
-
-    /**
-     * A source {@code View} of the action.
-     */
-    private final S source;
-
-    /**
-     * A destination {@code View} of the action.
-     */
-    private final D destination;
+public class TransitionAction<S extends View, D extends View> extends AbstractAction<S, D> {
 
     protected TransitionAction(String name, Shortcut shortcut, S source, D destination) {
-        super(name, shortcut);
-        checkNotNull(source);
-        checkNotNull(destination);
-        this.source = source;
-        this.destination = destination;
+        super(name, shortcut, source, destination);
     }
 
     /**
-     * {@inheritDoc}
+     * Makes transition to {@link #destination} view.
      */
     @Override
     public void execute() {
-        destination.render(this);
+        getDestination().render(this);
     }
 
     /**
@@ -71,14 +56,6 @@ public class TransitionAction<S extends View, D extends View> extends Action {
         final S reverseDestination = getSource();
         final D reserveSource = getDestination();
         return new TransitionAction<>(name, shortcut, reserveSource, reverseDestination);
-    }
-
-    protected S getSource() {
-        return source;
-    }
-
-    protected D getDestination() {
-        return destination;
     }
 
     /**
@@ -104,7 +81,7 @@ public class TransitionAction<S extends View, D extends View> extends Action {
      */
     public static class TransitionActionProducer<S extends View,
                                                  D extends View>
-            extends AbstractTransitionActionProducer<S, D, TransitionAction<S, D>> {
+            extends AbstractActionProducer<S, D, TransitionAction<S, D>> {
 
         private final D destination;
 

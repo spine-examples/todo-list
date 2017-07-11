@@ -30,7 +30,7 @@ import java.util.Locale;
 import static com.google.protobuf.util.Timestamps.toMillis;
 
 /**
- * Formats the data into a user-friendly representation.
+ * Formats a date into a user-friendly representation.
  *
  * @author Illia Shepilov
  */

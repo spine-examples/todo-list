@@ -21,7 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.AbstractAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
 import io.spine.examples.todolist.q.projection.MyListView;
@@ -38,7 +38,7 @@ import static java.lang.String.valueOf;
 /**
  * A view of {@link MyListView}.
  *
- * <p>Each item of {@link MyListView} is represented by an {@link Action}.
+ * <p>Each item of {@link MyListView} is represented by an {@link AbstractAction}.
  * The action gives short info about the task and leads to a {@link MyTaskView}.
  *
  * @author Dmytro Grankin

@@ -20,18 +20,19 @@
 
 package io.spine.examples.todolist.action;
 
+import io.spine.examples.todolist.RootView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.action.Action.formatShortcut;
-import static io.spine.examples.todolist.action.Action.getShortcutNameSeparator;
+import static io.spine.examples.todolist.action.ActionFormatter.format;
+import static io.spine.examples.todolist.action.ActionFormatter.getShortcutNameSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("Action should")
+@DisplayName("AbstractAction should")
 class ActionTest {
 
     private static final String ACTION_NAME = "action";
@@ -59,15 +60,15 @@ class ActionTest {
     @Test
     @DisplayName("override `toString`")
     void overrideToString() {
-        final String formattedShortcut = formatShortcut(SHORTCUT);
+        final String formattedShortcut = format(SHORTCUT);
         final String expectedString = formattedShortcut + getShortcutNameSeparator() + ACTION_NAME;
         assertEquals(expectedString, action.toString());
     }
 
-    private static class AnAction extends Action {
+    private static class AnAction extends AbstractAction<RootView, RootView> {
 
         private AnAction(String name, Shortcut shortcut) {
-            super(name, shortcut);
+            super(name, shortcut, new RootView(), new RootView());
         }
 
         @Override

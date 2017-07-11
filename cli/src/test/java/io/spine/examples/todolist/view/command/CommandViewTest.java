@@ -107,12 +107,11 @@ class CommandViewTest extends UserIoTest {
         }
     }
 
-    private static class BuildState extends Action {
+    private static class BuildState implements Action {
 
         private final CreateCommentView view;
 
         private BuildState(CreateCommentView view) {
-            super("b", new Shortcut("f"));
             this.view = view;
         }
 
@@ -120,6 +119,16 @@ class CommandViewTest extends UserIoTest {
         public void execute() {
             view.getState()
                 .build();
+        }
+
+        @Override
+        public String getName() {
+            return "build";
+        }
+
+        @Override
+        public Shortcut getShortcut() {
+            return new Shortcut("b");
         }
     }
 }

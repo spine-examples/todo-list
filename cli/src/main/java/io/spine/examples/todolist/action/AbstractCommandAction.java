@@ -40,7 +40,7 @@ import static io.spine.examples.todolist.AppConfig.getIoFacade;
  */
 public abstract class AbstractCommandAction<M extends Message,
                                             B extends ValidatingBuilder<M, ? extends Message.Builder>>
-        extends TransitionAction<CommandView<M, B>, CommandView<M, B>> {
+        extends AbstractAction<CommandView<M, B>, CommandView<M, B>> {
 
     private IoFacade ioFacade = getIoFacade();
 
@@ -85,7 +85,7 @@ public abstract class AbstractCommandAction<M extends Message,
     public abstract static class AbstractCommandActionProducer<M extends Message,
                                                                B extends ValidatingBuilder<M, ? extends Message.Builder>,
                                                                T extends AbstractCommandAction<M, B>>
-            extends AbstractTransitionActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
+            extends AbstractActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
 
         protected AbstractCommandActionProducer(String name, Shortcut shortcut) {
             super(name, shortcut);

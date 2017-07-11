@@ -20,61 +20,48 @@
 
 package io.spine.examples.todolist.action;
 
-import java.util.Objects;
+import io.spine.examples.todolist.view.View;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
- * Special kind of {@link Action}, that does nothing.
+ * Producer of an {@link AbstractAction}.
  *
- * <p>Should be used for boundary conditions, e.g. exit from root view.
+ * <p>Allows to specify construction of the {@link AbstractAction} for an unknown source.
  *
- * <p>Also suits for usage in tests, where {@link Action} behavior does not play a role.
+ * @param <S> the type of the source view
+ * @param <D> the type of the destination view
+ * @param <T> the type of the action to be created
  */
-public class NoOpAction implements Action {
+public abstract class AbstractActionProducer<S extends View,
+                                             D extends View,
+                                             T extends AbstractAction<S, D>> {
 
     private final String name;
     private final Shortcut shortcut;
 
-    public NoOpAction(String name, Shortcut shortcut) {
+    protected AbstractActionProducer(String name, Shortcut shortcut) {
+        checkArgument(!isNullOrEmpty(name));
+        checkNotNull(shortcut);
         this.name = name;
         this.shortcut = shortcut;
     }
 
-    @Override
-    public void execute() {
-        // Do nothing.
-    }
+    /**
+     * Creates the {@link TransitionAction} with the specified source.
+     *
+     * @param source the source {@link View}
+     * @return the action with the source
+     */
+    public abstract T create(S source);
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
     public Shortcut getShortcut() {
         return shortcut;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof Action)) {
-            return false;
-        }
-
-        Action other = (Action) o;
-
-        return Objects.equals(shortcut, other.getShortcut());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(shortcut);
-    }
-
-    @Override
-    public String toString() {
-        return ActionFormatter.format(this);
     }
 }

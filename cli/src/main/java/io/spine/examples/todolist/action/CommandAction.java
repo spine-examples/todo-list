@@ -27,42 +27,47 @@ import io.spine.examples.todolist.view.command.CommandView;
 import io.spine.validate.ValidatingBuilder;
 
 /**
- * An {@code ExecuteCommandAction} sends a command prepared by a {@link CommandView} to a server.
+ * A {@code CommandAction} posts a command obtained from a {@link CommandView} to a server.
  *
  * @param <M> the type of the command message
  * @param <B> the validating builder for the command message
  * @author Dmytro Grankin
  */
-public abstract class ExecuteCommandAction<M extends Message,
-                                           B extends ValidatingBuilder<M, ? extends Message.Builder>>
-        extends TransitionAction<CommandView<M, B>, CommandView<M, B>> {
+public abstract class CommandAction<M extends Message,
+                                    B extends ValidatingBuilder<M, ? extends Message.Builder>>
+        extends AbstractAction<CommandView<M, B>, CommandView<M, B>> {
 
     private static final String ACTION_NAME = "Finish";
     private static final Shortcut ACTION_SHORTCUT = new Shortcut("f");
 
     private final TodoClient client = AppConfig.getClient();
 
-    protected ExecuteCommandAction(CommandView<M, B> source) {
+    protected CommandAction(CommandView<M, B> source) {
         super(ACTION_NAME, ACTION_SHORTCUT, source, source);
     }
 
     /**
      * Executes the obtained command from the source {@link CommandView}.
      *
-     * <p>If {@linkplain #executeCommand(Message) command execution} is successful,
+     * <p>If {@link #post(Message)} is successful,
      * clears state of the source view and renders {@linkplain #getDestination() destination view}.
      */
     @Override
     public void execute() {
         final B sourceState = getSource().getState();
         final M commandMessage = sourceState.build();
-        executeCommand(commandMessage);
+        post(commandMessage);
 
         sourceState.clear();
         getDestination().render(this);
     }
 
-    protected abstract void executeCommand(M commandMessage);
+    /**
+     * Posts the specified command message to a server.
+     *
+     * @param commandMessage the command message to post
+     */
+    protected abstract void post(M commandMessage);
 
     protected TodoClient getClient() {
         return client;
@@ -70,8 +75,8 @@ public abstract class ExecuteCommandAction<M extends Message,
 
     public abstract static class ExecuteCommandActionProducer<M extends Message,
                                                               B extends ValidatingBuilder<M, ? extends Message.Builder>,
-                                                              T extends ExecuteCommandAction<M, B>>
-            extends AbstractTransitionActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
+                                                              T extends CommandAction<M, B>>
+            extends AbstractActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
 
         protected ExecuteCommandActionProducer() {
             super(ACTION_NAME, ACTION_SHORTCUT);

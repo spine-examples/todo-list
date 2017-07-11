@@ -34,8 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("ExecuteCommandAction should")
-class ExecuteCommandActionTest {
+@DisplayName("CommandAction should")
+class CommandActionTest {
 
     private final UpdateStringValueView view = new UpdateStringValueView();
     private final UpdateStringValueAction action = new UpdateStringValueAction(view);
@@ -69,7 +69,7 @@ class ExecuteCommandActionTest {
     }
 
     private static class UpdateStringValueAction
-            extends ExecuteCommandAction<StringValue, StringValueVBuilder> {
+            extends CommandAction<StringValue, StringValueVBuilder> {
 
         private StringValue commandMessageBeforeExecution;
 
@@ -78,7 +78,7 @@ class ExecuteCommandActionTest {
         }
 
         @Override
-        protected void executeCommand(StringValue commandMessage) {
+        protected void post(StringValue commandMessage) {
             commandMessageBeforeExecution = commandMessage;
         }
 
