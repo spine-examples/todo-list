@@ -20,49 +20,42 @@
 
 package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.Screen;
-import io.spine.examples.todolist.TestScreen;
-import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.Given.newNoOpView;
+import static io.spine.examples.todolist.action.ActionFormatter.SHORTCUT_FORMAT;
+import static io.spine.examples.todolist.action.ActionFormatter.SHORTCUT_NAME_SEPARATOR;
+import static io.spine.examples.todolist.action.ActionFormatter.format;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("TransitionAction should")
-class TransitionActionTest {
+@DisplayName("ActionFormatter should")
+class ActionFormatterTest {
 
-    private static final String ACTION_NAME = "static transition action";
     private static final Shortcut SHORTCUT = new Shortcut("s");
 
     @Test
-    @DisplayName("cause render of a destination view")
-    void causeDestinationViewRender() {
-        final View source = newNoOpView();
-        final DisplayCounterView destination = new DisplayCounterView();
-        final TransitionAction<View, DisplayCounterView> action =
-                new TransitionAction<>(ACTION_NAME, SHORTCUT, source, destination);
-
-        assertEquals(0, destination.displayedTimes);
-        action.execute();
-        assertEquals(1, destination.displayedTimes);
+    @DisplayName("have the private constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(ActionFormatter.class);
     }
 
-    static class DisplayCounterView implements View {
+    @Test
+    @DisplayName("format Shortcut")
+    void formatShortcut() {
+        final String expected = String.format(SHORTCUT_FORMAT, SHORTCUT);
+        assertEquals(expected, format(SHORTCUT));
+    }
 
-        private int displayedTimes = 0;
-
-        @Override
-        public void render(Screen screen) {
-            displayedTimes++;
-        }
-
-        @Override
-        public Screen getScreen() {
-            return new TestScreen();
-        }
+    @Test
+    @DisplayName("format Action")
+    void formatAction() {
+        final Action action = new NoOpAction("action", SHORTCUT);
+        final String formattedShortcut = format(action.getShortcut());
+        final String expected = formattedShortcut + SHORTCUT_NAME_SEPARATOR + action.getName();
+        assertEquals(expected, format(action));
     }
 }

@@ -47,7 +47,8 @@ class MyTasksListView extends ActionListView {
 
     private static final String EMPTY_TASKS_LIST_MSG = "<no tasks>";
 
-    private MyTasksListView() {
+    @VisibleForTesting
+    MyTasksListView() {
         super("My tasks list");
     }
 
@@ -75,14 +76,14 @@ class MyTasksListView extends ActionListView {
                                                    .getItemsList();
         for (TaskView taskView : taskViews) {
             final int index = taskViews.indexOf(taskView);
-            producers.add(newDetailsProducer(taskView, index));
+            producers.add(newOpenTaskViewProducer(taskView, index));
         }
         return producers;
     }
 
     @VisibleForTesting
     static TransitionActionProducer<MyTasksListView, MyTaskView>
-    newDetailsProducer(TaskView taskView, int viewIndex) {
+    newOpenTaskViewProducer(TaskView taskView, int viewIndex) {
         final String name = taskView.getDescription();
         final String shortcutValue = valueOf(viewIndex + 1);
         final Shortcut shortcut = new Shortcut(shortcutValue);

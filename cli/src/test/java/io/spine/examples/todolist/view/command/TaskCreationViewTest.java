@@ -23,18 +23,13 @@ package io.spine.examples.todolist.view.command;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
-import io.spine.examples.todolist.view.AbstractView;
-import io.spine.examples.todolist.view.View;
 import io.spine.examples.todolist.view.command.TaskCreationView.EnterDescription;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.Given.newNoOpView;
-import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static io.spine.examples.todolist.view.command.TaskCreationView.DESCRIPTION_LABEL;
 import static io.spine.examples.todolist.view.command.TaskCreationView.EMPTY_VALUE;
@@ -83,13 +78,7 @@ class TaskCreationViewTest extends UserIoTest {
                                      .getId();
 
         addAnswer(getBackShortcut().getValue());
-        final TransitionActionProducer<View, View> producer = newProducer("a",
-                                                                          new Shortcut("a"),
-                                                                          view);
-        final AbstractView source = newNoOpView();
-        source.setScreen(getScreen());
-        producer.create(source)
-                .execute();
+        view.render(view.getScreen());
 
         final TaskId idAfterRender = view.getState()
                                          .getId();

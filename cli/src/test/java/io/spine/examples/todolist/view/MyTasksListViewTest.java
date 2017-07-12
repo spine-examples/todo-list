@@ -20,6 +20,8 @@
 
 package io.spine.examples.todolist.view;
 
+import io.spine.examples.todolist.UserIoTest;
+import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
 import io.spine.examples.todolist.q.projection.MyListView;
@@ -29,23 +31,43 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.Set;
 
-import static io.spine.examples.todolist.view.MyTasksListView.newDetailsProducer;
+import static com.google.common.collect.Sets.newHashSet;
+import static io.spine.examples.todolist.view.AbstractView.getBackShortcut;
+import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskViewProducer;
 import static io.spine.examples.todolist.view.MyTasksListView.producersFor;
 import static java.util.Collections.nCopies;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * @author Dmytro Grankin
  */
 @DisplayName("MyTasksListView should")
-class MyTasksListViewTest {
+class MyTasksListViewTest extends UserIoTest {
 
     private static final int VIEW_INDEX = 0;
 
     private final TaskView taskView = TaskView.newBuilder()
                                               .setDescription("task desc")
                                               .build();
+
+    @Test
+    @DisplayName("refresh task list")
+    void refreshTaskList() {
+        final MyTasksListView view = new MyTasksListView();
+        view.addAction(newOpenTaskViewProducer(taskView, 0));
+        view.addAction(newOpenTaskViewProducer(taskView, 1));
+        final Set<Action> actionsToBeRemoved = view.getActions();
+
+        addAnswer(getBackShortcut().getValue());
+        getScreen().renderView(view);
+
+        final Set<Action> refreshedActions = newHashSet(view.getActions());
+        final boolean containsActionsForRemoval = refreshedActions.retainAll(actionsToBeRemoved);
+        assertFalse(containsActionsForRemoval);
+    }
 
     @Test
     @DisplayName("create action for every task view")
@@ -62,13 +84,13 @@ class MyTasksListViewTest {
     }
 
     @Test
-    @DisplayName("create details producer")
-    void createOpenTaskDetailsAction() {
+    @DisplayName("create open task view producer")
+    void createOpenTaskViewProducer() {
         final String shortcutValue = String.valueOf(VIEW_INDEX + 1);
         final Shortcut expectedShortcut = new Shortcut(shortcutValue);
 
         final TransitionActionProducer<MyTasksListView, MyTaskView> producer =
-                newDetailsProducer(taskView, VIEW_INDEX);
+                newOpenTaskViewProducer(taskView, VIEW_INDEX);
 
         assertEquals(taskView.getDescription(), producer.getName());
         assertEquals(expectedShortcut, producer.getShortcut());

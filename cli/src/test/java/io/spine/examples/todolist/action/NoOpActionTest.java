@@ -20,49 +20,43 @@
 
 package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.Screen;
-import io.spine.examples.todolist.TestScreen;
-import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.Given.newNoOpView;
+import static io.spine.examples.todolist.action.ActionFormatter.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("TransitionAction should")
-class TransitionActionTest {
+@DisplayName("NoOpAction should")
+class NoOpActionTest {
 
-    private static final String ACTION_NAME = "static transition action";
+    private static final String ACTION_NAME = "action";
     private static final Shortcut SHORTCUT = new Shortcut("s");
+    private static final Action action = new NoOpAction(ACTION_NAME, SHORTCUT);
 
     @Test
-    @DisplayName("cause render of a destination view")
-    void causeDestinationViewRender() {
-        final View source = newNoOpView();
-        final DisplayCounterView destination = new DisplayCounterView();
-        final TransitionAction<View, DisplayCounterView> action =
-                new TransitionAction<>(ACTION_NAME, SHORTCUT, source, destination);
-
-        assertEquals(0, destination.displayedTimes);
-        action.execute();
-        assertEquals(1, destination.displayedTimes);
+    @DisplayName("not allow null or empty name")
+    void notAllowEmptyStrings() {
+        final String emptyString = "";
+        assertThrows(IllegalArgumentException.class, () -> new NoOpAction(emptyString, SHORTCUT));
+        assertThrows(IllegalArgumentException.class, () -> new NoOpAction(null, SHORTCUT));
     }
 
-    static class DisplayCounterView implements View {
+    @Test
+    @DisplayName("consider an action with same shortcut equal")
+    void overrideEqualsAndHashCode() {
+        final String differentName = action.getName() + "difference";
+        final Action secondAction = new NoOpAction(differentName, action.getShortcut());
+        assertEquals(action, secondAction);
+        assertEquals(action.hashCode(), secondAction.hashCode());
+    }
 
-        private int displayedTimes = 0;
-
-        @Override
-        public void render(Screen screen) {
-            displayedTimes++;
-        }
-
-        @Override
-        public Screen getScreen() {
-            return new TestScreen();
-        }
+    @Test
+    @DisplayName("override `toString`")
+    void overrideToString() {
+        assertEquals(format(action), action.toString());
     }
 }

@@ -26,7 +26,6 @@ import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.Given.newNoOpView;
 import static io.spine.examples.todolist.action.ActionFormatter.format;
-import static io.spine.examples.todolist.action.ActionFormatter.getShortcutNameSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -34,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Dmytro Grankin
  */
 @DisplayName("AbstractAction should")
-class ActionTest {
+class AbstractActionTest {
 
     private static final String ACTION_NAME = "action";
     private static final Shortcut SHORTCUT = new Shortcut("s");
@@ -52,8 +51,8 @@ class ActionTest {
     @DisplayName("consider an action with same shortcut equal")
     void overrideEqualsAndHashCode() {
         final Action firstAction = action;
-        final String differentName = action.getName() + "difference";
-        final Action secondAction = new AnAction(differentName, action.getShortcut());
+        final String differentName = firstAction.getName() + "difference";
+        final Action secondAction = new NoOpAction(differentName, action.getShortcut());
         assertEquals(firstAction, secondAction);
         assertEquals(firstAction.hashCode(), secondAction.hashCode());
     }
@@ -61,9 +60,7 @@ class ActionTest {
     @Test
     @DisplayName("override `toString`")
     void overrideToString() {
-        final String formattedShortcut = format(SHORTCUT);
-        final String expectedString = formattedShortcut + getShortcutNameSeparator() + ACTION_NAME;
-        assertEquals(expectedString, action.toString());
+        assertEquals(format(action), action.toString());
     }
 
     private static class AnAction extends AbstractAction<View, View> {

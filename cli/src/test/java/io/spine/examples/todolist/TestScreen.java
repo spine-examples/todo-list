@@ -35,7 +35,7 @@ import static java.util.Collections.unmodifiableCollection;
 public class TestScreen extends AbstractScreen {
 
     @SuppressWarnings("StringBufferField") // Used to collect all output of the class.
-    private static final StringBuilder builder = new StringBuilder();
+    private static final StringBuilder BUILDER = new StringBuilder();
 
     private final Queue<String> answers = new ArrayDeque<>();
 
@@ -51,23 +51,23 @@ public class TestScreen extends AbstractScreen {
 
     @Override
     public void println(String message) {
-        builder.append(message)
+        BUILDER.append(message)
                .append(lineSeparator());
     }
 
-    public void addAnswer(String answer) {
+    protected void addAnswer(String answer) {
         answers.add(answer);
     }
 
-    public Collection<String> getAnswers() {
+    protected Collection<String> getAnswers() {
         return unmodifiableCollection(answers);
     }
 
-    public static String getOutput() {
-        return builder.toString();
+    protected static String getOutput() {
+        return BUILDER.toString();
     }
 
-    public static void clearOutput() {
-        builder.setLength(0);
+    protected static void clearOutput() {
+        BUILDER.setLength(0);
     }
 }

@@ -18,41 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.view;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.TestScreen.getOutput;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * @author Dmytro Grankin
  */
-public class UserIoTest {
+@DisplayName("MainMenu should")
+class MainMenuTest {
 
-    private TestScreen screen;
-
-    @BeforeEach
-    protected void setUp() {
-        TestScreen.clearOutput();
-        this.screen = new TestScreen();
-    }
-
-    protected void assertOutput(String expected) {
-        assertEquals(expected, getOutput());
-    }
-
-    protected void assertAllAnswersWereGiven() {
-        assertTrue(screen.getAnswers()
-                         .isEmpty());
-    }
-
-    protected void addAnswer(String answer) {
-        screen.addAnswer(answer);
-    }
-
-    protected TestScreen getScreen() {
-        return screen;
+    @Test
+    @DisplayName("not be empty")
+    void notBeEmpty() {
+        final MainMenu mainMenu = MainMenu.create();
+        assertFalse(mainMenu.getActions()
+                            .isEmpty());
     }
 }
