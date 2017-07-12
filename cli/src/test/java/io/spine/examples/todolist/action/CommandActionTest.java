@@ -22,7 +22,7 @@ package io.spine.examples.todolist.action;
 
 import com.google.protobuf.StringValue;
 import io.spine.examples.todolist.UserIoTest;
-import io.spine.examples.todolist.view.command.CommandView;
+import io.spine.examples.todolist.view.CommandView;
 import io.spine.validate.StringValueVBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

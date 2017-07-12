@@ -18,17 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.view.command;
+package io.spine.examples.todolist;
 
 import com.google.protobuf.Descriptors.FieldDescriptor;
+import io.spine.examples.todolist.view.command.NaturalNumber;
+import io.spine.examples.todolist.view.command.NaturalNumberVBuilder;
 import io.spine.validate.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.examples.todolist.view.command.ValidationExceptionFormatter.ERROR_MSG_FORMAT;
-import static io.spine.examples.todolist.view.command.ValidationExceptionFormatter.toErrorMessages;
+import static io.spine.examples.todolist.ValidationExceptionFormatter.ERROR_MSG_FORMAT;
+import static io.spine.examples.todolist.ValidationExceptionFormatter.toErrorMessages;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;

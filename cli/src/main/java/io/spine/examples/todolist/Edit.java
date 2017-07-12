@@ -18,26 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.view;
+package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.action.Shortcut;
-
-import static io.spine.examples.todolist.action.TransitionAction.newProducer;
-import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskListProducer;
+import com.google.protobuf.Message;
+import io.spine.validate.ValidatingBuilder;
 
 /**
+ * An interface for editing a {@link ValidatingBuilder} state.
+ *
  * @author Dmytro Grankin
  */
-class MyTasksMenu extends ActionListView {
+public interface Edit<M extends Message,
+                      B extends ValidatingBuilder<M, ? extends Message.Builder>> {
 
-    private MyTasksMenu() {
-        super("My tasks");
-    }
-
-    static MyTasksMenu create() {
-        final MyTasksMenu view = new MyTasksMenu();
-        view.addAction(newProducer("Create task", new Shortcut("c"), TaskCreationView.create()));
-        view.addAction(newOpenTaskListProducer("List tasks", new Shortcut("l")));
-        return view;
-    }
+    /**
+     * Starts editing of the specified state.
+     *
+     * @param screen the {@link Screen}
+     * @param state the validating builder state
+     */
+    void start(Screen screen, B state);
 }

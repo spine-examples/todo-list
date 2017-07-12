@@ -18,21 +18,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.view.command;
+package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.UserIoTest;
-import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
-import io.spine.examples.todolist.view.command.TaskCreationView.EnterDescription;
+import io.spine.examples.todolist.view.TaskCreationView.DescriptionEdit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
-import static io.spine.examples.todolist.view.command.TaskCreationView.DESCRIPTION_LABEL;
-import static io.spine.examples.todolist.view.command.TaskCreationView.EMPTY_VALUE;
+import static io.spine.examples.todolist.view.AbstractView.getBackShortcut;
+import static io.spine.examples.todolist.view.TaskCreationView.DESCRIPTION_LABEL;
+import static io.spine.examples.todolist.view.TaskCreationView.EMPTY_VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -78,7 +77,7 @@ class TaskCreationViewTest extends UserIoTest {
                                      .getId();
 
         addAnswer(getBackShortcut().getValue());
-        view.render(view.getScreen());
+        getScreen().renderView(view);
 
         final TaskId idAfterRender = view.getState()
                                          .getId();
@@ -86,24 +85,18 @@ class TaskCreationViewTest extends UserIoTest {
     }
 
     @Nested
-    @DisplayName("EnterDescription should")
-    class EnterDescriptionTest {
+    @DisplayName("DescriptionEdit should")
+    class DescriptionEditTest {
 
-        private final EnterDescription enterDescription =
-                new EnterDescription("d", new Shortcut("d"), view);
-
-        @BeforeEach
-        void setUp() {
-            enterDescription.setScreen(getScreen());
-        }
+        private final DescriptionEdit descriptionEdit = new DescriptionEdit();
 
         @Test
-        @DisplayName("modify description")
-        void modifyDescription() {
+        @DisplayName("edit description")
+        void editDescription() {
             addAnswer(VALID_DESCRIPTION);
 
             final CreateBasicTaskVBuilder state = view.getState();
-            enterDescription.edit();
+            descriptionEdit.start(getScreen(), state);
 
             assertEquals(VALID_DESCRIPTION, state.getDescription());
         }

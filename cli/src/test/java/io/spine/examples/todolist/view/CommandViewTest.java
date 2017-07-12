@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.view.command;
+package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
@@ -65,7 +65,7 @@ class CommandViewTest extends UserIoTest {
     }
 
     @Test
-    @DisplayName("wrap ValidationException and renderBody the source view")
+    @DisplayName("wrap ValidationException and re-render itself")
     void displayViewOnValidationException() {
         assertThrows(ValidationException.class, buildState::execute);
         assertFalse(view.wasDisplayed);

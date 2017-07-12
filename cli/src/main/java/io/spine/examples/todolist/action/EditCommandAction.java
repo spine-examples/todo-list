@@ -20,63 +20,70 @@
 
 package io.spine.examples.todolist.action;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Message;
+import io.spine.examples.todolist.Edit;
 import io.spine.examples.todolist.Screen;
-import io.spine.examples.todolist.view.command.CommandView;
+import io.spine.examples.todolist.view.CommandView;
 import io.spine.validate.ValidatingBuilder;
+import io.spine.validate.ValidationException;
+
+import java.util.Collection;
+import java.util.List;
+
+import static com.google.common.base.Preconditions.checkArgument;
+import static io.spine.examples.todolist.ValidationExceptionFormatter.toErrorMessages;
 
 /**
- * Abstract base class for editing command actions.
- *
- * <p>Represents a user action, that updates
- * {@linkplain CommandView#state state of the command view}.
+ * An {@link Action}, that edits a {@linkplain CommandView#state state of the command view}.
  *
  * @param <M> the type of the command message
  * @param <B> the validating builder type for the command message
  * @author Dmytro Grankin
  */
-public abstract class EditCommandAction<M extends Message,
-                                        B extends ValidatingBuilder<M, ? extends Message.Builder>>
+public class EditCommandAction<M extends Message,
+                               B extends ValidatingBuilder<M, ? extends Message.Builder>>
         extends AbstractAction<CommandView<M, B>, CommandView<M, B>> {
 
-    private Screen screen;
+    private final Collection<Edit<M, B>> edits;
 
-    protected EditCommandAction(String name, Shortcut shortcut, CommandView<M, B> source) {
-        super(name, shortcut, source, source);
+    private EditCommandAction(String name, Shortcut shortcut,
+                              CommandView<M, B> source,
+                              CommandView<M, B> destination,
+                              Collection<Edit<M, B>> edits) {
+        super(name, shortcut, source, destination);
+        checkArgument(!edits.isEmpty());
+        this.edits = edits;
     }
 
     /**
-     * Edits a state of the source view and then renders destination view.
+     * Applies {@link #edits} to the {@linkplain CommandView#state source view state}
+     * and then renders destination view.
      */
     @Override
     public void execute() {
-        screen = getSource().getScreen();
-        edit();
+        for (Edit<M, B> edit : edits) {
+            execute(edit);
+        }
+
+        final Screen screen = getSource().getScreen();
         screen.renderView(getDestination());
     }
 
-    /**
-     * Edits {@link #getBuilder() state of a the source view}.
-     */
-    protected abstract void edit();
-
-    /**
-     * Obtains state of the source view.
-     *
-     * @return source view state
-     */
-    protected B getBuilder() {
-        return getSource().getState();
+    private void execute(Edit<M, B> edit) {
+        final Screen screen = getSource().getScreen();
+        try {
+            edit.start(screen, getSource().getState());
+        } catch (ValidationException e) {
+            final List<String> errorMessages = toErrorMessages(e);
+            errorMessages.forEach(screen::println);
+            execute(edit);
+        }
     }
 
-    protected Screen getScreen() {
-        return screen;
-    }
-
-    @VisibleForTesting
-    public void setScreen(Screen screen) {
-        this.screen = screen;
+    public static <M extends Message, B extends ValidatingBuilder<M, ? extends Message.Builder>>
+    EditCommandActionProducer<M, B> newProducer(String name, Shortcut shortcut,
+                                                Collection<Edit<M, B>> edits) {
+        return new EditCommandActionProducer<>(name, shortcut, edits);
     }
 
     /**
@@ -84,15 +91,23 @@ public abstract class EditCommandAction<M extends Message,
      *
      * @param <M> the type of the command message
      * @param <B> the validating builder type for the command message
-     * @param <T> {@inheritDoc}
      */
-    public abstract static class EditCommandActionProducer<M extends Message,
-                                                           B extends ValidatingBuilder<M, ? extends Message.Builder>,
-                                                           T extends EditCommandAction<M, B>>
-            extends AbstractActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
+    public static class EditCommandActionProducer<M extends Message,
+                                                  B extends ValidatingBuilder<M, ? extends Message.Builder>>
+            extends AbstractActionProducer<CommandView<M, B>, CommandView<M, B>, EditCommandAction<M, B>> {
 
-        protected EditCommandActionProducer(String name, Shortcut shortcut) {
+        private final Collection<Edit<M, B>> edits;
+
+        private EditCommandActionProducer(String name, Shortcut shortcut,
+                                          Collection<Edit<M, B>> edits) {
             super(name, shortcut);
+            checkArgument(!edits.isEmpty());
+            this.edits = edits;
+        }
+
+        @Override
+        public EditCommandAction<M, B> create(CommandView<M, B> source) {
+            return new EditCommandAction<>(getName(), getShortcut(), source, source, edits);
         }
     }
 }

@@ -22,7 +22,7 @@ package io.spine.examples.todolist.action;
 
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.Screen;
-import io.spine.examples.todolist.view.command.CommandView;
+import io.spine.examples.todolist.view.CommandView;
 import io.spine.validate.ValidatingBuilder;
 
 /**

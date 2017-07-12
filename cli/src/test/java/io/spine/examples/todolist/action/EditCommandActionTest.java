@@ -21,17 +21,24 @@
 package io.spine.examples.todolist.action;
 
 import com.google.protobuf.StringValue;
+import io.spine.examples.todolist.Edit;
+import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.UserIoTest;
-import io.spine.examples.todolist.view.command.CommandView;
+import io.spine.examples.todolist.view.CommandView;
 import io.spine.validate.StringValueVBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.action.EditCommandActionTest.AnEditCommandAction.VALUE_AFTER_UPDATE;
+import static io.spine.examples.todolist.action.EditCommandAction.newProducer;
+import static io.spine.examples.todolist.action.EditCommandActionTest.AnEdit.VALUE_AFTER_UPDATE;
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singleton;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Dmytro Grankin
@@ -39,8 +46,12 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 @DisplayName("EditCommandAction should")
 class EditCommandActionTest extends UserIoTest {
 
-    private final CommandView<StringValue, StringValueVBuilder> view = new ACommandView();
-    private final AnEditCommandAction action = new AnEditCommandAction(view);
+    private static final String ACTION_NAME = "action";
+    private static final Shortcut SHORTCUT = new Shortcut("s");
+
+    private final ACommandView view = new ACommandView();
+    private final EditCommandAction<StringValue, StringValueVBuilder> action =
+            newProducer(ACTION_NAME, SHORTCUT, singleton(new AnEdit())).create(view);
 
     @Override
     @BeforeEach
@@ -50,9 +61,24 @@ class EditCommandActionTest extends UserIoTest {
     }
 
     @Test
+    @DisplayName("not allow empty edits")
+    void notAllowEmptyEdits() {
+        assertThrows(IllegalArgumentException.class,
+                     () -> newProducer(ACTION_NAME, SHORTCUT, emptyList()));
+    }
+
+    @Test
     @DisplayName("have same source and destination view")
     void haveSameSourceAndDestination() {
         assertSame(action.getSource(), action.getDestination());
+    }
+
+    @Test
+    @DisplayName("render destination view")
+    void renderDestinationView() {
+        addAnswer(getBackShortcut().getValue());
+        action.execute();
+        assertTrue(view.wasRendered);
     }
 
     @Test
@@ -65,29 +91,33 @@ class EditCommandActionTest extends UserIoTest {
                                              .getValue());
     }
 
-    static class AnEditCommandAction extends EditCommandAction<StringValue, StringValueVBuilder> {
-
-        static final String VALUE_AFTER_UPDATE = "updated";
-
-        private AnEditCommandAction(CommandView<StringValue, StringValueVBuilder> source) {
-            super("name", new Shortcut("s"), source);
-        }
-
-        @Override
-        protected void edit() {
-            getBuilder().setValue(VALUE_AFTER_UPDATE);
-        }
-    }
-
     private static class ACommandView extends CommandView<StringValue, StringValueVBuilder> {
+
+        private boolean wasRendered;
 
         private ACommandView() {
             super("View title");
         }
 
         @Override
+        public void render(Screen screen) {
+            wasRendered = true;
+            super.render(screen);
+        }
+
+        @Override
         protected String renderState(StringValueVBuilder state) {
             return "";
+        }
+    }
+
+    static class AnEdit implements Edit<StringValue, StringValueVBuilder> {
+
+        static final String VALUE_AFTER_UPDATE = "updated";
+
+        @Override
+        public void start(Screen screen, StringValueVBuilder state) {
+            state.setValue(VALUE_AFTER_UPDATE);
         }
     }
 }

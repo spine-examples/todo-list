@@ -18,26 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.view;
-
-import io.spine.examples.todolist.action.Shortcut;
-
-import static io.spine.examples.todolist.action.TransitionAction.newProducer;
-import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskListProducer;
-
 /**
- * @author Dmytro Grankin
+ * This package provides classes for a user actions in CLI.
  */
-class MyTasksMenu extends ActionListView {
 
-    private MyTasksMenu() {
-        super("My tasks");
-    }
+@ParametersAreNonnullByDefault
+package io.spine.examples.todolist.action;
 
-    static MyTasksMenu create() {
-        final MyTasksMenu view = new MyTasksMenu();
-        view.addAction(newProducer("Create task", new Shortcut("c"), TaskCreationView.create()));
-        view.addAction(newOpenTaskListProducer("List tasks", new Shortcut("l")));
-        return view;
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

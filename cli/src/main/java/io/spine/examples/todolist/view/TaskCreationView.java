@@ -18,19 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.view.command;
+package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.spine.examples.todolist.Edit;
+import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.action.CommandAction;
-import io.spine.examples.todolist.action.EditCommandAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
-import io.spine.examples.todolist.view.command.TaskCreationView.EnterDescription.EnterDescriptionProducer;
 
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.AppConfig.getClient;
+import static io.spine.examples.todolist.action.EditCommandAction.newProducer;
+import static java.util.Collections.singletonList;
 
 /**
  * A {@code CommandView}, that allows to create a task in a quick mode.
@@ -50,15 +52,16 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
 
     public static TaskCreationView create() {
         final TaskCreationView view = new TaskCreationView();
-        view.addAction(new EnterDescriptionProducer("Enter description", new Shortcut("d")));
+        view.addAction(newProducer("Start input", new Shortcut("i"),
+                                   singletonList(new DescriptionEdit())));
         view.addAction(new CreateTask.CreateTaskProducer());
         return view;
     }
 
     @Override
-    protected void renderBody() {
+    public void render(Screen screen) {
         getState().setId(generatedId());
-        super.renderBody();
+        super.render(screen);
     }
 
     @Override
@@ -77,35 +80,14 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
     }
 
     @VisibleForTesting
-    static class EnterDescription extends EditCommandAction<CreateBasicTask,
-                                                            CreateBasicTaskVBuilder> {
+    static class DescriptionEdit implements Edit<CreateBasicTask, CreateBasicTaskVBuilder> {
 
         private static final String PROMPT = "Please enter the task description";
 
-        EnterDescription(String name, Shortcut shortcut,
-                         CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
-            super(name, shortcut, source);
-        }
-
         @Override
-        protected void edit() {
-            final String description = getScreen().promptUser(PROMPT);
-            getBuilder().setDescription(description);
-        }
-
-        static class EnterDescriptionProducer extends EditCommandActionProducer<CreateBasicTask,
-                                                                                CreateBasicTaskVBuilder,
-                                                                                EnterDescription> {
-
-            private EnterDescriptionProducer(String name, Shortcut shortcut) {
-                super(name, shortcut);
-            }
-
-            @Override
-            public EnterDescription create(CommandView<CreateBasicTask,
-                                           CreateBasicTaskVBuilder> source) {
-                return new EnterDescription(getName(), getShortcut(), source);
-            }
+        public void start(Screen screen, CreateBasicTaskVBuilder state) {
+            final String description = screen.promptUser(PROMPT);
+            state.setDescription(description);
         }
     }
 

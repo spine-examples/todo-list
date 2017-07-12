@@ -18,29 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.view.command;
+package io.spine.examples.todolist.view;
 
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.CommandAction;
 import io.spine.examples.todolist.action.EditCommandAction;
-import io.spine.examples.todolist.view.AbstractView;
 import io.spine.reflect.GenericTypeIndex;
 import io.spine.validate.ValidatingBuilder;
 import io.spine.validate.ValidatingBuilders;
 import io.spine.validate.ValidationException;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedList;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.examples.todolist.view.command.CommandView.GenericParameter.STATE_BUILDER;
-import static io.spine.examples.todolist.view.command.ValidationExceptionFormatter.toErrorMessages;
+import static io.spine.examples.todolist.ValidationExceptionFormatter.toErrorMessages;
+import static io.spine.examples.todolist.view.CommandView.GenericParameter.STATE_BUILDER;
 
 /**
  * A {@code CommandView} is a view where end-user prepares and sends a command to a server.
  *
- * <p>The view must predominantly consist of
- * {@linkplain EditCommandAction edit command actions} and {@link CommandAction CommandAction}.
+ * <p>The view must predominantly consist of {@link EditCommandAction} and {@link CommandAction}.
  *
  * @author Dmytro Grankin
  */
@@ -49,6 +48,7 @@ public abstract class CommandView<M extends Message,
         extends AbstractView {
 
     private final B state;
+    private final Collection<String> validationErrors = new LinkedList<>();
 
     protected CommandView(String title) {
         super(title);
@@ -57,6 +57,9 @@ public abstract class CommandView<M extends Message,
 
     @Override
     protected void renderBody() {
+        validationErrors.forEach(msg -> getScreen().println(msg));
+        validationErrors.clear();
+
         final String renderedState = renderState(state);
         getScreen().println(renderedState);
     }
@@ -64,7 +67,7 @@ public abstract class CommandView<M extends Message,
     /**
      * {@inheritDoc}
      *
-     * <p>If {@link ValidationException} is occurred, prints errors and renders the view.
+     * <p>Handles a {@link ValidationException} in case of occurrence.
      *
      * @param action {@inheritDoc}
      */
@@ -78,9 +81,8 @@ public abstract class CommandView<M extends Message,
     }
 
     private void handleValidationException(ValidationException ex) {
-        final List<String> errorMessages = toErrorMessages(ex);
-        errorMessages.forEach(message -> getScreen().println(message));
-        renderBody();
+        validationErrors.addAll(toErrorMessages(ex));
+        getScreen().renderView(this);
     }
 
     /**

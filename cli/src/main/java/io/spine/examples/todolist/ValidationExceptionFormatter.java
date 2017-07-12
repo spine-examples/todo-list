@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.view.command;
+package io.spine.examples.todolist;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.FieldPath;
@@ -35,7 +35,7 @@ import static java.lang.String.format;
  *
  * @author Dmytro Grankin
  */
-class ValidationExceptionFormatter {
+public class ValidationExceptionFormatter {
 
     @VisibleForTesting
     static final String ERROR_MSG_FORMAT = "Invalid `%s`.";
@@ -52,7 +52,7 @@ class ValidationExceptionFormatter {
      * @param e the {@code ValidationException}
      * @return error messages
      */
-    static List<String> toErrorMessages(ValidationException e) {
+    public static List<String> toErrorMessages(ValidationException e) {
         final List<String> messages = new LinkedList<>();
         for (ConstraintViolation violation : e.getConstraintViolations()) {
             final FieldPath fieldPath = violation.getFieldPath();
