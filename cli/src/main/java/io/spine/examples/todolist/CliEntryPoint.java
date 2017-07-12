@@ -50,7 +50,7 @@ public class CliEntryPoint {
 
         final View entryPoint = MainMenu.create();
         final Screen screen = new CommandLineScreen();
-        entryPoint.render(screen);
+        screen.renderView(entryPoint);
 
         getClient().shutdown();
         server.shutdown();

@@ -23,20 +23,12 @@ package io.spine.examples.todolist.view;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
 import io.spine.examples.todolist.UserIoTest;
-import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.Given.newNoOpView;
-import static io.spine.examples.todolist.action.TransitionAction.newProducer;
-import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
-import static io.spine.examples.todolist.view.ActionListView.getSelectActionMsg;
 import static io.spine.protobuf.Wrapper.forString;
 import static java.lang.System.lineSeparator;
-import static java.util.stream.Collectors.joining;
 
 /**
  * @author Dmytro Grankin
@@ -54,35 +46,16 @@ class EntityViewTest extends UserIoTest {
     }
 
     @Test
-    @DisplayName("render details before actions")
-    void displayDetailsBeforeActions() {
-        final Shortcut back = getBackShortcut();
-        addAnswer(back.getValue());
-
-        final TransitionActionProducer<View, View> producer = newProducer("Transition",
-                                                                          new Shortcut("t"),
-                                                                          view);
-        final AbstractView source = newNoOpView();
-        source.setScreen(getScreen());
-        producer.create(source)
-                .execute();
-
-        final String stateRepresentation = view.renderState(AnEntityView.RECENT_STATE);
-        final String actionsRepresentation = view.getActions()
-                                                 .stream()
-                                                 .map(Action::toString)
-                                                 .collect(joining(lineSeparator()));
-        final String expectedRepresentation =
-                view.formatTitle() + lineSeparator() +
-                        stateRepresentation + lineSeparator() +
-                        actionsRepresentation + lineSeparator() +
-                        getSelectActionMsg() + lineSeparator();
-        assertOutput(expectedRepresentation);
+    @DisplayName("load and render entity state")
+    void loadAndRenderEntityState() {
+        view.renderBody();
+        final String expectedBody = view.renderState(AnEntityView.STATE) + lineSeparator();
+        assertOutput(expectedBody);
     }
 
     private static class AnEntityView extends EntityView<Int32Value, StringValue> {
 
-        private static final StringValue RECENT_STATE = forString("string");
+        private static final StringValue STATE = forString("string");
 
         private AnEntityView(Int32Value id) {
             super(id, "View title");
@@ -90,7 +63,7 @@ class EntityViewTest extends UserIoTest {
 
         @Override
         protected StringValue load(Int32Value id) {
-            return RECENT_STATE;
+            return STATE;
         }
 
         @Override

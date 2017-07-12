@@ -58,7 +58,7 @@ class MyTaskViewTest {
     }
 
     @Test
-    @DisplayName("render TaskView")
+    @DisplayName("renderBody TaskView")
     void renderTaskView() {
         final String expectedResult =
                 DESCRIPTION_VALUE + taskView.getDescription() + lineSeparator() +

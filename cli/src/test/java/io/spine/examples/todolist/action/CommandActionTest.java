@@ -21,13 +21,14 @@
 package io.spine.examples.todolist.action;
 
 import com.google.protobuf.StringValue;
-import io.spine.examples.todolist.TestScreen;
+import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.view.command.CommandView;
 import io.spine.validate.StringValueVBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.view.AbstractView.getBackShortcut;
 import static io.spine.validate.Validate.isDefault;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -37,14 +38,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("CommandAction should")
-class CommandActionTest {
+class CommandActionTest extends UserIoTest {
 
     private final UpdateStringValueView view = new UpdateStringValueView();
     private final UpdateStringValueAction action = new UpdateStringValueAction(view);
 
     @BeforeEach
-    void setUp() {
-        view.setScreen(new TestScreen());
+    @Override
+    protected void setUp() {
+        super.setUp();
+        view.setScreen(getScreen());
     }
 
     @Test
@@ -54,8 +57,10 @@ class CommandActionTest {
     }
 
     @Test
-    @DisplayName("execute command and render a source view")
+    @DisplayName("execute command and cause render of a source view")
     void executeCommandAndRenderSource() {
+        addAnswer(getBackShortcut().getValue());
+
         final String expectedString = "A string value.";
         final StringValueVBuilder viewState = view.getState();
         viewState.setValue(expectedString);
@@ -69,14 +74,16 @@ class CommandActionTest {
     @Test
     @DisplayName("clear state of source view after successful execution")
     void clearSourceState() {
+        addAnswer(getBackShortcut().getValue());
+
         final StringValueVBuilder viewState = view.getState();
         viewState.setValue("Non-default value");
         action.execute();
         assertTrue(isDefault(viewState.internalBuild()));
     }
 
-    private static class UpdateStringValueAction
-            extends CommandAction<StringValue, StringValueVBuilder> {
+    private static class UpdateStringValueAction extends CommandAction<StringValue,
+            StringValueVBuilder> {
 
         private StringValue commandMessageBeforeExecution;
 
@@ -103,12 +110,12 @@ class CommandActionTest {
         }
 
         @Override
-        protected void render() {
+        protected void renderBody() {
             rendered = true;
         }
 
         @Override
-        protected String representationOf(StringValueVBuilder state) {
+        protected String renderState(StringValueVBuilder state) {
             return String.valueOf(rendered);
         }
 

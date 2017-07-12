@@ -42,7 +42,7 @@ public class Given {
         }
 
         @Override
-        protected void render() {
+        protected void renderBody() {
             // Do nothing.
         }
     }

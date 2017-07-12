@@ -86,7 +86,7 @@ class EditCommandActionTest extends UserIoTest {
         }
 
         @Override
-        protected String representationOf(StringValueVBuilder state) {
+        protected String renderState(StringValueVBuilder state) {
             return "";
         }
     }

@@ -34,7 +34,7 @@ public interface Screen {
     /**
      * Renders specified view.
      *
-     * @param view the view to render
+     * @param view the view to renderBody
      */
     void renderView(View view);
 

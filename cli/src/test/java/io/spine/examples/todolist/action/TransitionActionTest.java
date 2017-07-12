@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.action;
 
+import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.TestScreen;
 import io.spine.examples.todolist.view.AbstractView;
 import io.spine.examples.todolist.view.View;
@@ -43,31 +44,27 @@ class TransitionActionTest {
     void causeDestinationViewRender() {
         final AbstractView source = newNoOpView();
         source.setScreen(new TestScreen());
+        final DisplayCounterView destination = new DisplayCounterView();
         final TransitionAction<View, DisplayCounterView> action =
-                new TransitionAction<>(ACTION_NAME, SHORTCUT, source, new DisplayCounterView());
+                new TransitionAction<>(ACTION_NAME, SHORTCUT, source, destination);
 
-        assertEquals(0, action.getDestination()
-                              .getDisplayedTimes());
+        assertEquals(0, destination.displayedTimes);
         action.execute();
-        assertEquals(1, action.getDestination()
-                              .getDisplayedTimes());
+        assertEquals(1, destination.displayedTimes);
     }
 
-    static class DisplayCounterView extends AbstractView {
+    static class DisplayCounterView implements View {
 
         private int displayedTimes = 0;
 
-        private DisplayCounterView() {
-            super("View title");
-        }
-
         @Override
-        public void render() {
+        public void render(Screen screen) {
             displayedTimes++;
         }
 
-        private int getDisplayedTimes() {
-            return displayedTimes;
+        @Override
+        public Screen getScreen() {
+            return new TestScreen();
         }
     }
 }

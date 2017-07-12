@@ -23,7 +23,6 @@ package io.spine.examples.todolist.view;
 import com.google.protobuf.Message;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.System.lineSeparator;
 
 /**
  * A {@link View} of the entity.
@@ -32,7 +31,7 @@ import static java.lang.System.lineSeparator;
  * @param <S> the type of the entity state
  * @author Dmytro Grankin
  */
-public abstract class EntityView<I extends Message, S extends Message> extends ActionListView {
+public abstract class EntityView<I extends Message, S extends Message> extends AbstractView {
 
     private final I id;
     private S state;
@@ -47,9 +46,10 @@ public abstract class EntityView<I extends Message, S extends Message> extends A
      * Updates {@link #state} and then renders the view.
      */
     @Override
-    protected void render() {
+    protected void renderBody() {
         state = load(id);
-        super.render();
+        final String renderedState = renderState(state);
+        getScreen().println(renderedState);
     }
 
     /**
@@ -67,9 +67,4 @@ public abstract class EntityView<I extends Message, S extends Message> extends A
      * @return the rendered state
      */
     protected abstract String renderState(S state);
-
-    @Override
-    public String toString() {
-        return renderState(state) + lineSeparator() + super.toString();
-    }
 }

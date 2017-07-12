@@ -24,7 +24,7 @@ import com.google.protobuf.Message;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.CommandAction;
 import io.spine.examples.todolist.action.EditCommandAction;
-import io.spine.examples.todolist.view.ActionListView;
+import io.spine.examples.todolist.view.AbstractView;
 import io.spine.reflect.GenericTypeIndex;
 import io.spine.validate.ValidatingBuilder;
 import io.spine.validate.ValidatingBuilders;
@@ -35,7 +35,6 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.examples.todolist.view.command.CommandView.GenericParameter.STATE_BUILDER;
 import static io.spine.examples.todolist.view.command.ValidationExceptionFormatter.toErrorMessages;
-import static java.lang.System.lineSeparator;
 
 /**
  * A {@code CommandView} is a view where end-user prepares and sends a command to a server.
@@ -47,13 +46,19 @@ import static java.lang.System.lineSeparator;
  */
 public abstract class CommandView<M extends Message,
                                   B extends ValidatingBuilder<M, ? extends Message.Builder>>
-        extends ActionListView {
+        extends AbstractView {
 
     private final B state;
 
     protected CommandView(String title) {
         super(title);
         this.state = newBuilderInstance();
+    }
+
+    @Override
+    protected void renderBody() {
+        final String renderedState = renderState(state);
+        getScreen().println(renderedState);
     }
 
     /**
@@ -75,23 +80,16 @@ public abstract class CommandView<M extends Message,
     private void handleValidationException(ValidationException ex) {
         final List<String> errorMessages = toErrorMessages(ex);
         errorMessages.forEach(message -> getScreen().println(message));
-        render();
+        renderBody();
     }
 
     /**
-     * Obtains string representation of the specified state.
-     *
-     * <p>The representation will be displayed during view rendering.
+     * Renders the specified state.
      *
      * @param state the command state
-     * @return a string representation
+     * @return the string representation
      */
-    protected abstract String representationOf(B state);
-
-    @Override
-    public String toString() {
-        return representationOf(state) + lineSeparator() + super.toString();
-    }
+    protected abstract String renderState(B state);
 
     public B getState() {
         return state;

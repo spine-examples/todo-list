@@ -56,13 +56,13 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
     }
 
     @Override
-    protected void render() {
+    protected void renderBody() {
         getState().setId(generatedId());
-        super.render();
+        super.renderBody();
     }
 
     @Override
-    protected String representationOf(CreateBasicTaskVBuilder state) {
+    protected String renderState(CreateBasicTaskVBuilder state) {
         final String descriptionValue = state.getDescription()
                                              .isEmpty()
                                         ? EMPTY_VALUE

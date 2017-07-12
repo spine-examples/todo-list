@@ -52,11 +52,11 @@ class MyTasksListView extends ActionListView {
     }
 
     @Override
-    protected void render() {
+    protected void renderBody() {
         final MyListView myListView = getClient().getMyListView();
         final Collection<TransitionActionProducer> producers = producersFor(myListView);
         refreshActions(producers);
-        super.render();
+        super.renderBody();
     }
 
     private void refreshActions(Collection<TransitionActionProducer> newActionProducers) {

@@ -63,7 +63,7 @@ class TaskCreationViewTest extends UserIoTest {
     void handleEmptyDescription() {
         final CreateBasicTaskVBuilder cleanBuilder = CreateBasicTaskVBuilder.newBuilder();
         final String expectedRepresentation = DESCRIPTION_LABEL + ' ' + EMPTY_VALUE;
-        assertEquals(expectedRepresentation, view.representationOf(cleanBuilder));
+        assertEquals(expectedRepresentation, view.renderState(cleanBuilder));
     }
 
     @Test
@@ -73,7 +73,7 @@ class TaskCreationViewTest extends UserIoTest {
         final CreateBasicTaskVBuilder state = CreateBasicTaskVBuilder.newBuilder()
                                                                      .setDescription(description);
         final String expectedRepresentation = DESCRIPTION_LABEL + ' ' + description;
-        assertEquals(expectedRepresentation, view.representationOf(state));
+        assertEquals(expectedRepresentation, view.renderState(state));
     }
 
     @Test

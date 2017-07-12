@@ -33,6 +33,7 @@ import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,15 +57,15 @@ class CommandViewTest extends UserIoTest {
     }
 
     @Test
-    @DisplayName("render state representation firstly")
+    @DisplayName("render state representation")
     void renderStateRepresentation() {
-        final String stateRepresentation = view.representationOf(CreateCommentVBuilder.newBuilder());
-        final String viewRepresentation = view.toString();
-        assertTrue(viewRepresentation.startsWith(stateRepresentation));
+        view.renderBody();
+        final String expectedBody = view.renderState(CreateCommentVBuilder.newBuilder()) + lineSeparator();
+        assertOutput(expectedBody);
     }
 
     @Test
-    @DisplayName("wrap ValidationException and render the source view")
+    @DisplayName("wrap ValidationException and renderBody the source view")
     void displayViewOnValidationException() {
         assertThrows(ValidationException.class, buildState::execute);
         assertFalse(view.wasDisplayed);
@@ -96,13 +97,13 @@ class CommandViewTest extends UserIoTest {
         }
 
         @Override
-        protected void render() {
+        protected void renderBody() {
             wasDisplayed = true;
-            super.render();
+            super.renderBody();
         }
 
         @Override
-        protected String representationOf(CreateCommentVBuilder state) {
+        protected String renderState(CreateCommentVBuilder state) {
             return "Comment: " + getState().getValue();
         }
     }

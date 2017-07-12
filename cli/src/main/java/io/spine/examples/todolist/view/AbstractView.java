@@ -22,42 +22,83 @@ package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.Screen;
+import io.spine.examples.todolist.action.AbstractAction;
+import io.spine.examples.todolist.action.AbstractActionProducer;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
 
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.repeat;
-import static java.lang.System.lineSeparator;
+import static io.spine.examples.todolist.action.ActionFormatter.format;
+import static io.spine.util.Exceptions.newIllegalArgumentException;
+import static java.util.Collections.unmodifiableSet;
 
 /**
  * Abstract base class for views.
+ *
+ * <p>Contains {@link #actions} and provides
+ * {@linkplain #selectAction() selection} mechanism for them.
  *
  * @author Dmytro Grankin
  */
 public abstract class AbstractView implements View {
 
+    private static final String BACK_NAME = "Back";
+    private static final Shortcut BACK_SHORTCUT = new Shortcut("b");
+
+    private static final String ACTION_SELECTION_HINT = format(new Shortcut("?"));
+    private static final String SELECT_ACTION_MSG = "Select an action " + ACTION_SELECTION_HINT;
+    private static final String INVALID_SELECTION_MSG = "There is no action with specified shortcut.";
+
     private final String title;
+    private final Set<Action> actions;
+
     private Screen screen;
 
+    /**
+     * Creates a new instance without some {@link #actions}.
+     *
+     * @param title the view title
+     */
     protected AbstractView(String title) {
         checkArgument(!isNullOrEmpty(title));
         this.title = title;
+        this.actions = new LinkedHashSet<>();
     }
 
     @Override
-    public final void render(Screen screen) {
+    public void render(Screen screen) {
         setScreen(screen);
-        screen.println(formatTitle());
-        render();
+        renderTitle();
+        renderBody();
+        renderActions();
+        final Action selectedAction = selectAction();
+        executeAction(selectedAction);
     }
 
-    protected abstract void render();
+    private void renderTitle() {
+        final String titleUnderline = repeat("-", title.length());
+        getScreen().println(title);
+        getScreen().println(titleUnderline);
+    }
+
+    protected abstract void renderBody();
+
+    private void renderActions() {
+        addBackAction();
+        actions.stream()
+               .map(Action::toString)
+               .forEach(actionView -> getScreen().println(actionView));
+    }
 
     /**
      * Obtains the action leading to the {@linkplain Screen#getPreviousView(View) previous view}.
@@ -66,7 +107,8 @@ public abstract class AbstractView implements View {
      * @param shortcut the shortcut for the action
      * @return the back action
      */
-    protected Action createBackAction(String name, Shortcut shortcut) {
+    @VisibleForTesting
+    Action createBackAction(String name, Shortcut shortcut) {
         final Optional<View> previousView = screen.getPreviousView(this);
         return previousView
                 .<Action>map(view -> new TransitionAction<>(name, shortcut, this, view))
@@ -84,9 +126,106 @@ public abstract class AbstractView implements View {
         return screen;
     }
 
+    private void addBackAction() {
+        final Action action = createBackAction(BACK_NAME, BACK_SHORTCUT);
+        actions.add(action);
+    }
+
+    private Action selectAction() {
+        do {
+            final Optional<Action> selectedAction = trySelectAction();
+            if (!selectedAction.isPresent()) {
+                getScreen().println(INVALID_SELECTION_MSG);
+            } else {
+                return selectedAction.get();
+            }
+        } while (true);
+    }
+
+    private Optional<Action> trySelectAction() {
+        final String answer = getScreen().promptUser(SELECT_ACTION_MSG);
+        final Predicate<Action> actionMatch = new ShortcutMatchPredicate(answer);
+        return actions.stream()
+                      .filter(actionMatch)
+                      .findFirst();
+    }
+
+    /**
+     * Executes the specified action.
+     *
+     * @param action the action to execute
+     */
+    protected void executeAction(Action action) {
+        action.execute();
+    }
+
+    /**
+     * Adds the {@link TransitionAction} created using
+     * the specified {@link AbstractActionProducer}.
+     *
+     * @param producer the producer of the action
+     * @param <S>      the type of the source view
+     * @param <D>      the type of the destination view
+     * @param <T>      the type of the action
+     */
+    @SuppressWarnings("unchecked" /* Casts this to generic type to provide type covariance
+                                     in the derived classes. */)
+    public <S extends AbstractView,
+            D extends View,
+            T extends AbstractAction<S, D>>
+    void addAction(AbstractActionProducer<S, D, T> producer) {
+        final S source = (S) this;
+        final T action = producer.create(source);
+        addAction(action);
+    }
+
+    /**
+     * Removes all elements from {@link #actions}.
+     */
+    protected void clearActions() {
+        actions.clear();
+    }
+
+    private void addAction(Action action) {
+        checkNotNull(action);
+        checkHasNotReservedShortcut(action);
+        checkArgument(!actions.contains(action));
+        actions.add(action);
+    }
+
     @VisibleForTesting
-    String formatTitle() {
-        final String underline = repeat("-", title.length());
-        return title + lineSeparator() + underline;
+    Set<Action> getActions() {
+        return unmodifiableSet(actions);
+    }
+
+    @VisibleForTesting
+    public static Shortcut getBackShortcut() {
+        return BACK_SHORTCUT;
+    }
+
+    private static void checkHasNotReservedShortcut(Action action) {
+        final Predicate<Action> predicate = new ShortcutMatchPredicate(BACK_SHORTCUT.getValue());
+        final boolean hasReservedShortcut = predicate.test(action);
+
+        if (hasReservedShortcut) {
+            throw newIllegalArgumentException("Action with reserved shortcut `%s` was specified.",
+                                              BACK_SHORTCUT);
+        }
+    }
+
+    private static class ShortcutMatchPredicate implements Predicate<Action> {
+
+        private final String shortcutValue;
+
+        private ShortcutMatchPredicate(String shortcutValue) {
+            this.shortcutValue = shortcutValue;
+        }
+
+        @Override
+        public boolean test(Action action) {
+            return action.getShortcut()
+                         .getValue()
+                         .equals(shortcutValue);
+        }
     }
 }
