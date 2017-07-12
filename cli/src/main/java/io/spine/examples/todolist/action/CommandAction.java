@@ -67,12 +67,12 @@ public abstract class CommandAction<M extends Message,
      */
     protected abstract void post(M commandMessage);
 
-    public abstract static class ExecuteCommandActionProducer<M extends Message,
-                                                              B extends ValidatingBuilder<M, ? extends Message.Builder>,
-                                                              T extends CommandAction<M, B>>
+    public abstract static class CommandActionProducer<M extends Message,
+                                                       B extends ValidatingBuilder<M, ? extends Message.Builder>,
+                                                       T extends CommandAction<M, B>>
             extends AbstractActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
 
-        protected ExecuteCommandActionProducer() {
+        protected CommandActionProducer() {
             super(ACTION_NAME, ACTION_SHORTCUT);
         }
     }

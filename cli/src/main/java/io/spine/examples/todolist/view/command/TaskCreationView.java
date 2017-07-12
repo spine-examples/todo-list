@@ -51,7 +51,7 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
     public static TaskCreationView create() {
         final TaskCreationView view = new TaskCreationView();
         view.addAction(new EnterDescriptionProducer("Enter description", new Shortcut("d")));
-        view.addAction(new Command.ExecuteCommandProducer());
+        view.addAction(new CreateTask.CreateTaskProducer());
         return view;
     }
 
@@ -93,9 +93,9 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
             getBuilder().setDescription(description);
         }
 
-        static class EnterDescriptionProducer extends AbstractCommandActionProducer<CreateBasicTask,
-                                                                                    CreateBasicTaskVBuilder,
-                                                                                    EnterDescription> {
+        static class EnterDescriptionProducer extends EditCommandActionProducer<CreateBasicTask,
+                                                                                CreateBasicTaskVBuilder,
+                                                                                EnterDescription> {
 
             private EnterDescriptionProducer(String name, Shortcut shortcut) {
                 super(name, shortcut);
@@ -109,10 +109,10 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
         }
     }
 
-    private static class Command extends CommandAction<CreateBasicTask,
-                                                       CreateBasicTaskVBuilder> {
+    private static class CreateTask extends CommandAction<CreateBasicTask,
+                                                          CreateBasicTaskVBuilder> {
 
-        private Command(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
+        private CreateTask(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
             super(source);
         }
 
@@ -121,13 +121,13 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
             getClient().create(commandMessage);
         }
 
-        static class ExecuteCommandProducer extends ExecuteCommandActionProducer<CreateBasicTask,
-                                                                                 CreateBasicTaskVBuilder,
-                Command> {
+        static class CreateTaskProducer extends CommandActionProducer<CreateBasicTask,
+                                                                      CreateBasicTaskVBuilder,
+                                                                      CreateTask> {
 
             @Override
-            public Command create(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
-                return new Command(source);
+            public CreateTask create(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
+                return new CreateTask(source);
             }
         }
     }

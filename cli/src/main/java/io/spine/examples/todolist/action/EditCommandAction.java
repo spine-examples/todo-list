@@ -86,12 +86,12 @@ public abstract class EditCommandAction<M extends Message,
      * @param <B> the validating builder type for the command message
      * @param <T> {@inheritDoc}
      */
-    public abstract static class AbstractCommandActionProducer<M extends Message,
-                                                               B extends ValidatingBuilder<M, ? extends Message.Builder>,
-                                                               T extends EditCommandAction<M, B>>
+    public abstract static class EditCommandActionProducer<M extends Message,
+                                                           B extends ValidatingBuilder<M, ? extends Message.Builder>,
+                                                           T extends EditCommandAction<M, B>>
             extends AbstractActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
 
-        protected AbstractCommandActionProducer(String name, Shortcut shortcut) {
+        protected EditCommandActionProducer(String name, Shortcut shortcut) {
             super(name, shortcut);
         }
     }
