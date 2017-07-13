@@ -59,4 +59,11 @@ class NoOpActionTest {
     void overrideToString() {
         assertEquals(format(action), action.toString());
     }
+
+    @Test
+    @DisplayName("not allow retrieve source or destination view")
+    void notAllowRetrieveSourceOrDestinationView() {
+        assertThrows(UnsupportedOperationException.class, action::getSource);
+        assertThrows(UnsupportedOperationException.class, action::getDestination);
+    }
 }

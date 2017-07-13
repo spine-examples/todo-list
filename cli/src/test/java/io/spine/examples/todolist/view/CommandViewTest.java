@@ -111,6 +111,8 @@ class CommandViewTest extends UserIoTest {
 
     private static class ThrowValidationExceptionAction implements Action {
 
+        private static final String UNSUPPORTED_MSG = "This class should not be used for this goal.";
+
         @Override
         public void execute() {
             throw new ValidationException(emptyList());
@@ -124,6 +126,16 @@ class CommandViewTest extends UserIoTest {
         @Override
         public Shortcut getShortcut() {
             return new Shortcut("t");
+        }
+
+        @Override
+        public View getSource() {
+            throw new UnsupportedOperationException(UNSUPPORTED_MSG);
+        }
+
+        @Override
+        public View getDestination() {
+            throw new UnsupportedOperationException(UNSUPPORTED_MSG);
         }
     }
 }

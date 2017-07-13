@@ -18,41 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.action;
+package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.ActionProducer;
+import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.view.View;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 /**
- * Abstract base class for the {@link ActionProducer}.
+ * Producer of an {@link Action}.
  *
- * @param <S> {@inheritDoc}
- * @param <D> {@inheritDoc}
- * @param <T> {@inheritDoc}
+ * <p>Allows to specify construction of the {@link Action} for an unknown source.
+ *
+ * @param <S> the type of the source view
+ * @param <D> the type of the destination view
+ * @param <T> the type of the action to be created
+ * @author Dmytro Grankin
  */
-abstract class AbstractActionProducer<S extends View,
-                                      D extends View,
-                                      T extends Action<S, D>> implements ActionProducer<S, D, T> {
+public interface ActionProducer<S extends View,
+                                D extends View,
+                                T extends Action<S, D>> {
 
-    private final String name;
-    private final Shortcut shortcut;
-
-    AbstractActionProducer(String name, Shortcut shortcut) {
-        checkArgument(!isNullOrEmpty(name));
-        checkNotNull(shortcut);
-        this.name = name;
-        this.shortcut = shortcut;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Shortcut getShortcut() {
-        return shortcut;
-    }
+    /**
+     * Creates the {@link Action} with the specified source.
+     *
+     * @param source the source {@link View}
+     * @return the action with the source
+     */
+    T create(S source);
 }

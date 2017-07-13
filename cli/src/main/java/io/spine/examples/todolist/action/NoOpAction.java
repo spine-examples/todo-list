@@ -20,6 +20,8 @@
 
 package io.spine.examples.todolist.action;
 
+import io.spine.examples.todolist.view.View;
+
 import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -33,7 +35,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  *
  * <p>Also suits for usage in tests, where {@link Action} behavior does not play a role.
  */
-public class NoOpAction implements Action {
+public class NoOpAction implements Action<View, View> {
+
+    private static final String UNSUPPORTED_MSG = "NoOpAction does not define transitions between views";
 
     private final String name;
     private final Shortcut shortcut;
@@ -58,6 +62,16 @@ public class NoOpAction implements Action {
     @Override
     public Shortcut getShortcut() {
         return shortcut;
+    }
+
+    @Override
+    public View getSource() {
+        throw new UnsupportedOperationException(UNSUPPORTED_MSG);
+    }
+
+    @Override
+    public View getDestination() {
+        throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
     @Override

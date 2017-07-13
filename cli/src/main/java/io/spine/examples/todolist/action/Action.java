@@ -20,14 +20,19 @@
 
 package io.spine.examples.todolist.action;
 
+import io.spine.examples.todolist.view.View;
+
 /**
- * An interface for all actions.
+ * <p>An {@code Action} takes the end-user from a {@linkplain #getSource()}  source view}
+ * to a {@linkplain #getDestination()}  destination view}.
  *
  * <p>Actions with same {@link Shortcut} are considered equal.
  *
+ * @param <S> the type of the source view
+ * @param <D> the type of the destination view
  * @author Dmytro Grankin
  */
-public interface Action {
+public interface Action<S extends View, D extends View> {
 
     /**
      * Executes the action.
@@ -44,9 +49,23 @@ public interface Action {
     /**
      * Obtains {@link Shortcut} of the action.
      *
-      * @return action shortcut
+     * @return action shortcut
      */
     Shortcut getShortcut();
+
+    /**
+     * A source {@code View} of the action.
+     *
+     * @return a source view
+     */
+    S getSource();
+
+    /**
+     * A destination {@code View} of the action.
+     *
+     * @return a destination view
+     */
+    D getDestination();
 
     /**
      * Compares the specified object with this action for equality.

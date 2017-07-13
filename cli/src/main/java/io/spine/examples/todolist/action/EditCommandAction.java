@@ -63,7 +63,7 @@ public class EditCommandAction<M extends Message,
     @Override
     public void execute() {
         for (Edit<M, B> edit : edits) {
-            execute(edit);
+            start(edit);
         }
 
         final Screen screen = getSource().getScreen();
@@ -71,14 +71,14 @@ public class EditCommandAction<M extends Message,
     }
 
     @VisibleForTesting
-    void execute(Edit<M, B> edit) {
+    void start(Edit<M, B> edit) {
         final Screen screen = getSource().getScreen();
         try {
             edit.start(screen, getSource().getState());
         } catch (ValidationException e) {
             final List<String> errorMessages = toErrorMessages(e);
             errorMessages.forEach(screen::println);
-            execute(edit);
+            start(edit);
         }
     }
 

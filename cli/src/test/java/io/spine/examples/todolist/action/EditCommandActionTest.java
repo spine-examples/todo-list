@@ -112,7 +112,7 @@ class EditCommandActionTest extends UserIoTest {
     void repeatEditAfterValidationException() {
         addAnswer(INVALID_COMMENT);
         addAnswer(VALID_COMMENT);
-        action.execute(new CommentEdit());
+        action.start(new CommentEdit());
         assertAllAnswersWereGiven();
     }
 

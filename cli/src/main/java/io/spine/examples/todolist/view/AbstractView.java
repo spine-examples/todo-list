@@ -21,9 +21,8 @@
 package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.spine.examples.todolist.ActionProducer;
 import io.spine.examples.todolist.Screen;
-import io.spine.examples.todolist.action.AbstractAction;
-import io.spine.examples.todolist.action.AbstractActionProducer;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
@@ -112,8 +111,7 @@ public abstract class AbstractView implements View {
     }
 
     /**
-     * Adds the {@link TransitionAction} created using
-     * the specified {@link AbstractActionProducer}.
+     * Adds the {@link TransitionAction} created using the specified {@link ActionProducer}.
      *
      * @param producer the producer of the action
      * @param <S>      the type of the source view
@@ -124,8 +122,8 @@ public abstract class AbstractView implements View {
                                      in the derived classes. */)
     public <S extends AbstractView,
             D extends View,
-            T extends AbstractAction<S, D>>
-    void addAction(AbstractActionProducer<S, D, T> producer) {
+            T extends Action<S, D>>
+    void addAction(ActionProducer<S, D, T> producer) {
         final S source = (S) this;
         final T action = producer.create(source);
         addAction(action);

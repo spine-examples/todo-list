@@ -29,14 +29,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
- * An {@code Action} which takes the end-user from a {@linkplain #source source view}
- * to a {@linkplain #destination destination view}.
+ * Abstract base class for {@link Action}.
  *
- * @param <S> the type of the source view
- * @param <D> the type of the destination view
+ * @param <S> {@inheritDoc}
+ * @param <D> {@inheritDoc}
  * @author Dmytro Grankin
  */
-public abstract class AbstractAction<S extends View, D extends View> implements Action {
+abstract class AbstractAction<S extends View, D extends View> implements Action<S, D> {
 
     private final String name;
     private final Shortcut shortcut;
@@ -72,10 +71,12 @@ public abstract class AbstractAction<S extends View, D extends View> implements 
         return shortcut;
     }
 
+    @Override
     public S getSource() {
         return source;
     }
 
+    @Override
     public D getDestination() {
         return destination;
     }
