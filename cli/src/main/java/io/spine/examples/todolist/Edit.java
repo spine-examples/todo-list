@@ -35,7 +35,7 @@ public interface Edit<M extends Message,
      * Starts editing of the specified state.
      *
      * @param screen the {@link Screen}
-     * @param state the validating builder state
+     * @param state  the validating builder state
      */
     void start(Screen screen, B state);
 }

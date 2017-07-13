@@ -53,9 +53,9 @@ class MyTaskView extends EntityView<TaskId, TaskView> {
                                                 .getMyList()
                                                 .getItemsList();
         final Optional<TaskView> optionalView = views.stream()
-                                                         .filter(view -> view.getId()
-                                                                             .equals(id))
-                                                         .findFirst();
+                                                     .filter(view -> view.getId()
+                                                                         .equals(id))
+                                                     .findFirst();
         if (optionalView.isPresent()) {
             return optionalView.get();
         }
