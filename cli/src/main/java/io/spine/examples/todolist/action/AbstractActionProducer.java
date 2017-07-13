@@ -57,11 +57,11 @@ public abstract class AbstractActionProducer<S extends View,
      */
     public abstract T create(S source);
 
-    protected String getName() {
+    public String getName() {
         return name;
     }
 
-    protected Shortcut getShortcut() {
+    public Shortcut getShortcut() {
         return shortcut;
     }
 }
