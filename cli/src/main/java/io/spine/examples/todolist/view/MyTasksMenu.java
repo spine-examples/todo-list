@@ -26,6 +26,9 @@ import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskListProducer;
 
 /**
+ * Menu of actions that are related to
+ * {@link io.spine.examples.todolist.q.projection.MyListView MyListView}.
+ *
  * @author Dmytro Grankin
  */
 class MyTasksMenu extends ActionListView {

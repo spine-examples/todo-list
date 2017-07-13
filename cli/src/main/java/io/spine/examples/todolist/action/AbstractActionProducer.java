@@ -50,18 +50,18 @@ public abstract class AbstractActionProducer<S extends View,
     }
 
     /**
-     * Creates the {@link TransitionAction} with the specified source.
+     * Creates the {@link AbstractAction} with the specified source.
      *
      * @param source the source {@link View}
      * @return the action with the source
      */
     public abstract T create(S source);
 
-    public String getName() {
+    protected String getName() {
         return name;
     }
 
-    public Shortcut getShortcut() {
+    protected Shortcut getShortcut() {
         return shortcut;
     }
 }

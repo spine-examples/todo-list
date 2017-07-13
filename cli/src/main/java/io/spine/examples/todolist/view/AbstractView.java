@@ -75,80 +75,32 @@ public abstract class AbstractView implements View {
         this.actions = new LinkedHashSet<>();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Has the following render sequence:
+     * <ol>
+     *     <li>title</li>
+     *     <li>body</li>
+     *     <li>actions</li>
+     * </ol>
+     *
+     * @param screen {@inheritDoc}
+     */
     @Override
     public void render(Screen screen) {
         setScreen(screen);
         renderTitle();
         renderBody();
-        renderActions();
+        addBackAndRenderActions();
         final Action selectedAction = selectAction();
         executeAction(selectedAction);
     }
 
-    private void renderTitle() {
-        final String titleUnderline = repeat("-", title.length());
-        getScreen().println(title);
-        getScreen().println(titleUnderline);
-    }
-
-    protected abstract void renderBody();
-
-    private void renderActions() {
-        addBackAction();
-        actions.stream()
-               .map(Action::toString)
-               .forEach(actionView -> getScreen().println(actionView));
-    }
-
     /**
-     * Obtains the action leading to the {@linkplain Screen#getPreviousView(View) previous view}.
-     *
-     * @param name     the name for the action
-     * @param shortcut the shortcut for the action
-     * @return the back action
+     * Renders a body of the view.
      */
-    @VisibleForTesting
-    Action createBackAction(String name, Shortcut shortcut) {
-        final Optional<View> previousView = screen.getPreviousView(this);
-        return previousView
-                .<Action>map(view -> new TransitionAction<>(name, shortcut, this, view))
-                .orElseGet(() -> new NoOpAction(name, shortcut));
-    }
-
-    @VisibleForTesting
-    public void setScreen(Screen screen) {
-        checkNotNull(screen);
-        this.screen = screen;
-    }
-
-    @Override
-    public Screen getScreen() {
-        return screen;
-    }
-
-    private void addBackAction() {
-        final Action action = createBackAction(BACK_NAME, BACK_SHORTCUT);
-        actions.add(action);
-    }
-
-    private Action selectAction() {
-        do {
-            final Optional<Action> selectedAction = trySelectAction();
-            if (!selectedAction.isPresent()) {
-                getScreen().println(INVALID_SELECTION_MSG);
-            } else {
-                return selectedAction.get();
-            }
-        } while (true);
-    }
-
-    private Optional<Action> trySelectAction() {
-        final String answer = getScreen().promptUser(SELECT_ACTION_MSG);
-        final Predicate<Action> actionMatch = new ShortcutMatchPredicate(answer);
-        return actions.stream()
-                      .filter(actionMatch)
-                      .findFirst();
-    }
+    protected abstract void renderBody();
 
     /**
      * Executes the specified action.
@@ -186,11 +138,70 @@ public abstract class AbstractView implements View {
         actions.clear();
     }
 
+    private void renderTitle() {
+        final String titleUnderline = repeat("-", title.length());
+        getScreen().println(title);
+        getScreen().println(titleUnderline);
+    }
+
+    private void addBackAndRenderActions() {
+        final Action back = createBackAction(BACK_NAME, BACK_SHORTCUT);
+        actions.add(back);
+        actions.stream()
+               .map(Action::toString)
+               .forEach(actionView -> getScreen().println(actionView));
+    }
+
+    /**
+     * Obtains the action leading to the {@linkplain Screen#getPreviousView(View) previous view}.
+     *
+     * @param name     the name for the action
+     * @param shortcut the shortcut for the action
+     * @return the back action
+     */
+    @VisibleForTesting
+    Action createBackAction(String name, Shortcut shortcut) {
+        final Optional<View> previousView = screen.getPreviousView(this);
+        return previousView
+                .<Action>map(view -> new TransitionAction<>(name, shortcut, this, view))
+                .orElseGet(() -> new NoOpAction(name, shortcut));
+    }
+
+    private Action selectAction() {
+        do {
+            final Optional<Action> selectedAction = trySelectAction();
+            if (!selectedAction.isPresent()) {
+                getScreen().println(INVALID_SELECTION_MSG);
+            } else {
+                return selectedAction.get();
+            }
+        } while (true);
+    }
+
+    private Optional<Action> trySelectAction() {
+        final String answer = getScreen().promptUser(SELECT_ACTION_MSG);
+        final Predicate<Action> actionMatch = new ShortcutMatchPredicate(answer);
+        return actions.stream()
+                      .filter(actionMatch)
+                      .findFirst();
+    }
+
     private void addAction(Action action) {
         checkNotNull(action);
         checkHasNotReservedShortcut(action);
         checkArgument(!actions.contains(action));
         actions.add(action);
+    }
+
+    @Override
+    public Screen getScreen() {
+        return screen;
+    }
+
+    @VisibleForTesting
+    public void setScreen(Screen screen) {
+        checkNotNull(screen);
+        this.screen = screen;
     }
 
     @VisibleForTesting

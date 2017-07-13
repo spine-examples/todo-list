@@ -38,13 +38,13 @@ class ConfirmationTest extends UserIoTest {
 
     private static final String QUESTION = "?";
 
-    private final Confirmation confirmation = new Confirmation();
+    private Confirmation confirmation;
 
     @BeforeEach
     @Override
     protected void setUp() {
         super.setUp();
-        confirmation.setScreen(getScreen());
+        confirmation = new Confirmation(getScreen());
     }
 
     @Test

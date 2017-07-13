@@ -20,12 +20,10 @@
 
 package io.spine.examples.todolist.validator;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.Screen;
 
 import java.util.Optional;
 
-import static io.spine.examples.todolist.AppConfig.newScreen;
 import static io.spine.examples.todolist.validator.ConfirmationValidator.getNegativeAnswer;
 import static io.spine.examples.todolist.validator.ConfirmationValidator.getPositiveAnswer;
 import static java.lang.String.format;
@@ -40,7 +38,11 @@ class Confirmation {
     private static final String HINT_FORMAT = "(%s/%s)";
 
     private final Validator<String> validator = new ConfirmationValidator();
-    private Screen screen = newScreen();
+    private final Screen screen;
+
+    Confirmation(Screen screen) {
+        this.screen = screen;
+    }
 
     /**
      * Obtains a confirmation value for the specified question.
@@ -81,10 +83,5 @@ class Confirmation {
 
     private static String getHint() {
         return format(HINT_FORMAT, getPositiveAnswer(), getNegativeAnswer());
-    }
-
-    @VisibleForTesting
-    void setScreen(Screen screen) {
-        this.screen = screen;
     }
 }

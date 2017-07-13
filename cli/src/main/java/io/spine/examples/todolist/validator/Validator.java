@@ -21,22 +21,22 @@
 package io.spine.examples.todolist.validator;
 
 /**
- * Serves as supertype for all `cli` validators.
+ * Serves as supertype for all validators.
  *
  * @author Illia Shepilov
  */
 public interface Validator<T> {
 
     /**
-     * Validates the value text from the user.
+     * Validates the specified value.
      *
-     * @param value the user value
+     * @param value the value to validate
      * @return {@code true} if value is valid, otherwise {@code false}
      */
     boolean validate(T value);
 
     /**
-     * Provides the hint about valid values.
+     * Provides the hint about the valid values.
      *
      * @return the hint message
      */
