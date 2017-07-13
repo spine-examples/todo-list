@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.action;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.Edit;
 import io.spine.examples.todolist.Screen;
@@ -69,7 +70,8 @@ public class EditCommandAction<M extends Message,
         screen.renderView(getDestination());
     }
 
-    private void execute(Edit<M, B> edit) {
+    @VisibleForTesting
+    void execute(Edit<M, B> edit) {
         final Screen screen = getSource().getScreen();
         try {
             edit.start(screen, getSource().getState());

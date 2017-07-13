@@ -20,18 +20,19 @@
 
 package io.spine.examples.todolist.action;
 
-import com.google.protobuf.StringValue;
 import io.spine.examples.todolist.Edit;
 import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.UserIoTest;
+import io.spine.examples.todolist.test.action.Comment;
+import io.spine.examples.todolist.test.action.CommentVBuilder;
 import io.spine.examples.todolist.view.CommandView;
-import io.spine.validate.StringValueVBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
+
 import static io.spine.examples.todolist.action.EditCommandAction.newProducer;
-import static io.spine.examples.todolist.action.EditCommandActionTest.AnEdit.VALUE_AFTER_UPDATE;
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
@@ -49,9 +50,12 @@ class EditCommandActionTest extends UserIoTest {
     private static final String ACTION_NAME = "action";
     private static final Shortcut SHORTCUT = new Shortcut("s");
 
+    private static final String VALID_COMMENT = "a comment";
+    private static final String INVALID_COMMENT = "";
+
     private final ACommandView view = new ACommandView();
-    private final EditCommandAction<StringValue, StringValueVBuilder> action =
-            newProducer(ACTION_NAME, SHORTCUT, singleton(new AnEdit())).create(view);
+    private final EditCommandAction<Comment, CommentVBuilder> action =
+            newProducer(ACTION_NAME, SHORTCUT, singleton(new CommentEdit())).create(view);
 
     @Override
     @BeforeEach
@@ -68,6 +72,15 @@ class EditCommandActionTest extends UserIoTest {
     }
 
     @Test
+    @DisplayName("create the action with one more edit")
+    void createActionWithEdits() {
+        final Collection<Edit<Comment, CommentVBuilder>> edits = singleton(new CommentEdit());
+        final Action action = newProducer(ACTION_NAME, SHORTCUT, edits).create(view);
+        assertEquals(ACTION_NAME, action.getName());
+        assertEquals(SHORTCUT, action.getShortcut());
+    }
+
+    @Test
     @DisplayName("have same source and destination view")
     void haveSameSourceAndDestination() {
         assertSame(action.getSource(), action.getDestination());
@@ -76,6 +89,7 @@ class EditCommandActionTest extends UserIoTest {
     @Test
     @DisplayName("render destination view")
     void renderDestinationView() {
+        addAnswer(VALID_COMMENT);
         addAnswer(getBackShortcut().getValue());
         action.execute();
         assertTrue(view.wasRendered);
@@ -84,14 +98,25 @@ class EditCommandActionTest extends UserIoTest {
     @Test
     @DisplayName("update state of a view")
     void updateViewState() {
+        addAnswer(VALID_COMMENT);
         addAnswer(getBackShortcut().getValue());
+
         action.execute();
-        assertEquals(VALUE_AFTER_UPDATE, view.getState()
-                                             .build()
-                                             .getValue());
+        assertEquals(VALID_COMMENT, view.getState()
+                                        .build()
+                                        .getValue());
     }
 
-    private static class ACommandView extends CommandView<StringValue, StringValueVBuilder> {
+    @Test
+    @DisplayName("repeat an edit if ValidationException is occurred")
+    void repeatEditAfterValidationException() {
+        addAnswer(INVALID_COMMENT);
+        addAnswer(VALID_COMMENT);
+        action.execute(new CommentEdit());
+        assertAllAnswersWereGiven();
+    }
+
+    private static class ACommandView extends CommandView<Comment, CommentVBuilder> {
 
         private boolean wasRendered;
 
@@ -106,18 +131,17 @@ class EditCommandActionTest extends UserIoTest {
         }
 
         @Override
-        protected String renderState(StringValueVBuilder state) {
+        protected String renderState(CommentVBuilder state) {
             return "";
         }
     }
 
-    static class AnEdit implements Edit<StringValue, StringValueVBuilder> {
-
-        static final String VALUE_AFTER_UPDATE = "updated";
+    private static class CommentEdit implements Edit<Comment, CommentVBuilder> {
 
         @Override
-        public void start(Screen screen, StringValueVBuilder state) {
-            state.setValue(VALUE_AFTER_UPDATE);
+        public void start(Screen screen, CommentVBuilder state) {
+            final String commentValue = screen.promptUser("Enter a comment");
+            state.setValue(commentValue);
         }
     }
 }

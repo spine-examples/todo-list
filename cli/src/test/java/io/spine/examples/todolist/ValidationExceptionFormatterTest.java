@@ -21,8 +21,6 @@
 package io.spine.examples.todolist;
 
 import com.google.protobuf.Descriptors.FieldDescriptor;
-import io.spine.examples.todolist.view.command.NaturalNumber;
-import io.spine.examples.todolist.view.command.NaturalNumberVBuilder;
 import io.spine.validate.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

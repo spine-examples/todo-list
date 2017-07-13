@@ -20,11 +20,11 @@
 
 package io.spine.examples.todolist.view;
 
+import com.google.protobuf.StringValue;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.test.CreateComment;
-import io.spine.examples.todolist.test.CreateCommentVBuilder;
+import io.spine.validate.StringValueVBuilder;
 import io.spine.validate.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +34,7 @@ import org.junit.jupiter.api.Test;
 import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static java.lang.System.lineSeparator;
+import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -46,8 +47,7 @@ class CommandViewTest extends UserIoTest {
 
     private static final Shortcut BACK_SHORTCUT = getBackShortcut();
 
-    private final CreateCommentView view = new CreateCommentView();
-    private final Action buildState = new BuildState(view);
+    private final ACommandView view = new ACommandView();
 
     @BeforeEach
     @Override
@@ -60,18 +60,19 @@ class CommandViewTest extends UserIoTest {
     @DisplayName("render state representation")
     void renderStateRepresentation() {
         view.renderBody();
-        final String expectedBody = view.renderState(CreateCommentVBuilder.newBuilder()) + lineSeparator();
+        final String expectedBody = view.renderState(StringValueVBuilder.newBuilder()) + lineSeparator();
         assertOutput(expectedBody);
     }
 
     @Test
     @DisplayName("wrap ValidationException and re-render itself")
     void displayViewOnValidationException() {
-        assertThrows(ValidationException.class, buildState::execute);
+        final Action throwVException = new ThrowValidationExceptionAction();
+        assertThrows(ValidationException.class, throwVException::execute);
         assertFalse(view.wasDisplayed);
 
         addAnswer(BACK_SHORTCUT.getValue());
-        view.executeAction(buildState);
+        view.executeAction(new ThrowValidationExceptionAction());
 
         assertTrue(view.wasDisplayed);
     }
@@ -88,11 +89,11 @@ class CommandViewTest extends UserIoTest {
         }
     }
 
-    private static class CreateCommentView extends CommandView<CreateComment, CreateCommentVBuilder> {
+    private static class ACommandView extends CommandView<StringValue, StringValueVBuilder> {
 
         private boolean wasDisplayed = false;
 
-        private CreateCommentView() {
+        private ACommandView() {
             super("View title");
         }
 
@@ -103,33 +104,26 @@ class CommandViewTest extends UserIoTest {
         }
 
         @Override
-        protected String renderState(CreateCommentVBuilder state) {
-            return "Comment: " + getState().getValue();
+        protected String renderState(StringValueVBuilder state) {
+            return "state";
         }
     }
 
-    private static class BuildState implements Action {
-
-        private final CreateCommentView view;
-
-        private BuildState(CreateCommentView view) {
-            this.view = view;
-        }
+    private static class ThrowValidationExceptionAction implements Action {
 
         @Override
         public void execute() {
-            view.getState()
-                .build();
+            throw new ValidationException(emptyList());
         }
 
         @Override
         public String getName() {
-            return "build";
+            return "throws ValidationException";
         }
 
         @Override
         public Shortcut getShortcut() {
-            return new Shortcut("b");
+            return new Shortcut("t");
         }
     }
 }
