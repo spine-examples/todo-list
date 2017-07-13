@@ -65,13 +65,4 @@ public class AppConfig {
     public static TodoClient getClient() {
         return CLIENT;
     }
-
-    /**
-     * Obtains the new {@link Screen}.
-     *
-     * @return the screen
-     */
-    public static Screen newScreen() {
-        return ScreenFactory.newInstance();
-    }
 }
