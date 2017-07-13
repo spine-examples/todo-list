@@ -18,9 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.view.View;
 
 /**

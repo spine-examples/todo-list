@@ -43,7 +43,7 @@ public abstract class EntityView<I extends Message, S extends Message> extends A
     }
 
     /**
-     * Updates {@link #state} and then renders the view.
+     * Loads the {@link #state} and then renders it.
      */
     @Override
     protected void renderBody() {

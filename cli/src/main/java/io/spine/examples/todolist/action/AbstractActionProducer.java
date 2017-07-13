@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.ActionProducer;
 import io.spine.examples.todolist.view.View;
 
 import static com.google.common.base.Preconditions.checkArgument;

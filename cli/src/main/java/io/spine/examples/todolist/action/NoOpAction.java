@@ -37,7 +37,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public class NoOpAction implements Action<View, View> {
 
-    private static final String UNSUPPORTED_MSG = "NoOpAction does not define transitions between views";
+    private static final String UNSUPPORTED_MSG = "NoOpAction does not support transitions between views";
 
     private final String name;
     private final Shortcut shortcut;

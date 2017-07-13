@@ -21,9 +21,9 @@
 package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.ActionProducer;
 import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.action.Action;
+import io.spine.examples.todolist.action.ActionProducer;
 import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
