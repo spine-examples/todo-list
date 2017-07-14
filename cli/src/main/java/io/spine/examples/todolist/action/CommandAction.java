@@ -29,7 +29,7 @@ import io.spine.validate.ValidatingBuilder;
  * A {@code CommandAction} posts a command obtained from a {@link CommandView} to a server.
  *
  * @param <M> the type of the command message
- * @param <B> the validating builder for the command message
+ * @param <B> the validating builder type for the command message
  * @author Dmytro Grankin
  */
 public abstract class CommandAction<M extends Message,
@@ -67,6 +67,13 @@ public abstract class CommandAction<M extends Message,
      */
     protected abstract void post(M commandMessage);
 
+    /**
+     * Producer of command actions.
+     *
+     * @param <M> the type of the command message
+     * @param <B> the validating builder type for the command message
+     * @param <T> {@inheritDoc}
+     */
     public abstract static class CommandActionProducer<M extends Message,
                                                        B extends ValidatingBuilder<M, ? extends Message.Builder>,
                                                        T extends CommandAction<M, B>>

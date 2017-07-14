@@ -82,6 +82,16 @@ public class EditCommandAction<M extends Message,
         }
     }
 
+    /**
+     * Creates a new instance of a {@code EditCommandActionProducer}.
+     *
+     * @param name     the name for the action
+     * @param shortcut the shortcut for the action
+     * @param edits    the edits for the action
+     * @param <M>      the type of the command message
+     * @param <B>      the validating builder type for the command message
+     * @return the new producer
+     */
     public static <M extends Message, B extends ValidatingBuilder<M, ? extends Message.Builder>>
     EditCommandActionProducer<M, B> newProducer(String name, Shortcut shortcut,
                                                 Collection<Edit<M, B>> edits) {
@@ -89,7 +99,7 @@ public class EditCommandAction<M extends Message,
     }
 
     /**
-     * {@inheritDoc}
+     * Producer of edit command actions.
      *
      * @param <M> the type of the command message
      * @param <B> the validating builder type for the command message

@@ -20,8 +20,14 @@
 
 package io.spine.examples.todolist.view;
 
+import io.spine.examples.todolist.Screen;
+
 /**
- * A {@code View} with {@linkplain #renderBody() empty body}.
+ * A {@code View} that represents list of
+ * {@linkplain io.spine.examples.todolist.action.Action actions}.
+ *
+ * <p>Typical instance of the class is a menu, where the end-user selects an {@code Action}
+ * to be executed from the actions list.
  *
  * @author Dmytro Grankin
  */
@@ -31,7 +37,12 @@ public class ActionListView extends AbstractView {
         super(title);
     }
 
+    /**
+     * Does nothing. All the required behavior for this class is implemented in the
+     * {@linkplain AbstractView#render(Screen) super} class.
+     */
     @Override
     protected void renderBody() {
+        // Do nothing.
     }
 }

@@ -29,7 +29,7 @@ import static io.spine.examples.todolist.validator.ConfirmationValidator.getPosi
 import static java.lang.String.format;
 
 /**
- * This class serves for asking a confirmation.
+ * This class serves for asking for a confirmation.
  *
  * @author Dmytro Grankin
  */

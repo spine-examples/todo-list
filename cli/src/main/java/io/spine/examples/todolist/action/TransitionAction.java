@@ -26,7 +26,9 @@ import io.spine.examples.todolist.view.View;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * {@inheritDoc}
+ * Base implementation of {@link Action}.
+ *
+ * <p>Executes transition from a {@link #source} to a {@link #destination} and nothing else.
  *
  * @param <S> {@inheritDoc}
  * @param <D> {@inheritDoc}
@@ -39,7 +41,7 @@ public class TransitionAction<S extends View, D extends View> extends AbstractAc
     }
 
     /**
-     * Makes transition to {@link #destination} view.
+     * Makes transition to a {@link #destination} view.
      */
     @Override
     public void execute() {
@@ -48,7 +50,7 @@ public class TransitionAction<S extends View, D extends View> extends AbstractAc
     }
 
     /**
-     * Creates a new instance of the {@code TransitionAction}.
+     * Creates a new instance of a {@code TransitionActionProducer}.
      *
      * @param name        the name for the action
      * @param shortcut    the shortcut for the action
