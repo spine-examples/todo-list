@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import com.google.protobuf.Message;
+import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.CommandAction;
 import io.spine.examples.todolist.action.EditCommandAction;
@@ -68,12 +69,14 @@ public abstract class CommandView<M extends Message,
 
     /**
      * Renders {@link #recentViolations} and the {@link #state} of the command message.
+     *
+     * @param screen {@inheritDoc}
      */
     @Override
-    protected void renderBody() {
-        renderRecentViolations();
+    protected void renderBody(Screen screen) {
+        renderRecentViolations(screen);
         final String renderedState = renderState(state);
-        getScreen().println(renderedState);
+        screen.println(renderedState);
     }
 
     /**
@@ -105,9 +108,9 @@ public abstract class CommandView<M extends Message,
         getScreen().renderView(this);
     }
 
-    private void renderRecentViolations() {
+    private void renderRecentViolations(Screen screen) {
         final List<String> errorMessages = format(recentViolations);
-        errorMessages.forEach(msg -> getScreen().println(msg));
+        errorMessages.forEach(screen::println);
         recentViolations.clear();
     }
 

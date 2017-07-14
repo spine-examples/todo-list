@@ -37,14 +37,20 @@ public class Given {
 
     public static class NoOpView implements View {
 
+        private boolean rendered;
+
         @Override
         public void render(Screen screen) {
-            // Do nothing.
+            rendered = true;
         }
 
         @Override
         public Screen getScreen() {
             return new TestScreen();
+        }
+
+        public boolean wasRendered() {
+            return rendered;
         }
     }
 }

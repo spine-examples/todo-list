@@ -20,10 +20,15 @@
 
 package io.spine.examples.todolist;
 
+import com.google.common.annotations.VisibleForTesting;
+import io.spine.examples.todolist.action.Shortcut;
+import io.spine.examples.todolist.action.TransitionAction;
 import io.spine.examples.todolist.view.View;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.Optional;
 
 /**
@@ -35,32 +40,44 @@ import java.util.Optional;
  */
 abstract class AbstractScreen implements Screen {
 
-    private View currentView;
-
-    /**
-     * A view to its previous view map.
-     */
-    private final Map<View, View> previousViews = new HashMap<>();
+    private final Deque<View> history = new ArrayDeque<>();
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void renderView(View view) {
-        if (!previousViews.containsKey(view)) {
-            previousViews.put(view, currentView);
+        if (isNewView(view)) {
+            history.push(view);
         }
-
-        currentView = view;
-        currentView.render(this);
+        view.render(this);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Optional<View> getPreviousView(View view) {
-        final View previousView = previousViews.get(view);
-        return Optional.ofNullable(previousView);
+    public Optional<TransitionAction<View, View>> createBackAction(String name, Shortcut shortcut) {
+        final boolean canGoBack = history.size() > 1;
+
+        if (!canGoBack) {
+            return Optional.empty();
+        }
+
+        final View current = history.pop();
+        final View previous = history.pop();
+        final TransitionAction<View, View> back = new TransitionAction<>(name, shortcut,
+                                                                         current, previous);
+        return Optional.of(back);
+    }
+
+    private boolean isNewView(View view) {
+        final View currentView = history.peek();
+        return currentView == null || !currentView.equals(view);
+    }
+
+    @VisibleForTesting
+    Collection<View> getHistory() {
+        return Collections.unmodifiableCollection(history);
     }
 }

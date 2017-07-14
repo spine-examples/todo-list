@@ -21,12 +21,12 @@
 package io.spine.examples.todolist.view;
 
 import com.google.protobuf.StringValue;
+import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.validate.StringValueVBuilder;
 import io.spine.validate.ValidationException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -49,17 +49,10 @@ class CommandViewTest extends UserIoTest {
 
     private final ACommandView view = new ACommandView();
 
-    @BeforeEach
-    @Override
-    protected void setUp() {
-        super.setUp();
-        view.setScreen(getScreen());
-    }
-
     @Test
     @DisplayName("render state representation")
     void renderStateRepresentation() {
-        view.renderBody();
+        view.renderBody(getScreen());
         final String expectedBody = view.renderState(StringValueVBuilder.newBuilder()) + lineSeparator();
         assertOutput(expectedBody);
     }
@@ -69,12 +62,12 @@ class CommandViewTest extends UserIoTest {
     void displayViewOnValidationException() {
         final Action throwVException = new ThrowValidationExceptionAction();
         assertThrows(ValidationException.class, throwVException::execute);
-        assertFalse(view.wasDisplayed);
+        assertFalse(view.wasRendered);
 
         addAnswer(BACK_SHORTCUT.getValue());
         view.executeAction(new ThrowValidationExceptionAction());
 
-        assertTrue(view.wasDisplayed);
+        assertTrue(view.wasRendered);
     }
 
     @SuppressWarnings("InnerClassMayBeStatic")
@@ -91,16 +84,16 @@ class CommandViewTest extends UserIoTest {
 
     private static class ACommandView extends CommandView<StringValue, StringValueVBuilder> {
 
-        private boolean wasDisplayed = false;
+        private boolean wasRendered = false;
 
         private ACommandView() {
             super("View title");
         }
 
         @Override
-        protected void renderBody() {
-            wasDisplayed = true;
-            super.renderBody();
+        protected void renderBody(Screen screen) {
+            wasRendered = true;
+            super.renderBody(screen);
         }
 
         @Override

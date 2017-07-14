@@ -32,7 +32,7 @@ public interface View {
     /**
      * Renders the view.
      *
-     * @param screen the screen
+     * @param screen the screen to use
      */
     void render(Screen screen);
 

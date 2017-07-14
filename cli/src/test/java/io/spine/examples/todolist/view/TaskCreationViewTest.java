@@ -24,7 +24,6 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import io.spine.examples.todolist.view.TaskCreationView.DescriptionEdit;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,13 +43,6 @@ class TaskCreationViewTest extends UserIoTest {
     private static final String VALID_DESCRIPTION = "to the task";
 
     private final TaskCreationView view = TaskCreationView.create();
-
-    @BeforeEach
-    @Override
-    protected void setUp() {
-        super.setUp();
-        view.setScreen(getScreen());
-    }
 
     @Test
     @DisplayName("handle empty description")

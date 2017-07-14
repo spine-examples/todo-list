@@ -24,14 +24,12 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.ActionProducer;
-import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
 
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -44,8 +42,16 @@ import static java.util.Collections.unmodifiableSet;
 /**
  * Abstract base class for views.
  *
- * <p>Contains {@link #actions} and provides
- * {@linkplain #selectAction() selection} mechanism for them.
+ * <p>Has the following render sequence:
+ * <ol>
+ *     <li>{@linkplain #renderTitle(Screen) title}</li>
+ *     <li>{@linkplain #renderBody(Screen) body}</li>
+ *     <li>{@linkplain #addBackAndRenderActions(Screen) actions}</li>
+ * </ol>
+ *
+ * <p>Automatically adds `back` action to the {@link #actions} before each render of actions.
+ *
+ * <p>In the end of rendering prompts a user to select an action to be executed.
  *
  * @author Dmytro Grankin
  */
@@ -61,45 +67,37 @@ public abstract class AbstractView implements View {
     private final String title;
     private final Set<Action> actions;
 
-    private Screen screen;
-
     /**
      * Creates a new instance without some {@link #actions}.
      *
      * @param title the view title
      */
-    protected AbstractView(String title) {
+    AbstractView(String title) {
         checkArgument(!isNullOrEmpty(title));
         this.title = title;
         this.actions = new LinkedHashSet<>();
     }
 
     /**
-     * {@inheritDoc}
-     *
-     * <p>Has the following render sequence:
-     * <ol>
-     *     <li>title</li>
-     *     <li>body</li>
-     *     <li>actions</li>
-     * </ol>
+     * Renders the view, prompts to select an action and then executes the action.
      *
      * @param screen {@inheritDoc}
      */
     @Override
     public void render(Screen screen) {
-        setScreen(screen);
-        renderTitle();
-        renderBody();
-        addBackAndRenderActions();
-        final Action selectedAction = selectAction();
+        renderTitle(screen);
+        renderBody(screen);
+        addBackAndRenderActions(screen);
+        final Action selectedAction = promptSelectAction(screen);
         executeAction(selectedAction);
     }
 
     /**
      * Renders a body of the view.
+     *
+     * @param screen the screen to use
      */
-    protected abstract void renderBody();
+    protected abstract void renderBody(Screen screen);
 
     /**
      * Executes the specified action.
@@ -136,52 +134,35 @@ public abstract class AbstractView implements View {
         actions.clear();
     }
 
-    private void renderTitle() {
+    private void renderTitle(Screen screen) {
         final String titleUnderline = repeat("-", title.length());
-        getScreen().println(title);
-        getScreen().println(titleUnderline);
+        screen.println(title);
+        screen.println(titleUnderline);
     }
 
-    private void addBackAndRenderActions() {
-        final Action back = createBackAction(BACK_NAME, BACK_SHORTCUT);
-        actions.add(back);
+    private void addBackAndRenderActions(Screen screen) {
+        final Optional<TransitionAction<View, View>> back = screen.createBackAction(BACK_NAME,
+                                                                                    BACK_SHORTCUT);
+        back.ifPresent(actions::add);
         actions.stream()
                .map(Action::toString)
-               .forEach(actionView -> getScreen().println(actionView));
+               .forEach(screen::println);
     }
 
-    /**
-     * Obtains the action leading to the {@linkplain Screen#getPreviousView(View) previous view}.
-     *
-     * @param name     the name for the action
-     * @param shortcut the shortcut for the action
-     * @return the back action
-     */
-    @VisibleForTesting
-    Action createBackAction(String name, Shortcut shortcut) {
-        final Optional<View> previousView = screen.getPreviousView(this);
-        return previousView
-                .<Action>map(view -> new TransitionAction<>(name, shortcut, this, view))
-                .orElseGet(() -> new NoOpAction(name, shortcut));
-    }
-
-    private Action selectAction() {
+    private Action promptSelectAction(Screen screen) {
         do {
-            final Optional<Action> selectedAction = trySelectAction();
+            final String shortcutValue = screen.promptUser(SELECT_ACTION_MSG);
+            final Optional<Action> selectedAction = actions.stream()
+                                                           .filter(action -> action.getShortcut()
+                                                                                   .getValue()
+                                                                                   .equals(shortcutValue))
+                                                           .findFirst();
             if (!selectedAction.isPresent()) {
-                getScreen().println(INVALID_SELECTION_MSG);
+                screen.println(INVALID_SELECTION_MSG);
             } else {
                 return selectedAction.get();
             }
         } while (true);
-    }
-
-    private Optional<Action> trySelectAction() {
-        final String answer = getScreen().promptUser(SELECT_ACTION_MSG);
-        final Predicate<Action> actionMatch = new ShortcutMatchPredicate(answer);
-        return actions.stream()
-                      .filter(actionMatch)
-                      .findFirst();
     }
 
     private void addAction(Action action) {
@@ -191,19 +172,13 @@ public abstract class AbstractView implements View {
         actions.add(action);
     }
 
+    //TODO:2017-07-14:dmytro.grankin: remove this method from the interface
     @Override
     public Screen getScreen() {
-        return screen;
+        throw new UnsupportedOperationException();
     }
 
-    @VisibleForTesting
-    public void setScreen(Screen screen) {
-        checkNotNull(screen);
-        this.screen = screen;
-    }
-
-    @VisibleForTesting
-    Set<Action> getActions() {
+    public Set<Action> getActions() {
         return unmodifiableSet(actions);
     }
 
@@ -213,28 +188,11 @@ public abstract class AbstractView implements View {
     }
 
     private static void checkHasNotReservedShortcut(Action action) {
-        final Predicate<Action> predicate = new ShortcutMatchPredicate(BACK_SHORTCUT.getValue());
-        final boolean hasReservedShortcut = predicate.test(action);
-
+        final boolean hasReservedShortcut = action.getShortcut()
+                                                  .equals(BACK_SHORTCUT);
         if (hasReservedShortcut) {
             throw newIllegalArgumentException("Action with reserved shortcut `%s` was specified.",
                                               BACK_SHORTCUT);
-        }
-    }
-
-    private static class ShortcutMatchPredicate implements Predicate<Action> {
-
-        private final String shortcutValue;
-
-        private ShortcutMatchPredicate(String shortcutValue) {
-            this.shortcutValue = shortcutValue;
-        }
-
-        @Override
-        public boolean test(Action action) {
-            return action.getShortcut()
-                         .getValue()
-                         .equals(shortcutValue);
         }
     }
 }

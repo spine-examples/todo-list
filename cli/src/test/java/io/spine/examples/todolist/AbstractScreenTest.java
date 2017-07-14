@@ -20,15 +20,20 @@
 
 package io.spine.examples.todolist;
 
+import io.spine.examples.todolist.Given.NoOpView;
+import io.spine.examples.todolist.action.Shortcut;
+import io.spine.examples.todolist.action.TransitionAction;
 import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.Optional;
 
 import static io.spine.examples.todolist.Given.newNoOpView;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Dmytro Grankin
@@ -36,50 +41,66 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 @DisplayName("AbstractScreen should")
 class AbstractScreenTest {
 
-    private final Screen screen = new AnAbstractScreen();
+    private static final String BACK_NAME = "back";
+    private static final Shortcut BACK_SHORTCUT = new Shortcut("b");
+
+    private final AbstractScreen screen = new AnAbstractScreen();
 
     @Test
-    @DisplayName("not return previous view for a root view")
-    void notReturnPreviousViewForRootView() {
+    @DisplayName("render a view")
+    void renderView() {
+        final NoOpView view = newNoOpView();
+        screen.renderView(view);
+        assertTrue(view.wasRendered());
+    }
+
+    @Test
+    @DisplayName("not modify history on a current view rendering")
+    void notModifyHistoryOnCurrentViewRendering() {
+        final View view = newNoOpView();
+        final Collection<View> history = screen.getHistory();
+
+        assertTrue(history.isEmpty());
+
+        screen.renderView(view);
+        assertEquals(1, history.size());
+
+        screen.renderView(view);
+        assertEquals(1, history.size());
+    }
+
+    @Test
+    @DisplayName("not create back action if there is not back destination")
+    void notCreateBackAction() {
         final View view = newNoOpView();
         screen.renderView(view);
-        final Optional<View> previousView = screen.getPreviousView(view);
-        assertFalse(previousView.isPresent());
+        final Optional<TransitionAction<View, View>> back = screen.createBackAction(BACK_NAME,
+                                                                                    BACK_SHORTCUT);
+        assertFalse(back.isPresent());
     }
 
     @Test
-    @DisplayName("return previous view for a child view")
-    void returnPreviousViewForChildView() {
-        final View rootView = newNoOpView();
-        final View childView = newNoOpView();
+    @DisplayName("create back action if there is back destination")
+    void createBackAction() {
+        final View first = newNoOpView();
+        final View second = newNoOpView();
+        final View third = newNoOpView();
 
-        screen.renderView(rootView);
-        screen.renderView(childView);
+        screen.renderView(first);
+        screen.renderView(second);
+        screen.renderView(third);
 
-        final View previousView = screen.getPreviousView(childView)
-                                        .get();
-        assertSame(rootView, previousView);
-    }
-
-    @Test
-    @DisplayName("not overwrite a previous view")
-    void notOverwritePreviousView() {
-        final View rootView = newNoOpView();
-        final View childView = newNoOpView();
-
-        screen.renderView(rootView);
-        screen.renderView(childView);
-        assertSame(rootView, screen.getPreviousView(childView)
-                                   .get());
-
-        screen.renderView(childView);
-        assertSame(rootView, screen.getPreviousView(childView)
-                                   .get());
+        final TransitionAction<View, View> back = screen.createBackAction(BACK_NAME, BACK_SHORTCUT)
+                                                        .get();
+        assertEquals(BACK_NAME, back.getName());
+        assertEquals(BACK_SHORTCUT, back.getShortcut());
+        assertEquals(third, back.getSource());
+        assertEquals(second, back.getDestination());
     }
 
     private static class AnAbstractScreen extends AbstractScreen {
 
-        private static final String UNSUPPORTED_MSG = "Should not be called in this test.";
+        private static final String UNSUPPORTED_MSG = "Not implemented in AbstractScreen.";
 
         @Override
         public String promptUser(String prompt) {

@@ -20,9 +20,9 @@
 
 package io.spine.examples.todolist.view;
 
+import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.NoOpAction;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
 import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
@@ -33,10 +33,7 @@ import java.util.Set;
 
 import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 import static io.spine.examples.todolist.view.AbstractView.getBackShortcut;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -50,39 +47,6 @@ class AbstractViewTest extends UserIoTest {
     private static final Shortcut SHORTCUT = new Shortcut("s");
 
     private final AbstractView view = new AView();
-
-    @Test
-    @DisplayName("create NoOpAction as a back action for a root view")
-    void createNoOpBackAction() {
-        view.setScreen(getScreen());
-        final Action back = view.createBackAction(ACTION_NAME, SHORTCUT);
-
-        assertEquals(ACTION_NAME, back.getName());
-        assertEquals(SHORTCUT, back.getShortcut());
-        assertThat(back, instanceOf(NoOpAction.class));
-    }
-
-    @Test
-    @DisplayName("create usual back action for a child view")
-    void createUsualBackAction() {
-        final AbstractView childView = new AView();
-        final ActionListView rootView = new ActionListView("root view");
-        rootView.addAction(newProducer(ACTION_NAME, SHORTCUT, childView));
-
-        addAnswer(SHORTCUT.getValue()); // Open child view.
-        addAnswer(getBackShortcut().getValue()); // Back to the root view.
-        addAnswer(getBackShortcut().getValue()); // Quit from the root view.
-
-        getScreen().renderView(rootView);
-
-        final TransitionAction back =
-                (TransitionAction) childView.createBackAction(ACTION_NAME, SHORTCUT);
-
-        assertEquals(ACTION_NAME, back.getName());
-        assertEquals(SHORTCUT, back.getShortcut());
-        assertSame(rootView, back.getDestination());
-        assertSame(childView, back.getSource());
-    }
 
     @Test
     @DisplayName("clear all actions")
@@ -151,7 +115,7 @@ class AbstractViewTest extends UserIoTest {
         }
 
         @Override
-        public void renderBody() {
+        public void renderBody(Screen screen) {
         }
     }
 

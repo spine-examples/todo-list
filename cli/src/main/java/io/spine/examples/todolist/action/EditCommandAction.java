@@ -62,23 +62,21 @@ public class EditCommandAction<M extends Message,
      */
     @Override
     public void execute() {
-        for (Edit<M, B> edit : edits) {
-            start(edit);
-        }
-
         final Screen screen = getSource().getScreen();
+        for (Edit<M, B> edit : edits) {
+            start(edit, screen);
+        }
         screen.renderView(getDestination());
     }
 
     @VisibleForTesting
-    void start(Edit<M, B> edit) {
-        final Screen screen = getSource().getScreen();
+    void start(Edit<M, B> edit, Screen screen) {
         try {
             edit.start(screen, getSource().getState());
         } catch (ValidationException e) {
             final List<String> errorMessages = format(e.getConstraintViolations());
             errorMessages.forEach(screen::println);
-            start(edit);
+            start(edit, screen);
         }
     }
 

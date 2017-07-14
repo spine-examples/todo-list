@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
 import io.spine.examples.todolist.q.projection.MyListView;
@@ -53,20 +54,19 @@ class MyTasksListView extends ActionListView {
     }
 
     @Override
-    protected void renderBody() {
+    protected void renderBody(Screen screen) {
         final MyListView myListView = getClient().getMyListView();
         final Collection<TransitionActionProducer> producers = producersFor(myListView);
         refreshActions(producers);
-        super.renderBody();
+        if (getActions().isEmpty()) {
+            screen.println(EMPTY_TASKS_LIST_MSG);
+        }
+        super.renderBody(screen);
     }
 
     private void refreshActions(Collection<TransitionActionProducer> newActionProducers) {
         clearActions();
-        if (newActionProducers.isEmpty()) {
-            getScreen().println(EMPTY_TASKS_LIST_MSG);
-        } else {
-            newActionProducers.forEach(this::addAction);
-        }
+        newActionProducers.forEach(this::addAction);
     }
 
     @VisibleForTesting

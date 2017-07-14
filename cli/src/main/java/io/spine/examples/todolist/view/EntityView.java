@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import com.google.protobuf.Message;
+import io.spine.examples.todolist.Screen;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -44,12 +45,14 @@ public abstract class EntityView<I extends Message, S extends Message> extends A
 
     /**
      * Loads the {@link #state} and then renders it.
+     *
+     * @param screen {@inheritDoc}
      */
     @Override
-    protected void renderBody() {
+    protected void renderBody(Screen screen) {
         state = load(id);
         final String renderedState = renderState(state);
-        getScreen().println(renderedState);
+        screen.println(renderedState);
     }
 
     /**

@@ -21,10 +21,10 @@
 package io.spine.examples.todolist.action;
 
 import com.google.protobuf.StringValue;
+import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.view.CommandView;
 import io.spine.validate.StringValueVBuilder;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -42,13 +42,6 @@ class CommandActionTest extends UserIoTest {
 
     private final UpdateStringValueView view = new UpdateStringValueView();
     private final UpdateStringValueAction action = new UpdateStringValueAction(view);
-
-    @BeforeEach
-    @Override
-    protected void setUp() {
-        super.setUp();
-        view.setScreen(getScreen());
-    }
 
     @Test
     @DisplayName("have same source and destination view")
@@ -68,7 +61,7 @@ class CommandActionTest extends UserIoTest {
 
         assertEquals(expectedString, action.getCommandMessageBeforeExecution()
                                            .getValue());
-        assertTrue(view.isRendered());
+        assertTrue(view.wasRendered());
     }
 
     @Test
@@ -110,7 +103,7 @@ class CommandActionTest extends UserIoTest {
         }
 
         @Override
-        protected void renderBody() {
+        protected void renderBody(Screen screen) {
             rendered = true;
         }
 
@@ -119,7 +112,7 @@ class CommandActionTest extends UserIoTest {
             return String.valueOf(rendered);
         }
 
-        private boolean isRendered() {
+        private boolean wasRendered() {
             return rendered;
         }
     }

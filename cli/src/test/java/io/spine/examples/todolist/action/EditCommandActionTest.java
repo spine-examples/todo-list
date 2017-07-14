@@ -26,7 +26,6 @@ import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.test.action.Comment;
 import io.spine.examples.todolist.test.action.CommentVBuilder;
 import io.spine.examples.todolist.view.CommandView;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -56,13 +55,6 @@ class EditCommandActionTest extends UserIoTest {
     private final ACommandView view = new ACommandView();
     private final EditCommandAction<Comment, CommentVBuilder> action =
             newProducer(ACTION_NAME, SHORTCUT, singleton(new CommentEdit())).create(view);
-
-    @Override
-    @BeforeEach
-    protected void setUp() {
-        super.setUp();
-        view.setScreen(getScreen());
-    }
 
     @Test
     @DisplayName("not allow empty edits")
@@ -112,7 +104,7 @@ class EditCommandActionTest extends UserIoTest {
     void repeatEditAfterValidationException() {
         addAnswer(INVALID_COMMENT);
         addAnswer(VALID_COMMENT);
-        action.start(new CommentEdit());
+        action.start(new CommentEdit(), getScreen());
         assertAllAnswersWereGiven();
     }
 

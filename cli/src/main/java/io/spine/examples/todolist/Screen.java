@@ -20,6 +20,8 @@
 
 package io.spine.examples.todolist;
 
+import io.spine.examples.todolist.action.Shortcut;
+import io.spine.examples.todolist.action.TransitionAction;
 import io.spine.examples.todolist.view.View;
 
 import java.util.Optional;
@@ -39,13 +41,14 @@ public interface Screen {
     void renderView(View view);
 
     /**
-     * Obtains previous view for the specified view.
+     * Obtains the action leading from a current view to a previous view.
      *
-     * @param view the view that was rendered after the previous view
-     * @return {@code Optional} of previous view,
-     *         or {@code Optional.empty} if the specified view is the first view that was rendered
+     * @param name     the name for the action
+     * @param shortcut the shortcut for the action
+     * @return {@code Optional} of the back action,
+     *         or {@code Optional.empty} if there is no previous view
      */
-    Optional<View> getPreviousView(View view);
+    Optional<TransitionAction<View, View>> createBackAction(String name, Shortcut shortcut);
 
     /**
      * Prompts a user for an input and receives the input value.

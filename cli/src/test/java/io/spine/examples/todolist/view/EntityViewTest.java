@@ -23,7 +23,6 @@ package io.spine.examples.todolist.view;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
 import io.spine.examples.todolist.UserIoTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -38,17 +37,10 @@ class EntityViewTest extends UserIoTest {
 
     private final AnEntityView view = new AnEntityView(Int32Value.getDefaultInstance());
 
-    @BeforeEach
-    @Override
-    protected void setUp() {
-        super.setUp();
-        view.setScreen(getScreen());
-    }
-
     @Test
     @DisplayName("load and render entity state")
     void loadAndRenderEntityState() {
-        view.renderBody();
+        view.renderBody(getScreen());
         final String expectedBody = view.renderState(AnEntityView.STATE) + lineSeparator();
         assertOutput(expectedBody);
     }
