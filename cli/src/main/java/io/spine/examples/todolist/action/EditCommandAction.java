@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static io.spine.examples.todolist.ValidationExceptionFormatter.toErrorMessages;
+import static io.spine.examples.todolist.ConstraintViolationFormatter.format;
 
 /**
  * An {@link Action}, that edits a {@linkplain CommandView#state state of the command view}.
@@ -76,7 +76,7 @@ public class EditCommandAction<M extends Message,
         try {
             edit.start(screen, getSource().getState());
         } catch (ValidationException e) {
-            final List<String> errorMessages = toErrorMessages(e);
+            final List<String> errorMessages = format(e.getConstraintViolations());
             errorMessages.forEach(screen::println);
             start(edit);
         }

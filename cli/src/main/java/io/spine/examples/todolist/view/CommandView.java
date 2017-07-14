@@ -25,22 +25,33 @@ import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.CommandAction;
 import io.spine.examples.todolist.action.EditCommandAction;
 import io.spine.reflect.GenericTypeIndex;
+import io.spine.validate.ConstraintViolation;
 import io.spine.validate.ValidatingBuilder;
 import io.spine.validate.ValidatingBuilders;
 import io.spine.validate.ValidationException;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.examples.todolist.ValidationExceptionFormatter.toErrorMessages;
+import static io.spine.examples.todolist.ConstraintViolationFormatter.format;
 import static io.spine.examples.todolist.view.CommandView.GenericParameter.STATE_BUILDER;
 
 /**
- * A {@code CommandView} is a view where end-user prepares and sends a command to a server.
+ * A {@code CommandView} is a view where the end-user prepares and sends a command to a server.
  *
- * <p>The view must predominantly consist of {@link EditCommandAction} and {@link CommandAction}.
+ * <p>{@link EditCommandAction} and {@link CommandAction} are well-suited for usage in this view.
  *
+ * <p>Typical structure of actions in a {@code CommandView}.
+ * <ol>
+ *     <li>prepare a command (EditCommandAction)</li>
+ *     <li>send a command to a server (CommandAction)</li>
+ *     <li>move back (TransitionAction)</li>
+ * </ol>
+ *
+ * @param <M> the type of the command message
+ * @param <B> the validating builder type for the command message
  * @author Dmytro Grankin
  */
 public abstract class CommandView<M extends Message,
@@ -48,18 +59,19 @@ public abstract class CommandView<M extends Message,
         extends AbstractView {
 
     private final B state;
-    private final Collection<String> validationErrors = new LinkedList<>();
+    private final Collection<ConstraintViolation> recentViolations = new LinkedList<>();
 
     protected CommandView(String title) {
         super(title);
         this.state = newBuilderInstance();
     }
 
+    /**
+     * Renders {@link #recentViolations} and the {@link #state} of the command message.
+     */
     @Override
     protected void renderBody() {
-        validationErrors.forEach(msg -> getScreen().println(msg));
-        validationErrors.clear();
-
+        renderRecentViolations();
         final String renderedState = renderState(state);
         getScreen().println(renderedState);
     }
@@ -67,7 +79,7 @@ public abstract class CommandView<M extends Message,
     /**
      * {@inheritDoc}
      *
-     * <p>Handles a {@link ValidationException} in case of occurrence.
+     * <p>Handles a {@link ValidationException} in the case of occurrence.
      *
      * @param action {@inheritDoc}
      */
@@ -80,11 +92,6 @@ public abstract class CommandView<M extends Message,
         }
     }
 
-    private void handleValidationException(ValidationException ex) {
-        validationErrors.addAll(toErrorMessages(ex));
-        getScreen().renderView(this);
-    }
-
     /**
      * Renders the specified state.
      *
@@ -92,6 +99,17 @@ public abstract class CommandView<M extends Message,
      * @return the string representation
      */
     protected abstract String renderState(B state);
+
+    private void handleValidationException(ValidationException ex) {
+        recentViolations.addAll(ex.getConstraintViolations());
+        getScreen().renderView(this);
+    }
+
+    private void renderRecentViolations() {
+        final List<String> errorMessages = format(recentViolations);
+        errorMessages.forEach(msg -> getScreen().println(msg));
+        recentViolations.clear();
+    }
 
     public B getState() {
         return state;

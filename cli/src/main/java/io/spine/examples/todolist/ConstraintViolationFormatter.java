@@ -23,42 +23,37 @@ package io.spine.examples.todolist;
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.FieldPath;
 import io.spine.validate.ConstraintViolation;
-import io.spine.validate.ValidationException;
 
 import java.util.LinkedList;
 import java.util.List;
 
-import static java.lang.String.format;
-
 /**
- * Utilities for {@code ValidationException} formatting.
+ * Utilities for {@code ConstraintViolation} formatting.
  *
  * @author Dmytro Grankin
  */
-public class ValidationExceptionFormatter {
+public class ConstraintViolationFormatter {
 
     @VisibleForTesting
     static final String ERROR_MSG_FORMAT = "Invalid `%s`.";
 
-    private ValidationExceptionFormatter() {
+    private ConstraintViolationFormatter() {
         // Prevent instantiation of this utility class.
     }
 
     /**
-     * Obtains error messages based on the specified {@code ValidationException}.
+     * Formats the specified constraint violations into a user-friendly representation.
      *
-     * <p>The error message tells about a name of an invalid field.
-     *
-     * @param e the {@code ValidationException}
-     * @return error messages
+     * @param violations the violations to format
+     * @return formatted error messages
      */
-    public static List<String> toErrorMessages(ValidationException e) {
+    public static List<String> format(Iterable<ConstraintViolation> violations) {
         final List<String> messages = new LinkedList<>();
-        for (ConstraintViolation violation : e.getConstraintViolations()) {
+        for (ConstraintViolation violation : violations) {
             final FieldPath fieldPath = violation.getFieldPath();
             final int fieldPathSize = fieldPath.getFieldNameCount();
             final String unqualifiedName = fieldPath.getFieldName(fieldPathSize - 1);
-            final String errorMessage = format(ERROR_MSG_FORMAT, unqualifiedName);
+            final String errorMessage = String.format(ERROR_MSG_FORMAT, unqualifiedName);
             messages.add(errorMessage);
         }
         return messages;

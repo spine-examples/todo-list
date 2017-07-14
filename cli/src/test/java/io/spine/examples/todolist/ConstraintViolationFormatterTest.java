@@ -27,40 +27,39 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.examples.todolist.ValidationExceptionFormatter.ERROR_MSG_FORMAT;
-import static io.spine.examples.todolist.ValidationExceptionFormatter.toErrorMessages;
+import static io.spine.examples.todolist.ConstraintViolationFormatter.ERROR_MSG_FORMAT;
+import static io.spine.examples.todolist.ConstraintViolationFormatter.format;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
-import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("ValidationExceptionFormatter should")
-class ValidationExceptionFormatterTest {
+@DisplayName("ConstraintViolationFormatter should")
+class ConstraintViolationFormatterTest {
 
     @Test
     @DisplayName("have the private constructor")
     void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(ValidationExceptionFormatter.class);
+        assertHasPrivateParameterlessCtor(ConstraintViolationFormatter.class);
     }
 
     @Test
-    @DisplayName("obtain error messages from `ValidationException`")
-    void returnProperMessage() {
+    @DisplayName("format constraint violations")
+    void formatConstraintViolations() {
         final NaturalNumberVBuilder builder = NaturalNumberVBuilder.newBuilder();
         final int fieldIndexToBeUpdated = NaturalNumber.VALUE_FIELD_NUMBER - 1;
         final FieldDescriptor fieldDescriptor = NaturalNumber.getDescriptor()
                                                              .getFields()
                                                              .get(fieldIndexToBeUpdated);
         final String fieldNameToBeUpdated = fieldDescriptor.getName();
-        final String expectedErrorMsg = format(ERROR_MSG_FORMAT, fieldNameToBeUpdated);
+        final String expectedErrorMsg = String.format(ERROR_MSG_FORMAT, fieldNameToBeUpdated);
 
         final int invalidFieldValue = -1;
         final ValidationException ex = assertThrows(ValidationException.class,
                                                     () -> builder.setValue(invalidFieldValue));
-        final List<String> errorMessages = toErrorMessages(ex);
+        final List<String> errorMessages = format(ex.getConstraintViolations());
         assertEquals(1, errorMessages.size());
         assertEquals(expectedErrorMsg, errorMessages.get(0));
     }
