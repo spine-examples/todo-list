@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.action;
 
 import io.spine.examples.todolist.Screen;
-import io.spine.examples.todolist.TestScreen;
 import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,11 +57,6 @@ class TransitionActionTest {
         @Override
         public void render(Screen screen) {
             displayedTimes++;
-        }
-
-        @Override
-        public Screen getScreen() {
-            return new TestScreen();
         }
     }
 }

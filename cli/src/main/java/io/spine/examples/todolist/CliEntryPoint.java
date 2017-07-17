@@ -48,8 +48,9 @@ public class CliEntryPoint {
         final Server server = getServer();
         startServer(server);
 
-        final View entryPoint = MainMenu.create();
         final Screen screen = new CommandLineScreen();
+        Application.initialize(screen);
+        final View entryPoint = MainMenu.create();
         screen.renderView(entryPoint);
 
         getClient().shutdown();

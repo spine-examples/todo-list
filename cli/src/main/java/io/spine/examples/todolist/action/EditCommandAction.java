@@ -22,6 +22,7 @@ package io.spine.examples.todolist.action;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Message;
+import io.spine.examples.todolist.Application;
 import io.spine.examples.todolist.Edit;
 import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.view.CommandView;
@@ -62,7 +63,8 @@ public class EditCommandAction<M extends Message,
      */
     @Override
     public void execute() {
-        final Screen screen = getSource().getScreen();
+        final Screen screen = Application.getInstance()
+                                         .screen();
         for (Edit<M, B> edit : edits) {
             start(edit, screen);
         }

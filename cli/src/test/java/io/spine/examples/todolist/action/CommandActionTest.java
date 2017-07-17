@@ -76,7 +76,7 @@ class CommandActionTest extends UserIoTest {
     }
 
     private static class UpdateStringValueAction extends CommandAction<StringValue,
-            StringValueVBuilder> {
+                                                                       StringValueVBuilder> {
 
         private StringValue commandMessageBeforeExecution;
 

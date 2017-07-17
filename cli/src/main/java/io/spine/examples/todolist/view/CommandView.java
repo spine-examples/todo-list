@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import com.google.protobuf.Message;
+import io.spine.examples.todolist.Application;
 import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.action.Action;
 import io.spine.examples.todolist.action.CommandAction;
@@ -105,7 +106,9 @@ public abstract class CommandView<M extends Message,
 
     private void handleValidationException(ValidationException ex) {
         recentViolations.addAll(ex.getConstraintViolations());
-        getScreen().renderView(this);
+        Application.getInstance()
+                   .screen()
+                   .renderView(this);
     }
 
     private void renderRecentViolations(Screen screen) {

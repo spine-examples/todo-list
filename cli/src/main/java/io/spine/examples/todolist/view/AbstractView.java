@@ -172,12 +172,6 @@ public abstract class AbstractView implements View {
         actions.add(action);
     }
 
-    //TODO:2017-07-14:dmytro.grankin: remove this method from the interface
-    @Override
-    public Screen getScreen() {
-        throw new UnsupportedOperationException();
-    }
-
     public Set<Action> getActions() {
         return unmodifiableSet(actions);
     }

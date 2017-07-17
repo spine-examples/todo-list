@@ -35,11 +35,4 @@ public interface View {
      * @param screen the screen to use
      */
     void render(Screen screen);
-
-    /**
-     * Obtains {@link Screen}.
-     *
-     * @return the screen
-     */
-    Screen getScreen();
 }

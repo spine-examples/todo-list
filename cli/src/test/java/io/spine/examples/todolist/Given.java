@@ -44,11 +44,6 @@ public class Given {
             rendered = true;
         }
 
-        @Override
-        public Screen getScreen() {
-            return new TestScreen();
-        }
-
         public boolean wasRendered() {
             return rendered;
         }

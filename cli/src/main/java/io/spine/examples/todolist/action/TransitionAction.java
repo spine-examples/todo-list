@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.Screen;
+import io.spine.examples.todolist.Application;
 import io.spine.examples.todolist.view.View;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -45,8 +45,9 @@ public class TransitionAction<S extends View, D extends View> extends AbstractAc
      */
     @Override
     public void execute() {
-        final Screen screen = getSource().getScreen();
-        screen.renderView(getDestination());
+        Application.getInstance()
+                   .screen()
+                   .renderView(getDestination());
     }
 
     /**
