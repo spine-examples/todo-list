@@ -24,7 +24,7 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
-import io.spine.examples.todolist.view.TaskCreationView.DescriptionEdit;
+import io.spine.examples.todolist.view.TaskCreationView.DescriptionEditOperation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -81,10 +81,10 @@ class TaskCreationViewTest extends UserIoTest {
     }
 
     @Nested
-    @DisplayName("DescriptionEdit should")
-    class DescriptionEditTest {
+    @DisplayName("DescriptionEditOperation should")
+    class DescriptionEditOperationTest {
 
-        private final DescriptionEdit descriptionEdit = new DescriptionEdit();
+        private final DescriptionEditOperation descriptionEdit = new DescriptionEditOperation();
 
         @Test
         @DisplayName("edit description")

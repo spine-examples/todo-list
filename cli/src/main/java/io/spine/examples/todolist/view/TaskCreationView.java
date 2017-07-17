@@ -21,7 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.Edit;
+import io.spine.examples.todolist.EditOperation;
 import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.action.CommandAction;
@@ -53,7 +53,7 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
     public static TaskCreationView create() {
         final TaskCreationView view = new TaskCreationView();
         view.addAction(editCommandActionProducer("Start input", new Shortcut("i"),
-                                                 singletonList(new DescriptionEdit())));
+                                                 singletonList(new DescriptionEditOperation())));
         view.addAction(new CreateTask.CreateTaskProducer());
         return view;
     }
@@ -80,7 +80,8 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
     }
 
     @VisibleForTesting
-    static class DescriptionEdit implements Edit<CreateBasicTask, CreateBasicTaskVBuilder> {
+    static class DescriptionEditOperation implements EditOperation<CreateBasicTask,
+                                                                   CreateBasicTaskVBuilder> {
 
         private static final String PROMPT = "Please enter the task description";
 

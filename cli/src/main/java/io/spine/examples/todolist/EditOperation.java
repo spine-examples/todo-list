@@ -24,18 +24,22 @@ import com.google.protobuf.Message;
 import io.spine.validate.ValidatingBuilder;
 
 /**
- * An interface for editing a {@link ValidatingBuilder} state.
+ * An operation, that edits {@link ValidatingBuilder} state.
  *
+ * @param <M> the type of the message
+ * @param <B> the type of the validating builder for the message
  * @author Dmytro Grankin
  */
-public interface Edit<M extends Message,
-                      B extends ValidatingBuilder<M, ? extends Message.Builder>> {
+public interface EditOperation<M extends Message,
+                               B extends ValidatingBuilder<M, ? extends Message.Builder>> {
 
     /**
-     * Starts editing of the specified state.
+     * Starts editing of the specified validating builder.
+     *
+     * <p>Result of this operation is a modified validating builder is passed as a parameter.
      *
      * @param screen the {@link Screen}
-     * @param state  the validating builder state
+     * @param state  the validating builder
      */
     void start(Screen screen, B state);
 }

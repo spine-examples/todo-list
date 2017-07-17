@@ -23,7 +23,7 @@ package io.spine.examples.todolist.action;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.Application;
-import io.spine.examples.todolist.Edit;
+import io.spine.examples.todolist.EditOperation;
 import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.view.CommandView;
 import io.spine.validate.ValidatingBuilder;
@@ -36,7 +36,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static io.spine.examples.todolist.ConstraintViolationFormatter.format;
 
 /**
- * An {@link Action}, that edits a {@linkplain CommandView#state state of the command view}.
+ * An {@link Action}, that editOperations a {@linkplain CommandView#state state of the command view}.
  *
  * @param <M> the type of the command message
  * @param <B> the validating builder type for the command message
@@ -46,33 +46,33 @@ public class EditCommandAction<M extends Message,
                                B extends ValidatingBuilder<M, ? extends Message.Builder>>
         extends AbstractAction<CommandView<M, B>, CommandView<M, B>> {
 
-    private final Collection<Edit<M, B>> edits;
+    private final Collection<EditOperation<M, B>> editOperations;
 
     private EditCommandAction(String name, Shortcut shortcut,
                               CommandView<M, B> source,
                               CommandView<M, B> destination,
-                              Collection<Edit<M, B>> edits) {
+                              Collection<EditOperation<M, B>> editOperations) {
         super(name, shortcut, source, destination);
-        checkArgument(!edits.isEmpty());
-        this.edits = edits;
+        checkArgument(!editOperations.isEmpty());
+        this.editOperations = editOperations;
     }
 
     /**
-     * Applies {@link #edits} to the {@linkplain CommandView#state source view state}
+     * Applies {@link #editOperations} to the {@linkplain CommandView#state source view state}
      * and then renders destination view.
      */
     @Override
     public void execute() {
         final Screen screen = Application.getInstance()
                                          .screen();
-        for (Edit<M, B> edit : edits) {
+        for (EditOperation<M, B> edit : editOperations) {
             start(edit, screen);
         }
         screen.renderView(getDestination());
     }
 
     @VisibleForTesting
-    void start(Edit<M, B> edit, Screen screen) {
+    void start(EditOperation<M, B> edit, Screen screen) {
         try {
             edit.start(screen, getSource().getState());
         } catch (ValidationException e) {
@@ -87,14 +87,14 @@ public class EditCommandAction<M extends Message,
      *
      * @param name     the name for the action
      * @param shortcut the shortcut for the action
-     * @param edits    the edits for the action
+     * @param edits    the editOperations for the action
      * @param <M>      the type of the command message
      * @param <B>      the validating builder type for the command message
      * @return the new producer
      */
     public static <M extends Message, B extends ValidatingBuilder<M, ? extends Message.Builder>>
     EditCommandActionProducer<M, B> editCommandActionProducer(String name, Shortcut shortcut,
-                                                              Collection<Edit<M, B>> edits) {
+                                                              Collection<EditOperation<M, B>> edits) {
         return new EditCommandActionProducer<>(name, shortcut, edits);
     }
 
@@ -108,10 +108,10 @@ public class EditCommandAction<M extends Message,
                                                   B extends ValidatingBuilder<M, ? extends Message.Builder>>
             extends AbstractActionProducer<CommandView<M, B>, CommandView<M, B>, EditCommandAction<M, B>> {
 
-        private final Collection<Edit<M, B>> edits;
+        private final Collection<EditOperation<M, B>> edits;
 
         private EditCommandActionProducer(String name, Shortcut shortcut,
-                                          Collection<Edit<M, B>> edits) {
+                                          Collection<EditOperation<M, B>> edits) {
             super(name, shortcut);
             checkArgument(!edits.isEmpty());
             this.edits = edits;

@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.action;
 
-import io.spine.examples.todolist.Edit;
+import io.spine.examples.todolist.EditOperation;
 import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.test.action.Comment;
@@ -29,7 +29,7 @@ import io.spine.examples.todolist.view.CommandView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
+import java.util.Set;
 
 import static io.spine.examples.todolist.action.EditCommandAction.editCommandActionProducer;
 import static io.spine.examples.todolist.action.NoOpAction.noOpActionProducer;
@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("EditCommandAction should")
-class EditCommandActionTest extends UserIoTest {
+class EditOperationCommandActionTest extends UserIoTest {
 
     private static final String ACTION_NAME = "action";
     private static final Shortcut SHORTCUT = new Shortcut("s");
@@ -53,8 +53,10 @@ class EditCommandActionTest extends UserIoTest {
     private static final String INVALID_COMMENT = "";
 
     private final ACommandView view = new ACommandView();
+    private final Set<EditOperation<Comment, CommentVBuilder>> editOperations =
+            singleton(new CommentEditOperation());
     private final EditCommandAction<Comment, CommentVBuilder> action =
-            editCommandActionProducer(ACTION_NAME, SHORTCUT, singleton(new CommentEdit())).create(view);
+            editCommandActionProducer(ACTION_NAME, SHORTCUT, editOperations).create(view);
 
     @Test
     @DisplayName("not allow empty edits")
@@ -66,8 +68,8 @@ class EditCommandActionTest extends UserIoTest {
     @Test
     @DisplayName("create the action with one more edit")
     void createActionWithEdits() {
-        final Collection<Edit<Comment, CommentVBuilder>> edits = singleton(new CommentEdit());
-        final Action action = editCommandActionProducer(ACTION_NAME, SHORTCUT, edits).create(view);
+        final Action action = editCommandActionProducer(ACTION_NAME, SHORTCUT,
+                                                        editOperations).create(view);
         assertEquals(ACTION_NAME, action.getName());
         assertEquals(SHORTCUT, action.getShortcut());
     }
@@ -106,7 +108,7 @@ class EditCommandActionTest extends UserIoTest {
     void repeatEditAfterValidationException() {
         addAnswer(INVALID_COMMENT);
         addAnswer(VALID_COMMENT);
-        action.start(new CommentEdit(), getScreen());
+        action.start(new CommentEditOperation(), getScreen());
         assertAllAnswersWereGiven();
     }
 
@@ -130,7 +132,7 @@ class EditCommandActionTest extends UserIoTest {
         }
     }
 
-    private static class CommentEdit implements Edit<Comment, CommentVBuilder> {
+    private static class CommentEditOperation implements EditOperation<Comment, CommentVBuilder> {
 
         @Override
         public void start(Screen screen, CommentVBuilder state) {
