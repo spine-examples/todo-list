@@ -25,11 +25,11 @@ import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.action.TransitionAction;
 import io.spine.examples.todolist.view.View;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Deque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+
+import static java.util.Collections.unmodifiableList;
 
 /**
  * Abstract base class for {@link Screen}.
@@ -40,16 +40,22 @@ import java.util.Optional;
  */
 abstract class AbstractScreen implements Screen {
 
-    private final Deque<View> history = new ArrayDeque<>();
+    /**
+     * History of rendered views from the first view to the current view.
+     */
+    private final List<View> history = new ArrayList<>();
 
     /**
      * {@inheritDoc}
      */
     @Override
     public void renderView(View view) {
-        if (isNewView(view)) {
-            history.push(view);
+        if (isPreviousView(view)) {
+            history.remove(getCurrentViewIndex());
+        } else if (!isCurrentView(view)) {
+            history.add(view);
         }
+
         view.render(this);
     }
 
@@ -58,26 +64,43 @@ abstract class AbstractScreen implements Screen {
      */
     @Override
     public Optional<TransitionAction<View, View>> createBackAction(String name, Shortcut shortcut) {
-        final boolean canGoBack = history.size() > 1;
+        final int currentIndex = getCurrentViewIndex();
+        final int previousIndex = getPreviousViewIndex();
 
-        if (!canGoBack) {
+        if (currentIndex == -1 || previousIndex == -1) {
             return Optional.empty();
         }
 
-        final View current = history.pop();
-        final View previous = history.pop();
+        final View current = history.get(currentIndex);
+        final View previous = history.get(previousIndex);
         final TransitionAction<View, View> back = new TransitionAction<>(name, shortcut,
                                                                          current, previous);
         return Optional.of(back);
     }
 
-    private boolean isNewView(View view) {
-        final View currentView = history.peek();
-        return currentView == null || !currentView.equals(view);
+    private boolean isCurrentView(View view) {
+        final int currIndex = getCurrentViewIndex();
+        return currIndex != -1 && currIndex == history.indexOf(view);
+    }
+
+    private boolean isPreviousView(View view) {
+        final int prevIndex = getPreviousViewIndex();
+        return prevIndex != -1 && prevIndex == history.indexOf(view);
+    }
+
+    private int getCurrentViewIndex() {
+        return history.size() - 1;
+    }
+
+    private int getPreviousViewIndex() {
+        final int currentIndex = getCurrentViewIndex();
+        return currentIndex == -1
+               ? -1
+               : currentIndex - 1;
     }
 
     @VisibleForTesting
-    Collection<View> getHistory() {
-        return Collections.unmodifiableCollection(history);
+    List<View> getHistory() {
+        return unmodifiableList(history);
     }
 }

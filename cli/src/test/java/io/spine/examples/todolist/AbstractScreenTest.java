@@ -27,7 +27,8 @@ import io.spine.examples.todolist.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static io.spine.examples.todolist.Given.newNoOpView;
@@ -58,15 +59,30 @@ class AbstractScreenTest {
     @DisplayName("not modify history on a current view rendering")
     void notModifyHistoryOnCurrentViewRendering() {
         final View view = newNoOpView();
-        final Collection<View> history = screen.getHistory();
-
-        assertTrue(history.isEmpty());
 
         screen.renderView(view);
-        assertEquals(1, history.size());
+        final List<View> expectedHistory = screen.getHistory();
 
         screen.renderView(view);
-        assertEquals(1, history.size());
+        assertEquals(expectedHistory, screen.getHistory());
+    }
+
+    @Test
+    @DisplayName("make previous view current on its rendering")
+    void makePreviousViewCurrent() {
+        final View first = newNoOpView();
+        final View second = newNoOpView();
+
+        screen.renderView(first);
+        screen.renderView(second);
+
+        final List<View> history = screen.getHistory();
+        final List<View> historyWithoutCurrentView =
+                new ArrayList<>(history.subList(0, history.size() - 1));
+
+        screen.renderView(first);
+
+        assertEquals(historyWithoutCurrentView, screen.getHistory());
     }
 
     @Test
@@ -96,6 +112,19 @@ class AbstractScreenTest {
         assertEquals(BACK_SHORTCUT, back.getShortcut());
         assertEquals(third, back.getSource());
         assertEquals(second, back.getDestination());
+    }
+
+    @Test
+    @DisplayName("create back action and does not modify view history")
+    void createBackAndNotModifyHistory() {
+        final View first = newNoOpView();
+        final View second = newNoOpView();
+        screen.renderView(first);
+        screen.renderView(second);
+
+        final List<View> expectedHistory = screen.getHistory();
+        screen.createBackAction(BACK_NAME, BACK_SHORTCUT);
+        assertEquals(expectedHistory, screen.getHistory());
     }
 
     private static class AnAbstractScreen extends AbstractScreen {
