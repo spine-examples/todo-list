@@ -18,70 +18,73 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.validator;
+package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.Screen;
+import com.google.common.annotations.VisibleForTesting;
 
 import java.util.Optional;
 
-import static io.spine.examples.todolist.validator.ConfirmationValidator.getNegativeAnswer;
-import static io.spine.examples.todolist.validator.ConfirmationValidator.getPositiveAnswer;
 import static java.lang.String.format;
 
 /**
  * This class serves for asking for a confirmation.
  *
+ * <p>Valid answers are `y` and `n`.
+ *
+ * @author Illia Shepilov
  * @author Dmytro Grankin
  */
 class Confirmation {
 
-    private static final String HINT_FORMAT = "(%s/%s)";
+    @VisibleForTesting
+    static final String POSITIVE_ANSWER = "y";
 
-    private final Validator<String> validator = new ConfirmationValidator();
-    private final Screen screen;
+    @VisibleForTesting
+    static final String NEGATIVE_ANSWER = "n";
 
-    Confirmation(Screen screen) {
-        this.screen = screen;
+    private static final String DETAILED_HINT_FORMAT = "Valid values: '%s' or '%s'.";
+    private static final String DETAILED_HINT = format(DETAILED_HINT_FORMAT,
+                                                       POSITIVE_ANSWER, NEGATIVE_ANSWER);
+    private static final String MINOR_HINT_FORMAT = "(%s/%s)";
+    private static final String MINOR_HINT = format(MINOR_HINT_FORMAT,
+                                                    POSITIVE_ANSWER, NEGATIVE_ANSWER);
+
+    private Confirmation() {
+        // Prevent instantiation of this utility class.
     }
 
     /**
      * Obtains a confirmation value for the specified question.
      *
+     * @param screen   the screen to use
      * @param question the question to ask
      * @return {@code true} if the positive answer was given, {@code false} otherwise
      */
-    boolean ask(String question) {
-        final String questionWithHint = question + ' ' + getHint();
-        Optional<String> answer = getValidAnswer(questionWithHint);
+    static boolean ask(Screen screen, String question) {
+        final String questionWithHint = question + ' ' + MINOR_HINT;
+        Optional<String> answer = getValidAnswer(screen, questionWithHint);
 
         while (!answer.isPresent()) {
-            answer = getValidAnswer(getExtendedHint());
+            answer = getValidAnswer(screen, DETAILED_HINT);
         }
 
         return answer.get()
-                     .equals(getPositiveAnswer());
+                     .equals(POSITIVE_ANSWER);
     }
 
     /**
      * Obtains valid value of the answer for the specified question.
      *
+     * @param screen   the screen to use
      * @param question the question to ask
      * @return a valid answer value
      *         or {@code Optional.empty()} if the answer is not valid
      */
-    private Optional<String> getValidAnswer(String question) {
+    private static Optional<String> getValidAnswer(Screen screen, String question) {
         final String answer = screen.promptUser(question);
-        boolean isValidAnswer = validator.validate(answer);
+        boolean isValidAnswer = NEGATIVE_ANSWER.equals(answer) || POSITIVE_ANSWER.equals(answer);
         return isValidAnswer
                ? Optional.of(answer)
                : Optional.empty();
-    }
-
-    private String getExtendedHint() {
-        return validator.getHint();
-    }
-
-    private static String getHint() {
-        return format(HINT_FORMAT, getPositiveAnswer(), getNegativeAnswer());
     }
 }

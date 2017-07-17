@@ -18,15 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.validator;
+package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.UserIoTest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.validator.ConfirmationValidator.getNegativeAnswer;
-import static io.spine.examples.todolist.validator.ConfirmationValidator.getPositiveAnswer;
+import static io.spine.examples.todolist.Confirmation.NEGATIVE_ANSWER;
+import static io.spine.examples.todolist.Confirmation.POSITIVE_ANSWER;
+import static io.spine.examples.todolist.Confirmation.ask;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -38,28 +38,25 @@ class ConfirmationTest extends UserIoTest {
 
     private static final String QUESTION = "?";
 
-    private Confirmation confirmation;
-
-    @BeforeEach
-    @Override
-    protected void setUp() {
-        super.setUp();
-        confirmation = new Confirmation(getScreen());
+    @Test
+    @DisplayName("have the private constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(Confirmation.class);
     }
 
     @Test
     @DisplayName("return true for a positive answer")
     void returnTrueForPositiveAnswer() {
-        addAnswer(getPositiveAnswer());
-        final boolean result = confirmation.ask(QUESTION);
+        addAnswer(POSITIVE_ANSWER);
+        final boolean result = ask(getScreen(), QUESTION);
         assertTrue(result);
     }
 
     @Test
     @DisplayName("return false for a negative answer")
     void returnFalseForNegativeAnswer() {
-        addAnswer(getNegativeAnswer());
-        final boolean result = confirmation.ask(QUESTION);
+        addAnswer(NEGATIVE_ANSWER);
+        final boolean result = ask(getScreen(), QUESTION);
         assertFalse(result);
     }
 
@@ -68,9 +65,9 @@ class ConfirmationTest extends UserIoTest {
     void askAgainWhileAnswerIsNotValid() {
         final String invalidAnswer = "";
         addAnswer(invalidAnswer);
-        addAnswer(getPositiveAnswer());
+        addAnswer(POSITIVE_ANSWER);
 
-        confirmation.ask(QUESTION);
+        ask(getScreen(), QUESTION);
         assertAllAnswersWereGiven();
     }
 }
