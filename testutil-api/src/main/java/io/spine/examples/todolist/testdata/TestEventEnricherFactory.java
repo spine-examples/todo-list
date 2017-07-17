@@ -33,8 +33,6 @@ import io.spine.server.event.enrich.EventEnricher;
 
 import java.util.function.Function;
 
-import static io.spine.time.Time.getCurrentTime;
-
 /**
  * Provides event enricher for the test needs.
  *

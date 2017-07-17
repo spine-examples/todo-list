@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, TeamDev Ltd. All rights reserved.
+ * Copyright 2017, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,19 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    compile group: 'org.jline', name: 'jline', version: '3.3.0'
+package io.spine.examples.todolist;
 
-    compile project(path: ':api-java')
-    compile project(path: ':client')
-}
+import org.junit.jupiter.api.DisplayName;
 
-apply from: generateDescriptorSetPlugin
+/**
+ * @author Dmytro Grankin
+ */
+@DisplayName("Application should")
+class ApplicationTest {
 
-apply plugin: spineProtobufPluginId
-
-task runTodoList(dependsOn: jar, type: JavaExec) {
-    standardInput = System.in
-    main = 'io.spine.examples.todolist.CliEntryPoint'
-    classpath = sourceSets.main.runtimeClasspath
+//    @Test
+//    @DisplayName("not allow obtain the instance before initialization")
+//    void notAllowObtainInstanceBeforeInit() {
+//        assertThrows(IllegalStateException.class, Application::getInstance);
+//    }
+//
+//    @Test
+//    @DisplayName("not allow null Screen")
+//    void notAllowNullScreen() {
+//
+//    }
 }
