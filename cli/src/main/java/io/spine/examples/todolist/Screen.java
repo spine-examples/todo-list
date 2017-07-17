@@ -29,12 +29,17 @@ import java.util.Optional;
 /**
  * A screen of an application.
  *
+ * <p>Renders views and provides I/O methods.
+ *
+ * <p>Also provides methods related to a history of navigation
+ * between views, e.g. {@link #createBackAction(String, Shortcut)}.
+ *
  * @author Dmytro Grankin
  */
 public interface Screen {
 
     /**
-     * Renders specified view.
+     * Renders the specified view.
      *
      * @param view the view to renderBody
      */

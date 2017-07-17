@@ -45,7 +45,7 @@ import static io.spine.examples.todolist.view.CommandView.GenericParameter.STATE
  *
  * <p>{@link EditCommandAction} and {@link CommandAction} are well-suited for usage in this view.
  *
- * <p>Typical structure of actions in a {@code CommandView}.
+ * <p>List of actions in a {@code CommandView} may looks like this:
  * <ol>
  *     <li>prepare a command (EditCommandAction)</li>
  *     <li>send a command to a server (CommandAction)</li>
