@@ -32,9 +32,12 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.action.NoOpAction.noOpActionProducer;
+import static io.spine.examples.todolist.view.CommandView.GenericParameter.COMMAND_MESSAGE;
+import static io.spine.examples.todolist.view.CommandView.GenericParameter.STATE_BUILDER;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -72,7 +75,18 @@ class CommandViewTest extends UserIoTest {
         assertTrue(view.wasRendered);
     }
 
-    @SuppressWarnings("InnerClassMayBeStatic")
+    @Nested
+    @DisplayName("GenericParameter should")
+    class GenericParameterTest {
+
+        @Test
+        @DisplayName("obtain classes for the generic parameters")
+        void obtainClassesForGenericParams() {
+            assertEquals(StringValue.class, COMMAND_MESSAGE.getArgumentIn(ACommandView.class));
+            assertEquals(StringValueVBuilder.class, STATE_BUILDER.getArgumentIn(ACommandView.class));
+        }
+    }
+
     @Nested
     @DisplayName("TypeInfo should")
     class TypeInfoTest {

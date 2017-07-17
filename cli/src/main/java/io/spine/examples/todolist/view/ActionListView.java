@@ -26,7 +26,7 @@ import io.spine.examples.todolist.Screen;
  * A {@code View} that represents list of
  * {@linkplain io.spine.examples.todolist.action.Action actions}.
  *
- * <p>Typical instance of the class is a menu, where the end-user selects an {@code Action}
+ * <p>Typical instance of the class is a menu, in which the end-user selects an {@code Action}
  * to be executed from the actions list.
  *
  * @author Dmytro Grankin
