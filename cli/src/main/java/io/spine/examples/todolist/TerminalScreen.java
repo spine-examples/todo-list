@@ -25,14 +25,14 @@ import org.jline.terminal.Terminal;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static io.spine.examples.todolist.Terminals.dumbTerminal;
+import static io.spine.examples.todolist.Terminals.newTerminal;
 
 /**
  * A {@link Screen} of a command-line application.
  *
  * @author Dmytro Grankin
  */
-public class CommandLineScreen extends AbstractScreen {
+public class TerminalScreen extends AbstractScreen {
 
     private final LineReader reader = newLineReader();
 
@@ -59,7 +59,7 @@ public class CommandLineScreen extends AbstractScreen {
     }
 
     private static LineReader newLineReader() {
-        final Terminal terminal = dumbTerminal();
+        final Terminal terminal = newTerminal();
         return Readers.newLineReader(terminal);
     }
 }

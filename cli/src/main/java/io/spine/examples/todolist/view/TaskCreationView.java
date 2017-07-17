@@ -31,7 +31,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.AppConfig.getClient;
-import static io.spine.examples.todolist.action.EditCommandAction.newProducer;
+import static io.spine.examples.todolist.action.EditCommandAction.editCommandActionProducer;
 import static java.util.Collections.singletonList;
 
 /**
@@ -52,8 +52,8 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
 
     public static TaskCreationView create() {
         final TaskCreationView view = new TaskCreationView();
-        view.addAction(newProducer("Start input", new Shortcut("i"),
-                                   singletonList(new DescriptionEdit())));
+        view.addAction(editCommandActionProducer("Start input", new Shortcut("i"),
+                                                 singletonList(new DescriptionEdit())));
         view.addAction(new CreateTask.CreateTaskProducer());
         return view;
     }

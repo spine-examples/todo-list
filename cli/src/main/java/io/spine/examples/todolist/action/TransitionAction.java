@@ -61,7 +61,8 @@ public class TransitionAction<S extends View, D extends View> extends AbstractAc
      * @return the new producer
      */
     public static <S extends View, D extends View>
-    TransitionActionProducer<S, D> newProducer(String name, Shortcut shortcut, D destination) {
+    TransitionActionProducer<S, D> transitionProducer(String name, Shortcut shortcut,
+                                                      D destination) {
         return new TransitionActionProducer<>(name, shortcut, destination);
     }
 

@@ -28,12 +28,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("CommandLineScreen should")
-class CommandLineScreenTest {
+@DisplayName("TerminalScreen should")
+class TerminalScreenTest {
 
     private static final String EMPTY_STRING = "";
 
-    private final Screen screen = new CommandLineScreen();
+    private final Screen screen = new TerminalScreen();
 
     @Test
     @DisplayName("not allow empty prompt")

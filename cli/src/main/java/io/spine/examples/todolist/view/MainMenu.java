@@ -22,7 +22,7 @@ package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.action.Shortcut;
 
-import static io.spine.examples.todolist.action.TransitionAction.newProducer;
+import static io.spine.examples.todolist.action.TransitionAction.transitionProducer;
 
 /**
  * Root view of the application.
@@ -37,7 +37,8 @@ public class MainMenu extends ActionListView {
 
     public static MainMenu create() {
         final MainMenu mainMenu = new MainMenu();
-        mainMenu.addAction(newProducer("My tasks", new Shortcut("m"), MyTasksMenu.create()));
+        mainMenu.addAction(transitionProducer("My tasks", new Shortcut("m"),
+                                              MyTasksMenu.create()));
         return mainMenu;
     }
 }

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Set;
 
 import static io.spine.examples.todolist.action.NoOpAction.noOpActionProducer;
-import static io.spine.examples.todolist.action.TransitionAction.newProducer;
+import static io.spine.examples.todolist.action.TransitionAction.transitionProducer;
 import static io.spine.examples.todolist.view.AbstractView.getBackShortcut;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,8 +52,8 @@ class AbstractViewTest extends UserIoTest {
     @Test
     @DisplayName("clear all actions")
     void clearAllActions() {
-        view.addAction(newProducer(ACTION_NAME, SHORTCUT, view));
-        view.addAction(newProducer(ACTION_NAME, new Shortcut("s2"), view));
+        view.addAction(transitionProducer(ACTION_NAME, SHORTCUT, view));
+        view.addAction(transitionProducer(ACTION_NAME, new Shortcut("s2"), view));
         view.clearActions();
         assertTrue(view.getActions()
                        .isEmpty());
@@ -65,7 +65,7 @@ class AbstractViewTest extends UserIoTest {
         final Set<Action> actions = view.getActions();
         final int sizeBeforeAddition = actions.size();
 
-        view.addAction(newProducer(ACTION_NAME, SHORTCUT, view));
+        view.addAction(transitionProducer(ACTION_NAME, SHORTCUT, view));
 
         final int sizeAfterAddition = sizeBeforeAddition + 1;
         assertEquals(sizeAfterAddition, actions.size());
@@ -82,19 +82,19 @@ class AbstractViewTest extends UserIoTest {
     @DisplayName("not add the action with the back shortcut")
     void notAddActionWithBackShortcut() {
         assertThrows(IllegalArgumentException.class,
-                     () -> view.addAction(newProducer(ACTION_NAME, getBackShortcut(), view)));
+                     () -> view.addAction(transitionProducer(ACTION_NAME, getBackShortcut(), view)));
     }
 
     @Test
     @DisplayName("not add the action with an occupied shortcut")
     void notAddActionWithOccupiedShortcut() {
         final TransitionActionProducer<ActionListView, View> firstActionProducer =
-                newProducer(ACTION_NAME, SHORTCUT, view);
+                transitionProducer(ACTION_NAME, SHORTCUT, view);
         view.addAction(firstActionProducer);
 
         final String secondActionName = firstActionProducer.getName() + " difference";
         assertThrows(IllegalArgumentException.class,
-                     () -> view.addAction(newProducer(secondActionName, SHORTCUT, view)));
+                     () -> view.addAction(transitionProducer(secondActionName, SHORTCUT, view)));
     }
 
     @Test

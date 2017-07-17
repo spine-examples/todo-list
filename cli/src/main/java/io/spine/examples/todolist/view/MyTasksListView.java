@@ -32,7 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static io.spine.examples.todolist.AppConfig.getClient;
-import static io.spine.examples.todolist.action.TransitionAction.newProducer;
+import static io.spine.examples.todolist.action.TransitionAction.transitionProducer;
 import static java.lang.String.valueOf;
 
 /**
@@ -92,11 +92,11 @@ class MyTasksListView extends ActionListView {
         final String shortcutValue = valueOf(viewIndex + 1);
         final Shortcut shortcut = new Shortcut(shortcutValue);
         final MyTaskView destination = new MyTaskView(taskView.getId());
-        return newProducer(name, shortcut, destination);
+        return transitionProducer(name, shortcut, destination);
     }
 
     static <S extends View> TransitionActionProducer<S, MyTasksListView>
     newOpenTaskListProducer(String name, Shortcut shortcut) {
-        return newProducer(name, shortcut, new MyTasksListView());
+        return transitionProducer(name, shortcut, new MyTasksListView());
     }
 }

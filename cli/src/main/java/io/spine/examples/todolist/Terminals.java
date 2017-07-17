@@ -39,11 +39,11 @@ class Terminals {
     }
 
     /**
-     * Creates a {@linkplain org.jline.terminal.impl.DumbTerminal DumbTerminal}.
+     * Creates a new terminal.
      *
-     * @return the new terminal
+     * @return new terminal
      */
-    static Terminal dumbTerminal() {
+    static Terminal newTerminal() {
         try {
             return TerminalBuilder.builder()
                                   .dumb(true)
