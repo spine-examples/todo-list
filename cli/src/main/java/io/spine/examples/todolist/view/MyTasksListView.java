@@ -53,24 +53,28 @@ class MyTasksListView extends ActionListView {
         super("My tasks list");
     }
 
+    /**
+     * Refreshes the tasks list and renders the view.
+     *
+     * @param screen {@inheritDoc}
+     */
     @Override
-    protected void renderBody(Screen screen) {
-        final MyListView myListView = getClient().getMyListView();
-        final Collection<TransitionActionProducer> producers = producersFor(myListView);
-        refreshActions(producers);
-        if (getActions().isEmpty()) {
-            screen.println(EMPTY_TASKS_LIST_MSG);
-        }
-        super.renderBody(screen);
-    }
-
-    private void refreshActions(Collection<TransitionActionProducer> newActionProducers) {
+    public void render(Screen screen) {
         clearActions();
-        newActionProducers.forEach(this::addAction);
+
+        final MyListView myListView = getClient().getMyListView();
+        final Collection<TransitionActionProducer> producers = taskActionProducersFor(myListView);
+
+        if (producers.isEmpty()) {
+            screen.println(EMPTY_TASKS_LIST_MSG);
+        } else {
+            producers.forEach(this::addAction);
+        }
+        super.render(screen);
     }
 
     @VisibleForTesting
-    static Collection<TransitionActionProducer> producersFor(MyListView myListView) {
+    static Collection<TransitionActionProducer> taskActionProducersFor(MyListView myListView) {
         final Collection<TransitionActionProducer> producers = new LinkedList<>();
         final List<TaskView> taskViews = myListView.getMyList()
                                                    .getItemsList();

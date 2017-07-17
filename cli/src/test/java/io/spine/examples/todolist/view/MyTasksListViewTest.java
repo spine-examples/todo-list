@@ -36,7 +36,7 @@ import java.util.Set;
 import static com.google.common.collect.Sets.newHashSet;
 import static io.spine.examples.todolist.view.AbstractView.getBackShortcut;
 import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskViewProducer;
-import static io.spine.examples.todolist.view.MyTasksListView.producersFor;
+import static io.spine.examples.todolist.view.MyTasksListView.taskActionProducersFor;
 import static java.util.Collections.nCopies;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -79,7 +79,7 @@ class MyTasksListViewTest extends UserIoTest {
         final MyListView myListView = MyListView.newBuilder()
                                                 .setMyList(taskListView)
                                                 .build();
-        final Collection<TransitionActionProducer> actions = producersFor(myListView);
+        final Collection<TransitionActionProducer> actions = taskActionProducersFor(myListView);
         assertEquals(tasksCount, actions.size());
     }
 

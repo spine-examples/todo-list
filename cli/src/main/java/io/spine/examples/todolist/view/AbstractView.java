@@ -172,6 +172,7 @@ public abstract class AbstractView implements View {
         actions.add(action);
     }
 
+    @VisibleForTesting
     public Set<Action> getActions() {
         return unmodifiableSet(actions);
     }
