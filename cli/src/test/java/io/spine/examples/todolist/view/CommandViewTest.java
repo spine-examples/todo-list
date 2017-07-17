@@ -31,7 +31,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
+import static io.spine.examples.todolist.action.NoOpAction.noOpActionProducer;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
@@ -45,7 +45,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("CommandView should")
 class CommandViewTest extends UserIoTest {
 
-    private static final Shortcut BACK_SHORTCUT = getBackShortcut();
+    private static final String ACTION_NAME = "quit";
+    private static final Shortcut QUIT_SHORTCUT = new Shortcut("q");
 
     private final ACommandView view = new ACommandView();
 
@@ -64,7 +65,8 @@ class CommandViewTest extends UserIoTest {
         assertThrows(ValidationException.class, throwVException::execute);
         assertFalse(view.wasRendered);
 
-        addAnswer(BACK_SHORTCUT.getValue());
+        view.addAction(noOpActionProducer(ACTION_NAME, QUIT_SHORTCUT));
+        addAnswer(QUIT_SHORTCUT.getValue());
         view.executeAction(new ThrowValidationExceptionAction());
 
         assertTrue(view.wasRendered);

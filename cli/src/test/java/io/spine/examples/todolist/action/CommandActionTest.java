@@ -25,10 +25,11 @@ import io.spine.examples.todolist.Screen;
 import io.spine.examples.todolist.UserIoTest;
 import io.spine.examples.todolist.view.CommandView;
 import io.spine.validate.StringValueVBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.view.AbstractView.getBackShortcut;
+import static io.spine.examples.todolist.action.NoOpAction.noOpActionProducer;
 import static io.spine.validate.Validate.isDefault;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -40,8 +41,19 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("CommandAction should")
 class CommandActionTest extends UserIoTest {
 
+    private static final String ACTION_NAME = "quit";
+    private static final Shortcut QUIT = new Shortcut("q");
+
     private final UpdateStringValueView view = new UpdateStringValueView();
     private final UpdateStringValueAction action = new UpdateStringValueAction(view);
+
+    @Override
+    @BeforeEach
+    protected void setUp() {
+        super.setUp();
+        view.addAction(noOpActionProducer(ACTION_NAME, QUIT));
+        addAnswer(QUIT.getValue());
+    }
 
     @Test
     @DisplayName("have same source and destination view")
@@ -52,8 +64,6 @@ class CommandActionTest extends UserIoTest {
     @Test
     @DisplayName("execute command and cause render of a source view")
     void executeCommandAndRenderSource() {
-        addAnswer(getBackShortcut().getValue());
-
         final String expectedString = "A string value.";
         final StringValueVBuilder viewState = view.getState();
         viewState.setValue(expectedString);
@@ -67,8 +77,6 @@ class CommandActionTest extends UserIoTest {
     @Test
     @DisplayName("clear state of source view after successful execution")
     void clearSourceState() {
-        addAnswer(getBackShortcut().getValue());
-
         final StringValueVBuilder viewState = view.getState();
         viewState.setValue("Non-default value");
         action.execute();

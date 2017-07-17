@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.action;
 
+import io.spine.examples.todolist.view.AbstractView;
 import io.spine.examples.todolist.view.View;
 
 import java.util.Objects;
@@ -35,7 +36,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  *
  * <p>Also suits for usage in tests, where {@link Action} behavior does not play a role.
  */
-public class NoOpAction implements Action<View, View> {
+public class NoOpAction implements Action<AbstractView, View> {
 
     private static final String UNSUPPORTED_MSG = "NoOpAction does not support transitions between views";
 
@@ -65,7 +66,7 @@ public class NoOpAction implements Action<View, View> {
     }
 
     @Override
-    public View getSource() {
+    public AbstractView getSource() {
         throw new UnsupportedOperationException(UNSUPPORTED_MSG);
     }
 
@@ -96,5 +97,26 @@ public class NoOpAction implements Action<View, View> {
     @Override
     public String toString() {
         return ActionFormatter.format(this);
+    }
+
+    public static NoOpActionProducer noOpActionProducer(String name, Shortcut shortcut) {
+        return new NoOpActionProducer(name, shortcut);
+    }
+
+    /**
+     * Producer of no-op actions.
+     *
+     * <p>Purpose of this producer is simplify {@link ActionProducer}-based API.
+     */
+    public static class NoOpActionProducer extends AbstractActionProducer<AbstractView, View, NoOpAction> {
+
+        private NoOpActionProducer(String name, Shortcut shortcut) {
+            super(name, shortcut);
+        }
+
+        @Override
+        public NoOpAction create(AbstractView source) {
+            return new NoOpAction(getName(), getShortcut());
+        }
     }
 }

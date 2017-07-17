@@ -34,7 +34,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static io.spine.examples.todolist.view.AbstractView.getBackShortcut;
+import static io.spine.examples.todolist.Given.newNoOpView;
 import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskViewProducer;
 import static io.spine.examples.todolist.view.MyTasksListView.taskActionProducersFor;
 import static java.util.Collections.nCopies;
@@ -56,12 +56,14 @@ class MyTasksListViewTest extends UserIoTest {
     @Test
     @DisplayName("refresh task list")
     void refreshTaskList() {
+        getScreen().renderView(newNoOpView()); // Needed to cause addition of back action in the view.
+
         final MyTasksListView view = new MyTasksListView();
         view.addAction(newOpenTaskViewProducer(taskView, 0));
         view.addAction(newOpenTaskViewProducer(taskView, 1));
         final Set<Action> actionsToBeRemoved = view.getActions();
 
-        addAnswer(getBackShortcut().getValue());
+        addAnswer("b");
         getScreen().renderView(view);
 
         final Set<Action> refreshedActions = newHashSet(view.getActions());

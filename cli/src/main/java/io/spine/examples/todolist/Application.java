@@ -20,22 +20,20 @@
 
 package io.spine.examples.todolist;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A command-line application.
  *
- * <p>Contains the elements that should be shared within the application, e.g. {@link Screen}.
+ * <p>Contains the elements that are common for the entire application, e.g. {@link Screen}.
  *
  * @author Dmytro Grankin
  */
-public class Application {
+public final class Application {
 
-    private final Screen screen;
-
-    private Application(Screen screen) {
-        this.screen = screen;
-    }
+    private Screen screen;
 
     /**
      * Obtains {@link Screen} of the application.
@@ -47,18 +45,22 @@ public class Application {
     }
 
     /**
-     * Initializes the application with the specified parameters.
+     * Initializes the application with the specified screen.
      *
      * @param screen the screen to use
      */
-    public static void initialize(Screen screen) {
-        checkNotNull(screen);
-        if (Singleton.INSTANCE.value != null) {
-            throw new IllegalStateException("Application already initialized, " +
+    public void init(Screen screen) {
+        if (this.screen != null) {
+            throw new IllegalStateException("Application is already initialized, " +
                                                     "this function should be called only once.");
         } else {
-            Singleton.INSTANCE.value = new Application(screen);
+            this.screen = checkNotNull(screen);
         }
+    }
+
+    @VisibleForTesting
+    public void setScreen(Screen screen) {
+        this.screen = checkNotNull(screen);
     }
 
     /**
@@ -67,16 +69,12 @@ public class Application {
      * @return the singleton instance
      */
     public static Application getInstance() {
-        if (Singleton.INSTANCE.value == null) {
-            throw new IllegalStateException("Application should be initialized, " +
-                                                    "please call Application.initialize(Screen).");
-        }
         return Singleton.INSTANCE.value;
     }
 
     private enum Singleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private Application value;
+        private final Application value = new Application();
     }
 }

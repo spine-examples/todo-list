@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collection;
 
 import static io.spine.examples.todolist.action.EditCommandAction.newProducer;
-import static io.spine.examples.todolist.view.ActionListView.getBackShortcut;
+import static io.spine.examples.todolist.action.NoOpAction.noOpActionProducer;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -81,8 +81,9 @@ class EditCommandActionTest extends UserIoTest {
     @Test
     @DisplayName("render destination view")
     void renderDestinationView() {
+        view.addAction(noOpActionProducer(ACTION_NAME, SHORTCUT));
         addAnswer(VALID_COMMENT);
-        addAnswer(getBackShortcut().getValue());
+        addAnswer(SHORTCUT.getValue());
         action.execute();
         assertTrue(view.wasRendered);
     }
@@ -90,8 +91,9 @@ class EditCommandActionTest extends UserIoTest {
     @Test
     @DisplayName("update state of a view")
     void updateViewState() {
+        view.addAction(noOpActionProducer(ACTION_NAME, SHORTCUT));
         addAnswer(VALID_COMMENT);
-        addAnswer(getBackShortcut().getValue());
+        addAnswer(SHORTCUT.getValue());
 
         action.execute();
         assertEquals(VALID_COMMENT, view.getState()

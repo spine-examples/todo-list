@@ -37,6 +37,8 @@ public class UserIoTest {
     protected void setUp() {
         TestScreen.clearOutput();
         this.screen = new TestScreen();
+        Application.getInstance()
+                   .setScreen(this.screen);
     }
 
     protected void assertOutput(String expected) {

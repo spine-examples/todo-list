@@ -22,13 +22,14 @@ package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.UserIoTest;
+import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import io.spine.examples.todolist.view.TaskCreationView.DescriptionEdit;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.view.AbstractView.getBackShortcut;
+import static io.spine.examples.todolist.action.NoOpAction.noOpActionProducer;
 import static io.spine.examples.todolist.view.TaskCreationView.DESCRIPTION_LABEL;
 import static io.spine.examples.todolist.view.TaskCreationView.EMPTY_VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,6 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 @DisplayName("TaskCreationView should")
 class TaskCreationViewTest extends UserIoTest {
 
+    private static final String ACTION_NAME = "quit";
+    private static final Shortcut QUIT_SHORTCUT = new Shortcut("q");
     private static final String VALID_DESCRIPTION = "to the task";
 
     private final TaskCreationView view = TaskCreationView.create();
@@ -68,7 +71,8 @@ class TaskCreationViewTest extends UserIoTest {
         final TaskId initialId = view.getState()
                                      .getId();
 
-        addAnswer(getBackShortcut().getValue());
+        view.addAction(noOpActionProducer(ACTION_NAME, QUIT_SHORTCUT));
+        addAnswer(QUIT_SHORTCUT.getValue());
         getScreen().renderView(view);
 
         final TaskId idAfterRender = view.getState()

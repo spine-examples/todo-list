@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
+import static io.spine.examples.todolist.action.NoOpAction.noOpActionProducer;
 import static io.spine.examples.todolist.action.TransitionAction.newProducer;
 import static io.spine.examples.todolist.view.AbstractView.getBackShortcut;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -99,9 +100,10 @@ class AbstractViewTest extends UserIoTest {
     @Test
     @DisplayName("ask about action selection while the shortcut is invalid")
     void askActionSelection() {
-        final String validAnswer = getBackShortcut().getValue();
+        view.addAction(noOpActionProducer(ACTION_NAME, SHORTCUT));
+
         addAnswer("invalid answer");
-        addAnswer(validAnswer);
+        addAnswer(SHORTCUT.getValue());
 
         view.render(getScreen());
 
