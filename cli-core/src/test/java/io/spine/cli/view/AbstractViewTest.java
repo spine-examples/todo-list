@@ -105,7 +105,7 @@ class AbstractViewTest extends UserIoTest {
         addAnswer("invalid answer");
         addAnswer(SHORTCUT.getValue());
 
-        view.render(getScreen());
+        view.render(screen());
 
         assertAllAnswersWereGiven();
     }

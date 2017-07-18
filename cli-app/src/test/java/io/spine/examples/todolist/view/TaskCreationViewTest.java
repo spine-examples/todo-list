@@ -73,7 +73,7 @@ class TaskCreationViewTest extends UserIoTest {
 
         view.addAction(noOpActionProducer(ACTION_NAME, QUIT_SHORTCUT));
         addAnswer(QUIT_SHORTCUT.getValue());
-        getScreen().renderView(view);
+        screen().renderView(view);
 
         final TaskId idAfterRender = view.getState()
                                          .getId();
@@ -92,7 +92,7 @@ class TaskCreationViewTest extends UserIoTest {
             addAnswer(VALID_DESCRIPTION);
 
             final CreateBasicTaskVBuilder state = view.getState();
-            descriptionEdit.start(getScreen(), state);
+            descriptionEdit.start(screen(), state);
 
             assertEquals(VALID_DESCRIPTION, state.getDescription());
         }

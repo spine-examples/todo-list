@@ -18,49 +18,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.cli.view;
+package io.spine.cli;
 
-import com.google.protobuf.Int32Value;
-import com.google.protobuf.StringValue;
-import io.spine.cli.UserIoTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.protobuf.Wrapper.forString;
-import static java.lang.System.lineSeparator;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("EntityView should")
-class EntityViewTest extends UserIoTest {
+@DisplayName("NoOpView should")
+class NoOpViewTest {
 
-    private final AnEntityView view = new AnEntityView(Int32Value.getDefaultInstance());
+    private final NoOpView view = new NoOpView();
 
     @Test
-    @DisplayName("load and render entity state")
-    void loadAndRenderEntityState() {
-        view.renderBody(screen());
-        final String expectedBody = view.renderState(AnEntityView.STATE) + lineSeparator();
-        assertOutput(expectedBody);
+    @DisplayName("initially be marked unrendered")
+    void initiallyBeMarkedUnrendered() {
+        assertFalse(view.wasRendered());
     }
 
-    private static class AnEntityView extends EntityView<Int32Value, StringValue> {
-
-        private static final StringValue STATE = forString("string");
-
-        private AnEntityView(Int32Value id) {
-            super(id, "View title");
-        }
-
-        @Override
-        protected StringValue load(Int32Value id) {
-            return STATE;
-        }
-
-        @Override
-        protected String renderState(StringValue state) {
-            return state.getValue();
-        }
+    @Test
+    @DisplayName("be marked rendered after render")
+    void beMarkedRenderedAfterRender() {
+        new TestScreen().renderView(view);
+        assertTrue(view.wasRendered());
     }
 }

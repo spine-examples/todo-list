@@ -43,8 +43,7 @@ class NoOpActionTest {
     @Test
     @DisplayName("not allow null or empty name")
     void notAllowEmptyStrings() {
-        final String emptyString = "";
-        assertThrows(IllegalArgumentException.class, () -> new NoOpAction(emptyString, SHORTCUT));
+        assertThrows(IllegalArgumentException.class, () -> new NoOpAction("", SHORTCUT));
         assertThrows(IllegalArgumentException.class, () -> new NoOpAction(null, SHORTCUT));
     }
 

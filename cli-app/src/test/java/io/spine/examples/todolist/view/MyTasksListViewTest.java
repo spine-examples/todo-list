@@ -56,7 +56,7 @@ class MyTasksListViewTest extends UserIoTest {
     @Test
     @DisplayName("refresh task list")
     void refreshTaskList() {
-        getScreen().renderView(new NoOpView()); // Needed to cause addition of back action in the view.
+        screen().renderView(new NoOpView()); // Needed to cause addition of back action in the view.
 
         final MyTasksListView view = new MyTasksListView();
         view.addAction(newOpenTaskViewProducer(taskView, 0));
@@ -64,7 +64,7 @@ class MyTasksListViewTest extends UserIoTest {
         final Set<Action> actionsToBeRemoved = view.getActions();
 
         addAnswer("b");
-        getScreen().renderView(view);
+        screen().renderView(view);
 
         final Set<Action> refreshedActions = newHashSet(view.getActions());
         final boolean containsActionsForRemoval = refreshedActions.retainAll(actionsToBeRemoved);

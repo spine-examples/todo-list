@@ -48,7 +48,7 @@ class ConfirmationTest extends UserIoTest {
     @DisplayName("return true for a positive answer")
     void returnTrueForPositiveAnswer() {
         addAnswer(POSITIVE_ANSWER);
-        final boolean result = ask(getScreen(), QUESTION);
+        final boolean result = ask(screen(), QUESTION);
         assertTrue(result);
     }
 
@@ -56,7 +56,7 @@ class ConfirmationTest extends UserIoTest {
     @DisplayName("return false for a negative answer")
     void returnFalseForNegativeAnswer() {
         addAnswer(NEGATIVE_ANSWER);
-        final boolean result = ask(getScreen(), QUESTION);
+        final boolean result = ask(screen(), QUESTION);
         assertFalse(result);
     }
 
@@ -67,7 +67,7 @@ class ConfirmationTest extends UserIoTest {
         addAnswer(invalidAnswer);
         addAnswer(POSITIVE_ANSWER);
 
-        ask(getScreen(), QUESTION);
+        ask(screen(), QUESTION);
         assertAllAnswersWereGiven();
     }
 }

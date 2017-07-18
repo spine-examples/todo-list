@@ -20,10 +20,10 @@
 
 package io.spine.cli;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 
-import static io.spine.cli.TestScreen.getOutput;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Abstract base class for test suites that are dealing with user I/O of a command-line application.
@@ -37,26 +37,24 @@ public abstract class UserIoTest {
     @SuppressWarnings("TestOnlyProblems") // This class should be used only for tests needs.
     @BeforeEach
     protected void setUp() {
-        TestScreen.clearOutput();
-        this.screen = new TestScreen();
+        screen = new TestScreen();
         Application.getInstance()
-                   .setScreen(this.screen);
+                   .setScreen(screen);
     }
 
     protected void assertOutput(String expected) {
-        Assertions.assertEquals(expected, getOutput());
+        assertEquals(expected, screen.getOutput());
     }
 
     protected void assertAllAnswersWereGiven() {
-        Assertions.assertTrue(screen.getAnswers()
-                                    .isEmpty());
+        assertTrue(!screen.hasAnswers());
     }
 
     protected void addAnswer(String answer) {
         screen.addAnswer(answer);
     }
 
-    protected TestScreen getScreen() {
+    protected TestScreen screen() {
         return screen;
     }
 }

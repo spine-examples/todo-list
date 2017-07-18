@@ -35,7 +35,7 @@ class ActionListViewTest extends UserIoTest {
     @Test
     @DisplayName("have empty body")
     void haveEmptyBody() {
-        view.renderBody(getScreen());
+        view.renderBody(screen());
         assertOutput("");
     }
 }

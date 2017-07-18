@@ -18,49 +18,54 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.cli.view;
+package io.spine.cli;
 
-import com.google.protobuf.Int32Value;
-import com.google.protobuf.StringValue;
-import io.spine.cli.UserIoTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.protobuf.Wrapper.forString;
 import static java.lang.System.lineSeparator;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("EntityView should")
-class EntityViewTest extends UserIoTest {
+@DisplayName("UserIoTest should")
+class UserIoTestTest {
 
-    private final AnEntityView view = new AnEntityView(Int32Value.getDefaultInstance());
+    private static final String MESSAGE = "a message";
+
+    private final ATest test = new ATest();
 
     @Test
-    @DisplayName("load and render entity state")
-    void loadAndRenderEntityState() {
-        view.renderBody(screen());
-        final String expectedBody = view.renderState(AnEntityView.STATE) + lineSeparator();
-        assertOutput(expectedBody);
+    @DisplayName("pass if expected output is match actual")
+    void passOnEqualExpectedAndActual() {
+        test.screen()
+            .println(MESSAGE);
+        test.assertOutput(MESSAGE + lineSeparator());
     }
 
-    private static class AnEntityView extends EntityView<Int32Value, StringValue> {
+    @Test
+    @DisplayName("throw if expected output does not match actual")
+    void throwOnUnexpectedOutput() {
+        test.screen()
+            .println(MESSAGE);
+        assertThrows(AssertionError.class, () -> test.assertOutput(MESSAGE + "wrong part"));
+    }
 
-        private static final StringValue STATE = forString("string");
+    @Test
+    @DisplayName("pass if all answers were given")
+    void passIfAnswersWereGiven() {
+        test.assertAllAnswersWereGiven();
+    }
 
-        private AnEntityView(Int32Value id) {
-            super(id, "View title");
-        }
+    @Test
+    @DisplayName("throw if there are remaining answers")
+    void throwIfAnswersNotEmpty() {
+        test.screen()
+            .addAnswer(MESSAGE);
+        assertThrows(AssertionError.class, test::assertAllAnswersWereGiven);
+    }
 
-        @Override
-        protected StringValue load(Int32Value id) {
-            return STATE;
-        }
-
-        @Override
-        protected String renderState(StringValue state) {
-            return state.getValue();
-        }
+    private static class ATest extends UserIoTest {
     }
 }

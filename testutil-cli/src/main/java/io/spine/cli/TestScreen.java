@@ -21,23 +21,23 @@
 package io.spine.cli;
 
 import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.Queue;
 
 import static java.lang.System.lineSeparator;
-import static java.util.Collections.unmodifiableCollection;
 
 /**
  * A {@code Screen} for the test needs.
  *
- * <p>Allows to specify an input expected from a user of a command line application.
+ * <p>Allows to specify an input expected from a user (answers).
+ *
+ * <p>Answers will be used in order of its addition.
  *
  * @author Dmytro Grankin
  */
 public class TestScreen extends AbstractScreen {
 
-    @SuppressWarnings("StringBufferField") // Used to collect all output of the class.
-    private static final StringBuilder BUILDER = new StringBuilder();
+    @SuppressWarnings("StringBufferField") // Used to collect output of the class.
+    private final StringBuilder output = new StringBuilder();
 
     private final Queue<String> answers = new ArrayDeque<>();
 
@@ -53,23 +53,23 @@ public class TestScreen extends AbstractScreen {
 
     @Override
     public void println(String message) {
-        BUILDER.append(message)
-               .append(lineSeparator());
+        output.append(message)
+              .append(lineSeparator());
     }
 
-    protected void addAnswer(String answer) {
+    void addAnswer(String answer) {
         answers.add(answer);
     }
 
-    protected Collection<String> getAnswers() {
-        return unmodifiableCollection(answers);
+    boolean hasAnswers() {
+        return !answers.isEmpty();
     }
 
-    protected static String getOutput() {
-        return BUILDER.toString();
+    String getOutput() {
+        return output.toString();
     }
 
-    protected static void clearOutput() {
-        BUILDER.setLength(0);
+    void clearOutput() {
+        output.setLength(0);
     }
 }

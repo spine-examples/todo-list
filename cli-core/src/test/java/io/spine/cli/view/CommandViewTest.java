@@ -56,7 +56,7 @@ class CommandViewTest extends UserIoTest {
     @Test
     @DisplayName("render state representation")
     void renderStateRepresentation() {
-        view.renderBody(getScreen());
+        view.renderBody(screen());
         final String expectedBody = view.renderState(StringValueVBuilder.newBuilder()) + lineSeparator();
         assertOutput(expectedBody);
     }
