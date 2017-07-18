@@ -34,6 +34,10 @@ public abstract class UserIoTest {
 
     private TestScreen screen;
 
+    /**
+     * Creates the new screen and
+     * {@linkplain Application#setScreen(Screen) injects} it to the application.
+     */
     @SuppressWarnings("TestOnlyProblems") // This class should be used only for tests needs.
     @BeforeEach
     protected void setUp() {
@@ -42,18 +46,39 @@ public abstract class UserIoTest {
                    .setScreen(screen);
     }
 
+    /**
+     * Asserts that expected and actual {@link TestScreen#getOutput() output} are equal.
+     *
+     * @param expected the expected output
+     */
     protected void assertOutput(String expected) {
         assertEquals(expected, screen.getOutput());
     }
 
+    /**
+     * Asserts that answers is empty.
+     *
+     * <p>Should be used to make sure that a user was
+     * {@link Screen#promptUser(String) prompted} certain number of times.
+     */
     protected void assertAllAnswersWereGiven() {
         assertTrue(!screen.hasAnswers());
     }
 
+    /**
+     * Adds the specified answer to the {@link TestScreen}.
+     *
+     * @param answer the answer to add
+     */
     protected void addAnswer(String answer) {
         screen.addAnswer(answer);
     }
 
+    /**
+     * Obtains screen for the test.
+     *
+     * @return used screen
+     */
     protected Screen screen() {
         return screen;
     }

@@ -37,7 +37,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * An {@link Action}, that does nothing.
  *
- * <p>Suits for tests, where {@link Action} behavior does not play a role.
+ * <p>Suits for the tests, where {@link Action} behavior does not play a role.
  */
 public class NoOpAction implements Action<AbstractView, View> {
 
@@ -116,7 +116,7 @@ public class NoOpAction implements Action<AbstractView, View> {
     /**
      * Producer of no-op actions.
      *
-     * <p>Purpose of this producer is simplify {@link ActionProducer}-based API.
+     * <p>Purpose of this producer is simplify testing of {@link ActionProducer}-based API.
      */
     public static class NoOpActionProducer extends AbstractActionProducer<AbstractView, View, NoOpAction> {
 

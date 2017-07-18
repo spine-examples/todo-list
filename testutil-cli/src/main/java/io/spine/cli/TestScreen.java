@@ -28,9 +28,11 @@ import static java.lang.System.lineSeparator;
 /**
  * A {@code Screen} for the test needs.
  *
- * <p>Allows to specify an input expected from a user (answers).
+ * <p>Allows to specify answers for the {@linkplain #promptUser(String) prompts}.
  *
  * <p>Answers will be used in order of its addition.
+ *
+ * <p>This screen purposed for usage in {@link UserIoTest}.
  *
  * @author Dmytro Grankin
  */
@@ -41,6 +43,14 @@ public class TestScreen extends AbstractScreen {
 
     private final Queue<String> answers = new ArrayDeque<>();
 
+    /**
+     * Prints the specified prompt and returns the answer from top of {@link #answers}.
+     *
+     * <p>The answer is removed after execution.
+     *
+     * @param prompt the prompt to print
+     * @return the removed answer
+     */
     @Override
     public String promptUser(String prompt) {
         if (answers.isEmpty()) {
@@ -51,6 +61,11 @@ public class TestScreen extends AbstractScreen {
         return answers.remove();
     }
 
+    /**
+     * Appends the specified message and new line to the {@link #output}.
+     *
+     * @param message the message to append
+     */
     @Override
     public void println(String message) {
         output.append(message)

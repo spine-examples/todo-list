@@ -33,11 +33,21 @@ public class NoOpView implements View {
 
     private boolean rendered;
 
+    /**
+     * Marks the view as {@link #rendered}.
+     *
+     * @param screen {@inheritDoc}
+     */
     @Override
     public void render(Screen screen) {
         rendered = true;
     }
 
+    /**
+     * Determines whether the view was rendered at least once.
+     *
+     * @return {@code true} if the view was rendered, {@code false} otherwise
+     */
     public boolean wasRendered() {
         return rendered;
     }
