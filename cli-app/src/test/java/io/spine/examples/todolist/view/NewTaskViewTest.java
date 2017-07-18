@@ -66,7 +66,7 @@ class NewTaskViewTest extends UserIoTest {
     }
 
     @Test
-    @DisplayName("update the ID during rendering")
+    @DisplayName("update the ID if the view was rendered")
     void updateId() {
         final TaskId initialId = view.getState()
                                      .getId();

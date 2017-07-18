@@ -43,7 +43,7 @@ class TerminalsTest {
     }
 
     @Test
-    @DisplayName("Create a new dumb terminal")
+    @DisplayName("create a new dumb terminal")
     void createNewDumbTerminal() {
         final Terminal terminal = newTerminal();
         assertThat(terminal, instanceOf(DumbTerminal.class));
