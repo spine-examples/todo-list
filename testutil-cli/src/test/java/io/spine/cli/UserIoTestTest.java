@@ -61,8 +61,7 @@ class UserIoTestTest {
     @Test
     @DisplayName("throw if there are remaining answers")
     void throwIfAnswersNotEmpty() {
-        test.screen()
-            .addAnswer(MESSAGE);
+        test.addAnswer(MESSAGE);
         assertThrows(AssertionError.class, test::assertAllAnswersWereGiven);
     }
 

@@ -118,6 +118,7 @@ class AbstractViewTest extends UserIoTest {
 
         @Override
         public void renderBody(Screen screen) {
+            // Do nothing.
         }
     }
 

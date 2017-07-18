@@ -22,11 +22,11 @@ package io.spine.cli;
 
 import io.spine.cli.action.Action;
 import io.spine.cli.action.Shortcut;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.cli.action.ActionFormatter.format;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -52,14 +52,14 @@ class NoOpActionTest {
     void overrideEqualsAndHashCode() {
         final String differentName = action.getName() + "difference";
         final Action secondAction = new NoOpAction(differentName, action.getShortcut());
-        Assertions.assertEquals(action, secondAction);
-        Assertions.assertEquals(action.hashCode(), secondAction.hashCode());
+        assertEquals(action, secondAction);
+        assertEquals(action.hashCode(), secondAction.hashCode());
     }
 
     @Test
     @DisplayName("override `toString`")
     void overrideToString() {
-        Assertions.assertEquals(format(action), action.toString());
+        assertEquals(format(action), action.toString());
     }
 
     @Test

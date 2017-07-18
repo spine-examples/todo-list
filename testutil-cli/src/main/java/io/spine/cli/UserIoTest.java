@@ -54,7 +54,7 @@ public abstract class UserIoTest {
         screen.addAnswer(answer);
     }
 
-    protected TestScreen screen() {
+    protected Screen screen() {
         return screen;
     }
 }

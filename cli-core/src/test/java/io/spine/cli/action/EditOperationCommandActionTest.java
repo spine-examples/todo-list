@@ -24,7 +24,6 @@ import io.spine.cli.EditOperation;
 import io.spine.cli.Screen;
 import io.spine.cli.UserIoTest;
 import io.spine.cli.view.CommandView;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -97,9 +96,9 @@ class EditOperationCommandActionTest extends UserIoTest {
         addAnswer(SHORTCUT.getValue());
 
         action.execute();
-        Assertions.assertEquals(VALID_COMMENT, view.getState()
-                                                   .build()
-                                                   .getValue());
+        assertEquals(VALID_COMMENT, view.getState()
+                                        .build()
+                                        .getValue());
     }
 
     @Test

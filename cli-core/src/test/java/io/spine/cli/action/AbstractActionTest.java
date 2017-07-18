@@ -73,6 +73,7 @@ class AbstractActionTest {
 
         @Override
         public void execute() {
+            // Do noting.
         }
     }
 }
