@@ -20,7 +20,13 @@
 
 package io.spine.examples.todolist;
 
+import io.spine.cli.Application;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static io.spine.cli.Application.getInstance;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Dmytro Grankin
@@ -28,15 +34,22 @@ import org.junit.jupiter.api.DisplayName;
 @DisplayName("Application should")
 class ApplicationTest {
 
-//    @Test
-//    @DisplayName("not allow obtain the instance before initialization")
-//    void notAllowObtainInstanceBeforeInit() {
-//        assertThrows(IllegalStateException.class, Application::getInstance);
-//    }
-//
-//    @Test
-//    @DisplayName("not allow null Screen")
-//    void notAllowNullScreen() {
-//
-//    }
+    @Test
+    @DisplayName("have the private constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(Application.class);
+    }
+
+    @Test
+    @DisplayName("allow initialization only once")
+    void allowInitOnlyOnce() {
+        try {
+            // Exception may be thrown during first call also (if was initialized in other tests).
+            getInstance().init(new TerminalScreen());
+
+            getInstance().init(new TerminalScreen());
+            fail("Exception should be thrown.");
+        } catch (IllegalStateException ignored) {
+        }
+    }
 }

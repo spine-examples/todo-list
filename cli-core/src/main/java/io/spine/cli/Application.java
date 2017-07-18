@@ -35,6 +35,10 @@ public final class Application {
 
     private Screen screen;
 
+    private Application() {
+        // Prevent instantiation of this class from outside.
+    }
+
     /**
      * Obtains {@link Screen} of the application.
      *
