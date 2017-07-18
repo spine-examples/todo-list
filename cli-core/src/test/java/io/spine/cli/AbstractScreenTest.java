@@ -84,7 +84,7 @@ class AbstractScreenTest {
     }
 
     @Test
-    @DisplayName("not create back action if there is not back destination")
+    @DisplayName("not create back action if there is no back destination")
     void notCreateBackAction() {
         final View view = new NoOpView();
         screen.renderView(view);
