@@ -26,10 +26,10 @@ import io.spine.cli.view.View;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -76,7 +76,7 @@ class AbstractScreenTest {
 
         final List<View> history = screen.getHistory();
         final List<View> historyWithoutCurrentView =
-                new ArrayList<>(history.subList(0, history.size() - 1));
+                newArrayList(history.subList(0, history.size() - 1));
 
         screen.renderView(first);
 

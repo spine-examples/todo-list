@@ -24,8 +24,9 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.base.FieldPath;
 import io.spine.validate.ConstraintViolation;
 
-import java.util.LinkedList;
 import java.util.List;
+
+import static com.google.common.collect.Lists.newLinkedList;
 
 /**
  * Utilities for {@code ConstraintViolation} formatting.
@@ -48,7 +49,7 @@ public class ConstraintViolationFormatter {
      * @return formatted error messages
      */
     public static List<String> format(Iterable<ConstraintViolation> violations) {
-        final List<String> messages = new LinkedList<>();
+        final List<String> messages = newLinkedList();
         for (ConstraintViolation violation : violations) {
             final FieldPath fieldPath = violation.getFieldPath();
             final int fieldPathSize = fieldPath.getFieldNameCount();

@@ -25,10 +25,10 @@ import io.spine.cli.action.Shortcut;
 import io.spine.cli.action.TransitionAction;
 import io.spine.cli.view.View;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.unmodifiableList;
 
 /**
@@ -47,7 +47,7 @@ public abstract class AbstractScreen implements Screen {
      * <p>Does not include next views for the current view,
      * i.e. last rendered view is the end of the history.
      */
-    private final List<View> history = new ArrayList<>();
+    private final List<View> history = newArrayList();
 
     /**
      * {@inheritDoc}

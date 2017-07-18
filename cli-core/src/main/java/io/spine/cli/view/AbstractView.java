@@ -27,7 +27,6 @@ import io.spine.cli.action.ActionProducer;
 import io.spine.cli.action.Shortcut;
 import io.spine.cli.action.TransitionAction;
 
-import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -35,6 +34,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.repeat;
+import static com.google.common.collect.Sets.newLinkedHashSet;
 import static io.spine.cli.action.ActionFormatter.format;
 import static io.spine.util.Exceptions.newIllegalArgumentException;
 import static java.util.Collections.unmodifiableSet;
@@ -75,7 +75,7 @@ public abstract class AbstractView implements View {
     AbstractView(String title) {
         checkArgument(!isNullOrEmpty(title));
         this.title = title;
-        this.actions = new LinkedHashSet<>();
+        this.actions = newLinkedHashSet();
     }
 
     /**

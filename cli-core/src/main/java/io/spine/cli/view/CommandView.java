@@ -33,10 +33,10 @@ import io.spine.validate.ValidatingBuilders;
 import io.spine.validate.ValidationException;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Lists.newLinkedList;
 import static io.spine.cli.ConstraintViolationFormatter.format;
 import static io.spine.cli.view.CommandView.GenericParameter.STATE_BUILDER;
 
@@ -61,7 +61,7 @@ public abstract class CommandView<M extends Message,
         extends AbstractView {
 
     private final B state;
-    private final Collection<ConstraintViolation> recentViolations = new LinkedList<>();
+    private final Collection<ConstraintViolation> recentViolations = newLinkedList();
 
     protected CommandView(String title) {
         super(title);
