@@ -58,8 +58,7 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
  * @author Illia Shepilov
  */
 @SuppressWarnings("OverlyCoupledClass")
-public class MyListViewProjection extends
-                                  Projection<TaskListId, MyListView, MyListViewValidatingBuilder> {
+public class MyListViewProjection extends Projection<TaskListId, MyListView, MyListViewVBuilder> {
 
     /**
      * As long as there is just a single end-user in the app,

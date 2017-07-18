@@ -26,7 +26,7 @@ import io.spine.examples.todolist.TaskDefinition;
 import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.events.TaskCreated;
-import io.spine.validate.ConstraintViolationThrowable;
+import io.spine.validate.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -90,9 +90,8 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatch(aggregate, envelopeOf(createBasicTask)));
         final Throwable rootCause = Throwables.getRootCause(t);
-        final ConstraintViolationThrowable constraintViolation =
-                (ConstraintViolationThrowable) rootCause;
-        final int violationCount = constraintViolation.getConstraintViolations()
+        final ValidationException validationException = (ValidationException) rootCause;
+        final int violationCount = validationException.getConstraintViolations()
                                                       .size();
         assertEquals(1, violationCount);
     }

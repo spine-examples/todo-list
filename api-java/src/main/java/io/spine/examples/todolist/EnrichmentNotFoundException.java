@@ -27,7 +27,7 @@ package io.spine.examples.todolist;
  */
 class EnrichmentNotFoundException extends RuntimeException {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 0L;
 
     EnrichmentNotFoundException(String message) {
         super(message);

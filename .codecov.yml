@@ -9,7 +9,7 @@ coverage:
   ignore:
   - generated/*
   - test/*
-  - testutil/src/main/java/io/spine/examples/todolist/testdata/*
+  - testutil-api/src/main/java/io/spine/examples/todolist/testdata/*
 
   status:
     patch: false

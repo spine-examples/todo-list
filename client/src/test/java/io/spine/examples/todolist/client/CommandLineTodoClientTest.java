@@ -42,6 +42,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 
@@ -51,7 +52,8 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIP
 abstract class CommandLineTodoClientTest {
 
     static final String UPDATED_TASK_DESCRIPTION = "New task description.";
-    private static final String HOST = "localhost";
+    private static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
+
     private Server server;
     private TodoClient client;
 
@@ -60,9 +62,9 @@ abstract class CommandLineTodoClientTest {
         final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
         TaskAggregateRoot.injectBoundedContext(boundedContext);
 
-        server = new Server(boundedContext);
+        server = new Server(PORT, boundedContext);
         startServer();
-        client = new CommandLineTodoClient(HOST, DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
+        client = new CommandLineTodoClient(HOST, PORT, boundedContext);
     }
 
     @AfterEach
