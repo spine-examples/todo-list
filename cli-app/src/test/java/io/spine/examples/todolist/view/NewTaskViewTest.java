@@ -24,28 +24,28 @@ import io.spine.cli.UserIoTest;
 import io.spine.cli.action.Shortcut;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
-import io.spine.examples.todolist.view.TaskCreationView.DescriptionEditOperation;
+import io.spine.examples.todolist.view.NewTaskView.DescriptionEditOperation;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.cli.NoOpAction.noOpActionProducer;
-import static io.spine.examples.todolist.view.TaskCreationView.DESCRIPTION_LABEL;
-import static io.spine.examples.todolist.view.TaskCreationView.EMPTY_VALUE;
+import static io.spine.examples.todolist.view.NewTaskView.DESCRIPTION_LABEL;
+import static io.spine.examples.todolist.view.NewTaskView.EMPTY_VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("TaskCreationView should")
-class TaskCreationViewTest extends UserIoTest {
+@DisplayName("NewTaskView should")
+class NewTaskViewTest extends UserIoTest {
 
     private static final String ACTION_NAME = "quit";
     private static final Shortcut QUIT_SHORTCUT = new Shortcut("q");
     private static final String VALID_DESCRIPTION = "to the task";
 
-    private final TaskCreationView view = TaskCreationView.create();
+    private final NewTaskView view = NewTaskView.create();
 
     @Test
     @DisplayName("handle empty description")

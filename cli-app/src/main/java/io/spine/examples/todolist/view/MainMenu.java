@@ -36,6 +36,11 @@ public class MainMenu extends ActionListView {
         super("Main menu");
     }
 
+    /**
+     * Creates a new {@code MainMenu} instance.
+     *
+     * @return the new instance
+     */
     public static MainMenu create() {
         final MainMenu mainMenu = new MainMenu();
         mainMenu.addAction(transitionProducer("My tasks", new Shortcut("m"),

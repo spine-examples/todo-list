@@ -47,7 +47,7 @@ import static java.lang.String.valueOf;
  *
  * @author Dmytro Grankin
  */
-class MyTasksListView extends ActionListView {
+public class MyTasksListView extends ActionListView {
 
     private static final String EMPTY_TASKS_LIST_MSG = "<no tasks>";
 
@@ -98,7 +98,15 @@ class MyTasksListView extends ActionListView {
         return transitionProducer(name, shortcut, destination);
     }
 
-    static <S extends View> TransitionActionProducer<S, MyTasksListView>
+    /**
+     * Creates {@link TransitionActionProducer} with {@link MyTasksListView} destination.
+     *
+     * @param name     the name for the action
+     * @param shortcut the shortcut for the action
+     * @param <S>      the type of the source view
+     * @return the new producer
+     */
+    public static <S extends View> TransitionActionProducer<S, MyTasksListView>
     newOpenTaskListProducer(String name, Shortcut shortcut) {
         return transitionProducer(name, shortcut, new MyTasksListView());
     }

@@ -24,6 +24,7 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.cli.EditOperation;
 import io.spine.cli.Screen;
 import io.spine.cli.action.CommandAction;
+import io.spine.cli.action.CommandAction.CommandActionProducer;
 import io.spine.cli.action.Shortcut;
 import io.spine.cli.view.CommandView;
 import io.spine.examples.todolist.TaskId;
@@ -42,23 +43,33 @@ import static java.util.Collections.singletonList;
  *
  * @author Dmytro Grankin
  */
-public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTaskVBuilder> {
+public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBuilder> {
 
     static final String EMPTY_VALUE = "empty";
     static final String DESCRIPTION_LABEL = "Description:";
 
-    private TaskCreationView() {
+    private NewTaskView() {
         super("New task");
     }
 
-    public static TaskCreationView create() {
-        final TaskCreationView view = new TaskCreationView();
+    /**
+     * Creates a new {@code NewTaskView} instance.
+     *
+     * @return the new instance.
+     */
+    public static NewTaskView create() {
+        final NewTaskView view = new NewTaskView();
         view.addAction(editCommandActionProducer("Start input", new Shortcut("i"),
                                                  singletonList(new DescriptionEditOperation())));
-        view.addAction(new CreateTask.CreateTaskProducer());
+        view.addAction(new NewTaskProducer());
         return view;
     }
 
+    /**
+     * Updates ID of the command and renders the view.
+     *
+     * @param screen {@inheritDoc}
+     */
     @Override
     public void render(Screen screen) {
         getState().setId(generatedId());
@@ -80,12 +91,21 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
                      .build();
     }
 
+    /**
+     * The operation that updates the {@linkplain CreateBasicTask#getDescription() description}.
+     */
     @VisibleForTesting
     static class DescriptionEditOperation implements EditOperation<CreateBasicTask,
                                                                    CreateBasicTaskVBuilder> {
 
         private static final String PROMPT = "Please enter the task description";
 
+        /**
+         * Prompts a user for a task description and updates state of the specified builder.
+         *
+         * @param screen  {@inheritDoc}
+         * @param builder {@inheritDoc}
+         */
         @Override
         public void start(Screen screen, CreateBasicTaskVBuilder builder) {
             final String description = screen.promptUser(PROMPT);
@@ -93,6 +113,9 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
         }
     }
 
+    /**
+     * The action for posting {@link CreateBasicTask} command to a server.
+     */
     private static class CreateTask extends CommandAction<CreateBasicTask,
                                                           CreateBasicTaskVBuilder> {
 
@@ -104,15 +127,21 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
         protected void post(CreateBasicTask commandMessage) {
             getClient().create(commandMessage);
         }
+    }
 
-        static class CreateTaskProducer extends CommandActionProducer<CreateBasicTask,
-                                                                      CreateBasicTaskVBuilder,
-                                                                      CreateTask> {
+    /**
+     * Producer of {@code NewTaskView}.
+     */
+    private static class NewTaskProducer extends CommandActionProducer<CreateBasicTask,
+                                                                       CreateBasicTaskVBuilder,
+                                                                       CreateTask> {
 
-            @Override
-            public CreateTask create(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
-                return new CreateTask(source);
-            }
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public CreateTask create(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
+            return new CreateTask(source);
         }
     }
 }

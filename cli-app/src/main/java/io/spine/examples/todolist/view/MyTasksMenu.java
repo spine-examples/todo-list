@@ -40,7 +40,7 @@ class MyTasksMenu extends ActionListView {
 
     static MyTasksMenu create() {
         final MyTasksMenu view = new MyTasksMenu();
-        view.addAction(transitionProducer("Create task", new Shortcut("c"), TaskCreationView.create()));
+        view.addAction(transitionProducer("Create task", new Shortcut("c"), NewTaskView.create()));
         view.addAction(newOpenTaskListProducer("List tasks", new Shortcut("l")));
         return view;
     }

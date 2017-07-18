@@ -22,7 +22,6 @@ package io.spine.cli.view;
 
 import com.google.protobuf.Message;
 import io.spine.cli.Application;
-import io.spine.cli.ConstraintViolationFormatter;
 import io.spine.cli.Screen;
 import io.spine.cli.action.Action;
 import io.spine.cli.action.CommandAction;
@@ -38,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.cli.ConstraintViolationFormatter.format;
 import static io.spine.cli.view.CommandView.GenericParameter.STATE_BUILDER;
 
 /**
@@ -112,7 +112,7 @@ public abstract class CommandView<M extends Message,
     }
 
     private void renderRecentViolations(Screen screen) {
-        final List<String> errorMessages = ConstraintViolationFormatter.format(recentViolations);
+        final List<String> errorMessages = format(recentViolations);
         errorMessages.forEach(screen::println);
         recentViolations.clear();
     }
