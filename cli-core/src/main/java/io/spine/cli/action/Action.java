@@ -66,26 +66,4 @@ public interface Action<S extends View, D extends View> {
      * @return a destination view
      */
     D getDestination();
-
-    /**
-     * Compares the specified object with this action for equality.
-     *
-     * <p>Returns {@code true} if the specified object is also an action and
-     * both actions have equal {@linkplain Shortcut shortcuts}.
-     *
-     * @param o the object to compare
-     * @return {@code true} if the specified object is equal to this, {@code false} otherwise
-     */
-    @Override
-    boolean equals(Object o);
-
-    /**
-     * Obtains the hash code of the action.
-     *
-     * <p>Implementation should return hash code for {@link Shortcut}.
-     *
-     * @return the hash code value
-     */
-    @Override
-    int hashCode();
 }
