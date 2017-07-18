@@ -30,47 +30,47 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("UserIoTest should")
-class UserIoTestTest {
+@DisplayName("Bot should")
+class BotTest {
 
     private static final String MESSAGE = "a message";
 
-    private final ATest test = new ATest();
+    private final ABot bot = new ABot();
 
     @BeforeEach
     void setUp() {
-        test.setUp();
+        bot.setUp();
     }
 
     @Test
     @DisplayName("pass if expected output is match actual")
     void passOnEqualExpectedAndActual() {
-        test.screen()
-            .println(MESSAGE);
-        test.assertOutput(MESSAGE + lineSeparator());
+        bot.screen()
+           .println(MESSAGE);
+        bot.assertOutput(MESSAGE + lineSeparator());
     }
 
     @Test
     @DisplayName("throw if expected output does not match actual")
     void throwOnUnexpectedOutput() {
-        test.screen()
-            .println(MESSAGE);
-        assertThrows(AssertionError.class, () -> test.assertOutput(MESSAGE + "wrong part"));
+        bot.screen()
+           .println(MESSAGE);
+        assertThrows(AssertionError.class, () -> bot.assertOutput(MESSAGE + "wrong part"));
     }
 
     @Test
     @DisplayName("pass if all answers were given")
     void passIfAnswersWereGiven() {
-        test.assertAllAnswersWereGiven();
+        bot.assertAllAnswersWereGiven();
     }
 
     @Test
     @DisplayName("throw if there are remaining answers")
     void throwIfAnswersNotEmpty() {
-        test.addAnswer(MESSAGE);
-        assertThrows(AssertionError.class, test::assertAllAnswersWereGiven);
+        bot.addAnswer(MESSAGE);
+        assertThrows(AssertionError.class, bot::assertAllAnswersWereGiven);
     }
 
-    private static class ATest extends UserIoTest {
+    private static class ABot extends Bot {
     }
 }

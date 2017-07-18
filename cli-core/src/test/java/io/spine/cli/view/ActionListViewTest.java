@@ -20,7 +20,7 @@
 
 package io.spine.cli.view;
 
-import io.spine.cli.UserIoTest;
+import io.spine.cli.Bot;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
  * @author Dmytro Grankin
  */
 @DisplayName("ActionListView should")
-class ActionListViewTest extends UserIoTest {
+class ActionListViewTest extends Bot {
 
     private final ActionListView view = new ActionListView("View title");
 

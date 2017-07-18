@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.view;
 
-import io.spine.cli.UserIoTest;
+import io.spine.cli.Bot;
 import io.spine.cli.action.Shortcut;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  * @author Dmytro Grankin
  */
 @DisplayName("NewTaskView should")
-class NewTaskViewTest extends UserIoTest {
+class NewTaskViewTest extends Bot {
 
     private static final String ACTION_NAME = "quit";
     private static final Shortcut QUIT_SHORTCUT = new Shortcut("q");

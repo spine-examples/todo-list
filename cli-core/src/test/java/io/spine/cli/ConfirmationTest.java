@@ -34,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("Confirmation should")
-class ConfirmationTest extends UserIoTest {
+class ConfirmationTest extends Bot {
 
     private static final String QUESTION = "?";
 

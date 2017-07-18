@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *
  * @author Dmytro Grankin
  */
-public abstract class UserIoTest {
+public abstract class Bot {
 
     private TestScreen screen;
 

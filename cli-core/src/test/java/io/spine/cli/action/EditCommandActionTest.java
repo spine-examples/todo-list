@@ -20,9 +20,9 @@
 
 package io.spine.cli.action;
 
+import io.spine.cli.Bot;
 import io.spine.cli.EditOperation;
 import io.spine.cli.Screen;
-import io.spine.cli.UserIoTest;
 import io.spine.cli.view.CommandView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("EditCommandAction should")
-class EditCommandActionTest extends UserIoTest {
+class EditCommandActionTest extends Bot {
 
     private static final String ACTION_NAME = "action";
     private static final Shortcut SHORTCUT = new Shortcut("s");

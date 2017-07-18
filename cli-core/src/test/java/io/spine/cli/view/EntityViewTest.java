@@ -22,7 +22,7 @@ package io.spine.cli.view;
 
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
-import io.spine.cli.UserIoTest;
+import io.spine.cli.Bot;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +33,7 @@ import static java.lang.System.lineSeparator;
  * @author Dmytro Grankin
  */
 @DisplayName("EntityView should")
-class EntityViewTest extends UserIoTest {
+class EntityViewTest extends Bot {
 
     private final AnEntityView view = new AnEntityView(Int32Value.getDefaultInstance());
 

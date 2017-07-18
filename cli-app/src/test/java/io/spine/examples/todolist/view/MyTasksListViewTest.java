@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.view;
 
+import io.spine.cli.Bot;
 import io.spine.cli.NoOpView;
-import io.spine.cli.UserIoTest;
 import io.spine.cli.action.Action;
 import io.spine.cli.action.Shortcut;
 import io.spine.cli.action.TransitionAction.TransitionActionProducer;
@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @author Dmytro Grankin
  */
 @DisplayName("MyTasksListView should")
-class MyTasksListViewTest extends UserIoTest {
+class MyTasksListViewTest extends Bot {
 
     private static final int VIEW_INDEX = 0;
 

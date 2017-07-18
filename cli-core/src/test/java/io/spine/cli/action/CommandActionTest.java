@@ -21,8 +21,8 @@
 package io.spine.cli.action;
 
 import com.google.protobuf.StringValue;
+import io.spine.cli.Bot;
 import io.spine.cli.Screen;
-import io.spine.cli.UserIoTest;
 import io.spine.cli.view.CommandView;
 import io.spine.validate.StringValueVBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("CommandAction should")
-class CommandActionTest extends UserIoTest {
+class CommandActionTest extends Bot {
 
     private static final String ACTION_NAME = "quit";
     private static final Shortcut QUIT = new Shortcut("q");

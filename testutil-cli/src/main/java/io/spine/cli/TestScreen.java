@@ -32,7 +32,7 @@ import static java.lang.System.lineSeparator;
  *
  * <p>Answers will be used in order of its addition.
  *
- * <p>This screen purposed for usage in {@link UserIoTest}.
+ * <p>This screen purposed for usage in {@link Bot}.
  *
  * @author Dmytro Grankin
  */
