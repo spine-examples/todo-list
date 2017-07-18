@@ -87,7 +87,7 @@ public class EditCommandAction<M extends Message,
      *
      * @param name     the name for the action
      * @param shortcut the shortcut for the action
-     * @param edits    the editOperations for the action
+     * @param edits    the {@linkplain EditOperation edit operations} for the action
      * @param <M>      the type of the command message
      * @param <B>      the validating builder type for the command message
      * @return the new producer

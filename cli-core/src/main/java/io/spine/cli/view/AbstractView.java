@@ -49,7 +49,7 @@ import static java.util.Collections.unmodifiableSet;
  *     <li>{@linkplain #addBackAndRenderActions(Screen) actions}</li>
  * </ol>
  *
- * <p>Automatically adds `back` action to the {@link #actions} before each render of actions.
+ * <p>Automatically adds {@code back} action to the {@link #actions} before each render of actions.
  *
  * <p>In the end of rendering prompts a user to select an action to be executed.
  *

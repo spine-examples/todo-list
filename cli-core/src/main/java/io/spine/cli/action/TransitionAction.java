@@ -28,7 +28,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Base implementation of {@link Action}.
  *
- * <p>Executes transition from a {@link #source} to a {@link #destination} and nothing else.
+ * <p>Executes transition from a {@link #source} to a {@link #destination}.
  *
  * @param <S> {@inheritDoc}
  * @param <D> {@inheritDoc}
@@ -41,7 +41,8 @@ public class TransitionAction<S extends View, D extends View> extends AbstractAc
     }
 
     /**
-     * Makes transition to a {@link #destination} view.
+     * Makes transition to a {@link #destination} view
+     * using the {@linkplain Application#screen() screen}.
      */
     @Override
     public void execute() {

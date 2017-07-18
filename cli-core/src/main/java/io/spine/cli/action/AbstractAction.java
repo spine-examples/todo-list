@@ -37,7 +37,14 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 abstract class AbstractAction<S extends View, D extends View> implements Action<S, D> {
 
+    /**
+     * A name of the action to be displayed.
+     */
     private final String name;
+
+    /**
+     * A {@link Shortcut} that corresponds to the action.
+     */
     private final Shortcut shortcut;
 
     /**

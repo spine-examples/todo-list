@@ -28,6 +28,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * Value object, that represents a shortcut for an {@link Action}.
  *
+ * <p>Shortcut is the value used to distinguish and select different actions.
+ *
  * @author Dmytro Grankin
  */
 public class Shortcut {

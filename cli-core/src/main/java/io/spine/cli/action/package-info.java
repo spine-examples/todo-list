@@ -19,7 +19,7 @@
  */
 
 /**
- * This package provides classes for a user actions in CLI.
+ * This package provides classes for user actions in CLI.
  */
 
 @ParametersAreNonnullByDefault
