@@ -21,11 +21,9 @@
 package io.spine.cli.view;
 
 import io.spine.cli.Screen;
-import io.spine.cli.action.Action;
 
 /**
- * A {@code View} that represents list of
- * {@linkplain Action actions}.
+ * A {@code View} that represents list of {@linkplain io.spine.cli.action.Action actions}.
  *
  * <p>Typical instance of the class is a menu, in which the end-user selects an {@code Action}
  * to be executed from the actions list.

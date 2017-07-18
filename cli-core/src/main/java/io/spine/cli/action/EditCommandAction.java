@@ -36,7 +36,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static io.spine.cli.ConstraintViolationFormatter.format;
 
 /**
- * An {@link Action}, that editOperations a {@linkplain CommandView#state state of the command view}.
+ * An {@link Action}, that edits a {@linkplain CommandView#state state of the command view}.
  *
  * @param <M> the type of the command message
  * @param <B> the validating builder type for the command message

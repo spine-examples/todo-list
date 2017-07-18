@@ -133,9 +133,9 @@ class EditOperationCommandActionTest extends UserIoTest {
     private static class CommentEditOperation implements EditOperation<Comment, CommentVBuilder> {
 
         @Override
-        public void start(Screen screen, CommentVBuilder state) {
+        public void start(Screen screen, CommentVBuilder builder) {
             final String commentValue = screen.promptUser("Enter a comment");
-            state.setValue(commentValue);
+            builder.setValue(commentValue);
         }
     }
 }

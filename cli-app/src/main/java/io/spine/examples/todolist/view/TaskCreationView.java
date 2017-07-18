@@ -87,9 +87,9 @@ public class TaskCreationView extends CommandView<CreateBasicTask, CreateBasicTa
         private static final String PROMPT = "Please enter the task description";
 
         @Override
-        public void start(Screen screen, CreateBasicTaskVBuilder state) {
+        public void start(Screen screen, CreateBasicTaskVBuilder builder) {
             final String description = screen.promptUser(PROMPT);
-            state.setDescription(description);
+            builder.setDescription(description);
         }
     }
 

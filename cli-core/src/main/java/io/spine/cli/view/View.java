@@ -30,7 +30,7 @@ import io.spine.cli.Screen;
 public interface View {
 
     /**
-     * Renders the view.
+     * Renders the view using the specified screen.
      *
      * @param screen the screen to use
      */

@@ -70,7 +70,7 @@ public interface Action<S extends View, D extends View> {
     /**
      * Compares the specified object with this action for equality.
      *
-     * <p>Returns {@code} true if the specified object is also an action and
+     * <p>Returns {@code true} if the specified object is also an action and
      * both actions have equal {@linkplain Shortcut shortcuts}.
      *
      * @param o the object to compare

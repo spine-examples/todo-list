@@ -26,7 +26,9 @@ import io.spine.cli.Screen;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A {@link View} of the entity.
+ * A {@link View} of an entity.
+ *
+ * <p>This view adds rendering of an entity state.
  *
  * @param <I> the type of entity identifier
  * @param <S> the type of the entity state

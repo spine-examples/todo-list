@@ -62,7 +62,7 @@ class CommandActionTest extends UserIoTest {
     }
 
     @Test
-    @DisplayName("execute command and cause render of a source view")
+    @DisplayName("execute command and render a source view")
     void executeCommandAndRenderSource() {
         final String expectedString = "A string value.";
         final StringValueVBuilder viewState = view.getState();

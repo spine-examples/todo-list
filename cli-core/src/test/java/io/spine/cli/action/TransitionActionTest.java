@@ -38,8 +38,8 @@ class TransitionActionTest {
     private static final Shortcut SHORTCUT = new Shortcut("s");
 
     @Test
-    @DisplayName("cause render of a destination view")
-    void causeDestinationViewRender() {
+    @DisplayName("render of a destination view")
+    void renderDestinationView() {
         final View source = new NoOpView();
         final DisplayCounterView destination = new DisplayCounterView();
         final TransitionAction<View, DisplayCounterView> action =

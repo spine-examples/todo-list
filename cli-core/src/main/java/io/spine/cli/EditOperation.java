@@ -36,10 +36,10 @@ public interface EditOperation<M extends Message,
     /**
      * Starts editing of the specified validating builder.
      *
-     * <p>Result of this operation is a modified validating builder is passed as a parameter.
+     * <p>Result of this operation is state modification of the specified builder.
      *
-     * @param screen the {@link Screen}
-     * @param state  the validating builder
+     * @param screen  the {@link Screen} to use
+     * @param builder the validating builder
      */
-    void start(Screen screen, B state);
+    void start(Screen screen, B builder);
 }

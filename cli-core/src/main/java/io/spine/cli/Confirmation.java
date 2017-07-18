@@ -29,12 +29,12 @@ import static java.lang.String.format;
 /**
  * This class serves for asking for a confirmation.
  *
- * <p>Valid answers are `y` and `n`.
+ * <p>Valid confirmation values are `y` and `n`.
  *
  * @author Illia Shepilov
  * @author Dmytro Grankin
  */
-class Confirmation {
+public class Confirmation {
 
     @VisibleForTesting
     static final String POSITIVE_ANSWER = "y";
@@ -60,7 +60,7 @@ class Confirmation {
      * @param question the question to ask
      * @return {@code true} if the positive answer was given, {@code false} otherwise
      */
-    static boolean ask(Screen screen, String question) {
+    public static boolean ask(Screen screen, String question) {
         final String questionWithHint = question + ' ' + MINOR_HINT;
         Optional<String> answer = getValidAnswer(screen, questionWithHint);
 

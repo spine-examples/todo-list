@@ -34,7 +34,8 @@ import static java.util.Collections.unmodifiableList;
 /**
  * Abstract base class for {@link Screen}.
  *
- * <p>Implements common operation for all screens.
+ * <p>Implements all methods except the I/O methods,
+ * that are specific for a concrete implementation.
  *
  * @author Dmytro Grankin
  */
