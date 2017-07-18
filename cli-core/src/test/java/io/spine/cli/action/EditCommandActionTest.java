@@ -46,7 +46,6 @@ class EditCommandActionTest extends UserIoTest {
 
     private static final String ACTION_NAME = "action";
     private static final Shortcut SHORTCUT = new Shortcut("s");
-
     private static final String VALID_COMMENT = "a comment";
     private static final String INVALID_COMMENT = "";
 

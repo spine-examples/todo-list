@@ -58,8 +58,8 @@ class NoOpActionTest {
     }
 
     @Test
-    @DisplayName("override `toString`")
-    void overrideToString() {
+    @DisplayName("have user-friendly representation")
+    void haveUserFriendlyRepresentation() {
         assertEquals(format(action), action.toString());
     }
 
