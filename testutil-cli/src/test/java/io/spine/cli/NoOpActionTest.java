@@ -25,6 +25,7 @@ import io.spine.cli.action.Shortcut;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.cli.NoOpAction.noOpActionProducer;
 import static io.spine.cli.action.ActionFormatter.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -67,5 +68,20 @@ class NoOpActionTest {
     void notAllowRetrieveSourceOrDestinationView() {
         assertThrows(UnsupportedOperationException.class, action::getSource);
         assertThrows(UnsupportedOperationException.class, action::getDestination);
+    }
+
+    @Test
+    @DisplayName("be executed successfully")
+    void beExecutedSuccessfully() {
+        action.execute();
+    }
+
+    @SuppressWarnings("ConstantConditions") // Part of the test.
+    @Test
+    @DisplayName("be created using the producer")
+    void beCreatedByProducer() {
+        final Action action = noOpActionProducer(ACTION_NAME, SHORTCUT).create(null);
+        assertEquals(ACTION_NAME, action.getName());
+        assertEquals(SHORTCUT, action.getShortcut());
     }
 }

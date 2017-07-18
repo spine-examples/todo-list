@@ -20,6 +20,7 @@
 
 package io.spine.cli;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -35,6 +36,11 @@ class UserIoTestTest {
     private static final String MESSAGE = "a message";
 
     private final ATest test = new ATest();
+
+    @BeforeEach
+    void setUp() {
+        test.setUp();
+    }
 
     @Test
     @DisplayName("pass if expected output is match actual")
