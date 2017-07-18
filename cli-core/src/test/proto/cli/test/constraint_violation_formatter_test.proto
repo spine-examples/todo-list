@@ -25,10 +25,18 @@ package io.spine.cli;
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.cli";
-option java_package = "io.spine.cli.action";
+option java_package = "io.spine.cli";
+option java_outer_classname = "ConstraintViolationFormatterTestProto";
 option java_multiple_files = true;
 
-message Comment {
+// A natural number.
+//
+// Zero is considered a natural number.
+//
+message NaturalNumber {
 
-    string value = 1 [(required) = true];
+    // Natural number value.
+    //
+    // Must be greater than or equal to zero.
+    int32 value = 1 [(min).value = "0"];
 }
