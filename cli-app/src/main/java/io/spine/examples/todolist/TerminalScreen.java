@@ -20,6 +20,8 @@
 
 package io.spine.examples.todolist;
 
+import io.spine.cli.AbstractScreen;
+import io.spine.cli.Screen;
 import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
 

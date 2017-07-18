@@ -20,9 +20,10 @@
 
 package io.spine.examples.todolist.view;
 
-import io.spine.examples.todolist.action.Shortcut;
+import io.spine.cli.action.Shortcut;
+import io.spine.cli.view.ActionListView;
 
-import static io.spine.examples.todolist.action.TransitionAction.transitionProducer;
+import static io.spine.cli.action.TransitionAction.transitionProducer;
 
 /**
  * Root view of the application.

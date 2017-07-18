@@ -20,10 +20,11 @@
 
 package io.spine.examples.todolist.view;
 
-import io.spine.examples.todolist.UserIoTest;
-import io.spine.examples.todolist.action.Action;
-import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
+import io.spine.cli.NoOpView;
+import io.spine.cli.UserIoTest;
+import io.spine.cli.action.Action;
+import io.spine.cli.action.Shortcut;
+import io.spine.cli.action.TransitionAction.TransitionActionProducer;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskListView;
 import io.spine.examples.todolist.q.projection.TaskView;
@@ -34,7 +35,6 @@ import java.util.Collection;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static io.spine.examples.todolist.Given.newNoOpView;
 import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskViewProducer;
 import static io.spine.examples.todolist.view.MyTasksListView.taskActionProducersFor;
 import static java.util.Collections.nCopies;
@@ -56,7 +56,7 @@ class MyTasksListViewTest extends UserIoTest {
     @Test
     @DisplayName("refresh task list")
     void refreshTaskList() {
-        getScreen().renderView(newNoOpView()); // Needed to cause addition of back action in the view.
+        getScreen().renderView(new NoOpView()); // Needed to cause addition of back action in the view.
 
         final MyTasksListView view = new MyTasksListView();
         view.addAction(newOpenTaskViewProducer(taskView, 0));

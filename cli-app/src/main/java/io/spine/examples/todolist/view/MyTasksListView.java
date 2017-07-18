@@ -21,9 +21,12 @@
 package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.Screen;
-import io.spine.examples.todolist.action.Shortcut;
-import io.spine.examples.todolist.action.TransitionAction.TransitionActionProducer;
+import io.spine.cli.Screen;
+import io.spine.cli.action.Shortcut;
+import io.spine.cli.action.TransitionAction;
+import io.spine.cli.action.TransitionAction.TransitionActionProducer;
+import io.spine.cli.view.ActionListView;
+import io.spine.cli.view.View;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskView;
 
@@ -31,15 +34,15 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import static io.spine.cli.action.TransitionAction.transitionProducer;
 import static io.spine.examples.todolist.AppConfig.getClient;
-import static io.spine.examples.todolist.action.TransitionAction.transitionProducer;
 import static java.lang.String.valueOf;
 
 /**
  * A view of {@link MyListView}.
  *
  * <p>{@link MyListView} mainly consists of
- * {@linkplain io.spine.examples.todolist.action.TransitionAction transition actions}.
+ * {@linkplain TransitionAction transition actions}.
  * The action gives short info about the task and leads to a {@link MyTaskView}.
  *
  * @author Dmytro Grankin

@@ -27,10 +27,6 @@ dependencies {
     testCompile project(path: ':testutil-cli')
 }
 
-apply from: generateDescriptorSetPlugin
-
-apply plugin: spineProtobufPluginId
-
 task runTodoList(dependsOn: jar, type: JavaExec) {
     standardInput = System.in
     main = 'io.spine.examples.todolist.CliEntryPoint'

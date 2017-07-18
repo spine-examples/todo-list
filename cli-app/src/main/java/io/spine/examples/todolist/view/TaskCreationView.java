@@ -21,17 +21,18 @@
 package io.spine.examples.todolist.view;
 
 import com.google.common.annotations.VisibleForTesting;
-import io.spine.examples.todolist.EditOperation;
-import io.spine.examples.todolist.Screen;
+import io.spine.cli.EditOperation;
+import io.spine.cli.Screen;
+import io.spine.cli.action.CommandAction;
+import io.spine.cli.action.Shortcut;
+import io.spine.cli.view.CommandView;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.action.CommandAction;
-import io.spine.examples.todolist.action.Shortcut;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 
 import static io.spine.base.Identifier.newUuid;
+import static io.spine.cli.action.EditCommandAction.editCommandActionProducer;
 import static io.spine.examples.todolist.AppConfig.getClient;
-import static io.spine.examples.todolist.action.EditCommandAction.editCommandActionProducer;
 import static java.util.Collections.singletonList;
 
 /**

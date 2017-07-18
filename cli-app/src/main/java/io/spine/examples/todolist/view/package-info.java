@@ -19,7 +19,7 @@
  */
 
 /**
- * This package contains CLI views.
+ * This package contains views of the application CLI.
  */
 
 @ParametersAreNonnullByDefault

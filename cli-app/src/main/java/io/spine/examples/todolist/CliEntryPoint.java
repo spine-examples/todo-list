@@ -20,9 +20,11 @@
 
 package io.spine.examples.todolist;
 
+import io.spine.cli.Application;
+import io.spine.cli.Screen;
+import io.spine.cli.view.View;
 import io.spine.examples.todolist.server.Server;
 import io.spine.examples.todolist.view.MainMenu;
-import io.spine.examples.todolist.view.View;
 
 import java.io.IOException;
 

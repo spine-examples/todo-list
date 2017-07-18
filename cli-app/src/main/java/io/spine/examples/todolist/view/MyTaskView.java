@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.view;
 
+import io.spine.cli.view.EntityView;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.q.projection.TaskView;
 

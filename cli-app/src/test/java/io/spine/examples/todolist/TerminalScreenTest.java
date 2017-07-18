@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist;
 
+import io.spine.cli.Screen;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
