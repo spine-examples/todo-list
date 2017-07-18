@@ -42,7 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("EditCommandAction should")
-class EditOperationCommandActionTest extends UserIoTest {
+class EditCommandActionTest extends UserIoTest {
 
     private static final String ACTION_NAME = "action";
     private static final Shortcut SHORTCUT = new Shortcut("s");
