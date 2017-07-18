@@ -35,7 +35,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public abstract class EntityView<I extends Message, S extends Message> extends AbstractView {
 
     private final I id;
-    private S state;
 
     protected EntityView(I id, String title) {
         super(title);
@@ -44,13 +43,13 @@ public abstract class EntityView<I extends Message, S extends Message> extends A
     }
 
     /**
-     * Loads the {@link #state} and then renders it.
+     * Loads the entity state and then renders it.
      *
      * @param screen {@inheritDoc}
      */
     @Override
     protected void renderBody(Screen screen) {
-        state = load(id);
+        final S state = load(id);
         final String renderedState = renderState(state);
         screen.println(renderedState);
     }
