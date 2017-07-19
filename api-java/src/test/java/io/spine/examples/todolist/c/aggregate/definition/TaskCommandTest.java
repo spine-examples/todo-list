@@ -21,10 +21,10 @@
 package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.protobuf.Message;
-import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
-import io.spine.examples.todolist.c.aggregate.TaskDefinitionPart;
 import io.spine.envelope.CommandEnvelope;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
+import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.context.TodoListBoundedContext;
 import io.spine.test.AggregatePartCommandTest;
 import io.spine.test.TestActorRequestFactory;
@@ -32,17 +32,16 @@ import io.spine.test.TestActorRequestFactory;
 import static io.spine.base.Identifier.newUuid;
 
 /**
- * The parent class for the {@link TaskDefinitionPart} test classes.
+ * The parent class for the {@link TaskPart} test classes.
  * Provides the common methods for testing.
  *
  * @author Illia Shepilov
  */
-abstract class TaskDefinitionCommandTest<C extends Message>
-        extends AggregatePartCommandTest<C, TaskDefinitionPart> {
+abstract class TaskCommandTest<C extends Message> extends AggregatePartCommandTest<C, TaskPart> {
 
     private final TestActorRequestFactory requestFactory =
             TestActorRequestFactory.newInstance(getClass());
-    TaskDefinitionPart aggregate;
+    TaskPart aggregate;
     TaskId taskId;
 
     @Override
@@ -52,12 +51,12 @@ abstract class TaskDefinitionCommandTest<C extends Message>
     }
 
     @Override
-    protected TaskDefinitionPart createAggregatePart() {
+    protected TaskPart createAggregatePart() {
         TaskAggregateRoot.injectBoundedContext(TodoListBoundedContext.createTestInstance());
 
         taskId = createTaskId();
         final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
-        return new TaskDefinitionPart(root);
+        return new TaskPart(root);
     }
 
     CommandEnvelope envelopeOf(Message commandMessage) {

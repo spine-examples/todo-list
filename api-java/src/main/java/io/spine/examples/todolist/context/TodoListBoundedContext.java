@@ -25,8 +25,8 @@ import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
 import io.spine.examples.todolist.repository.MyListViewRepository;
-import io.spine.examples.todolist.repository.TaskDefinitionRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
+import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
@@ -75,14 +75,14 @@ public class TodoListBoundedContext {
     private static BoundedContext create() {
         final BoundedContext boundedContext = createBoundedContext();
 
-        final TaskDefinitionRepository taskDefinitionRepo = new TaskDefinitionRepository();
+        final TaskRepository taskRepo = new TaskRepository();
         final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
         final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
         final MyListViewRepository myListViewRepo = new MyListViewRepository();
         final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
         final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
 
-        boundedContext.register(taskDefinitionRepo);
+        boundedContext.register(taskRepo);
         boundedContext.register(taskLabelsRepo);
         boundedContext.register(labelAggregateRepo);
         boundedContext.register(myListViewRepo);
@@ -91,7 +91,7 @@ public class TodoListBoundedContext {
 
         TodoListEnrichmentConfiguration.newBuilder()
                                        .setLabelRepository(labelAggregateRepo)
-                                       .setTaskDefinitionRepository(taskDefinitionRepo)
+                                       .setTaskRepository(taskRepo)
                                        .setTaskLabelsRepository(taskLabelsRepo)
                                        .apply(boundedContext.getEventBus())
                                        .addEnrichmentFields();

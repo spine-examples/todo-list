@@ -64,11 +64,11 @@ message LabelsListEnrichment {
     LabelIdsList label_ids_list = 1 [(by) = "task_id"];
 }
 
-// Task definition enrichment for the TaskDratfFinalized event.
+// Task enrichment for the TaskDratfFinalized event.
 //
 message TaskEnrichment {
     option (enrichment_for) = "spine.examples.todolist.TaskDraftFinalized";
 
-    // A task definition.
-    TaskDefinition task_definition = 1 [(by) = "task_id"];
+    // A task.
+    Task task = 1 [(by) = "task_id"];
 }

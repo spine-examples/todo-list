@@ -24,9 +24,9 @@ import com.google.common.base.Throwables;
 import io.grpc.stub.StreamObserver;
 import io.spine.base.Command;
 import io.spine.base.Event;
-import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
-import io.spine.examples.todolist.c.aggregate.TaskDefinitionPart;
+import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -71,8 +71,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("RestoreDeletedTask command should be interpreted by TaskDefinitionPart and")
-public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDeletedTask> {
+@DisplayName("RestoreDeletedTask command should be interpreted by TaskPart and")
+public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> {
 
     private TestResponseObserver responseObserver;
     private BoundedContext boundedContext;
@@ -87,7 +87,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         TaskAggregateRoot.injectBoundedContext(boundedContext);
 
         commandBus = boundedContext.getCommandBus();
-        aggregate = new TaskDefinitionPart(TaskAggregateRoot.get(taskId));
+        aggregate = new TaskPart(TaskAggregateRoot.get(taskId));
     }
 
     @Test
@@ -144,7 +144,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
 
         restoreDeletedTask();
 
-        final TaskDefinition state = aggregate.getState();
+        final Task state = aggregate.getState();
         assertEquals(taskId, state.getId());
         assertEquals(OPEN, state.getTaskStatus());
     }
@@ -157,7 +157,7 @@ public class RestoreDeletedTaskTest extends TaskDefinitionCommandTest<RestoreDel
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
         dispatch(aggregate, envelopeOf(deleteTask));
 
-        TaskDefinition state = aggregate.getState();
+        Task state = aggregate.getState();
         assertEquals(taskId, state.getId());
         assertEquals(DELETED, state.getTaskStatus());
 

@@ -25,7 +25,7 @@ import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdsList;
-import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
@@ -48,12 +48,11 @@ public class TestEventEnricherFactory {
                                                                .setDescription(DESCRIPTION)
                                                                .setPriority(TaskPriority.LOW)
                                                                .build();
-    private static final TaskDefinition TASK_DEFINITION =
-            TaskDefinition.newBuilder()
-                          .setDescription(DESCRIPTION)
-                          .setDueDate(TASK_DUE_DATE)
-                          .setPriority(TASK_PRIORITY)
-                          .build();
+    private static final Task TASK = Task.newBuilder()
+                                         .setDescription(DESCRIPTION)
+                                         .setDueDate(TASK_DUE_DATE)
+                                         .setPriority(TASK_PRIORITY)
+                                         .build();
     private static final LabelDetails LABEL_DETAILS = LabelDetails.newBuilder()
                                                                   .setColor(LabelColor.BLUE)
                                                                   .setTitle(LABEL_TITLE)
@@ -73,8 +72,7 @@ public class TestEventEnricherFactory {
     private static final Function<TaskId, TaskDetails> TASK_ID_TO_TASK_DETAILS =
             taskId -> TASK_DETAILS;
 
-    private static final Function<TaskId, TaskDefinition> TASK_ID_TO_TASK_DEFINITION =
-            taskId -> TASK_DEFINITION;
+    private static final Function<TaskId, Task> TASK_ID_TO_TASK = taskId -> TASK;
 
     private TestEventEnricherFactory() {
     }
@@ -97,8 +95,8 @@ public class TestEventEnricherFactory {
                                                  LabelIdsList.class,
                                                  TASK_ID_TO_LABEL_IDS_LIST::apply)
                              .addFieldEnrichment(TaskId.class,
-                                                 TaskDefinition.class,
-                                                 TASK_ID_TO_TASK_DEFINITION::apply)
+                                                 Task.class,
+                                                 TASK_ID_TO_TASK::apply)
                              .build();
         return result;
     }

@@ -22,7 +22,7 @@ package io.spine.examples.todolist.q.projection;
 
 import io.spine.annotation.Subscribe;
 import io.spine.base.EventContext;
-import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskListId;
@@ -166,12 +166,12 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     public void on(TaskDraftFinalized event, EventContext context) {
         final TaskId taskId = event.getTaskId();
         final TaskEnrichment enrichment = getEnrichment(TaskEnrichment.class, context);
-        final TaskDefinition taskDefinition = enrichment.getTaskDefinition();
+        final Task task = enrichment.getTask();
         final TaskView view = TaskView.newBuilder()
                                       .setId(taskId)
-                                      .setDescription(taskDefinition.getDescription())
-                                      .setDueDate(taskDefinition.getDueDate())
-                                      .setPriority(taskDefinition.getPriority())
+                                      .setDescription(task.getDescription())
+                                      .setDueDate(task.getDueDate())
+                                      .setPriority(task.getPriority())
                                       .build();
         addTaskView(view);
     }

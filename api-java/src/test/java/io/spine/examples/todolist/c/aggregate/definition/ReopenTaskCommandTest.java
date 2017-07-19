@@ -21,23 +21,17 @@
 package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
-import io.spine.server.aggregate.AggregateCommandDispatcher;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.ReopenTask;
 import io.spine.examples.todolist.c.failures.CannotReopenTask;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.examples.todolist.TaskStatus.COMPLETED;
 import static io.spine.examples.todolist.TaskStatus.OPEN;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
@@ -46,12 +40,17 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createD
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("ReopenTask command should be interpreted by TaskDefinitionPart and")
-public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask> {
+@DisplayName("ReopenTask command should be interpreted by TaskPart and")
+public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
 
     @Override
     @BeforeEach
@@ -77,7 +76,7 @@ public class ReopenTaskCommandTest extends TaskDefinitionCommandTest<ReopenTask>
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
         dispatch(aggregate, envelopeOf(completeTaskCmd));
 
-        TaskDefinition state = aggregate.getState();
+        Task state = aggregate.getState();
         assertEquals(taskId, state.getId());
         assertEquals(COMPLETED, state.getTaskStatus());
 

@@ -20,17 +20,15 @@
 
 package io.spine.examples.todolist.repository;
 
-import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.TaskDefinitionPart;
-import io.spine.server.BoundedContext;
+import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
+import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.server.aggregate.AggregatePartRepository;
 
 /**
- * Repository for the {@link TaskDefinitionPart}
+ * Repository for the {@link TaskPart}.
  *
  * @author Illia Shepilov
  */
-public class TaskDefinitionRepository
-        extends AggregatePartRepository<TaskId, TaskDefinitionPart, TaskAggregateRoot> {
+public class TaskRepository extends AggregatePartRepository<TaskId, TaskPart, TaskAggregateRoot> {
 }
