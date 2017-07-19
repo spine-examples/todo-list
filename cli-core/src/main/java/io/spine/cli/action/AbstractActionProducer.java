@@ -47,10 +47,20 @@ public abstract class AbstractActionProducer<S extends View,
         this.shortcut = shortcut;
     }
 
+    /**
+     * Obtains the name to be used for an action creation.
+     *
+     * @return the name
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Obtains the shortcut to be used for an action creation.
+     *
+     * @return the shortcut
+     */
     public Shortcut getShortcut() {
         return shortcut;
     }
