@@ -21,7 +21,7 @@
 package io.spine.examples.todolist.view;
 
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.q.projection.TaskItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -41,11 +41,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("MyTaskView should")
 class MyTaskViewTest {
 
-    private final TaskView taskView = TaskView.newBuilder()
-                                              .setDescription("my task description")
-                                              .setPriority(NORMAL)
-                                              .setDueDate(getCurrentTime())
-                                              .build();
+    private final TaskItem task = TaskItem.newBuilder()
+                                          .setDescription("my task description")
+                                          .setPriority(NORMAL)
+                                          .setDueDate(getCurrentTime())
+                                          .build();
     private final MyTaskView myTaskView = new MyTaskView(TaskId.getDefaultInstance());
 
     @Test
@@ -58,13 +58,13 @@ class MyTaskViewTest {
     }
 
     @Test
-    @DisplayName("render TaskView state")
-    void renderTaskView() {
+    @DisplayName("render TaskItem state")
+    void renderTaskItem() {
         final String expectedResult =
-                DESCRIPTION_VALUE + taskView.getDescription() + lineSeparator() +
-                        PRIORITY_VALUE + taskView.getPriority() + lineSeparator() +
-                        DUE_DATE_VALUE + format(taskView.getDueDate());
-        assertEquals(expectedResult, myTaskView.renderState(taskView));
+                DESCRIPTION_VALUE + task.getDescription() + lineSeparator() +
+                        PRIORITY_VALUE + task.getPriority() + lineSeparator() +
+                        DUE_DATE_VALUE + format(task.getDueDate());
+        assertEquals(expectedResult, myTaskView.renderState(task));
     }
 
 }

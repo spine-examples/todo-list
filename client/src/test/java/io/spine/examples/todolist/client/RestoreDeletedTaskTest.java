@@ -20,9 +20,6 @@
 
 package io.spine.examples.todolist.client;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
@@ -31,16 +28,19 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
+import io.spine.examples.todolist.q.projection.TaskItem;
 import io.spine.examples.todolist.q.projection.TaskListView;
-import io.spine.examples.todolist.q.projection.TaskView;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.restoreDeletedTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Illia Shepilov
@@ -75,12 +75,12 @@ class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
         assertEquals(expectedListSize, tasksViewList.size());
 
-        final List<TaskView> taskViews = tasksViewList.get(0)
+        final List<TaskItem> taskViews = tasksViewList.get(0)
                                                       .getLabelledTasks()
                                                       .getItemsList();
         assertEquals(expectedListSize, taskViews.size());
 
-        final TaskView view = taskViews.get(0);
+        final TaskItem view = taskViews.get(0);
 
         assertEquals(taskId, view.getId());
         assertEquals(labelId, view.getLabelId());
@@ -107,7 +107,7 @@ class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
 
         final TaskListView taskListView = tasksViewList.get(0)
                                                        .getLabelledTasks();
-        final List<TaskView> taskViews = taskListView.getItemsList();
+        final List<TaskItem> taskViews = taskListView.getItemsList();
 
         assertTrue(taskViews.isEmpty());
     }

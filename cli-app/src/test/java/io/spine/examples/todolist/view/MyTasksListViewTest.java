@@ -26,8 +26,8 @@ import io.spine.cli.action.Action;
 import io.spine.cli.action.Shortcut;
 import io.spine.cli.action.TransitionAction.TransitionActionProducer;
 import io.spine.examples.todolist.q.projection.MyListView;
+import io.spine.examples.todolist.q.projection.TaskItem;
 import io.spine.examples.todolist.q.projection.TaskListView;
-import io.spine.examples.todolist.q.projection.TaskView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +49,7 @@ class MyTasksListViewTest extends Bot {
 
     private static final int VIEW_INDEX = 0;
 
-    private final TaskView taskView = TaskView.newBuilder()
+    private final TaskItem taskView = TaskItem.newBuilder()
                                               .setDescription("task desc")
                                               .build();
 
@@ -87,7 +87,7 @@ class MyTasksListViewTest extends Bot {
 
     @Test
     @DisplayName("create open task view producer")
-    void createOpenTaskViewProducer() {
+    void createOpenTaskItemProducer() {
         final String shortcutValue = String.valueOf(VIEW_INDEX + 1);
         final Shortcut expectedShortcut = new Shortcut(shortcutValue);
 

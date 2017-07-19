@@ -22,7 +22,7 @@ package io.spine.examples.todolist.view;
 
 import io.spine.cli.view.EntityView;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.q.projection.TaskItem;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,12 +33,12 @@ import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.System.lineSeparator;
 
 /**
- * An {@link EntityView} of a {@link TaskView} from the
+ * An {@link EntityView} of a {@link TaskItem} from the
  * {@link io.spine.examples.todolist.q.projection.MyListView MyListView}.
  *
  * @author Dmytro Grankin
  */
-class MyTaskView extends EntityView<TaskId, TaskView> {
+class MyTaskView extends EntityView<TaskId, TaskItem> {
 
     static final String DUE_DATE_VALUE = "Due date: ";
     static final String DESCRIPTION_VALUE = "Description: ";
@@ -49,23 +49,23 @@ class MyTaskView extends EntityView<TaskId, TaskView> {
     }
 
     @Override
-    protected TaskView load(TaskId id) {
-        final List<TaskView> views = getClient().getMyListView()
+    protected TaskItem load(TaskId id) {
+        final List<TaskItem> tasks = getClient().getMyListView()
                                                 .getMyList()
                                                 .getItemsList();
-        final Optional<TaskView> optionalView = views.stream()
-                                                     .filter(view -> view.getId()
+        final Optional<TaskItem> optionalTask = tasks.stream()
+                                                     .filter(task -> task.getId()
                                                                          .equals(id))
                                                      .findFirst();
-        if (optionalView.isPresent()) {
-            return optionalView.get();
+        if (optionalTask.isPresent()) {
+            return optionalTask.get();
         }
 
         throw newIllegalStateException("There is no task with ID `%s`.", id);
     }
 
     @Override
-    protected String renderState(TaskView state) {
+    protected String renderState(TaskItem state) {
         final String date = format(state.getDueDate());
         return new StringBuilder().append(DESCRIPTION_VALUE)
                                   .append(state.getDescription())

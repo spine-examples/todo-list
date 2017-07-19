@@ -28,7 +28,7 @@ import io.spine.cli.action.TransitionAction.TransitionActionProducer;
 import io.spine.cli.view.ActionListView;
 import io.spine.cli.view.View;
 import io.spine.examples.todolist.q.projection.MyListView;
-import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.q.projection.TaskItem;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -79,22 +79,22 @@ public class MyTasksListView extends ActionListView {
     @VisibleForTesting
     static Collection<TransitionActionProducer> taskActionProducersFor(MyListView myListView) {
         final Collection<TransitionActionProducer> producers = new LinkedList<>();
-        final List<TaskView> taskViews = myListView.getMyList()
-                                                   .getItemsList();
-        for (TaskView taskView : taskViews) {
-            final int index = taskViews.indexOf(taskView);
-            producers.add(newOpenTaskViewProducer(taskView, index));
+        final List<TaskItem> tasks = myListView.getMyList()
+                                               .getItemsList();
+        for (TaskItem task : tasks) {
+            final int index = tasks.indexOf(task);
+            producers.add(newOpenTaskViewProducer(task, index));
         }
         return producers;
     }
 
     @VisibleForTesting
     static TransitionActionProducer<MyTasksListView, MyTaskView>
-    newOpenTaskViewProducer(TaskView taskView, int viewIndex) {
-        final String name = taskView.getDescription();
+    newOpenTaskViewProducer(TaskItem task, int viewIndex) {
+        final String name = task.getDescription();
         final String shortcutValue = valueOf(viewIndex + 1);
         final Shortcut shortcut = new Shortcut(shortcutValue);
-        final MyTaskView destination = new MyTaskView(taskView.getId());
+        final MyTaskView destination = new MyTaskView(task.getId());
         return transitionProducer(name, shortcut, destination);
     }
 

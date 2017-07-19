@@ -20,10 +20,6 @@
 
 package io.spine.examples.todolist.client;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
@@ -32,14 +28,18 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.q.projection.TaskItem;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.finalizeDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Illia Shepilov
@@ -65,7 +65,7 @@ class FinalizeDraftTest extends CommandLineTodoClientTest {
         void obtainView() {
             final CreateDraft createDraft = createDraftTask();
 
-            List<TaskView> views = client.getMyListView()
+            List<TaskItem> views = client.getMyListView()
                                          .getMyList()
                                          .getItemsList();
             int expectedListSize = 0;
@@ -81,7 +81,7 @@ class FinalizeDraftTest extends CommandLineTodoClientTest {
                           .getItemsList();
             assertEquals(expectedListSize, views.size());
 
-            final TaskView view = views.get(0);
+            final TaskItem view = views.get(0);
             assertEquals(taskId, view.getId());
         }
     }
@@ -110,11 +110,11 @@ class FinalizeDraftTest extends CommandLineTodoClientTest {
             assertEquals(1, labelledViews.size());
 
             final LabelledTasksView labelledView = labelledViews.get(0);
-            final List<TaskView> taskViews = labelledView.getLabelledTasks()
+            final List<TaskItem> taskViews = labelledView.getLabelledTasks()
                                                          .getItemsList();
             assertEquals(1, taskViews.size());
 
-            final TaskView taskView = taskViews.get(0);
+            final TaskItem taskView = taskViews.get(0);
             assertEquals(taskId, taskView.getId());
             assertEquals(labelId, taskView.getLabelId());
         }
@@ -131,7 +131,7 @@ class FinalizeDraftTest extends CommandLineTodoClientTest {
 
             DraftTasksView draftTasksView = client.getDraftTasksView();
 
-            List<TaskView> taskViewList = draftTasksView.getDraftTasks()
+            List<TaskItem> taskViewList = draftTasksView.getDraftTasks()
                                                         .getItemsList();
             assertEquals(1, taskViewList.size());
             assertEquals(createDraft.getId(), taskViewList.get(0)
@@ -154,12 +154,12 @@ class FinalizeDraftTest extends CommandLineTodoClientTest {
             final FinalizeDraft finalizeDraft = finalizeDraftInstance(createWrongTaskId());
             client.finalize(finalizeDraft);
 
-            final List<TaskView> taskViews = client.getDraftTasksView()
+            final List<TaskItem> taskViews = client.getDraftTasksView()
                                                    .getDraftTasks()
                                                    .getItemsList();
             assertEquals(1, taskViews.size());
 
-            final TaskView view = taskViews.get(0);
+            final TaskItem view = taskViews.get(0);
             assertEquals(taskId, view.getId());
         }
     }

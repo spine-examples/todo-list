@@ -20,10 +20,6 @@
 
 package io.spine.examples.todolist.client;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
@@ -32,16 +28,20 @@ import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.ReopenTask;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.q.projection.TaskItem;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Illia Shepilov
@@ -65,14 +65,14 @@ class ReopenTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain the task view with uncompleted task")
         void containViewWithUncompletedTask() {
-            final TaskView view = obtainViewWhenHandledCommandReopenTask(true);
+            final TaskItem view = obtainViewWhenHandledCommandReopenTask(true);
             assertFalse(view.getCompleted());
         }
 
         @Test
         @DisplayName("contain the task view with completed task when command has wrong ID")
         void containViewWithCompletedTask() {
-            final TaskView view = obtainViewWhenHandledCommandReopenTask(false);
+            final TaskItem view = obtainViewWhenHandledCommandReopenTask(false);
             assertTrue(view.getCompleted());
         }
     }
@@ -84,19 +84,19 @@ class ReopenTaskTest extends CommandLineTodoClientTest {
         @Test
         @DisplayName("contain the task view with uncompleted task")
         void containViewWithUncompletedTask() {
-            final TaskView view = obtainTaskViewWhenHandledReopenTask(true);
+            final TaskItem view = obtainTaskItemWhenHandledReopenTask(true);
             assertFalse(view.getCompleted());
         }
 
         @Test
         @DisplayName("contain the task view with completed task when command has wrong ID")
         void containViewWithCompletedTask() {
-            final TaskView view = obtainTaskViewWhenHandledReopenTask(false);
+            final TaskItem view = obtainTaskItemWhenHandledReopenTask(false);
             assertTrue(view.getCompleted());
         }
     }
 
-    private TaskView obtainViewWhenHandledCommandReopenTask(boolean isCorrectId) {
+    private TaskItem obtainViewWhenHandledCommandReopenTask(boolean isCorrectId) {
         final CreateBasicTask createTask = createTask();
         final TaskId createdTaskId = createTask.getId();
 
@@ -114,28 +114,28 @@ class ReopenTaskTest extends CommandLineTodoClientTest {
         final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
         assertEquals(1, labelledTasksView.size());
 
-        final List<TaskView> taskViews = labelledTasksView.get(0)
+        final List<TaskItem> taskViews = labelledTasksView.get(0)
                                                           .getLabelledTasks()
                                                           .getItemsList();
         return checkAndObtainView(taskId, taskViews);
     }
 
-    private TaskView obtainTaskViewWhenHandledReopenTask(boolean isCorrectId) {
+    private TaskItem obtainTaskItemWhenHandledReopenTask(boolean isCorrectId) {
         final CreateBasicTask createTask = createTask();
         final TaskId idOfCreatedTask = createTask.getId();
 
         completeAndReopenTask(isCorrectId, idOfCreatedTask);
 
-        final List<TaskView> taskViews = client.getMyListView()
+        final List<TaskItem> taskViews = client.getMyListView()
                                                .getMyList()
                                                .getItemsList();
         return checkAndObtainView(idOfCreatedTask, taskViews);
     }
 
-    private static TaskView checkAndObtainView(TaskId idOfCreatedTask, List<TaskView> taskViews) {
+    private static TaskItem checkAndObtainView(TaskId idOfCreatedTask, List<TaskItem> taskViews) {
         assertEquals(1, taskViews.size());
 
-        final TaskView view = taskViews.get(0);
+        final TaskItem view = taskViews.get(0);
         assertEquals(idOfCreatedTask, view.getId());
         return view;
     }

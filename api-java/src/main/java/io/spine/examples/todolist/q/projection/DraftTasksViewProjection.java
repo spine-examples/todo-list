@@ -40,7 +40,7 @@ import java.util.List;
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskListView;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
-import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskViewList;
+import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskItemList;
 
 /**
  * A projection state of tasks in a "draft" state.
@@ -74,13 +74,13 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
     @Subscribe
     public void on(TaskDraftCreated event) {
         final TaskDetails taskDetails = event.getDetails();
-        final TaskView taskView = TaskView.newBuilder()
+        final TaskItem taskView = TaskItem.newBuilder()
                                           .setId(event.getId())
                                           .setDescription(taskDetails.getDescription())
                                           .setPriority(taskDetails.getPriority())
                                           .setCompleted(taskDetails.getCompleted())
                                           .build();
-        final List<TaskView> views = new ArrayList<>(getState().getDraftTasks()
+        final List<TaskItem> views = new ArrayList<>(getState().getDraftTasks()
                                                                .getItemsList());
         views.add(taskView);
         final TaskListView taskListView = TaskListView.newBuilder()
@@ -91,7 +91,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
 
     @Subscribe
     public void on(TaskDraftFinalized event) {
-        final List<TaskView> views = new ArrayList<>(getState().getDraftTasks()
+        final List<TaskItem> views = new ArrayList<>(getState().getDraftTasks()
                                                                .getItemsList());
         final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
         getBuilder().setDraftTasks(taskListView);
@@ -99,7 +99,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
 
     @Subscribe
     public void on(TaskDeleted event) {
-        final List<TaskView> views = new ArrayList<>(getState().getDraftTasks()
+        final List<TaskItem> views = new ArrayList<>(getState().getDraftTasks()
                                                                .getItemsList());
         final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
         getBuilder().setDraftTasks(taskListView);
@@ -107,54 +107,54 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
 
     @Subscribe
     public void on(TaskDescriptionUpdated event) {
-        final List<TaskView> views = getState().getDraftTasks()
+        final List<TaskItem> views = getState().getDraftTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
         getBuilder().setDraftTasks(taskListView);
     }
 
     @Subscribe
     public void on(TaskPriorityUpdated event) {
-        final List<TaskView> views = getState().getDraftTasks()
+        final List<TaskItem> views = getState().getDraftTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
         getBuilder().setDraftTasks(taskListView);
     }
 
     @Subscribe
     public void on(TaskDueDateUpdated event) {
-        final List<TaskView> views = getState().getDraftTasks()
+        final List<TaskItem> views = getState().getDraftTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
         getBuilder().setDraftTasks(taskListView);
     }
 
     @Subscribe
     public void on(LabelAssignedToTask event) {
-        final List<TaskView> views = getState().getDraftTasks()
+        final List<TaskItem> views = getState().getDraftTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
         getBuilder().setDraftTasks(taskListView);
     }
 
     @Subscribe
     public void on(LabelRemovedFromTask event) {
-        final List<TaskView> views = getState().getDraftTasks()
+        final List<TaskItem> views = getState().getDraftTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
         getBuilder().setDraftTasks(taskListView);
     }
 
     @Subscribe
     public void on(LabelDetailsUpdated event) {
-        final List<TaskView> views = getState().getDraftTasks()
+        final List<TaskItem> views = getState().getDraftTasks()
                                                .getItemsList();
-        final List<TaskView> updatedList = updateTaskViewList(views, event);
+        final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
         getBuilder().setDraftTasks(taskListView);
     }

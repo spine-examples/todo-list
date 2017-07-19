@@ -20,13 +20,13 @@
 
 package io.spine.examples.todolist.client;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.q.projection.TaskItem;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
@@ -55,7 +55,7 @@ class CreateDraftTest extends CommandLineTodoClientTest {
         client.create(createDraft);
 
         final DraftTasksView draftTasksView = client.getDraftTasksView();
-        final List<TaskView> taskViewList = draftTasksView.getDraftTasks()
+        final List<TaskItem> taskViewList = draftTasksView.getDraftTasks()
                                                           .getItemsList();
         assertEquals(1, taskViewList.size());
         assertEquals(createDraft.getId(), taskViewList.get(0)
@@ -78,7 +78,7 @@ class CreateDraftTest extends CommandLineTodoClientTest {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
 
-        final List<TaskView> taskViews = client.getMyListView()
+        final List<TaskItem> taskViews = client.getMyListView()
                                                .getMyList()
                                                .getItemsList();
         assertTrue(taskViews.isEmpty());
