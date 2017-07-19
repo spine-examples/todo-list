@@ -25,6 +25,7 @@ import io.spine.cli.action.Shortcut;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import io.spine.examples.todolist.view.NewTaskView.DescriptionEditOperation;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -39,13 +40,19 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  * @author Dmytro Grankin
  */
 @DisplayName("NewTaskView should")
-class NewTaskViewTest extends Bot {
+class NewTaskViewTest {
 
     private static final String ACTION_NAME = "quit";
     private static final Shortcut QUIT_SHORTCUT = new Shortcut("q");
     private static final String VALID_DESCRIPTION = "to the task";
 
+    private Bot bot;
     private final NewTaskView view = NewTaskView.create();
+
+    @BeforeEach
+    void setUp() {
+        bot = new Bot();
+    }
 
     @Test
     @DisplayName("handle empty description")
@@ -72,9 +79,9 @@ class NewTaskViewTest extends Bot {
                                      .getId();
 
         view.addAction(noOpActionProducer(ACTION_NAME, QUIT_SHORTCUT));
-        addAnswer(QUIT_SHORTCUT.getValue());
-        screen().renderView(view);
-
+        bot.addAnswer(QUIT_SHORTCUT.getValue());
+        bot.screen()
+           .renderView(view);
         final TaskId idAfterRender = view.getState()
                                          .getId();
         assertNotEquals(initialId.getValue(), idAfterRender.getValue());
@@ -89,10 +96,10 @@ class NewTaskViewTest extends Bot {
         @Test
         @DisplayName("edit description")
         void editDescription() {
-            addAnswer(VALID_DESCRIPTION);
+            bot.addAnswer(VALID_DESCRIPTION);
 
             final CreateBasicTaskVBuilder state = view.getState();
-            descriptionEdit.start(screen(), state);
+            descriptionEdit.start(bot.screen(), state);
 
             assertEquals(VALID_DESCRIPTION, state.getDescription());
         }

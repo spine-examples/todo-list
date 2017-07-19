@@ -26,6 +26,7 @@ import io.spine.cli.action.Action;
 import io.spine.cli.action.Shortcut;
 import io.spine.cli.action.TransitionAction;
 import io.spine.cli.action.TransitionAction.TransitionActionProducer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -42,12 +43,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("AbstractView should")
-class AbstractViewTest extends Bot {
+class AbstractViewTest {
 
     private static final String ACTION_NAME = "action";
     private static final Shortcut SHORTCUT = new Shortcut("s");
 
+    private Bot bot;
     private final AbstractView view = new AView();
+
+    @BeforeEach
+    void setUp() {
+        bot = new Bot();
+    }
 
     @Test
     @DisplayName("clear all actions")
@@ -102,12 +109,12 @@ class AbstractViewTest extends Bot {
     void askActionSelection() {
         view.addAction(noOpActionProducer(ACTION_NAME, SHORTCUT));
 
-        addAnswer("invalid answer");
-        addAnswer(SHORTCUT.getValue());
+        bot.addAnswer("invalid answer");
+        bot.addAnswer(SHORTCUT.getValue());
 
-        view.render(screen());
-
-        assertAllAnswersWereGiven();
+        bot.screen()
+           .renderView(view);
+        bot.assertAllAnswersWereGiven();
     }
 
     private static class AView extends AbstractView {

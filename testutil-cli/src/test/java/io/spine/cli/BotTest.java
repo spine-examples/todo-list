@@ -35,11 +35,11 @@ class BotTest {
 
     private static final String MESSAGE = "a message";
 
-    private final ABot bot = new ABot();
+    private Bot bot;
 
     @BeforeEach
     void setUp() {
-        bot.setUp();
+        bot = new Bot();
     }
 
     @Test
@@ -69,8 +69,5 @@ class BotTest {
     void throwIfAnswersNotEmpty() {
         bot.addAnswer(MESSAGE);
         assertThrows(AssertionError.class, bot::assertAllAnswersWereGiven);
-    }
-
-    private static class ABot extends Bot {
     }
 }

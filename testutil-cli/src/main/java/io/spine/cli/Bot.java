@@ -20,30 +20,37 @@
 
 package io.spine.cli;
 
-import org.junit.jupiter.api.BeforeEach;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * Abstract base class for test suites that are dealing with user I/O of a command-line application.
+ * A bot for user input imitation.
+ *
+ * <p>Handles {@link Application} configuration and provides I/O related assertions.
  *
  * @author Dmytro Grankin
  */
-public abstract class Bot {
+public class Bot {
 
-    private TestScreen screen;
+    private final TestScreen screen;
 
     /**
-     * Creates the new screen and
-     * {@linkplain Application#setScreen(Screen) injects} it to the application.
+     * Creates a new bot, that uses {@link TestScreen}
+     * {@linkplain Application#setScreen(Screen) injected} to the application.
      */
-    @SuppressWarnings("TestOnlyProblems") // This class should be used only for tests needs.
-    @BeforeEach
-    protected void setUp() {
-        screen = new TestScreen();
+    public Bot() {
+        this.screen = new TestScreen();
         Application.getInstance()
                    .setScreen(screen);
+    }
+
+    /**
+     * Adds the specified answer to the {@link TestScreen}.
+     *
+     * @param answer the answer to add
+     */
+    public void addAnswer(String answer) {
+        screen.addAnswer(answer);
     }
 
     /**
@@ -51,7 +58,7 @@ public abstract class Bot {
      *
      * @param expected the expected output
      */
-    protected void assertOutput(String expected) {
+    public void assertOutput(String expected) {
         assertEquals(expected, screen.getOutput());
     }
 
@@ -61,25 +68,16 @@ public abstract class Bot {
      * <p>Should be used to make sure that a user was
      * {@link Screen#promptUser(String) prompted} certain number of times.
      */
-    protected void assertAllAnswersWereGiven() {
+    public void assertAllAnswersWereGiven() {
         assertTrue(!screen.hasAnswers());
     }
 
     /**
-     * Adds the specified answer to the {@link TestScreen}.
-     *
-     * @param answer the answer to add
-     */
-    protected void addAnswer(String answer) {
-        screen.addAnswer(answer);
-    }
-
-    /**
-     * Obtains screen for the test.
+     * Obtains screen used by this bot.
      *
      * @return used screen
      */
-    protected Screen screen() {
+    public Screen screen() {
         return screen;
     }
 }

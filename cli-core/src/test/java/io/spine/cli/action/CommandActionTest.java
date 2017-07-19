@@ -39,20 +39,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("CommandAction should")
-class CommandActionTest extends Bot {
+class CommandActionTest {
 
     private static final String ACTION_NAME = "quit";
     private static final Shortcut QUIT = new Shortcut("q");
 
+    private Bot bot;
     private final UpdateStringValueView view = new UpdateStringValueView();
     private final UpdateStringValueAction action = new UpdateStringValueAction(view);
 
-    @Override
     @BeforeEach
     protected void setUp() {
-        super.setUp();
+        bot = new Bot();
         view.addAction(noOpActionProducer(ACTION_NAME, QUIT));
-        addAnswer(QUIT.getValue());
+        bot.addAnswer(QUIT.getValue());
     }
 
     @Test

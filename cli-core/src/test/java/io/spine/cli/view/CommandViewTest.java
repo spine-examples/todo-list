@@ -27,6 +27,7 @@ import io.spine.cli.action.Action;
 import io.spine.cli.action.Shortcut;
 import io.spine.validate.StringValueVBuilder;
 import io.spine.validate.ValidationException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -46,19 +47,25 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("CommandView should")
-class CommandViewTest extends Bot {
+class CommandViewTest {
 
     private static final String ACTION_NAME = "quit";
     private static final Shortcut QUIT_SHORTCUT = new Shortcut("q");
 
+    private Bot bot;
     private final ACommandView view = new ACommandView();
+
+    @BeforeEach
+    void setUp() {
+        bot = new Bot();
+    }
 
     @Test
     @DisplayName("render state representation")
     void renderStateRepresentation() {
-        view.renderBody(screen());
+        view.renderBody(bot.screen());
         final String expectedBody = view.renderState(StringValueVBuilder.newBuilder()) + lineSeparator();
-        assertOutput(expectedBody);
+        bot.assertOutput(expectedBody);
     }
 
     @Test
@@ -69,7 +76,7 @@ class CommandViewTest extends Bot {
         assertFalse(view.wasRendered);
 
         view.addAction(noOpActionProducer(ACTION_NAME, QUIT_SHORTCUT));
-        addAnswer(QUIT_SHORTCUT.getValue());
+        bot.addAnswer(QUIT_SHORTCUT.getValue());
         view.executeAction(new ThrowValidationExceptionAction());
 
         assertTrue(view.wasRendered);

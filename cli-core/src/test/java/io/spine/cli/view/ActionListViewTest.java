@@ -21,6 +21,7 @@
 package io.spine.cli.view;
 
 import io.spine.cli.Bot;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -28,14 +29,20 @@ import org.junit.jupiter.api.Test;
  * @author Dmytro Grankin
  */
 @DisplayName("ActionListView should")
-class ActionListViewTest extends Bot {
+class ActionListViewTest {
 
+    private Bot bot;
     private final ActionListView view = new ActionListView("View title");
+
+    @BeforeEach
+    void setUp() {
+        bot = new Bot();
+    }
 
     @Test
     @DisplayName("have empty body")
     void haveEmptyBody() {
-        view.renderBody(screen());
-        assertOutput("");
+        view.renderBody(bot.screen());
+        bot.assertOutput("");
     }
 }

@@ -28,6 +28,7 @@ import io.spine.cli.action.TransitionAction.TransitionActionProducer;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import io.spine.examples.todolist.q.projection.TaskListView;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -45,27 +46,34 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @author Dmytro Grankin
  */
 @DisplayName("MyTasksListView should")
-class MyTasksListViewTest extends Bot {
+class MyTasksListViewTest {
 
     private static final int VIEW_INDEX = 0;
 
+    private Bot bot;
     private final TaskItem taskView = TaskItem.newBuilder()
                                               .setDescription("task desc")
                                               .build();
 
+    @BeforeEach
+    void setUp() {
+        bot = new Bot();
+    }
+
     @Test
     @DisplayName("refresh task list")
     void refreshTaskList() {
-        screen().renderView(new NoOpView()); // Needed to cause addition of back action in the view.
+        bot.screen()
+           .renderView(new NoOpView()); // Needed to cause addition of back action in the view.
 
         final MyTasksListView view = new MyTasksListView();
         view.addAction(newOpenTaskViewProducer(taskView, 0));
         view.addAction(newOpenTaskViewProducer(taskView, 1));
         final Set<Action> actionsToBeRemoved = view.getActions();
 
-        addAnswer("b");
-        screen().renderView(view);
-
+        bot.addAnswer("b");
+        bot.screen()
+           .renderView(view);
         final Set<Action> refreshedActions = newHashSet(view.getActions());
         final boolean containsActionsForRemoval = refreshedActions.retainAll(actionsToBeRemoved);
         assertFalse(containsActionsForRemoval);

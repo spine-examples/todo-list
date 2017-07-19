@@ -24,6 +24,7 @@ import io.spine.cli.Bot;
 import io.spine.cli.EditOperation;
 import io.spine.cli.Screen;
 import io.spine.cli.view.CommandView;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -42,18 +43,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Grankin
  */
 @DisplayName("EditCommandAction should")
-class EditCommandActionTest extends Bot {
+class EditCommandActionTest {
 
     private static final String ACTION_NAME = "action";
     private static final Shortcut SHORTCUT = new Shortcut("s");
     private static final String VALID_COMMENT = "a comment";
     private static final String INVALID_COMMENT = "";
 
+    private Bot bot;
     private final ACommandView view = new ACommandView();
     private final Set<EditOperation<Comment, CommentVBuilder>> edits =
             singleton(new CommentEditOperation());
     private final EditCommandAction<Comment, CommentVBuilder> action =
             editCommandActionProducer(ACTION_NAME, SHORTCUT, edits).create(view);
+
+    @BeforeEach
+    void setUp() {
+        bot = new Bot();
+    }
 
     @Test
     @DisplayName("not allow empty edits")
@@ -81,8 +88,8 @@ class EditCommandActionTest extends Bot {
     @DisplayName("render destination view")
     void renderDestinationView() {
         view.addAction(noOpActionProducer(ACTION_NAME, SHORTCUT));
-        addAnswer(VALID_COMMENT);
-        addAnswer(SHORTCUT.getValue());
+        bot.addAnswer(VALID_COMMENT);
+        bot.addAnswer(SHORTCUT.getValue());
         action.execute();
         assertTrue(view.wasRendered);
     }
@@ -91,8 +98,8 @@ class EditCommandActionTest extends Bot {
     @DisplayName("update state of a view")
     void updateViewState() {
         view.addAction(noOpActionProducer(ACTION_NAME, SHORTCUT));
-        addAnswer(VALID_COMMENT);
-        addAnswer(SHORTCUT.getValue());
+        bot.addAnswer(VALID_COMMENT);
+        bot.addAnswer(SHORTCUT.getValue());
 
         action.execute();
         assertEquals(VALID_COMMENT, view.getState()
@@ -103,10 +110,10 @@ class EditCommandActionTest extends Bot {
     @Test
     @DisplayName("repeat an edit if ValidationException is occurred")
     void repeatEditAfterValidationException() {
-        addAnswer(INVALID_COMMENT);
-        addAnswer(VALID_COMMENT);
-        action.start(new CommentEditOperation(), screen());
-        assertAllAnswersWereGiven();
+        bot.addAnswer(INVALID_COMMENT);
+        bot.addAnswer(VALID_COMMENT);
+        action.start(new CommentEditOperation(), bot.screen());
+        bot.assertAllAnswersWereGiven();
     }
 
     private static class ACommandView extends CommandView<Comment, CommentVBuilder> {

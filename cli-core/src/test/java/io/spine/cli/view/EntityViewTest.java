@@ -23,6 +23,7 @@ package io.spine.cli.view;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.StringValue;
 import io.spine.cli.Bot;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -33,16 +34,22 @@ import static java.lang.System.lineSeparator;
  * @author Dmytro Grankin
  */
 @DisplayName("EntityView should")
-class EntityViewTest extends Bot {
+class EntityViewTest {
 
+    private Bot bot;
     private final AnEntityView view = new AnEntityView(Int32Value.getDefaultInstance());
+
+    @BeforeEach
+    void setUp() {
+        bot = new Bot();
+    }
 
     @Test
     @DisplayName("load and render entity state")
     void loadAndRenderEntityState() {
-        view.renderBody(screen());
+        view.renderBody(bot.screen());
         final String expectedBody = view.renderState(AnEntityView.STATE) + lineSeparator();
-        assertOutput(expectedBody);
+        bot.assertOutput(expectedBody);
     }
 
     private static class AnEntityView extends EntityView<Int32Value, StringValue> {
