@@ -32,13 +32,18 @@ import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskListPro
  *
  * @author Dmytro Grankin
  */
-class MyTasksMenu extends ActionListView {
+public class MyTasksMenu extends ActionListView {
 
     private MyTasksMenu() {
         super("My tasks menu");
     }
 
-    static MyTasksMenu create() {
+    /**
+     * Creates a new {@code MyTasksMenu} instance.
+     *
+     * @return the new instance
+     */
+    public static MyTasksMenu create() {
         final MyTasksMenu view = new MyTasksMenu();
         view.addAction(transitionProducer("Create task", new Shortcut("c"), NewTaskView.create()));
         view.addAction(newOpenTaskListProducer("List tasks", new Shortcut("l")));

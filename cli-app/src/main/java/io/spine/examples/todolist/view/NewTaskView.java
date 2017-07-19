@@ -76,6 +76,9 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
         super.render(screen);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String renderState(CreateBasicTaskVBuilder state) {
         final String descriptionValue = state.getDescription()

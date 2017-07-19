@@ -76,6 +76,19 @@ public class MyTasksListView extends ActionListView {
         super.render(screen);
     }
 
+    /**
+     * Creates {@link TransitionActionProducer} with {@link MyTasksListView} destination.
+     *
+     * @param name     the name for the action
+     * @param shortcut the shortcut for the action
+     * @param <S>      the type of the source view
+     * @return the new producer
+     */
+    public static <S extends View> TransitionActionProducer<S, MyTasksListView>
+    newOpenTaskListProducer(String name, Shortcut shortcut) {
+        return transitionProducer(name, shortcut, new MyTasksListView());
+    }
+
     @VisibleForTesting
     static Collection<TransitionActionProducer> taskActionProducersFor(MyListView myListView) {
         final Collection<TransitionActionProducer> producers = new LinkedList<>();
@@ -96,18 +109,5 @@ public class MyTasksListView extends ActionListView {
         final Shortcut shortcut = new Shortcut(shortcutValue);
         final MyTaskView destination = new MyTaskView(task.getId());
         return transitionProducer(name, shortcut, destination);
-    }
-
-    /**
-     * Creates {@link TransitionActionProducer} with {@link MyTasksListView} destination.
-     *
-     * @param name     the name for the action
-     * @param shortcut the shortcut for the action
-     * @param <S>      the type of the source view
-     * @return the new producer
-     */
-    public static <S extends View> TransitionActionProducer<S, MyTasksListView>
-    newOpenTaskListProducer(String name, Shortcut shortcut) {
-        return transitionProducer(name, shortcut, new MyTasksListView());
     }
 }

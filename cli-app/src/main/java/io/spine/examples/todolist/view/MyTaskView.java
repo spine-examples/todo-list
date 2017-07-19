@@ -48,6 +48,9 @@ class MyTaskView extends EntityView<TaskId, TaskItem> {
         super(id, "My task details");
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected TaskItem load(TaskId id) {
         final List<TaskItem> tasks = getClient().getMyListView()
@@ -64,6 +67,9 @@ class MyTaskView extends EntityView<TaskId, TaskItem> {
         throw newIllegalStateException("There is no task with ID `%s`.", id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String renderState(TaskItem state) {
         final String date = format(state.getDueDate());
