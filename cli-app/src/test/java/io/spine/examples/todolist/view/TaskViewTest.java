@@ -27,9 +27,9 @@ import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
 import static io.spine.examples.todolist.view.DateFormatter.format;
-import static io.spine.examples.todolist.view.MyTaskView.DESCRIPTION_VALUE;
-import static io.spine.examples.todolist.view.MyTaskView.DUE_DATE_VALUE;
-import static io.spine.examples.todolist.view.MyTaskView.PRIORITY_VALUE;
+import static io.spine.examples.todolist.view.TaskView.DESCRIPTION_VALUE;
+import static io.spine.examples.todolist.view.TaskView.DUE_DATE_VALUE;
+import static io.spine.examples.todolist.view.TaskView.PRIORITY_VALUE;
 import static io.spine.time.Time.getCurrentTime;
 import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,15 +38,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Dmytro Grankin
  */
-@DisplayName("MyTaskView should")
-class MyTaskViewTest {
+@DisplayName("TaskView should")
+class TaskViewTest {
 
     private final TaskItem task = TaskItem.newBuilder()
                                           .setDescription("my task description")
                                           .setPriority(NORMAL)
                                           .setDueDate(getCurrentTime())
                                           .build();
-    private final MyTaskView myTaskView = new MyTaskView(TaskId.getDefaultInstance());
+    private final TaskView taskView = new TaskView(TaskId.getDefaultInstance());
 
     @Test
     @DisplayName("throw the exception if nonexistent task ID is specified")
@@ -54,7 +54,7 @@ class MyTaskViewTest {
         final TaskId id = TaskId.newBuilder()
                                 .setValue("invalid ID")
                                 .build();
-        assertThrows(IllegalStateException.class, () -> myTaskView.load(id));
+        assertThrows(IllegalStateException.class, () -> taskView.load(id));
     }
 
     @Test
@@ -64,7 +64,7 @@ class MyTaskViewTest {
                 DESCRIPTION_VALUE + task.getDescription() + lineSeparator() +
                         PRIORITY_VALUE + task.getPriority() + lineSeparator() +
                         DUE_DATE_VALUE + format(task.getDueDate());
-        assertEquals(expectedResult, myTaskView.renderState(task));
+        assertEquals(expectedResult, taskView.renderState(task));
     }
 
 }

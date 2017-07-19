@@ -43,7 +43,7 @@ import static java.lang.String.valueOf;
  *
  * <p>{@link MyListView} mainly consists of
  * {@linkplain TransitionAction transition actions}.
- * The action gives short info about the task and leads to a {@link MyTaskView}.
+ * The action gives short info about the task and leads to a {@link TaskView}.
  *
  * @author Dmytro Grankin
  */
@@ -102,12 +102,12 @@ public class MyTasksListView extends ActionListView {
     }
 
     @VisibleForTesting
-    static TransitionActionProducer<MyTasksListView, MyTaskView>
+    static TransitionActionProducer<MyTasksListView, TaskView>
     newOpenTaskViewProducer(TaskItem task, int viewIndex) {
         final String name = task.getDescription();
         final String shortcutValue = valueOf(viewIndex + 1);
         final Shortcut shortcut = new Shortcut(shortcutValue);
-        final MyTaskView destination = new MyTaskView(task.getId());
+        final TaskView destination = new TaskView(task.getId());
         return transitionProducer(name, shortcut, destination);
     }
 }

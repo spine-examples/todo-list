@@ -91,7 +91,7 @@ class MyTasksListViewTest extends Bot {
         final String shortcutValue = String.valueOf(VIEW_INDEX + 1);
         final Shortcut expectedShortcut = new Shortcut(shortcutValue);
 
-        final TransitionActionProducer<MyTasksListView, MyTaskView> producer =
+        final TransitionActionProducer<MyTasksListView, TaskView> producer =
                 newOpenTaskViewProducer(taskView, VIEW_INDEX);
 
         assertEquals(taskView.getDescription(), producer.getName());

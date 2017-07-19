@@ -33,18 +33,19 @@ import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.System.lineSeparator;
 
 /**
- * An {@link EntityView} of a {@link TaskItem} from the
- * {@link io.spine.examples.todolist.q.projection.MyListView MyListView}.
+ * An {@link EntityView} of a {@link TaskItem}.
+ *
+ * <p>Renders the task and provides actions for working with the task.
  *
  * @author Dmytro Grankin
  */
-class MyTaskView extends EntityView<TaskId, TaskItem> {
+class TaskView extends EntityView<TaskId, TaskItem> {
 
     static final String DUE_DATE_VALUE = "Due date: ";
     static final String DESCRIPTION_VALUE = "Description: ";
     static final String PRIORITY_VALUE = "Priority: ";
 
-    MyTaskView(TaskId id) {
+    TaskView(TaskId id) {
         super(id, "My task details");
     }
 
@@ -53,6 +54,7 @@ class MyTaskView extends EntityView<TaskId, TaskItem> {
      */
     @Override
     protected TaskItem load(TaskId id) {
+        //TODO:2017-07-19:dmytro.grankin: Allow to specify the source projection of task items.
         final List<TaskItem> tasks = getClient().getMyListView()
                                                 .getMyList()
                                                 .getItemsList();
