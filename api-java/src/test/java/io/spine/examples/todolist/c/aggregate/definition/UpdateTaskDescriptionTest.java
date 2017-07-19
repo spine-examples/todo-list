@@ -22,13 +22,10 @@ package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
-import com.google.protobuf.StringValue;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.DescriptionUpdateFailed;
 import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
@@ -36,23 +33,25 @@ import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskWithInappropriateDescription;
 import io.spine.examples.todolist.c.failures.Failures;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static io.spine.examples.todolist.testdata.MessageFactory.newDescription;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 import static io.spine.protobuf.AnyPacker.unpack;
-import static io.spine.protobuf.Wrapper.forString;
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Illia Shepilov
@@ -81,22 +80,9 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
                 (TaskDescriptionUpdated) messageList.get(0);
 
         assertEquals(taskId, taskDescriptionUpdated.getTaskId());
-        final String newDescription = taskDescriptionUpdated.getDescriptionChange()
-                                                            .getNewValue();
+        final TaskDescription newDescription = taskDescriptionUpdated.getDescriptionChange()
+                                                                     .getNewDescription();
         assertEquals(DESCRIPTION, newDescription);
-    }
-
-    @Test
-    @DisplayName("throw CannotUpdateTaskWithInappropriateDescription failure " +
-            "upon an attempt to update the task by too short description")
-    void cannotUpdateTaskDescription() {
-        final UpdateTaskDescription updateTaskDescriptionCmd =
-                updateTaskDescriptionInstance(taskId, "", ".");
-        final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatch(aggregate,
-                                                        envelopeOf(updateTaskDescriptionCmd)));
-        assertThat(Throwables.getRootCause(t),
-                   instanceOf(CannotUpdateTaskWithInappropriateDescription.class));
     }
 
     @Test
@@ -134,7 +120,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
     @Test
     @DisplayName("update the task description")
     void updateDescription() {
-        final String newDescription = "new description.";
+        final TaskDescription newDescription = newDescription("new description.");
         dispatchCreateTaskCmd();
 
         final UpdateTaskDescription updateTaskDescriptionCmd =
@@ -152,9 +138,9 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
         dispatch(aggregate, envelopeOf(createBasicTask));
 
-        final String expectedValue = "expected description";
-        final String newValue = "update description";
-        final String actualValue = createBasicTask.getDescription();
+        final TaskDescription expectedValue = newDescription("expected description");
+        final TaskDescription newValue = newDescription("update description");
+        final TaskDescription actualValue = createBasicTask.getDescription();
 
         final UpdateTaskDescription updateTaskDescription =
                 updateTaskDescriptionInstance(taskId, expectedValue, newValue);
@@ -171,14 +157,10 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
                                                            .getTaskId();
         assertEquals(taskId, actualTaskId);
 
-        final StringValue expectedStringValue = forString(expectedValue);
-        final StringValue actualStringValue = forString(actualValue);
-        final StringValue newStringValue = forString(newValue);
-
         final ValueMismatch mismatch = descriptionUpdateFailed.getDescriptionMismatch();
-        assertEquals(expectedStringValue, unpack(mismatch.getExpected()));
-        assertEquals(actualStringValue, unpack(mismatch.getActual()));
-        assertEquals(newStringValue, unpack(mismatch.getNewValue()));
+        assertEquals(expectedValue, unpack(mismatch.getExpected()));
+        assertEquals(actualValue, unpack(mismatch.getActual()));
+        assertEquals(newValue, unpack(mismatch.getNewValue()));
     }
 
     private void dispatchCreateTaskCmd() {

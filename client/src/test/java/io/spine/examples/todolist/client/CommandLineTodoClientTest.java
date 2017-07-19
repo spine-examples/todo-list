@@ -20,9 +20,8 @@
 
 package io.spine.examples.todolist.client;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -34,6 +33,8 @@ import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
 import io.spine.util.Exceptions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.examples.todolist.testdata.MessageFactory.newDescription;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 
@@ -50,7 +52,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIP
  */
 abstract class CommandLineTodoClientTest {
 
-    static final String UPDATED_TASK_DESCRIPTION = "New task description.";
+    static final TaskDescription UPDATED_TASK_DESCRIPTION = newDescription("Updated.");
     private static final String HOST = "localhost";
     private Server server;
     private TodoClient client;

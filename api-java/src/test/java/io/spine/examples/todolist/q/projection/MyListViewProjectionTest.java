@@ -158,10 +158,8 @@ class MyListViewProjectionTest extends ProjectionTest {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             dispatch(projection, createEvent(taskCreatedEvent));
 
-            final String updatedDescription = UPDATED_DESCRIPTION;
-
             final TaskDescriptionUpdated descriptionUpdatedEvent =
-                    taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), updatedDescription);
+                    taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), UPDATED_DESCRIPTION);
             dispatch(projection, createEvent(descriptionUpdatedEvent));
 
             final TaskListView taskListView = projection.getState()
@@ -171,7 +169,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final TaskView view = taskListView.getItemsList()
                                               .get(0);
             assertEquals(TASK_ID, view.getId());
-            assertNotEquals(updatedDescription, view.getDescription());
+            assertNotEquals(UPDATED_DESCRIPTION, view.getDescription());
         }
     }
 

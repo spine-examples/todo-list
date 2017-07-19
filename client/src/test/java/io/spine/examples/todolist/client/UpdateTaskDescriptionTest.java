@@ -20,11 +20,8 @@
 
 package io.spine.examples.todolist.client;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -33,14 +30,18 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskView;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 /**
  * @author Illia Shepilov
@@ -75,7 +76,7 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         void containNonUpdatedView() {
             final TaskView view = obtainViewWhenHandledCommandUpdateTaskDescription(
                     UPDATED_TASK_DESCRIPTION, false);
-            final String actualDescription = view.getDescription();
+            final TaskDescription actualDescription = view.getDescription();
             assertNotEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
             assertEquals(DESCRIPTION, actualDescription);
         }
@@ -112,7 +113,7 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         void containUpdatedView() {
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(
                     UPDATED_TASK_DESCRIPTION, true);
-            final String actualDescription = view.getDescription();
+            final TaskDescription actualDescription = view.getDescription();
             assertEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
         }
 
@@ -122,14 +123,14 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         void containNonUpdatedView() {
             final TaskView view = obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(
                     UPDATED_TASK_DESCRIPTION, false);
-            final String actualDescription = view.getDescription();
+            final TaskDescription actualDescription = view.getDescription();
             assertEquals(DESCRIPTION, actualDescription);
             assertNotEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
         }
     }
 
-    private TaskView obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(String newDescription,
-            boolean isCorrectId) {
+    private TaskView obtainTaskViewWhenHandledUpdateTaskDescriptionCommand(TaskDescription newDescription,
+                                                                           boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
 
@@ -146,7 +147,8 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private TaskView obtainViewWhenHandledCommandUpdateTaskDescription(String newDescription,
+    private TaskView obtainViewWhenHandledCommandUpdateTaskDescription(
+            TaskDescription newDescription,
             boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
         client.create(createTask);
@@ -174,18 +176,18 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private TaskView obtainViewWhenHandledUpdateTaskDescription(String newDescription,
-            boolean isCorrectId) {
+    private TaskView obtainViewWhenHandledUpdateTaskDescription(TaskDescription newDescription,
+                                                                boolean isCorrectId) {
         final CreateDraft createDraft = createDraft();
         client.create(createDraft);
         final TaskId createdTaskId = createDraft.getId();
 
         final TaskId updatedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
-        final String previousDescription = client.getDraftTasksView()
-                                                 .getDraftTasks()
-                                                 .getItemsList()
-                                                 .get(0)
-                                                 .getDescription();
+        final TaskDescription previousDescription = client.getDraftTasksView()
+                                                          .getDraftTasks()
+                                                          .getItemsList()
+                                                          .get(0)
+                                                          .getDescription();
         final UpdateTaskDescription updateTaskDescription =
                 updateTaskDescriptionInstance(updatedTaskId, previousDescription, newDescription);
         client.update(updateTaskDescription);
@@ -201,8 +203,8 @@ class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
         return view;
     }
 
-    private void updateDescription(String newDescription, boolean isCorrectId,
-            CreateBasicTask createTask) {
+    private void updateDescription(TaskDescription newDescription, boolean isCorrectId,
+                                   CreateBasicTask createTask) {
         final TaskId idOfCreatedTask = createTask.getId();
         final TaskId updatedTaskId = isCorrectId ? idOfCreatedTask : createWrongTaskId();
         final UpdateTaskDescription updateTaskDescription =

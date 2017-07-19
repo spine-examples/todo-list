@@ -33,6 +33,7 @@ import "spine/change/change.proto";
 
 import "todolist/identifiers.proto";
 import "todolist/changes.proto";
+import "todolist/values.proto";
 
 // An attempt to create a task in a "Quick" mode.
 //
@@ -52,9 +53,7 @@ message CreateBasicTask {
     TaskId id = 1;
 
     // A description for the task created.
-    //
-    // Must contain at least 3 alphanumeric symbols.
-    string description = 2 [(pattern).regex = "^(.*?[a-zA-Z0-9]){3,}.*"];
+    TaskDescription description = 2;
 
     // Reserved for future extension.
     reserved 3 to 10;
@@ -72,8 +71,7 @@ message UpdateTaskDescription {
     TaskId id = 1;
 
     // The description change.
-    // Contains the previous description and the description to set for the target task.
-    change.StringChange description_change = 2 [(required) = true];
+    TaskDescriptionChange description_change = 2 [(required) = true];
 
     // Reserved for future extension.
     reserved 3 to 10;

@@ -23,10 +23,11 @@ package io.spine.examples.todolist.testdata;
 import com.google.protobuf.Duration;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
-import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
+import io.spine.examples.todolist.TaskDescription;
+import io.spine.examples.todolist.TaskDescriptionChange;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
@@ -42,6 +43,7 @@ import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.events.TaskReopened;
 
 import static io.spine.base.Identifier.newUuid;
+import static io.spine.examples.todolist.testdata.MessageFactory.newDescription;
 import static io.spine.time.Time.getCurrentTime;
 
 /**
@@ -51,8 +53,8 @@ import static io.spine.time.Time.getCurrentTime;
  */
 public class TestTaskEventFactory {
 
-    public static final String UPDATED_DESCRIPTION = "Description updated.";
-    public static final String DESCRIPTION = "task description";
+    public static final TaskDescription UPDATED_DESCRIPTION = newDescription("Updated description");
+    public static final TaskDescription DESCRIPTION = newDescription("Task description");
     public static final TaskPriority TASK_PRIORITY = TaskPriority.NORMAL;
     public static final TaskPriority UPDATED_TASK_PRIORITY = TaskPriority.HIGH;
     public static final Timestamp TASK_DUE_DATE = getCurrentTime();
@@ -93,11 +95,11 @@ public class TestTaskEventFactory {
          * @return the {@code TaskDescriptionUpdated} instance
          */
         public static TaskDescriptionUpdated taskDescriptionUpdatedInstance(TaskId id,
-                                                                            String description) {
-            final StringChange descriptionChange =
-                    StringChange.newBuilder()
-                                .setNewValue(description)
-                                .build();
+                                                                            TaskDescription description) {
+            final TaskDescriptionChange descriptionChange =
+                    TaskDescriptionChange.newBuilder()
+                                         .setNewDescription(description)
+                                         .build();
             final TaskDescriptionUpdated result =
                     TaskDescriptionUpdated.newBuilder()
                                           .setTaskId(id)
@@ -182,7 +184,8 @@ public class TestTaskEventFactory {
          * @param priority    specified task priority
          * @return the {@code TaskCreated} instance
          */
-        public static TaskCreated taskCreatedInstance(String description, TaskPriority priority) {
+        public static TaskCreated taskCreatedInstance(TaskDescription description,
+                                                      TaskPriority priority) {
             final TaskDetails.Builder details = TaskDetails.newBuilder()
                                                            .setDescription(description)
                                                            .setPriority(priority);
@@ -224,7 +227,7 @@ public class TestTaskEventFactory {
          * @param creationTime the time creation of the created draft
          * @return the {@code TaskDraftCreated} instance
          */
-        public static TaskDraftCreated taskDraftCreatedInstance(String description,
+        public static TaskDraftCreated taskDraftCreatedInstance(TaskDescription description,
                                                                 TaskPriority priority,
                                                                 Timestamp creationTime) {
             final TaskDetails.Builder details = TaskDetails.newBuilder()
@@ -317,4 +320,5 @@ public class TestTaskEventFactory {
             return result;
         }
     }
+
 }

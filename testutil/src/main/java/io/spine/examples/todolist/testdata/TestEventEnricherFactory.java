@@ -26,14 +26,13 @@ import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdsList;
 import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.server.event.enrich.EventEnricher;
 
 import java.util.function.Function;
-
-import static io.spine.time.Time.getCurrentTime;
 
 /**
  * Provides event enricher for the test needs.
@@ -42,8 +41,8 @@ import static io.spine.time.Time.getCurrentTime;
  */
 public class TestEventEnricherFactory {
 
-    public static final String LABEL_TITLE = "title";
-    private static final String DESCRIPTION = TestTaskEventFactory.DESCRIPTION;
+    public static final String LABEL_TITLE = "a label title";
+    private static final TaskDescription DESCRIPTION = TestTaskEventFactory.DESCRIPTION;
     private static final Timestamp TASK_DUE_DATE = TestTaskEventFactory.TASK_DUE_DATE;
     private static final TaskPriority TASK_PRIORITY = TestTaskEventFactory.TASK_PRIORITY;
     private static final TaskDetails TASK_DETAILS = TaskDetails.newBuilder()

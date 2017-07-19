@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.q.projection;
 
 import com.google.protobuf.Timestamp;
-import io.spine.base.EventContext;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
@@ -171,10 +170,8 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
         void notUpdateDescription() {
             taskDraftCreated();
 
-            final String updatedDescription = UPDATED_DESCRIPTION;
-
             final TaskDescriptionUpdated descriptionUpdatedEvent =
-                    taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), updatedDescription);
+                    taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), UPDATED_DESCRIPTION);
             dispatch(projection, createEvent(descriptionUpdatedEvent));
 
             final TaskListView taskListView = projection.getState()
@@ -184,7 +181,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
             final TaskView view = taskListView.getItemsList()
                                               .get(0);
             assertEquals(TASK_ID, view.getId());
-            assertNotEquals(updatedDescription, view.getDescription());
+            assertNotEquals(UPDATED_DESCRIPTION, view.getDescription());
         }
     }
 

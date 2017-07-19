@@ -41,6 +41,15 @@ message TaskPriorityValue {
     TaskPriority priority_value = 1;
 }
 
+// A description of a task.
+message TaskDescription {
+
+    // A description value.
+    //
+    // Must contain at least 3 alphanumeric symbols.
+    string value = 1 [(pattern).regex = "(.*?[a-zA-Z0-9]){3,}.*"];
+}
+
 // **** Data transfer objects ****
 
 // DTO for the task details.
@@ -50,9 +59,7 @@ message TaskPriorityValue {
 message TaskDetails {
 
     // A description of the task.
-    //
-    // Must contain at least 3 alphanumeric symbols.
-    string description = 1 [(pattern).regex = "^(.*?[a-zA-Z0-9]){3,}.*"];
+    TaskDescription description = 1;
 
     // A priority of the task.
     TaskPriority priority = 2 [(required) = true];

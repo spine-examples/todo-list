@@ -52,3 +52,13 @@ message LabelDetailsChange {
     // The new value of the label details.
     LabelDetails new_details = 2;
 }
+
+// Definition of a change in a task description field.
+message TaskDescriptionChange {
+
+    // The value of the task description that's changing.
+    TaskDescription previous_description = 1;
+
+    // The new task description.
+    TaskDescription new_description = 2 [(required) = true];
+}

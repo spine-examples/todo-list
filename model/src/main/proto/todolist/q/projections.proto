@@ -34,6 +34,7 @@ import "spine/options.proto";
 
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
+import "todolist/values.proto";
 
 // A projection state of created tasks.
 //
@@ -107,7 +108,7 @@ message TaskView {
     TaskId id = 1;
 
     // Task description.
-    string description = 2;
+    TaskDescription description = 2;
 
     // Task priority.
     TaskPriority priority = 3;

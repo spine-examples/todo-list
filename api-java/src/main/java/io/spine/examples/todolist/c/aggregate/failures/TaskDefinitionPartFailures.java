@@ -51,7 +51,6 @@ import io.spine.examples.todolist.c.failures.CannotRestoreDeletedTask;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskDueDate;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskPriority;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskWithInappropriateDescription;
 
 /**
  * Utility class for working with {@link TaskDefinitionPart} failures.
@@ -61,6 +60,7 @@ import io.spine.examples.todolist.c.failures.CannotUpdateTaskWithInappropriateDe
 public class TaskDefinitionPartFailures {
 
     private TaskDefinitionPartFailures() {
+        // Prevent instantiation of this utility class.
     }
 
     public static class UpdateFailures {
@@ -175,23 +175,6 @@ public class TaskDefinitionPartFailures {
                                         .setFailureDetails(commandFailed)
                                         .build();
             throw new CannotUpdateTaskPriority(priorityUpdateFailed);
-        }
-
-        /**
-         * Constructs and throws the {@link CannotUpdateTaskWithInappropriateDescription} failure
-         * according to the passed parameters.
-         *
-         * @param cmd the {@code UpdateTaskDescription} command which thrown the failure
-         * @throws CannotUpdateTaskWithInappropriateDescription the failure to throw
-         */
-        public static void throwCannotUpdateTooShortDescription(
-                UpdateTaskDescription cmd) throws CannotUpdateTaskWithInappropriateDescription {
-            final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
-            final DescriptionUpdateFailed updateFailed =
-                    DescriptionUpdateFailed.newBuilder()
-                                           .setFailureDetails(commandFailed)
-                                           .build();
-            throw new CannotUpdateTaskWithInappropriateDescription(updateFailed);
         }
     }
 
