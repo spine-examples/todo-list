@@ -27,6 +27,7 @@ import io.spine.cli.action.CommandAction;
 import io.spine.cli.action.CommandAction.CommandActionProducer;
 import io.spine.cli.action.Shortcut;
 import io.spine.cli.view.CommandView;
+import io.spine.examples.todolist.TaskDescriptionVBuilder;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
@@ -81,11 +82,12 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
      */
     @Override
     protected String renderState(CreateBasicTaskVBuilder state) {
-        final String descriptionValue = state.getDescription()
-                                             .isEmpty()
-                                        ? EMPTY_VALUE
-                                        : state.getDescription();
-        return DESCRIPTION_LABEL + ' ' + descriptionValue;
+        final String rawDescription = state.getDescription()
+                                           .getValue();
+        final String result = rawDescription.isEmpty()
+                              ? EMPTY_VALUE
+                              : rawDescription;
+        return DESCRIPTION_LABEL + ' ' + result;
     }
 
     private static TaskId generatedId() {
@@ -112,7 +114,9 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
         @Override
         public void start(Screen screen, CreateBasicTaskVBuilder builder) {
             final String description = screen.promptUser(PROMPT);
-            builder.setDescription(description);
+            builder.setDescription(TaskDescriptionVBuilder.newBuilder()
+                                                          .setValue(description)
+                                                          .build());
         }
     }
 

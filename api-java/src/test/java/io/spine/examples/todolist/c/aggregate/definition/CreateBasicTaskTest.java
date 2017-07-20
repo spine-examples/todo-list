@@ -25,7 +25,6 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.events.TaskCreated;
-import io.spine.validate.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -77,20 +76,5 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
         final Task state = aggregate.getState();
         assertEquals(state.getId(), createBasicTask.getId());
         assertEquals(state.getTaskStatus(), TaskStatus.FINALIZED);
-    }
-
-    @Test
-    @DisplayName("does not pass command validation" +
-            "upon an attempt to create task with too short description")
-    void notPassCommandValidation() {
-        final CreateBasicTask createBasicTask = createTaskInstance(taskId, "D");
-
-        final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatch(aggregate, envelopeOf(createBasicTask)));
-        final Throwable rootCause = Throwables.getRootCause(t);
-        final ValidationException validationException = (ValidationException) rootCause;
-        final int violationCount = validationException.getConstraintViolations()
-                                                      .size();
-        assertEquals(1, violationCount);
     }
 }

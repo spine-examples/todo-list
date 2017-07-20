@@ -22,6 +22,7 @@ package io.spine.examples.todolist.view;
 
 import io.spine.cli.Bot;
 import io.spine.cli.action.Shortcut;
+import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import io.spine.examples.todolist.view.NewTaskView.DescriptionEditOperation;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.cli.NoOpAction.noOpActionProducer;
+import static io.spine.examples.todolist.testdata.MessageFactory.newDescription;
 import static io.spine.examples.todolist.view.NewTaskView.DESCRIPTION_LABEL;
 import static io.spine.examples.todolist.view.NewTaskView.EMPTY_VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -44,7 +46,7 @@ class NewTaskViewTest {
 
     private static final String ACTION_NAME = "quit";
     private static final Shortcut QUIT_SHORTCUT = new Shortcut("q");
-    private static final String VALID_DESCRIPTION = "to the task";
+    private static final TaskDescription VALID_DESCRIPTION = newDescription("task description");
 
     private Bot bot;
     private final NewTaskView view = NewTaskView.create();
@@ -65,10 +67,10 @@ class NewTaskViewTest {
     @Test
     @DisplayName("handle non-empty description")
     void handleNonEmptyDescription() {
-        final String description = "task description";
+        final TaskDescription description = newDescription("task description");
         final CreateBasicTaskVBuilder state = CreateBasicTaskVBuilder.newBuilder()
                                                                      .setDescription(description);
-        final String expectedRepresentation = DESCRIPTION_LABEL + ' ' + description;
+        final String expectedRepresentation = DESCRIPTION_LABEL + ' ' + description.getValue();
         assertEquals(expectedRepresentation, view.renderState(state));
     }
 
@@ -96,7 +98,7 @@ class NewTaskViewTest {
         @Test
         @DisplayName("edit description")
         void editDescription() {
-            bot.addAnswer(VALID_DESCRIPTION);
+            bot.addAnswer(VALID_DESCRIPTION.getValue());
 
             final CreateBasicTaskVBuilder state = view.getState();
             descriptionEdit.start(bot.screen(), state);

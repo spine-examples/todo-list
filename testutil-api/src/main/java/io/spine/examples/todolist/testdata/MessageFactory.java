@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, TeamDev Ltd. All rights reserved.
+ * Copyright 2017, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,18 +18,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    compile group: 'org.jline', name: 'jline', version: '3.3.0'
+package io.spine.examples.todolist.testdata;
 
-    compile project(path: ':api-java')
-    compile project(path: ':client')
-    compile project(path: ':cli-core')
-    testCompile project(path: ':testutil-cli')
-    testCompile project(path: ':testutil-api')
-}
+import io.spine.examples.todolist.TaskDescription;
+import io.spine.examples.todolist.TaskDescriptionVBuilder;
 
-task runTodoList(dependsOn: jar, type: JavaExec) {
-    standardInput = System.in
-    main = 'io.spine.examples.todolist.CliEntryPoint'
-    classpath = sourceSets.main.runtimeClasspath
+/**
+ * Utilities for creating Protobuf messages.
+ */
+public class MessageFactory {
+
+    private MessageFactory() {
+        // Prevent instantiation of this utility class.
+    }
+
+    /**
+     * Obtains task description with the specified value.
+     *
+     * @param value the description value
+     * @return the task description
+     */
+    public static TaskDescription newDescription(String value) {
+        return TaskDescriptionVBuilder.newBuilder()
+                                      .setValue(value)
+                                      .build();
+    }
 }
