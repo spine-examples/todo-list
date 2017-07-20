@@ -24,8 +24,8 @@ import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.DescriptionUpdateFailed;
-import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.Task;
+import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
@@ -40,14 +40,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.examples.todolist.testdata.MessageFactory.newDescription;
+import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 import static io.spine.protobuf.AnyPacker.unpack;
-import static io.spine.protobuf.Wrapper.forString;
 import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;

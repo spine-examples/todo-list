@@ -26,7 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
-import static io.spine.examples.todolist.testdata.MessageFactory.newDescription;
+import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.view.DateFormatter.format;
 import static io.spine.examples.todolist.view.TaskView.DESCRIPTION_VALUE;
 import static io.spine.examples.todolist.view.TaskView.DUE_DATE_VALUE;

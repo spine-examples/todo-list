@@ -28,9 +28,9 @@ import io.spine.examples.todolist.TaskDescriptionVBuilder;
  *
  * @author Dmytro Grankin
  */
-public class MessageFactory {
+public class Given {
 
-    private MessageFactory() {
+    private Given() {
         // Prevent instantiation of this utility class.
     }
 

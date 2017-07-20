@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.cli.NoOpAction.noOpActionProducer;
-import static io.spine.examples.todolist.testdata.MessageFactory.newDescription;
+import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.view.NewTaskView.DESCRIPTION_LABEL;
 import static io.spine.examples.todolist.view.NewTaskView.EMPTY_VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;

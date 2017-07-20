@@ -36,7 +36,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static io.spine.examples.todolist.testdata.MessageFactory.newDescription;
+import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskViewProducer;
 import static io.spine.examples.todolist.view.MyTasksListView.taskActionProducersFor;
 import static java.util.Collections.nCopies;
