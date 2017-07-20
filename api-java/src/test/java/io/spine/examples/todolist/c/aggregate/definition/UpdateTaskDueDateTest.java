@@ -24,7 +24,7 @@ import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
 import io.spine.change.ValueMismatch;
-import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskDueDateUpdateFailed;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CompleteTask;
@@ -57,8 +57,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("UpdateTaskDueDate command should be interpreted by TaskDefinitionPart and")
-public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskDueDate> {
+@DisplayName("UpdateTaskDueDate command should be interpreted by TaskPart and")
+public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
 
     @Override
     @BeforeEach
@@ -117,7 +117,7 @@ public class UpdateTaskDueDateTest extends TaskDefinitionCommandTest<UpdateTaskD
         final UpdateTaskDueDate updateTaskDueDateCmd =
                 updateTaskDueDateInstance(taskId, Timestamp.getDefaultInstance(), updatedDueDate);
         dispatch(aggregate, envelopeOf(updateTaskDueDateCmd));
-        final TaskDefinition state = aggregate.getState();
+        final Task state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
         assertEquals(updatedDueDate, state.getDueDate());

@@ -22,6 +22,8 @@ syntax = "proto3";
 
 package spine.examples.todolist;
 
+import "spine/options.proto";
+
 option (type_url_prefix) = "type.spine.examples.todolist";
 option java_package = "io.spine.examples.todolist.q.projection";
 option java_outer_classname = "ProjectionsProto";
@@ -30,7 +32,6 @@ option java_generate_equals_and_hash = true;
 
 import "google/protobuf/timestamp.proto";
 
-import "spine/options.proto";
 
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
@@ -97,12 +98,12 @@ message LabelledTasksView {
 message TaskListView {
 
     // A list of tasks.
-    repeated TaskView items = 1;
+    repeated TaskItem items = 1;
 }
 
-// Generic definition of a task view model.
+// Item of a task list view.
 //
-message TaskView {
+message TaskItem {
 
     // Task identifier.
     TaskId id = 1;

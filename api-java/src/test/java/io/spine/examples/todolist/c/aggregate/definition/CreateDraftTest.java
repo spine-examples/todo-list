@@ -22,33 +22,33 @@ package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.events.TaskDraftCreated;
 import io.spine.examples.todolist.c.failures.CannotCreateDraft;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.examples.todolist.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CreateDraft command should be interpreted by TaskDefinitionPart and")
-public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
+@DisplayName("CreateDraft command should be interpreted by TaskPart and")
+public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
 
     @Override
     @BeforeEach
@@ -73,7 +73,7 @@ public class CreateDraftTest extends TaskDefinitionCommandTest<CreateDraft> {
     void createDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         dispatch(aggregate, envelopeOf(createDraftCmd));
-        final TaskDefinition state = aggregate.getState();
+        final Task state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
         assertEquals(DRAFT, state.getTaskStatus());

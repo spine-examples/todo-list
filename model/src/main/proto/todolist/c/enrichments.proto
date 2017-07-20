@@ -22,13 +22,14 @@ syntax = "proto3";
 
 package spine.examples.todolist;
 
+import "spine/options.proto";
+
 option (type_url_prefix) = "type.spine.examples.todolist";
 option java_package = "io.spine.examples.todolist.c.enrichments";
 option java_outer_classname = "EnrichmentsProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
-import "spine/options.proto";
 import "todolist/values.proto";
 import "todolist/model.proto";
 
@@ -64,11 +65,11 @@ message LabelsListEnrichment {
     LabelIdsList label_ids_list = 1 [(by) = "task_id"];
 }
 
-// Task definition enrichment for the TaskDratfFinalized event.
+// Task enrichment for the TaskDratfFinalized event.
 //
 message TaskEnrichment {
     option (enrichment_for) = "spine.examples.todolist.TaskDraftFinalized";
 
-    // A task definition.
-    TaskDefinition task_definition = 1 [(by) = "task_id"];
+    // A task.
+    Task task = 1 [(by) = "task_id"];
 }

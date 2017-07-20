@@ -21,19 +21,19 @@
 package io.spine.examples.todolist.context;
 
 import com.google.common.base.Function;
-import io.spine.examples.todolist.c.aggregate.TaskDefinitionPart;
-import io.spine.examples.todolist.repository.TaskDefinitionRepository;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdsList;
-import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
+import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
+import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.event.EventBus;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -47,13 +47,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
                            // until the migration of Spine to Java 8 is performed.
 public class TodoListEnrichmentConfiguration {
 
-    private final TaskDefinitionRepository taskDefinitionRepo;
+    private final TaskRepository taskRepo;
     private final TaskLabelsRepository taskLabelsRepo;
     private final LabelAggregateRepository labelRepository;
     private final EventBus eventBus;
 
     private TodoListEnrichmentConfiguration(Builder builder) {
-        this.taskDefinitionRepo = builder.taskDefinitionRepo;
+        this.taskRepo = builder.taskRepo;
         this.taskLabelsRepo = builder.taskLabelsRepo;
         this.labelRepository = builder.labelRepository;
         this.eventBus = builder.eventBus;
@@ -66,18 +66,18 @@ public class TodoListEnrichmentConfiguration {
         eventBus.addFieldEnrichment(LabelId.class, LabelDetails.class, labelIdToLabelDetails());
         eventBus.addFieldEnrichment(TaskId.class, TaskDetails.class, taskIdToTaskDetails());
         eventBus.addFieldEnrichment(TaskId.class, LabelIdsList.class, taskIdToLabelList());
-        eventBus.addFieldEnrichment(TaskId.class, TaskDefinition.class, taskIdToTaskDefinition());
+        eventBus.addFieldEnrichment(TaskId.class, Task.class, taskIdToTask());
     }
 
-    private Function<TaskId, TaskDefinition> taskIdToTaskDefinition() {
-        final Function<TaskId, TaskDefinition> result = taskId -> {
+    private Function<TaskId, Task> taskIdToTask() {
+        final Function<TaskId, Task> result = taskId -> {
             if (taskId == null) {
-                return TaskDefinition.getDefaultInstance();
+                return Task.getDefaultInstance();
             }
-            final TaskDefinitionPart aggregate = taskDefinitionRepo.find(taskId)
-                                                                   .get();
-            final TaskDefinition taskDefinition = aggregate.getState();
-            return taskDefinition;
+            final TaskPart aggregate = taskRepo.find(taskId)
+                                               .get();
+            final Task task = aggregate.getState();
+            return task;
         };
         return result;
     }
@@ -87,9 +87,9 @@ public class TodoListEnrichmentConfiguration {
             if (taskId == null) {
                 return TaskDetails.getDefaultInstance();
             }
-            final TaskDefinitionPart aggregate = taskDefinitionRepo.find(taskId)
-                                                                   .get();
-            final TaskDefinition state = aggregate.getState();
+            final TaskPart aggregate = taskRepo.find(taskId)
+                                               .get();
+            final Task state = aggregate.getState();
             final TaskDetails details = TaskDetails.newBuilder()
                                                    .setDescription(state.getDescription())
                                                    .setPriority(state.getPriority())
@@ -145,7 +145,7 @@ public class TodoListEnrichmentConfiguration {
      */
     public static class Builder {
 
-        private TaskDefinitionRepository taskDefinitionRepo;
+        private TaskRepository taskRepo;
         private TaskLabelsRepository taskLabelsRepo;
         private LabelAggregateRepository labelRepository;
         private EventBus eventBus;
@@ -153,9 +153,9 @@ public class TodoListEnrichmentConfiguration {
         private Builder() {
         }
 
-        public Builder setTaskDefinitionRepository(TaskDefinitionRepository definitionRepository) {
+        public Builder setTaskRepository(TaskRepository definitionRepository) {
             checkNotNull(definitionRepository);
-            this.taskDefinitionRepo = definitionRepository;
+            this.taskRepo = definitionRepository;
             return this;
         }
 

@@ -26,15 +26,15 @@ import io.spine.change.TimestampChange;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
-import io.spine.examples.todolist.TaskDefinition;
-import io.spine.examples.todolist.TaskDefinitionValidatingBuilder;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDescriptionChange;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.TaskStatus;
+import io.spine.examples.todolist.TaskVBuilder;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
@@ -80,22 +80,23 @@ import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidCr
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidTransition;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskPriorityCommand;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotCompleteTask;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotDeleteTask;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotFinalizeDraft;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotReopenTask;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures.throwCannotRestoreDeletedTask;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateDescription;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskPriority;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.ChangeStatusFailures.throwCannotCompleteTask;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.ChangeStatusFailures.throwCannotDeleteTask;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.ChangeStatusFailures.throwCannotFinalizeDraft;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.ChangeStatusFailures.throwCannotReopenTask;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.ChangeStatusFailures.throwCannotRestoreDeletedTask;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateDescription;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTaskPriority;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTooShortDescription;
 import static io.spine.time.Time.getCurrentTime;
 import static io.spine.time.Timestamps2.compare;
 import static java.util.Collections.singletonList;
 
 /**
- * The aggregate managing the state of a {@link TaskDefinition}.
+ * The aggregate managing the state of a {@link Task}.
  *
  * @author Illia Shepilov
  */
@@ -107,10 +108,10 @@ import static java.util.Collections.singletonList;
                                                  In that case class has too many methods.*/
         "OverlyCoupledClass"}) /* As each method needs dependencies  necessary to perform execution
                                                  that class also overly coupled.*/
-public class TaskDefinitionPart extends AggregatePart<TaskId,
-                                                      TaskDefinition,
-                                                      TaskDefinitionValidatingBuilder,
-                                                      TaskAggregateRoot> {
+public class TaskPart extends AggregatePart<TaskId,
+                                            Task,
+                                            TaskVBuilder,
+                                            TaskAggregateRoot> {
 
     private static final TaskDescription DEFAULT_DRAFT_DESCRIPTION =
             TaskDescription.newBuilder()
@@ -122,7 +123,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
      *
      * @param root
      */
-    public TaskDefinitionPart(TaskAggregateRoot root) {
+    public TaskPart(TaskAggregateRoot root) {
         super(root);
     }
 
@@ -167,7 +168,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
 
     @Assign
     List<? extends Message> handle(UpdateTaskDueDate cmd) throws CannotUpdateTaskDueDate {
-        final TaskDefinition state = getState();
+        final Task state = getState();
         final TaskStatus taskStatus = state.getTaskStatus();
         final boolean isValid = isValidUpdateTaskDueDateCommand(taskStatus);
 
@@ -199,7 +200,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
 
     @Assign
     List<? extends Message> handle(UpdateTaskPriority cmd) throws CannotUpdateTaskPriority {
-        final TaskDefinition state = getState();
+        final Task state = getState();
         final TaskStatus taskStatus = state.getTaskStatus();
         final boolean isValid = isValidUpdateTaskPriorityCommand(taskStatus);
 
@@ -231,7 +232,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
 
     @Assign
     List<? extends Message> handle(ReopenTask cmd) throws CannotReopenTask {
-        final TaskDefinition state = getState();
+        final Task state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final boolean isValid = ensureCompleted(currentStatus);
 
@@ -248,7 +249,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
 
     @Assign
     List<? extends Message> handle(DeleteTask cmd) throws CannotDeleteTask {
-        final TaskDefinition state = getState();
+        final Task state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.DELETED;
         final boolean isValid = isValidTransition(currentStatus, newStatus);
@@ -266,7 +267,7 @@ public class TaskDefinitionPart extends AggregatePart<TaskId,
 
     @Assign
     List<? extends Message> handle(CompleteTask cmd) throws CannotCompleteTask {
-        final TaskDefinition state = getState();
+        final Task state = getState();
         final TaskStatus currentStatus = state.getTaskStatus();
         final TaskStatus newStatus = TaskStatus.COMPLETED;
         final boolean isValid = isValidTransition(currentStatus, newStatus);

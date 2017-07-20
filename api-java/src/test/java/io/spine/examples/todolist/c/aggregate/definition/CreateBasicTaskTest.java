@@ -21,10 +21,11 @@
 package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.protobuf.Message;
-import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.events.TaskCreated;
+import io.spine.validate.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,8 +41,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CreateBasicTask command should be interpreted by TaskDefinitionPart and")
-public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTask> {
+@DisplayName("CreateBasicTask command should be interpreted by TaskPart and")
+public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
 
     @Override
     @BeforeEach
@@ -73,8 +74,23 @@ public class CreateBasicTaskTest extends TaskDefinitionCommandTest<CreateBasicTa
         final CreateBasicTask createBasicTask = createTaskInstance();
         dispatch(aggregate, envelopeOf(createBasicTask));
 
-        final TaskDefinition state = aggregate.getState();
+        final Task state = aggregate.getState();
         assertEquals(state.getId(), createBasicTask.getId());
         assertEquals(state.getTaskStatus(), TaskStatus.FINALIZED);
+    }
+
+    @Test
+    @DisplayName("does not pass command validation" +
+            "upon an attempt to create task with too short description")
+    void notPassCommandValidation() {
+        final CreateBasicTask createBasicTask = createTaskInstance(taskId, "D");
+
+        final Throwable t = assertThrows(Throwable.class,
+                                         () -> dispatch(aggregate, envelopeOf(createBasicTask)));
+        final Throwable rootCause = Throwables.getRootCause(t);
+        final ValidationException validationException = (ValidationException) rootCause;
+        final int violationCount = validationException.getConstraintViolations()
+                                                      .size();
+        assertEquals(1, violationCount);
     }
 }

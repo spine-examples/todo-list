@@ -18,19 +18,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.repository;
+package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.TaskDefinitionPart;
-import io.spine.server.BoundedContext;
-import io.spine.server.aggregate.AggregatePartRepository;
+import org.jline.reader.LineReader;
+import org.jline.terminal.Terminal;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static io.spine.examples.todolist.Readers.newLineReader;
+import static io.spine.examples.todolist.Terminals.newTerminal;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
- * Repository for the {@link TaskDefinitionPart}
- *
- * @author Illia Shepilov
+ * @author Dmytro Grankin
  */
-public class TaskDefinitionRepository
-        extends AggregatePartRepository<TaskId, TaskDefinitionPart, TaskAggregateRoot> {
+@DisplayName("Readers should")
+class ReadersTest {
+
+    @Test
+    @DisplayName("have the private constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(Readers.class);
+    }
+
+    @Test
+    @DisplayName("Create `LineReader` with the specified `Terminal`")
+    void createLineReader() {
+        final Terminal terminal = newTerminal();
+        final LineReader reader = newLineReader(terminal);
+        assertSame(terminal, reader.getTerminal());
+    }
 }

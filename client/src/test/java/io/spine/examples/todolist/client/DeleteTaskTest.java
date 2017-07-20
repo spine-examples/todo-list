@@ -20,10 +20,6 @@
 
 package io.spine.examples.todolist.client;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
@@ -32,14 +28,18 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.q.projection.TaskItem;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Illia Shepilov
@@ -80,7 +80,7 @@ class DeleteTaskTest extends CommandLineTodoClientTest {
             final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
             assertEquals(1, labelledTasksView.size());
 
-            final List<TaskView> taskViews = labelledTasksView.get(0)
+            final List<TaskItem> taskViews = labelledTasksView.get(0)
                                                               .getLabelledTasks()
                                                               .getItemsList();
             assertTrue(taskViews.isEmpty());
@@ -107,12 +107,12 @@ class DeleteTaskTest extends CommandLineTodoClientTest {
             final int expectedListSize = 1;
             assertEquals(expectedListSize, labelledTasksView.size());
 
-            final List<TaskView> taskViews = labelledTasksView.get(0)
+            final List<TaskItem> taskViews = labelledTasksView.get(0)
                                                               .getLabelledTasks()
                                                               .getItemsList();
             assertEquals(expectedListSize, taskViews.size());
 
-            final TaskView view = taskViews.get(0);
+            final TaskItem view = taskViews.get(0);
             assertEquals(taskId, view.getId());
         }
     }
@@ -130,7 +130,7 @@ class DeleteTaskTest extends CommandLineTodoClientTest {
             final DeleteTask deleteTask = deleteTaskInstance(createDraft.getId());
             client.delete(deleteTask);
 
-            final List<TaskView> taskViews = client.getDraftTasksView()
+            final List<TaskItem> taskViews = client.getDraftTasksView()
                                                    .getDraftTasks()
                                                    .getItemsList();
             assertTrue(taskViews.isEmpty());
@@ -146,12 +146,12 @@ class DeleteTaskTest extends CommandLineTodoClientTest {
             final DeleteTask deleteTask = deleteTaskInstance(createWrongTaskId());
             client.delete(deleteTask);
 
-            final List<TaskView> taskViews = client.getDraftTasksView()
+            final List<TaskItem> taskViews = client.getDraftTasksView()
                                                    .getDraftTasks()
                                                    .getItemsList();
             assertEquals(1, taskViews.size());
 
-            final TaskView view = taskViews.get(0);
+            final TaskItem view = taskViews.get(0);
             assertEquals(taskId, view.getId());
         }
     }
@@ -166,8 +166,8 @@ class DeleteTaskTest extends CommandLineTodoClientTest {
             final CreateBasicTask createTask = createTask();
 
             final TaskId idOfCreatedTask = createTask.getId();
-            final List<TaskView> taskViews =
-                    obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, true);
+            final List<TaskItem> taskViews =
+                    obtainTaskItemListWhenHandledDeleteTask(idOfCreatedTask, true);
 
             assertTrue(taskViews.isEmpty());
         }
@@ -178,17 +178,17 @@ class DeleteTaskTest extends CommandLineTodoClientTest {
             final CreateBasicTask createTask = createTask();
 
             final TaskId idOfCreatedTask = createTask.getId();
-            final List<TaskView> taskViews =
-                    obtainTaskViewListWhenHandledDeleteTask(idOfCreatedTask, false);
+            final List<TaskItem> taskViews =
+                    obtainTaskItemListWhenHandledDeleteTask(idOfCreatedTask, false);
             assertEquals(1, taskViews.size());
 
-            final TaskView view = taskViews.get(0);
+            final TaskItem view = taskViews.get(0);
             final TaskId taskId = createTask.getId();
             assertEquals(taskId, view.getId());
         }
     }
 
-    private List<TaskView> obtainTaskViewListWhenHandledDeleteTask(TaskId idOfCreatedTask,
+    private List<TaskItem> obtainTaskItemListWhenHandledDeleteTask(TaskId idOfCreatedTask,
             boolean isCorrectId) {
         final TaskId idOfDeletedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
 

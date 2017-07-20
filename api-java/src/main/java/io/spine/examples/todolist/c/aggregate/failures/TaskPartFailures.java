@@ -32,7 +32,7 @@ import io.spine.examples.todolist.ReopenTaskFailed;
 import io.spine.examples.todolist.RestoreDeletedTaskFailed;
 import io.spine.examples.todolist.TaskDueDateUpdateFailed;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.TaskDefinitionPart;
+import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
@@ -53,13 +53,13 @@ import io.spine.examples.todolist.c.failures.CannotUpdateTaskDueDate;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskPriority;
 
 /**
- * Utility class for working with {@link TaskDefinitionPart} failures.
+ * Utility class for working with {@link TaskPart} failures.
  *
  * @author Illia Shepilov
  */
-public class TaskDefinitionPartFailures {
+public class TaskPartFailures {
 
-    private TaskDefinitionPartFailures() {
+    private TaskPartFailures() {
         // Prevent instantiation of this utility class.
     }
 

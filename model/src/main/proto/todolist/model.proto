@@ -22,6 +22,8 @@ syntax = "proto3";
 
 package spine.examples.todolist;
 
+import "spine/options.proto";
+
 option (type_url_prefix) = "type.spine.examples.todolist";
 option java_package = "io.spine.examples.todolist";
 option java_outer_classname = "ModelProto";
@@ -30,13 +32,12 @@ option java_generate_equals_and_hash = true;
 
 import "google/protobuf/timestamp.proto";
 
-import "spine/options.proto";
 
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
 import "todolist/values.proto";
 
-message TaskDefinition {
+message Task {
 
     // Task identifier.
     TaskId id = 1;
