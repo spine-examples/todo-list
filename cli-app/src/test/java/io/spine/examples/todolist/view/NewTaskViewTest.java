@@ -67,10 +67,11 @@ class NewTaskViewTest {
     @Test
     @DisplayName("handle non-empty description")
     void handleNonEmptyDescription() {
-        final TaskDescription description = newDescription("task description");
-        final CreateBasicTaskVBuilder state = CreateBasicTaskVBuilder.newBuilder()
-                                                                     .setDescription(description);
-        final String expectedRepresentation = DESCRIPTION_LABEL + ' ' + description.getValue();
+        final CreateBasicTaskVBuilder state =
+                CreateBasicTaskVBuilder.newBuilder()
+                                       .setDescription(VALID_DESCRIPTION);
+        final String expectedRepresentation =
+                DESCRIPTION_LABEL + ' ' + VALID_DESCRIPTION.getValue();
         assertEquals(expectedRepresentation, view.renderState(state));
     }
 

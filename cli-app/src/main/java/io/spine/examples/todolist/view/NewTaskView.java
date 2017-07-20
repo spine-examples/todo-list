@@ -84,10 +84,10 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
     protected String renderState(CreateBasicTaskVBuilder state) {
         final String rawDescription = state.getDescription()
                                            .getValue();
-        final String result = rawDescription.isEmpty()
-                              ? EMPTY_VALUE
-                              : rawDescription;
-        return DESCRIPTION_LABEL + ' ' + result;
+        final String resultDescription = rawDescription.isEmpty()
+                                         ? EMPTY_VALUE
+                                         : rawDescription;
+        return DESCRIPTION_LABEL + ' ' + resultDescription;
     }
 
     private static TaskId generatedId() {
