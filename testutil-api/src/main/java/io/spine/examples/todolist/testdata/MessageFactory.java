@@ -24,7 +24,9 @@ import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDescriptionVBuilder;
 
 /**
- * Utilities for creating Protobuf messages.
+ * Utilities for creating Protobuf messages with a single field.
+ *
+ * @author Dmytro Grankin
  */
 public class MessageFactory {
 
