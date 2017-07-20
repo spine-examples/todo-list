@@ -24,6 +24,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -49,10 +50,11 @@ class ShortcutTest {
         assertEquals(SHORTCUT.hashCode(), SHORTCUT.hashCode());
     }
 
+    @SuppressWarnings("ObjectEqualsNull") // Purpose of this test.
     @Test
     @DisplayName("consider other classes not equal")
     void considerOtherClassesNotEqual() {
-        assertNotEquals(null, SHORTCUT);
+        assertFalse(SHORTCUT.equals(null)); // `assertNotEquals` does not suit for null comparison.
         assertNotEquals(VALUE, SHORTCUT);
     }
 
