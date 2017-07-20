@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import static io.spine.cli.NoOpAction.noOpActionProducer;
 import static io.spine.cli.action.ActionFormatter.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -49,8 +50,14 @@ class NoOpActionTest {
     }
 
     @Test
+    @DisplayName("have user-friendly representation")
+    void haveUserFriendlyRepresentation() {
+        assertEquals(format(action), action.toString());
+    }
+
+    @Test
     @DisplayName("consider an action with same shortcut equal")
-    void overrideEqualsAndHashCode() {
+    void considerActionWithSameShortcutEqual() {
         final String differentName = action.getName() + "difference";
         final Action secondAction = new NoOpAction(differentName, action.getShortcut());
         assertEquals(action, secondAction);
@@ -58,9 +65,15 @@ class NoOpActionTest {
     }
 
     @Test
-    @DisplayName("have user-friendly representation")
-    void haveUserFriendlyRepresentation() {
-        assertEquals(format(action), action.toString());
+    @DisplayName("consider itself equal")
+    void considerItselfEqual() {
+        assertEquals(action, action);
+    }
+
+    @Test
+    @DisplayName("consider classes not from Action hierarchy not equal")
+    void considerNotActionNotEqual() {
+        assertNotEquals(action, SHORTCUT);
     }
 
     @Test

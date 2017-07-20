@@ -86,10 +86,13 @@ class AbstractScreenTest {
     @Test
     @DisplayName("not create back action if there is no back destination")
     void notCreateBackAction() {
+        Optional<TransitionAction<View, View>> back = screen.createBackAction(BACK_NAME,
+                                                                              BACK_SHORTCUT);
+        assertFalse(back.isPresent());
+
         final View view = new NoOpView();
         screen.renderView(view);
-        final Optional<TransitionAction<View, View>> back = screen.createBackAction(BACK_NAME,
-                                                                                    BACK_SHORTCUT);
+        back = screen.createBackAction(BACK_NAME, BACK_SHORTCUT);
         assertFalse(back.isPresent());
     }
 

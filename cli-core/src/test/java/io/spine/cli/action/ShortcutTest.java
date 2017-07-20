@@ -24,6 +24,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class ShortcutTest {
 
     private static final String VALUE = "s";
+    private static final Shortcut SHORTCUT = new Shortcut(VALUE);
 
     @Test
     @DisplayName("not allow empty value")
@@ -42,11 +44,16 @@ class ShortcutTest {
 
     @Test
     @DisplayName("consider a shortcut with same value equal")
-    void overrideEqualsAndHashCode() {
-        final Shortcut first = new Shortcut(VALUE);
-        final Shortcut second = new Shortcut(VALUE);
-        assertEquals(first, second);
-        assertEquals(first.hashCode(), second.hashCode());
+    void considerShortcutWithSameValueEqual() {
+        assertEquals(SHORTCUT, SHORTCUT);
+        assertEquals(SHORTCUT.hashCode(), SHORTCUT.hashCode());
+    }
+
+    @Test
+    @DisplayName("consider other classes not equal")
+    void considerOtherClassesNotEqual() {
+        assertNotEquals(null, SHORTCUT);
+        assertNotEquals(VALUE, SHORTCUT);
     }
 
     @Test

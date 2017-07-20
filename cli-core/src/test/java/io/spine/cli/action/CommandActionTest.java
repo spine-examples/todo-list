@@ -44,15 +44,13 @@ class CommandActionTest {
     private static final String ACTION_NAME = "quit";
     private static final Shortcut QUIT = new Shortcut("q");
 
-    private Bot bot;
     private final UpdateStringValueView view = new UpdateStringValueView();
     private final UpdateStringValueAction action = new UpdateStringValueAction(view);
 
     @BeforeEach
-    protected void setUp() {
-        bot = new Bot();
+    void setUp() {
         view.addAction(noOpActionProducer(ACTION_NAME, QUIT));
-        bot.addAnswer(QUIT.getValue());
+        new Bot().addAnswer(QUIT.getValue());
     }
 
     @Test

@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 
 import static io.spine.cli.action.ActionFormatter.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -50,6 +51,12 @@ class AbstractActionTest {
     }
 
     @Test
+    @DisplayName("have user-friendly representation")
+    void haveUserFriendlyRepresentation() {
+        assertEquals(format(action), action.toString());
+    }
+
+    @Test
     @DisplayName("consider an action with same shortcut equal")
     void overrideEqualsAndHashCode() {
         final Action firstAction = action;
@@ -60,9 +67,15 @@ class AbstractActionTest {
     }
 
     @Test
-    @DisplayName("have user-friendly representation")
-    void haveUserFriendlyRepresentation() {
-        assertEquals(format(action), action.toString());
+    @DisplayName("consider itself equal")
+    void considerItselfEqual() {
+        assertEquals(action, action);
+    }
+
+    @Test
+    @DisplayName("consider classes not from Action hierarchy not equal")
+    void considerNotActionNotEqual() {
+        assertNotEquals(action, SHORTCUT);
     }
 
     private static class AnAction extends AbstractAction<View, View> {

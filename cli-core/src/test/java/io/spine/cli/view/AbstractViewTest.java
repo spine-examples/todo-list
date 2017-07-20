@@ -49,11 +49,19 @@ class AbstractViewTest {
     private static final Shortcut SHORTCUT = new Shortcut("s");
 
     private Bot bot;
-    private final AbstractView view = new AView();
+    private final AbstractView view = new AView("abstract view");
 
     @BeforeEach
     void setUp() {
         bot = new Bot();
+    }
+
+    @SuppressWarnings("ConstantConditions") // Purpose of the test.
+    @Test
+    @DisplayName("not allow null or empty title")
+    void notAllowNullOrEmptyTitle() {
+        assertThrows(IllegalArgumentException.class, () -> new AView(null));
+        assertThrows(IllegalArgumentException.class, () -> new AView(""));
     }
 
     @Test
@@ -119,8 +127,8 @@ class AbstractViewTest {
 
     private static class AView extends AbstractView {
 
-        private AView() {
-            super("View title");
+        private AView(String title) {
+            super(title);
         }
 
         @Override
