@@ -22,12 +22,16 @@ package io.spine.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
+import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
 import io.spine.examples.todolist.repository.MyListViewRepository;
-import io.spine.examples.todolist.repository.TaskDefinitionRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
-import io.spine.examples.todolist.repository.LabelAggregateRepository;
+import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
+import io.spine.server.storage.StorageFactory;
+import io.spine.server.storage.memory.InMemoryStorageFactory;
+
+import java.util.function.Supplier;
 
 /**
  * Serves for creation the {@link BoundedContext} instances.
@@ -38,6 +42,8 @@ public class TodoListBoundedContext {
 
     /** The name of the Bounded Context. */
     private static final String NAME = "TodoListBoundedContext";
+
+    private static final StorageFactory storageFactory = InMemoryStorageFactory.getInstance(false);
 
     /**
      * Obtains the reference to the singleton {@link BoundedContext}.
@@ -69,14 +75,14 @@ public class TodoListBoundedContext {
     private static BoundedContext create() {
         final BoundedContext boundedContext = createBoundedContext();
 
-        final TaskDefinitionRepository taskDefinitionRepo = new TaskDefinitionRepository();
+        final TaskRepository taskRepo = new TaskRepository();
         final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
         final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
         final MyListViewRepository myListViewRepo = new MyListViewRepository();
         final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
         final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
 
-        boundedContext.register(taskDefinitionRepo);
+        boundedContext.register(taskRepo);
         boundedContext.register(taskLabelsRepo);
         boundedContext.register(labelAggregateRepo);
         boundedContext.register(myListViewRepo);
@@ -85,7 +91,7 @@ public class TodoListBoundedContext {
 
         TodoListEnrichmentConfiguration.newBuilder()
                                        .setLabelRepository(labelAggregateRepo)
-                                       .setTaskDefinitionRepository(taskDefinitionRepo)
+                                       .setTaskRepository(taskRepo)
                                        .setTaskLabelsRepository(taskLabelsRepo)
                                        .apply(boundedContext.getEventBus())
                                        .addEnrichmentFields();
@@ -93,10 +99,11 @@ public class TodoListBoundedContext {
     }
 
     private static BoundedContext createBoundedContext() {
-        final BoundedContext result = BoundedContext.newBuilder()
-                                                    .setName(NAME)
-                                                    .build();
-        return result;
+        final Supplier<StorageFactory> storageFactorySupplier = () -> storageFactory;
+        return BoundedContext.newBuilder()
+                             .setStorageFactorySupplier(storageFactorySupplier::get)
+                             .setName(NAME)
+                             .build();
     }
 
     /** The holder for the singleton reference. */

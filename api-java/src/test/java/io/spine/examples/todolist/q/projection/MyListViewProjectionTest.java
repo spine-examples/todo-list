@@ -89,17 +89,17 @@ class MyListViewProjectionTest extends ProjectionTest {
     class TaskCreatedEvent {
 
         @Test
-        @DisplayName("add TaskView to MyListView")
+        @DisplayName("add TaskItem to MyListView")
         void addView() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             dispatch(projection, createEvent(taskCreatedEvent));
 
-            final List<TaskView> views = projection.getState()
+            final List<TaskItem> views = projection.getState()
                                                    .getMyList()
                                                    .getItemsList();
             assertEquals(1, views.size());
 
-            final TaskView view = views.get(0);
+            final TaskItem view = views.get(0);
             assertEquals(TASK_PRIORITY, view.getPriority());
             assertEquals(DESCRIPTION, view.getDescription());
         }
@@ -110,7 +110,7 @@ class MyListViewProjectionTest extends ProjectionTest {
     class TaskDeletedEvent {
 
         @Test
-        @DisplayName("remove TaskView from MyListView")
+        @DisplayName("remove TaskItem from MyListView")
         void removeView() {
             final TaskCreated taskCreated = taskCreatedInstance();
             final Event taskCreatedEvent = createEvent(taskCreated);
@@ -120,7 +120,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final TaskDeleted taskDeletedEvent = taskDeletedInstance();
             dispatch(projection, createEvent(taskDeletedEvent));
 
-            List<TaskView> views = projection.getState()
+            List<TaskItem> views = projection.getState()
                                              .getMyList()
                                              .getItemsList();
             assertTrue(views.isEmpty());
@@ -146,7 +146,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView view = taskListView.getItemsList()
+            final TaskItem view = taskListView.getItemsList()
                                               .get(0);
             assertEquals(expectedTaskId, view.getId());
             assertEquals(UPDATED_DESCRIPTION, view.getDescription());
@@ -168,7 +168,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView view = taskListView.getItemsList()
+            final TaskItem view = taskListView.getItemsList()
                                               .get(0);
             assertEquals(TASK_ID, view.getId());
             assertNotEquals(updatedDescription, view.getDescription());
@@ -196,7 +196,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(expectedTaskId, taskView.getId());
             assertEquals(updatedDueDate, taskView.getDueDate());
@@ -218,7 +218,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertNotEquals(updatedDueDate, taskView.getDueDate());
         }
@@ -245,7 +245,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(expectedTaskId, taskView.getId());
             assertEquals(updatedTaskPriority, taskView.getPriority());
@@ -267,7 +267,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(TASK_ID, taskView.getId());
             assertNotEquals(updatedTaskPriority, taskView.getPriority());
@@ -300,7 +300,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(LABEL_ID, taskView.getLabelId());
             assertEquals(updatedColor, taskView.getLabelColor());
@@ -332,7 +332,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final int expectedViewListSize = 1;
             assertEquals(expectedViewListSize, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(expectedTaskId, taskView.getId());
             assertNotEquals(updatedColor, taskView.getLabelColor());
@@ -344,8 +344,8 @@ class MyListViewProjectionTest extends ProjectionTest {
     class LabelRemovedFromTaskEvent {
 
         @Test
-        @DisplayName("set `LabelId` to default state for the TaskView")
-        void removeLabelFromTaskView() {
+        @DisplayName("set `LabelId` to default state for the TaskItem")
+        void removeLabelFromTaskItem() {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             dispatch(projection, createEvent(taskCreatedEvent));
 
@@ -358,7 +358,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
             dispatch(projection, createEvent(labelRemovedFromTask));
 
-            final TaskView taskView = projection.getState()
+            final TaskItem taskView = projection.getState()
                                                 .getMyList()
                                                 .getItems(0);
             assertEquals(LabelId.getDefaultInstance(), taskView.getLabelId());
@@ -380,7 +380,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final int expectedViewListSize = 1;
             assertEquals(expectedViewListSize, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItems(0);
+            final TaskItem taskView = taskListView.getItems(0);
             assertEquals(TASK_ID, taskView.getId());
             assertEquals(DESCRIPTION, taskView.getDescription());
             assertEquals(TASK_PRIORITY, taskView.getPriority());
@@ -406,7 +406,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final int expectedViewListSize = 1;
             assertEquals(expectedViewListSize, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(TASK_ID, taskView.getId());
             assertTrue(taskView.getCompleted());
@@ -427,7 +427,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final int expectedViewListSize = 1;
             assertEquals(expectedViewListSize, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(TASK_ID, taskView.getId());
             assertFalse(taskView.getCompleted());
@@ -455,7 +455,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final int expectedViewListSize = 1;
             assertEquals(expectedViewListSize, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(TASK_ID, taskView.getId());
             assertFalse(taskView.getCompleted());
@@ -479,7 +479,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final int expectedViewListSize = 1;
             assertEquals(expectedViewListSize, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(TASK_ID, taskView.getId());
             assertTrue(taskView.getCompleted());

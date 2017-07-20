@@ -23,10 +23,10 @@ package io.spine.examples.todolist.c.aggregate;
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdsList;
-import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
-import io.spine.examples.todolist.TaskLabelsValidatingBuilder;
+import io.spine.examples.todolist.TaskLabelsVBuilder;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
 import io.spine.examples.todolist.c.events.LabelAssignedToTask;
@@ -55,7 +55,7 @@ import static java.util.Collections.singletonList;
 @SuppressWarnings("unused" /* The methods annotated with {@link Apply}
                               are declared {@code private} by design. */)
 public class TaskLabelsPart
-        extends AggregatePart<TaskId, TaskLabels, TaskLabelsValidatingBuilder, TaskAggregateRoot> {
+        extends AggregatePart<TaskId, TaskLabels, TaskLabelsVBuilder, TaskAggregateRoot> {
 
     /**
      * {@inheritDoc}
@@ -71,13 +71,11 @@ public class TaskLabelsPart
         final LabelId labelId = cmd.getLabelId();
         final TaskId taskId = cmd.getId();
 
-        final TaskDefinition taskDefinitionState = getPartState(TaskDefinition.class);
+        final Task taskState = getPartState(Task.class);
         final boolean isLabelAssigned = getState().getLabelIdsList()
                                                   .getIdsList()
                                                   .contains(labelId);
-        final boolean isValidTaskStatus =
-                isValidTaskStatusToRemoveLabel(taskDefinitionState.getTaskStatus());
-
+        final boolean isValidTaskStatus = isValidTaskStatusToRemoveLabel(taskState.getTaskStatus());
         if (!isLabelAssigned || !isValidTaskStatus) {
             throwCannotRemoveLabelFromTaskFailure(cmd);
         }
@@ -94,7 +92,7 @@ public class TaskLabelsPart
         final TaskId taskId = cmd.getId();
         final LabelId labelId = cmd.getLabelId();
 
-        final TaskDefinition state = getPartState(TaskDefinition.class);
+        final Task state = getPartState(Task.class);
         final boolean isValid = isValidAssignLabelToTaskCommand(state.getTaskStatus());
 
         if (!isValid) {

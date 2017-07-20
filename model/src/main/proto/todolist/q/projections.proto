@@ -97,12 +97,12 @@ message LabelledTasksView {
 message TaskListView {
 
     // A list of tasks.
-    repeated TaskView items = 1;
+    repeated TaskItem items = 1;
 }
 
-// Generic definition of a task view model.
+// Item of a task list view.
 //
-message TaskView {
+message TaskItem {
 
     // Task identifier.
     TaskId id = 1;

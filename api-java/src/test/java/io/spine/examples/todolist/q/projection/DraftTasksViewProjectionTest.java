@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.q.projection;
 
 import com.google.protobuf.Timestamp;
-import io.spine.base.EventContext;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
@@ -88,7 +87,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
     class TaskDraftCreatedEvent {
 
         @Test
-        @DisplayName("add TaskView to DraftTasksView")
+        @DisplayName("add TaskItem to DraftTasksView")
         void addView() {
             taskDraftCreated();
 
@@ -96,7 +95,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                                                     .getDraftTasks();
             assertEquals(1, listView.getItemsCount());
 
-            final TaskView taskView = listView.getItems(0);
+            final TaskItem taskView = listView.getItems(0);
             assertEquals(TASK_ID, taskView.getId());
             assertEquals(DESCRIPTION, taskView.getDescription());
             assertEquals(TASK_PRIORITY, taskView.getPriority());
@@ -108,14 +107,14 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
     class TaskDraftFinalizedEvent {
 
         @Test
-        @DisplayName("remove TaskView from DraftTasksView")
+        @DisplayName("remove TaskItem from DraftTasksView")
         void removeView() {
             taskDraftCreated();
 
             final TaskDraftFinalized taskDraftFinalizedEvent = taskDraftFinalizedInstance();
             dispatch(projection, createEvent(taskDraftFinalizedEvent));
 
-            final List<TaskView> views = projection.getState()
+            final List<TaskItem> views = projection.getState()
                                                    .getDraftTasks()
                                                    .getItemsList();
             assertTrue(views.isEmpty());
@@ -127,14 +126,14 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
     class TaskDeletedEvent {
 
         @Test
-        @DisplayName("remove TaskView from DraftTasksView")
+        @DisplayName("remove TaskItem from DraftTasksView")
         void removeView() {
             taskDraftCreated();
 
             final TaskDeleted taskDeletedEvent = taskDeletedInstance();
             dispatch(projection, createEvent(taskDeletedEvent));
 
-            final List<TaskView> views = projection.getState()
+            final List<TaskItem> views = projection.getState()
                                                    .getDraftTasks()
                                                    .getItemsList();
             assertTrue(views.isEmpty());
@@ -146,7 +145,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
     class TaskDescriptionUpdatedEvent {
 
         @Test
-        @DisplayName("update the task description in DraftTaskView")
+        @DisplayName("update the task description in DraftTaskItem")
         void updateDescription() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
             dispatch(projection, createEvent(taskDraftCreatedEvent));
@@ -160,7 +159,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView view = taskListView.getItemsList()
+            final TaskItem view = taskListView.getItemsList()
                                               .get(0);
             assertEquals(expectedTaskId, view.getId());
             assertEquals(UPDATED_DESCRIPTION, view.getDescription());
@@ -181,7 +180,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView view = taskListView.getItemsList()
+            final TaskItem view = taskListView.getItemsList()
                                               .get(0);
             assertEquals(TASK_ID, view.getId());
             assertNotEquals(updatedDescription, view.getDescription());
@@ -193,7 +192,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
     class DueDateUpdatedEvent {
 
         @Test
-        @DisplayName("update the task due date in DraftTaskView")
+        @DisplayName("update the task due date in DraftTaskItem")
         void updateDueDate() {
             final TaskDraftCreated taskDraftCreatedEvent = taskDraftCreatedInstance();
             dispatch(projection, createEvent(taskDraftCreatedEvent));
@@ -209,7 +208,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(expectedTaskId, taskView.getId());
             assertEquals(updatedDueDate, taskView.getDueDate());
@@ -230,7 +229,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(TASK_ID, taskView.getId());
             assertNotEquals(updatedDueDate, taskView.getDueDate());
@@ -258,7 +257,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(expectedTaskId, taskView.getId());
             assertEquals(updatedTaskPriority, taskView.getPriority());
@@ -279,7 +278,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(TASK_ID, taskView.getId());
             assertNotEquals(updatedTaskPriority, taskView.getPriority());
@@ -312,7 +311,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(LABEL_ID, taskView.getLabelId());
             assertEquals(updatedColor, taskView.getLabelColor());
@@ -342,7 +341,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(TASK_ID, taskView.getId());
             assertNotEquals(updatedColor, taskView.getLabelColor());
@@ -354,7 +353,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
     class LabelRemovedFromTaskEvent {
 
         @Test
-        @DisplayName("remove TaskView from DraftTasksView")
+        @DisplayName("remove TaskItem from DraftTasksView")
         void removeView() {
             taskDraftCreated();
 
@@ -368,7 +367,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
-            final TaskView taskView = taskListView.getItemsList()
+            final TaskItem taskView = taskListView.getItemsList()
                                                   .get(0);
             assertEquals(TASK_ID, taskView.getId());
             assertNotEquals(LABEL_ID, taskView.getLabelId());

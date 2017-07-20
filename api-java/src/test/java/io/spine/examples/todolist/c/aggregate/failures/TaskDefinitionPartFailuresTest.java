@@ -22,9 +22,9 @@ package io.spine.examples.todolist.c.aggregate.failures;
 
 import io.spine.examples.todolist.FailedTaskCommandDetails;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.ChangeStatusFailures;
-import io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures;
-import io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures;
+import io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.ChangeStatusFailures;
+import io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.TaskCreationFailures;
+import io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
@@ -35,9 +35,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskDefinitionPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
+import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -45,15 +45,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("TaskDefinitionPartFailures should")
-class TaskDefinitionPartFailuresTest {
+@DisplayName("TaskPartFailures should")
+class TaskPartFailuresTest {
 
     private final TaskId taskId = TaskId.getDefaultInstance();
 
     @Test
     @DisplayName("have the private constructor")
     void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(TaskDefinitionPartFailures.class);
+        assertHasPrivateParameterlessCtor(TaskPartFailures.class);
     }
 
     @Nested

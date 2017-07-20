@@ -23,12 +23,9 @@ package io.spine.examples.todolist.c.aggregate.definition;
 import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
 import com.google.protobuf.StringValue;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.DescriptionUpdateFailed;
-import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
@@ -38,14 +35,12 @@ import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskWithInappropriateDescription;
 import io.spine.examples.todolist.c.failures.Failures;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
@@ -53,12 +48,17 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static io.spine.protobuf.Wrapper.forString;
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("UpdateTaskDescription command should be interpreted by TaskDefinitionPart and")
-public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateTaskDescription> {
+@DisplayName("UpdateTaskDescription command should be interpreted by TaskPart and")
+public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescription> {
 
     @Override
     @BeforeEach
@@ -140,7 +140,7 @@ public class UpdateTaskDescriptionTest extends TaskDefinitionCommandTest<UpdateT
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId, DESCRIPTION, newDescription);
         dispatch(aggregate, envelopeOf(updateTaskDescriptionCmd));
-        final TaskDefinition state = aggregate.getState();
+        final Task state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
         assertEquals(newDescription, state.getDescription());

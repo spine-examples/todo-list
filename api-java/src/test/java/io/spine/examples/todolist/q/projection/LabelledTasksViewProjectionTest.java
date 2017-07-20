@@ -99,29 +99,29 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
     class LabelAssignedToTaskEvent {
 
         @Test
-        @DisplayName("add TaskView to LabelledTasksView")
+        @DisplayName("add TaskItem to LabelledTasksView")
         void addView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
-            LabelledTasksView labelledTaskView = getProjectionState();
+            LabelledTasksView labelledTaskItem = getProjectionState();
 
-            TaskListView listView = labelledTaskView.getLabelledTasks();
+            TaskListView listView = labelledTaskItem.getLabelledTasks();
 
-            matchesExpectedValues(labelledTaskView);
+            matchesExpectedValues(labelledTaskItem);
 
             int actualListSize = listView.getItemsCount();
             int expectedListSize = 1;
             assertEquals(expectedListSize, actualListSize);
 
-            TaskView view = listView.getItems(0);
+            TaskItem view = listView.getItems(0);
 
             matchesExpectedValues(view);
 
             eventBus.post(labelAssignedToTaskEvent);
 
-            labelledTaskView = getProjectionState();
-            listView = labelledTaskView.getLabelledTasks();
+            labelledTaskItem = getProjectionState();
+            listView = labelledTaskItem.getLabelledTasks();
             actualListSize = listView.getItemsCount();
 
             expectedListSize = 2;
@@ -130,12 +130,12 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             view = listView.getItems(0);
 
             matchesExpectedValues(view);
-            matchesExpectedValues(labelledTaskView);
+            matchesExpectedValues(labelledTaskItem);
 
             view = listView.getItems(1);
 
             matchesExpectedValues(view);
-            matchesExpectedValues(labelledTaskView);
+            matchesExpectedValues(labelledTaskItem);
         }
     }
 
@@ -145,7 +145,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
     class LabelRemovedFromTaskEvent {
 
         @Test
-        @DisplayName("remove TaskView from LabelledTasksView")
+        @DisplayName("remove TaskItem from LabelledTasksView")
         void removeView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
@@ -162,8 +162,8 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask);
             eventBus.post(labelRemovedFromTaskEvent);
 
-            final LabelledTasksView updatedLabelledTaskView = getProjectionState();
-            final TaskListView labelledTasks = updatedLabelledTaskView.getLabelledTasks();
+            final LabelledTasksView updatedLabelledTaskItem = getProjectionState();
+            final TaskListView labelledTasks = updatedLabelledTaskItem.getLabelledTasks();
 
             assertTrue(labelledTasks.getItemsList()
                                     .isEmpty());
@@ -176,7 +176,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
     class LabelledTaskRestoredEvent {
 
         @Test
-        @DisplayName("add TaskView to LabelledTasksView")
+        @DisplayName("add TaskItem to LabelledTasksView")
         void addView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
@@ -199,7 +199,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
 
             int expectedListSize = 1;
             assertEquals(expectedListSize, actualListSize);
-            final TaskView taskView = listView.getItems(0);
+            final TaskItem taskView = listView.getItems(0);
             assertEquals(TASK_ID, taskView.getId());
 
             eventBus.post(deletedTaskRestoredEvent);
@@ -223,7 +223,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
     class TaskDeletedEvent {
 
         @Test
-        @DisplayName("remove TaskView from LabelledTasksView")
+        @DisplayName("remove TaskItem from LabelledTasksView")
         void removesView() {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
@@ -266,7 +266,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskView taskView = listView.getItems(0);
+            final TaskItem taskView = listView.getItems(0);
             assertEquals(UPDATED_DESCRIPTION, taskView.getDescription());
         }
 
@@ -289,7 +289,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskView taskView = listView.getItems(0);
+            final TaskItem taskView = listView.getItems(0);
             assertNotEquals(UPDATED_DESCRIPTION, taskView.getDescription());
         }
 
@@ -317,7 +317,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskView taskView = listView.getItems(0);
+            final TaskItem taskView = listView.getItems(0);
             assertEquals(UPDATED_TASK_PRIORITY, taskView.getPriority());
         }
 
@@ -339,7 +339,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskView taskView = listView.getItems(0);
+            final TaskItem taskView = listView.getItems(0);
             assertNotEquals(UPDATED_TASK_PRIORITY, taskView.getPriority());
         }
     }
@@ -366,7 +366,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskView taskView = listView.getItems(0);
+            final TaskItem taskView = listView.getItems(0);
             assertEquals(UPDATED_TASK_DUE_DATE, taskView.getDueDate());
         }
 
@@ -388,7 +388,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskView taskView = listView.getItems(0);
+            final TaskItem taskView = listView.getItems(0);
             assertNotEquals(UPDATED_TASK_DUE_DATE, taskView.getDueDate());
         }
     }
@@ -414,7 +414,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskView taskView = listView.getItems(0);
+            final TaskItem taskView = listView.getItems(0);
             assertTrue(taskView.getCompleted());
         }
 
@@ -435,7 +435,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskView taskView = listView.getItems(0);
+            final TaskItem taskView = listView.getItems(0);
             assertTrue(taskView.getCompleted());
         }
     }
@@ -465,7 +465,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskView taskView = listView.getItems(0);
+            final TaskItem taskView = listView.getItems(0);
             assertFalse(taskView.getCompleted());
         }
 
@@ -490,7 +490,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskView taskView = listView.getItems(0);
+            final TaskItem taskView = listView.getItems(0);
             assertTrue(taskView.getCompleted());
         }
     }
@@ -544,14 +544,14 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         }
     }
 
-    private static void matchesExpectedValues(TaskView taskView) {
+    private static void matchesExpectedValues(TaskItem taskView) {
         assertEquals(TASK_ID, taskView.getId());
         assertEquals(LABEL_ID, taskView.getLabelId());
     }
 
-    private static void matchesExpectedValues(LabelledTasksView labelledTaskView) {
-        assertEquals(LabelColorView.valueOf(LabelColor.BLUE), labelledTaskView.getLabelColor());
-        assertEquals(LABEL_TITLE, labelledTaskView.getLabelTitle());
+    private static void matchesExpectedValues(LabelledTasksView labelledTaskItem) {
+        assertEquals(LabelColorView.valueOf(LabelColor.BLUE), labelledTaskItem.getLabelColor());
+        assertEquals(LABEL_TITLE, labelledTaskItem.getLabelTitle());
     }
 
     private LabelledTasksView getProjectionState() {

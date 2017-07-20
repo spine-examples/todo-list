@@ -20,20 +20,20 @@
 
 package io.spine.examples.todolist.client;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.q.projection.TaskItem;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 
 /**
  * @author Illia Shepilov
@@ -61,12 +61,12 @@ class CreateBasicTaskTest extends CommandLineTodoClientTest {
     }
 
     @Test
-    @DisplayName("DraftTaskView should be empty")
+    @DisplayName("DraftTaskItem should be empty")
     void obtainEmptyDraftViewList() {
         final CreateBasicTask createBasicTask = createBasicTask();
         client.create(createBasicTask);
 
-        final List<TaskView> taskViews = client.getDraftTasksView()
+        final List<TaskItem> taskViews = client.getDraftTasksView()
                                                .getDraftTasks()
                                                .getItemsList();
         assertTrue(taskViews.isEmpty());
@@ -81,13 +81,13 @@ class CreateBasicTaskTest extends CommandLineTodoClientTest {
         final CreateBasicTask createSecondTask = createBasicTask();
         client.create(createSecondTask);
 
-        final List<TaskView> taskViews = client.getMyListView()
+        final List<TaskItem> taskViews = client.getMyListView()
                                                .getMyList()
                                                .getItemsList();
         assertEquals(2, taskViews.size());
 
-        final TaskView firstView = taskViews.get(0);
-        final TaskView secondView = taskViews.get(1);
+        final TaskItem firstView = taskViews.get(0);
+        final TaskItem secondView = taskViews.get(1);
         final List<TaskId> taskIds = new ArrayList<>(2);
         taskIds.add(firstView.getId());
         taskIds.add(secondView.getId());

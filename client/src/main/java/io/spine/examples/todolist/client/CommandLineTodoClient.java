@@ -25,8 +25,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import io.spine.base.Command;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.Query;
@@ -54,12 +52,14 @@ import io.spine.server.QueryService;
 import io.spine.time.ZoneOffsets;
 import io.spine.users.UserId;
 import io.spine.util.Exceptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static io.spine.base.Identifier.newUuid;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**
  * Implementation of the command line gRPC client.
@@ -69,7 +69,9 @@ import static io.spine.base.Identifier.newUuid;
 @SuppressWarnings("OverlyCoupledClass")
 public class CommandLineTodoClient implements TodoClient {
 
+    public static final String HOST = "localhost";
     private static final int TIMEOUT = 10;
+
     private final ManagedChannel channel;
     private final QueryService queryService;
     private final CommandServiceGrpc.CommandServiceBlockingStub commandService;
@@ -258,10 +260,9 @@ public class CommandLineTodoClient implements TodoClient {
     }
 
     private static ManagedChannel initChannel(String host, int port) {
-        final ManagedChannel result = ManagedChannelBuilder
-                .forAddress(host, port)
-                .usePlaintext(true)
-                .build();
+        final ManagedChannel result = ManagedChannelBuilder.forAddress(host, port)
+                                                           .usePlaintext(true)
+                                                           .build();
         return result;
     }
 

@@ -37,7 +37,7 @@ import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
 import "todolist/values.proto";
 
-message TaskDefinition {
+message Task {
 
     // Task identifier.
     TaskId id = 1;

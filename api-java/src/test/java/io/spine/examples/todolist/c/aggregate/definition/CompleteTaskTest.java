@@ -22,37 +22,36 @@ package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
-import io.spine.server.aggregate.AggregateCommandDispatcher;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import io.spine.examples.todolist.TaskDefinition;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.events.TaskCompleted;
 import io.spine.examples.todolist.c.failures.CannotCompleteTask;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.examples.todolist.TaskStatus.COMPLETED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
+import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CompleteTask command should be interpreted by TaskDefinitionPart and")
-public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
+@DisplayName("CompleteTask command should be interpreted by TaskPart and")
+public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
 
     @Override
     @BeforeEach
@@ -81,7 +80,7 @@ public class CompleteTaskTest extends TaskDefinitionCommandTest<CompleteTask> {
         dispatchCreateTaskCmd();
 
         dispatchCompleteTaskCmd();
-        final TaskDefinition state = aggregate.getState();
+        final Task state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
         assertEquals(COMPLETED, state.getTaskStatus());

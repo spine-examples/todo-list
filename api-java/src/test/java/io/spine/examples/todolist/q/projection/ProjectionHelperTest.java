@@ -20,20 +20,20 @@
 
 package io.spine.examples.todolist.q.projection;
 
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.TaskId;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.spine.base.Identifier.newUuid;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static io.spine.base.Identifier.newUuid;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
@@ -47,9 +47,9 @@ public class ProjectionHelperTest {
     private static final LabelId LABEL_ID = LabelId.newBuilder()
                                                    .setValue(newUuid())
                                                    .build();
-    private TaskView viewWithDefaultLabelId;
-    private TaskView viewWithDefaultTaskId;
-    private List<TaskView> viewList;
+    private TaskItem viewWithDefaultLabelId;
+    private TaskItem viewWithDefaultTaskId;
+    private List<TaskItem> viewList;
 
     @BeforeEach
     public void setUp() {
@@ -63,7 +63,7 @@ public class ProjectionHelperTest {
     }
 
     @Test
-    @DisplayName("remove TaskView from state by label ID")
+    @DisplayName("remove TaskItem from state by label ID")
     public void removeView() {
         final int expectedListSize = 2;
         final TaskListView view = ProjectionHelper.removeViewsByLabelId(viewList, LABEL_ID);
@@ -73,7 +73,7 @@ public class ProjectionHelperTest {
     }
 
     @Test
-    @DisplayName("not remove TaskView from state by wrong label ID")
+    @DisplayName("not remove TaskItem from state by wrong label ID")
     public void notRemoveViewByLabelId() {
         final int expectedListSize = viewList.size();
         final LabelId wrongLabelId = LabelId.newBuilder()
@@ -86,7 +86,7 @@ public class ProjectionHelperTest {
     }
 
     @Test
-    @DisplayName("remove TaskView from state by task ID")
+    @DisplayName("remove TaskItem from state by task ID")
     public void removeViewByTaskId() {
         final int expectedListSize = 2;
         final TaskListView view = ProjectionHelper.removeViewsByTaskId(viewList, TASK_ID);
@@ -96,8 +96,8 @@ public class ProjectionHelperTest {
     }
 
     @Test
-    @DisplayName("not remove TaskView from state by wrong task ID")
-    public void notRemoveTaskViewByTaskId() {
+    @DisplayName("not remove TaskItem from state by wrong task ID")
+    public void notRemoveTaskItemByTaskId() {
         final int expectedListSize = viewList.size();
         final TaskId wrongTaskId = TaskId.newBuilder()
                                          .setValue(newUuid())
@@ -108,13 +108,13 @@ public class ProjectionHelperTest {
         assertTrue(viewList.contains(viewWithDefaultTaskId));
     }
 
-    private List<TaskView> createViewList() {
-        final List<TaskView> viewList = new ArrayList<>();
-        viewWithDefaultLabelId = TaskView.newBuilder()
+    private List<TaskItem> createViewList() {
+        final List<TaskItem> viewList = new ArrayList<>();
+        viewWithDefaultLabelId = TaskItem.newBuilder()
                                          .setId(TASK_ID)
                                          .setLabelId(LabelId.getDefaultInstance())
                                          .build();
-        viewWithDefaultTaskId = TaskView.newBuilder()
+        viewWithDefaultTaskId = TaskItem.newBuilder()
                                         .setLabelId(LABEL_ID)
                                         .setId(TaskId.getDefaultInstance())
                                         .build();
