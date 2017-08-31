@@ -19,17 +19,12 @@
  */
 
 buildscript {
+    apply from: 'ext.gradle'
+
     ext {
-        protobufGradlePluginVersion = '0.8.3'
-        appEngineVersion = '1.9.42'
         spineRepository = 'http://maven.teamdev.com/repository/spine'
         spineSnapshotsRepository = 'http://maven.teamdev.com/repository/spine-snapshots'
         appEngineGradlePlugin = 'com.google.cloud.tools:appengine-gradle-plugin:+'
-        guavaVersion = '20.0'
-        jUnitPlatformVersion = '1.0.0-RC3'
-        jUnitVersion = '5.0.0-RC3'
-        spineVersion = '0.9.60-SNAPSHOT'
-        spineBaseVersion = '0.9.55-SNAPSHOT'
     }
 
     repositories {
@@ -92,7 +87,7 @@ allprojects {
     apply plugin: 'idea'
 
     group = 'io.spine.examples.todolist'       // Generated output GroupId
-    version = '0.9.21-SNAPSHOT'  // Version in generated output. This is the version of the code.
+    version = appVersion  // Version in generated output. This is the version of the code.
     // For the deployment version see `project.ext.getDeploymentVersion`.
 
     repositories {
@@ -117,16 +112,7 @@ rootProject.jar { onlyIf { false } }
 final boolean isTravis = System.env.TRAVIS == 'true'
 
 ext {
-    protobufVersion = '3.2.0'
     protobufDependency = "com.google.protobuf:protoc:${protobufVersion}"
-    gRpcVersion = '1.1.2'
-    slf4jVersion = '1.7.21'
-    servletApiVersion = '3.1.0'
-    gcloudJavaVersion = '0.2.8'
-
-    // Take latest snapshot of Spine from the repo.
-    // See: http://stackoverflow.com/questions/22372508/use-latest-snapshot-version-from-the-remote-repo
-//    spineVersion = 'latest.integration'
 }
 
 
