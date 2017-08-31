@@ -21,8 +21,9 @@
 package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
-import io.spine.base.Command;
-import io.spine.envelope.CommandEnvelope;
+import io.spine.core.Ack;
+import io.spine.core.Command;
+import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
@@ -37,10 +38,10 @@ import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
 import io.spine.examples.todolist.c.failures.CannotAssignLabelToTask;
 import io.spine.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 import io.spine.examples.todolist.context.TodoListBoundedContext;
-import io.spine.examples.todolist.testdata.TestResponseObserver;
+import io.spine.grpc.MemoizingObserver;
+import io.spine.grpc.StreamObservers;
 import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
-import io.spine.test.AggregatePartCommandTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -48,7 +49,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
@@ -220,7 +220,7 @@ class TaskLabelsPartTest {
     private abstract static class TaskLabelsCommandTest<C extends Message>
             extends AggregatePartCommandTest<C, TaskLabelsPart> {
 
-        TestResponseObserver responseObserver;
+        MemoizingObserver<Ack> responseObserver;
         CommandBus commandBus;
         TaskLabelsPart taskLabelsPart;
         TaskId taskId;
@@ -237,7 +237,7 @@ class TaskLabelsPartTest {
         protected TaskLabelsPart createAggregatePart() {
             final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
             commandBus = boundedContext.getCommandBus();
-            responseObserver = new TestResponseObserver();
+            responseObserver = StreamObservers.memoizingObserver();
             taskId = createTaskId();
             labelId = createLabelId();
             final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, taskId);

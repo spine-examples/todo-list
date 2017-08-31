@@ -21,18 +21,13 @@
 package io.spine.examples.todolist.repository;
 
 import io.spine.examples.todolist.TaskListId;
-import io.spine.examples.todolist.c.events.TaskDraftCreated;
-import io.spine.examples.todolist.c.events.TaskDraftFinalized;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.DraftTasksViewProjection;
-import io.spine.server.BoundedContext;
-import io.spine.server.entity.idfunc.IdSetEventFunction;
 import io.spine.server.projection.ProjectionRepository;
-
-import java.util.Collections;
+import io.spine.server.route.EventRoute;
 
 import static io.spine.examples.todolist.q.projection.DraftTasksViewProjection.ID;
-import static io.spine.examples.todolist.repository.RepositoryHelper.addCommonIdSetFunctions;
+import static java.util.Collections.singleton;
 
 /**
  * Repository for the {@link DraftTasksViewProjection}.
@@ -48,20 +43,12 @@ public class DraftTasksViewRepository
     }
 
     /**
-     * Adds the {@link IdSetEventFunction}s to the repository.
+     * Adds the {@link EventRoute}s to the repository.
      * Should to be overridden in an successor classes,
      * otherwise all successors will use {@code DraftTasksViewProjection.ID}
      * and only with specified events below.
      */
     protected void addIdSetFunctions() {
-        final IdSetEventFunction<TaskListId, TaskDraftCreated> draftCreatedFn =
-                (message, context) -> Collections.singleton(ID);
-        addIdSetFunction(TaskDraftCreated.class, draftCreatedFn);
-
-        final IdSetEventFunction<TaskListId, TaskDraftFinalized> draftFinalizedFn =
-                (message, context) -> Collections.singleton(ID);
-        addIdSetFunction(TaskDraftFinalized.class, draftFinalizedFn);
-
-        addCommonIdSetFunctions(this, ID);
+        getEventRouting().replaceDefault(((message, context) -> singleton(ID)));
     }
 }

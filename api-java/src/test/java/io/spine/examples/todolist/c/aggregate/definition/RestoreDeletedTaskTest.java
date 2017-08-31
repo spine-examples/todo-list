@@ -22,8 +22,9 @@ package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
 import io.grpc.stub.StreamObserver;
-import io.spine.base.Command;
-import io.spine.base.Event;
+import io.spine.core.Ack;
+import io.spine.core.Command;
+import io.spine.core.Event;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.aggregate.TaskPart;
@@ -37,7 +38,8 @@ import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
 import io.spine.examples.todolist.c.events.LabelledTaskRestored;
 import io.spine.examples.todolist.c.failures.CannotRestoreDeletedTask;
 import io.spine.examples.todolist.context.TodoListBoundedContext;
-import io.spine.examples.todolist.testdata.TestResponseObserver;
+import io.spine.grpc.MemoizingObserver;
+import io.spine.grpc.StreamObservers;
 import io.spine.protobuf.AnyPacker;
 import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
@@ -74,7 +76,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("RestoreDeletedTask command should be interpreted by TaskPart and")
 public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> {
 
-    private TestResponseObserver responseObserver;
+    private MemoizingObserver<Ack> responseObserver;
     private BoundedContext boundedContext;
     private CommandBus commandBus;
 
@@ -82,7 +84,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
     @BeforeEach
     public void setUp() {
         super.setUp();
-        responseObserver = new TestResponseObserver();
+        responseObserver = StreamObservers.memoizingObserver();
         boundedContext = TodoListBoundedContext.createTestInstance();
         TaskAggregateRoot.injectBoundedContext(boundedContext);
 

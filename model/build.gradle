@@ -19,5 +19,3 @@
  */
 
 apply from: generateDescriptorSetPlugin
-
-apply plugin: spineProtobufPluginId

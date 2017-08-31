@@ -27,7 +27,7 @@ import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 
-import static io.spine.base.Identifier.newUuid;
+import static io.spine.Identifier.newUuid;
 
 /**
  * A factory of the label commands for the test needs.

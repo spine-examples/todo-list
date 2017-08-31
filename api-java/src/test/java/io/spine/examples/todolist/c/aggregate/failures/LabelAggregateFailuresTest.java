@@ -22,7 +22,7 @@ package io.spine.examples.todolist.c.aggregate.failures;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import io.spine.base.CommandContext;
+import io.spine.core.CommandContext;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.failures.CannotUpdateLabelDetails;

@@ -20,18 +20,13 @@
 
 package io.spine.examples.todolist.repository;
 
-import io.spine.examples.todolist.q.projection.MyListViewProjection;
 import io.spine.examples.todolist.TaskListId;
-import io.spine.examples.todolist.c.events.TaskCompleted;
-import io.spine.examples.todolist.c.events.TaskCreated;
-import io.spine.examples.todolist.c.events.TaskDraftFinalized;
-import io.spine.examples.todolist.c.events.TaskReopened;
 import io.spine.examples.todolist.q.projection.MyListView;
-import io.spine.server.BoundedContext;
-import io.spine.server.entity.idfunc.IdSetEventFunction;
+import io.spine.examples.todolist.q.projection.MyListViewProjection;
 import io.spine.server.projection.ProjectionRepository;
 
-import java.util.Collections;
+import static io.spine.examples.todolist.q.projection.MyListViewProjection.ID;
+import static java.util.Collections.singleton;
 
 /**
  * Repository for the {@link MyListViewProjection}.
@@ -47,28 +42,12 @@ public class MyListViewRepository
     }
 
     /**
-     * Adds the {@link IdSetEventFunction}s to the repository.
+     * Adds the {@link io.spine.server.route.EventRoute EventRoute}s to the repository.
      * Should to be overridden in an successor classes,
      * otherwise all successors will use {@code MyListViewProjection.ID}
      * and only with specified events below.
      */
     protected void addIdSetFunctions() {
-        final IdSetEventFunction<TaskListId, TaskCreated> taskCreatedFn =
-                (message, context) -> Collections.singleton(MyListViewProjection.ID);
-        addIdSetFunction(TaskCreated.class, taskCreatedFn);
-
-        final IdSetEventFunction<TaskListId, TaskCompleted> taskCompletedFn =
-                (message, context) -> Collections.singleton(MyListViewProjection.ID);
-        addIdSetFunction(TaskCompleted.class, taskCompletedFn);
-
-        final IdSetEventFunction<TaskListId, TaskReopened> taskReopenedFn =
-                (message, context) -> Collections.singleton(MyListViewProjection.ID);
-        addIdSetFunction(TaskReopened.class, taskReopenedFn);
-
-        final IdSetEventFunction<TaskListId, TaskDraftFinalized> draftFinalized =
-                (message, context) -> Collections.singleton(MyListViewProjection.ID);
-        addIdSetFunction(TaskDraftFinalized.class, draftFinalized);
-
-        RepositoryHelper.addCommonIdSetFunctions(this, MyListViewProjection.ID);
+        getEventRouting().replaceDefault(((message, context) -> singleton(ID)));
     }
 }

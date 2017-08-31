@@ -63,10 +63,10 @@ public class TodoListEnrichmentConfiguration {
      * Adds enrichment fields to the {@link EventBus}.
      */
     void addEnrichmentFields() {
-        eventBus.addFieldEnrichment(LabelId.class, LabelDetails.class, labelIdToLabelDetails());
-        eventBus.addFieldEnrichment(TaskId.class, TaskDetails.class, taskIdToTaskDetails());
-        eventBus.addFieldEnrichment(TaskId.class, LabelIdsList.class, taskIdToLabelList());
-        eventBus.addFieldEnrichment(TaskId.class, Task.class, taskIdToTask());
+//        eventBus.addFieldEnrichment(LabelId.class, LabelDetails.class, labelIdToLabelDetails());
+//        eventBus.addFieldEnrichment(TaskId.class, TaskDetails.class, taskIdToTaskDetails());
+//        eventBus.addFieldEnrichment(TaskId.class, LabelIdsList.class, taskIdToLabelList());
+//        eventBus.addFieldEnrichment(TaskId.class, Task.class, taskIdToTask());
     }
 
     private Function<TaskId, Task> taskIdToTask() {

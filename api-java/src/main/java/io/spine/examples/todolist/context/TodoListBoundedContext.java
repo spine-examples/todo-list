@@ -43,7 +43,8 @@ public class TodoListBoundedContext {
     /** The name of the Bounded Context. */
     private static final String NAME = "TodoListBoundedContext";
 
-    private static final StorageFactory storageFactory = InMemoryStorageFactory.getInstance(false);
+    private static final StorageFactory storageFactory =
+            InMemoryStorageFactory.newInstance(NAME, false);
 
     /**
      * Obtains the reference to the singleton {@link BoundedContext}.
