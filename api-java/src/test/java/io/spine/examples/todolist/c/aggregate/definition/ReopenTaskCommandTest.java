@@ -40,7 +40,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createD
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,27 +61,27 @@ public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
     @Test
     @DisplayName("throw CannotReopenTask failure upon an attempt to reopen not completed task")
     void cannotReopenNotCompletedTask() {
-        dispatchCreateTaskCmd();
+        dispatchCommandCreateTaskCmd();
 
         final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatch(aggregate, envelopeOf(reopenTaskCmd)));
+                                         () -> dispatchCommand(aggregate, envelopeOf(reopenTaskCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotReopenTask.class));
     }
 
     @Test
     @DisplayName("reopen completed task")
     void reopenTask() {
-        dispatchCreateTaskCmd();
+        dispatchCommandCreateTaskCmd();
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(completeTaskCmd));
+        dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
 
         Task state = aggregate.getState();
         assertEquals(taskId, state.getId());
         assertEquals(COMPLETED, state.getTaskStatus());
 
         final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(reopenTaskCmd));
+        dispatchCommand(aggregate, envelopeOf(reopenTaskCmd));
 
         state = aggregate.getState();
         assertEquals(taskId, state.getId());
@@ -91,13 +91,13 @@ public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
     @Test
     @DisplayName("throw CannotReopenTask upon an attempt to reopen the deleted task")
     void cannotReopenDeletedTask() {
-        dispatchCreateTaskCmd();
+        dispatchCommandCreateTaskCmd();
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(deleteTaskCmd));
+        dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
         final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatch(aggregate, envelopeOf(reopenTaskCmd)));
+                                         () -> dispatchCommand(aggregate, envelopeOf(reopenTaskCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotReopenTask.class));
     }
 
@@ -105,16 +105,16 @@ public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
     @DisplayName("throw CannotReopenTask upon an attempt to reopen the task in draft state")
     void cannotReopenDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
-        dispatch(aggregate, envelopeOf(createDraftCmd));
+        dispatchCommand(aggregate, envelopeOf(createDraftCmd));
 
         final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatch(aggregate, envelopeOf(reopenTaskCmd)));
+                                         () -> dispatchCommand(aggregate, envelopeOf(reopenTaskCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotReopenTask.class));
     }
 
-    private void dispatchCreateTaskCmd() {
+    private void dispatchCommandCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        dispatch(aggregate, envelopeOf(createTaskCmd));
+        dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }
 }

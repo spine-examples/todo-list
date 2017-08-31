@@ -45,8 +45,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("TaskPartFailures should")
-class TaskPartFailuresTest {
+@DisplayName("TaskPartRejections should")
+class TaskPartRejectionsTest {
 
     private final TaskId taskId = TaskId.getDefaultInstance();
 
@@ -86,7 +86,7 @@ class TaskPartFailuresTest {
             final CannotCreateDraft failure = assertThrows(CannotCreateDraft.class,
                                                            () -> throwCannotCreateDraftFailure(
                                                                    cmd));
-            final TaskId actual = failure.getFailureMessage()
+            final TaskId actual = failure.getMessageThrown()
                                          .getCreateDraftFailed()
                                          .getFailureDetails()
                                          .getTaskId();
@@ -113,7 +113,7 @@ class TaskPartFailuresTest {
             final CannotUpdateTaskDueDate failure =
                     assertThrows(CannotUpdateTaskDueDate.class,
                                  () -> throwCannotUpdateTaskDueDate(cmd));
-            final FailedTaskCommandDetails failedCommand = failure.getFailureMessage()
+            final FailedTaskCommandDetails failedCommand = failure.getMessageThrown()
                                                                   .getUpdateFailed()
                                                                   .getFailureDetails();
             final TaskId actualId = failedCommand.getTaskId();
@@ -129,7 +129,7 @@ class TaskPartFailuresTest {
             final CannotUpdateTaskDescription failure =
                     assertThrows(CannotUpdateTaskDescription.class,
                                  () -> throwCannotUpdateTaskDescription(cmd));
-            final FailedTaskCommandDetails failedCommand = failure.getFailureMessage()
+            final FailedTaskCommandDetails failedCommand = failure.getMessageThrown()
                                                                   .getUpdateFailed()
                                                                   .getFailureDetails();
             final TaskId actualId = failedCommand.getTaskId();

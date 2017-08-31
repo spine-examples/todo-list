@@ -20,13 +20,13 @@
 
 package io.spine.examples.todolist;
 
+import io.spine.core.EventContext;
+import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import io.spine.base.EventContext;
-import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Illia Shepilov

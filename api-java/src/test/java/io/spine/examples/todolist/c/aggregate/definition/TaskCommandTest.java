@@ -21,15 +21,15 @@
 package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.protobuf.Message;
-import io.spine.envelope.CommandEnvelope;
+import io.spine.client.TestActorRequestFactory;
+import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.context.TodoListBoundedContext;
-import io.spine.test.AggregatePartCommandTest;
-import io.spine.test.TestActorRequestFactory;
+import io.spine.server.aggregate.AggregatePartCommandTest;
 
-import static io.spine.base.Identifier.newUuid;
+import static io.spine.Identifier.newUuid;
 
 /**
  * The parent class for the {@link TaskPart} test classes.

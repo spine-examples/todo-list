@@ -21,9 +21,9 @@
 package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
-import io.spine.base.Command;
 import io.spine.change.ValueMismatch;
-import io.spine.envelope.CommandEnvelope;
+import io.spine.core.Command;
+import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelDetailsUpdateFailed;
@@ -34,8 +34,8 @@ import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.events.LabelCreated;
 import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
 import io.spine.examples.todolist.c.failures.CannotUpdateLabelDetails;
-import io.spine.examples.todolist.c.failures.Failures;
-import io.spine.test.AggregateCommandTest;
+import io.spine.examples.todolist.c.failures.Rejections;
+import io.spine.server.aggregate.AggregateCommandTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,14 +43,14 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.base.Identifier.newUuid;
+import static io.spine.Identifier.newUuid;
 import static io.spine.examples.todolist.c.aggregate.LabelAggregate.DEFAULT_LABEL_COLOR;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.UPDATED_LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.updateLabelDetailsInstance;
 import static io.spine.protobuf.AnyPacker.pack;
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -102,9 +102,9 @@ class LabelAggregateTest {
             createBasicLabel();
         }
 
-        private List<? extends Message> dispatchUpdateLabelDetails(UpdateLabelDetails details) {
+        private List<? extends Message> dispatchCommandUpdateLabelDetails(UpdateLabelDetails details) {
             final Command command = createCommand(details);
-            return dispatch(aggregate, CommandEnvelope.of(command));
+            return dispatchCommand(aggregate, CommandEnvelope.of(command));
         }
 
         @Test
@@ -112,7 +112,7 @@ class LabelAggregateTest {
         void produceEvent() {
             final UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(getLabelId());
             final List<? extends Message> messageList =
-                    dispatchUpdateLabelDetails(updateLabelDetails);
+                    dispatchCommandUpdateLabelDetails(updateLabelDetails);
 
             assertEquals(1, messageList.size());
             assertEquals(LabelDetailsUpdated.class, messageList.get(0)
@@ -131,7 +131,7 @@ class LabelAggregateTest {
         @DisplayName("update the label details twice")
         void updateLabelDetailsTwice() {
             UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(getLabelId());
-            dispatchUpdateLabelDetails(updateLabelDetails);
+            dispatchCommandUpdateLabelDetails(updateLabelDetails);
 
             TaskLabel state = aggregate.getState();
             assertEquals(getLabelId(), state.getId());
@@ -151,7 +151,7 @@ class LabelAggregateTest {
                                                              .build();
             updateLabelDetails = updateLabelDetailsInstance(getLabelId(), previousLabelDetails,
                                                             newLabelDetails);
-            dispatchUpdateLabelDetails(updateLabelDetails);
+            dispatchCommandUpdateLabelDetails(updateLabelDetails);
 
             state = aggregate.getState();
             assertEquals(getLabelId(), state.getId());
@@ -177,8 +177,8 @@ class LabelAggregateTest {
             final CannotUpdateLabelDetails failure =
                     assertThrows(CannotUpdateLabelDetails.class,
                                  () -> aggregate.handle(commandMessage().get()));
-            final Failures.CannotUpdateLabelDetails cannotUpdateLabelDetails =
-                    failure.getFailureMessage();
+            final Rejections.CannotUpdateLabelDetails cannotUpdateLabelDetails =
+                    failure.getMessageThrown();
             final LabelDetailsUpdateFailed labelDetailsUpdateFailed =
                     cannotUpdateLabelDetails.getUpdateFailed();
             final LabelId actualLabelId = labelDetailsUpdateFailed.getFailureDetails()
@@ -227,7 +227,7 @@ class LabelAggregateTest {
         List<? extends Message> createBasicLabel() {
             final CreateBasicLabel createBasicLabel = createLabelInstance(labelId);
             final Command command = createDifferentCommand(createBasicLabel);
-            return dispatch(aggregate, CommandEnvelope.of(command));
+            return dispatchCommand(aggregate, CommandEnvelope.of(command));
         }
 
         private static LabelId createLabelId() {

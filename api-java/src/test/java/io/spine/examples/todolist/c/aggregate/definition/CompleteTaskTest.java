@@ -41,7 +41,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.complet
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,9 +62,9 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     @Test
     @DisplayName("produce TaskCompleted event")
     void produceEvent() {
-        dispatchCreateTaskCmd();
+        dispatchCommandCreateTaskCmd();
 
-        final List<? extends Message> messageList = dispatchCompleteTaskCmd();
+        final List<? extends Message> messageList = dispatchCommandCompleteTaskCmd();
 
         assertEquals(1, messageList.size());
         assertEquals(TaskCompleted.class, messageList.get(0)
@@ -77,9 +77,9 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     @Test
     @DisplayName("complete the task")
     void completeTheTask() {
-        dispatchCreateTaskCmd();
+        dispatchCommandCreateTaskCmd();
 
-        dispatchCompleteTaskCmd();
+        dispatchCommandCompleteTaskCmd();
         final Task state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -89,12 +89,12 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     @Test
     @DisplayName("throw CannotCompleteTask failure upon an attempt to complete the deleted task")
     void cannotCompleteDeletedTask() {
-        dispatchCreateTaskCmd();
+        dispatchCommandCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(deleteTaskCmd));
+        dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
-        final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
+        final Throwable t = assertThrows(Throwable.class, this::dispatchCommandCompleteTaskCmd);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
     }
 
@@ -103,19 +103,19 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
             "an attempt to complete the task in draft state")
     void cannotCompleteDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
-        dispatch(aggregate, envelopeOf(createDraftCmd));
+        dispatchCommand(aggregate, envelopeOf(createDraftCmd));
 
-        final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
+        final Throwable t = assertThrows(Throwable.class, this::dispatchCommandCompleteTaskCmd);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
     }
 
-    private void dispatchCreateTaskCmd() {
+    private void dispatchCommandCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        dispatch(aggregate, envelopeOf(createTaskCmd));
+        dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }
 
-    private List<? extends Message> dispatchCompleteTaskCmd() {
+    private List<? extends Message> dispatchCommandCompleteTaskCmd() {
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
-        return dispatch(aggregate, envelopeOf(completeTaskCmd));
+        return dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
     }
 }

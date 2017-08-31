@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.q.projection;
 
-import io.spine.base.Event;
+import io.spine.core.Event;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
@@ -37,7 +37,7 @@ import io.spine.examples.todolist.c.events.TaskReopened;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
 import io.spine.server.BoundedContext;
 import io.spine.server.event.EventBus;
-import io.spine.server.event.enrich.EventEnricher;
+import io.spine.server.event.EventEnricher;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.StorageFactorySwitch;
@@ -46,7 +46,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.base.Identifier.newUuid;
+import static io.spine.Identifier.newUuid;
 import static io.spine.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
 import static io.spine.examples.todolist.testdata.TestEventBusFactory.newEventBusBuilder;
 import static io.spine.examples.todolist.testdata.TestEventEnricherFactory.LABEL_TITLE;
@@ -66,6 +66,7 @@ import static io.spine.examples.todolist.testdata.TestTaskEventFactory.UpdateEve
 import static io.spine.examples.todolist.testdata.TestTaskEventFactory.UpdateEvents.taskPriorityUpdatedInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsEventFactory.labelAssignedToTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsEventFactory.labelRemovedFromTaskInstance;
+import static io.spine.server.storage.StorageFactorySwitch.newInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -82,7 +83,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
 
     @BeforeEach
     void setUp() {
-        final StorageFactorySwitch storageFactorySwitch = StorageFactorySwitch.getInstance(false);
+        final StorageFactorySwitch storageFactorySwitch = newInstance("test", false);
         final StorageFactory storageFactory = storageFactorySwitch.get();
         final EventEnricher eventEnricher = eventEnricherInstance();
         final EventBus.Builder eventBusBuilder = newEventBusBuilder(storageFactory, eventEnricher);

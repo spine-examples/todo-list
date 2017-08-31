@@ -34,7 +34,7 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskWithInappropriateDescription;
-import io.spine.examples.todolist.c.failures.Failures;
+import io.spine.examples.todolist.c.failures.Rejections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,8 +47,8 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 import static io.spine.protobuf.AnyPacker.unpack;
-import static io.spine.protobuf.Wrapper.forString;
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static io.spine.protobuf.TypeConverter.toMessage;
+import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,10 +69,10 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     @Test
     @DisplayName("produce TaskDescriptionUpdated event")
     void produceEvent() {
-        dispatchCreateTaskCmd();
+        dispatchCommandCreateTaskCmd();
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId);
-        final List<? extends Message> messageList = dispatch(aggregate,
+        final List<? extends Message> messageList = dispatchCommand(aggregate,
                                                              envelopeOf(updateTaskDescriptionCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDescriptionUpdated.class, messageList.get(0)
@@ -93,7 +93,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId, "", ".");
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatch(aggregate,
+                                         () -> dispatchCommand(aggregate,
                                                         envelopeOf(updateTaskDescriptionCmd)));
         assertThat(Throwables.getRootCause(t),
                    instanceOf(CannotUpdateTaskWithInappropriateDescription.class));
@@ -103,15 +103,15 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     @DisplayName("throw CannotUpdateTaskDescription failure " +
             "upon an attempt to update the description of the deleted task")
     void cannotUpdateDeletedTaskDescription() {
-        dispatchCreateTaskCmd();
+        dispatchCommandCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(deleteTaskCmd));
+        dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId);
         Throwable t = assertThrows(Throwable.class,
-                                   () -> dispatch(aggregate, envelopeOf(updateTaskDescriptionCmd)));
+                                   () -> dispatchCommand(aggregate, envelopeOf(updateTaskDescriptionCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDescription.class));
     }
 
@@ -119,15 +119,15 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     @DisplayName("throw CannotUpdateTaskDescription failure " +
             "upon an attempt to update the description of the completed task")
     void cannotUpdateCompletedTaskDescription() {
-        dispatchCreateTaskCmd();
+        dispatchCommandCreateTaskCmd();
 
         final CompleteTask completeTaskCmd = completeTaskInstance();
-        dispatch(aggregate, envelopeOf(completeTaskCmd));
+        dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
 
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId);
         Throwable t = assertThrows(Throwable.class,
-                                   () -> dispatch(aggregate, envelopeOf(updateTaskDescriptionCmd)));
+                                   () -> dispatchCommand(aggregate, envelopeOf(updateTaskDescriptionCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDescription.class));
     }
 
@@ -135,11 +135,11 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     @DisplayName("update the task description")
     void updateDescription() {
         final String newDescription = "new description.";
-        dispatchCreateTaskCmd();
+        dispatchCommandCreateTaskCmd();
 
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId, DESCRIPTION, newDescription);
-        dispatch(aggregate, envelopeOf(updateTaskDescriptionCmd));
+        dispatchCommand(aggregate, envelopeOf(updateTaskDescriptionCmd));
         final Task state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -150,7 +150,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     @DisplayName("produce CannotUpdateTaskDescription failure")
     void produceFailure() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
-        dispatch(aggregate, envelopeOf(createBasicTask));
+        dispatchCommand(aggregate, envelopeOf(createBasicTask));
 
         final String expectedValue = "expected description";
         final String newValue = "update description";
@@ -159,21 +159,21 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         final UpdateTaskDescription updateTaskDescription =
                 updateTaskDescriptionInstance(taskId, expectedValue, newValue);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatch(aggregate, envelopeOf(updateTaskDescription)));
+                                         () -> dispatchCommand(aggregate, envelopeOf(updateTaskDescription)));
         final Throwable cause = Throwables.getRootCause(t);
         assertThat(cause, instanceOf(CannotUpdateTaskDescription.class));
 
         @SuppressWarnings("ConstantConditions") // Instance type checked before.
-        final Failures.CannotUpdateTaskDescription failure =
-                ((CannotUpdateTaskDescription) cause).getFailureMessage();
+        final Rejections.CannotUpdateTaskDescription failure =
+                ((CannotUpdateTaskDescription) cause).getMessageThrown();
         final DescriptionUpdateFailed descriptionUpdateFailed = failure.getUpdateFailed();
         final TaskId actualTaskId = descriptionUpdateFailed.getFailureDetails()
                                                            .getTaskId();
         assertEquals(taskId, actualTaskId);
 
-        final StringValue expectedStringValue = forString(expectedValue);
-        final StringValue actualStringValue = forString(actualValue);
-        final StringValue newStringValue = forString(newValue);
+        final StringValue expectedStringValue = toMessage(expectedValue);
+        final StringValue actualStringValue = toMessage(actualValue);
+        final StringValue newStringValue = toMessage(newValue);
 
         final ValueMismatch mismatch = descriptionUpdateFailed.getDescriptionMismatch();
         assertEquals(expectedStringValue, unpack(mismatch.getExpected()));
@@ -181,8 +181,8 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         assertEquals(newStringValue, unpack(mismatch.getNewValue()));
     }
 
-    private void dispatchCreateTaskCmd() {
+    private void dispatchCommandCreateTaskCmd() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
-        dispatch(aggregate, envelopeOf(createBasicTask));
+        dispatchCommand(aggregate, envelopeOf(createBasicTask));
     }
 }

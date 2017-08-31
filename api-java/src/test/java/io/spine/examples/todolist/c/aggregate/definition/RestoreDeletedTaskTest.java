@@ -64,7 +64,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.restoreDeletedTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -142,7 +142,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         createBasicTask();
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(deleteTask));
+        dispatchCommand(aggregate, envelopeOf(deleteTask));
 
         restoreDeletedTask();
 
@@ -157,7 +157,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         createDraft();
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(deleteTask));
+        dispatchCommand(aggregate, envelopeOf(deleteTask));
 
         Task state = aggregate.getState();
         assertEquals(taskId, state.getId());
@@ -177,7 +177,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         createBasicTask();
 
         final CompleteTask completeTask = completeTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(completeTask));
+        dispatchCommand(aggregate, envelopeOf(completeTask));
 
         final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotRestoreDeletedTask.class));
@@ -203,17 +203,17 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
 
     private void createBasicTask() {
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        dispatch(aggregate, envelopeOf(createTask));
+        dispatchCommand(aggregate, envelopeOf(createTask));
     }
 
     private void createDraft() {
         final CreateDraft createDraft = createDraftInstance(taskId);
-        dispatch(aggregate, envelopeOf(createDraft));
+        dispatchCommand(aggregate, envelopeOf(createDraft));
     }
 
     private void restoreDeletedTask() {
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(restoreDeletedTask));
+        dispatchCommand(aggregate, envelopeOf(restoreDeletedTask));
     }
 
     private static class EventStreamObserver implements StreamObserver<Event> {

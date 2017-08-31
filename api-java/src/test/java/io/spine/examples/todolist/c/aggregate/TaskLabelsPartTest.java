@@ -41,6 +41,7 @@ import io.spine.examples.todolist.context.TodoListBoundedContext;
 import io.spine.grpc.MemoizingObserver;
 import io.spine.grpc.StreamObservers;
 import io.spine.server.BoundedContext;
+import io.spine.server.aggregate.AggregatePartCommandTest;
 import io.spine.server.commandbus.CommandBus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,6 +50,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.spine.Identifier.newUuid;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
@@ -56,7 +58,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.removeLabelFromTaskInstance;
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -82,7 +84,7 @@ class TaskLabelsPartTest {
         @DisplayName("produce LabelAssignedToTask event")
         void produceEvent() {
             final List<? extends Message> messageList =
-                    dispatch(taskLabelsPart, CommandEnvelope.of(command().get()));
+                    dispatchCommand(taskLabelsPart, CommandEnvelope.of(command().get()));
 
             assertEquals(1, messageList.size());
             assertEquals(LabelAssignedToTask.class, messageList.get(0)
@@ -97,7 +99,7 @@ class TaskLabelsPartTest {
         @Test
         @DisplayName("assign a label to the task")
         void assignLabelToTask() {
-            dispatch(taskLabelsPart, CommandEnvelope.of(command().get()));
+            dispatchCommand(taskLabelsPart, CommandEnvelope.of(command().get()));
 
             final TaskLabels state = taskLabelsPart.getState();
             final List<LabelId> labelIds = state.getLabelIdsList()
@@ -146,7 +148,7 @@ class TaskLabelsPartTest {
         @DisplayName("produce LabelRemovedFromTask event")
         void produceEvent() throws CannotRemoveLabelFromTask {
             createBasicTask();
-            dispatchAssignLabelToTask();
+            dispatchCommandAssignLabelToTask();
 
             final List<? extends Message> messageList =
                     taskLabelsPart.handle(commandMessage().get());
@@ -165,13 +167,13 @@ class TaskLabelsPartTest {
         @DisplayName("remove a label from the task")
         void removeLabelFromTask() {
             createBasicTask();
-            dispatchAssignLabelToTask();
+            dispatchCommandAssignLabelToTask();
             final List<LabelId> labelIdsBeforeRemove = taskLabelsPart.getState()
                                                                      .getLabelIdsList()
                                                                      .getIdsList();
             assertTrue(labelIdsBeforeRemove.contains(labelId));
 
-            dispatch(taskLabelsPart, CommandEnvelope.of(command().get()));
+            dispatchCommand(taskLabelsPart, CommandEnvelope.of(command().get()));
             final List<LabelId> labelIdsAfterRemove = taskLabelsPart.getState()
                                                                     .getLabelIdsList()
                                                                     .getIdsList();
@@ -191,7 +193,7 @@ class TaskLabelsPartTest {
                 "upon an attempt to remove the label from the completed task")
         void cannotRemoveLabelFromCompletedTask() {
             createBasicTask();
-            dispatchAssignLabelToTask();
+            dispatchCommandAssignLabelToTask();
             completeTask();
 
             assertThrows(CannotRemoveLabelFromTask.class,
@@ -203,17 +205,17 @@ class TaskLabelsPartTest {
                 "upon an attempt to remove the label from the deleted task")
         void cannotRemoveLabelFromDeletedTask() {
             createBasicTask();
-            dispatchAssignLabelToTask();
+            dispatchCommandAssignLabelToTask();
             deleteTask();
 
             assertThrows(CannotRemoveLabelFromTask.class,
                          () -> taskLabelsPart.handle(commandMessage().get()));
         }
 
-        private void dispatchAssignLabelToTask() {
+        private void dispatchCommandAssignLabelToTask() {
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
             final Command assignLabelToTaskCmd = createDifferentCommand(assignLabelToTask);
-            dispatch(taskLabelsPart, CommandEnvelope.of(assignLabelToTaskCmd));
+            dispatchCommand(taskLabelsPart, CommandEnvelope.of(assignLabelToTaskCmd));
         }
     }
 

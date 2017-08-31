@@ -142,6 +142,7 @@ subprojects {
         generatedTestGrpcDir = "${generatedRootDir}/test/grpc"
 
         generatedSpineDir = "${generatedRootDir}/main/spine"
+        generatedTestSpineDir = "${generatedRootDir}/test/spine"
 
         testArtifactsPlugin = "${rootDir}/scripts/test-artifacts.gradle"
         generateDescriptorSetPlugin = "${rootDir}/scripts/generate-descriptor-set.gradle"
@@ -176,6 +177,9 @@ subprojects {
         compile group: 'io.spine', name: 'spine-base', version: spineBaseVersion
         compile group: 'io.spine', name: 'spine-client', version: spineVersion
         compile group: 'io.spine', name: 'spine-server', version: spineVersion
+        compile group: 'io.spine', name: 'spine-testutil-base', version: spineBaseVersion
+        compile group: 'io.spine', name: 'spine-testutil-client', version: spineVersion
+        compile group: 'io.spine', name: 'spine-testutil-server', version: spineVersion
 
         testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
         testCompile("io.spine:spine-testutil-core:${spineVersion}") {
@@ -198,7 +202,7 @@ subprojects {
         }
         test {
             proto.srcDirs = ["${sourcesRootDir}/test/proto"]
-            java.srcDirs = [generatedTestJavaDir, "${sourcesRootDir}/test/java"]
+            java.srcDirs = [generatedTestJavaDir, generatedTestSpineDir, "${sourcesRootDir}/test/java"]
             resources.srcDirs = ["${generatedRootDir}/test/resources"]
         }
     }
