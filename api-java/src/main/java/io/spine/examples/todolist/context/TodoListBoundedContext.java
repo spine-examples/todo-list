@@ -28,10 +28,10 @@ import io.spine.examples.todolist.repository.MyListViewRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
+import io.spine.server.event.EventBus;
+import io.spine.server.event.EventEnricher;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
-
-import java.util.function.Supplier;
 
 /**
  * Serves for creation the {@link BoundedContext} instances.
@@ -74,14 +74,17 @@ public class TodoListBoundedContext {
      * Creates a new instance of the Bounded Context.
      */
     private static BoundedContext create() {
-        final BoundedContext boundedContext = createBoundedContext();
-
-        final TaskRepository taskRepo = new TaskRepository();
         final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
+        final TaskRepository taskRepo = new TaskRepository();
         final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
         final MyListViewRepository myListViewRepo = new MyListViewRepository();
         final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
         final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
+
+        final EventBus.Builder eventBus = createEventBus(labelAggregateRepo,
+                                                         taskRepo,
+                                                         taskLabelsRepo);
+        final BoundedContext boundedContext = createBoundedContext(eventBus);
 
         boundedContext.register(taskRepo);
         boundedContext.register(taskLabelsRepo);
@@ -90,20 +93,29 @@ public class TodoListBoundedContext {
         boundedContext.register(tasksViewRepo);
         boundedContext.register(draftTasksViewRepo);
 
-        TodoListEnrichmentConfiguration.newBuilder()
-                                       .setLabelRepository(labelAggregateRepo)
-                                       .setTaskRepository(taskRepo)
-                                       .setTaskLabelsRepository(taskLabelsRepo)
-                                       .apply(boundedContext.getEventBus())
-                                       .addEnrichmentFields();
         return boundedContext;
     }
 
-    private static BoundedContext createBoundedContext() {
-        final Supplier<StorageFactory> storageFactorySupplier = () -> storageFactory;
+    private static EventBus.Builder createEventBus(LabelAggregateRepository labelRepo,
+                                                   TaskRepository taskRepo,
+                                                   TaskLabelsRepository labelsRepo) {
+        final EventEnricher enricher = TodoListEnrichments.newBuilder()
+                                                          .setLabelRepository(labelRepo)
+                                                          .setTaskRepository(taskRepo)
+                                                          .setTaskLabelsRepository(labelsRepo)
+                                                          .build()
+                                                          .createEnricher();
+        final EventBus.Builder eventBus = EventBus.newBuilder()
+                                                  .setEnricher(enricher)
+                                                  .setStorageFactory(storageFactory);
+        return eventBus;
+    }
+
+    private static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
         return BoundedContext.newBuilder()
-                             .setStorageFactorySupplier(storageFactorySupplier::get)
+                             .setStorageFactorySupplier(() -> storageFactory)
                              .setName(NAME)
+                             .setEventBus(eventBus)
                              .build();
     }
 
