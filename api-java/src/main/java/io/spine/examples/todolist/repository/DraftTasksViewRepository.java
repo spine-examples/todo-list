@@ -39,7 +39,7 @@ public class DraftTasksViewRepository
 
     public DraftTasksViewRepository() {
         super();
-        addIdSetFunctions();
+        setUpEventRoute();
     }
 
     /**
@@ -48,7 +48,7 @@ public class DraftTasksViewRepository
      * otherwise all successors will use {@code DraftTasksViewProjection.ID}
      * and only with specified events below.
      */
-    protected void addIdSetFunctions() {
+    protected void setUpEventRoute() {
         getEventRouting().replaceDefault(((message, context) -> singleton(ID)));
     }
 }

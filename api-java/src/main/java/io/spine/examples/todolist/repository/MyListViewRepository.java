@@ -38,7 +38,7 @@ public class MyListViewRepository
 
     public MyListViewRepository() {
         super();
-        addIdSetFunctions();
+        setUpEventRoute();
     }
 
     /**
@@ -47,7 +47,7 @@ public class MyListViewRepository
      * otherwise all successors will use {@code MyListViewProjection.ID}
      * and only with specified events below.
      */
-    protected void addIdSetFunctions() {
+    protected void setUpEventRoute() {
         getEventRouting().replaceDefault(((message, context) -> singleton(ID)));
     }
 }

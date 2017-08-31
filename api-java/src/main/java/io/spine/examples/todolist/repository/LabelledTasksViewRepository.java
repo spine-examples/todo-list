@@ -57,7 +57,7 @@ public class LabelledTasksViewRepository
 
     public LabelledTasksViewRepository() {
         super();
-        addIdSetFunctions();
+        setUpEventRoute();
     }
 
     /**
@@ -66,7 +66,7 @@ public class LabelledTasksViewRepository
      * otherwise all successors will use {@code LabelId}
      * and only with specified events below.
      */
-    protected void addIdSetFunctions() {
+    protected void setUpEventRoute() {
         final EventRouting<LabelId> routing = getEventRouting();
         routing.route(LabelAssignedToTask.class, 
                       (message, context) -> singleton(message.getLabelId()));
