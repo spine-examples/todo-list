@@ -6,5 +6,3 @@ include 'cli-app'
 include 'cli-core'
 include 'testutil-api'
 include 'testutil-cli'
-include 'kafka-storage'
-
