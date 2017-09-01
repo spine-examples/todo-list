@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.q.projection;
 
-import io.spine.annotation.Subscribe;
-import io.spine.base.EventContext;
+import io.spine.core.EventContext;
+import io.spine.core.Subscribe;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;

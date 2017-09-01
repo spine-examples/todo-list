@@ -29,7 +29,7 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
-import io.spine.server.event.enrich.EventEnricher;
+import io.spine.server.event.EventEnricher;
 
 import java.util.function.Function;
 
@@ -83,21 +83,20 @@ public class TestEventEnricherFactory {
      * @return {@code EventEnricher}
      */
     public static EventEnricher eventEnricherInstance() {
-        final EventEnricher result =
-                EventEnricher.newBuilder()
-                             .addFieldEnrichment(LabelId.class,
-                                                 LabelDetails.class,
-                                                 LABEL_ID_TO_LABEL_DETAILS::apply)
-                             .addFieldEnrichment(TaskId.class,
-                                                 TaskDetails.class,
-                                                 TASK_ID_TO_TASK_DETAILS::apply)
-                             .addFieldEnrichment(TaskId.class,
-                                                 LabelIdsList.class,
-                                                 TASK_ID_TO_LABEL_IDS_LIST::apply)
-                             .addFieldEnrichment(TaskId.class,
-                                                 Task.class,
-                                                 TASK_ID_TO_TASK::apply)
-                             .build();
+        final EventEnricher result = EventEnricher.newBuilder()
+                                                  .add(LabelId.class,
+                                                       LabelDetails.class,
+                                                       LABEL_ID_TO_LABEL_DETAILS::apply)
+                                                  .add(TaskId.class,
+                                                       TaskDetails.class,
+                                                       TASK_ID_TO_TASK_DETAILS::apply)
+                                                  .add(TaskId.class,
+                                                       LabelIdsList.class,
+                                                       TASK_ID_TO_LABEL_IDS_LIST::apply)
+                                                  .add(TaskId.class,
+                                                       Task.class,
+                                                       TASK_ID_TO_TASK::apply)
+                                                  .build();
         return result;
     }
 }

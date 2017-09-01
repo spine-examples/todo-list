@@ -20,7 +20,8 @@
 
 package io.spine.examples.todolist.repository;
 
-import io.spine.base.EventContext;
+import com.google.protobuf.Message;
+import io.spine.core.EventContext;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdsList;
 import io.spine.examples.todolist.c.enrichments.LabelsListEnrichment;
@@ -36,15 +37,15 @@ import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.events.TaskReopened;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksViewProjection;
-import io.spine.server.BoundedContext;
-import io.spine.server.entity.idfunc.IdSetEventFunction;
 import io.spine.server.projection.ProjectionRepository;
+import io.spine.server.route.EventRoute;
+import io.spine.server.route.EventRouting;
 
-import java.util.Collections;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static io.spine.examples.todolist.EnrichmentHelper.getEnrichment;
+import static java.util.Collections.singleton;
 
 /**
  * Repository for the {@link LabelledTasksViewProjection}.
@@ -56,55 +57,35 @@ public class LabelledTasksViewRepository
 
     public LabelledTasksViewRepository() {
         super();
-        addIdSetFunctions();
+        setUpEventRoute();
     }
 
     /**
-     * Adds the {@link IdSetEventFunction}s to the repository.
+     * Adds the {@link EventRoute}s to the repository.
      * Should to be overridden in an successor classes,
      * otherwise all successors will use {@code LabelId}
      * and only with specified events below.
      */
-    protected void addIdSetFunctions() {
-        final IdSetEventFunction<LabelId, LabelAssignedToTask> labelAssignedFn =
-                (message, context) -> Collections.singleton(message.getLabelId());
-        addIdSetFunction(LabelAssignedToTask.class, labelAssignedFn);
+    protected void setUpEventRoute() {
+        final EventRouting<LabelId> routing = getEventRouting();
+        routing.route(LabelAssignedToTask.class, 
+                      (message, context) -> singleton(message.getLabelId()));
+        routing.route(LabelRemovedFromTask.class,
+                      (message, context) -> singleton(message.getLabelId()));
+        routing.route(LabelledTaskRestored.class,
+                      (message, context) -> singleton(message.getLabelId()));
+        routing.route(LabelDetailsUpdated.class,
+                      (message, context) -> singleton(message.getLabelId()));
+        routing.route(TaskDeleted.class, fromContext());
+        routing.route(TaskReopened.class, fromContext());
+        routing.route(TaskCompleted.class, fromContext());
+        routing.route(TaskPriorityUpdated.class, fromContext());
+        routing.route(TaskDescriptionUpdated.class, fromContext());
+        routing.route(TaskDueDateUpdated.class, fromContext());
+    }
 
-        final IdSetEventFunction<LabelId, LabelRemovedFromTask> labelRemovedFn =
-                (message, context) -> Collections.singleton(message.getLabelId());
-        addIdSetFunction(LabelRemovedFromTask.class, labelRemovedFn);
-
-        final IdSetEventFunction<LabelId, LabelledTaskRestored> deletedTaskRestoredFn =
-                (message, context) -> Collections.singleton(message.getLabelId());
-        addIdSetFunction(LabelledTaskRestored.class, deletedTaskRestoredFn);
-
-        final IdSetEventFunction<LabelId, LabelDetailsUpdated> labelDetailsUpdatedFn =
-                (message, context) -> Collections.singleton(message.getLabelId());
-        addIdSetFunction(LabelDetailsUpdated.class, labelDetailsUpdatedFn);
-
-        final IdSetEventFunction<LabelId, TaskDeleted> taskDeletedFn = (message, context) ->
-                getLabelIdsSet(context);
-        addIdSetFunction(TaskDeleted.class, taskDeletedFn);
-
-        final IdSetEventFunction<LabelId, TaskReopened> taskReopenedFn = (message, context) ->
-                getLabelIdsSet(context);
-        addIdSetFunction(TaskReopened.class, taskReopenedFn);
-
-        final IdSetEventFunction<LabelId, TaskCompleted> taskCompletedFn = (message, context) ->
-                getLabelIdsSet(context);
-        addIdSetFunction(TaskCompleted.class, taskCompletedFn);
-
-        final IdSetEventFunction<LabelId, TaskPriorityUpdated> taskPriorityUpdatedFn =
-                (message, context) -> getLabelIdsSet(context);
-        addIdSetFunction(TaskPriorityUpdated.class, taskPriorityUpdatedFn);
-
-        final IdSetEventFunction<LabelId, TaskDescriptionUpdated> taskDescriptionUpdatedFn =
-                (message, context) -> getLabelIdsSet(context);
-        addIdSetFunction(TaskDescriptionUpdated.class, taskDescriptionUpdatedFn);
-
-        final IdSetEventFunction<LabelId, TaskDueDateUpdated> taskDueDateUpdatedFn =
-                (message, context) -> getLabelIdsSet(context);
-        addIdSetFunction(TaskDueDateUpdated.class, taskDueDateUpdatedFn);
+    private static <T extends Message> EventRoute<LabelId, T> fromContext() {
+        return (message, context) -> getLabelIdsSet(context);
     }
 
     private static Set<LabelId> getLabelIdsSet(EventContext context) {

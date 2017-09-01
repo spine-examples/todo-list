@@ -29,6 +29,9 @@ hs_err_pid*
 build/
 */build/
 
+# Spine temp arfifact storage
+.spine/
+
 # Login details to Maven repository.
 # Each workstation should have developer's login defined in this file.
 credentials.properties

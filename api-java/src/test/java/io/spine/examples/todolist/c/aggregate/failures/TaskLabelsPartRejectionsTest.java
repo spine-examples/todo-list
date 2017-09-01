@@ -20,9 +20,7 @@
 
 package io.spine.examples.todolist.c.aggregate.failures;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import io.spine.base.CommandContext;
+import io.spine.core.CommandContext;
 import io.spine.examples.todolist.FailedTaskCommandDetails;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
@@ -30,16 +28,18 @@ import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
 import io.spine.examples.todolist.c.failures.CannotAssignLabelToTask;
 import io.spine.examples.todolist.c.failures.CannotRemoveLabelFromTask;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("TaskLabelsPartFailures should")
-class TaskLabelsPartFailuresTest {
+@DisplayName("TaskLabelsPartRejections should")
+class TaskLabelsPartRejectionsTest {
 
     private final TaskId taskId = TaskId.getDefaultInstance();
     private final LabelId labelId = LabelId.getDefaultInstance();
@@ -62,7 +62,7 @@ class TaskLabelsPartFailuresTest {
         final CannotRemoveLabelFromTask failure =
                 assertThrows(CannotRemoveLabelFromTask.class,
                              () -> TaskLabelsPartFailures.throwCannotRemoveLabelFromTaskFailure(cmd));
-        final TaskId actual = failure.getFailureMessage()
+        final TaskId actual = failure.getMessageThrown()
                                      .getRemoveLabelFailed()
                                      .getFailureDetails()
                                      .getTaskId();
@@ -81,7 +81,7 @@ class TaskLabelsPartFailuresTest {
         final CannotAssignLabelToTask failure =
                 assertThrows(CannotAssignLabelToTask.class,
                              () -> TaskLabelsPartFailures.throwCannotAssignLabelToTaskFailure(cmd));
-        final FailedTaskCommandDetails failedCommand = failure.getFailureMessage()
+        final FailedTaskCommandDetails failedCommand = failure.getMessageThrown()
                                                               .getAssignLabelFailed()
                                                               .getFailureDetails();
         final TaskId actualId = failedCommand.getTaskId();

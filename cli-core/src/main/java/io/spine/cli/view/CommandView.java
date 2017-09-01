@@ -26,7 +26,7 @@ import io.spine.cli.Screen;
 import io.spine.cli.action.Action;
 import io.spine.cli.action.CommandAction;
 import io.spine.cli.action.EditCommandAction;
-import io.spine.reflect.GenericTypeIndex;
+import io.spine.util.GenericTypeIndex;
 import io.spine.validate.ConstraintViolation;
 import io.spine.validate.ValidatingBuilder;
 import io.spine.validate.ValidatingBuilders;

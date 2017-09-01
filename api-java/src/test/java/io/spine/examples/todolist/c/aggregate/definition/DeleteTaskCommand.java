@@ -22,7 +22,7 @@ package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
-import io.spine.envelope.CommandEnvelope;
+import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.DeleteTask;
@@ -38,7 +38,7 @@ import static io.spine.examples.todolist.TaskStatus.DELETED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -62,7 +62,7 @@ public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
         dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(deleteTaskCmd));
+        dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
         final Task state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -77,10 +77,10 @@ public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         final CommandEnvelope deleteTaskEnvelope = envelopeOf(deleteTaskCmd);
-        dispatch(aggregate, deleteTaskEnvelope);
+        dispatchCommand(aggregate, deleteTaskEnvelope);
 
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatch(aggregate, deleteTaskEnvelope));
+                                         () -> dispatchCommand(aggregate, deleteTaskEnvelope));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotDeleteTask.class));
     }
 
@@ -90,7 +90,7 @@ public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
         dispatchCreateTaskCmd();
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
 
-        final List<? extends Message> messageList = dispatch(aggregate, envelopeOf(deleteTaskCmd));
+        final List<? extends Message> messageList = dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDeleted.class, messageList.get(0)
                                                    .getClass());
@@ -100,6 +100,6 @@ public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
 
     private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        dispatch(aggregate, envelopeOf(createTaskCmd));
+        dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }
 }

@@ -25,11 +25,12 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
-import io.spine.base.Command;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.Query;
 import io.spine.client.QueryResponse;
 import io.spine.client.grpc.CommandServiceGrpc;
+import io.spine.core.Command;
+import io.spine.core.UserId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -50,7 +51,6 @@ import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.server.BoundedContext;
 import io.spine.server.QueryService;
 import io.spine.time.ZoneOffsets;
-import io.spine.users.UserId;
 import io.spine.util.Exceptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static io.spine.base.Identifier.newUuid;
+import static io.spine.Identifier.newUuid;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 /**

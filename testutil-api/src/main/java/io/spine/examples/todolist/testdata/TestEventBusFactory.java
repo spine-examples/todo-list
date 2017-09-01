@@ -21,7 +21,7 @@
 package io.spine.examples.todolist.testdata;
 
 import io.spine.server.event.EventBus;
-import io.spine.server.event.enrich.EventEnricher;
+import io.spine.server.event.EventEnricher;
 import io.spine.server.storage.StorageFactory;
 
 /**

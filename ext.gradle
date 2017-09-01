@@ -18,33 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
 
-import io.spine.core.EventContext;
-import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+final def SPINE_VERSION = '0.9.60-SNAPSHOT'
 
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+project.ext {
+    // TODOList version
+    appVersion = SPINE_VERSION
 
-/**
- * @author Illia Shepilov
- */
-@DisplayName("EnrichmentHelper should")
-class EnrichmentHelperTest {
+    // Spine dependencies' versions
+    spineVersion = SPINE_VERSION
+    spineBaseVersion = '0.9.55-SNAPSHOT'
 
-    @Test
-    @DisplayName("have the private constructor")
-    void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(EnrichmentHelper.class);
-    }
+    // Main scope third party dependencies' versions
+    protobufGradlePluginVersion = '0.8.3'
+    appEngineVersion = '1.9.42'
+    guavaVersion = '20.0'
+    protobufVersion = '3.2.0'
+    gRpcVersion = '1.1.2'
+    slf4jVersion = '1.7.21'
+    servletApiVersion = '3.1.0'
+    gcloudJavaVersion = '0.2.8'
 
-    @Test
-    @DisplayName("throw EnrichmentNotFoundException when enrichment is not present")
-    void throwException() {
-        assertThrows(EnrichmentNotFoundException.class, () ->
-                EnrichmentHelper.getEnrichment(TaskEnrichment.class,
-                                               EventContext.getDefaultInstance()));
-    }
+    // Test scope third party dependencies' versions
+    jUnitPlatformVersion = '1.0.0-RC3'
+    jUnitVersion = '5.0.0-RC3'
 }

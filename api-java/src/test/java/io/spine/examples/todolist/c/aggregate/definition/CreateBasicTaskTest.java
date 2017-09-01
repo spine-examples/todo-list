@@ -35,7 +35,7 @@ import java.util.List;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -56,7 +56,7 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
     @DisplayName("produce TaskCreated event")
     void produceEvent() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        final List<? extends Message> messageList = dispatch(aggregate, envelopeOf(createTaskCmd));
+        final List<? extends Message> messageList = dispatchCommand(aggregate, envelopeOf(createTaskCmd));
         assertNotNull(aggregate.getState()
                                .getCreated());
         assertNotNull(aggregate.getId());
@@ -74,7 +74,7 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
     @DisplayName("create the task")
     void createTask() {
         final CreateBasicTask createBasicTask = createTaskInstance();
-        dispatch(aggregate, envelopeOf(createBasicTask));
+        dispatchCommand(aggregate, envelopeOf(createBasicTask));
 
         final Task state = aggregate.getState();
         assertEquals(state.getId(), createBasicTask.getId());
@@ -88,7 +88,7 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, "D");
 
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatch(aggregate, envelopeOf(createBasicTask)));
+                                         () -> dispatchCommand(aggregate, envelopeOf(createBasicTask)));
         final Throwable rootCause = Throwables.getRootCause(t);
         final ValidationException validationException = (ValidationException) rootCause;
         final int violationCount = validationException.getConstraintViolations()

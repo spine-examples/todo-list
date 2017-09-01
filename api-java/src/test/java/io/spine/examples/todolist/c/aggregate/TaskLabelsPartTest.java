@@ -21,8 +21,9 @@
 package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
-import io.spine.base.Command;
-import io.spine.envelope.CommandEnvelope;
+import io.spine.core.Ack;
+import io.spine.core.Command;
+import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
@@ -37,10 +38,11 @@ import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
 import io.spine.examples.todolist.c.failures.CannotAssignLabelToTask;
 import io.spine.examples.todolist.c.failures.CannotRemoveLabelFromTask;
 import io.spine.examples.todolist.context.TodoListBoundedContext;
-import io.spine.examples.todolist.testdata.TestResponseObserver;
+import io.spine.grpc.MemoizingObserver;
+import io.spine.grpc.StreamObservers;
 import io.spine.server.BoundedContext;
+import io.spine.server.aggregate.AggregatePartCommandTest;
 import io.spine.server.commandbus.CommandBus;
-import io.spine.test.AggregatePartCommandTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -48,7 +50,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.base.Identifier.newUuid;
+import static io.spine.Identifier.newUuid;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
@@ -56,7 +58,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.removeLabelFromTaskInstance;
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -82,7 +84,7 @@ class TaskLabelsPartTest {
         @DisplayName("produce LabelAssignedToTask event")
         void produceEvent() {
             final List<? extends Message> messageList =
-                    dispatch(taskLabelsPart, CommandEnvelope.of(command().get()));
+                    dispatchCommand(taskLabelsPart, CommandEnvelope.of(command().get()));
 
             assertEquals(1, messageList.size());
             assertEquals(LabelAssignedToTask.class, messageList.get(0)
@@ -97,7 +99,7 @@ class TaskLabelsPartTest {
         @Test
         @DisplayName("assign a label to the task")
         void assignLabelToTask() {
-            dispatch(taskLabelsPart, CommandEnvelope.of(command().get()));
+            dispatchCommand(taskLabelsPart, CommandEnvelope.of(command().get()));
 
             final TaskLabels state = taskLabelsPart.getState();
             final List<LabelId> labelIds = state.getLabelIdsList()
@@ -171,7 +173,7 @@ class TaskLabelsPartTest {
                                                                      .getIdsList();
             assertTrue(labelIdsBeforeRemove.contains(labelId));
 
-            dispatch(taskLabelsPart, CommandEnvelope.of(command().get()));
+            dispatchCommand(taskLabelsPart, CommandEnvelope.of(command().get()));
             final List<LabelId> labelIdsAfterRemove = taskLabelsPart.getState()
                                                                     .getLabelIdsList()
                                                                     .getIdsList();
@@ -213,14 +215,14 @@ class TaskLabelsPartTest {
         private void dispatchAssignLabelToTask() {
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
             final Command assignLabelToTaskCmd = createDifferentCommand(assignLabelToTask);
-            dispatch(taskLabelsPart, CommandEnvelope.of(assignLabelToTaskCmd));
+            dispatchCommand(taskLabelsPart, CommandEnvelope.of(assignLabelToTaskCmd));
         }
     }
 
     private abstract static class TaskLabelsCommandTest<C extends Message>
             extends AggregatePartCommandTest<C, TaskLabelsPart> {
 
-        TestResponseObserver responseObserver;
+        MemoizingObserver<Ack> responseObserver;
         CommandBus commandBus;
         TaskLabelsPart taskLabelsPart;
         TaskId taskId;
@@ -237,7 +239,7 @@ class TaskLabelsPartTest {
         protected TaskLabelsPart createAggregatePart() {
             final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
             commandBus = boundedContext.getCommandBus();
-            responseObserver = new TestResponseObserver();
+            responseObserver = StreamObservers.memoizingObserver();
             taskId = createTaskId();
             labelId = createLabelId();
             final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, taskId);

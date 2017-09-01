@@ -27,7 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.protobuf.Wrapper.forString;
+import static io.spine.protobuf.TypeConverter.toMessage;
 import static java.lang.System.lineSeparator;
 
 /**
@@ -54,7 +54,7 @@ class EntityViewTest {
 
     private static class AnEntityView extends EntityView<Int32Value, StringValue> {
 
-        private static final StringValue STATE = forString("string");
+        private static final StringValue STATE = toMessage("string");
 
         private AnEntityView(Int32Value id) {
             super(id, "View title");

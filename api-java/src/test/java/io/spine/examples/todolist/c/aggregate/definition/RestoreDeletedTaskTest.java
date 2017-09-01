@@ -22,8 +22,9 @@ package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
 import io.grpc.stub.StreamObserver;
-import io.spine.base.Command;
-import io.spine.base.Event;
+import io.spine.core.Ack;
+import io.spine.core.Command;
+import io.spine.core.Event;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.aggregate.TaskPart;
@@ -37,7 +38,8 @@ import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
 import io.spine.examples.todolist.c.events.LabelledTaskRestored;
 import io.spine.examples.todolist.c.failures.CannotRestoreDeletedTask;
 import io.spine.examples.todolist.context.TodoListBoundedContext;
-import io.spine.examples.todolist.testdata.TestResponseObserver;
+import io.spine.grpc.MemoizingObserver;
+import io.spine.grpc.StreamObservers;
 import io.spine.protobuf.AnyPacker;
 import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
@@ -62,7 +64,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.restoreDeletedTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
-import static io.spine.server.aggregate.AggregateCommandDispatcher.dispatch;
+import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,7 +76,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("RestoreDeletedTask command should be interpreted by TaskPart and")
 public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> {
 
-    private TestResponseObserver responseObserver;
+    private MemoizingObserver<Ack> responseObserver;
     private BoundedContext boundedContext;
     private CommandBus commandBus;
 
@@ -82,7 +84,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
     @BeforeEach
     public void setUp() {
         super.setUp();
-        responseObserver = new TestResponseObserver();
+        responseObserver = StreamObservers.memoizingObserver();
         boundedContext = TodoListBoundedContext.createTestInstance();
         TaskAggregateRoot.injectBoundedContext(boundedContext);
 
@@ -140,7 +142,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         createBasicTask();
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(deleteTask));
+        dispatchCommand(aggregate, envelopeOf(deleteTask));
 
         restoreDeletedTask();
 
@@ -155,7 +157,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         createDraft();
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(deleteTask));
+        dispatchCommand(aggregate, envelopeOf(deleteTask));
 
         Task state = aggregate.getState();
         assertEquals(taskId, state.getId());
@@ -175,7 +177,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         createBasicTask();
 
         final CompleteTask completeTask = completeTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(completeTask));
+        dispatchCommand(aggregate, envelopeOf(completeTask));
 
         final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotRestoreDeletedTask.class));
@@ -201,17 +203,17 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
 
     private void createBasicTask() {
         final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        dispatch(aggregate, envelopeOf(createTask));
+        dispatchCommand(aggregate, envelopeOf(createTask));
     }
 
     private void createDraft() {
         final CreateDraft createDraft = createDraftInstance(taskId);
-        dispatch(aggregate, envelopeOf(createDraft));
+        dispatchCommand(aggregate, envelopeOf(createDraft));
     }
 
     private void restoreDeletedTask() {
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-        dispatch(aggregate, envelopeOf(restoreDeletedTask));
+        dispatchCommand(aggregate, envelopeOf(restoreDeletedTask));
     }
 
     private static class EventStreamObserver implements StreamObserver<Event> {

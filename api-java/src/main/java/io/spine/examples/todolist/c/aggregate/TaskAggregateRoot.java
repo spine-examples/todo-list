@@ -21,10 +21,10 @@
 package io.spine.examples.todolist.c.aggregate;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.spine.Environment;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.context.TodoListBoundedContext;
 import io.spine.server.BoundedContext;
-import io.spine.server.Environment;
 import io.spine.server.aggregate.AggregateRoot;
 
 /**
