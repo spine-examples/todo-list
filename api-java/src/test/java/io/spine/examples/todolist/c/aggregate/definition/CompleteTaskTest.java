@@ -62,9 +62,9 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     @Test
     @DisplayName("produce TaskCompleted event")
     void produceEvent() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
 
-        final List<? extends Message> messageList = dispatchCommandCompleteTaskCmd();
+        final List<? extends Message> messageList = dispatchCompleteTaskCmd();
 
         assertEquals(1, messageList.size());
         assertEquals(TaskCompleted.class, messageList.get(0)
@@ -77,9 +77,9 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     @Test
     @DisplayName("complete the task")
     void completeTheTask() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
 
-        dispatchCommandCompleteTaskCmd();
+        dispatchCompleteTaskCmd();
         final Task state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
@@ -89,12 +89,12 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     @Test
     @DisplayName("throw CannotCompleteTask failure upon an attempt to complete the deleted task")
     void cannotCompleteDeletedTask() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
-        final Throwable t = assertThrows(Throwable.class, this::dispatchCommandCompleteTaskCmd);
+        final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
     }
 
@@ -105,16 +105,16 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         dispatchCommand(aggregate, envelopeOf(createDraftCmd));
 
-        final Throwable t = assertThrows(Throwable.class, this::dispatchCommandCompleteTaskCmd);
+        final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
     }
 
-    private void dispatchCommandCreateTaskCmd() {
+    private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }
 
-    private List<? extends Message> dispatchCommandCompleteTaskCmd() {
+    private List<? extends Message> dispatchCompleteTaskCmd() {
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
         return dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
     }

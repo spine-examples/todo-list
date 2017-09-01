@@ -64,7 +64,7 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
     @BeforeEach
     protected void setUp() {
         super.setUp();
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
     }
 
     @Test
@@ -153,7 +153,7 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
         assertEquals(actualDueDate, unpack(mismatch.getActual()));
     }
 
-    private void dispatchCommandCreateTaskCmd() {
+    private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }

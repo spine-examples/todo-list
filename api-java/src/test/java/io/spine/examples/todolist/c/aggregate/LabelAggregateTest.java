@@ -102,7 +102,7 @@ class LabelAggregateTest {
             createBasicLabel();
         }
 
-        private List<? extends Message> dispatchCommandUpdateLabelDetails(UpdateLabelDetails details) {
+        private List<? extends Message> dispatchUpdateLabelDetails(UpdateLabelDetails details) {
             final Command command = createCommand(details);
             return dispatchCommand(aggregate, CommandEnvelope.of(command));
         }
@@ -112,7 +112,7 @@ class LabelAggregateTest {
         void produceEvent() {
             final UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(getLabelId());
             final List<? extends Message> messageList =
-                    dispatchCommandUpdateLabelDetails(updateLabelDetails);
+                    dispatchUpdateLabelDetails(updateLabelDetails);
 
             assertEquals(1, messageList.size());
             assertEquals(LabelDetailsUpdated.class, messageList.get(0)
@@ -131,7 +131,7 @@ class LabelAggregateTest {
         @DisplayName("update the label details twice")
         void updateLabelDetailsTwice() {
             UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(getLabelId());
-            dispatchCommandUpdateLabelDetails(updateLabelDetails);
+            dispatchUpdateLabelDetails(updateLabelDetails);
 
             TaskLabel state = aggregate.getState();
             assertEquals(getLabelId(), state.getId());
@@ -151,7 +151,7 @@ class LabelAggregateTest {
                                                              .build();
             updateLabelDetails = updateLabelDetailsInstance(getLabelId(), previousLabelDetails,
                                                             newLabelDetails);
-            dispatchCommandUpdateLabelDetails(updateLabelDetails);
+            dispatchUpdateLabelDetails(updateLabelDetails);
 
             state = aggregate.getState();
             assertEquals(getLabelId(), state.getId());

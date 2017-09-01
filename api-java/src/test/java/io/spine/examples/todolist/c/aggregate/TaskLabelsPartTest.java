@@ -148,7 +148,7 @@ class TaskLabelsPartTest {
         @DisplayName("produce LabelRemovedFromTask event")
         void produceEvent() throws CannotRemoveLabelFromTask {
             createBasicTask();
-            dispatchCommandAssignLabelToTask();
+            dispatchAssignLabelToTask();
 
             final List<? extends Message> messageList =
                     taskLabelsPart.handle(commandMessage().get());
@@ -167,7 +167,7 @@ class TaskLabelsPartTest {
         @DisplayName("remove a label from the task")
         void removeLabelFromTask() {
             createBasicTask();
-            dispatchCommandAssignLabelToTask();
+            dispatchAssignLabelToTask();
             final List<LabelId> labelIdsBeforeRemove = taskLabelsPart.getState()
                                                                      .getLabelIdsList()
                                                                      .getIdsList();
@@ -193,7 +193,7 @@ class TaskLabelsPartTest {
                 "upon an attempt to remove the label from the completed task")
         void cannotRemoveLabelFromCompletedTask() {
             createBasicTask();
-            dispatchCommandAssignLabelToTask();
+            dispatchAssignLabelToTask();
             completeTask();
 
             assertThrows(CannotRemoveLabelFromTask.class,
@@ -205,14 +205,14 @@ class TaskLabelsPartTest {
                 "upon an attempt to remove the label from the deleted task")
         void cannotRemoveLabelFromDeletedTask() {
             createBasicTask();
-            dispatchCommandAssignLabelToTask();
+            dispatchAssignLabelToTask();
             deleteTask();
 
             assertThrows(CannotRemoveLabelFromTask.class,
                          () -> taskLabelsPart.handle(commandMessage().get()));
         }
 
-        private void dispatchCommandAssignLabelToTask() {
+        private void dispatchAssignLabelToTask() {
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
             final Command assignLabelToTaskCmd = createDifferentCommand(assignLabelToTask);
             dispatchCommand(taskLabelsPart, CommandEnvelope.of(assignLabelToTaskCmd));

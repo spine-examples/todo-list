@@ -69,7 +69,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     @Test
     @DisplayName("produce TaskDescriptionUpdated event")
     void produceEvent() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId);
         final List<? extends Message> messageList = dispatchCommand(aggregate,
@@ -103,7 +103,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     @DisplayName("throw CannotUpdateTaskDescription failure " +
             "upon an attempt to update the description of the deleted task")
     void cannotUpdateDeletedTaskDescription() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
@@ -119,7 +119,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     @DisplayName("throw CannotUpdateTaskDescription failure " +
             "upon an attempt to update the description of the completed task")
     void cannotUpdateCompletedTaskDescription() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
 
         final CompleteTask completeTaskCmd = completeTaskInstance();
         dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
@@ -135,7 +135,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     @DisplayName("update the task description")
     void updateDescription() {
         final String newDescription = "new description.";
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
 
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId, DESCRIPTION, newDescription);
@@ -181,7 +181,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         assertEquals(newStringValue, unpack(mismatch.getNewValue()));
     }
 
-    private void dispatchCommandCreateTaskCmd() {
+    private void dispatchCreateTaskCmd() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createBasicTask));
     }

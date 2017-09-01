@@ -61,7 +61,7 @@ public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
     @Test
     @DisplayName("throw CannotReopenTask failure upon an attempt to reopen not completed task")
     void cannotReopenNotCompletedTask() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
 
         final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
@@ -72,7 +72,7 @@ public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
     @Test
     @DisplayName("reopen completed task")
     void reopenTask() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
         dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
 
@@ -91,7 +91,7 @@ public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
     @Test
     @DisplayName("throw CannotReopenTask upon an attempt to reopen the deleted task")
     void cannotReopenDeletedTask() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
@@ -113,7 +113,7 @@ public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
         assertThat(Throwables.getRootCause(t), instanceOf(CannotReopenTask.class));
     }
 
-    private void dispatchCommandCreateTaskCmd() {
+    private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }

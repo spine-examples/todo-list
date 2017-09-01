@@ -74,7 +74,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
     @DisplayName("throw CannotUpdateTaskPriority failure upon an attempt to " +
             "update the priority of the deleted task")
     void cannotUpdateDeletedTaskPriority() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
@@ -90,7 +90,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
     @DisplayName("throw CannotUpdateTaskPriority failure " +
             "upon an attempt to update the priority of the completed task")
     void cannotUpdateCompletedTaskPriority() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
 
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
         dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
@@ -104,7 +104,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
     @Test
     @DisplayName("produce TaskPriorityUpdated event")
     void produceEvent() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
 
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
         final List<? extends Message> messageList = dispatchCommand(aggregate,
@@ -124,7 +124,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
     @DisplayName("update the task priority")
     void updatePriority() {
         final TaskPriority updatedPriority = HIGH;
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
 
         final UpdateTaskPriority updateTaskPriorityCmd =
                 updateTaskPriorityInstance(taskId, TP_UNDEFINED, updatedPriority);
@@ -163,7 +163,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
         assertEquals(newValue, unpack(mismatch.getNewValue()));
     }
 
-    private void dispatchCommandCreateTaskCmd() {
+    private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }

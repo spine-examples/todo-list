@@ -59,7 +59,7 @@ public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
     @Test
     @DisplayName("delete the task")
     void deleteTask() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
@@ -73,7 +73,7 @@ public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
     @DisplayName("throw CannotDeleteTask failure upon an attempt to " +
             "delete the already deleted task")
     void cannotDeleteAlreadyDeletedTask() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
         final CommandEnvelope deleteTaskEnvelope = envelopeOf(deleteTaskCmd);
@@ -87,7 +87,7 @@ public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
     @Test
     @DisplayName("produce TaskDeleted event")
     void produceEvent() {
-        dispatchCommandCreateTaskCmd();
+        dispatchCreateTaskCmd();
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
 
         final List<? extends Message> messageList = dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
@@ -98,7 +98,7 @@ public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
         assertEquals(taskId, taskDeleted.getTaskId());
     }
 
-    private void dispatchCommandCreateTaskCmd() {
+    private void dispatchCreateTaskCmd() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }
