@@ -20,6 +20,7 @@
 
 package io.spine.server.storage.kafka;
 
+import com.google.protobuf.Message;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.AggregateStorage;
 import io.spine.server.entity.Entity;
@@ -29,20 +30,38 @@ import io.spine.server.projection.ProjectionStorage;
 import io.spine.server.stand.StandStorage;
 import io.spine.server.storage.RecordStorage;
 import io.spine.server.storage.StorageFactory;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.producer.KafkaProducer;
 
 import java.util.Map;
 
-import static com.google.common.collect.ImmutableMap.copyOf;
+import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
+import static io.spine.server.storage.kafka.MessageSerializer.serializer;
 
 /**
  * @author Dmytro Dashenkov
  */
 public class KafkaStorageFactory implements StorageFactory {
 
-    private final Map<String, String> clientConfig;
+    private final KafkaWrapper storage;
 
-    protected KafkaStorageFactory(Map<String, String> clientConfig) {
-        this.clientConfig = copyOf(clientConfig);
+    protected KafkaStorageFactory(Map<String, Object> producerConfig,
+                                  Map<String, Object> consumerConfig,
+                                  Consistency consistencyLevel) {
+        this.storage = createStorage(producerConfig, consumerConfig, consistencyLevel);
+    }
+
+    private static KafkaWrapper createStorage(Map<String, Object> producerConfig,
+                                              Map<String, Object> consumerConfig,
+                                              Consistency consistencyLevel) {
+        final KafkaProducer<Message, Message> producer = new KafkaProducer<>(producerConfig,
+                                                                             serializer(),
+                                                                             serializer());
+        final KafkaConsumer<Message, Message> consumer = new KafkaConsumer<>(consumerConfig,
+                                                                             deserializer(),
+                                                                             deserializer());
+        final KafkaWrapper kafkaWrapper = new KafkaWrapper(producer, consumer, consistencyLevel);
+        return kafkaWrapper;
     }
 
     @Override
@@ -63,7 +82,7 @@ public class KafkaStorageFactory implements StorageFactory {
     @Override
     public <I> AggregateStorage<I> createAggregateStorage(
             Class<? extends Aggregate<I, ?, ?>> aggregateClass) {
-        return null;
+        return new KafkaAggregateStorage<>(aggregateClass, storage, isMultitenant());
     }
 
     @Override
@@ -79,7 +98,7 @@ public class KafkaStorageFactory implements StorageFactory {
 
     @Override
     public StorageFactory toSingleTenant() {
-        return null;
+        return this;
     }
 
     @Override
