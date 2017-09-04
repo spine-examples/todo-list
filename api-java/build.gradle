@@ -20,5 +20,13 @@
 
 dependencies {
     compile project(path: ':model')
+    compile project(path: ':kafka-storage')
+
     testCompile project(path: ':testutil-api')
+}
+
+sourceSets {
+    main {
+        resources.srcDirs += "$sourcesRootDir/main/resources"
+    }
 }
