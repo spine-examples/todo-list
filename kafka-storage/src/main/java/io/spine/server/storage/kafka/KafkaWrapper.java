@@ -20,7 +20,10 @@
 
 package io.spine.server.storage.kafka;
 
+import com.google.common.collect.Iterators;
 import com.google.protobuf.Message;
+import com.google.protobuf.StringValue;
+import io.spine.server.entity.Entity;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -28,6 +31,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
@@ -62,7 +66,7 @@ public class KafkaWrapper {
     public <M extends Message> Optional<M> readLast(Topic topic) {
         ensureSubscriptionOnto(topic);
         final ConsumerRecords<Message, Message> all = consumer.poll(STANDARD_POLL_AWAIT);
-        final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.name());
+        final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
         final Optional<Message> lastMsg = StreamSupport.stream(records.spliterator(), false)
                                                        .reduce((left, right) -> right)
                                                        .map(ConsumerRecord::value);
@@ -72,7 +76,7 @@ public class KafkaWrapper {
     }
 
     private void ensureSubscriptionOnto(Topic topic) {
-        final String topicName = topic.name();
+        final String topicName = topic.getName();
         final Set<String> subscription = consumer.subscription();
         if (!subscription.contains(topicName)) {
             final Collection<String> newSubscription = newLinkedList(subscription);
@@ -84,7 +88,7 @@ public class KafkaWrapper {
     public <M extends Message> Iterator<M> read(Topic topic) {
         ensureSubscriptionOnto(topic);
         final ConsumerRecords<Message, Message> all = consumer.poll(STANDARD_POLL_AWAIT);
-        final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.name());
+        final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
         final Iterator<Message> messages = StreamSupport.stream(records.spliterator(), false)
                                                         .map(ConsumerRecord::value)
                                                         .collect(Collectors.toList())
@@ -94,9 +98,26 @@ public class KafkaWrapper {
         return result;
     }
 
+    public <M extends Message> Iterator<M> readAll(Class<? extends Entity> type) {
+        final Topic topicOfTopics = Topic.forType(type);
+        ensureSubscriptionOnto(topicOfTopics);
+        final Iterable<ConsumerRecord<Message, Message>> records =
+                consumer.poll(STANDARD_POLL_AWAIT)
+                        .records(topicOfTopics.getName());
+        final Iterator<M> result = StreamSupport.stream(records.spliterator(), false)
+                                                .map(ConsumerRecord::value)
+                                                .map(msg -> ((StringValue) msg).getValue())
+                                                .map(Topic::ofValue)
+                                                .map(this::read)
+                                                .collect(Collections::emptyIterator,
+                                                         Iterators::concat,
+                                                         Iterators::concat);
+        return result;
+    }
+
     public void write(Topic topic, Object id, Message value) {
         final Message key = toMessage(id);
-        final ProducerRecord<Message, Message> record = new ProducerRecord<>(topic.name(),
+        final ProducerRecord<Message, Message> record = new ProducerRecord<>(topic.getName(),
                                                                              key,
                                                                              value);
         final Future<?> ack = producer.send(record);

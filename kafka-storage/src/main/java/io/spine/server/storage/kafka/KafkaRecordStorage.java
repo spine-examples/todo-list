@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static com.google.common.base.Optional.fromNullable;
+import static com.google.common.collect.Iterators.transform;
 import static com.google.common.collect.Lists.newLinkedList;
 import static io.spine.protobuf.AnyPacker.pack;
 
@@ -71,6 +72,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
 
     @Override
     protected Iterator<EntityRecord> readMultipleRecords(Iterable<I> ids) {
+        // TODO:2017-09-04:dmytro.dashenkov: Optimize.
         final List<EntityRecord> records = newLinkedList();
         for (I id : ids) {
             records.add(read(id).orNull());
@@ -80,6 +82,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
 
     @Override
     protected Iterator<EntityRecord> readMultipleRecords(Iterable<I> ids, FieldMask fieldMask) {
+        // TODO:2017-09-04:dmytro.dashenkov: Optimize.
         final List<EntityRecord> records = newLinkedList();
         for (I id : ids) {
             final EntityRecord record = read(id).transform(maskState(fieldMask)::apply)
@@ -96,8 +99,9 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
 
     @Override
     protected Iterator<EntityRecord> readAllRecords(FieldMask fieldMask) {
-        // TODO:2017-09-04:dmytro.dashenkov: TBD.
-        return null;
+        final Iterator<EntityRecord> result = storage.readAll(entityClass);
+        final Iterator<EntityRecord> maskedResult = transform(result, maskState(fieldMask)::apply);
+        return maskedResult;
     }
 
     @Override
@@ -113,7 +117,8 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
 
     @Override
     protected void writeRecords(Map<I, EntityRecordWithColumns> records) {
-
+        // TODO:2017-09-04:dmytro.dashenkov: Optimize.
+        records.forEach(this::writeRecord);
     }
 
     @Override

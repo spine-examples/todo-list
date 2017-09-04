@@ -20,6 +20,13 @@
 
 package io.spine.server.storage.kafka;
 
+import com.google.protobuf.Message;
+import io.spine.server.entity.Entity;
+import io.spine.server.storage.kafka.Topics.TypeTopic;
+import io.spine.server.storage.kafka.Topics.ValueTopic;
+import io.spine.type.TypeName;
+
+import static io.spine.server.entity.Entity.GenericParameter.STATE;
 import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_AGGREGATE_RECORD;
 import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_ENTITY_RECORD;
 import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_EVENT_COUNT_AFTER_SNAPSHOT;
@@ -31,7 +38,7 @@ import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_LIFE
  */
 public interface Topic {
 
-    String name();
+    String getName();
 
     static Topic forRecord(Class<?> ofType, Object withId) {
         return FOR_ENTITY_RECORD.create(ofType, withId);
@@ -51,5 +58,18 @@ public interface Topic {
 
     static Topic forLastHandledEventTime(Class<?> ofType, Object withId) {
         return FOR_LAST_HANDLED_EVENT_TIME.create(ofType, withId);
+    }
+
+    static Topic ofValue(String topicValue) {
+        return new ValueTopic(topicValue);
+    }
+
+    static Topic forType(Class<? extends Entity> entityClass) {
+        @SuppressWarnings("unchecked") // Guaranteed by the `STATE` contract.
+        final Class<? extends Message> stateClass =
+                (Class<? extends Message>) STATE.getArgumentIn(entityClass);
+        final TypeName typeName = TypeName.of(stateClass);
+        final Topic topic = new TypeTopic(typeName);
+        return topic;
     }
 }
