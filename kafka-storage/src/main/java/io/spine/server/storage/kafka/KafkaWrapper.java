@@ -27,13 +27,16 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static io.spine.protobuf.TypeConverter.toMessage;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
 
@@ -57,6 +60,7 @@ public class KafkaWrapper {
     }
 
     public <M extends Message> Optional<M> readLast(Topic topic) {
+        ensureSubscriptionOnto(topic);
         final ConsumerRecords<Message, Message> all = consumer.poll(STANDARD_POLL_AWAIT);
         final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.name());
         final Optional<Message> lastMsg = StreamSupport.stream(records.spliterator(), false)
@@ -67,7 +71,18 @@ public class KafkaWrapper {
         return result;
     }
 
+    private void ensureSubscriptionOnto(Topic topic) {
+        final String topicName = topic.name();
+        final Set<String> subscription = consumer.subscription();
+        if (!subscription.contains(topicName)) {
+            final Collection<String> newSubscription = newLinkedList(subscription);
+            newSubscription.add(topicName);
+            consumer.subscribe(newSubscription);
+        }
+    }
+
     public <M extends Message> Iterator<M> read(Topic topic) {
+        ensureSubscriptionOnto(topic);
         final ConsumerRecords<Message, Message> all = consumer.poll(STANDARD_POLL_AWAIT);
         final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.name());
         final Iterator<Message> messages = StreamSupport.stream(records.spliterator(), false)
