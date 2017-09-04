@@ -72,7 +72,8 @@ public class KafkaStorageFactory implements StorageFactory {
 
     @Override
     public ColumnTypeRegistry getTypeRegistry() {
-        return null;
+        return ColumnTypeRegistry.newBuilder()
+                                 .build();
     }
 
     @Override
@@ -90,7 +91,7 @@ public class KafkaStorageFactory implements StorageFactory {
     @Override
     public <I> KafkaRecordStorage<I>
     createRecordStorage(Class<? extends Entity<I, ?>> entityClass) {
-        return new KafkaRecordStorage<>(isMultitenant());
+        return new KafkaRecordStorage<>(entityClass, storage, isMultitenant());
     }
 
     @Override
