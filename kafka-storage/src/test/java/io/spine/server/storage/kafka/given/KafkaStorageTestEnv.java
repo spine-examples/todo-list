@@ -1,0 +1,75 @@
+/*
+ * Copyright 2017, TeamDev Ltd. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package io.spine.server.storage.kafka.given;
+
+import com.google.common.collect.ImmutableMap;
+import io.spine.server.storage.kafka.KafkaStorageFactory;
+import io.spine.server.storage.kafka.MessageSerializer;
+
+import java.util.Map;
+
+import static io.spine.server.storage.kafka.Consistency.STRONG;
+import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
+
+/**
+ * @author Dmytro Dashenkov
+ */
+public class KafkaStorageTestEnv {
+
+    private static final String TEST_SERVER_URL = "localhost:4545";
+    private static final String SERIALIZER_NAME = MessageSerializer.class.getName();
+    private static final String ALL = "all";
+
+    private static final Map<String, Object> PRODUCER_CONFIG =
+            ImmutableMap.<String, Object>builder()
+                        .put(BOOTSTRAP_SERVERS_CONFIG, TEST_SERVER_URL)
+                        .put(KEY_SERIALIZER_CLASS_CONFIG, SERIALIZER_NAME)
+                        .put(VALUE_SERIALIZER_CLASS_CONFIG, SERIALIZER_NAME)
+                        .put(ACKS_CONFIG, ALL)
+                        .build();
+    private static final Map<String, Object> CONSUMER_CONFIG =
+            ImmutableMap.<String, Object>builder()
+                        .put(BOOTSTRAP_SERVERS_CONFIG, TEST_SERVER_URL)
+                        .put(KEY_DESERIALIZER_CLASS_CONFIG, SERIALIZER_NAME)
+                        .put(VALUE_DESERIALIZER_CLASS_CONFIG, SERIALIZER_NAME)
+                        .build();
+
+    private KafkaStorageTestEnv() {
+        // Prevent utility class instantiation.
+    }
+
+    public static KafkaStorageFactory getStorageFactory() {
+        return StorageFactorySingleton.INSTANCE.value;
+    }
+
+    private enum StorageFactorySingleton {
+        INSTANCE;
+        @SuppressWarnings("NonSerializableFieldInSerializableClass")
+        private final KafkaStorageFactory value = new KafkaStorageFactory(PRODUCER_CONFIG,
+                                                                          CONSUMER_CONFIG,
+                                                                          STRONG);
+    }
+}

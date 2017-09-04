@@ -7,4 +7,9 @@ ext {
 dependencies {
     compile group: 'org.apache.kafka', name: 'kafka-clients', version: kafkaVersion
     compile group: 'org.apache.kafka', name: 'kafka-streams', version: kafkaVersion
+
+    testCompile group: 'io.spine', name: 'spine-server', version: spineVersion, classifier: 'test'
+
+    // Old JUnit used in core-java.
+    compile 'junit:junit:4.8.2'
 }
