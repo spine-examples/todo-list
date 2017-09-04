@@ -20,17 +20,16 @@
 
 package io.spine.server.storage.kafka.given;
 
-import com.google.common.collect.ImmutableMap;
 import io.spine.server.storage.kafka.KafkaStorageFactory;
 import io.spine.server.storage.kafka.MessageSerializer;
 
-import java.util.Map;
+import java.util.Properties;
 
 import static io.spine.server.storage.kafka.Consistency.STRONG;
-import static org.apache.kafka.clients.CommonClientConfigs.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG;
+import static org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG;
 
@@ -43,19 +42,24 @@ public class KafkaStorageTestEnv {
     private static final String SERIALIZER_NAME = MessageSerializer.class.getName();
     private static final String ALL = "all";
 
-    private static final Map<String, Object> PRODUCER_CONFIG =
-            ImmutableMap.<String, Object>builder()
-                        .put(BOOTSTRAP_SERVERS_CONFIG, TEST_SERVER_URL)
-                        .put(KEY_SERIALIZER_CLASS_CONFIG, SERIALIZER_NAME)
-                        .put(VALUE_SERIALIZER_CLASS_CONFIG, SERIALIZER_NAME)
-                        .put(ACKS_CONFIG, ALL)
-                        .build();
-    private static final Map<String, Object> CONSUMER_CONFIG =
-            ImmutableMap.<String, Object>builder()
-                        .put(BOOTSTRAP_SERVERS_CONFIG, TEST_SERVER_URL)
-                        .put(KEY_DESERIALIZER_CLASS_CONFIG, SERIALIZER_NAME)
-                        .put(VALUE_DESERIALIZER_CLASS_CONFIG, SERIALIZER_NAME)
-                        .build();
+    private static final Properties producerConfig = new Properties();
+    private static final Properties consumerConfig = new Properties();
+
+    static {
+        constructConfigs();
+    }
+
+    @SuppressWarnings("UseOfPropertiesAsHashtable") // Build test values (always String -> String)
+    private static void constructConfigs() {
+        producerConfig.put(BOOTSTRAP_SERVERS_CONFIG, TEST_SERVER_URL);
+        producerConfig.put(KEY_SERIALIZER_CLASS_CONFIG, SERIALIZER_NAME);
+        producerConfig.put(VALUE_SERIALIZER_CLASS_CONFIG, SERIALIZER_NAME);
+        producerConfig.put(ACKS_CONFIG, ALL);
+
+        consumerConfig.put(BOOTSTRAP_SERVERS_CONFIG, TEST_SERVER_URL);
+        consumerConfig.put(KEY_DESERIALIZER_CLASS_CONFIG, SERIALIZER_NAME);
+        consumerConfig.put(VALUE_DESERIALIZER_CLASS_CONFIG, SERIALIZER_NAME);
+    }
 
     private KafkaStorageTestEnv() {
         // Prevent utility class instantiation.
@@ -68,8 +72,8 @@ public class KafkaStorageTestEnv {
     private enum StorageFactorySingleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final KafkaStorageFactory value = new KafkaStorageFactory(PRODUCER_CONFIG,
-                                                                          CONSUMER_CONFIG,
+        private final KafkaStorageFactory value = new KafkaStorageFactory(producerConfig,
+                                                                          consumerConfig,
                                                                           STRONG);
     }
 }

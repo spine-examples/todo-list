@@ -33,7 +33,7 @@ import io.spine.server.storage.StorageFactory;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 
-import java.util.Map;
+import java.util.Properties;
 
 import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
@@ -46,14 +46,14 @@ public class KafkaStorageFactory implements StorageFactory {
     private final KafkaWrapper storage;
 
     // TODO:2017-09-04:dmytro.dashenkov: Replace with builder.
-    public KafkaStorageFactory(Map<String, Object> producerConfig,
-                               Map<String, Object> consumerConfig,
+    public KafkaStorageFactory(Properties producerConfig,
+                               Properties consumerConfig,
                                Consistency consistencyLevel) {
         this.storage = createStorage(producerConfig, consumerConfig, consistencyLevel);
     }
 
-    private static KafkaWrapper createStorage(Map<String, Object> producerConfig,
-                                              Map<String, Object> consumerConfig,
+    private static KafkaWrapper createStorage(Properties producerConfig,
+                                              Properties consumerConfig,
                                               Consistency consistencyLevel) {
         final KafkaProducer<Message, Message> producer = new KafkaProducer<>(producerConfig,
                                                                              serializer(),
