@@ -23,6 +23,8 @@ package io.spine.server.storage.kafka;
 /**
  * @author Dmytro Dashenkov
  */
+
+// TODO:2017-09-04:dmytro.dashenkov: Add TopicFactory.
 public interface Topic {
 
     String name();
