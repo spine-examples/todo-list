@@ -45,9 +45,10 @@ public class KafkaStorageFactory implements StorageFactory {
 
     private final KafkaWrapper storage;
 
-    protected KafkaStorageFactory(Map<String, Object> producerConfig,
-                                  Map<String, Object> consumerConfig,
-                                  Consistency consistencyLevel) {
+    // TODO:2017-09-04:dmytro.dashenkov: Replace with builder.
+    public KafkaStorageFactory(Map<String, Object> producerConfig,
+                               Map<String, Object> consumerConfig,
+                               Consistency consistencyLevel) {
         this.storage = createStorage(producerConfig, consumerConfig, consistencyLevel);
     }
 

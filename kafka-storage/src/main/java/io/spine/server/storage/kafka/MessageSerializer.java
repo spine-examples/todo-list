@@ -34,9 +34,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * @author Dmytro Dashenkov
  */
-public enum MessageSerializer implements Serializer<Message>, Deserializer<Message> {
+public class MessageSerializer implements Serializer<Message>, Deserializer<Message> {
 
-    INSTANCE;
+    private MessageSerializer() {
+        // Prevent direct instantiation and insure no parameter ctor (required by Kafka)
+    }
 
     @Override
     public void configure(Map<String, ?> configs, boolean isKey) {
@@ -70,10 +72,16 @@ public enum MessageSerializer implements Serializer<Message>, Deserializer<Messa
     }
 
     public static Serializer<Message> serializer() {
-        return INSTANCE;
+        return Default.INSTANCE.value;
     }
 
     public static Deserializer<Message> deserializer() {
-        return INSTANCE;
+        return Default.INSTANCE.value;
+    }
+
+    private enum Default {
+        INSTANCE;
+        @SuppressWarnings("NonSerializableFieldInSerializableClass")
+        private final MessageSerializer value = new MessageSerializer();
     }
 }
