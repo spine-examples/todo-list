@@ -42,10 +42,8 @@ message Task {
     // Task identifier.
     TaskId id = 1;
 
-    // A description of the task.
-    //
-    // Must contain at least 3 alphanumeric symbols.
-    string description = 2 [(pattern).regex = "(.*?[a-zA-Z0-9]){3,}.*"];
+    // Task description.
+    TaskDescription description = 2;
 
     // Task priority.
     //

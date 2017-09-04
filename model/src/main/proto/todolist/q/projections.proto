@@ -35,6 +35,7 @@ import "google/protobuf/timestamp.proto";
 
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
+import "todolist/values.proto";
 
 // A projection state of created tasks.
 //
@@ -108,7 +109,7 @@ message TaskItem {
     TaskId id = 1;
 
     // Task description.
-    string description = 2;
+    TaskDescription description = 2;
 
     // Task priority.
     TaskPriority priority = 3;

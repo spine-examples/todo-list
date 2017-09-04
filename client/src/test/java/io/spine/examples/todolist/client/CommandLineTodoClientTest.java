@@ -43,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 import static io.spine.Identifier.newUuid;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
+import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 
@@ -51,7 +52,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIP
  */
 abstract class CommandLineTodoClientTest {
 
-    static final String UPDATED_TASK_DESCRIPTION = "New task description.";
+    static final String UPDATED_TASK_DESCRIPTION = "Updated.";
     private static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
 
     private Server server;
@@ -104,7 +105,7 @@ abstract class CommandLineTodoClientTest {
     static CreateBasicTask createBasicTask() {
         return CommandBuilder.task()
                              .createTask()
-                             .setDescription(DESCRIPTION)
+                             .setDescription(newDescription(DESCRIPTION))
                              .build();
     }
 

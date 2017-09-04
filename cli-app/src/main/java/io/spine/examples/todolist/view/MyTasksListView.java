@@ -104,7 +104,8 @@ public class MyTasksListView extends ActionListView {
     @VisibleForTesting
     static TransitionActionProducer<MyTasksListView, TaskView>
     newOpenTaskViewProducer(TaskItem task, int viewIndex) {
-        final String name = task.getDescription();
+        final String name = task.getDescription()
+                                .getValue();
         final String shortcutValue = valueOf(viewIndex + 1);
         final Shortcut shortcut = new Shortcut(shortcutValue);
         final TaskView destination = new TaskView(task.getId());

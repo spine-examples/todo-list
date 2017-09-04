@@ -144,13 +144,3 @@ message CannotFinalizeDraft {
     // Failed the draft finalization.
     FinalizeDraftFailed finalize_draft_failed = 1;
 }
-
-// The failure to update a task description.
-//
-// It is thrown if an attempt is made to update the description
-// when the suggested description has less than three symbols.
-message CannotUpdateTaskWithInappropriateDescription {
-
-    // Failed the description update.
-    DescriptionUpdateFailed update_failed = 1;
-}

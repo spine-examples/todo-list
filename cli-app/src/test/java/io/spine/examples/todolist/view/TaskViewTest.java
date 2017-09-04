@@ -26,6 +26,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
+import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.view.DateFormatter.format;
 import static io.spine.examples.todolist.view.TaskView.DESCRIPTION_VALUE;
 import static io.spine.examples.todolist.view.TaskView.DUE_DATE_VALUE;
@@ -42,7 +43,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class TaskViewTest {
 
     private final TaskItem task = TaskItem.newBuilder()
-                                          .setDescription("my task description")
+                                          .setDescription(newDescription("my task description"))
                                           .setPriority(NORMAL)
                                           .setDueDate(getCurrentTime())
                                           .build();

@@ -33,7 +33,6 @@ import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskWithInappropriateDescription;
 import io.spine.examples.todolist.c.failures.Rejections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,7 +72,8 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId);
         final List<? extends Message> messageList = dispatchCommand(aggregate,
-                                                             envelopeOf(updateTaskDescriptionCmd));
+                                                                    envelopeOf(
+                                                                            updateTaskDescriptionCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDescriptionUpdated.class, messageList.get(0)
                                                               .getClass());
@@ -84,19 +84,6 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         final String newDescription = taskDescriptionUpdated.getDescriptionChange()
                                                             .getNewValue();
         assertEquals(DESCRIPTION, newDescription);
-    }
-
-    @Test
-    @DisplayName("throw CannotUpdateTaskWithInappropriateDescription failure " +
-            "upon an attempt to update the task by too short description")
-    void cannotUpdateTaskDescription() {
-        final UpdateTaskDescription updateTaskDescriptionCmd =
-                updateTaskDescriptionInstance(taskId, "", ".");
-        final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate,
-                                                        envelopeOf(updateTaskDescriptionCmd)));
-        assertThat(Throwables.getRootCause(t),
-                   instanceOf(CannotUpdateTaskWithInappropriateDescription.class));
     }
 
     @Test
@@ -111,7 +98,8 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId);
         Throwable t = assertThrows(Throwable.class,
-                                   () -> dispatchCommand(aggregate, envelopeOf(updateTaskDescriptionCmd)));
+                                   () -> dispatchCommand(aggregate,
+                                                         envelopeOf(updateTaskDescriptionCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDescription.class));
     }
 
@@ -127,7 +115,8 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(taskId);
         Throwable t = assertThrows(Throwable.class,
-                                   () -> dispatchCommand(aggregate, envelopeOf(updateTaskDescriptionCmd)));
+                                   () -> dispatchCommand(aggregate,
+                                                         envelopeOf(updateTaskDescriptionCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDescription.class));
     }
 
@@ -143,7 +132,8 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         final Task state = aggregate.getState();
 
         assertEquals(taskId, state.getId());
-        assertEquals(newDescription, state.getDescription());
+        assertEquals(newDescription, state.getDescription()
+                                          .getValue());
     }
 
     @Test
@@ -154,12 +144,13 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
 
         final String expectedValue = "expected description";
         final String newValue = "update description";
-        final String actualValue = createBasicTask.getDescription();
-
+        final String actualValue = createBasicTask.getDescription()
+                                                  .getValue();
         final UpdateTaskDescription updateTaskDescription =
                 updateTaskDescriptionInstance(taskId, expectedValue, newValue);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate, envelopeOf(updateTaskDescription)));
+                                         () -> dispatchCommand(aggregate,
+                                                               envelopeOf(updateTaskDescription)));
         final Throwable cause = Throwables.getRootCause(t);
         assertThat(cause, instanceOf(CannotUpdateTaskDescription.class));
 

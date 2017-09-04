@@ -97,7 +97,8 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
 
             final TaskItem taskView = listView.getItems(0);
             assertEquals(TASK_ID, taskView.getId());
-            assertEquals(DESCRIPTION, taskView.getDescription());
+            assertEquals(DESCRIPTION, taskView.getDescription()
+                                              .getValue());
             assertEquals(TASK_PRIORITY, taskView.getPriority());
         }
     }
@@ -162,7 +163,8 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
             final TaskItem view = taskListView.getItemsList()
                                               .get(0);
             assertEquals(expectedTaskId, view.getId());
-            assertEquals(UPDATED_DESCRIPTION, view.getDescription());
+            assertEquals(UPDATED_DESCRIPTION, view.getDescription()
+                                                  .getValue());
         }
 
         @Test
@@ -170,10 +172,9 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
         void notUpdateDescription() {
             taskDraftCreated();
 
-            final String updatedDescription = UPDATED_DESCRIPTION;
-
             final TaskDescriptionUpdated descriptionUpdatedEvent =
-                    taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), updatedDescription);
+                    taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(),
+                                                   UPDATED_DESCRIPTION);
             dispatch(projection, createEvent(descriptionUpdatedEvent));
 
             final TaskListView taskListView = projection.getState()
@@ -183,7 +184,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
             final TaskItem view = taskListView.getItemsList()
                                               .get(0);
             assertEquals(TASK_ID, view.getId());
-            assertNotEquals(updatedDescription, view.getDescription());
+            assertNotEquals(UPDATED_DESCRIPTION, view.getDescription());
         }
     }
 

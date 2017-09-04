@@ -25,6 +25,7 @@ import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
+import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.commands.CompleteTask;
@@ -54,7 +55,7 @@ public class TestTaskCommandFactory {
     public static final LabelId LABEL_ID = LabelId.newBuilder()
                                                   .setValue(newUuid())
                                                   .build();
-    public static final String DESCRIPTION = "Create command description.";
+    public static final String DESCRIPTION = "Task description.";
     public static final Timestamp DUE_DATE = getCurrentTime();
     public static final String UPDATED_LABEL_TITLE = "labelTitle";
 
@@ -79,9 +80,12 @@ public class TestTaskCommandFactory {
      * @return the {@code CreateBasicTask} instance
      */
     public static CreateBasicTask createTaskInstance(TaskId id, String description) {
+        final TaskDescription taskDescription = TaskDescription.newBuilder()
+                                                               .setValue(description)
+                                                               .build();
         final CreateBasicTask result = CreateBasicTask.newBuilder()
                                                       .setId(id)
-                                                      .setDescription(description)
+                                                      .setDescription(taskDescription)
                                                       .build();
         return result;
     }
@@ -92,7 +96,8 @@ public class TestTaskCommandFactory {
      * @return the {@code UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance() {
-        final UpdateTaskDescription result = updateTaskDescriptionInstance(TASK_ID, DESCRIPTION,
+        final UpdateTaskDescription result = updateTaskDescriptionInstance(TASK_ID,
+                                                                           DESCRIPTION,
                                                                            DESCRIPTION);
         return result;
     }
@@ -104,7 +109,8 @@ public class TestTaskCommandFactory {
      * @return the {@code UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId taskId) {
-        final UpdateTaskDescription result = updateTaskDescriptionInstance(taskId, DESCRIPTION,
+        final UpdateTaskDescription result = updateTaskDescriptionInstance(taskId,
+                                                                           DESCRIPTION,
                                                                            DESCRIPTION);
         return result;
     }
@@ -118,16 +124,15 @@ public class TestTaskCommandFactory {
      * @return the {@code UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id,
-            String previousDescription,
-            String newDescription) {
-        final StringChange descriptionChange = StringChange.newBuilder()
-                                                           .setPreviousValue(previousDescription)
-                                                           .setNewValue(newDescription)
-                                                           .build();
+                                                                      String previousDescription,
+                                                                      String newDescription) {
+        final StringChange change = StringChange.newBuilder()
+                                                .setPreviousValue(previousDescription)
+                                                .setNewValue(newDescription)
+                                                .build();
         final UpdateTaskDescription result = UpdateTaskDescription.newBuilder()
                                                                   .setId(id)
-                                                                  .setDescriptionChange(
-                                                                          descriptionChange)
+                                                                  .setDescriptionChange(change)
                                                                   .build();
         return result;
     }
@@ -165,8 +170,8 @@ public class TestTaskCommandFactory {
      * @return {@link UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance(TaskId id,
-            Timestamp previousDueDate,
-            Timestamp updatedDueDate) {
+                                                              Timestamp previousDueDate,
+                                                              Timestamp updatedDueDate) {
         final TimestampChange dueDateChange = TimestampChange.newBuilder()
                                                              .setPreviousValue(previousDueDate)
                                                              .setNewValue(updatedDueDate)
@@ -210,8 +215,8 @@ public class TestTaskCommandFactory {
      * @return the {@code UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskId id,
-            TaskPriority previousPriority,
-            TaskPriority newPriority) {
+                                                                TaskPriority previousPriority,
+                                                                TaskPriority newPriority) {
         final PriorityChange taskPriorityChange = PriorityChange.newBuilder()
                                                                 .setPreviousValue(previousPriority)
                                                                 .setNewValue(newPriority)

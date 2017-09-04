@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.Set;
 
 import static com.google.common.collect.Sets.newHashSet;
+import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.view.MyTasksListView.newOpenTaskViewProducer;
 import static io.spine.examples.todolist.view.MyTasksListView.taskActionProducersFor;
 import static java.util.Collections.nCopies;
@@ -52,7 +53,7 @@ class MyTasksListViewTest {
 
     private Bot bot;
     private final TaskItem taskView = TaskItem.newBuilder()
-                                              .setDescription("task desc")
+                                              .setDescription(newDescription("task desc"))
                                               .build();
 
     @BeforeEach
@@ -102,7 +103,9 @@ class MyTasksListViewTest {
         final TransitionActionProducer<MyTasksListView, TaskView> producer =
                 newOpenTaskViewProducer(taskView, VIEW_INDEX);
 
-        assertEquals(taskView.getDescription(), producer.getName());
+        final String expectedDescription = taskView.getDescription()
+                                                   .getValue();
+        assertEquals(expectedDescription, producer.getName());
         assertEquals(expectedShortcut, producer.getShortcut());
     }
 }

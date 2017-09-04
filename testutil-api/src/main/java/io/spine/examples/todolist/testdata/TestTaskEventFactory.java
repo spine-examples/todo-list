@@ -27,6 +27,7 @@ import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
+import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
@@ -51,8 +52,8 @@ import static io.spine.time.Time.getCurrentTime;
  */
 public class TestTaskEventFactory {
 
-    public static final String UPDATED_DESCRIPTION = "Description updated.";
-    public static final String DESCRIPTION = "task description";
+    public static final String UPDATED_DESCRIPTION = "Updated description.";
+    public static final String DESCRIPTION = "Task description.";
     public static final TaskPriority TASK_PRIORITY = TaskPriority.NORMAL;
     public static final TaskPriority UPDATED_TASK_PRIORITY = TaskPriority.HIGH;
     public static final Timestamp TASK_DUE_DATE = getCurrentTime();
@@ -94,10 +95,9 @@ public class TestTaskEventFactory {
          */
         public static TaskDescriptionUpdated taskDescriptionUpdatedInstance(TaskId id,
                                                                             String description) {
-            final StringChange descriptionChange =
-                    StringChange.newBuilder()
-                                .setNewValue(description)
-                                .build();
+            final StringChange descriptionChange = StringChange.newBuilder()
+                                                               .setNewValue(description)
+                                                               .build();
             final TaskDescriptionUpdated result =
                     TaskDescriptionUpdated.newBuilder()
                                           .setTaskId(id)
@@ -182,10 +182,9 @@ public class TestTaskEventFactory {
          * @param priority    specified task priority
          * @return the {@code TaskCreated} instance
          */
-        public static TaskCreated taskCreatedInstance(String description, TaskPriority priority) {
-            final TaskDetails.Builder details = TaskDetails.newBuilder()
-                                                           .setDescription(description)
-                                                           .setPriority(priority);
+        public static TaskCreated taskCreatedInstance(String description,
+                                                      TaskPriority priority) {
+            final TaskDetails details = newTaskDetails(description, priority);
             final TaskCreated result = TaskCreated.newBuilder()
                                                   .setId(TASK_ID)
                                                   .setDetails(details)
@@ -227,9 +226,7 @@ public class TestTaskEventFactory {
         public static TaskDraftCreated taskDraftCreatedInstance(String description,
                                                                 TaskPriority priority,
                                                                 Timestamp creationTime) {
-            final TaskDetails.Builder details = TaskDetails.newBuilder()
-                                                           .setPriority(priority)
-                                                           .setDescription(description);
+            final TaskDetails details = newTaskDetails(description, priority);
             final TaskDraftCreated result = TaskDraftCreated.newBuilder()
                                                             .setId(TASK_ID)
                                                             .setDetails(details)
@@ -315,6 +312,16 @@ public class TestTaskEventFactory {
                                                                     .setLabelId(LABEL_ID)
                                                                     .build();
             return result;
+        }
+
+        private static TaskDetails newTaskDetails(String description, TaskPriority priority) {
+            final TaskDescription taskDescription = TaskDescription.newBuilder()
+                                                                   .setValue(description)
+                                                                   .build();
+            return TaskDetails.newBuilder()
+                              .setDescription(taskDescription)
+                              .setPriority(priority)
+                              .build();
         }
     }
 }

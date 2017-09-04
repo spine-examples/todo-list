@@ -23,6 +23,7 @@ package io.spine.examples.todolist.q.projection;
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.events.LabelAssignedToTask;
@@ -223,8 +224,11 @@ class ProjectionHelper {
         final TaskId targetTaskId = event.getTaskId();
 
         final TaskTransformation updateFn = builder -> {
-            final String newDescription = event.getDescriptionChange()
-                                               .getNewValue();
+            final String newDescriptionValue = event.getDescriptionChange()
+                                                    .getNewValue();
+            final TaskDescription newDescription = TaskDescription.newBuilder()
+                                                                  .setValue(newDescriptionValue)
+                                                                  .build();
             return builder.setDescription(newDescription);
         };
         return transformWithUpdate(tasks, targetTaskId, updateFn);

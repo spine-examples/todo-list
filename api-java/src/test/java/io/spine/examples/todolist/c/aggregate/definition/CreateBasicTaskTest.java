@@ -20,13 +20,11 @@
 
 package io.spine.examples.todolist.c.aggregate.definition;
 
-import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.events.TaskCreated;
-import io.spine.validate.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,7 +36,6 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Illia Shepilov
@@ -56,7 +53,8 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
     @DisplayName("produce TaskCreated event")
     void produceEvent() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        final List<? extends Message> messageList = dispatchCommand(aggregate, envelopeOf(createTaskCmd));
+        final List<? extends Message> messageList = dispatchCommand(aggregate,
+                                                                    envelopeOf(createTaskCmd));
         assertNotNull(aggregate.getState()
                                .getCreated());
         assertNotNull(aggregate.getId());
@@ -67,7 +65,8 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
 
         assertEquals(taskId, taskCreated.getId());
         assertEquals(DESCRIPTION, taskCreated.getDetails()
-                                             .getDescription());
+                                             .getDescription()
+                                             .getValue());
     }
 
     @Test
@@ -79,20 +78,5 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
         final Task state = aggregate.getState();
         assertEquals(state.getId(), createBasicTask.getId());
         assertEquals(state.getTaskStatus(), TaskStatus.FINALIZED);
-    }
-
-    @Test
-    @DisplayName("does not pass command validation" +
-            "upon an attempt to create task with too short description")
-    void notPassCommandValidation() {
-        final CreateBasicTask createBasicTask = createTaskInstance(taskId, "D");
-
-        final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate, envelopeOf(createBasicTask)));
-        final Throwable rootCause = Throwables.getRootCause(t);
-        final ValidationException validationException = (ValidationException) rootCause;
-        final int violationCount = validationException.getConstraintViolations()
-                                                      .size();
-        assertEquals(1, violationCount);
     }
 }

@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.client.builder;
 
+import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
@@ -70,7 +71,7 @@ public final class TaskBuilder {
          * @param description the description of the command
          * @return the {@code CreateBasicTaskBuilder} instance
          */
-        public CreateBasicTaskBuilder setDescription(String description) {
+        public CreateBasicTaskBuilder setDescription(TaskDescription description) {
             builder.setDescription(description);
             return this;
         }

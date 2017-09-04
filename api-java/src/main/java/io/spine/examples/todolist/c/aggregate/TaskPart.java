@@ -28,6 +28,7 @@ import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.Task;
+import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
@@ -64,7 +65,6 @@ import io.spine.examples.todolist.c.failures.CannotRestoreDeletedTask;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskDueDate;
 import io.spine.examples.todolist.c.failures.CannotUpdateTaskPriority;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskWithInappropriateDescription;
 import io.spine.server.aggregate.AggregatePart;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
@@ -90,7 +90,6 @@ import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.U
 import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate;
 import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTaskPriority;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTooShortDescription;
 import static io.spine.time.Time.getCurrentTime;
 import static io.spine.time.Timestamps2.compare;
 import static java.util.Collections.singletonList;
@@ -113,8 +112,10 @@ public class TaskPart extends AggregatePart<TaskId,
                                             TaskVBuilder,
                                             TaskAggregateRoot> {
 
-    private static final int MIN_DESCRIPTION_LENGTH = 3;
-    private static final String DEFAULT_DRAFT_DESCRIPTION = "Task description goes here.";
+    private static final TaskDescription DEFAULT_DRAFT_DESCRIPTION =
+            TaskDescription.newBuilder()
+                           .setValue("Task description goes here.")
+                           .build();
 
     /**
      * {@inheritDoc}
@@ -138,20 +139,21 @@ public class TaskPart extends AggregatePart<TaskId,
     }
 
     @Assign
-    List<? extends Message> handle(UpdateTaskDescription cmd)
-            throws CannotUpdateTaskDescription, CannotUpdateTaskWithInappropriateDescription {
-        validateCommand(cmd);
-        final Task state = getState();
-        final StringChange change = cmd.getDescriptionChange();
+    List<? extends Message> handle(UpdateTaskDescription cmd) throws CannotUpdateTaskDescription {
+        boolean isValid = ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
+        if (!isValid) {
+            throwCannotUpdateTaskDescription(cmd);
+        }
 
-        final String actualDescription = state.getDescription();
-        final String expectedDescription = change.getPreviousValue();
+        final StringChange descriptionChange = cmd.getDescriptionChange();
+        final String actualDescription = getState().getDescription()
+                                                   .getValue();
+        final String expectedDescription = descriptionChange.getPreviousValue();
         final boolean isEquals = actualDescription.equals(expectedDescription);
 
         if (!isEquals) {
-            final String newDescription = change.getNewValue();
             final ValueMismatch mismatch = unexpectedValue(expectedDescription, actualDescription,
-                                                           newDescription);
+                                                           descriptionChange.getNewValue());
             throwCannotUpdateDescription(cmd, mismatch);
         }
 
@@ -159,7 +161,7 @@ public class TaskPart extends AggregatePart<TaskId,
         final TaskDescriptionUpdated taskDescriptionUpdated =
                 TaskDescriptionUpdated.newBuilder()
                                       .setTaskId(taskId)
-                                      .setDescriptionChange(change)
+                                      .setDescriptionChange(descriptionChange)
                                       .build();
         return singletonList(taskDescriptionUpdated);
     }
@@ -362,8 +364,11 @@ public class TaskPart extends AggregatePart<TaskId,
 
     @Apply
     private void taskDescriptionUpdated(TaskDescriptionUpdated event) {
-        final String newDescription = event.getDescriptionChange()
-                                           .getNewValue();
+        final String newDescriptionValue = event.getDescriptionChange()
+                                                .getNewValue();
+        final TaskDescription newDescription = TaskDescription.newBuilder()
+                                                              .setValue(newDescriptionValue)
+                                                              .build();
         getBuilder().setDescription(newDescription);
     }
 
@@ -418,21 +423,5 @@ public class TaskPart extends AggregatePart<TaskId,
                     .setDescription(event.getDetails()
                                          .getDescription())
                     .setTaskStatus(TaskStatus.DRAFT);
-    }
-
-    private void validateCommand(UpdateTaskDescription cmd)
-            throws CannotUpdateTaskDescription, CannotUpdateTaskWithInappropriateDescription {
-        final String description = cmd.getDescriptionChange()
-                                      .getNewValue();
-
-        if (description != null && description.length() < MIN_DESCRIPTION_LENGTH) {
-            throwCannotUpdateTooShortDescription(cmd);
-        }
-
-        boolean isValid = ensureNeitherCompletedNorDeleted(getState().getTaskStatus());
-
-        if (!isValid) {
-            throwCannotUpdateTaskDescription(cmd);
-        }
     }
 }
