@@ -23,12 +23,12 @@ package io.spine.server.storage.kafka;
 import com.google.protobuf.Message;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.AggregateStorage;
+import io.spine.server.entity.AbstractEntity;
 import io.spine.server.entity.Entity;
 import io.spine.server.entity.storage.ColumnTypeRegistry;
 import io.spine.server.projection.Projection;
 import io.spine.server.projection.ProjectionStorage;
 import io.spine.server.stand.StandStorage;
-import io.spine.server.storage.RecordStorage;
 import io.spine.server.storage.StorageFactory;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -77,24 +77,27 @@ public class KafkaStorageFactory implements StorageFactory {
 
     @Override
     public StandStorage createStandStorage() {
-        return null;
+        final KafkaRecordStorage<Message> delegate = createRecordStorage(StandStorageRecord.class);
+        return new KafkaStandStorage(delegate, isMultitenant());
     }
 
     @Override
-    public <I> AggregateStorage<I> createAggregateStorage(
-            Class<? extends Aggregate<I, ?, ?>> aggregateClass) {
+    public <I> AggregateStorage<I>
+    createAggregateStorage(Class<? extends Aggregate<I, ?, ?>> aggregateClass) {
         return new KafkaAggregateStorage<>(aggregateClass, storage, isMultitenant());
     }
 
     @Override
-    public <I> RecordStorage<I> createRecordStorage(Class<? extends Entity<I, ?>> entityClass) {
-        return null;
+    public <I> KafkaRecordStorage<I>
+    createRecordStorage(Class<? extends Entity<I, ?>> entityClass) {
+        return new KafkaRecordStorage<>(isMultitenant());
     }
 
     @Override
     public <I> ProjectionStorage<I> createProjectionStorage(
             Class<? extends Projection<I, ?, ?>> projectionClass) {
-        return null;
+        final KafkaRecordStorage<I> recordStorage = createRecordStorage(projectionClass);
+        return new KafkaProjectionStorage<>(recordStorage, isMultitenant());
     }
 
     @Override
@@ -105,5 +108,12 @@ public class KafkaStorageFactory implements StorageFactory {
     @Override
     public void close() throws Exception {
 
+    }
+
+    private static class StandStorageRecord extends AbstractEntity<Message, Message> {
+
+        protected StandStorageRecord(Message id) {
+            super(id);
+        }
     }
 }
