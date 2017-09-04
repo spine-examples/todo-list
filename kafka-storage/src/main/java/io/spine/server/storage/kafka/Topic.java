@@ -20,12 +20,36 @@
 
 package io.spine.server.storage.kafka;
 
+import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_AGGREGATE_RECORD;
+import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_ENTITY_RECORD;
+import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_EVENT_COUNT_AFTER_SNAPSHOT;
+import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_LAST_HANDLED_EVENT_TIME;
+import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_LIFECYCLE_FLAGS;
+
 /**
  * @author Dmytro Dashenkov
  */
-
-// TODO:2017-09-04:dmytro.dashenkov: Add TopicFactory.
 public interface Topic {
 
     String name();
+
+    static Topic forRecord(Class<?> ofType, Object withId) {
+        return FOR_ENTITY_RECORD.create(ofType, withId);
+    }
+
+    static Topic forAggregateRecord(Class<?> ofType, Object withId) {
+        return FOR_AGGREGATE_RECORD.create(ofType, withId);
+    }
+
+    static Topic forLifecycleFlags(Class<?> ofType, Object withId) {
+        return FOR_LIFECYCLE_FLAGS.create(ofType, withId);
+    }
+
+    static Topic forEventCountAfterSnapshot(Class<?> ofType, Object withId) {
+        return FOR_EVENT_COUNT_AFTER_SNAPSHOT.create(ofType, withId);
+    }
+
+    static Topic forLastHandledEventTime(Class<?> ofType, Object withId) {
+        return FOR_LAST_HANDLED_EVENT_TIME.create(ofType, withId);
+    }
 }
