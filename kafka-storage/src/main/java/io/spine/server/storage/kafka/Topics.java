@@ -23,6 +23,10 @@ package io.spine.server.storage.kafka;
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import io.spine.string.Stringifiers;
+import io.spine.type.TypeName;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Dmytro Dashenkov
@@ -30,21 +34,35 @@ import io.spine.string.Stringifiers;
 final class Topics {
 
     private static final char SEPARATOR = '_';
+    private static final Pattern VALID_TOPIC_CHAR = Pattern.compile("[a-zA-Z0-9._\\-]+");
 
     private Topics() {
         // Prevent utility class instantiation.
+    }
+
+    private static String escape(String topic) {
+        final Matcher matcher = VALID_TOPIC_CHAR.matcher(topic);
+        if (matcher.matches()) {
+            return topic;
+        }
+        final StringBuilder result = new StringBuilder(topic.length());
+        while (matcher.find()) {
+            final String group = matcher.group();
+            result.append(group);
+        }
+        return result.toString();
     }
 
     private abstract static class AbstractTopic implements Topic {
 
         @Override
         public String toString() {
-            return name();
+            return getName();
         }
 
         @Override
         public int hashCode() {
-            return name().hashCode();
+            return getName().hashCode();
         }
 
         @Override
@@ -56,7 +74,7 @@ final class Topics {
                 return true;
             }
             final Topic other = (Topic) obj;
-            return Objects.equal(name(), other.name());
+            return Objects.equal(getName(), other.getName());
         }
     }
 
@@ -84,16 +102,32 @@ final class Topics {
         }
     }
 
-    private static final class ValueTopic extends AbstractTopic {
+    static final class TypeTopic extends AbstractTopic {
+
+        private static final String PREFIX = "_TYPE_";
 
         private final String value;
 
-        private ValueTopic(String value) {
-            this.value = value;
+        TypeTopic(TypeName type) {
+            this.value = PREFIX + type;
         }
 
         @Override
-        public String name() {
+        public String getName() {
+            return value;
+        }
+    }
+
+    static final class ValueTopic extends AbstractTopic {
+
+        private final String value;
+
+        ValueTopic(String value) {
+            this.value = escape(value);
+        }
+
+        @Override
+        public String getName() {
             return value;
         }
     }
