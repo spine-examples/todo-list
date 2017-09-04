@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.q.projection;
 
-import io.spine.annotation.Subscribe;
-import io.spine.base.EventContext;
+import io.spine.core.EventContext;
+import io.spine.core.Subscribe;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
@@ -43,7 +43,7 @@ import io.spine.server.projection.Projection;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.spine.base.Identifier.newUuid;
+import static io.spine.Identifier.newUuid;
 import static io.spine.examples.todolist.EnrichmentHelper.getEnrichment;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskListView;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;

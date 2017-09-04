@@ -39,8 +39,8 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 
-import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
+import static io.spine.Identifier.newUuid;
 import static io.spine.time.Time.getCurrentTime;
 
 /**

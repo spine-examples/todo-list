@@ -32,7 +32,7 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 
-import static io.spine.base.Identifier.newUuid;
+import static io.spine.Identifier.newUuid;
 import static io.spine.cli.action.EditCommandAction.editCommandActionProducer;
 import static io.spine.examples.todolist.AppConfig.getClient;
 import static java.util.Collections.singletonList;

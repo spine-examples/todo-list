@@ -20,16 +20,11 @@
 
 package io.spine.examples.todolist.c.aggregate;
 
-import com.google.protobuf.Timestamp;
-import io.spine.base.Version;
-import io.spine.change.StringMismatch;
 import io.spine.change.ValueMismatch;
-import io.spine.examples.todolist.LabelDetails;
+import io.spine.core.Version;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.TaskPriorityValue;
 import io.spine.protobuf.AnyPacker;
-
-import static com.google.protobuf.Any.pack;
 
 /**
  * Utility class for working with mismatches.

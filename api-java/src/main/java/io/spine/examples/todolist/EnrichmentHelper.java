@@ -22,8 +22,8 @@ package io.spine.examples.todolist;
 
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
-import io.spine.base.Enrichments;
-import io.spine.base.EventContext;
+import io.spine.core.Enrichments;
+import io.spine.core.EventContext;
 
 /**
  * Utility class for working with enrichments.
