@@ -20,10 +20,8 @@
 
 package io.spine.server.storage.kafka;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.protobuf.UInt32Value;
-import io.spine.Identifier;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.AggregateEventRecord;
 import io.spine.server.aggregate.AggregateStorage;
@@ -51,7 +49,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     protected int readEventCountAfterLastSnapshot(I id) {
-        final Topic topic = new EventCountTopic(id, aggregateClass);
+        final Topic topic = Topic.forEventCountAfterSnapshot(aggregateClass, id);
         final int eventCount = storage.<UInt32Value>readLast(topic)
                                       .map(UInt32Value::getValue)
                                       .orElse(0);
@@ -60,7 +58,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     protected void writeEventCountAfterLastSnapshot(I id, int eventCount) {
-        final Topic topic = new EventCountTopic(id, aggregateClass);
+        final Topic topic = Topic.forEventCountAfterSnapshot(aggregateClass, id);
         final UInt32Value msg = UInt32Value.newBuilder()
                                            .setValue(eventCount)
                                            .build();
@@ -69,20 +67,20 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     protected void writeRecord(I id, AggregateEventRecord record) {
-        final Topic topic = new AggregateRecordTopic(id, aggregateClass);
+        final Topic topic = Topic.forAggregateRecord(aggregateClass, id);
         storage.write(topic, id, record);
     }
 
     @Override
     protected Iterator<AggregateEventRecord> historyBackward(I id) {
-        final Topic topic = new AggregateRecordTopic(id, aggregateClass);
+        final Topic topic = Topic.forAggregateRecord(aggregateClass, id);
         return storage.read(topic);
     }
 
     @SuppressWarnings("Guava") // Spine API for Java 7.
     @Override
     public Optional<LifecycleFlags> readLifecycleFlags(I id) {
-        final Topic topic = new LifecycleFlagsTopic(id, aggregateClass);
+        final Topic topic = Topic.forLifecycleFlags(aggregateClass, id);
         final LifecycleFlags result = storage.<LifecycleFlags>readLast(topic)
                                              .orElse(null);
         return fromNullable(result);
@@ -90,132 +88,12 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     public void writeLifecycleFlags(I id, LifecycleFlags flags) {
-        final Topic topic = new LifecycleFlagsTopic(id, aggregateClass);
+        final Topic topic = Topic.forLifecycleFlags(aggregateClass, id);
         storage.write(topic, id, flags);
     }
 
     @Override
     public Iterator<I> index() {
-        return null;
-    }
-
-    private static class EventCountTopic implements Topic {
-
-        private static final String PREFIX = "event_count_als_";
-
-        private final String topic;
-
-        private EventCountTopic(Object id, Class<?> type) {
-            this.topic = PREFIX
-                    + type.getName()
-                    + Identifier.toString(id);
-        }
-
-        @Override
-        public String name() {
-            return topic;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            EventCountTopic that = (EventCountTopic) o;
-            return Objects.equal(topic, that.topic);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(topic);
-        }
-
-        @Override
-        public String toString() {
-            return name();
-        }
-    }
-
-    private static class LifecycleFlagsTopic implements Topic {
-
-        private static final String PREFIX = "agg_lifecycle_";
-
-        private final String topic;
-
-        private LifecycleFlagsTopic(Object id, Class<?> type) {
-            this.topic = PREFIX
-                    + type.getName()
-                    + Identifier.toString(id);
-        }
-
-        @Override
-        public String name() {
-            return topic;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            EventCountTopic that = (EventCountTopic) o;
-            return Objects.equal(topic, that.topic);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(topic);
-        }
-
-        @Override
-        public String toString() {
-            return name();
-        }
-    }
-
-    private static class AggregateRecordTopic implements Topic {
-
-        private static final String PREFIX = "aggregate_";
-
-        private final String topic;
-
-        private AggregateRecordTopic(Object id, Class<?> type) {
-            this.topic = PREFIX
-                    + type.getName()
-                    + Identifier.toString(id);
-        }
-
-        @Override
-        public String name() {
-            return topic;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            EventCountTopic that = (EventCountTopic) o;
-            return Objects.equal(topic, that.topic);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(topic);
-        }
-
-        @Override
-        public String toString() {
-            return name();
-        }
+        throw new UnsupportedOperationException("Method index unimplemented!");
     }
 }

@@ -20,7 +20,6 @@
 
 package io.spine.server.storage.kafka;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.Message;
@@ -30,7 +29,6 @@ import io.spine.server.entity.FieldMasks;
 import io.spine.server.entity.storage.EntityQuery;
 import io.spine.server.entity.storage.EntityRecordWithColumns;
 import io.spine.server.storage.RecordStorage;
-import io.spine.string.Stringifiers;
 import io.spine.type.TypeUrl;
 
 import java.util.Iterator;
@@ -66,7 +64,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
     @SuppressWarnings("Guava") // Spine Java 7 API
     @Override
     protected Optional<EntityRecord> readRecord(I id) {
-        final Topic topic = new RecordTopic(entityClass, id);
+        final Topic topic = Topic.forRecord(entityClass, id);
         final EntityRecord record = storage.<EntityRecord>readLast(topic).orElse(null);
         return fromNullable(record);
     }
@@ -109,7 +107,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
 
     @Override
     protected void writeRecord(I id, EntityRecordWithColumns record) {
-        final Topic topic = new RecordTopic(entityClass, id);
+        final Topic topic = Topic.forRecord(entityClass, id);
         storage.write(topic, id, record.getRecord());
     }
 
@@ -133,43 +131,5 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
                                                     .build();
             return result;
         };
-    }
-
-    private static class RecordTopic implements Topic {
-
-        private static final String PREFIX = "entityRecord_";
-
-        private final String value;
-
-        private RecordTopic(Class<?> type, Object id) {
-            this.value = PREFIX + type.getName() + Stringifiers.toString(id);
-        }
-
-        @Override
-        public String name() {
-            return value;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            RecordTopic that = (RecordTopic) o;
-            return Objects.equal(value, that.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(value);
-        }
-
-        @Override
-        public String toString() {
-            return name();
-        }
     }
 }
