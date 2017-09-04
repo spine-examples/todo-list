@@ -21,11 +21,11 @@
 package io.spine.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
+import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.TaskDescription;
-import io.spine.examples.todolist.TaskDescriptionChange;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.commands.CompleteTask;
@@ -39,7 +39,6 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 
-import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.Identifier.newUuid;
 import static io.spine.time.Time.getCurrentTime;
 
@@ -56,7 +55,7 @@ public class TestTaskCommandFactory {
     public static final LabelId LABEL_ID = LabelId.newBuilder()
                                                   .setValue(newUuid())
                                                   .build();
-    public static final TaskDescription DESCRIPTION = newDescription("Task description.");
+    public static final String DESCRIPTION = "Task description.";
     public static final Timestamp DUE_DATE = getCurrentTime();
     public static final String UPDATED_LABEL_TITLE = "labelTitle";
 
@@ -80,10 +79,13 @@ public class TestTaskCommandFactory {
      * @param description a description of the updated task
      * @return the {@code CreateBasicTask} instance
      */
-    public static CreateBasicTask createTaskInstance(TaskId id, TaskDescription description) {
+    public static CreateBasicTask createTaskInstance(TaskId id, String description) {
+        final TaskDescription taskDescription = TaskDescription.newBuilder()
+                                                               .setValue(description)
+                                                               .build();
         final CreateBasicTask result = CreateBasicTask.newBuilder()
                                                       .setId(id)
-                                                      .setDescription(description)
+                                                      .setDescription(taskDescription)
                                                       .build();
         return result;
     }
@@ -94,7 +96,8 @@ public class TestTaskCommandFactory {
      * @return the {@code UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance() {
-        final UpdateTaskDescription result = updateTaskDescriptionInstance(TASK_ID, DESCRIPTION,
+        final UpdateTaskDescription result = updateTaskDescriptionInstance(TASK_ID,
+                                                                           DESCRIPTION,
                                                                            DESCRIPTION);
         return result;
     }
@@ -106,7 +109,8 @@ public class TestTaskCommandFactory {
      * @return the {@code UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId taskId) {
-        final UpdateTaskDescription result = updateTaskDescriptionInstance(taskId, DESCRIPTION,
+        final UpdateTaskDescription result = updateTaskDescriptionInstance(taskId,
+                                                                           DESCRIPTION,
                                                                            DESCRIPTION);
         return result;
     }
@@ -114,18 +118,18 @@ public class TestTaskCommandFactory {
     /**
      * Provides the {@link UpdateTaskDescription} instance by description and task ID specified.
      *
-     * @param id             an identifier of the updated task
-     * @param previous       the previous description of the task
-     * @param newDescription the description of the updated task
+     * @param id                  an identifier of the updated task
+     * @param previousDescription the previous description of the task
+     * @param newDescription      the description of the updated task
      * @return the {@code UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id,
-                                                                      TaskDescription previous,
-                                                                      TaskDescription newDescription) {
-        final TaskDescriptionChange change = TaskDescriptionChange.newBuilder()
-                                                                  .setPreviousDescription(previous)
-                                                                  .setNewDescription(newDescription)
-                                                                  .build();
+                                                                      String previousDescription,
+                                                                      String newDescription) {
+        final StringChange change = StringChange.newBuilder()
+                                                .setPreviousValue(previousDescription)
+                                                .setNewValue(newDescription)
+                                                .build();
         final UpdateTaskDescription result = UpdateTaskDescription.newBuilder()
                                                                   .setId(id)
                                                                   .setDescriptionChange(change)

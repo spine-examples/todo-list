@@ -94,7 +94,9 @@ class CreateBasicTaskTest extends CommandLineTodoClientTest {
 
         assertTrue(taskIds.contains(createFirstTask.getId()));
         assertTrue(taskIds.contains(createSecondTask.getId()));
-        assertEquals(DESCRIPTION, firstView.getDescription());
-        assertEquals(DESCRIPTION, secondView.getDescription());
+        assertEquals(DESCRIPTION, firstView.getDescription()
+                                           .getValue());
+        assertEquals(DESCRIPTION, secondView.getDescription()
+                                            .getValue());
     }
 }

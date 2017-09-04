@@ -22,13 +22,13 @@ package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
+import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskDescription;
-import io.spine.examples.todolist.TaskDescriptionChange;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
@@ -145,14 +145,15 @@ public class TaskPart extends AggregatePart<TaskId,
             throwCannotUpdateTaskDescription(cmd);
         }
 
-        final TaskDescriptionChange change = cmd.getDescriptionChange();
-        final TaskDescription actualDescription = getState().getDescription();
-        final TaskDescription expectedDescription = change.getPreviousDescription();
+        final StringChange descriptionChange = cmd.getDescriptionChange();
+        final String actualDescription = getState().getDescription()
+                                                   .getValue();
+        final String expectedDescription = descriptionChange.getPreviousValue();
         final boolean isEquals = actualDescription.equals(expectedDescription);
 
         if (!isEquals) {
             final ValueMismatch mismatch = unexpectedValue(expectedDescription, actualDescription,
-                                                           change.getNewDescription());
+                                                           descriptionChange.getNewValue());
             throwCannotUpdateDescription(cmd, mismatch);
         }
 
@@ -160,7 +161,7 @@ public class TaskPart extends AggregatePart<TaskId,
         final TaskDescriptionUpdated taskDescriptionUpdated =
                 TaskDescriptionUpdated.newBuilder()
                                       .setTaskId(taskId)
-                                      .setDescriptionChange(change)
+                                      .setDescriptionChange(descriptionChange)
                                       .build();
         return singletonList(taskDescriptionUpdated);
     }
@@ -363,8 +364,11 @@ public class TaskPart extends AggregatePart<TaskId,
 
     @Apply
     private void taskDescriptionUpdated(TaskDescriptionUpdated event) {
-        final TaskDescription newDescription = event.getDescriptionChange()
-                                                    .getNewDescription();
+        final String newDescriptionValue = event.getDescriptionChange()
+                                                .getNewValue();
+        final TaskDescription newDescription = TaskDescription.newBuilder()
+                                                              .setValue(newDescriptionValue)
+                                                              .build();
         getBuilder().setDescription(newDescription);
     }
 

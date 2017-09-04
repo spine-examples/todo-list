@@ -26,30 +26,19 @@ import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.examples.todolist";
 option java_package = "io.spine.examples.todolist";
-option java_outer_classname = "ChangesProto";
+option java_outer_classname = "ValidationRulesProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
+// A validation rule for a task description change.
+//
+// Target type is `StringChange`.
+message DescriptionChangeRule {
+    option (validation_of) = "spine.examples.todolist.UpdateTaskDescription.description_change,"
+                             "spine.examples.todolist.TaskDescriptionUpdated.description_change";
 
-import "todolist/attributes.proto";
-import "todolist/values.proto";
-
-// Definition of a change in a task priority field.
-message PriorityChange {
-
-    // The value of the priority that's changing.
-    TaskPriority previous_value = 1;
-
-    // The new value of the priority.
-    TaskPriority new_value = 2;
-}
-
-// Definition of a change in a label details field.
-message LabelDetailsChange {
-
-    // The value of the label details that's changing.
-    LabelDetails previous_details = 1;
-
-    // The new value of the label details.
-    LabelDetails new_details = 2;
+    // The new value of the task description.
+    //
+    // Must contain at least 3 alphanumeric symbols.
+    string new_value = 2 [(pattern).regex = "(.*?[a-zA-Z0-9]){3,}.*"];
 }

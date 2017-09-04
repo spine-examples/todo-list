@@ -101,7 +101,8 @@ class MyListViewProjectionTest extends ProjectionTest {
 
             final TaskItem view = views.get(0);
             assertEquals(TASK_PRIORITY, view.getPriority());
-            assertEquals(DESCRIPTION, view.getDescription());
+            assertEquals(DESCRIPTION, view.getDescription()
+                                          .getValue());
         }
     }
 
@@ -149,7 +150,8 @@ class MyListViewProjectionTest extends ProjectionTest {
             final TaskItem view = taskListView.getItemsList()
                                               .get(0);
             assertEquals(expectedTaskId, view.getId());
-            assertEquals(UPDATED_DESCRIPTION, view.getDescription());
+            assertEquals(UPDATED_DESCRIPTION, view.getDescription()
+                                                  .getValue());
         }
 
         @Test
@@ -159,7 +161,8 @@ class MyListViewProjectionTest extends ProjectionTest {
             dispatch(projection, createEvent(taskCreatedEvent));
 
             final TaskDescriptionUpdated descriptionUpdatedEvent =
-                    taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(), UPDATED_DESCRIPTION);
+                    taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(),
+                                                   UPDATED_DESCRIPTION);
             dispatch(projection, createEvent(descriptionUpdatedEvent));
 
             final TaskListView taskListView = projection.getState()
@@ -380,7 +383,8 @@ class MyListViewProjectionTest extends ProjectionTest {
 
             final TaskItem taskView = taskListView.getItems(0);
             assertEquals(TASK_ID, taskView.getId());
-            assertEquals(DESCRIPTION, taskView.getDescription());
+            assertEquals(DESCRIPTION, taskView.getDescription()
+                                              .getValue());
             assertEquals(TASK_PRIORITY, taskView.getPriority());
             assertEquals(TASK_DUE_DATE, taskView.getDueDate());
         }

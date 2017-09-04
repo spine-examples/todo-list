@@ -53,7 +53,8 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
     @DisplayName("produce TaskCreated event")
     void produceEvent() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
-        final List<? extends Message> messageList = dispatchCommand(aggregate, envelopeOf(createTaskCmd));
+        final List<? extends Message> messageList = dispatchCommand(aggregate,
+                                                                    envelopeOf(createTaskCmd));
         assertNotNull(aggregate.getState()
                                .getCreated());
         assertNotNull(aggregate.getId());
@@ -64,7 +65,8 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
 
         assertEquals(taskId, taskCreated.getId());
         assertEquals(DESCRIPTION, taskCreated.getDetails()
-                                             .getDescription());
+                                             .getDescription()
+                                             .getValue());
     }
 
     @Test

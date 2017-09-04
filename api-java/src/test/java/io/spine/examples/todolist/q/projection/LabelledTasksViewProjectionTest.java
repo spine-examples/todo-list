@@ -207,7 +207,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
             listView = getProjectionState()
-                                 .getLabelledTasks();
+                    .getLabelledTasks();
 
             actualListSize = listView.getItemsCount();
             expectedListSize = 2;
@@ -268,7 +268,8 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             assertEquals(1, actualListSize);
 
             final TaskItem taskView = listView.getItems(0);
-            assertEquals(UPDATED_DESCRIPTION, taskView.getDescription());
+            assertEquals(UPDATED_DESCRIPTION, taskView.getDescription()
+                                                      .getValue());
         }
 
         @Test

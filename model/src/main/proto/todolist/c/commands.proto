@@ -71,8 +71,8 @@ message UpdateTaskDescription {
     // An identifier of the target task.
     TaskId id = 1;
 
-    // The description change.
-    TaskDescriptionChange description_change = 2 [(required) = true];
+    // The change of the task description.
+    change.StringChange description_change = 2 [(valid) = true];
 
     // Reserved for future extension.
     reserved 3 to 10;

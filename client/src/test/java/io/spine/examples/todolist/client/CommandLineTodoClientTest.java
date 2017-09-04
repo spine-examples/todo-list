@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -53,7 +52,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIP
  */
 abstract class CommandLineTodoClientTest {
 
-    static final TaskDescription UPDATED_TASK_DESCRIPTION = newDescription("Updated.");
+    static final String UPDATED_TASK_DESCRIPTION = "Updated.";
     private static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
 
     private Server server;
@@ -106,7 +105,7 @@ abstract class CommandLineTodoClientTest {
     static CreateBasicTask createBasicTask() {
         return CommandBuilder.task()
                              .createTask()
-                             .setDescription(DESCRIPTION)
+                             .setDescription(newDescription(DESCRIPTION))
                              .build();
     }
 
