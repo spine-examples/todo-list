@@ -112,7 +112,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
     @Override
     protected void writeRecord(I id, EntityRecordWithColumns record) {
         final Topic topic = Topic.forRecord(entityClass, id);
-        storage.write(topic, id, record.getRecord());
+        storage.write(entityClass, topic, record.getRecord());
     }
 
     @Override
@@ -124,6 +124,14 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
     @Override
     public Iterator<I> index() {
         throw new UnsupportedOperationException("Method index unimplemented!");
+    }
+
+    KafkaWrapper getKafkaStorage() {
+        return storage;
+    }
+
+    Class<? extends Entity> getEntityClass() {
+        return entityClass;
     }
 
     private static Function<EntityRecord, EntityRecord> maskState(FieldMask fieldMask) {

@@ -82,7 +82,6 @@ final class Topics {
 
         FOR_ENTITY_RECORD("entity"),
         FOR_AGGREGATE_RECORD("agg_record"),
-        FOR_LAST_HANDLED_EVENT_TIME("lhet"),
         FOR_LIFECYCLE_FLAGS("lifecycle"),
         FOR_EVENT_COUNT_AFTER_SNAPSHOT("event_count_als");
 
@@ -99,6 +98,22 @@ final class Topics {
                                              Stringifiers.toString(withId));
             final Topic result = new ValueTopic(value);
             return result;
+        }
+    }
+
+    static final class LastHandledEventTimeTopic extends AbstractTopic {
+
+        private static final String PREFIX = "lhet";
+
+        private final String value;
+
+        LastHandledEventTimeTopic(Class<?> type) {
+            this.value = PREFIX + type.getName();
+        }
+
+        @Override
+        public String getName() {
+            return value;
         }
     }
 

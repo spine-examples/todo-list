@@ -25,6 +25,7 @@ import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.AggregateStorage;
 import io.spine.server.entity.AbstractEntity;
 import io.spine.server.entity.Entity;
+import io.spine.server.entity.EntityRecord;
 import io.spine.server.entity.storage.ColumnTypeRegistry;
 import io.spine.server.projection.Projection;
 import io.spine.server.projection.ProjectionStorage;
@@ -111,7 +112,7 @@ public class KafkaStorageFactory implements StorageFactory {
 
     }
 
-    private static class StandStorageRecord extends AbstractEntity<Message, Message> {
+    private static class StandStorageRecord extends AbstractEntity<Message, EntityRecord> {
 
         protected StandStorageRecord(Message id) {
             super(id);

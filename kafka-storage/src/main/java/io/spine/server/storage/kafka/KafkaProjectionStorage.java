@@ -22,6 +22,7 @@ package io.spine.server.storage.kafka;
 
 import com.google.protobuf.FieldMask;
 import com.google.protobuf.Timestamp;
+import io.spine.server.entity.Entity;
 import io.spine.server.entity.EntityRecord;
 import io.spine.server.projection.ProjectionStorage;
 import io.spine.server.storage.RecordStorage;
@@ -44,13 +45,20 @@ public class KafkaProjectionStorage<I> extends ProjectionStorage<I> {
 
     @Override
     protected void writeLastHandledEventTime(Timestamp time) {
-        throw new UnsupportedOperationException("Method writeLastHandledEventTime unimplemented!");
+        final KafkaWrapper storage = delegate.getKafkaStorage();
+        final Class<? extends Entity> cls = delegate.getEntityClass();
+        final Topic topic = Topic.forLastHandledEventTime(cls);
+        storage.write(cls, topic, time);
     }
 
     @Nullable
     @Override
     protected Timestamp readLastHandledEventTime() {
-        throw new UnsupportedOperationException("Method readLastHandledEventTime unimplemented!");
+        final KafkaWrapper storage = delegate.getKafkaStorage();
+        final Class<? extends Entity> cls = delegate.getEntityClass();
+        final Topic topic = Topic.forLastHandledEventTime(cls);
+        final Timestamp timestamp = storage.<Timestamp>readLast(topic).orElse(null);
+        return timestamp;
     }
 
     @Override
