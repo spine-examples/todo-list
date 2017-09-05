@@ -62,13 +62,13 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
         final UInt32Value msg = UInt32Value.newBuilder()
                                            .setValue(eventCount)
                                            .build();
-        storage.write(topic, id, msg);
+        storage.write(aggregateClass, topic, msg);
     }
 
     @Override
     protected void writeRecord(I id, AggregateEventRecord record) {
         final Topic topic = Topic.forAggregateRecord(aggregateClass, id);
-        storage.write(topic, id, record);
+        storage.write(aggregateClass, topic, record);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
     @Override
     public void writeLifecycleFlags(I id, LifecycleFlags flags) {
         final Topic topic = Topic.forLifecycleFlags(aggregateClass, id);
-        storage.write(topic, id, flags);
+        storage.write(aggregateClass, topic, flags);
     }
 
     @Override

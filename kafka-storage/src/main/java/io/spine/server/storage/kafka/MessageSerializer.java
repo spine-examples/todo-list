@@ -27,6 +27,7 @@ import io.spine.protobuf.AnyPacker;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serializer;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -35,6 +36,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @author Dmytro Dashenkov
  */
 public class MessageSerializer implements Serializer<Message>, Deserializer<Message> {
+
+    private static final byte[] EMPTY_BITES = {};
 
     private MessageSerializer() {
         // Prevent direct instantiation and insure no parameter ctor (required by Kafka)
@@ -45,9 +48,13 @@ public class MessageSerializer implements Serializer<Message>, Deserializer<Mess
         // NoOp
     }
 
+    @Nullable
     @Override
     public Message deserialize(String topic, byte[] data) {
         checkNotNull(data);
+        if (data.length == 0) {
+            return null;
+        }
         final Any packed;
         try {
             packed = Any.parseFrom(data);
@@ -60,7 +67,9 @@ public class MessageSerializer implements Serializer<Message>, Deserializer<Mess
 
     @Override
     public byte[] serialize(String topic, Message data) {
-        checkNotNull(data);
+        if (data == null) {
+            return EMPTY_BITES;
+        }
         final Any packed = AnyPacker.pack(data);
         final byte[] result = packed.toByteArray();
         return result;

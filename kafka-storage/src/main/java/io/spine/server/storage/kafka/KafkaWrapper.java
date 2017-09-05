@@ -24,6 +24,8 @@ import com.google.common.collect.Iterators;
 import com.google.protobuf.Message;
 import com.google.protobuf.StringValue;
 import io.spine.server.entity.Entity;
+import io.spine.server.entity.EntityRecord;
+import io.spine.server.entity.LifecycleFlags;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -37,11 +39,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static io.spine.protobuf.TypeConverter.toMessage;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
 
 /**
@@ -49,7 +50,7 @@ import static io.spine.server.storage.kafka.Consistency.STRONG;
  */
 public class KafkaWrapper {
 
-    private static final long STANDARD_POLL_AWAIT = 100L;
+    private static final long STANDARD_POLL_AWAIT = 5000L;
 
     private final KafkaProducer<Message, Message> producer;
     private final KafkaConsumer<Message, Message> consumer;
@@ -82,6 +83,8 @@ public class KafkaWrapper {
             final Collection<String> newSubscription = newLinkedList(subscription);
             newSubscription.add(topicName);
             consumer.subscribe(newSubscription);
+            consumer.poll(0);
+            consumer.seekToBeginning(consumer.assignment());
         }
     }
 
@@ -91,7 +94,7 @@ public class KafkaWrapper {
         final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
         final Iterator<Message> messages = StreamSupport.stream(records.spliterator(), false)
                                                         .map(ConsumerRecord::value)
-                                                        .collect(Collectors.toList())
+                                                        .filter(active())
                                                         .iterator();
         @SuppressWarnings("unchecked") // Expect caller to be aware of the type.
         final Iterator<M> result = (Iterator<M>) messages;
@@ -106,19 +109,21 @@ public class KafkaWrapper {
                         .records(topicOfTopics.getName());
         final Iterator<M> result = StreamSupport.stream(records.spliterator(), false)
                                                 .map(ConsumerRecord::value)
+                                                .distinct()
                                                 .map(msg -> ((StringValue) msg).getValue())
                                                 .map(Topic::ofValue)
                                                 .map(this::read)
+                                                // Use collect() instead of reduce() to preserve
+                                                // <M> type parameter.
                                                 .collect(Collections::emptyIterator,
                                                          Iterators::concat,
                                                          Iterators::concat);
         return result;
     }
 
-    public void write(Topic topic, Object id, Message value) {
-        final Message key = toMessage(id);
+    public void write(Class<? extends Entity> entityClass, Topic topic, Message value) {
+        writeToSuperTopic(entityClass, topic);
         final ProducerRecord<Message, Message> record = new ProducerRecord<>(topic.getName(),
-                                                                             key,
                                                                              value);
         final Future<?> ack = producer.send(record);
         if (consistencyLevel == STRONG) {
@@ -128,5 +133,28 @@ public class KafkaWrapper {
                 throw new IllegalStateException(e);
             }
         }
+    }
+
+    private void writeToSuperTopic(Class<? extends Entity> entityClass, Topic topic) {
+        final Topic topicOfTopics = Topic.forType(entityClass);
+        final StringValue topicValue = StringValue.newBuilder()
+                                                  .setValue(topic.getName())
+                                                  .build();
+        final ProducerRecord<Message, Message> record =
+                new ProducerRecord<>(topicOfTopics.getName(), topicValue);
+        producer.send(record);
+    }
+
+
+    private static Predicate<Message> active() {
+        return record -> {
+            final LifecycleFlags flags;
+            if (record instanceof EntityRecord) {
+                flags = ((EntityRecord) record).getLifecycleFlags();
+                return !(flags.getArchived() && flags.getDeleted());
+            } else {
+                return true;
+            }
+        };
     }
 }
