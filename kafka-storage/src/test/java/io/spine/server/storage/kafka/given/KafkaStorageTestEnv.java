@@ -26,6 +26,7 @@ import io.spine.server.storage.kafka.MessageSerializer;
 import java.util.Properties;
 
 import static io.spine.server.storage.kafka.Consistency.STRONG;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.producer.ProducerConfig.ACKS_CONFIG;
@@ -41,6 +42,7 @@ public class KafkaStorageTestEnv {
     private static final String TEST_SERVER_URL = "localhost:4545";
     private static final String SERIALIZER_NAME = MessageSerializer.class.getName();
     private static final String ALL = "all";
+    private static final String CONSUMER_GROUP_ID = "0";
 
     private static final Properties producerConfig = new Properties();
     private static final Properties consumerConfig = new Properties();
@@ -59,6 +61,7 @@ public class KafkaStorageTestEnv {
         consumerConfig.put(BOOTSTRAP_SERVERS_CONFIG, TEST_SERVER_URL);
         consumerConfig.put(KEY_DESERIALIZER_CLASS_CONFIG, SERIALIZER_NAME);
         consumerConfig.put(VALUE_DESERIALIZER_CLASS_CONFIG, SERIALIZER_NAME);
+        consumerConfig.put(GROUP_ID_CONFIG, CONSUMER_GROUP_ID);
     }
 
     private KafkaStorageTestEnv() {
@@ -67,6 +70,16 @@ public class KafkaStorageTestEnv {
 
     public static KafkaStorageFactory getStorageFactory() {
         return StorageFactorySingleton.INSTANCE.value;
+    }
+
+    @SuppressWarnings("ReturnOfCollectionOrArrayField") // Ok for tests.
+    public static Properties getProducerConfig() {
+        return producerConfig;
+    }
+
+    @SuppressWarnings("ReturnOfCollectionOrArrayField") // Ok for tests.
+    public static Properties getConsumerConfig() {
+        return consumerConfig;
     }
 
     private enum StorageFactorySingleton {
