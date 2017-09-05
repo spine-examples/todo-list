@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.context;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
@@ -40,6 +41,7 @@ import static io.spine.util.Exceptions.newIllegalStateException;
  * Utilities for creation the {@link BoundedContext} instances.
  *
  * @author Illia Shepilov
+ * @author Dmytro Grankin
  */
 public final class BoundedContexts {
 
@@ -113,7 +115,8 @@ public final class BoundedContexts {
 
     @SuppressWarnings("Guava" /* Spine API is Java 7-based
                                  and uses `Optional` from Google Guava. */)
-    private static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
+    @VisibleForTesting
+    static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
         final Optional<StorageFactory> storageFactory = eventBus.getStorageFactory();
         if (!storageFactory.isPresent()) {
             throw newIllegalStateException("EventBus does not specify a StorageFactory.");
