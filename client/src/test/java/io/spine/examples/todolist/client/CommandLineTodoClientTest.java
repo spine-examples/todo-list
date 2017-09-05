@@ -22,7 +22,6 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
@@ -60,8 +59,6 @@ abstract class CommandLineTodoClientTest {
     @BeforeEach
     void setUp() throws InterruptedException {
         final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
-        TaskAggregateRoot.injectBoundedContext(boundedContext);
-
         server = new Server(PORT, boundedContext);
         startServer();
         client = new CommandLineTodoClient(HOST, PORT, boundedContext);

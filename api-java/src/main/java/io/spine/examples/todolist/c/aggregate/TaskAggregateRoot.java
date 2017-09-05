@@ -20,10 +20,7 @@
 
 package io.spine.examples.todolist.c.aggregate;
 
-import com.google.common.annotations.VisibleForTesting;
-import io.spine.Environment;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.context.TodoListBoundedContext;
 import io.spine.server.BoundedContext;
 import io.spine.server.aggregate.AggregateRoot;
 
@@ -36,70 +33,12 @@ import io.spine.server.aggregate.AggregateRoot;
 public class TaskAggregateRoot extends AggregateRoot<TaskId> {
 
     /**
-     * It must be initialized through {@code #injectBoundedContext(BoundedContext)} method
-     * during the tests, in other cases it will be initialized by default.
-     */
-    @SuppressWarnings("StaticVariableMayNotBeInitialized")
-    private static BoundedContext boundedContext;
-
-    static {
-        initBoundedContextIfNeeded();
-    }
-
-    /**
      * Creates a new instance.
      *
      * @param boundedContext the bounded context to which the aggregate belongs
      * @param id             the ID of the aggregate
      */
-    protected TaskAggregateRoot(BoundedContext boundedContext, TaskId id) {
+    public TaskAggregateRoot(BoundedContext boundedContext, TaskId id) {
         super(boundedContext, id);
-    }
-
-    /**
-     * Obtains and sets the {@link BoundedContext} singleton instance,
-     * if the {@link Environment} is non-test environment.
-     *
-     * @see Environment#isTests()
-     * @see TodoListBoundedContext#getInstance()
-     */
-    private static void initBoundedContextIfNeeded() {
-        final boolean testEnv = Environment.getInstance()
-                                           .isTests();
-        if (!testEnv) {
-            boundedContext = TodoListBoundedContext.getInstance();
-        }
-    }
-
-    /**
-     * Creates a new {@link TaskAggregateRoot} instance.
-     *
-     * @param id the ID of the aggregate
-     */
-    protected TaskAggregateRoot(TaskId id) {
-        super(boundedContext, id);
-    }
-
-    /**
-     * Obtains the {@link TaskAggregateRoot} instance with the given {@code TaskId}.
-     *
-     * @param id a task identifier
-     * @return the aggregate root for the task
-     */
-    public static TaskAggregateRoot get(TaskId id) {
-        return new TaskAggregateRoot(id);
-    }
-
-    /**
-     * Injects the {@link BoundedContext} instance.
-     *
-     * <p>Method uses only for test needs. As the {@code BoundedContext} must be `clear`
-     * for each test, it injects through that method. Singleton instance is uses for non-test needs.
-     *
-     * @param boundedContext instance to inject
-     */
-    @VisibleForTesting
-    public static void injectBoundedContext(BoundedContext boundedContext) {
-        TaskAggregateRoot.boundedContext = boundedContext;
     }
 }

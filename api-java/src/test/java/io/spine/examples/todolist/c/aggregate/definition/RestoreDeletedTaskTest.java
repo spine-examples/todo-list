@@ -86,10 +86,9 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         super.setUp();
         responseObserver = StreamObservers.memoizingObserver();
         boundedContext = TodoListBoundedContext.createTestInstance();
-        TaskAggregateRoot.injectBoundedContext(boundedContext);
-
         commandBus = boundedContext.getCommandBus();
-        aggregate = new TaskPart(TaskAggregateRoot.get(taskId));
+        final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, taskId);
+        aggregate = new TaskPart(root);
     }
 
     @Test

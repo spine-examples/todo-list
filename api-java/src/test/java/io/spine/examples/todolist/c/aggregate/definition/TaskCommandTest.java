@@ -27,6 +27,7 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.context.TodoListBoundedContext;
+import io.spine.server.BoundedContext;
 import io.spine.server.aggregate.AggregatePartCommandTest;
 
 import static io.spine.Identifier.newUuid;
@@ -52,10 +53,9 @@ abstract class TaskCommandTest<C extends Message> extends AggregatePartCommandTe
 
     @Override
     protected TaskPart createAggregatePart() {
-        TaskAggregateRoot.injectBoundedContext(TodoListBoundedContext.createTestInstance());
-
+        final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
         taskId = createTaskId();
-        final TaskAggregateRoot root = TaskAggregateRoot.get(taskId);
+        final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, taskId);
         return new TaskPart(root);
     }
 
