@@ -64,7 +64,7 @@ public final class Application {
 
     @VisibleForTesting
     public void setScreen(Screen screen) {
-        this.screen = checkNotNull(screen);
+        this.screen = screen;
     }
 
     /**

@@ -18,27 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.c.aggregate;
+package io.spine.examples.todolist.context;
 
-import io.spine.examples.todolist.TaskId;
-import io.spine.server.BoundedContext;
-import io.spine.server.aggregate.AggregateRoot;
+import io.spine.server.event.EventBus;
+import io.spine.test.Tests;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-/**
- * Aggregate root for the tasks.
- *
- * @author Illia Shepilov
- * @see AggregateRoot
- */
-public class TaskAggregateRoot extends AggregateRoot<TaskId> {
+import static io.spine.examples.todolist.context.BoundedContexts.createBoundedContext;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.jupiter.api.Assertions.*;
 
-    /**
-     * Creates a new instance.
-     *
-     * @param boundedContext the bounded context to which the aggregate belongs
-     * @param id             the ID of the aggregate
-     */
-    public TaskAggregateRoot(BoundedContext boundedContext, TaskId id) {
-        super(boundedContext, id);
+@DisplayName("BoundedContexts should")
+class BoundedContextsTest {
+
+    @Test
+    @DisplayName("have the private parameterless constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(BoundedContexts.class);
+    }
+
+    @Test
+    @DisplayName("not create BoundedContext from EventBus.Builder without a StorageFactory")
+    void notCreateBoundedContextWithoutStorageFactory() {
+        final EventBus.Builder builder = EventBus.newBuilder();
+        assertThrows(IllegalStateException.class, () -> createBoundedContext(builder));
     }
 }

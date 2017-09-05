@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.cli.Application;
 import io.spine.cli.Screen;
 import io.spine.cli.view.View;
@@ -46,13 +47,12 @@ public class CliEntryPoint {
         // Prevent instantiation of this class.
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         final Server server = getServer();
         startServer(server);
 
-        final Application application = Application.getInstance();
         final Screen screen = new TerminalScreen();
-        application.init(screen);
+        initCli(screen);
         final View entryPoint = MainMenu.create();
         screen.renderView(entryPoint);
 
@@ -60,7 +60,14 @@ public class CliEntryPoint {
         server.shutdown();
     }
 
-    private static void startServer(Server server) throws InterruptedException {
+    @VisibleForTesting
+    static void initCli(Screen screen) {
+        Application.getInstance()
+                   .init(screen);
+    }
+
+    @VisibleForTesting
+    static void startServer(Server server) {
         final Thread serverThread = new Thread(() -> {
             try {
                 server.start();

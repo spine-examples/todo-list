@@ -22,12 +22,11 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.client.builder.CommandBuilder;
-import io.spine.examples.todolist.context.TodoListBoundedContext;
+import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
@@ -60,9 +59,7 @@ abstract class CommandLineTodoClientTest {
 
     @BeforeEach
     void setUp() throws InterruptedException {
-        final BoundedContext boundedContext = TodoListBoundedContext.createTestInstance();
-        TaskAggregateRoot.injectBoundedContext(boundedContext);
-
+        final BoundedContext boundedContext = BoundedContexts.create();
         server = new Server(PORT, boundedContext);
         startServer();
         client = new CommandLineTodoClient(HOST, PORT, boundedContext);

@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Optional;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
@@ -33,47 +34,46 @@ import io.spine.server.event.EventEnricher;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.util.Exceptions.newIllegalStateException;
+
 /**
- * Serves for creation the {@link BoundedContext} instances.
+ * Utilities for creation the {@link BoundedContext} instances.
  *
  * @author Illia Shepilov
+ * @author Dmytro Grankin
  */
-public class TodoListBoundedContext {
+public final class BoundedContexts {
 
-    /** The name of the Bounded Context. */
+    /** The default name of the {@code BoundedContext}. */
     private static final String NAME = "TodoListBoundedContext";
-
-    private static final StorageFactory storageFactory =
+    private static final StorageFactory IN_MEMORY_FACTORY =
             InMemoryStorageFactory.newInstance(NAME, false);
 
-    /**
-     * Obtains the reference to the singleton {@link BoundedContext}.
-     */
-    public static BoundedContext getInstance() {
-        return Singleton.INSTANCE.value;
-    }
-
-    /**
-     * Creates and returns the {@link BoundedContext} instance.
-     *
-     * <p>Serves only for test needs.
-     *
-     * @return the {@link BoundedContext} instance
-     */
-    @VisibleForTesting
-    public static BoundedContext createTestInstance() {
-        final BoundedContext result = create();
-        return result;
-    }
-
-    private TodoListBoundedContext() {
+    private BoundedContexts() {
         // Disable instantiation from outside.
     }
 
     /**
-     * Creates a new instance of the Bounded Context.
+     * Creates the {@link BoundedContext} instance
+     * using {@code InMemoryStorageFactory} for a single tenant.
+     *
+     * @return the {@link BoundedContext} instance
      */
-    private static BoundedContext create() {
+    public static BoundedContext create() {
+        final BoundedContext result = create(IN_MEMORY_FACTORY);
+        return result;
+    }
+
+    /**
+     * Creates a new instance of the {@link BoundedContext}
+     * using the specified {@link StorageFactory}.
+     *
+     * @param storageFactory the storage factory to use
+     * @return the bounded context created with the storage factory
+     */
+    public static BoundedContext create(StorageFactory storageFactory) {
+        checkNotNull(storageFactory);
         final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
         final TaskRepository taskRepo = new TaskRepository();
         final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
@@ -81,7 +81,8 @@ public class TodoListBoundedContext {
         final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
         final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
 
-        final EventBus.Builder eventBus = createEventBus(labelAggregateRepo,
+        final EventBus.Builder eventBus = createEventBus(storageFactory,
+                                                         labelAggregateRepo,
                                                          taskRepo,
                                                          taskLabelsRepo);
         final BoundedContext boundedContext = createBoundedContext(eventBus);
@@ -96,7 +97,8 @@ public class TodoListBoundedContext {
         return boundedContext;
     }
 
-    private static EventBus.Builder createEventBus(LabelAggregateRepository labelRepo,
+    private static EventBus.Builder createEventBus(StorageFactory storageFactory,
+                                                   LabelAggregateRepository labelRepo,
                                                    TaskRepository taskRepo,
                                                    TaskLabelsRepository labelsRepo) {
         final EventEnricher enricher = TodoListEnrichments.newBuilder()
@@ -111,19 +113,19 @@ public class TodoListBoundedContext {
         return eventBus;
     }
 
-    private static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
+    @SuppressWarnings("Guava" /* Spine API is Java 7-based
+                                 and uses `Optional` from Google Guava. */)
+    @VisibleForTesting
+    static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
+        final Optional<StorageFactory> storageFactory = eventBus.getStorageFactory();
+        if (!storageFactory.isPresent()) {
+            throw newIllegalStateException("EventBus does not specify a StorageFactory.");
+        }
+
         return BoundedContext.newBuilder()
-                             .setStorageFactorySupplier(() -> storageFactory)
+                             .setStorageFactorySupplier(storageFactory::get)
                              .setName(NAME)
                              .setEventBus(eventBus)
                              .build();
-    }
-
-    /** The holder for the singleton reference. */
-    private enum Singleton {
-        INSTANCE;
-
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final BoundedContext value = create();
     }
 }
