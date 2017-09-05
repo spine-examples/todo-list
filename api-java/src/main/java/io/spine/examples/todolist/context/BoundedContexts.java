@@ -33,6 +33,7 @@ import io.spine.server.event.EventEnricher;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
@@ -42,7 +43,7 @@ import static io.spine.util.Exceptions.newIllegalStateException;
  */
 public class BoundedContexts {
 
-    /** The name of the Bounded Context. */
+    /** The default name of the {@code BoundedContext}. */
     private static final String NAME = "TodoListBoundedContext";
     private static final StorageFactory IN_MEMORY_FACTORY =
             InMemoryStorageFactory.newInstance(NAME, false);
@@ -70,6 +71,7 @@ public class BoundedContexts {
      * @return the bounded context created with the storage factory
      */
     public static BoundedContext create(StorageFactory storageFactory) {
+        checkNotNull(storageFactory);
         final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
         final TaskRepository taskRepo = new TaskRepository();
         final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
@@ -109,6 +111,8 @@ public class BoundedContexts {
         return eventBus;
     }
 
+    @SuppressWarnings("Guava" /* Spine API is Java 7-based
+                                 and uses `Optional` from Google Guava. */)
     private static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
         final Optional<StorageFactory> storageFactory = eventBus.getStorageFactory();
         if (!storageFactory.isPresent()) {
