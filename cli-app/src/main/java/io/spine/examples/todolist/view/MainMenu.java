@@ -22,7 +22,9 @@ package io.spine.examples.todolist.view;
 
 import io.spine.cli.action.Shortcut;
 import io.spine.cli.view.ActionListView;
+import io.spine.examples.todolist.client.TodoClient;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.cli.action.TransitionAction.transitionProducer;
 
 /**
@@ -39,12 +41,14 @@ public class MainMenu extends ActionListView {
     /**
      * Creates a new {@code MainMenu} instance.
      *
+     * @param client the client to use
      * @return the new instance
      */
-    public static MainMenu create() {
+    public static MainMenu create(TodoClient client) {
+        checkNotNull(client);
         final MainMenu mainMenu = new MainMenu();
         mainMenu.addAction(transitionProducer("My tasks", new Shortcut("m"),
-                                              MyTasksMenu.create()));
+                                              MyTasksMenu.create(client)));
         return mainMenu;
     }
 }

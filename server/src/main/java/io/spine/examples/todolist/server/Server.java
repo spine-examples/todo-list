@@ -28,7 +28,6 @@ import io.spine.server.transport.GrpcContainer;
 
 import java.io.IOException;
 
-import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.server.event.EventStore.log;
 
 /**
@@ -82,8 +81,7 @@ public class Server {
      */
     public void start() throws IOException {
         startServer();
-        log().info(
-                "Server started, listening to commands on the port " + port);
+        log().info("Server started, listening to commands on the port {}.", port);
         awaitTermination();
     }
 
@@ -100,13 +98,9 @@ public class Server {
     }
 
     /**
-     * Initiates an orderly shutdown of {@link GrpcContainer} and closes {@link BoundedContext}.
-     *
-     * <p> Closes the {@code BoundedContext} performing all necessary clean-ups.
-     *
-     * @throws Exception caused by closing one of the {@link BoundedContext} components
+     * Initiates an orderly shutdown of the {@link GrpcContainer}.
      */
-    public void shutdown() throws Exception {
+    public void shutdown() {
         grpcContainer.shutdown();
     }
 

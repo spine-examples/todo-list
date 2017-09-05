@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.view;
 
+import io.spine.examples.todolist.Given;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +47,8 @@ class TaskViewTest {
                                           .setPriority(NORMAL)
                                           .setDueDate(getCurrentTime())
                                           .build();
-    private final TaskView taskView = new TaskView(TaskId.getDefaultInstance());
+    private final TaskView taskView = new TaskView(Given.createClient(),
+                                                   TaskId.getDefaultInstance());
 
     @Test
     @DisplayName("throw the exception if nonexistent task ID is specified")

@@ -18,27 +18,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.view;
+package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.Given;
-import io.spine.examples.todolist.client.TodoClient;
+import io.spine.cli.Application;
+import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.examples.todolist.server.Server;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import java.io.IOException;
 
-/**
- * @author Dmytro Grankin
- */
-@DisplayName("MainMenu should")
-class MainMenuTest {
+import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.test.Tests.nullRef;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
 
+@DisplayName("TodoList should")
+class TodoListTest {
+
+    private final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, BoundedContexts.create());
+    private final TodoList todoList = new TodoList(server, Given.createClient());
+
+    @DisplayName("start the server")
     @Test
-    @DisplayName("not be empty")
-    void notBeEmpty() {
-        final TodoClient client = Given.createClient();
-        final MainMenu mainMenu = MainMenu.create(client);
-        assertFalse(mainMenu.getActions()
-                            .isEmpty());
+    void startServer() throws InterruptedException, IOException {
+        todoList.startServer();
+    }
+
+    @DisplayName("initialize the Application")
+    @Test
+    void initCli() {
+        final Application application = Application.getInstance();
+        application.setScreen(nullRef());
+
+        todoList.initCli();
+        assertThat(application.screen(), instanceOf(TerminalScreen.class));
     }
 }

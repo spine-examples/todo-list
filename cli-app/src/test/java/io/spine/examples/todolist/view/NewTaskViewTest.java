@@ -22,6 +22,7 @@ package io.spine.examples.todolist.view;
 
 import io.spine.cli.Bot;
 import io.spine.cli.action.Shortcut;
+import io.spine.examples.todolist.Given;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import io.spine.examples.todolist.view.NewTaskView.DescriptionEditOperation;
@@ -47,7 +48,7 @@ class NewTaskViewTest {
     private static final String VALID_DESCRIPTION = "to the task";
 
     private Bot bot;
-    private final NewTaskView view = NewTaskView.create();
+    private final NewTaskView view = NewTaskView.create(Given.createClient());
 
     @BeforeEach
     void setUp() {

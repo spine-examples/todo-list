@@ -20,17 +20,14 @@
 
 package io.spine.examples.todolist;
 
-import io.spine.cli.Application;
-import io.spine.cli.Screen;
-import io.spine.cli.view.View;
+import io.spine.examples.todolist.client.CommandLineTodoClient;
+import io.spine.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.examples.todolist.server.Server;
-import io.spine.examples.todolist.view.MainMenu;
+import io.spine.server.BoundedContext;
 
-import java.io.IOException;
-
-import static io.spine.examples.todolist.AppConfig.getClient;
-import static io.spine.examples.todolist.AppConfig.getServer;
-import static io.spine.util.Exceptions.illegalStateWithCauseOf;
+import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
 
 /**
  * Entry point to the command-line application.
@@ -47,28 +44,11 @@ public class CliEntryPoint {
     }
 
     public static void main(String[] args) throws Exception {
-        final Server server = getServer();
-        startServer(server);
-
-        final Application application = Application.getInstance();
-        final Screen screen = new TerminalScreen();
-        application.init(screen);
-        final View entryPoint = MainMenu.create();
-        screen.renderView(entryPoint);
-
-        getClient().shutdown();
-        server.shutdown();
-    }
-
-    private static void startServer(Server server) throws InterruptedException {
-        final Thread serverThread = new Thread(() -> {
-            try {
-                server.start();
-            } catch (IOException e) {
-                throw illegalStateWithCauseOf(e);
-            }
-        });
-
-        serverThread.start();
+        final int port = DEFAULT_CLIENT_SERVICE_PORT;
+        final BoundedContext boundedContext = BoundedContexts.create();
+        final Server server = new Server(port, boundedContext);
+        final TodoClient client = new CommandLineTodoClient(HOST, port, boundedContext);
+        final TodoList todoList = new TodoList(server, client);
+        todoList.run();
     }
 }

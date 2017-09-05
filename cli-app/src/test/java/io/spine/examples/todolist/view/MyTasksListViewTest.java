@@ -25,10 +25,11 @@ import io.spine.cli.NoOpView;
 import io.spine.cli.action.Action;
 import io.spine.cli.action.Shortcut;
 import io.spine.cli.action.TransitionAction.TransitionActionProducer;
+import io.spine.examples.todolist.Given;
+import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import io.spine.examples.todolist.q.projection.TaskListView;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -50,15 +51,11 @@ class MyTasksListViewTest {
 
     private static final int VIEW_INDEX = 0;
 
-    private Bot bot;
+    private final TodoClient client = Given.createClient();
+    private final Bot bot = new Bot();
     private final TaskItem taskView = TaskItem.newBuilder()
                                               .setDescription("task desc")
                                               .build();
-
-    @BeforeEach
-    void setUp() {
-        bot = new Bot();
-    }
 
     @Test
     @DisplayName("refresh task list")
@@ -66,9 +63,9 @@ class MyTasksListViewTest {
         bot.screen()
            .renderView(new NoOpView()); // Needed to cause addition of back action in the view.
 
-        final MyTasksListView view = new MyTasksListView();
-        view.addAction(newOpenTaskViewProducer(taskView, 0));
-        view.addAction(newOpenTaskViewProducer(taskView, 1));
+        final MyTasksListView view = new MyTasksListView(client);
+        view.addAction(newOpenTaskViewProducer(client, taskView, 0));
+        view.addAction(newOpenTaskViewProducer(client, taskView, 1));
         final Set<Action> actionsToBeRemoved = view.getActions();
 
         bot.addAnswer("b");
@@ -89,7 +86,8 @@ class MyTasksListViewTest {
         final MyListView myListView = MyListView.newBuilder()
                                                 .setMyList(taskListView)
                                                 .build();
-        final Collection<TransitionActionProducer> actions = taskActionProducersFor(myListView);
+        final Collection<TransitionActionProducer> actions = taskActionProducersFor(client,
+                                                                                    myListView);
         assertEquals(tasksCount, actions.size());
     }
 
@@ -100,7 +98,7 @@ class MyTasksListViewTest {
         final Shortcut expectedShortcut = new Shortcut(shortcutValue);
 
         final TransitionActionProducer<MyTasksListView, TaskView> producer =
-                newOpenTaskViewProducer(taskView, VIEW_INDEX);
+                newOpenTaskViewProducer(client, taskView, VIEW_INDEX);
 
         assertEquals(taskView.getDescription(), producer.getName());
         assertEquals(expectedShortcut, producer.getShortcut());

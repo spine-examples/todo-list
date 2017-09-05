@@ -22,12 +22,13 @@ package io.spine.examples.todolist.view;
 
 import io.spine.cli.view.EntityView;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.TaskItem;
 
 import java.util.List;
 import java.util.Optional;
 
-import static io.spine.examples.todolist.AppConfig.getClient;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.examples.todolist.view.DateFormatter.format;
 import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.System.lineSeparator;
@@ -45,8 +46,11 @@ class TaskView extends EntityView<TaskId, TaskItem> {
     static final String DESCRIPTION_VALUE = "Description: ";
     static final String PRIORITY_VALUE = "Priority: ";
 
-    TaskView(TaskId id) {
+    private final TodoClient client;
+
+    TaskView(TodoClient client, TaskId id) {
         super(id, "My task details");
+        this.client = checkNotNull(client);
     }
 
     /**
@@ -55,9 +59,9 @@ class TaskView extends EntityView<TaskId, TaskItem> {
     @Override
     protected TaskItem load(TaskId id) {
         //TODO:2017-07-19:dmytro.grankin: Allow to specify the source projection of task items.
-        final List<TaskItem> tasks = getClient().getMyListView()
-                                                .getMyList()
-                                                .getItemsList();
+        final List<TaskItem> tasks = client.getMyListView()
+                                           .getMyList()
+                                           .getItemsList();
         final Optional<TaskItem> optionalTask = tasks.stream()
                                                      .filter(task -> task.getId()
                                                                          .equals(id))
