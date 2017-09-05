@@ -22,7 +22,7 @@ package io.spine.examples.todolist;
 
 import io.spine.examples.todolist.client.CommandLineTodoClient;
 import io.spine.examples.todolist.client.TodoClient;
-import io.spine.examples.todolist.context.TodoListBoundedContext;
+import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
 
@@ -37,7 +37,7 @@ import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
 public class AppConfig {
 
     static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
-    private static final BoundedContext BOUNDED_CONTEXT = TodoListBoundedContext.getInstance();
+    private static final BoundedContext BOUNDED_CONTEXT = BoundedContexts.create();
 
     private static final Server SERVER = new Server(PORT, BOUNDED_CONTEXT);
     private static final TodoClient CLIENT = new CommandLineTodoClient(HOST, PORT, BOUNDED_CONTEXT);
