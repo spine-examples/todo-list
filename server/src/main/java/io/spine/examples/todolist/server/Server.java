@@ -98,7 +98,7 @@ public class Server {
     }
 
     /**
-     * Initiates an orderly shutdown of the {@link GrpcContainer}.
+     * Initiates a shutdown of this {@code Server} instance.
      */
     public void shutdown() {
         grpcContainer.shutdown();

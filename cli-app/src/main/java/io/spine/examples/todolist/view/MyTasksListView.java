@@ -27,7 +27,6 @@ import io.spine.cli.action.TransitionAction;
 import io.spine.cli.action.TransitionAction.TransitionActionProducer;
 import io.spine.cli.view.ActionListView;
 import io.spine.cli.view.View;
-import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 
@@ -35,8 +34,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.cli.action.TransitionAction.transitionProducer;
+import static io.spine.examples.todolist.AppConfig.getClient;
 import static java.lang.String.valueOf;
 
 /**
@@ -52,12 +51,9 @@ public class MyTasksListView extends ActionListView {
 
     private static final String EMPTY_TASKS_LIST_MSG = "<no tasks>";
 
-    private final TodoClient client;
-
     @VisibleForTesting
-    MyTasksListView(TodoClient client) {
+    MyTasksListView() {
         super("My tasks list");
-        this.client = checkNotNull(client);
     }
 
     /**
@@ -69,9 +65,9 @@ public class MyTasksListView extends ActionListView {
     public void render(Screen screen) {
         clearActions();
 
-        final MyListView myListView = client.getMyListView();
-        final Collection<TransitionActionProducer> producers = taskActionProducersFor(client,
-                                                                                      myListView);
+        final MyListView myListView = getClient().getMyListView();
+        final Collection<TransitionActionProducer> producers = taskActionProducersFor(myListView);
+
         if (producers.isEmpty()) {
             screen.println(EMPTY_TASKS_LIST_MSG);
         } else {
@@ -89,30 +85,29 @@ public class MyTasksListView extends ActionListView {
      * @return the new producer
      */
     public static <S extends View> TransitionActionProducer<S, MyTasksListView>
-    newOpenTaskListProducer(String name, Shortcut shortcut, TodoClient client) {
-        return transitionProducer(name, shortcut, new MyTasksListView(client));
+    newOpenTaskListProducer(String name, Shortcut shortcut) {
+        return transitionProducer(name, shortcut, new MyTasksListView());
     }
 
     @VisibleForTesting
-    static Collection<TransitionActionProducer> taskActionProducersFor(TodoClient client,
-                                                                       MyListView myListView) {
+    static Collection<TransitionActionProducer> taskActionProducersFor(MyListView myListView) {
         final Collection<TransitionActionProducer> producers = new LinkedList<>();
         final List<TaskItem> tasks = myListView.getMyList()
                                                .getItemsList();
         for (TaskItem task : tasks) {
             final int index = tasks.indexOf(task);
-            producers.add(newOpenTaskViewProducer(client, task, index));
+            producers.add(newOpenTaskViewProducer(task, index));
         }
         return producers;
     }
 
     @VisibleForTesting
     static TransitionActionProducer<MyTasksListView, TaskView>
-    newOpenTaskViewProducer(TodoClient client, TaskItem task, int viewIndex) {
+    newOpenTaskViewProducer(TaskItem task, int viewIndex) {
         final String name = task.getDescription();
         final String shortcutValue = valueOf(viewIndex + 1);
         final Shortcut shortcut = new Shortcut(shortcutValue);
-        final TaskView destination = new TaskView(client, task.getId());
+        final TaskView destination = new TaskView(task.getId());
         return transitionProducer(name, shortcut, destination);
     }
 }

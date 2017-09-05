@@ -41,7 +41,7 @@ import static io.spine.util.Exceptions.newIllegalStateException;
  *
  * @author Illia Shepilov
  */
-public class BoundedContexts {
+public final class BoundedContexts {
 
     /** The default name of the {@code BoundedContext}. */
     private static final String NAME = "TodoListBoundedContext";

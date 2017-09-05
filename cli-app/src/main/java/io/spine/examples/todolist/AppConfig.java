@@ -20,38 +20,49 @@
 
 package io.spine.examples.todolist;
 
-import io.spine.cli.Application;
+import io.spine.examples.todolist.client.CommandLineTodoClient;
+import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.examples.todolist.server.Server;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import java.io.IOException;
+import io.spine.server.BoundedContext;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.test.Tests.nullRef;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
 
-@DisplayName("TodoList should")
-class TodoListTest {
+/**
+ * Configuration of the application.
+ *
+ * @author Dmytro Grankin
+ */
+public class AppConfig {
 
-    private final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, BoundedContexts.create());
-    private final TodoList todoList = new TodoList(server, Given.createClient());
+    static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
+    private static final BoundedContext BOUNDED_CONTEXT = BoundedContexts.create();
 
-    @DisplayName("start the server")
-    @Test
-    void startServer() throws InterruptedException, IOException {
-        todoList.startServer();
+    private static final Server SERVER = new Server(PORT, BOUNDED_CONTEXT);
+    private static final TodoClient CLIENT = new CommandLineTodoClient(HOST, PORT, BOUNDED_CONTEXT);
+
+    private AppConfig() {
+        // Prevent instantiation of this class.
     }
 
-    @DisplayName("initialize the Application")
-    @Test
-    void initCli() {
-        final Application application = Application.getInstance();
-        application.setScreen(nullRef());
+    /**
+     * Obtains the {@link Server} instance.
+     *
+     * <p>Initially is not started.
+     *
+     * @return the server
+     */
+    static Server getServer() {
+        return SERVER;
+    }
 
-        todoList.initCli();
-        assertThat(application.screen(), instanceOf(TerminalScreen.class));
+    /**
+     * Obtains {@link TodoClient} for communication with the {@linkplain #getServer() server}.
+     *
+     * @return the client interface
+     */
+    public static TodoClient getClient() {
+        return CLIENT;
     }
 }

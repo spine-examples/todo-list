@@ -20,14 +20,18 @@
 
 package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.client.CommandLineTodoClient;
-import io.spine.examples.todolist.client.TodoClient;
-import io.spine.examples.todolist.context.BoundedContexts;
+import com.google.common.annotations.VisibleForTesting;
+import io.spine.cli.Application;
+import io.spine.cli.Screen;
+import io.spine.cli.view.View;
 import io.spine.examples.todolist.server.Server;
-import io.spine.server.BoundedContext;
+import io.spine.examples.todolist.view.MainMenu;
 
-import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
+import java.io.IOException;
+
+import static io.spine.examples.todolist.AppConfig.getClient;
+import static io.spine.examples.todolist.AppConfig.getServer;
+import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
  * Entry point to the command-line application.
@@ -43,12 +47,35 @@ public class CliEntryPoint {
         // Prevent instantiation of this class.
     }
 
-    public static void main(String[] args) throws Exception {
-        final int port = DEFAULT_CLIENT_SERVICE_PORT;
-        final BoundedContext boundedContext = BoundedContexts.create();
-        final Server server = new Server(port, boundedContext);
-        final TodoClient client = new CommandLineTodoClient(HOST, port, boundedContext);
-        final TodoList todoList = new TodoList(server, client);
-        todoList.run();
+    public static void main(String[] args) {
+        final Server server = getServer();
+        startServer(server);
+
+        final Screen screen = new TerminalScreen();
+        initCli(screen);
+        final View entryPoint = MainMenu.create();
+        screen.renderView(entryPoint);
+
+        getClient().shutdown();
+        server.shutdown();
+    }
+
+    @VisibleForTesting
+    static void initCli(Screen screen) {
+        Application.getInstance()
+                   .init(screen);
+    }
+
+    @VisibleForTesting
+    static void startServer(Server server) {
+        final Thread serverThread = new Thread(() -> {
+            try {
+                server.start();
+            } catch (IOException e) {
+                throw illegalStateWithCauseOf(e);
+            }
+        });
+
+        serverThread.start();
     }
 }

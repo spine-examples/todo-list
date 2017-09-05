@@ -30,11 +30,10 @@ import io.spine.cli.view.CommandView;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
-import io.spine.examples.todolist.client.TodoClient;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.Identifier.newUuid;
 import static io.spine.cli.action.EditCommandAction.editCommandActionProducer;
+import static io.spine.examples.todolist.AppConfig.getClient;
 import static java.util.Collections.singletonList;
 
 /**
@@ -56,15 +55,13 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
     /**
      * Creates a new {@code NewTaskView} instance.
      *
-     * @param client the client to use
      * @return the new instance.
      */
-    public static NewTaskView create(TodoClient client) {
-        checkNotNull(client);
+    public static NewTaskView create() {
         final NewTaskView view = new NewTaskView();
         view.addAction(editCommandActionProducer("Start input", new Shortcut("i"),
                                                  singletonList(new DescriptionEditOperation())));
-        view.addAction(new NewTaskProducer(client));
+        view.addAction(new NewTaskProducer());
         return view;
     }
 
@@ -125,17 +122,13 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
     private static class CreateTask extends CommandAction<CreateBasicTask,
                                                           CreateBasicTaskVBuilder> {
 
-        private final TodoClient client;
-
-        private CreateTask(TodoClient client,
-                           CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
+        private CreateTask(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
             super(source);
-            this.client = client;
         }
 
         @Override
         protected void post(CreateBasicTask commandMessage) {
-            client.create(commandMessage);
+            getClient().create(commandMessage);
         }
     }
 
@@ -146,18 +139,12 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
                                                                        CreateBasicTaskVBuilder,
                                                                        CreateTask> {
 
-        private final TodoClient client;
-
-        private NewTaskProducer(TodoClient client) {
-            this.client = client;
-        }
-
         /**
          * {@inheritDoc}
          */
         @Override
         public CreateTask create(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
-            return new CreateTask(client, source);
+            return new CreateTask(source);
         }
     }
 }

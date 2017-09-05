@@ -20,8 +20,6 @@
 
 package io.spine.examples.todolist.view;
 
-import io.spine.examples.todolist.Given;
-import io.spine.examples.todolist.client.TodoClient;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -36,8 +34,7 @@ class MainMenuTest {
     @Test
     @DisplayName("not be empty")
     void notBeEmpty() {
-        final TodoClient client = Given.createClient();
-        final MainMenu mainMenu = MainMenu.create(client);
+        final MainMenu mainMenu = MainMenu.create();
         assertFalse(mainMenu.getActions()
                             .isEmpty());
     }
