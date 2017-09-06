@@ -30,6 +30,9 @@ import io.spine.server.entity.LifecycleFlags;
 import java.util.Iterator;
 
 import static com.google.common.base.Optional.fromNullable;
+import static com.google.common.base.Preconditions.checkArgument;
+import static io.spine.server.aggregate.AggregateEventRecord.KindCase.EVENT;
+import static io.spine.server.aggregate.AggregateEventRecord.KindCase.SNAPSHOT;
 
 /**
  * @author Dmytro Dashenkov
@@ -62,13 +65,22 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
         final UInt32Value msg = UInt32Value.newBuilder()
                                            .setValue(eventCount)
                                            .build();
-        storage.write(aggregateClass, topic, msg);
+        storage.write(aggregateClass, topic, id, msg);
     }
 
     @Override
     protected void writeRecord(I id, AggregateEventRecord record) {
         final Topic topic = Topic.forAggregateRecord(aggregateClass, id);
-        storage.write(aggregateClass, topic, record);
+        Object key = null;
+        if (record.getKindCase() == EVENT) {
+            key = record.getEvent().getId();
+        } else if (record.getKindCase() == SNAPSHOT) {
+            key = topic.getName();
+        }
+        checkArgument(key != null,
+                      "Passed AggregateEventRecord is neither EVENT not SNAPSHOT. Value is: %s",
+                      record);
+        storage.write(aggregateClass, topic, key, record);
     }
 
     @Override
@@ -80,16 +92,16 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
     @SuppressWarnings("Guava") // Spine API for Java 7.
     @Override
     public Optional<LifecycleFlags> readLifecycleFlags(I id) {
-        final Topic topic = Topic.forLifecycleFlags(aggregateClass, id);
-        final LifecycleFlags result = storage.<LifecycleFlags>readLast(topic)
+        final Topic topic = Topic.forLifecycleFlags(aggregateClass);
+        final LifecycleFlags result = storage.<LifecycleFlags>read(topic, id)
                                              .orElse(null);
         return fromNullable(result);
     }
 
     @Override
     public void writeLifecycleFlags(I id, LifecycleFlags flags) {
-        final Topic topic = Topic.forLifecycleFlags(aggregateClass, id);
-        storage.write(aggregateClass, topic, flags);
+        final Topic topic = Topic.forLifecycleFlags(aggregateClass);
+        storage.write(aggregateClass, topic, id, flags);
     }
 
     @Override

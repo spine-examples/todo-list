@@ -78,16 +78,15 @@ final class Topics {
         }
     }
 
-    enum PrefixedTopicFactory {
+    enum PrefixedIdTopicFactory {
 
         FOR_ENTITY_RECORD("entity"),
         FOR_AGGREGATE_RECORD("agg_record"),
-        FOR_LIFECYCLE_FLAGS("lifecycle"),
         FOR_EVENT_COUNT_AFTER_SNAPSHOT("event_count_als");
 
         private final String prefix;
 
-        PrefixedTopicFactory(String prefix) {
+        PrefixedIdTopicFactory(String prefix) {
             this.prefix = prefix;
         }
 
@@ -101,19 +100,22 @@ final class Topics {
         }
     }
 
-    static final class LastHandledEventTimeTopic extends AbstractTopic {
+    enum PrefixedTopicFactory {
 
-        private static final String PREFIX = "lhet";
+        FOR_LIFECYCLE_FLAGS("lifecycle"),
+        FOR_LAST_EVENT_TIME("lhet");
 
-        private final String value;
+        private final String prefix;
 
-        LastHandledEventTimeTopic(Class<?> type) {
-            this.value = PREFIX + type.getName();
+        PrefixedTopicFactory(String prefix) {
+            this.prefix = prefix;
         }
 
-        @Override
-        public String getName() {
-            return value;
+        Topic create(Class<?> forType) {
+            final String value = Joiner.on(SEPARATOR)
+                                       .join(prefix, forType.getName());
+            final Topic result = new ValueTopic(value);
+            return result;
         }
     }
 
