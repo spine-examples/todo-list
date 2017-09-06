@@ -40,7 +40,7 @@ public class AppConfig {
     private static final BoundedContext BOUNDED_CONTEXT = BoundedContexts.create();
 
     private static final Server SERVER = new Server(PORT, BOUNDED_CONTEXT);
-    private static final TodoClient CLIENT = new CommandLineTodoClient(HOST, PORT, BOUNDED_CONTEXT);
+    private static final TodoClient CLIENT = new CommandLineTodoClient(HOST, PORT);
 
     private AppConfig() {
         // Prevent instantiation of this class.

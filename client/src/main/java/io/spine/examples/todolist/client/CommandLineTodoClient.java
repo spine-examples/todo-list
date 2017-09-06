@@ -24,11 +24,10 @@ import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import io.grpc.stub.StreamObserver;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.Query;
-import io.spine.client.QueryResponse;
 import io.spine.client.grpc.CommandServiceGrpc;
+import io.spine.client.grpc.QueryServiceGrpc;
 import io.spine.core.Command;
 import io.spine.core.UserId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
@@ -48,12 +47,8 @@ import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
-import io.spine.server.BoundedContext;
-import io.spine.server.QueryService;
 import io.spine.time.ZoneOffsets;
 import io.spine.util.Exceptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -73,20 +68,18 @@ public class CommandLineTodoClient implements TodoClient {
     private static final int TIMEOUT = 10;
 
     private final ManagedChannel channel;
-    private final QueryService queryService;
+    private final QueryServiceGrpc.QueryServiceBlockingStub queryService;
     private final CommandServiceGrpc.CommandServiceBlockingStub commandService;
     private final ActorRequestFactory requestFactory;
 
     /**
      * Construct the client connecting to server at {@code host:port}.
      */
-    public CommandLineTodoClient(String host, int port, BoundedContext boundedContext) {
+    public CommandLineTodoClient(String host, int port) {
         this.requestFactory = actorRequestFactoryInstance();
         this.channel = initChannel(host, port);
         this.commandService = CommandServiceGrpc.newBlockingStub(channel);
-        this.queryService = QueryService.newBuilder()
-                                        .add(boundedContext)
-                                        .build();
+        this.queryService = QueryServiceGrpc.newBlockingStub(channel);
     }
 
     @Override
@@ -192,17 +185,12 @@ public class CommandLineTodoClient implements TodoClient {
         try {
             final Query query = requestFactory.query()
                                               .all(MyListView.class);
-            final EventStreamObserver responseObserver = new EventStreamObserver();
-            queryService.read(query, responseObserver);
-
-            final boolean isEmpty = responseObserver.queryResponses.isEmpty();
-            if (isEmpty) {
-                return MyListView.getDefaultInstance();
-            }
-
-            MyListView result = responseObserver.queryResponses.get(0)
-                                                               .unpack(MyListView.class);
-            return result;
+            final List<Any> messages = queryService.read(query)
+                                                   .getMessagesList();
+            return messages.isEmpty()
+                   ? MyListView.getDefaultInstance()
+                   : messages.get(0)
+                             .unpack(MyListView.class);
         } catch (InvalidProtocolBufferException e) {
             throw Exceptions.illegalStateWithCauseOf(e);
         }
@@ -213,11 +201,11 @@ public class CommandLineTodoClient implements TodoClient {
         try {
             final Query query = requestFactory.query()
                                               .all(LabelledTasksView.class);
-            final EventStreamObserver responseObserver = new EventStreamObserver();
-            queryService.read(query, responseObserver);
+            final List<Any> messages = queryService.read(query)
+                                                   .getMessagesList();
             final List<LabelledTasksView> result = newArrayList();
 
-            for (Any any : responseObserver.queryResponses) {
+            for (Any any : messages) {
                 final LabelledTasksView labelledView = any.unpack(LabelledTasksView.class);
                 result.add(labelledView);
             }
@@ -233,17 +221,12 @@ public class CommandLineTodoClient implements TodoClient {
         try {
             final Query query = requestFactory.query()
                                               .all(DraftTasksView.class);
-            final EventStreamObserver responseObserver = new EventStreamObserver();
-            queryService.read(query, responseObserver);
-
-            final boolean isEmpty = responseObserver.queryResponses.isEmpty();
-            if (isEmpty) {
-                return DraftTasksView.getDefaultInstance();
-            }
-            final DraftTasksView result =
-                    responseObserver.queryResponses.get(0)
-                                                   .unpack(DraftTasksView.class);
-            return result;
+            final List<Any> messages = queryService.read(query)
+                                                   .getMessagesList();
+            return messages.isEmpty()
+                   ? DraftTasksView.getDefaultInstance()
+                   : messages.get(0)
+                             .unpack(DraftTasksView.class);
         } catch (InvalidProtocolBufferException e) {
             throw Exceptions.illegalStateWithCauseOf(e);
         }
@@ -275,36 +258,5 @@ public class CommandLineTodoClient implements TodoClient {
                                                               .setZoneOffset(ZoneOffsets.UTC)
                                                               .build();
         return result;
-    }
-
-    private static class EventStreamObserver implements StreamObserver<QueryResponse> {
-
-        private List<Any> queryResponses;
-
-        @Override
-        public void onNext(QueryResponse value) {
-            queryResponses = value.getMessagesList();
-        }
-
-        @Override
-        public void onError(Throwable t) {
-            log().error("Exception is occurred during receiving the notifications.", t);
-        }
-
-        @Override
-        public void onCompleted() {
-            log().info("Receiving notifications is completed.");
-        }
-
-        private enum LogSingleton {
-            INSTANCE;
-
-            @SuppressWarnings("NonSerializableFieldInSerializableClass")
-            private final Logger value = LoggerFactory.getLogger(EventStreamObserver.class);
-        }
-
-        private static Logger log() {
-            return LogSingleton.INSTANCE.value;
-        }
     }
 }

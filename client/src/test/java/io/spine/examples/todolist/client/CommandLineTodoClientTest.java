@@ -62,7 +62,7 @@ abstract class CommandLineTodoClientTest {
         final BoundedContext boundedContext = BoundedContexts.create();
         server = new Server(PORT, boundedContext);
         startServer();
-        client = new CommandLineTodoClient(HOST, PORT, boundedContext);
+        client = new CommandLineTodoClient(HOST, PORT);
     }
 
     @AfterEach
