@@ -43,7 +43,9 @@ import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
 
 import static com.google.common.collect.Lists.newLinkedList;
+import static io.spine.protobuf.TypeConverter.toMessage;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
+import static java.lang.Long.compare;
 
 /**
  * @author Dmytro Dashenkov
@@ -113,17 +115,32 @@ public class KafkaWrapper {
                                                 .map(msg -> ((StringValue) msg).getValue())
                                                 .map(Topic::ofValue)
                                                 .map(this::read)
-                                                // Use collect() instead of reduce() to preserve
-                                                // <M> type parameter.
                                                 .collect(Collections::emptyIterator,
                                                          Iterators::concat,
                                                          Iterators::concat);
         return result;
     }
 
-    public void write(Class<? extends Entity> entityClass, Topic topic, Message value) {
+    public <M extends Message> Optional<M> read(Topic topic, Object id) {
+        final Message key = toMessage(id);
+        ensureSubscriptionOnto(topic);
+        final ConsumerRecords<Message, Message> all = consumer.poll(STANDARD_POLL_AWAIT);
+        final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
+        final Optional<Message> message = StreamSupport.stream(records.spliterator(), false)
+                                                       .filter(record -> key.equals(record.key()))
+                                                       .sorted(KafkaWrapper::compareConsRecords)
+                                                       .map(ConsumerRecord::value)
+                                                       .findFirst();
+        @SuppressWarnings("unchecked") // Expect caller to be aware of the type.
+        final Optional<M> result = (Optional<M>) message;
+        return result;
+    }
+
+    public void write(Class<? extends Entity> entityClass, Topic topic, Object id, Message value) {
         writeToSuperTopic(entityClass, topic);
+        final Message key = toMessage(id);
         final ProducerRecord<Message, Message> record = new ProducerRecord<>(topic.getName(),
+                                                                             key,
                                                                              value);
         final Future<?> ack = producer.send(record);
         if (consistencyLevel == STRONG) {
@@ -145,6 +162,10 @@ public class KafkaWrapper {
         producer.send(record);
     }
 
+    private static int compareConsRecords(ConsumerRecord<?, ?> left,
+                                          ConsumerRecord<?, ?> right) {
+        return compare(right.timestamp(), left.timestamp());
+    }
 
     private static Predicate<Message> active() {
         return record -> {

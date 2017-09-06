@@ -66,7 +66,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
     @Override
     protected Optional<EntityRecord> readRecord(I id) {
         final Topic topic = Topic.forRecord(entityClass, id);
-        final EntityRecord record = storage.<EntityRecord>readLast(topic).orElse(null);
+        final EntityRecord record = storage.<EntityRecord>read(topic, id).orElse(null);
         return fromNullable(record);
     }
 
@@ -112,7 +112,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
     @Override
     protected void writeRecord(I id, EntityRecordWithColumns record) {
         final Topic topic = Topic.forRecord(entityClass, id);
-        storage.write(entityClass, topic, record.getRecord());
+        storage.write(entityClass, topic, id, record.getRecord());
     }
 
     @Override
