@@ -66,7 +66,7 @@ abstract class CommandLineTodoClientTest {
     }
 
     @AfterEach
-    public void tearDown() throws Exception {
+    public void tearDown() {
         server.shutdown();
         getClient().shutdown();
     }

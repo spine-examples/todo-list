@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Dmytro Grankin
  */
 @DisplayName("TaskView should")
-class TaskViewTest {
+class TaskViewTest extends ViewTest {
 
     private final TaskItem task = TaskItem.newBuilder()
                                           .setDescription(newDescription("my task description"))
