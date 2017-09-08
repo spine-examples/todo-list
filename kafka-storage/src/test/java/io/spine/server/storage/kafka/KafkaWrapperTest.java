@@ -43,6 +43,7 @@ import static io.spine.server.storage.kafka.Consistency.STRONG;
 import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
 import static io.spine.server.storage.kafka.given.KafkaStorageTestEnv.getConsumerConfig;
+import static io.spine.server.storage.kafka.given.KafkaStorageTestEnv.getPollAwait;
 import static io.spine.server.storage.kafka.given.KafkaStorageTestEnv.getProducerConfig;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -65,7 +66,7 @@ class KafkaWrapperTest {
         final KafkaProducer<Message, Message> producer = new KafkaProducer<>(producerConfig,
                                                                              serializer(),
                                                                              serializer());
-        wrapper = new KafkaWrapper(producer, consumer, STRONG);
+        wrapper = new KafkaWrapper(producer, consumer, STRONG, getPollAwait());
     }
 
     @AfterEach

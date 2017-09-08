@@ -30,12 +30,14 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static io.spine.protobuf.TypeConverter.toMessage;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
 import static java.lang.Long.compare;
@@ -47,23 +49,26 @@ import static java.util.stream.StreamSupport.stream;
  */
 public class KafkaWrapper {
 
-    private static final long STANDARD_POLL_AWAIT = 10000L;
-
     private final KafkaProducer<Message, Message> producer;
     private final KafkaConsumer<Message, Message> consumer;
     private final Consistency consistencyLevel;
+    private final long pollAwait;
 
     public KafkaWrapper(KafkaProducer<Message, Message> producer,
                         KafkaConsumer<Message, Message> consumer,
-                        Consistency consistencyLevel) {
+                        Consistency consistencyLevel,
+                        Duration maxPollAwait) {
         this.producer = producer;
         this.consumer = consumer;
         this.consistencyLevel = consistencyLevel;
+        checkArgument(!maxPollAwait.isNegative() && !maxPollAwait.isZero(),
+                      "Max poll await must be a positive Duration.");
+        this.pollAwait = maxPollAwait.toMillis();
     }
 
     public <M extends Message> Optional<M> readLast(Topic topic) {
         ensureSubscriptionOnto(topic);
-        final ConsumerRecords<Message, Message> all = consumer.poll(STANDARD_POLL_AWAIT);
+        final ConsumerRecords<Message, Message> all = consumer.poll(pollAwait);
         final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
         final Optional<Message> lastMsg = stream(records.spliterator(), false)
                                                        .reduce((left, right) -> right)
@@ -97,7 +102,7 @@ public class KafkaWrapper {
 
     private Iterable<ConsumerRecord<Message, Message>> doRead(Topic topic) {
         ensureSubscriptionOnto(topic);
-        final ConsumerRecords<Message, Message> all = consumer.poll(STANDARD_POLL_AWAIT);
+        final ConsumerRecords<Message, Message> all = consumer.poll(pollAwait);
         final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
         return records;
     }
@@ -106,7 +111,7 @@ public class KafkaWrapper {
         final Topic topicOfTopics = Topic.forType(type);
         ensureSubscriptionOnto(topicOfTopics);
         final Iterable<ConsumerRecord<Message, Message>> records =
-                consumer.poll(STANDARD_POLL_AWAIT)
+                consumer.poll(pollAwait)
                         .records(topicOfTopics.getName());
         final Iterator<Message> messages = stream(records.spliterator(), false)
                 .map(ConsumerRecord::value)
@@ -127,7 +132,7 @@ public class KafkaWrapper {
     public <M extends Message> Optional<M> read(Topic topic, Object id) {
         final Message key = toMessage(id);
         ensureSubscriptionOnto(topic);
-        final ConsumerRecords<Message, Message> all = consumer.poll(STANDARD_POLL_AWAIT);
+        final ConsumerRecords<Message, Message> all = consumer.poll(pollAwait);
         final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
         final Optional<Message> message = stream(records.spliterator(), false)
                                                        .filter(record -> key.equals(record.key()))

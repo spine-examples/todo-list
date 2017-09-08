@@ -36,10 +36,12 @@ import io.spine.server.storage.kafka.KafkaStorageFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.Properties;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
@@ -53,6 +55,7 @@ public final class BoundedContexts {
     /** The default name of the {@code BoundedContext}. */
     private static final String KAFKA_PRODUCER_PROPS_PATH = "config/kafka-producer.properties";
     private static final String KAFKA_CONSUMER_PROPS_PATH = "config/kafka-consumer.properties";
+    private static final Duration POLL_AWAIT = Duration.of(1, SECONDS);
 
     /** The name of the Bounded Context. */
     private static final String NAME = "TodoListBoundedContext";
@@ -64,7 +67,10 @@ public final class BoundedContexts {
     static {
         final Properties producerConfig = loadProperties(KAFKA_PRODUCER_PROPS_PATH);
         final Properties consumerConfig = loadProperties(KAFKA_CONSUMER_PROPS_PATH);
-        storageFactory = new KafkaStorageFactory(producerConfig, consumerConfig, STRONG);
+        storageFactory = new KafkaStorageFactory(producerConfig,
+                                                 consumerConfig,
+                                                 STRONG,
+                                                 POLL_AWAIT);
     }
 
     private BoundedContexts() {

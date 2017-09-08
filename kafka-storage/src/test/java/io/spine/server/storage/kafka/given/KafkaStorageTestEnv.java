@@ -23,9 +23,11 @@ package io.spine.server.storage.kafka.given;
 import io.spine.server.storage.kafka.KafkaStorageFactory;
 import io.spine.server.storage.kafka.MessageSerializer;
 
+import java.time.Duration;
 import java.util.Properties;
 
 import static io.spine.server.storage.kafka.Consistency.STRONG;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
@@ -43,6 +45,8 @@ public class KafkaStorageTestEnv {
     private static final String SERIALIZER_NAME = MessageSerializer.class.getName();
     private static final String ALL = "all";
     private static final String CONSUMER_GROUP_ID = "0";
+
+    private static final Duration TEST_POLL_AWAIT = Duration.of(1, SECONDS);
 
     private static final Properties producerConfig = new Properties();
     private static final Properties consumerConfig = new Properties();
@@ -82,11 +86,16 @@ public class KafkaStorageTestEnv {
         return consumerConfig;
     }
 
+    public static Duration getPollAwait() {
+        return TEST_POLL_AWAIT;
+    }
+
     private enum StorageFactorySingleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
         private final KafkaStorageFactory value = new KafkaStorageFactory(producerConfig,
                                                                           consumerConfig,
-                                                                          STRONG);
+                                                                          STRONG,
+                                                                          TEST_POLL_AWAIT);
     }
 }
