@@ -34,6 +34,7 @@ import io.spine.server.storage.StorageFactory;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 
+import java.time.Duration;
 import java.util.Properties;
 
 import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
@@ -49,20 +50,28 @@ public class KafkaStorageFactory implements StorageFactory {
     // TODO:2017-09-04:dmytro.dashenkov: Replace with builder.
     public KafkaStorageFactory(Properties producerConfig,
                                Properties consumerConfig,
-                               Consistency consistencyLevel) {
-        this.storage = createStorage(producerConfig, consumerConfig, consistencyLevel);
+                               Consistency consistencyLevel,
+                               Duration maxPollAwait) {
+        this.storage = createStorage(producerConfig,
+                                     consumerConfig,
+                                     consistencyLevel,
+                                     maxPollAwait);
     }
 
     private static KafkaWrapper createStorage(Properties producerConfig,
                                               Properties consumerConfig,
-                                              Consistency consistencyLevel) {
+                                              Consistency consistencyLevel,
+                                              Duration maxPollAwait) {
         final KafkaProducer<Message, Message> producer = new KafkaProducer<>(producerConfig,
                                                                              serializer(),
                                                                              serializer());
         final KafkaConsumer<Message, Message> consumer = new KafkaConsumer<>(consumerConfig,
                                                                              deserializer(),
                                                                              deserializer());
-        final KafkaWrapper kafkaWrapper = new KafkaWrapper(producer, consumer, consistencyLevel);
+        final KafkaWrapper kafkaWrapper = new KafkaWrapper(producer,
+                                                           consumer,
+                                                           consistencyLevel,
+                                                           maxPollAwait);
         return kafkaWrapper;
     }
 
