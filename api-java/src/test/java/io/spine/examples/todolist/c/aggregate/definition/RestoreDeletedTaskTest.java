@@ -45,6 +45,7 @@ import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
 import io.spine.server.event.EventStreamQuery;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -92,6 +93,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         aggregate = new TaskPart(TaskAggregateRoot.get(taskId));
     }
 
+    @Disabled
     @Test
     @DisplayName("produce LabelledTaskRestored event")
     void produceEvent() {

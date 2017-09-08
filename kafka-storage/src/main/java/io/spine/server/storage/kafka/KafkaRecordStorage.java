@@ -26,6 +26,7 @@ import com.google.protobuf.Message;
 import io.spine.server.entity.Entity;
 import io.spine.server.entity.EntityRecord;
 import io.spine.server.entity.FieldMasks;
+import io.spine.server.entity.LifecycleFlags;
 import io.spine.server.entity.storage.EntityQuery;
 import io.spine.server.entity.storage.EntityRecordWithColumns;
 import io.spine.server.storage.RecordStorage;
@@ -37,6 +38,8 @@ import java.util.Map;
 import java.util.function.Function;
 
 import static com.google.common.base.Optional.fromNullable;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Iterators.filter;
 import static com.google.common.collect.Iterators.transform;
 import static com.google.common.collect.Lists.newLinkedList;
 import static io.spine.protobuf.AnyPacker.pack;
@@ -100,7 +103,13 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
     @Override
     protected Iterator<EntityRecord> readAllRecords(FieldMask fieldMask) {
         final Iterator<EntityRecord> result = storage.readAll(entityClass);
-        final Iterator<EntityRecord> maskedResult = transform(result, maskState(fieldMask)::apply);
+        final Iterator<EntityRecord> filtered = filter(result, record -> {
+            checkNotNull(record);
+            final LifecycleFlags flags = record.getLifecycleFlags();
+            return !(flags.getArchived() && flags.getDeleted());
+        });
+        final Iterator<EntityRecord> maskedResult = transform(filtered,
+                                                              maskState(fieldMask)::apply);
         return maskedResult;
     }
 

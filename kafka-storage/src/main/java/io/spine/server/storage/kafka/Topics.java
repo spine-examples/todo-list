@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 final class Topics {
 
     private static final char SEPARATOR = '_';
-    private static final Pattern VALID_TOPIC_CHAR = Pattern.compile("[a-zA-Z0-9._\\-]+");
+    private static final Pattern VALID_TOPIC_CHAR = Pattern.compile("[{}:\"\';$@/\\\\=]");
 
     private Topics() {
         // Prevent utility class instantiation.
@@ -42,15 +42,8 @@ final class Topics {
 
     private static String escape(String topic) {
         final Matcher matcher = VALID_TOPIC_CHAR.matcher(topic);
-        if (matcher.matches()) {
-            return topic;
-        }
-        final StringBuilder result = new StringBuilder(topic.length());
-        while (matcher.find()) {
-            final String group = matcher.group();
-            result.append(group);
-        }
-        return result.toString();
+        final String result = matcher.replaceAll("");
+        return result;
     }
 
     private abstract static class AbstractTopic implements Topic {

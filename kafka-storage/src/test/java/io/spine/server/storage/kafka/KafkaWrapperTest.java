@@ -26,10 +26,12 @@ import io.spine.server.entity.AbstractEntity;
 import io.spine.server.entity.Entity;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -48,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Dmytro Dashenkov
  */
-@DisplayName("FafkaWrapper should")
+@DisplayName("KafkaWrapper should")
 class KafkaWrapperTest {
 
     private KafkaWrapper wrapper;
@@ -64,6 +66,23 @@ class KafkaWrapperTest {
                                                                              serializer(),
                                                                              serializer());
         wrapper = new KafkaWrapper(producer, consumer, STRONG);
+    }
+
+    @AfterEach
+    void tearDown() throws IOException, InterruptedException {
+//        final Collection<String> topicNames = wrapper.getTopicNames();
+//        final Runtime runtime = getRuntime();
+//        final Collection<Process> processes = new ArrayList<>(topicNames.size());
+//        for (String topic : topicNames) {
+//            final Process process = runtime.exec(new String[] {
+//                    "bin/kafka-topics.sh",
+//                    "--zookeeper", "localhost:2181",
+//                    "--delete", "--topic", topic});
+//            processes.add(process);
+//        }
+//        for (Process process : processes) {
+//            process.waitFor();
+//        }
     }
 
     @Test
@@ -105,7 +124,6 @@ class KafkaWrapperTest {
                 super(id);
             }
         }
-
         final Class<? extends Entity> cls = UniqueNameEntity.class;
         final Topic topic1 = Topic.ofValue("KafkaWrapperTest-readAllByEntityType1");
         final int count1 = 5;
