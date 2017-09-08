@@ -141,6 +141,10 @@ public class KafkaWrapper {
 
     public void write(Class<? extends Entity> entityClass, Topic topic, Object id, Message value) {
         writeToSuperTopic(entityClass, topic);
+        write(topic, id, value);
+    }
+
+    public void write(Topic topic, Object id, Message value) {
         final Message key = toMessage(id);
         final ProducerRecord<Message, Message> record = new ProducerRecord<>(topic.getName(),
                                                                              key,
