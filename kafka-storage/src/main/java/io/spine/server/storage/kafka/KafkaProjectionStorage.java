@@ -48,7 +48,7 @@ public class KafkaProjectionStorage<I> extends ProjectionStorage<I> {
         final KafkaWrapper storage = delegate.getKafkaStorage();
         final Class<? extends Entity> cls = delegate.getEntityClass();
         final Topic topic = Topic.forLastHandledEventTime(cls);
-        storage.write(cls, topic, topic.getName(), time);
+        storage.write(topic, topic.getName(), time);
     }
 
     @Nullable

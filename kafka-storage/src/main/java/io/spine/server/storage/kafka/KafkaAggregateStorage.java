@@ -65,7 +65,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
         final UInt32Value msg = UInt32Value.newBuilder()
                                            .setValue(eventCount)
                                            .build();
-        storage.write(aggregateClass, topic, id, msg);
+        storage.write(topic, id, msg);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
     @Override
     public void writeLifecycleFlags(I id, LifecycleFlags flags) {
         final Topic topic = Topic.forLifecycleFlags(aggregateClass);
-        storage.write(aggregateClass, topic, id, flags);
+        storage.write(topic, id, flags);
     }
 
     @Override
