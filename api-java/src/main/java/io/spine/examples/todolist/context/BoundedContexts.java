@@ -41,7 +41,7 @@ import java.util.Properties;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
-import static java.time.temporal.ChronoUnit.SECONDS;
+import static java.time.temporal.ChronoUnit.MILLIS;
 import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
@@ -55,7 +55,7 @@ public final class BoundedContexts {
     /** The default name of the {@code BoundedContext}. */
     private static final String KAFKA_PRODUCER_PROPS_PATH = "config/kafka-producer.properties";
     private static final String KAFKA_CONSUMER_PROPS_PATH = "config/kafka-consumer.properties";
-    private static final Duration POLL_AWAIT = Duration.of(1, SECONDS);
+    private static final Duration POLL_AWAIT = Duration.of(50, MILLIS);
 
     /** The name of the Bounded Context. */
     private static final String NAME = "TodoListBoundedContext";
