@@ -22,12 +22,14 @@ package io.spine.server.storage.kafka;
 
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.Message;
+import com.google.protobuf.StringValue;
 import io.spine.server.entity.AbstractEntity;
 import io.spine.server.entity.Entity;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -58,6 +60,7 @@ class KafkaWrapperTest {
 
     @BeforeEach
     void setUp() {
+        TestRoutines.beforeEach();
         final Properties consumerConfig = getConsumerConfig();
         final Properties producerConfig = getProducerConfig();
         final KafkaConsumer<Message, Message> consumer = new KafkaConsumer<>(consumerConfig,
@@ -71,6 +74,7 @@ class KafkaWrapperTest {
 
     @AfterEach
     void tearDown() throws IOException, InterruptedException {
+        TestRoutines.afterEach();
 //        final Collection<String> topicNames = wrapper.getTopicNames();
 //        final Runtime runtime = getRuntime();
 //        final Collection<Process> processes = new ArrayList<>(topicNames.size());
@@ -161,6 +165,36 @@ class KafkaWrapperTest {
                                                 // OK for test as we expect the value to be present
         final Int32Value read = wrapper.<Int32Value>read(topic, id).get();
         assertEquals(last, read);
+    }
+
+    @Disabled // The test case ensures that the system is able to deal with comparatively big
+              // number of topics without any serious performance restrictions. The test runs for
+              // ~10 minutes (~2 for write and ~8 for read). If the topics already exist,
+              // the test takes ~8 minutes.
+    @Test
+    @DisplayName("handle thousands of topics")
+    @SuppressWarnings("MethodWithMultipleLoops")
+        // Required by the test logic. First we create all the topics and then read messages from
+        // them. The readability does not suffer in this case.
+    void handleBigNumberOfTopics() {
+        final int count = 1000;
+        final Message key = StringValue.newBuilder()
+                                       .setValue("big-data-key")
+                                       .build();
+        final Message value = StringValue.newBuilder()
+                                         .setValue("big-data-value")
+                                         .build();
+        final Topic[] topics = new Topic[count];
+        for (int i = 0; i < count; i++) {
+            final Topic topic = Topic.ofValue("KafkaWrapperTest-handleBigNumberOfTopics-" + i);
+            wrapper.write(topic, key, value);
+            topics[i] = topic;
+        }
+        for (int i = 0; i < count; i++) {
+            final Topic topic = topics[i];
+            final Iterator<StringValue> readMsgs = wrapper.read(topic);
+            assertEquals(value, readMsgs.next());
+        }
     }
 
     private static Collection<Int32Value> createValues(int count) {
