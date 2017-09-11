@@ -71,8 +71,8 @@ public class KafkaWrapper {
         final ConsumerRecords<Message, Message> all = consumer.poll(pollAwait);
         final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
         final Optional<Message> lastMsg = stream(records.spliterator(), false)
-                                                       .reduce((left, right) -> right)
-                                                       .map(ConsumerRecord::value);
+                .reduce((left, right) -> right)
+                .map(ConsumerRecord::value);
         @SuppressWarnings("unchecked") // Expect caller to be aware of the type.
         final Optional<M> result = (Optional<M>) lastMsg;
         return result;
@@ -116,10 +116,12 @@ public class KafkaWrapper {
         final Iterator<Message> messages = stream(records.spliterator(), false)
                 .map(ConsumerRecord::value)
                 .distinct()
-                .map(StringValue.class::cast)
-                .map(StringValue::getValue)
-                .map(Topic::ofValue)
-                .map(this::doRead)
+                .map(msg -> {
+                    final String topicName = ((StringValue) msg).getValue();
+                    final Topic topic = Topic.ofValue(topicName);
+                    final Iterable<ConsumerRecord<Message, Message>> result = doRead(topic);
+                    return result;
+                })
                 .flatMap(iterable -> stream(iterable.spliterator(), false))
                 .sorted(KafkaWrapper::compareConsRecords)
                 .map(ConsumerRecord::value)
@@ -135,10 +137,10 @@ public class KafkaWrapper {
         final ConsumerRecords<Message, Message> all = consumer.poll(pollAwait);
         final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
         final Optional<Message> message = stream(records.spliterator(), false)
-                                                       .filter(record -> key.equals(record.key()))
-                                                       .sorted(KafkaWrapper::compareConsRecords)
-                                                       .map(ConsumerRecord::value)
-                                                       .findFirst();
+                .filter(record -> key.equals(record.key()))
+                .sorted(KafkaWrapper::compareConsRecords)
+                .map(ConsumerRecord::value)
+                .findFirst();
         @SuppressWarnings("unchecked") // Expect caller to be aware of the type.
         final Optional<M> result = (Optional<M>) message;
         return result;
