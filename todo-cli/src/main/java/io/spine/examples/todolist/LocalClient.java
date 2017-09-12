@@ -29,16 +29,20 @@ import io.spine.examples.todolist.view.MainMenu;
 import static io.spine.examples.todolist.AppConfig.getClient;
 
 /**
- * A command-line client application.
+ * A command-line client application working with a local servers.
+ *
+ * <p>The client connects to a server using the
+ * {@linkplain io.spine.examples.todolist.client.CommandLineTodoClient#HOST host}
+ * and {@link io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
  *
  * <p>To run the application from a command-line, use the following command:
  * <pre>{@code gradle runTodoClient}</pre>
  *
  * @author Illia Shepilov
  */
-public class ClientApp {
+public class LocalClient {
 
-    private ClientApp() {
+    private LocalClient() {
         // Prevent instantiation of this class.
     }
 
