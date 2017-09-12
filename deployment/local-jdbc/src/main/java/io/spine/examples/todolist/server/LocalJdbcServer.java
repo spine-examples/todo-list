@@ -18,17 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.server;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.spine.examples.todolist.context.BoundedContexts;
-import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
-import io.spine.server.storage.jdbc.type.JdbcTypeRegistryFactory;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -37,16 +35,20 @@ import static io.spine.Identifier.newUuid;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
 /**
- * A local {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory}.
+ * A local {@link Server} using
+ * {@link io.spine.server.storage.jdbc.JdbcStorageFactory JdbcStorageFactory}.
+ *
+ * <p>The server uses the
+ * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
  *
  * @author Dmytro Grankin
  */
-public class LocalServer {
+public class LocalJdbcServer {
 
     private static final String HSQL_IN_MEMORY_DB_URL_PREFIX = "jdbc:hsqldb:mem:";
     private static final String DB_NAME = "TodoListInMemoryDB";
 
-    private LocalServer() {
+    private LocalJdbcServer() {
         // Prevent instantiation of this class.
     }
 
@@ -65,7 +67,6 @@ public class LocalServer {
     private static StorageFactory createStorageFactory() {
         return JdbcStorageFactory.newBuilder()
                                  .setDataSource(inMemoryDataSource())
-                                 .setColumnTypeRegistry(JdbcTypeRegistryFactory.defaultInstance())
                                  .setMultitenant(false)
                                  .build();
     }

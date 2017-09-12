@@ -19,16 +19,6 @@
  */
 
 dependencies {
-    compile group: 'org.jline', name: 'jline', version: '3.3.0'
-
-    compile project(path: ':client')
-    compile project(path: ':cli-core')
-    testCompile project(path: ':testutil-cli')
-    testCompile project(path: ':testutil-api')
-}
-
-task runTodoClient(dependsOn: jar, type: JavaExec) {
-    standardInput = System.in
-    main = 'io.spine.examples.todolist.ClientApp'
-    classpath = sourceSets.main.runtimeClasspath
+    compile project(path: ':server')
+    compile group: 'io.spine', name: 'jdbc-rdbms', version: spineVersion
 }

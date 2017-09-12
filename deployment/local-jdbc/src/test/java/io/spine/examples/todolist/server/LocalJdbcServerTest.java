@@ -18,24 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.server;
 
 import io.spine.server.BoundedContext;
 import io.spine.server.storage.StorageFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.LocalServer.createBoundedContext;
+import static io.spine.examples.todolist.server.LocalJdbcServer.createBoundedContext;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.Assert.assertFalse;
 
-@DisplayName("LocalServer should")
-class LocalServerTest {
+@DisplayName("LocalJdbcServer should")
+class LocalJdbcServerTest {
 
     @Test
     @DisplayName("have the private constructor")
     void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(LocalServer.class);
+        assertHasPrivateParameterlessCtor(LocalJdbcServer.class);
     }
 
     @Test

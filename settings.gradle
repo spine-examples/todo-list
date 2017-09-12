@@ -9,3 +9,7 @@ include 'testutil-cli'
 
 include ':local-inmem'
 project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+
+include ':local-jdbc'
+project(':local-jdbc').projectDir = new File('./deployment/local-jdbc')
+
