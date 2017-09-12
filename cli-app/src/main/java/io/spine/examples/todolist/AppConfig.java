@@ -22,43 +22,27 @@ package io.spine.examples.todolist;
 
 import io.spine.examples.todolist.client.CommandLineTodoClient;
 import io.spine.examples.todolist.client.TodoClient;
-import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.examples.todolist.server.Server;
-import io.spine.server.BoundedContext;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
 
 /**
- * Configuration of the application.
+ * Configuration of the client application.
  *
  * @author Dmytro Grankin
  */
 public class AppConfig {
 
-    static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
-    private static final BoundedContext BOUNDED_CONTEXT = BoundedContexts.create();
-
-    private static final Server SERVER = new Server(PORT, BOUNDED_CONTEXT);
-    private static final TodoClient CLIENT = new CommandLineTodoClient(HOST, PORT);
+    private static final TodoClient CLIENT = new CommandLineTodoClient(HOST,
+                                                                       DEFAULT_CLIENT_SERVICE_PORT);
 
     private AppConfig() {
         // Prevent instantiation of this class.
     }
 
     /**
-     * Obtains the {@link Server} instance.
-     *
-     * <p>Initially is not started.
-     *
-     * @return the server
-     */
-    static Server getServer() {
-        return SERVER;
-    }
-
-    /**
-     * Obtains {@link TodoClient} for communication with the {@linkplain #getServer() server}.
+     * Obtains {@link TodoClient} for communication with the {@link Server}.
      *
      * @return the client interface
      */
