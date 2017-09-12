@@ -24,58 +24,36 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.cli.Application;
 import io.spine.cli.Screen;
 import io.spine.cli.view.View;
-import io.spine.examples.todolist.server.Server;
 import io.spine.examples.todolist.view.MainMenu;
 
-import java.io.IOException;
-
 import static io.spine.examples.todolist.AppConfig.getClient;
-import static io.spine.examples.todolist.AppConfig.getServer;
-import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
- * Entry point to the command-line application.
+ * A command-line client application.
  *
- * <p>To run application from command-line, use the following command:
- * <pre>{@code gradle runTodoList}</pre>
+ * <p>To run the application from a command-line, use the following command:
+ * <pre>{@code gradle runTodoClient}</pre>
  *
  * @author Illia Shepilov
  */
-public class CliEntryPoint {
+public class ClientApp {
 
-    private CliEntryPoint() {
+    private ClientApp() {
         // Prevent instantiation of this class.
     }
 
     public static void main(String[] args) {
-        final Server server = getServer();
-        startServer(server);
-
         final Screen screen = new TerminalScreen();
         initCli(screen);
         final View entryPoint = MainMenu.create();
         screen.renderView(entryPoint);
 
         getClient().shutdown();
-        server.shutdown();
     }
 
     @VisibleForTesting
     static void initCli(Screen screen) {
         Application.getInstance()
                    .init(screen);
-    }
-
-    @VisibleForTesting
-    static void startServer(Server server) {
-        final Thread serverThread = new Thread(() -> {
-            try {
-                server.start();
-            } catch (IOException e) {
-                throw illegalStateWithCauseOf(e);
-            }
-        });
-
-        serverThread.start();
     }
 }

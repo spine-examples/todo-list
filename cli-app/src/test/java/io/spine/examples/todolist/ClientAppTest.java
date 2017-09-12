@@ -22,32 +22,21 @@ package io.spine.examples.todolist;
 
 import io.spine.cli.Application;
 import io.spine.cli.Screen;
-import io.spine.examples.todolist.context.BoundedContexts;
-import io.spine.examples.todolist.server.Server;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.CliEntryPoint.initCli;
-import static io.spine.examples.todolist.CliEntryPoint.startServer;
+import static io.spine.examples.todolist.ClientApp.initCli;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static io.spine.test.Tests.nullRef;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisplayName("CliEntryPoint should")
-class CliEntryPointTest {
+@DisplayName("ClientApp should")
+class ClientAppTest {
 
     @Test
     @DisplayName("have the private constructor")
     void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(CliEntryPoint.class);
-    }
-
-    @Test
-    @DisplayName("start the server properly")
-    void startServerProperly() {
-        final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, BoundedContexts.create());
-        startServer(server);
+        assertHasPrivateParameterlessCtor(ClientApp.class);
     }
 
     @Test

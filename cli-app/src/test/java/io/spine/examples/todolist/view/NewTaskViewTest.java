@@ -42,19 +42,14 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  * @author Dmytro Grankin
  */
 @DisplayName("NewTaskView should")
-class NewTaskViewTest {
+class NewTaskViewTest extends ViewTest {
 
     private static final String ACTION_NAME = "quit";
     private static final Shortcut QUIT_SHORTCUT = new Shortcut("q");
     private static final TaskDescription VALID_DESCRIPTION = newDescription("task description");
 
-    private Bot bot;
+    private final Bot bot = new Bot();
     private final NewTaskView view = NewTaskView.create();
-
-    @BeforeEach
-    void setUp() {
-        bot = new Bot();
-    }
 
     @Test
     @DisplayName("handle empty description")

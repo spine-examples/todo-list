@@ -20,6 +20,7 @@
 
 dependencies {
     compile group: 'org.jline', name: 'jline', version: '3.3.0'
+    compile group: 'io.spine', name: 'jdbc-rdbms', version: spineVersion
 
     compile project(path: ':api-java')
     compile project(path: ':client')
@@ -28,8 +29,8 @@ dependencies {
     testCompile project(path: ':testutil-api')
 }
 
-task runTodoList(dependsOn: jar, type: JavaExec) {
+task runTodoClient(dependsOn: jar, type: JavaExec) {
     standardInput = System.in
-    main = 'io.spine.examples.todolist.CliEntryPoint'
+    main = 'io.spine.examples.todolist.ClientApp'
     classpath = sourceSets.main.runtimeClasspath
 }

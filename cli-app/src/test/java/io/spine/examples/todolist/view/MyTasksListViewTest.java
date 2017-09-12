@@ -47,19 +47,14 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @author Dmytro Grankin
  */
 @DisplayName("MyTasksListView should")
-class MyTasksListViewTest {
+class MyTasksListViewTest extends ViewTest {
 
     private static final int VIEW_INDEX = 0;
 
-    private Bot bot;
+    private final Bot bot = new Bot();
     private final TaskItem taskView = TaskItem.newBuilder()
                                               .setDescription(newDescription("task desc"))
                                               .build();
-
-    @BeforeEach
-    void setUp() {
-        bot = new Bot();
-    }
 
     @Test
     @DisplayName("refresh task list")

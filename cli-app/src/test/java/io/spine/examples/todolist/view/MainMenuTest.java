@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @author Dmytro Grankin
  */
 @DisplayName("MainMenu should")
-class MainMenuTest {
+class MainMenuTest extends ViewTest {
 
     @Test
     @DisplayName("not be empty")

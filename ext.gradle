@@ -19,7 +19,7 @@
  */
 
 
-final def SPINE_VERSION = '0.9.60-SNAPSHOT'
+final def SPINE_VERSION = '0.9.64-SNAPSHOT'
 
 project.ext {
     // TODOList version

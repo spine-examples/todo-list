@@ -20,20 +20,29 @@
 
 package io.spine.examples.todolist;
 
+import io.spine.server.BoundedContext;
+import io.spine.server.storage.StorageFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.LocalServer.createBoundedContext;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.Assert.assertFalse;
 
-/**
- * @author Dmytro Grankin
- */
-@DisplayName("AppConfig should")
-class AppConfigTest {
+@DisplayName("LocalServer should")
+class LocalServerTest {
 
     @Test
     @DisplayName("have the private constructor")
     void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(AppConfig.class);
+        assertHasPrivateParameterlessCtor(LocalServer.class);
+    }
+
+    @Test
+    @DisplayName("create signletenant BoundedContext")
+    void createSingletenantBoundedContext() {
+        final BoundedContext boundedContext = createBoundedContext();
+        final StorageFactory storageFactory = boundedContext.getStorageFactory();
+        assertFalse(storageFactory.isMultitenant());
     }
 }
