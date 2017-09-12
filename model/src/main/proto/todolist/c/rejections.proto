@@ -25,7 +25,7 @@ package spine.examples.todolist;
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.examples.todolist";
-option java_package = "io.spine.examples.todolist.c.failures";
+option java_package = "io.spine.examples.todolist.c.rejection";
 option java_multiple_files = false;
 option java_generate_equals_and_hash = true;
 
@@ -33,7 +33,7 @@ option java_generate_equals_and_hash = true;
 import "todolist/identifiers.proto";
 import "todolist/values.proto";
 
-// The failure to update a task description.
+// The rejection to update a task description.
 //
 // It is thrown if an attempt is made to update the task in either DELETED or COMPLETED state.
 message CannotUpdateTaskDescription {
@@ -42,7 +42,7 @@ message CannotUpdateTaskDescription {
     DescriptionUpdateFailed update_failed = 1;
 }
 
-// The failure to update a task priority.
+// The rejection to update a task priority.
 //
 // It is thrown if an attempt is made to update the task in either DELETED or COMPLETED state.
 message CannotUpdateTaskPriority {
@@ -51,7 +51,7 @@ message CannotUpdateTaskPriority {
     PriorityUpdateFailed update_failed = 1;
 }
 
-// The failure to update a task due date.
+// The rejection to update a task due date.
 //
 // It is thrown if an attempt is made to update the task in either DELETED or COMPLETED state.
 message CannotUpdateTaskDueDate {
@@ -60,7 +60,7 @@ message CannotUpdateTaskDueDate {
     TaskDueDateUpdateFailed update_failed = 1;
 }
 
-// The failure to update a label details.
+// The rejection to update a label details.
 //
 // It is thrown if an attempt is made to update the label when
 // the expected label details do not match the actual.
@@ -70,7 +70,7 @@ message CannotUpdateLabelDetails {
     LabelDetailsUpdateFailed update_failed = 1;
 }
 
-// The failure to assign label to task.
+// The rejection to assign label to task.
 //
 // It is thrown if an attempt is made to assign the label
 // to the task in either DELETED or COMPLETED state.
@@ -80,7 +80,7 @@ message CannotAssignLabelToTask {
     AssignLabelToTaskFailed assign_label_failed = 1;
 }
 
-// The failure to remove label from task.
+// The rejection to remove label from task.
 //
 // It is thrown if an attempt is made to remove the label
 // from the task in either DELETED or COMPLETED state.
@@ -90,7 +90,7 @@ message CannotRemoveLabelFromTask {
     RemoveLabelFromTaskFailed remove_label_failed = 1;
 }
 
-// The failure to reopen a task.
+// The rejection to reopen a task.
 //
 // It is thrown if an attempt is made to reopen the task when task is not COMPLETED.
 message CannotReopenTask {
@@ -99,7 +99,7 @@ message CannotReopenTask {
     ReopenTaskFailed reopen_task_failed = 1;
 }
 
-// The failure to delete a task.
+// The rejection to delete a task.
 //
 // It is thrown if an attempt is made to delete the task
 // when task in either DELETED or COMPLETED state.
@@ -109,7 +109,7 @@ message CannotDeleteTask {
     DeleteTaskFailed delete_task_failed = 1;
 }
 
-// The failure to restore a task.
+// The rejection to restore a task.
 //
 // It is thrown if an attempt is made to restore the task when task is not DELETED.
 message CannotRestoreDeletedTask {
@@ -118,7 +118,7 @@ message CannotRestoreDeletedTask {
     RestoreDeletedTaskFailed restore_task_failed = 1;
 }
 
-// The failure to complete a task.
+// The rejection to complete a task.
 //
 // It is thrown if an attempt is made to complete the task when task is not FINALIZED.
 message CannotCompleteTask {
@@ -127,7 +127,7 @@ message CannotCompleteTask {
     CompleteTaskFailed complete_task_failed = 1;
 }
 
-// The failure to create a task draft.
+// The rejection to create a task draft.
 //
 // It is thrown if an attempt is made to create the task draft when task is already has a state.
 message CannotCreateDraft {
@@ -136,7 +136,7 @@ message CannotCreateDraft {
     CreateDraftFailed create_draft_failed = 1;
 }
 
-// The failure to finalize a draft.
+// The rejection to finalize a draft.
 //
 // It is thrown if an attempt is made to finalize the task when task is not DRAFT.
 message CannotFinalizeDraft {

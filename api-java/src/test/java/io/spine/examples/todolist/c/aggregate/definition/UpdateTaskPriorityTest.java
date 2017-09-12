@@ -34,8 +34,8 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskPriority;
-import io.spine.examples.todolist.c.failures.Rejections;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskPriority;
+import io.spine.examples.todolist.c.rejection.Rejections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -71,7 +71,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskPriority failure upon an attempt to " +
+    @DisplayName("throw CannotUpdateTaskPriority rejection upon an attempt to " +
             "update the priority of the deleted task")
     void cannotUpdateDeletedTaskPriority() {
         dispatchCreateTaskCmd();
@@ -87,7 +87,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskPriority failure " +
+    @DisplayName("throw CannotUpdateTaskPriority rejection " +
             "upon an attempt to update the priority of the completed task")
     void cannotUpdateCompletedTaskPriority() {
         dispatchCreateTaskCmd();
@@ -136,8 +136,8 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
     }
 
     @Test
-    @DisplayName("produce CannotUpdateTaskPriority failure")
-    void produceFailure() {
+    @DisplayName("produce CannotUpdateTaskPriority rejection")
+    void produceRejection() {
         final UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(taskId, LOW, HIGH);
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatchCommand(aggregate, envelopeOf(updateTaskPriority)));
@@ -149,7 +149,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
                 ((CannotUpdateTaskPriority) cause).getMessageThrown();
         final PriorityUpdateFailed priorityUpdateFailed =
                 cannotUpdateTaskPriority.getUpdateFailed();
-        final TaskId actualTaskId = priorityUpdateFailed.getFailureDetails()
+        final TaskId actualTaskId = priorityUpdateFailed.getRejectionDetails()
                                                         .getTaskId();
         assertEquals(taskId, actualTaskId);
 

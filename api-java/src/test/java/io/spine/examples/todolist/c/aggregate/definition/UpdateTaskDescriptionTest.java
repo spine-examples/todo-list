@@ -32,8 +32,8 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
-import io.spine.examples.todolist.c.failures.Rejections;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDescription;
+import io.spine.examples.todolist.c.rejection.Rejections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,7 +87,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDescription failure " +
+    @DisplayName("throw CannotUpdateTaskDescription rejection " +
             "upon an attempt to update the description of the deleted task")
     void cannotUpdateDeletedTaskDescription() {
         dispatchCreateTaskCmd();
@@ -104,7 +104,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDescription failure " +
+    @DisplayName("throw CannotUpdateTaskDescription rejection " +
             "upon an attempt to update the description of the completed task")
     void cannotUpdateCompletedTaskDescription() {
         dispatchCreateTaskCmd();
@@ -137,8 +137,8 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     }
 
     @Test
-    @DisplayName("produce CannotUpdateTaskDescription failure")
-    void produceFailure() {
+    @DisplayName("produce CannotUpdateTaskDescription rejection")
+    void produceRejection() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createBasicTask));
 
@@ -155,10 +155,10 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         assertThat(cause, instanceOf(CannotUpdateTaskDescription.class));
 
         @SuppressWarnings("ConstantConditions") // Instance type checked before.
-        final Rejections.CannotUpdateTaskDescription failure =
+        final Rejections.CannotUpdateTaskDescription rejection =
                 ((CannotUpdateTaskDescription) cause).getMessageThrown();
-        final DescriptionUpdateFailed descriptionUpdateFailed = failure.getUpdateFailed();
-        final TaskId actualTaskId = descriptionUpdateFailed.getFailureDetails()
+        final DescriptionUpdateFailed descriptionUpdateFailed = rejection.getUpdateFailed();
+        final TaskId actualTaskId = descriptionUpdateFailed.getRejectionDetails()
                                                            .getTaskId();
         assertEquals(taskId, actualTaskId);
 

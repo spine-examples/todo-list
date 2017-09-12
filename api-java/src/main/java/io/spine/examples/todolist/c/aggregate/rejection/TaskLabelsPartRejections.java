@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.c.aggregate.failures;
+package io.spine.examples.todolist.c.aggregate.rejection;
 
 import io.spine.examples.todolist.AssignLabelToTaskFailed;
 import io.spine.examples.todolist.FailedTaskCommandDetails;
@@ -26,27 +26,27 @@ import io.spine.examples.todolist.RemoveLabelFromTaskFailed;
 import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
-import io.spine.examples.todolist.c.failures.CannotAssignLabelToTask;
-import io.spine.examples.todolist.c.failures.CannotRemoveLabelFromTask;
+import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
+import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
 
 /**
- * Utility class for working with {@link TaskLabelsPart} failures.
+ * Utility class for working with {@link TaskLabelsPart} rejection.
  *
  * @author Illia Shepilov
  */
-public class TaskLabelsPartFailures {
+public class TaskLabelsPartRejections {
 
-    private TaskLabelsPartFailures() {
+    private TaskLabelsPartRejections() {
     }
 
     /**
-     * Constructs and throws the {@link CannotAssignLabelToTask} failure according to
+     * Constructs and throws the {@link CannotAssignLabelToTask} rejection according to
      * the passed parameters.
      *
-     * @param cmd the {@code AssignLabelToTask} command which thrown the failure
-     * @throws CannotAssignLabelToTask the failure to throw
+     * @param cmd the {@code AssignLabelToTask} command which thrown the rejection
+     * @throws CannotAssignLabelToTask the rejection to throw
      */
-    public static void throwCannotAssignLabelToTaskFailure(AssignLabelToTask cmd)
+    public static void throwCannotAssignLabelToTask(AssignLabelToTask cmd)
             throws CannotAssignLabelToTask {
         final FailedTaskCommandDetails commandFailed =
                 FailedTaskCommandDetails.newBuilder()
@@ -54,20 +54,20 @@ public class TaskLabelsPartFailures {
                                         .build();
         final AssignLabelToTaskFailed assignLabelToTaskFailed =
                 AssignLabelToTaskFailed.newBuilder()
-                                       .setFailureDetails(commandFailed)
+                                       .setRejectionDetails(commandFailed)
                                        .setLabelId(cmd.getLabelId())
                                        .build();
         throw new CannotAssignLabelToTask(assignLabelToTaskFailed);
     }
 
     /**
-     * Constructs and throws the {@link CannotRemoveLabelFromTask} failure according to
+     * Constructs and throws the {@link CannotRemoveLabelFromTask} rejection according to
      * the passed parameters.
      *
-     * @param cmd the {@code AssignLabelToTask} command which thrown the failure
-     * @throws CannotRemoveLabelFromTask the failure to throw
+     * @param cmd the {@code AssignLabelToTask} command which thrown the rejection
+     * @throws CannotRemoveLabelFromTask the rejection to throw
      */
-    public static void throwCannotRemoveLabelFromTaskFailure(RemoveLabelFromTask cmd)
+    public static void throwCannotRemoveLabelFromTask(RemoveLabelFromTask cmd)
             throws CannotRemoveLabelFromTask {
         final FailedTaskCommandDetails commandFailed =
                 FailedTaskCommandDetails.newBuilder()
@@ -76,7 +76,7 @@ public class TaskLabelsPartFailures {
         final RemoveLabelFromTaskFailed removeLabelFromTaskFailed =
                 RemoveLabelFromTaskFailed.newBuilder()
                                          .setLabelId(cmd.getLabelId())
-                                         .setFailureDetails(commandFailed)
+                                         .setRejectionDetails(commandFailed)
                                          .build();
         throw new CannotRemoveLabelFromTask(removeLabelFromTaskFailed);
     }

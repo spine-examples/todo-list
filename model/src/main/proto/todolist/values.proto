@@ -86,7 +86,7 @@ message LabelDetails {
 message DescriptionUpdateFailed {
 
     // Unsuccessful task command.
-    FailedTaskCommandDetails failure_details = 1;
+    FailedTaskCommandDetails rejection_details = 1;
 
     // A mismatching description value.
     change.ValueMismatch description_mismatch = 2;
@@ -96,7 +96,7 @@ message DescriptionUpdateFailed {
 message PriorityUpdateFailed {
 
     // Unsuccessful task command.
-    FailedTaskCommandDetails failure_details = 1;
+    FailedTaskCommandDetails rejection_details = 1;
 
     // A mismatching priority value.
     change.ValueMismatch priority_mismatch = 2;
@@ -106,7 +106,7 @@ message PriorityUpdateFailed {
 message TaskDueDateUpdateFailed {
 
     // Unsuccessful task command.
-    FailedTaskCommandDetails failure_details = 1;
+    FailedTaskCommandDetails rejection_details = 1;
 
     // A mismatching due date value.
     change.ValueMismatch due_date_mismatch = 2;
@@ -116,7 +116,7 @@ message TaskDueDateUpdateFailed {
 message LabelDetailsUpdateFailed {
 
     // Unsuccessful label command.
-    FailedLabelCommandDetails failure_details = 1;
+    FailedLabelCommandDetails rejection_details = 1;
 
     // A mismatching label details value.
     change.ValueMismatch label_details_mismatch = 2;
@@ -126,14 +126,14 @@ message LabelDetailsUpdateFailed {
 message CreateBasicTaskFailed {
 
     // Unsuccessful task command.
-    FailedTaskCommandDetails failure_details = 1;
+    FailedTaskCommandDetails rejection_details = 1;
 }
 
 // DTO for the failed assign label to task command.
 message AssignLabelToTaskFailed {
 
     // Unsuccessful task command.
-    FailedTaskCommandDetails failure_details = 1;
+    FailedTaskCommandDetails rejection_details = 1;
 
     // An identifier of the label.
     LabelId label_id = 2;
@@ -143,7 +143,7 @@ message AssignLabelToTaskFailed {
 message RemoveLabelFromTaskFailed {
 
     // An unsuccessful task command.
-    FailedTaskCommandDetails failure_details = 1;
+    FailedTaskCommandDetails rejection_details = 1;
 
     // An identifier of the label.
     LabelId label_id = 2;
@@ -153,42 +153,42 @@ message RemoveLabelFromTaskFailed {
 message ReopenTaskFailed {
 
     // An unsuccessful task command.
-    FailedTaskCommandDetails failure_details = 1;
+    FailedTaskCommandDetails rejection_details = 1;
 }
 
 // DTO for the failed delete task command.
 message DeleteTaskFailed {
 
     // An unsuccessful task command.
-    FailedTaskCommandDetails failure_details = 1;
+    FailedTaskCommandDetails rejection_details = 1;
 }
 
 // DTO for the failed restore deleted task command.
 message RestoreDeletedTaskFailed {
 
     // An unsuccessful task command.
-    FailedTaskCommandDetails failure_details = 1;
+    FailedTaskCommandDetails rejection_details = 1;
 }
 
 // DTO for the failed complete task command.
 message CompleteTaskFailed {
 
     // An unsuccessful task command.
-    FailedTaskCommandDetails failure_details = 1;
+    FailedTaskCommandDetails rejection_details = 1;
 }
 
 // DTO for the failed create task draft command.
 message CreateDraftFailed {
 
     // An unsuccessful task command.
-    FailedTaskCommandDetails failure_details = 1;
+    FailedTaskCommandDetails rejection_details = 1;
 }
 
 // DTO for the failed finalize draft command.
 message FinalizeDraftFailed {
 
     // An unsuccessful task command.
-    FailedTaskCommandDetails failure_details = 1;
+    FailedTaskCommandDetails rejection_details = 1;
 }
 
 // DTO for the unsuccessful task command.

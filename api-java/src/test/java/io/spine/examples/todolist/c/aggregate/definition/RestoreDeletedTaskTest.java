@@ -36,7 +36,7 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
 import io.spine.examples.todolist.c.events.LabelledTaskRestored;
-import io.spine.examples.todolist.c.failures.CannotRestoreDeletedTask;
+import io.spine.examples.todolist.c.rejection.CannotRestoreDeletedTask;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.grpc.MemoizingObserver;
 import io.spine.grpc.StreamObservers;
@@ -170,7 +170,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
     }
 
     @Test
-    @DisplayName("throw CannotRestoreDeletedTask failure upon an attempt to " +
+    @DisplayName("throw CannotRestoreDeletedTask rejection upon an attempt to " +
             "restore the completed task")
     void cannotRestoreCompletedTask() {
         createBasicTask();

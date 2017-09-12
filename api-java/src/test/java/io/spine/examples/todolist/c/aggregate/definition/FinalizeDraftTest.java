@@ -26,7 +26,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
-import io.spine.examples.todolist.c.failures.CannotFinalizeDraft;
+import io.spine.examples.todolist.c.rejection.CannotFinalizeDraft;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -76,7 +76,7 @@ public class FinalizeDraftTest extends TaskCommandTest<FinalizeDraft> {
     }
 
     @Test
-    @DisplayName("throw CannotFinalizeDraft failure upon an attempt to finalize the deleted task")
+    @DisplayName("throw CannotFinalizeDraft rejection upon an attempt to finalize the deleted task")
     void cannotFinalizeDeletedTask() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
@@ -91,7 +91,7 @@ public class FinalizeDraftTest extends TaskCommandTest<FinalizeDraft> {
     }
 
     @Test
-    @DisplayName("throw CannotFinalizeDraft failure upon an attempt to finalize " +
+    @DisplayName("throw CannotFinalizeDraft rejection upon an attempt to finalize " +
             "the task which is not a draft")
     void cannotFinalizeNotDraftTask() {
         final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);

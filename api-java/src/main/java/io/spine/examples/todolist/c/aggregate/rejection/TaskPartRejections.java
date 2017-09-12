@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.c.aggregate.failures;
+package io.spine.examples.todolist.c.aggregate.rejection;
 
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.CompleteTaskFailed;
@@ -42,92 +42,92 @@ import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
-import io.spine.examples.todolist.c.failures.CannotCompleteTask;
-import io.spine.examples.todolist.c.failures.CannotCreateDraft;
-import io.spine.examples.todolist.c.failures.CannotDeleteTask;
-import io.spine.examples.todolist.c.failures.CannotFinalizeDraft;
-import io.spine.examples.todolist.c.failures.CannotReopenTask;
-import io.spine.examples.todolist.c.failures.CannotRestoreDeletedTask;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskDueDate;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskPriority;
+import io.spine.examples.todolist.c.rejection.CannotCompleteTask;
+import io.spine.examples.todolist.c.rejection.CannotCreateDraft;
+import io.spine.examples.todolist.c.rejection.CannotDeleteTask;
+import io.spine.examples.todolist.c.rejection.CannotFinalizeDraft;
+import io.spine.examples.todolist.c.rejection.CannotReopenTask;
+import io.spine.examples.todolist.c.rejection.CannotRestoreDeletedTask;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDescription;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDueDate;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskPriority;
 
 /**
- * Utility class for working with {@link TaskPart} failures.
+ * Utility class for working with {@link TaskPart} rejection.
  *
  * @author Illia Shepilov
  */
-public class TaskPartFailures {
+public class TaskPartRejections {
 
-    private TaskPartFailures() {
+    private TaskPartRejections() {
         // Prevent instantiation of this utility class.
     }
 
-    public static class UpdateFailures {
+    public static class UpdateRejections {
 
-        private UpdateFailures() {
+        private UpdateRejections() {
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDescription} failure
+         * Constructs and throws the {@link CannotUpdateTaskDescription} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code UpdateTaskDescription} command which thrown the failure
-         * @throws CannotUpdateTaskDescription the failure to throw
+         * @param cmd the {@code UpdateTaskDescription} command which thrown the rejection
+         * @throws CannotUpdateTaskDescription the rejection to throw
          */
         public static void throwCannotUpdateTaskDescription(UpdateTaskDescription cmd)
                 throws CannotUpdateTaskDescription {
             final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final DescriptionUpdateFailed descriptionUpdateFailed =
                     DescriptionUpdateFailed.newBuilder()
-                                           .setFailureDetails(commandFailed)
+                                           .setRejectionDetails(commandFailed)
                                            .build();
             throw new CannotUpdateTaskDescription(descriptionUpdateFailed);
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure
+         * Constructs and throws the {@link CannotUpdateTaskDueDate} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code UpdateTaskDueDate} command which thrown the failure
-         * @throws CannotUpdateTaskDueDate the failure to throw
+         * @param cmd the {@code UpdateTaskDueDate} command which thrown the rejection
+         * @throws CannotUpdateTaskDueDate the rejection to throw
          */
         public static void throwCannotUpdateTaskDueDate(UpdateTaskDueDate cmd)
                 throws CannotUpdateTaskDueDate {
             final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final TaskDueDateUpdateFailed dueDateUpdateFailed =
                     TaskDueDateUpdateFailed.newBuilder()
-                                           .setFailureDetails(commandFailed)
+                                           .setRejectionDetails(commandFailed)
                                            .build();
             throw new CannotUpdateTaskDueDate(dueDateUpdateFailed);
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDueDate} failure
+         * Constructs and throws the {@link CannotUpdateTaskDueDate} rejection
          * according to the passed parameters.
          *
-         * @param cmd      the {@code UpdateTaskDueDate} command which thrown the failure
+         * @param cmd      the {@code UpdateTaskDueDate} command which thrown the rejection
          * @param mismatch the {@link ValueMismatch}
-         * @throws CannotUpdateTaskDueDate the failure to throw
+         * @throws CannotUpdateTaskDueDate the rejection to throw
          */
         public static void throwCannotUpdateTaskDueDate(
                 UpdateTaskDueDate cmd, ValueMismatch mismatch) throws CannotUpdateTaskDueDate {
             final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final TaskDueDateUpdateFailed dueDateUpdateFailed =
                     TaskDueDateUpdateFailed.newBuilder()
-                                           .setFailureDetails(commandFailed)
+                                           .setRejectionDetails(commandFailed)
                                            .setDueDateMismatch(mismatch)
                                            .build();
             throw new CannotUpdateTaskDueDate(dueDateUpdateFailed);
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskDescription} failure
+         * Constructs and throws the {@link CannotUpdateTaskDescription} rejection
          * according to the passed parameters.
          *
-         * @param cmd      the {@code UpdateTaskDescription} command which thrown the failure
+         * @param cmd      the {@code UpdateTaskDescription} command which thrown the rejection
          * @param mismatch the {@link ValueMismatch}
-         * @throws CannotUpdateTaskDescription the failure to throw
+         * @throws CannotUpdateTaskDescription the rejection to throw
          */
         public static void throwCannotUpdateDescription(
                 UpdateTaskDescription cmd, ValueMismatch mismatch)
@@ -135,153 +135,153 @@ public class TaskPartFailures {
             final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final DescriptionUpdateFailed descriptionUpdateFailed =
                     DescriptionUpdateFailed.newBuilder()
-                                           .setFailureDetails(commandFailed)
+                                           .setRejectionDetails(commandFailed)
                                            .setDescriptionMismatch(mismatch)
                                            .build();
             throw new CannotUpdateTaskDescription(descriptionUpdateFailed);
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskPriority} failure
+         * Constructs and throws the {@link CannotUpdateTaskPriority} rejection
          * according to the passed parameters.
          *
-         * @param cmd      the {@code UpdateTaskPriority} command which thrown the failure
+         * @param cmd      the {@code UpdateTaskPriority} command which thrown the rejection
          * @param mismatch the {@link ValueMismatch}
-         * @throws CannotUpdateTaskPriority the failure to throw
+         * @throws CannotUpdateTaskPriority the rejection to throw
          */
         public static void throwCannotUpdateTaskPriority(
                 UpdateTaskPriority cmd, ValueMismatch mismatch) throws CannotUpdateTaskPriority {
             final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final PriorityUpdateFailed priorityUpdateFailed =
                     PriorityUpdateFailed.newBuilder()
-                                        .setFailureDetails(commandFailed)
+                                        .setRejectionDetails(commandFailed)
                                         .setPriorityMismatch(mismatch)
                                         .build();
             throw new CannotUpdateTaskPriority(priorityUpdateFailed);
         }
 
         /**
-         * Constructs and throws the {@link CannotUpdateTaskPriority} failure
+         * Constructs and throws the {@link CannotUpdateTaskPriority} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code UpdateTaskPriority} command which thrown the failure
-         * @throws CannotUpdateTaskPriority the failure to throw
+         * @param cmd the {@code UpdateTaskPriority} command which thrown the rejection
+         * @throws CannotUpdateTaskPriority the rejection to throw
          */
         public static void throwCannotUpdateTaskPriority(UpdateTaskPriority cmd)
                 throws CannotUpdateTaskPriority {
             final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final PriorityUpdateFailed priorityUpdateFailed =
                     PriorityUpdateFailed.newBuilder()
-                                        .setFailureDetails(commandFailed)
+                                        .setRejectionDetails(commandFailed)
                                         .build();
             throw new CannotUpdateTaskPriority(priorityUpdateFailed);
         }
     }
 
-    public static class TaskCreationFailures {
+    public static class TaskCreationRejections {
 
-        private TaskCreationFailures() {
+        private TaskCreationRejections() {
         }
 
         /**
-         * Constructs and throws the {@link CannotCreateDraft} failure
+         * Constructs and throws the {@link CannotCreateDraft} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code CreateDraft} command which thrown the failure
-         * @throws CannotCreateDraft the failure to throw
+         * @param cmd the {@code CreateDraft} command which thrown the rejection
+         * @throws CannotCreateDraft the rejection to throw
          */
-        public static void throwCannotCreateDraftFailure(CreateDraft cmd) throws CannotCreateDraft {
+        public static void throwCannotCreateDraft(CreateDraft cmd) throws CannotCreateDraft {
             final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final CreateDraftFailed createDraftFailed =
                     CreateDraftFailed.newBuilder()
-                                     .setFailureDetails(commandFailed)
+                                     .setRejectionDetails(commandFailed)
                                      .build();
             throw new CannotCreateDraft(createDraftFailed);
         }
     }
 
-    public static class ChangeStatusFailures {
+    public static class ChangeStatusRejections {
 
-        private ChangeStatusFailures() {
+        private ChangeStatusRejections() {
         }
 
         /**
-         * Constructs and throws the {@link CannotReopenTask} failure
+         * Constructs and throws the {@link CannotReopenTask} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code ReopenTask} command which thrown the failure
-         * @throws CannotReopenTask the failure to throw
+         * @param cmd the {@code ReopenTask} command which thrown the rejection
+         * @throws CannotReopenTask the rejection to throw
          */
         public static void throwCannotReopenTask(ReopenTask cmd) throws CannotReopenTask {
             final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final ReopenTaskFailed reopenTaskFailed =
                     ReopenTaskFailed.newBuilder()
-                                    .setFailureDetails(commandFailed)
+                                    .setRejectionDetails(commandFailed)
                                     .build();
             throw new CannotReopenTask(reopenTaskFailed);
         }
 
         /**
-         * Constructs and throws the {@link CannotFinalizeDraft} failure
+         * Constructs and throws the {@link CannotFinalizeDraft} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code FinalizeDraft} command which thrown the failure
-         * @throws CannotFinalizeDraft the failure to throw
+         * @param cmd the {@code FinalizeDraft} command which thrown the rejection
+         * @throws CannotFinalizeDraft the rejection to throw
          */
         public static void throwCannotFinalizeDraft(FinalizeDraft cmd) throws CannotFinalizeDraft {
             final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final FinalizeDraftFailed finalizeDraftFailed =
                     FinalizeDraftFailed.newBuilder()
-                                       .setFailureDetails(commandFailed)
+                                       .setRejectionDetails(commandFailed)
                                        .build();
             throw new CannotFinalizeDraft(finalizeDraftFailed);
         }
 
         /**
-         * Constructs and throws the {@link CannotDeleteTask} failure
+         * Constructs and throws the {@link CannotDeleteTask} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code DeleteTask} command which thrown the failure
-         * @throws CannotDeleteTask the failure to throw
+         * @param cmd the {@code DeleteTask} command which thrown the rejection
+         * @throws CannotDeleteTask the rejection to throw
          */
         public static void throwCannotDeleteTask(DeleteTask cmd) throws CannotDeleteTask {
             final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final DeleteTaskFailed deleteTaskFailed =
                     DeleteTaskFailed.newBuilder()
-                                    .setFailureDetails(commandFailed)
+                                    .setRejectionDetails(commandFailed)
                                     .build();
             throw new CannotDeleteTask(deleteTaskFailed);
         }
 
         /**
-         * Constructs and throws the {@link CannotCompleteTask} failure
+         * Constructs and throws the {@link CannotCompleteTask} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code CompleteTask} command which thrown the failure
-         * @throws CannotCompleteTask the failure to throw
+         * @param cmd the {@code CompleteTask} command which thrown the rejection
+         * @throws CannotCompleteTask the rejection to throw
          */
         public static void throwCannotCompleteTask(CompleteTask cmd) throws CannotCompleteTask {
             final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final CompleteTaskFailed completeTaskFailed =
                     CompleteTaskFailed.newBuilder()
-                                      .setFailureDetails(commandFailed)
+                                      .setRejectionDetails(commandFailed)
                                       .build();
             throw new CannotCompleteTask(completeTaskFailed);
         }
 
         /**
-         * Constructs and throws the {@link CannotRestoreDeletedTask} failure
+         * Constructs and throws the {@link CannotRestoreDeletedTask} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code RestoreDeletedTask} command which thrown the failure
-         * @throws CannotRestoreDeletedTask the {@code CannotRestoreDeletedTask} failure
+         * @param cmd the {@code RestoreDeletedTask} command which thrown the rejection
+         * @throws CannotRestoreDeletedTask the {@code CannotRestoreDeletedTask} rejection
          */
         public static void throwCannotRestoreDeletedTask(RestoreDeletedTask cmd)
                 throws CannotRestoreDeletedTask {
             final FailedTaskCommandDetails commandFailed = newFailedTaskCommandDetails(cmd.getId());
             final RestoreDeletedTaskFailed restoreDeletedTaskFailed =
                     RestoreDeletedTaskFailed.newBuilder()
-                                            .setFailureDetails(commandFailed)
+                                            .setRejectionDetails(commandFailed)
                                             .build();
             throw new CannotRestoreDeletedTask(restoreDeletedTaskFailed);
         }

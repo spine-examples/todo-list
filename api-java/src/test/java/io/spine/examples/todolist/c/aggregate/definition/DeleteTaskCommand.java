@@ -27,7 +27,7 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.events.TaskDeleted;
-import io.spine.examples.todolist.c.failures.CannotDeleteTask;
+import io.spine.examples.todolist.c.rejection.CannotDeleteTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -70,7 +70,7 @@ public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
     }
 
     @Test
-    @DisplayName("throw CannotDeleteTask failure upon an attempt to " +
+    @DisplayName("throw CannotDeleteTask rejection upon an attempt to " +
             "delete the already deleted task")
     void cannotDeleteAlreadyDeletedTask() {
         dispatchCreateTaskCmd();

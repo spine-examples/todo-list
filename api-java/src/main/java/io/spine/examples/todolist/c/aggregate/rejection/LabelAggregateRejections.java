@@ -18,35 +18,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.c.aggregate.failures;
+package io.spine.examples.todolist.c.aggregate.rejection;
 
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.FailedLabelCommandDetails;
 import io.spine.examples.todolist.LabelDetailsUpdateFailed;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
-import io.spine.examples.todolist.c.failures.CannotUpdateLabelDetails;
+import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
 
 /**
- * Utility class for working with {@link LabelAggregate} failures.
+ * Utility class for working with {@link LabelAggregate} rejection.
  *
  * @author Illia Shepilov
  */
-public class LabelAggregateFailures {
+public class LabelAggregateRejections {
 
-    private LabelAggregateFailures() {
+    private LabelAggregateRejections() {
     }
 
     /**
-     * Constructs and throws the {@link CannotUpdateLabelDetails} failure according to
+     * Constructs and throws the {@link CannotUpdateLabelDetails} rejection according to
      * the passed parameters.
      *
      * @param cmd      the failed command
      * @param mismatch the {@link ValueMismatch}
-     * @throws CannotUpdateLabelDetails the failure to throw
+     * @throws CannotUpdateLabelDetails the rejection to throw
      */
-    public static void throwCannotUpdateLabelDetailsFailure(UpdateLabelDetails cmd,
-                                                            ValueMismatch mismatch)
+    public static void throwCannotUpdateLabelDetails(UpdateLabelDetails cmd,
+                                                     ValueMismatch mismatch)
             throws CannotUpdateLabelDetails {
         final FailedLabelCommandDetails labelCommandFailed =
                 FailedLabelCommandDetails.newBuilder()
@@ -54,7 +54,7 @@ public class LabelAggregateFailures {
                                          .build();
         final LabelDetailsUpdateFailed labelDetailsUpdateFailed =
                 LabelDetailsUpdateFailed.newBuilder()
-                                        .setFailureDetails(labelCommandFailed)
+                                        .setRejectionDetails(labelCommandFailed)
                                         .setLabelDetailsMismatch(mismatch)
                                         .build();
         throw new CannotUpdateLabelDetails(labelDetailsUpdateFailed);

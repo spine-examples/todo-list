@@ -33,8 +33,8 @@ import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.events.LabelCreated;
 import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
-import io.spine.examples.todolist.c.failures.CannotUpdateLabelDetails;
-import io.spine.examples.todolist.c.failures.Rejections;
+import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
+import io.spine.examples.todolist.c.rejection.Rejections;
 import io.spine.server.aggregate.AggregateCommandTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -160,7 +160,7 @@ class LabelAggregateTest {
         }
 
         @Test
-        @DisplayName("produce CannotUpdateLabelDetails failure " +
+        @DisplayName("produce CannotUpdateLabelDetails rejection " +
                 "when the label details does not match expected")
         void cannotUpdateLabelDetails() {
             final LabelDetails expectedLabelDetails = LabelDetails.newBuilder()
@@ -174,14 +174,14 @@ class LabelAggregateTest {
             final UpdateLabelDetails updateLabelDetails =
                     updateLabelDetailsInstance(getLabelId(), expectedLabelDetails, newLabelDetails);
             createCommand(updateLabelDetails);
-            final CannotUpdateLabelDetails failure =
+            final CannotUpdateLabelDetails rejection =
                     assertThrows(CannotUpdateLabelDetails.class,
                                  () -> aggregate.handle(commandMessage().get()));
             final Rejections.CannotUpdateLabelDetails cannotUpdateLabelDetails =
-                    failure.getMessageThrown();
+                    rejection.getMessageThrown();
             final LabelDetailsUpdateFailed labelDetailsUpdateFailed =
                     cannotUpdateLabelDetails.getUpdateFailed();
-            final LabelId actualLabelId = labelDetailsUpdateFailed.getFailureDetails()
+            final LabelId actualLabelId = labelDetailsUpdateFailed.getRejectionDetails()
                                                                   .getLabelId();
             assertEquals(getLabelId(), actualLabelId);
 

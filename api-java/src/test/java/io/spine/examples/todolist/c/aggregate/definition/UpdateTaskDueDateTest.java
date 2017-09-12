@@ -32,8 +32,8 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskDueDate;
-import io.spine.examples.todolist.c.failures.Rejections;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDueDate;
+import io.spine.examples.todolist.c.rejection.Rejections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDueDate failure " +
+    @DisplayName("throw CannotUpdateTaskDueDate rejection " +
             "upon an attempt to update the due date of the completed task")
     void cannotUpdateCompletedTaskDueDate() {
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
@@ -81,7 +81,7 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDueDate failure " +
+    @DisplayName("throw CannotUpdateTaskDueDate rejection " +
             "upon an attempt to update the due date of the deleted task")
     void cannotUpdateDeletedTaskDueDate() {
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
@@ -124,8 +124,8 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
     }
 
     @Test
-    @DisplayName("produce CannotUpdateTaskDueDate failure")
-    void produceFailure() {
+    @DisplayName("produce CannotUpdateTaskDueDate rejection")
+    void produceRejection() {
         final Timestamp expectedDueDate = getCurrentTime();
         final Timestamp newDueDate = getCurrentTime();
 
@@ -140,7 +140,7 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
                 ((CannotUpdateTaskDueDate) cause).getMessageThrown();
 
         final TaskDueDateUpdateFailed dueDateUpdateFailed = cannotUpdateTaskDueDate.getUpdateFailed();
-        final TaskId actualTaskId = dueDateUpdateFailed.getFailureDetails()
+        final TaskId actualTaskId = dueDateUpdateFailed.getRejectionDetails()
                                                        .getTaskId();
         assertEquals(taskId, actualTaskId);
 

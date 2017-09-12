@@ -56,15 +56,15 @@ import io.spine.examples.todolist.c.events.TaskDraftFinalized;
 import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
 import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.events.TaskReopened;
-import io.spine.examples.todolist.c.failures.CannotCompleteTask;
-import io.spine.examples.todolist.c.failures.CannotCreateDraft;
-import io.spine.examples.todolist.c.failures.CannotDeleteTask;
-import io.spine.examples.todolist.c.failures.CannotFinalizeDraft;
-import io.spine.examples.todolist.c.failures.CannotReopenTask;
-import io.spine.examples.todolist.c.failures.CannotRestoreDeletedTask;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskDueDate;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskPriority;
+import io.spine.examples.todolist.c.rejection.CannotCompleteTask;
+import io.spine.examples.todolist.c.rejection.CannotCreateDraft;
+import io.spine.examples.todolist.c.rejection.CannotDeleteTask;
+import io.spine.examples.todolist.c.rejection.CannotFinalizeDraft;
+import io.spine.examples.todolist.c.rejection.CannotReopenTask;
+import io.spine.examples.todolist.c.rejection.CannotRestoreDeletedTask;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDescription;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDueDate;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskPriority;
 import io.spine.server.aggregate.AggregatePart;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
@@ -80,16 +80,16 @@ import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidCr
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidTransition;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskPriorityCommand;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.ChangeStatusFailures.throwCannotCompleteTask;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.ChangeStatusFailures.throwCannotDeleteTask;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.ChangeStatusFailures.throwCannotFinalizeDraft;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.ChangeStatusFailures.throwCannotReopenTask;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.ChangeStatusFailures.throwCannotRestoreDeletedTask;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateDescription;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTaskPriority;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotCompleteTask;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotDeleteTask;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotFinalizeDraft;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotReopenTask;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotRestoreDeletedTask;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.TaskCreationRejections.throwCannotCreateDraft;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateDescription;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDescription;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDueDate;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskPriority;
 import static io.spine.time.Time.getCurrentTime;
 import static io.spine.time.Timestamps2.compare;
 import static java.util.Collections.singletonList;
@@ -288,7 +288,7 @@ public class TaskPart extends AggregatePart<TaskId,
         final boolean isValid = isValidCreateDraftCommand(getState().getTaskStatus());
 
         if (!isValid) {
-            throwCannotCreateDraftFailure(cmd);
+            throwCannotCreateDraft(cmd);
         }
 
         final TaskId taskId = cmd.getId();

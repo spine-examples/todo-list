@@ -28,7 +28,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.events.TaskDraftCreated;
-import io.spine.examples.todolist.c.failures.CannotCreateDraft;
+import io.spine.examples.todolist.c.rejection.CannotCreateDraft;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -80,7 +80,7 @@ public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
     }
 
     @Test
-    @DisplayName("throw CannotCreateDraft failure upon " +
+    @DisplayName("throw CannotCreateDraft rejection upon " +
             "an attempt to create draft with deleted task ID")
     void notCreateDraft() {
         final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
@@ -91,13 +91,14 @@ public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
 
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate, envelopeOf(createDraftCmd)));
+                                         () -> dispatchCommand(aggregate,
+                                                               envelopeOf(createDraftCmd)));
         final Throwable cause = Throwables.getRootCause(t);
-        final CannotCreateDraft failure = (CannotCreateDraft) cause;
-        final TaskId actualId = failure.getMessageThrown()
-                                       .getCreateDraftFailed()
-                                       .getFailureDetails()
-                                       .getTaskId();
+        final CannotCreateDraft rejection = (CannotCreateDraft) cause;
+        final TaskId actualId = rejection.getMessageThrown()
+                                         .getCreateDraftFailed()
+                                         .getRejectionDetails()
+                                         .getTaskId();
         assertEquals(taskId, actualId);
     }
 }

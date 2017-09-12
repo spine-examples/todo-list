@@ -18,38 +18,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.c.aggregate.failures;
+package io.spine.examples.todolist.c.aggregate.rejection;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import io.spine.core.CommandContext;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
-import io.spine.examples.todolist.c.failures.CannotUpdateLabelDetails;
+import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
 
+import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRejections.throwCannotUpdateLabelDetails;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static io.spine.examples.todolist.c.aggregate.failures.LabelAggregateFailures.throwCannotUpdateLabelDetailsFailure;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
  */
-@DisplayName("LabelAggregateFailures should")
-class LabelAggregateFailuresTest {
+@DisplayName("LabelAggregateRejections should")
+class LabelAggregateRejectionsTest {
 
     @Test
     @DisplayName("have the private constructor")
     public void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(LabelAggregateFailures.class);
+        assertHasPrivateParameterlessCtor(LabelAggregateRejections.class);
     }
 
     @Test
-    @DisplayName("throw CannotUpdateLabelDetails failure")
-    public void throwCannotUpdateLabelDetails() {
+    @DisplayName("throw CannotUpdateLabelDetails rejection")
+    public void throwCannotUpdateLabelDetailsRejection() {
         final UpdateLabelDetails cmd = UpdateLabelDetails.getDefaultInstance();
-        final CommandContext ctx = CommandContext.getDefaultInstance();
         final ValueMismatch valueMismatch = ValueMismatch.getDefaultInstance();
-        assertThrows(CannotUpdateLabelDetails.class, () ->
-                throwCannotUpdateLabelDetailsFailure(cmd, valueMismatch));
+        assertThrows(CannotUpdateLabelDetails.class,
+                     () -> throwCannotUpdateLabelDetails(cmd, valueMismatch));
     }
 }
