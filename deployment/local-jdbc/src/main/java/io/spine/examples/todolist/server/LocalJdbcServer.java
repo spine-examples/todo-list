@@ -23,20 +23,32 @@ package io.spine.examples.todolist.server;
 import com.google.common.annotations.VisibleForTesting;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.spine.Environment;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.server.BoundedContext;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
+import org.slf4j.Logger;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 
-import static io.spine.Identifier.newUuid;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static java.lang.String.format;
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * A local {@link Server} using
- * {@link io.spine.server.storage.jdbc.JdbcStorageFactory JdbcStorageFactory}.
+ * A local {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
+ * JdbcStorageFactory}, {@code MySQL} in particular.
+ *
+ * <p>To run the server from a command-line run the command as follows:
+ * {@code gradle :local-jdbc:runServer -Pconf=db_name,username,password}
+ *
+ * <p>If the parameters were not specified to a command or the server was ran directly,
+ * {@linkplain #DEFAULT_ARGUMENTS} will be used.
+ *
+ * <p>As the server uses {@code MySQL}, the data base with the specified name should be created
+ * and the username and password should be correct.
  *
  * <p>The server uses the
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
@@ -45,39 +57,84 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
  */
 public class LocalJdbcServer {
 
-    private static final String HSQL_IN_MEMORY_DB_URL_PREFIX = "jdbc:hsqldb:mem:";
-    private static final String DB_NAME = "TodoListInMemoryDB";
+    private static final String DB_URL_PREFIX = "jdbc:mysql:";
+    private static final String DB_URL_FORMAT = "%s%s?useSSL=false";
+
+    private static final String DB_NAME = "TodoListDB";
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = "root";
+    @VisibleForTesting
+    static final String[] DEFAULT_ARGUMENTS = {DB_NAME, USERNAME, PASSWORD};
 
     private LocalJdbcServer() {
         // Prevent instantiation of this class.
     }
 
     public static void main(String[] args) throws IOException {
-        final BoundedContext boundedContext = createBoundedContext();
+        final String[] actualArguments;
+        if (DEFAULT_ARGUMENTS.length != args.length) {
+            log().info("The specified arguments don't match the required format. " +
+                               "Default arguments will be used.");
+            actualArguments = DEFAULT_ARGUMENTS;
+        } else {
+            actualArguments = args;
+        }
+
+        final BoundedContext boundedContext = createBoundedContext(actualArguments);
         final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
     }
 
     @VisibleForTesting
-    static BoundedContext createBoundedContext() {
-        final StorageFactory storageFactory = createStorageFactory();
+    static BoundedContext createBoundedContext(String[] args) {
+        final StorageFactory storageFactory = createStorageFactory(args);
         return BoundedContexts.create(storageFactory);
     }
 
-    private static StorageFactory createStorageFactory() {
+    private static StorageFactory createStorageFactory(String[] args) {
         return JdbcStorageFactory.newBuilder()
-                                 .setDataSource(inMemoryDataSource())
+                                 .setDataSource(createDataSource(args))
                                  .setMultitenant(false)
                                  .build();
     }
 
-    private static DataSource inMemoryDataSource() {
+    private static DataSource createDataSource(String[] args) {
         final HikariConfig config = new HikariConfig();
-        final String dbUrl = HSQL_IN_MEMORY_DB_URL_PREFIX + DB_NAME + newUuid();
-        config.setJdbcUrl(dbUrl);
 
-        // Not setting username and password is OK for in-memory database.
+        final String dbName = args[0];
+        final String username = args[1];
+        final String password = args[2];
+
+        log().info("Start `DataSource` creation. The following parameters will be used:");
+        final String dbUrl = getDbUrl(dbName);
+        config.setJdbcUrl(dbUrl);
+        log().info("JDBC URL: {}", dbUrl);
+
+        config.setUsername(username);
+        log().info("Username: {}", username);
+
+        config.setPassword(password);
+        log().info("Password: {}", password);
+
         final DataSource dataSource = new HikariDataSource(config);
         return dataSource;
+    }
+
+    private static String getDbUrl(String dbName) {
+        final Environment environment = Environment.getInstance();
+        final String prefix = environment.isTests()
+                              ? "jdbc:h2:mem:"
+                              : DB_URL_PREFIX;
+        return format(DB_URL_FORMAT, prefix, dbName);
+    }
+
+    private static Logger log() {
+        return LogSingleton.INSTANCE.value;
+    }
+
+    private enum LogSingleton {
+        INSTANCE;
+        @SuppressWarnings("NonSerializableFieldInSerializableClass")
+        private final Logger value = getLogger(LocalJdbcServer.class);
     }
 }

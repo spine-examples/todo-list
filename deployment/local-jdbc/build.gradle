@@ -19,6 +19,17 @@
  */
 
 dependencies {
-    compile project(path: ':server')
     compile group: 'io.spine', name: 'jdbc-rdbms', version: spineVersion
+    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+
+    compile project(path: ':server')
+}
+
+// A task to run the server. See `LocalJdbcServer` for the details.
+task runServer(dependsOn: jar, type: JavaExec) {
+    if(project.hasProperty('conf')){
+        args(conf.split(','))
+    }
+    main = 'io.spine.examples.todolist.server.LocalJdbcServer'
+    classpath = sourceSets.main.runtimeClasspath
 }

@@ -25,6 +25,7 @@ import io.spine.server.storage.StorageFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.server.LocalJdbcServer.DEFAULT_ARGUMENTS;
 import static io.spine.examples.todolist.server.LocalJdbcServer.createBoundedContext;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.Assert.assertFalse;
@@ -41,7 +42,7 @@ class LocalJdbcServerTest {
     @Test
     @DisplayName("create signletenant BoundedContext")
     void createSingletenantBoundedContext() {
-        final BoundedContext boundedContext = createBoundedContext();
+        final BoundedContext boundedContext = createBoundedContext(DEFAULT_ARGUMENTS);
         final StorageFactory storageFactory = boundedContext.getStorageFactory();
         assertFalse(storageFactory.isMultitenant());
     }
