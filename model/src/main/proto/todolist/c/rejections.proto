@@ -38,8 +38,8 @@ import "todolist/values.proto";
 // It is thrown if an attempt is made to update the task in either DELETED or COMPLETED state.
 message CannotUpdateTaskDescription {
 
-    // Failed the description update.
-    DescriptionUpdateFailed update_failed = 1;
+    // Rejected the description update.
+    DescriptionUpdateRejected update_rejected = 1;
 }
 
 // The rejection to update a task priority.
@@ -47,8 +47,8 @@ message CannotUpdateTaskDescription {
 // It is thrown if an attempt is made to update the task in either DELETED or COMPLETED state.
 message CannotUpdateTaskPriority {
 
-    // Failed the priority update.
-    PriorityUpdateFailed update_failed = 1;
+    // Rejected the priority update.
+    PriorityUpdateRejected update_rejected = 1;
 }
 
 // The rejection to update a task due date.
@@ -56,8 +56,8 @@ message CannotUpdateTaskPriority {
 // It is thrown if an attempt is made to update the task in either DELETED or COMPLETED state.
 message CannotUpdateTaskDueDate {
 
-    // Failed the due date update.
-    TaskDueDateUpdateFailed update_failed = 1;
+    // Rejected the due date update.
+    TaskDueDateUpdateRejected update_rejected = 1;
 }
 
 // The rejection to update a label details.
@@ -66,8 +66,8 @@ message CannotUpdateTaskDueDate {
 // the expected label details do not match the actual.
 message CannotUpdateLabelDetails {
 
-    // Failed the label details update.
-    LabelDetailsUpdateFailed update_failed = 1;
+    // Rejected the label details update.
+    LabelDetailsUpdateRejected update_rejected = 1;
 }
 
 // The rejection to assign label to task.
@@ -76,8 +76,8 @@ message CannotUpdateLabelDetails {
 // to the task in either DELETED or COMPLETED state.
 message CannotAssignLabelToTask {
 
-    // Failed the label assigning to the task.
-    AssignLabelToTaskFailed assign_label_failed = 1;
+    // Rejected the label assigning to the task.
+    AssignLabelToTaskRejected assign_label_rejected = 1;
 }
 
 // The rejection to remove label from task.
@@ -86,8 +86,8 @@ message CannotAssignLabelToTask {
 // from the task in either DELETED or COMPLETED state.
 message CannotRemoveLabelFromTask {
 
-    // Failed the label removing from task.
-    RemoveLabelFromTaskFailed remove_label_failed = 1;
+    // Rejected the label removing from task.
+    RemoveLabelFromTaskRejected remove_label_rejected = 1;
 }
 
 // The rejection to reopen a task.
@@ -95,8 +95,8 @@ message CannotRemoveLabelFromTask {
 // It is thrown if an attempt is made to reopen the task when task is not COMPLETED.
 message CannotReopenTask {
 
-    // Failed the task reopening.
-    ReopenTaskFailed reopen_task_failed = 1;
+    // Rejected the task reopening.
+    ReopenTaskRejected reopen_task_rejected = 1;
 }
 
 // The rejection to delete a task.
@@ -105,8 +105,8 @@ message CannotReopenTask {
 // when task in either DELETED or COMPLETED state.
 message CannotDeleteTask {
 
-    // Failed the task deletion.
-    DeleteTaskFailed delete_task_failed = 1;
+    // Rejected the task deletion.
+    DeleteTaskRejected delete_task_rejected = 1;
 }
 
 // The rejection to restore a task.
@@ -114,8 +114,8 @@ message CannotDeleteTask {
 // It is thrown if an attempt is made to restore the task when task is not DELETED.
 message CannotRestoreDeletedTask {
 
-    // Failed the task restoring.
-    RestoreDeletedTaskFailed restore_task_failed = 1;
+    // Rejected the task restoring.
+    RestoreDeletedTaskRejected restore_task_rejected = 1;
 }
 
 // The rejection to complete a task.
@@ -123,8 +123,8 @@ message CannotRestoreDeletedTask {
 // It is thrown if an attempt is made to complete the task when task is not FINALIZED.
 message CannotCompleteTask {
 
-    // Failed the task completion.
-    CompleteTaskFailed complete_task_failed = 1;
+    // Rejected the task completion.
+    CompleteTaskRejected complete_task_rejected = 1;
 }
 
 // The rejection to create a task draft.
@@ -132,8 +132,8 @@ message CannotCompleteTask {
 // It is thrown if an attempt is made to create the task draft when task is already has a state.
 message CannotCreateDraft {
 
-    // Failed the draft creation.
-    CreateDraftFailed create_draft_failed = 1;
+    // Rejected the draft creation.
+    CreateDraftRejected create_draft_rejected = 1;
 }
 
 // The rejection to finalize a draft.
@@ -141,6 +141,6 @@ message CannotCreateDraft {
 // It is thrown if an attempt is made to finalize the task when task is not DRAFT.
 message CannotFinalizeDraft {
 
-    // Failed the draft finalization.
-    FinalizeDraftFailed finalize_draft_failed = 1;
+    // Rejected the draft finalization.
+    FinalizeDraftRejected finalize_draft_rejected = 1;
 }

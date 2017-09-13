@@ -20,10 +20,10 @@
 
 package io.spine.examples.todolist.c.aggregate.rejection;
 
-import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.change.ValueMismatch;
-import io.spine.examples.todolist.FailedLabelCommandDetails;
-import io.spine.examples.todolist.LabelDetailsUpdateFailed;
+import io.spine.examples.todolist.LabelDetailsUpdateRejected;
+import io.spine.examples.todolist.RejectedLabelCommandDetails;
+import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
 
@@ -41,22 +41,22 @@ public class LabelAggregateRejections {
      * Constructs and throws the {@link CannotUpdateLabelDetails} rejection according to
      * the passed parameters.
      *
-     * @param cmd      the failed command
+     * @param cmd      the rejected command
      * @param mismatch the {@link ValueMismatch}
      * @throws CannotUpdateLabelDetails the rejection to throw
      */
     public static void throwCannotUpdateLabelDetails(UpdateLabelDetails cmd,
                                                      ValueMismatch mismatch)
             throws CannotUpdateLabelDetails {
-        final FailedLabelCommandDetails labelCommandFailed =
-                FailedLabelCommandDetails.newBuilder()
-                                         .setLabelId(cmd.getId())
-                                         .build();
-        final LabelDetailsUpdateFailed labelDetailsUpdateFailed =
-                LabelDetailsUpdateFailed.newBuilder()
-                                        .setRejectionDetails(labelCommandFailed)
-                                        .setLabelDetailsMismatch(mismatch)
-                                        .build();
-        throw new CannotUpdateLabelDetails(labelDetailsUpdateFailed);
+        final RejectedLabelCommandDetails labelCommandRejected =
+                RejectedLabelCommandDetails.newBuilder()
+                                           .setLabelId(cmd.getId())
+                                           .build();
+        final LabelDetailsUpdateRejected detailsUpdateRejected =
+                LabelDetailsUpdateRejected.newBuilder()
+                                          .setRejectionDetails(labelCommandRejected)
+                                          .setLabelDetailsMismatch(mismatch)
+                                          .build();
+        throw new CannotUpdateLabelDetails(detailsUpdateRejected);
     }
 }

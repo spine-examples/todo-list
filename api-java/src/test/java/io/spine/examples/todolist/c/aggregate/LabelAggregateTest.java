@@ -26,7 +26,7 @@ import io.spine.core.Command;
 import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
-import io.spine.examples.todolist.LabelDetailsUpdateFailed;
+import io.spine.examples.todolist.LabelDetailsUpdateRejected;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -179,13 +179,13 @@ class LabelAggregateTest {
                                  () -> aggregate.handle(commandMessage().get()));
             final Rejections.CannotUpdateLabelDetails cannotUpdateLabelDetails =
                     rejection.getMessageThrown();
-            final LabelDetailsUpdateFailed labelDetailsUpdateFailed =
-                    cannotUpdateLabelDetails.getUpdateFailed();
-            final LabelId actualLabelId = labelDetailsUpdateFailed.getRejectionDetails()
-                                                                  .getLabelId();
+            final LabelDetailsUpdateRejected detailsUpdateRejected =
+                    cannotUpdateLabelDetails.getUpdateRejected();
+            final LabelId actualLabelId = detailsUpdateRejected.getRejectionDetails()
+                                                               .getLabelId();
             assertEquals(getLabelId(), actualLabelId);
 
-            final ValueMismatch mismatch = labelDetailsUpdateFailed.getLabelDetailsMismatch();
+            final ValueMismatch mismatch = detailsUpdateRejected.getLabelDetailsMismatch();
             assertEquals(pack(expectedLabelDetails), mismatch.getExpected());
             assertEquals(pack(newLabelDetails), mismatch.getNewValue());
 
@@ -197,7 +197,7 @@ class LabelAggregateTest {
         }
     }
 
-    private static abstract class LabelAggregateCommandTest<C extends Message>
+    private abstract static class LabelAggregateCommandTest<C extends Message>
             extends AggregateCommandTest<C, LabelAggregate> {
 
         private LabelId labelId;

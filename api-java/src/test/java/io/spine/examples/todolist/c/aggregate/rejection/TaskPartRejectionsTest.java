@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.c.aggregate.rejection;
 
-import io.spine.examples.todolist.FailedTaskCommandDetails;
+import io.spine.examples.todolist.RejectedTaskCommandDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections;
 import io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections;
@@ -85,7 +85,7 @@ class TaskPartRejectionsTest {
             final CannotCreateDraft rejection = assertThrows(CannotCreateDraft.class,
                                                              () -> throwCannotCreateDraft(cmd));
             final TaskId actual = rejection.getMessageThrown()
-                                           .getCreateDraftFailed()
+                                           .getCreateDraftRejected()
                                            .getRejectionDetails()
                                            .getTaskId();
             assertEquals(taskId, actual);
@@ -111,10 +111,10 @@ class TaskPartRejectionsTest {
             final CannotUpdateTaskDueDate rejection =
                     assertThrows(CannotUpdateTaskDueDate.class,
                                  () -> throwCannotUpdateTaskDueDate(cmd));
-            final FailedTaskCommandDetails failedCommand = rejection.getMessageThrown()
-                                                                    .getUpdateFailed()
-                                                                    .getRejectionDetails();
-            final TaskId actualId = failedCommand.getTaskId();
+            final RejectedTaskCommandDetails rejectedCommand = rejection.getMessageThrown()
+                                                                        .getUpdateRejected()
+                                                                        .getRejectionDetails();
+            final TaskId actualId = rejectedCommand.getTaskId();
             assertEquals(taskId, actualId);
         }
 
@@ -127,10 +127,10 @@ class TaskPartRejectionsTest {
             final CannotUpdateTaskDescription rejection =
                     assertThrows(CannotUpdateTaskDescription.class,
                                  () -> throwCannotUpdateTaskDescription(cmd));
-            final FailedTaskCommandDetails failedCommand = rejection.getMessageThrown()
-                                                                    .getUpdateFailed()
-                                                                    .getRejectionDetails();
-            final TaskId actualId = failedCommand.getTaskId();
+            final RejectedTaskCommandDetails rejectedCommand = rejection.getMessageThrown()
+                                                                        .getUpdateRejected()
+                                                                        .getRejectionDetails();
+            final TaskId actualId = rejectedCommand.getTaskId();
             assertEquals(taskId, actualId);
         }
     }

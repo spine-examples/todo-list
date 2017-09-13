@@ -25,7 +25,7 @@ import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.TaskDueDateUpdateFailed;
+import io.spine.examples.todolist.TaskDueDateUpdateRejected;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
@@ -76,7 +76,8 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
 
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate, envelopeOf(updateTaskDueDateCmd)));
+                                         () -> dispatchCommand(aggregate,
+                                                               envelopeOf(updateTaskDueDateCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDueDate.class));
     }
 
@@ -89,7 +90,8 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
 
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate, envelopeOf(updateTaskDueDateCmd)));
+                                         () -> dispatchCommand(aggregate,
+                                                               envelopeOf(updateTaskDueDateCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDueDate.class));
     }
 
@@ -97,8 +99,8 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
     @DisplayName("produce TaskDueDateUpdated event")
     void produceEvent() {
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
-        final List<? extends Message> messageList = dispatchCommand(aggregate,
-                                                             envelopeOf(updateTaskDueDateCmd));
+        final List<? extends Message> messageList =
+                dispatchCommand(aggregate, envelopeOf(updateTaskDueDateCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDueDateUpdated.class, messageList.get(0)
                                                           .getClass());
@@ -132,19 +134,20 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
         final UpdateTaskDueDate updateTaskDueDate =
                 updateTaskDueDateInstance(taskId, expectedDueDate, newDueDate);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate, envelopeOf(updateTaskDueDate)));
+                                         () -> dispatchCommand(aggregate,
+                                                               envelopeOf(updateTaskDueDate)));
         final Throwable cause = Throwables.getRootCause(t);
         assertThat(cause, instanceOf(CannotUpdateTaskDueDate.class));
 
         final Rejections.CannotUpdateTaskDueDate cannotUpdateTaskDueDate =
                 ((CannotUpdateTaskDueDate) cause).getMessageThrown();
 
-        final TaskDueDateUpdateFailed dueDateUpdateFailed = cannotUpdateTaskDueDate.getUpdateFailed();
-        final TaskId actualTaskId = dueDateUpdateFailed.getRejectionDetails()
-                                                       .getTaskId();
+        final TaskDueDateUpdateRejected dueDateUpdateRejected = cannotUpdateTaskDueDate.getUpdateRejected();
+        final TaskId actualTaskId = dueDateUpdateRejected.getRejectionDetails()
+                                                         .getTaskId();
         assertEquals(taskId, actualTaskId);
 
-        final ValueMismatch mismatch = dueDateUpdateFailed.getDueDateMismatch();
+        final ValueMismatch mismatch = dueDateUpdateRejected.getDueDateMismatch();
 
         assertEquals(newDueDate, unpack(mismatch.getNewValue()));
         assertEquals(expectedDueDate, unpack(mismatch.getExpected()));

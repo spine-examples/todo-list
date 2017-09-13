@@ -24,7 +24,7 @@ import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.PriorityChange;
-import io.spine.examples.todolist.PriorityUpdateFailed;
+import io.spine.examples.todolist.PriorityUpdateRejected;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
@@ -81,7 +81,8 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
 
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate, envelopeOf(updateTaskPriorityCmd)));
+                                         () -> dispatchCommand(aggregate,
+                                                               envelopeOf(updateTaskPriorityCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskPriority.class));
 
     }
@@ -97,7 +98,8 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
 
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate, envelopeOf(updateTaskPriorityCmd)));
+                                         () -> dispatchCommand(aggregate,
+                                                               envelopeOf(updateTaskPriorityCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskPriority.class));
     }
 
@@ -108,7 +110,8 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
 
         final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
         final List<? extends Message> messageList = dispatchCommand(aggregate,
-                                                             envelopeOf(updateTaskPriorityCmd));
+                                                                    envelopeOf(
+                                                                            updateTaskPriorityCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskPriorityUpdated.class, messageList.get(0)
                                                            .getClass());
@@ -140,21 +143,22 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
     void produceRejection() {
         final UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(taskId, LOW, HIGH);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate, envelopeOf(updateTaskPriority)));
+                                         () -> dispatchCommand(aggregate,
+                                                               envelopeOf(updateTaskPriority)));
         final Throwable cause = Throwables.getRootCause(t);
         assertThat(cause, instanceOf(CannotUpdateTaskPriority.class));
 
         @SuppressWarnings("ConstantConditions") // Instance type checked before.
         final Rejections.CannotUpdateTaskPriority cannotUpdateTaskPriority =
                 ((CannotUpdateTaskPriority) cause).getMessageThrown();
-        final PriorityUpdateFailed priorityUpdateFailed =
-                cannotUpdateTaskPriority.getUpdateFailed();
-        final TaskId actualTaskId = priorityUpdateFailed.getRejectionDetails()
-                                                        .getTaskId();
+        final PriorityUpdateRejected priorityUpdateRejected =
+                cannotUpdateTaskPriority.getUpdateRejected();
+        final TaskId actualTaskId = priorityUpdateRejected.getRejectionDetails()
+                                                          .getTaskId();
         assertEquals(taskId, actualTaskId);
 
         final PriorityChange priorityChange = updateTaskPriority.getPriorityChange();
-        final ValueMismatch mismatch = priorityUpdateFailed.getPriorityMismatch();
+        final ValueMismatch mismatch = priorityUpdateRejected.getPriorityMismatch();
         final TaskPriorityValue expectedValue = priorityValueOf(priorityChange.getPreviousValue());
         final TaskPriorityValue actualValue = priorityValueOf(TP_UNDEFINED);
         final TaskPriorityValue newValue = priorityValueOf(priorityChange.getNewValue());
@@ -168,7 +172,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }
 
-    private TaskPriorityValue priorityValueOf(TaskPriority taskPriority) {
+    private static TaskPriorityValue priorityValueOf(TaskPriority taskPriority) {
         return TaskPriorityValue.newBuilder()
                                 .setPriorityValue(taskPriority)
                                 .build();

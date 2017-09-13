@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.c.aggregate.rejection;
 
-import io.spine.examples.todolist.FailedTaskCommandDetails;
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.RejectedTaskCommandDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
@@ -62,7 +62,7 @@ class TaskLabelsPartRejectionsTest {
                 assertThrows(CannotRemoveLabelFromTask.class,
                              () -> throwCannotRemoveLabelFromTask(cmd));
         final TaskId actual = rejection.getMessageThrown()
-                                       .getRemoveLabelFailed()
+                                       .getRemoveLabelRejected()
                                        .getRejectionDetails()
                                        .getTaskId();
         assertEquals(taskId, actual);
@@ -78,10 +78,10 @@ class TaskLabelsPartRejectionsTest {
         final CannotAssignLabelToTask rejection =
                 assertThrows(CannotAssignLabelToTask.class,
                              () -> throwCannotAssignLabelToTask(cmd));
-        final FailedTaskCommandDetails failedCommand = rejection.getMessageThrown()
-                                                                .getAssignLabelFailed()
-                                                                .getRejectionDetails();
-        final TaskId actualId = failedCommand.getTaskId();
+        final RejectedTaskCommandDetails rejectedCommand = rejection.getMessageThrown()
+                                                                    .getAssignLabelRejected()
+                                                                    .getRejectionDetails();
+        final TaskId actualId = rejectedCommand.getTaskId();
         assertEquals(taskId, actualId);
     }
 }

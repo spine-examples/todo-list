@@ -24,7 +24,7 @@ import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
 import com.google.protobuf.StringValue;
 import io.spine.change.ValueMismatch;
-import io.spine.examples.todolist.DescriptionUpdateFailed;
+import io.spine.examples.todolist.DescriptionUpdateRejected;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CompleteTask;
@@ -157,16 +157,16 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         @SuppressWarnings("ConstantConditions") // Instance type checked before.
         final Rejections.CannotUpdateTaskDescription rejection =
                 ((CannotUpdateTaskDescription) cause).getMessageThrown();
-        final DescriptionUpdateFailed descriptionUpdateFailed = rejection.getUpdateFailed();
-        final TaskId actualTaskId = descriptionUpdateFailed.getRejectionDetails()
-                                                           .getTaskId();
+        final DescriptionUpdateRejected descriptionUpdateRejected = rejection.getUpdateRejected();
+        final TaskId actualTaskId = descriptionUpdateRejected.getRejectionDetails()
+                                                             .getTaskId();
         assertEquals(taskId, actualTaskId);
 
         final StringValue expectedStringValue = toMessage(expectedValue);
         final StringValue actualStringValue = toMessage(actualValue);
         final StringValue newStringValue = toMessage(newValue);
 
-        final ValueMismatch mismatch = descriptionUpdateFailed.getDescriptionMismatch();
+        final ValueMismatch mismatch = descriptionUpdateRejected.getDescriptionMismatch();
         assertEquals(expectedStringValue, unpack(mismatch.getExpected()));
         assertEquals(actualStringValue, unpack(mismatch.getActual()));
         assertEquals(newStringValue, unpack(mismatch.getNewValue()));

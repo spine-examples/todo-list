@@ -60,7 +60,8 @@ public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
     @DisplayName("produce TaskDraftCreated event")
     void produceEvent() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);
-        final List<? extends Message> messageList = dispatchCommand(aggregate, envelopeOf(createDraftCmd));
+        final List<? extends Message> messageList = dispatchCommand(aggregate,
+                                                                    envelopeOf(createDraftCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDraftCreated.class, messageList.get(0)
                                                         .getClass());
@@ -96,7 +97,7 @@ public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
         final Throwable cause = Throwables.getRootCause(t);
         final CannotCreateDraft rejection = (CannotCreateDraft) cause;
         final TaskId actualId = rejection.getMessageThrown()
-                                         .getCreateDraftFailed()
+                                         .getCreateDraftRejected()
                                          .getRejectionDetails()
                                          .getTaskId();
         assertEquals(taskId, actualId);
