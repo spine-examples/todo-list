@@ -157,16 +157,16 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         @SuppressWarnings("ConstantConditions") // Instance type checked before.
         final Rejections.CannotUpdateTaskDescription rejection =
                 ((CannotUpdateTaskDescription) cause).getMessageThrown();
-        final DescriptionUpdateRejected descriptionUpdateRejected = rejection.getUpdateRejected();
-        final TaskId actualTaskId = descriptionUpdateRejected.getRejectionDetails()
-                                                             .getTaskId();
+        final DescriptionUpdateRejected rejectionDetails = rejection.getRejectionDetails();
+        final TaskId actualTaskId = rejectionDetails.getCommandDetails()
+                                                    .getTaskId();
         assertEquals(taskId, actualTaskId);
 
         final StringValue expectedStringValue = toMessage(expectedValue);
         final StringValue actualStringValue = toMessage(actualValue);
         final StringValue newStringValue = toMessage(newValue);
 
-        final ValueMismatch mismatch = descriptionUpdateRejected.getDescriptionMismatch();
+        final ValueMismatch mismatch = rejectionDetails.getDescriptionMismatch();
         assertEquals(expectedStringValue, unpack(mismatch.getExpected()));
         assertEquals(actualStringValue, unpack(mismatch.getActual()));
         assertEquals(newStringValue, unpack(mismatch.getNewValue()));

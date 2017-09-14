@@ -151,14 +151,14 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
         @SuppressWarnings("ConstantConditions") // Instance type checked before.
         final Rejections.CannotUpdateTaskPriority cannotUpdateTaskPriority =
                 ((CannotUpdateTaskPriority) cause).getMessageThrown();
-        final PriorityUpdateRejected priorityUpdateRejected =
-                cannotUpdateTaskPriority.getUpdateRejected();
-        final TaskId actualTaskId = priorityUpdateRejected.getRejectionDetails()
-                                                          .getTaskId();
+        final PriorityUpdateRejected rejectionDetails =
+                cannotUpdateTaskPriority.getRejectionDetails();
+        final TaskId actualTaskId = rejectionDetails.getCommandDetails()
+                                                    .getTaskId();
         assertEquals(taskId, actualTaskId);
 
         final PriorityChange priorityChange = updateTaskPriority.getPriorityChange();
-        final ValueMismatch mismatch = priorityUpdateRejected.getPriorityMismatch();
+        final ValueMismatch mismatch = rejectionDetails.getPriorityMismatch();
         final TaskPriorityValue expectedValue = priorityValueOf(priorityChange.getPreviousValue());
         final TaskPriorityValue actualValue = priorityValueOf(TP_UNDEFINED);
         final TaskPriorityValue newValue = priorityValueOf(priorityChange.getNewValue());

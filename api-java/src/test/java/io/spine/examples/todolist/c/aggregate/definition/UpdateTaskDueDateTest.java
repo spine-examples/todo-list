@@ -142,12 +142,12 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
         final Rejections.CannotUpdateTaskDueDate cannotUpdateTaskDueDate =
                 ((CannotUpdateTaskDueDate) cause).getMessageThrown();
 
-        final TaskDueDateUpdateRejected dueDateUpdateRejected = cannotUpdateTaskDueDate.getUpdateRejected();
-        final TaskId actualTaskId = dueDateUpdateRejected.getRejectionDetails()
-                                                         .getTaskId();
+        final TaskDueDateUpdateRejected details = cannotUpdateTaskDueDate.getRejectionDetails();
+        final TaskId actualTaskId = details.getCommandDetails()
+                                           .getTaskId();
         assertEquals(taskId, actualTaskId);
 
-        final ValueMismatch mismatch = dueDateUpdateRejected.getDueDateMismatch();
+        final ValueMismatch mismatch = details.getDueDateMismatch();
 
         assertEquals(newDueDate, unpack(mismatch.getNewValue()));
         assertEquals(expectedDueDate, unpack(mismatch.getExpected()));

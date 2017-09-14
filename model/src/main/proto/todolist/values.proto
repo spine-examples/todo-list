@@ -85,8 +85,8 @@ message LabelDetails {
 // DTO for the description mismatch.
 message DescriptionUpdateRejected {
 
-    // Unsuccessful task command.
-    RejectedTaskCommandDetails rejection_details = 1;
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
 
     // A mismatching description value.
     change.ValueMismatch description_mismatch = 2;
@@ -95,8 +95,8 @@ message DescriptionUpdateRejected {
 // DTO for the priority mismatch.
 message PriorityUpdateRejected {
 
-    // Unsuccessful task command.
-    RejectedTaskCommandDetails rejection_details = 1;
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
 
     // A mismatching priority value.
     change.ValueMismatch priority_mismatch = 2;
@@ -105,8 +105,8 @@ message PriorityUpdateRejected {
 // DTO for the due date mismatch.
 message TaskDueDateUpdateRejected {
 
-    // Unsuccessful task command.
-    RejectedTaskCommandDetails rejection_details = 1;
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
 
     // A mismatching due date value.
     change.ValueMismatch due_date_mismatch = 2;
@@ -115,90 +115,90 @@ message TaskDueDateUpdateRejected {
 // DTO for the label details mismatch.
 message LabelDetailsUpdateRejected {
 
-    // Unsuccessful label command.
-    RejectedLabelCommandDetails rejection_details = 1;
+    // An unsuccessful label command details.
+    RejectedLabelCommandDetails command_details = 1;
 
     // A mismatching label details value.
     change.ValueMismatch label_details_mismatch = 2;
 }
 
-// DTO for the rejected craete basic task command.
+// DTO for the rejected craete basic task command details.
 message CreateBasicTaskRejected {
 
-    // Unsuccessful task command.
-    RejectedTaskCommandDetails rejection_details = 1;
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
 }
 
-// DTO for the rejected assign label to task command.
+// DTO for the rejected assign label to task command details.
 message AssignLabelToTaskRejected {
 
-    // Unsuccessful task command.
-    RejectedTaskCommandDetails rejection_details = 1;
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
 
     // An identifier of the label.
     LabelId label_id = 2;
 }
 
-// DTO for the rejected remove label from task command.
+// DTO for the rejected remove label from task command details.
 message RemoveLabelFromTaskRejected {
 
-    // An unsuccessful task command.
-    RejectedTaskCommandDetails rejection_details = 1;
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
 
     // An identifier of the label.
     LabelId label_id = 2;
 }
 
-// DTO for the rejected reopen task command.
+// DTO for the rejected reopen task command details.
 message ReopenTaskRejected {
 
-    // An unsuccessful task command.
-    RejectedTaskCommandDetails rejection_details = 1;
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
 }
 
-// DTO for the rejected delete task command.
+// DTO for the rejected delete task command details.
 message DeleteTaskRejected {
 
-    // An unsuccessful task command.
-    RejectedTaskCommandDetails rejection_details = 1;
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
 }
 
-// DTO for the rejected restore deleted task command.
+// DTO for the rejected restore deleted task command details.
 message RestoreDeletedTaskRejected {
 
-    // An unsuccessful task command.
-    RejectedTaskCommandDetails rejection_details = 1;
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
 }
 
-// DTO for the rejected complete task command.
+// DTO for the rejected complete task command details.
 message CompleteTaskRejected {
 
-    // An unsuccessful task command.
-    RejectedTaskCommandDetails rejection_details = 1;
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
 }
 
-// DTO for the rejected create task draft command.
+// DTO for the rejected create task draft command details.
 message CreateDraftRejected {
 
-    // An unsuccessful task command.
-    RejectedTaskCommandDetails rejection_details = 1;
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
 }
 
-// DTO for the rejected finalize draft command.
+// DTO for the rejected finalize draft command details.
 message FinalizeDraftRejected {
 
-    // An unsuccessful task command.
-    RejectedTaskCommandDetails rejection_details = 1;
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
 }
 
-// DTO for the unsuccessful task command.
+// DTO for the unsuccessful task command details.
 message RejectedTaskCommandDetails {
 
     // A task identifier.
     TaskId task_id = 1;
 }
 
-// DTO for the unsuccessful label command.
+// DTO for the unsuccessful label command details.
 message RejectedLabelCommandDetails {
 
     // A task label identifier.

@@ -48,13 +48,13 @@ public class LabelAggregateRejections {
     public static void throwCannotUpdateLabelDetails(UpdateLabelDetails cmd,
                                                      ValueMismatch mismatch)
             throws CannotUpdateLabelDetails {
-        final RejectedLabelCommandDetails labelCommandRejected =
+        final RejectedLabelCommandDetails commandDetails =
                 RejectedLabelCommandDetails.newBuilder()
                                            .setLabelId(cmd.getId())
                                            .build();
         final LabelDetailsUpdateRejected detailsUpdateRejected =
                 LabelDetailsUpdateRejected.newBuilder()
-                                          .setRejectionDetails(labelCommandRejected)
+                                          .setCommandDetails(commandDetails)
                                           .setLabelDetailsMismatch(mismatch)
                                           .build();
         throw new CannotUpdateLabelDetails(detailsUpdateRejected);

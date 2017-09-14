@@ -179,13 +179,13 @@ class LabelAggregateTest {
                                  () -> aggregate.handle(commandMessage().get()));
             final Rejections.CannotUpdateLabelDetails cannotUpdateLabelDetails =
                     rejection.getMessageThrown();
-            final LabelDetailsUpdateRejected detailsUpdateRejected =
-                    cannotUpdateLabelDetails.getUpdateRejected();
-            final LabelId actualLabelId = detailsUpdateRejected.getRejectionDetails()
-                                                               .getLabelId();
+            final LabelDetailsUpdateRejected rejectionDetails =
+                    cannotUpdateLabelDetails.getRejectionDetails();
+            final LabelId actualLabelId = rejectionDetails.getCommandDetails()
+                                                          .getLabelId();
             assertEquals(getLabelId(), actualLabelId);
 
-            final ValueMismatch mismatch = detailsUpdateRejected.getLabelDetailsMismatch();
+            final ValueMismatch mismatch = rejectionDetails.getLabelDetailsMismatch();
             assertEquals(pack(expectedLabelDetails), mismatch.getExpected());
             assertEquals(pack(newLabelDetails), mismatch.getNewValue());
 

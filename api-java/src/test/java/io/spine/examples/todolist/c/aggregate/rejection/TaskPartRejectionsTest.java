@@ -85,8 +85,8 @@ class TaskPartRejectionsTest {
             final CannotCreateDraft rejection = assertThrows(CannotCreateDraft.class,
                                                              () -> throwCannotCreateDraft(cmd));
             final TaskId actual = rejection.getMessageThrown()
-                                           .getCreateDraftRejected()
                                            .getRejectionDetails()
+                                           .getCommandDetails()
                                            .getTaskId();
             assertEquals(taskId, actual);
         }
@@ -111,10 +111,10 @@ class TaskPartRejectionsTest {
             final CannotUpdateTaskDueDate rejection =
                     assertThrows(CannotUpdateTaskDueDate.class,
                                  () -> throwCannotUpdateTaskDueDate(cmd));
-            final RejectedTaskCommandDetails rejectedCommand = rejection.getMessageThrown()
-                                                                        .getUpdateRejected()
-                                                                        .getRejectionDetails();
-            final TaskId actualId = rejectedCommand.getTaskId();
+            final RejectedTaskCommandDetails commandDetails = rejection.getMessageThrown()
+                                                                       .getRejectionDetails()
+                                                                       .getCommandDetails();
+            final TaskId actualId = commandDetails.getTaskId();
             assertEquals(taskId, actualId);
         }
 
@@ -127,10 +127,11 @@ class TaskPartRejectionsTest {
             final CannotUpdateTaskDescription rejection =
                     assertThrows(CannotUpdateTaskDescription.class,
                                  () -> throwCannotUpdateTaskDescription(cmd));
-            final RejectedTaskCommandDetails rejectedCommand = rejection.getMessageThrown()
-                                                                        .getUpdateRejected()
-                                                                        .getRejectionDetails();
-            final TaskId actualId = rejectedCommand.getTaskId();
+            final RejectedTaskCommandDetails commandDetails = rejection.getMessageThrown()
+                                                                       .getRejectionDetails()
+                                                                       .getCommandDetails();
+
+            final TaskId actualId = commandDetails.getTaskId();
             assertEquals(taskId, actualId);
         }
     }

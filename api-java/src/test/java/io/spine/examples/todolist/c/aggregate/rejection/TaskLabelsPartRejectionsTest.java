@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.c.aggregate.rejection;
 
 import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.RejectedTaskCommandDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
@@ -61,11 +60,11 @@ class TaskLabelsPartRejectionsTest {
         final CannotRemoveLabelFromTask rejection =
                 assertThrows(CannotRemoveLabelFromTask.class,
                              () -> throwCannotRemoveLabelFromTask(cmd));
-        final TaskId actual = rejection.getMessageThrown()
-                                       .getRemoveLabelRejected()
-                                       .getRejectionDetails()
-                                       .getTaskId();
-        assertEquals(taskId, actual);
+        final TaskId actualId = rejection.getMessageThrown()
+                                         .getRejectionDetails()
+                                         .getCommandDetails()
+                                         .getTaskId();
+        assertEquals(taskId, actualId);
     }
 
     @Test
@@ -78,10 +77,10 @@ class TaskLabelsPartRejectionsTest {
         final CannotAssignLabelToTask rejection =
                 assertThrows(CannotAssignLabelToTask.class,
                              () -> throwCannotAssignLabelToTask(cmd));
-        final RejectedTaskCommandDetails rejectedCommand = rejection.getMessageThrown()
-                                                                    .getAssignLabelRejected()
-                                                                    .getRejectionDetails();
-        final TaskId actualId = rejectedCommand.getTaskId();
+        final TaskId actualId = rejection.getMessageThrown()
+                                         .getRejectionDetails()
+                                         .getCommandDetails()
+                                         .getTaskId();
         assertEquals(taskId, actualId);
     }
 }
