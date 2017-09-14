@@ -20,13 +20,9 @@
 
 package io.spine.server.storage.kafka;
 
-import com.google.protobuf.Message;
-import io.spine.server.entity.Entity;
-import io.spine.server.storage.kafka.Topics.TypeTopic;
+import io.spine.annotation.SPI;
 import io.spine.server.storage.kafka.Topics.ValueTopic;
-import io.spine.type.TypeName;
 
-import static io.spine.server.entity.Entity.GenericParameter.STATE;
 import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_AGGREGATE_RECORD;
 import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_ENTITY_RECORD;
 import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_EVENT_COUNT_AFTER_SNAPSHOT;
@@ -34,42 +30,80 @@ import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_LAST
 import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_LIFECYCLE_FLAGS;
 
 /**
+ * A tiny type for a Kafka topic.
+ *
+ * <p>It's not recommended to implement this interface. Use {@link Topic#ofValue(String)}
+ * to instantiate this type. All the static methods of this type return a carefully implemented
+ * {@code Topic} (i.e. with {@code equals()}, {@code hashCode()} and {@code toString()} overridden,
+ * etc.).
+ *
  * @author Dmytro Dashenkov
  */
+@SPI
 public interface Topic {
 
+    /**
+     * @return the name of the represented topic
+     */
     String getName();
 
+    /**
+     * Creates an instance of {@link Topic} for the records of entity of the given type.
+     *
+     * @param ofType the type of record
+     * @return new instance of {@link Topic}
+     */
     static Topic forRecord(Class<?> ofType) {
         return FOR_ENTITY_RECORD.create(ofType);
     }
 
+    /**
+     * Creates an instance of {@link Topic} for the records of aggregate of the given type.
+     *
+     * @param ofType the type of record
+     * @return new instance of {@link Topic}
+     */
     static Topic forAggregateRecord(Class<?> ofType) {
         return FOR_AGGREGATE_RECORD.create(ofType);
     }
 
+    /**
+     * Creates an instance of {@link Topic} for the records of entity of given type.
+     *
+     * @param ofType the type of record
+     * @return new instance of {@link Topic}
+     */
     static Topic forLifecycleFlags(Class<?> ofType) {
         return FOR_LIFECYCLE_FLAGS.create(ofType);
     }
 
+    /**
+     * Creates an instance of {@link Topic} for the records of entity of given type.
+     *
+     * @param ofType the type of record
+     * @return new instance of {@link Topic}
+     */
     static Topic forEventCountAfterSnapshot(Class<?> ofType) {
         return FOR_EVENT_COUNT_AFTER_SNAPSHOT.create(ofType);
     }
 
+    /**
+     * Creates an instance of {@link Topic} for the records of entity of given type.
+     *
+     * @param ofType the type of record
+     * @return new instance of {@link Topic}
+     */
     static Topic forLastHandledEventTime(Class<?> ofType) {
         return FOR_LAST_EVENT_TIME.create(ofType);
     }
 
+    /**
+     * Creates an instance of {@link Topic} with the given name.
+     *
+     * @param topicValue the name of the topic
+     * @return new instance of {@link Topic}
+     */
     static Topic ofValue(String topicValue) {
         return new ValueTopic(topicValue);
-    }
-
-    static Topic forType(Class<? extends Entity> entityClass) {
-        @SuppressWarnings("unchecked") // Guaranteed by the `STATE` contract.
-        final Class<? extends Message> stateClass =
-                (Class<? extends Message>) STATE.getArgumentIn(entityClass);
-        final TypeName typeName = TypeName.of(stateClass);
-        final Topic topic = new TypeTopic(typeName);
-        return topic;
     }
 }

@@ -22,29 +22,42 @@ package io.spine.server.storage.kafka;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
+import com.google.protobuf.Message;
+import io.spine.server.entity.Entity;
 import io.spine.type.TypeName;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static io.spine.server.entity.Entity.GenericParameter.STATE;
+
 /**
+ * An internal utility for creating the {@link Topic} instances.
+ *
  * @author Dmytro Dashenkov
  */
 final class Topics {
 
     private static final char SEPARATOR = '_';
-    private static final Pattern VALID_TOPIC_CHAR = Pattern.compile("[{}:\"\';$@/\\\\=]");
+    private static final Pattern INVALID_TOPIC_CHARS = Pattern.compile("[$@]");
 
     private Topics() {
         // Prevent utility class instantiation.
     }
 
+    /**
+     * Escapes the given string deleting the characters which may appear in a Java class name* but
+     * are not allowed for a topic name.
+     */
     private static String escape(String topic) {
-        final Matcher matcher = VALID_TOPIC_CHAR.matcher(topic);
+        final Matcher matcher = INVALID_TOPIC_CHARS.matcher(topic);
         final String result = matcher.replaceAll("");
         return result;
     }
 
+    /**
+     * A skeleton implementation for the {@link Topic} interface.
+     */
     private abstract static class AbstractTopic implements Topic {
 
         @Override
@@ -70,13 +83,16 @@ final class Topics {
         }
     }
 
+    /**
+     * A set of possible options of rules of creating a standard Spine type topic.
+     */
     enum PrefixedTopicFactory {
 
-        FOR_LIFECYCLE_FLAGS("lifecycle"),
-        FOR_LAST_EVENT_TIME("lhet"),
+        FOR_LIFECYCLE_FLAGS("_lifecycle"),
+        FOR_LAST_EVENT_TIME("_lhet"),
         FOR_ENTITY_RECORD("entity"),
         FOR_AGGREGATE_RECORD("agg_record"),
-        FOR_EVENT_COUNT_AFTER_SNAPSHOT("event_count_als");
+        FOR_EVENT_COUNT_AFTER_SNAPSHOT("_event_count_als");
 
         private final String prefix;
 
@@ -92,14 +108,16 @@ final class Topics {
         }
     }
 
-    static final class TypeTopic extends AbstractTopic {
-
-        private static final String PREFIX = "_TYPE_";
+    /**
+     * The standard implantation of the {@link Topic} interface, returning the given {@code value}
+     * on a call to {@link Topic#getName()}.
+     */
+    static final class ValueTopic extends AbstractTopic {
 
         private final String value;
 
-        TypeTopic(TypeName type) {
-            this.value = PREFIX + type;
+        ValueTopic(String value) {
+            this.value = escape(value);
         }
 
         @Override
@@ -108,12 +126,34 @@ final class Topics {
         }
     }
 
-    static final class ValueTopic extends AbstractTopic {
+    /**
+     * Creates a new super-topic instance for the given Entity class.
+     */
+    static Topic superTopic(Class<? extends Entity> entityClass) {
+        @SuppressWarnings("unchecked") // Guaranteed by the `STATE` contract.
+        final Class<? extends Message> stateClass =
+                (Class<? extends Message>) STATE.getArgumentIn(entityClass);
+        final TypeName typeName = TypeName.of(stateClass);
+        final Topic topic = new SuperTopic(typeName);
+        return topic;
+    }
+
+    /**
+     * An implementation of the {@link Topic} interface representing a super-topic.
+     *
+     * <p>All the instances of super-topic have the name consisting of the {@code "_TYPE_"} prefix
+     * and the given type name.
+     *
+     * @see KafkaWrapper#readAll(Class) for more on the super-topics
+     */
+    private static final class SuperTopic extends AbstractTopic {
+
+        private static final String PREFIX = "_TYPE_";
 
         private final String value;
 
-        ValueTopic(String value) {
-            this.value = escape(value);
+        SuperTopic(TypeName type) {
+            this.value = PREFIX + type;
         }
 
         @Override
