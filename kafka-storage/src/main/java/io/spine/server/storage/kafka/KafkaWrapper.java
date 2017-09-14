@@ -40,6 +40,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static io.spine.protobuf.TypeConverter.toMessage;
@@ -47,7 +49,6 @@ import static io.spine.server.storage.kafka.Consistency.STRONG;
 import static java.lang.Long.compare;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toSet;
-import static java.util.stream.StreamSupport.stream;
 
 /**
  * @author Dmytro Dashenkov
@@ -76,7 +77,7 @@ public class KafkaWrapper {
 
     public <M extends Message> Optional<M> readLast(Topic topic) {
         final Iterable<ConsumerRecord<Message, Message>> records = doRead(topic);
-        final Optional<Message> lastMsg = stream(records.spliterator(), false)
+        final Optional<Message> lastMsg = stream(records)
                 .max(ConsumerRecordComparator.DIRECT.get())
                 .map(ConsumerRecord::value);
         @SuppressWarnings("unchecked") // Expect caller to be aware of the type.
@@ -86,7 +87,7 @@ public class KafkaWrapper {
 
     public <M extends Message> Iterator<M> read(Topic topic) {
         final Iterable<ConsumerRecord<Message, Message>> records = doRead(topic);
-        final Iterator<Message> messages = stream(records.spliterator(), false)
+        final Iterator<Message> messages = stream(records)
                 .sorted(ConsumerRecordComparator.DIRECT.get())
                 .map(ConsumerRecord::value)
                 .iterator();
@@ -98,7 +99,7 @@ public class KafkaWrapper {
     public <M extends Message> Iterator<M> readAll(Class<? extends Entity> type) {
         final Topic topicOfTopics = Topic.forType(type);
         final Iterable<ConsumerRecord<Message, Message>> records = doRead(topicOfTopics);
-        final Iterator<Message> messages = stream(records.spliterator(), false)
+        final Iterator<Message> messages = stream(records)
                 .map(ConsumerRecord::value)
                 .distinct()
                 .map(msg -> {
@@ -107,7 +108,7 @@ public class KafkaWrapper {
                     final Iterable<ConsumerRecord<Message, Message>> result = doRead(topic);
                     return result;
                 })
-                .flatMap(iterable -> stream(iterable.spliterator(), false))
+                .flatMap(KafkaWrapper::stream)
                 .sorted(ConsumerRecordComparator.DIRECT.get())
                 .map(ConsumerRecord::value)
                 .iterator();
@@ -120,7 +121,7 @@ public class KafkaWrapper {
         final int partition = partitionFor(topic, id);
         final Iterable<ConsumerRecord<Message, Message>> records = doRead(topic, partition);
         final Message key = toMessage(id);
-        final Optional<Message> message = stream(records.spliterator(), false)
+        final Optional<Message> message = stream(records)
                 .filter(record -> key.equals(record.key()))
                 .sorted(ConsumerRecordComparator.DIRECT.get())
                 .map(ConsumerRecord::value)
@@ -182,14 +183,15 @@ public class KafkaWrapper {
         final Collection<TopicPartition> partitions =
                 producer.partitionsFor(topicName)
                         .stream()
-                        .map(pi -> new TopicPartition(pi.topic(), pi.partition()))
+                        .map(info -> new TopicPartition(info.topic(), info.partition()))
                         .collect(toSet());
         consumer.poll(0);
         consumer.seekToBeginning(partitions);
     }
 
     private int partitionFor(Topic topic, Object id) {
-        final int partitionCount = producer.partitionsFor(topic.getName()).size();
+        final int partitionCount = producer.partitionsFor(topic.getName())
+                                           .size();
         return Math.abs(id.hashCode()) % partitionCount;
     }
 
@@ -214,6 +216,11 @@ public class KafkaWrapper {
         }
         final Iterable<ConsumerRecord<Message, Message>> records = all.records(toPoll.getName());
         return records;
+    }
+
+    private static Stream<ConsumerRecord<Message, Message>>
+    stream(Iterable<ConsumerRecord<Message, Message>> records) {
+        return StreamSupport.stream(records.spliterator(), false);
     }
 
     private enum ConsumerRecordComparator implements Supplier<Comparator<ConsumerRecord<?, ?>>> {
