@@ -20,7 +20,6 @@
 
 package io.spine.server.storage.kafka;
 
-import com.google.common.base.Supplier;
 import com.google.protobuf.Message;
 import com.google.protobuf.StringValue;
 import io.spine.server.entity.Entity;
@@ -38,6 +37,9 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static io.spine.protobuf.TypeConverter.toMessage;
@@ -57,6 +59,9 @@ public class KafkaWrapper {
     private final Consistency consistencyLevel;
     private final long pollAwait;
 
+    // TODO:2017-09-14:dmytro.dashenkov: Should be fair?
+    private final Lock lock = new ReentrantLock();
+
     public KafkaWrapper(KafkaProducer<Message, Message> producer,
                         KafkaConsumer<Message, Message> consumer,
                         Consistency consistencyLevel,
@@ -70,9 +75,7 @@ public class KafkaWrapper {
     }
 
     public <M extends Message> Optional<M> readLast(Topic topic) {
-        ensureSubscriptionOnto(topic);
-        final ConsumerRecords<Message, Message> all = consumer.poll(pollAwait);
-        final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
+        final Iterable<ConsumerRecord<Message, Message>> records = doRead(topic);
         final Optional<Message> lastMsg = stream(records.spliterator(), false)
                 .max(ConsumerRecordComparator.DIRECT.get())
                 .map(ConsumerRecord::value);
@@ -92,19 +95,9 @@ public class KafkaWrapper {
         return result;
     }
 
-    private Iterable<ConsumerRecord<Message, Message>> doRead(Topic topic) {
-        ensureSubscriptionOnto(topic);
-        final ConsumerRecords<Message, Message> all = consumer.poll(pollAwait);
-        final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
-        return records;
-    }
-
     public <M extends Message> Iterator<M> readAll(Class<? extends Entity> type) {
         final Topic topicOfTopics = Topic.forType(type);
-        ensureSubscriptionOnto(topicOfTopics);
-        final Iterable<ConsumerRecord<Message, Message>> records =
-                consumer.poll(pollAwait)
-                        .records(topicOfTopics.getName());
+        final Iterable<ConsumerRecord<Message, Message>> records = doRead(topicOfTopics);
         final Iterator<Message> messages = stream(records.spliterator(), false)
                 .map(ConsumerRecord::value)
                 .distinct()
@@ -125,9 +118,7 @@ public class KafkaWrapper {
 
     public <M extends Message> Optional<M> read(Topic topic, Object id) {
         final int partition = partitionFor(topic, id);
-        ensureSubscriptionOnto(topic, partition);
-        final ConsumerRecords<Message, Message> all = consumer.poll(pollAwait);
-        final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
+        final Iterable<ConsumerRecord<Message, Message>> records = doRead(topic, partition);
         final Message key = toMessage(id);
         final Optional<Message> message = stream(records.spliterator(), false)
                 .filter(record -> key.equals(record.key()))
@@ -171,15 +162,14 @@ public class KafkaWrapper {
         producer.send(record);
     }
 
-    private void ensureSubscriptionOnto(Topic topic, int partition) {
-        final String topicName = topic.getName();
+    private void ensureSubscriptionOnto(TopicPartition topicPartition) {
         final Collection<TopicPartition> assignment = consumer.assignment();
-        final TopicPartition newPartition = new TopicPartition(topicName, partition);
-        if (!assignment.contains(newPartition)) {
+        final Collection<TopicPartition> activeAssignment = singleton(topicPartition);
+        if (!assignment.contains(topicPartition)) {
             consumer.unsubscribe();
-            consumer.assign(singleton(newPartition));
+            consumer.assign(activeAssignment);
         }
-        consumer.seekToBeginning(singleton(newPartition));
+        consumer.seekToBeginning(activeAssignment);
     }
 
     private void ensureSubscriptionOnto(Topic topic) {
@@ -191,7 +181,7 @@ public class KafkaWrapper {
         }
         final Collection<TopicPartition> partitions =
                 producer.partitionsFor(topicName)
-                        .parallelStream()
+                        .stream()
                         .map(pi -> new TopicPartition(pi.topic(), pi.partition()))
                         .collect(toSet());
         consumer.poll(0);
@@ -201,6 +191,29 @@ public class KafkaWrapper {
     private int partitionFor(Topic topic, Object id) {
         final int partitionCount = producer.partitionsFor(topic.getName()).size();
         return Math.abs(id.hashCode()) % partitionCount;
+    }
+
+    private Iterable<ConsumerRecord<Message, Message>> doRead(Topic topic) {
+        return executeAndPoll(() -> ensureSubscriptionOnto(topic), topic);
+    }
+
+    private Iterable<ConsumerRecord<Message, Message>> doRead(Topic topic, int partition) {
+        final TopicPartition topicPartition = new TopicPartition(topic.getName(), partition);
+        return executeAndPoll(() -> ensureSubscriptionOnto(topicPartition), topic);
+    }
+
+    private Iterable<ConsumerRecord<Message, Message>> executeAndPoll(Runnable toExecute,
+                                                                      Topic toPoll) {
+        final ConsumerRecords<Message, Message> all;
+        lock.lock();
+        try {
+            toExecute.run();
+            all = consumer.poll(pollAwait);
+        } finally {
+            lock.unlock();
+        }
+        final Iterable<ConsumerRecord<Message, Message>> records = all.records(toPoll.getName());
+        return records;
     }
 
     private enum ConsumerRecordComparator implements Supplier<Comparator<ConsumerRecord<?, ?>>> {
