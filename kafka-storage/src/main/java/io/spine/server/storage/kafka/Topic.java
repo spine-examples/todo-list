@@ -27,9 +27,9 @@ import io.spine.server.storage.kafka.Topics.ValueTopic;
 import io.spine.type.TypeName;
 
 import static io.spine.server.entity.Entity.GenericParameter.STATE;
-import static io.spine.server.storage.kafka.Topics.PrefixedIdTopicFactory.FOR_AGGREGATE_RECORD;
-import static io.spine.server.storage.kafka.Topics.PrefixedIdTopicFactory.FOR_ENTITY_RECORD;
-import static io.spine.server.storage.kafka.Topics.PrefixedIdTopicFactory.FOR_EVENT_COUNT_AFTER_SNAPSHOT;
+import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_AGGREGATE_RECORD;
+import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_ENTITY_RECORD;
+import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_EVENT_COUNT_AFTER_SNAPSHOT;
 import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_LAST_EVENT_TIME;
 import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_LIFECYCLE_FLAGS;
 
@@ -40,20 +40,20 @@ public interface Topic {
 
     String getName();
 
-    static Topic forRecord(Class<?> ofType, Object withId) {
-        return FOR_ENTITY_RECORD.create(ofType, withId);
+    static Topic forRecord(Class<?> ofType) {
+        return FOR_ENTITY_RECORD.create(ofType);
     }
 
-    static Topic forAggregateRecord(Class<?> ofType, Object withId) {
-        return FOR_AGGREGATE_RECORD.create(ofType, withId);
+    static Topic forAggregateRecord(Class<?> ofType) {
+        return FOR_AGGREGATE_RECORD.create(ofType);
     }
 
     static Topic forLifecycleFlags(Class<?> ofType) {
         return FOR_LIFECYCLE_FLAGS.create(ofType);
     }
 
-    static Topic forEventCountAfterSnapshot(Class<?> ofType, Object withId) {
-        return FOR_EVENT_COUNT_AFTER_SNAPSHOT.create(ofType, withId);
+    static Topic forEventCountAfterSnapshot(Class<?> ofType) {
+        return FOR_EVENT_COUNT_AFTER_SNAPSHOT.create(ofType);
     }
 
     static Topic forLastHandledEventTime(Class<?> ofType) {

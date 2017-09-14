@@ -22,7 +22,6 @@ package io.spine.server.storage.kafka;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import io.spine.string.Stringifiers;
 import io.spine.type.TypeName;
 
 import java.util.regex.Matcher;
@@ -71,32 +70,13 @@ final class Topics {
         }
     }
 
-    enum PrefixedIdTopicFactory {
-
-        FOR_ENTITY_RECORD("entity"),
-        FOR_AGGREGATE_RECORD("agg_record"),
-        FOR_EVENT_COUNT_AFTER_SNAPSHOT("event_count_als");
-
-        private final String prefix;
-
-        PrefixedIdTopicFactory(String prefix) {
-            this.prefix = prefix;
-        }
-
-        Topic create(Class<?> forType, Object withId) {
-            final String value = Joiner.on(SEPARATOR)
-                                       .join(prefix,
-                                             forType.getName(),
-                                             Stringifiers.toString(withId));
-            final Topic result = new ValueTopic(value);
-            return result;
-        }
-    }
-
     enum PrefixedTopicFactory {
 
         FOR_LIFECYCLE_FLAGS("lifecycle"),
-        FOR_LAST_EVENT_TIME("lhet");
+        FOR_LAST_EVENT_TIME("lhet"),
+        FOR_ENTITY_RECORD("entity"),
+        FOR_AGGREGATE_RECORD("agg_record"),
+        FOR_EVENT_COUNT_AFTER_SNAPSHOT("event_count_als");
 
         private final String prefix;
 
