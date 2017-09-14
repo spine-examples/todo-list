@@ -23,7 +23,9 @@ package io.spine.server.storage.kafka;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.Message;
 import com.google.protobuf.StringValue;
+import com.google.protobuf.UInt64Value;
 import io.spine.server.entity.AbstractEntity;
+import io.spine.server.entity.AbstractVersionableEntity;
 import io.spine.server.entity.Entity;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -124,12 +126,12 @@ class KafkaWrapperTest {
          * A test {@link io.spine.server.entity.Entity Entity} type with a explicit class name,
          * non-accessible from the outer context.
          */
-        class UniqueNameEntity extends TestEntity {
-            protected UniqueNameEntity(String id) {
+        class UniqueEntity extends AbstractVersionableEntity<String, UInt64Value> {
+            protected UniqueEntity(String id) {
                 super(id);
             }
         }
-        final Class<? extends Entity> cls = UniqueNameEntity.class;
+        final Class<? extends Entity> cls = UniqueEntity.class;
         final Topic topic1 = Topic.ofValue("KafkaWrapperTest-readAllByEntityType1");
         final int count1 = 5;
         final Collection<Int32Value> values1 = createValues(count1);
@@ -168,32 +170,35 @@ class KafkaWrapperTest {
     }
 
     @Disabled // The test case ensures that the system is able to deal with comparatively big
-              // number of topics without any serious performance restrictions. The test runs for
-              // ~10 minutes (~2 for write and ~8 for read). If the topics already exist,
-              // the test takes ~8 minutes.
+              // number of partitions without any serious performance restrictions.
+              // When running this test, set num.partitions=1000 or more to make it serve
+              // the purpose of the test.
     @Test
-    @DisplayName("handle thousands of topics")
+    @DisplayName("handle thousands of partitions")
     @SuppressWarnings("MethodWithMultipleLoops")
         // Required by the test logic. First we create all the topics and then read messages from
         // them. The readability does not suffer in this case.
-    void handleBigNumberOfTopics() {
-        final int count = 1000;
-        final Message key = StringValue.newBuilder()
-                                       .setValue("big-data-key")
-                                       .build();
-        final Message value = StringValue.newBuilder()
-                                         .setValue("big-data-value")
-                                         .build();
-        final Topic[] topics = new Topic[count];
+    void handleBigNumberOfPartitions() {
+        final int count = 100;
+        final Topic topic = Topic.ofValue("KafkaWrapperTest-handleBigNumberOfPartitions");
+        final Message[] keys = new Message[count];
+        final StringValue[] values = new StringValue[count];
         for (int i = 0; i < count; i++) {
-            final Topic topic = Topic.ofValue("KafkaWrapperTest-handleBigNumberOfTopics-" + i);
+            final Message key = StringValue.newBuilder()
+                                           .setValue("big-data-key" + i)
+                                           .build();
+            keys[i] = key;
+            final StringValue value = StringValue.newBuilder()
+                                             .setValue("big-data-value" + i)
+                                             .build();
+            values[i] = value;
             wrapper.write(topic, key, value);
-            topics[i] = topic;
         }
         for (int i = 0; i < count; i++) {
-            final Topic topic = topics[i];
-            final Iterator<StringValue> readMsgs = wrapper.read(topic);
-            assertEquals(value, readMsgs.next());
+            final Message key = keys[i];
+            final StringValue msg = wrapper.<StringValue>read(topic, key)
+                                           .orElseThrow(AssertionError::new);
+            assertEquals(values[i].getValue(), msg.getValue());
         }
     }
 
