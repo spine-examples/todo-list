@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.server;
 
 import io.spine.examples.todolist.context.BoundedContexts;
-import io.spine.server.BoundedContext;
 
 import java.io.IOException;
 
@@ -31,7 +30,7 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
  * A local {@link Server} using
  * {@link io.spine.server.storage.memory.InMemoryStorageFactory InMemoryStorageFactory}.
  *
- * <p>The server uses the
+ * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
  *
  * @author Dmytro Grankin

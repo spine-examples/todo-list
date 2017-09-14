@@ -49,18 +49,19 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  * <p>If the parameters were not specified to a command or the server was ran directly,
  * {@linkplain #getDefaultArguments() default arguments} will be used.
+ * The arguments are stored in the properties file {@code jdbc-storage.properties}.
  *
- * <p>As the server uses {@code MySQL}, the data base with the specified name should be created
+ * <p>As the server uses {@code MySQL}, the database with the specified name should be created
  * and the username and password should be correct.
  *
- * <p>The server uses the
+ * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
  *
  * @author Dmytro Grankin
  */
 public class LocalJdbcServer {
 
-    private static final String DB_PROPERTIES_FILE = "data_base.properties";
+    private static final String DB_PROPERTIES_FILE = "jdbc-storage.properties";
     private static final Properties properties = getProperties(DB_PROPERTIES_FILE);
 
     private static final String DB_URL_FORMAT = "%s/%s?useSSL=false";
@@ -122,12 +123,12 @@ public class LocalJdbcServer {
     }
 
     /**
-     * Obtains the prefix of the connection {@code URL} for the data base.
+     * Obtains the prefix of the connection {@code URL} for the database.
      *
      * <p>The value will be obtained from the {@link #properties}.
      *
      * <p>If the {@link Environment#isTests() environment} is tests,
-     * the method returns prefix for connection to an in-memory data base.
+     * the method returns prefix for connection to an in-memory database.
      *
      * @return the prefix for a connection {@code URL}
      */
