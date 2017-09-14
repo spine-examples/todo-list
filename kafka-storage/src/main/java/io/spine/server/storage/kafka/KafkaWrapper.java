@@ -172,7 +172,7 @@ public class KafkaWrapper {
      * @return an iterator of the
      */
     public <M extends Message> Iterator<M> readAll(Class<? extends Entity> type) {
-        final Topic topicOfTopics = Topic.forType(type);
+        final Topic topicOfTopics = Topics.superTopic(type);
         final Iterable<ConsumerRecord<Message, Message>> records = doRead(topicOfTopics);
         final Iterator<Message> messages = stream(records)
                 .map(ConsumerRecord::value)
@@ -290,7 +290,7 @@ public class KafkaWrapper {
      * the state of a that Entity types.
      */
     private void writeToSuperTopic(Class<? extends Entity> entityClass, Topic topic) {
-        final Topic topicOfTopics = Topic.forType(entityClass);
+        final Topic topicOfTopics = Topics.superTopic(entityClass);
         final StringValue topicValue = StringValue.newBuilder()
                                                   .setValue(topic.getName())
                                                   .build();
