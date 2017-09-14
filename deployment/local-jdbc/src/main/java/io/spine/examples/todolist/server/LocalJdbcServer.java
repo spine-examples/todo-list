@@ -32,8 +32,11 @@ import org.slf4j.Logger;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.lang.String.format;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -45,7 +48,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * {@code gradle :local-jdbc:runServer -Pconf=db_name,username,password}
  *
  * <p>If the parameters were not specified to a command or the server was ran directly,
- * {@linkplain #DEFAULT_ARGUMENTS} will be used.
+ * {@linkplain #getDefaultArguments() default arguments} will be used.
  *
  * <p>As the server uses {@code MySQL}, the data base with the specified name should be created
  * and the username and password should be correct.
@@ -57,14 +60,10 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class LocalJdbcServer {
 
-    private static final String DB_URL_PREFIX = "jdbc:mysql:";
-    private static final String DB_URL_FORMAT = "%s%s?useSSL=false";
+    private static final String DB_PROPERTIES_FILE = "data_base.properties";
+    private static final Properties properties = getProperties(DB_PROPERTIES_FILE);
 
-    private static final String DB_NAME = "TodoListDB";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "root";
-    @VisibleForTesting
-    static final String[] DEFAULT_ARGUMENTS = {DB_NAME, USERNAME, PASSWORD};
+    private static final String DB_URL_FORMAT = "%s/%s?useSSL=false";
 
     private LocalJdbcServer() {
         // Prevent instantiation of this class.
@@ -72,10 +71,12 @@ public class LocalJdbcServer {
 
     public static void main(String[] args) throws IOException {
         final String[] actualArguments;
-        if (DEFAULT_ARGUMENTS.length != args.length) {
-            log().info("The specified arguments don't match the required format. " +
-                               "Default arguments will be used.");
-            actualArguments = DEFAULT_ARGUMENTS;
+        final int expectedArgumentsLength = 3;
+        if (args.length != expectedArgumentsLength) {
+            actualArguments = getDefaultArguments();
+            log().info("The specified arguments don't match the length requirement. " +
+                               "Required arguments size: {}. Default arguments will be used: {}.",
+                       expectedArgumentsLength, actualArguments);
         } else {
             actualArguments = args;
         }
@@ -106,7 +107,7 @@ public class LocalJdbcServer {
         final String password = args[2];
 
         log().info("Start `DataSource` creation. The following parameters will be used:");
-        final String dbUrl = getDbUrl(dbName);
+        final String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName);
         config.setJdbcUrl(dbUrl);
         log().info("JDBC URL: {}", dbUrl);
 
@@ -120,12 +121,42 @@ public class LocalJdbcServer {
         return dataSource;
     }
 
-    private static String getDbUrl(String dbName) {
+    /**
+     * Obtains the prefix of the connection {@code URL} for the data base.
+     *
+     * <p>The value will be obtained from the {@link #properties}.
+     *
+     * <p>If the {@link Environment#isTests() environment} is tests,
+     * the method returns prefix for connection to an in-memory data base.
+     *
+     * @return the prefix for a connection {@code URL}
+     */
+    private static String getDbUrlPrefix() {
         final Environment environment = Environment.getInstance();
         final String prefix = environment.isTests()
                               ? "jdbc:h2:mem:"
-                              : DB_URL_PREFIX;
-        return format(DB_URL_FORMAT, prefix, dbName);
+                              : properties.getProperty("db.prefix");
+        return prefix;
+    }
+
+    @VisibleForTesting
+    static String[] getDefaultArguments() {
+        final String dbName = properties.getProperty("db.name");
+        final String username = properties.getProperty("db.username");
+        final String password = properties.getProperty("db.password");
+        return new String[]{dbName, username, password};
+    }
+
+    private static Properties getProperties(String propertiesFile) {
+        final Properties properties = new Properties();
+        final InputStream stream = LocalJdbcServer.class.getClassLoader()
+                                                        .getResourceAsStream(propertiesFile);
+        try {
+            properties.load(stream);
+        } catch (IOException e) {
+            throw illegalStateWithCauseOf(e);
+        }
+        return properties;
     }
 
     private static Logger log() {
