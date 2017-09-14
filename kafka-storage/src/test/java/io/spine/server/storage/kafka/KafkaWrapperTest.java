@@ -41,6 +41,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
@@ -199,6 +204,30 @@ class KafkaWrapperTest {
             final StringValue msg = wrapper.<StringValue>read(topic, key)
                                            .orElseThrow(AssertionError::new);
             assertEquals(values[i].getValue(), msg.getValue());
+        }
+    }
+
+    @SuppressWarnings("MethodWithMultipleLoops")
+        // Required to first launch and then await the Futures
+    @Test
+    @DisplayName("synchronize the consumer access")
+    void syncConsumerAccess() throws ExecutionException, InterruptedException {
+        final int threadCount = 10;
+        final ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        final Topic topic = Topic.ofValue("KafkaWrapperTest-syncConsumerAccess");
+        final long id = 314L;
+        final Message msg = StringValue.newBuilder()
+                                       .setValue("arbitrary")
+                                       .build();
+        wrapper.write(topic, id, msg);
+        final Collection<Future<Message>> results = new ArrayList<>(threadCount);
+        final Callable<Message> readOp = () -> wrapper.read(topic, id)
+                                                      .orElseThrow(AssertionError::new);
+        for (int i = 0; i < threadCount; i++) {
+            results.add(executor.submit(readOp));
+        }
+        for (Future<Message> result : results) {
+            assertEquals(msg, result.get());
         }
     }
 
