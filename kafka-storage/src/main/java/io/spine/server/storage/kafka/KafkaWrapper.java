@@ -20,6 +20,7 @@
 
 package io.spine.server.storage.kafka;
 
+import com.google.common.base.Supplier;
 import com.google.protobuf.Message;
 import com.google.protobuf.StringValue;
 import io.spine.server.entity.Entity;
@@ -32,6 +33,7 @@ import org.apache.kafka.common.TopicPartition;
 
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
@@ -42,6 +44,7 @@ import static io.spine.protobuf.TypeConverter.toMessage;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
 import static java.lang.Long.compare;
 import static java.util.Collections.singleton;
+import static java.util.stream.Collectors.toSet;
 import static java.util.stream.StreamSupport.stream;
 
 /**
@@ -71,28 +74,17 @@ public class KafkaWrapper {
         final ConsumerRecords<Message, Message> all = consumer.poll(pollAwait);
         final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
         final Optional<Message> lastMsg = stream(records.spliterator(), false)
-                .reduce((left, right) -> right)
+                .max(ConsumerRecordComparator.DIRECT.get())
                 .map(ConsumerRecord::value);
         @SuppressWarnings("unchecked") // Expect caller to be aware of the type.
         final Optional<M> result = (Optional<M>) lastMsg;
         return result;
     }
 
-    private void ensureSubscriptionOnto(Topic topic) {
-        final String topicName = topic.getName();
-        final Collection<TopicPartition> assignment = consumer.assignment();
-        final TopicPartition newPartition = new TopicPartition(topicName, 0);
-        if (!assignment.contains(newPartition)) {
-            consumer.assign(singleton(newPartition));
-        }
-        consumer.seekToBeginning(singleton(newPartition));
-        consumer.poll(0);
-    }
-
     public <M extends Message> Iterator<M> read(Topic topic) {
         final Iterable<ConsumerRecord<Message, Message>> records = doRead(topic);
         final Iterator<Message> messages = stream(records.spliterator(), false)
-                .sorted(KafkaWrapper::compareConsRecords)
+                .sorted(ConsumerRecordComparator.DIRECT.get())
                 .map(ConsumerRecord::value)
                 .iterator();
         @SuppressWarnings("unchecked") // Expect caller to be aware of the type.
@@ -123,7 +115,7 @@ public class KafkaWrapper {
                     return result;
                 })
                 .flatMap(iterable -> stream(iterable.spliterator(), false))
-                .sorted(KafkaWrapper::compareConsRecords)
+                .sorted(ConsumerRecordComparator.DIRECT.get())
                 .map(ConsumerRecord::value)
                 .iterator();
         @SuppressWarnings("unchecked") // Expect caller to be aware of the type.
@@ -132,13 +124,14 @@ public class KafkaWrapper {
     }
 
     public <M extends Message> Optional<M> read(Topic topic, Object id) {
-        final Message key = toMessage(id);
-        ensureSubscriptionOnto(topic);
+        final int partition = partitionFor(topic, id);
+        ensureSubscriptionOnto(topic, partition);
         final ConsumerRecords<Message, Message> all = consumer.poll(pollAwait);
         final Iterable<ConsumerRecord<Message, Message>> records = all.records(topic.getName());
+        final Message key = toMessage(id);
         final Optional<Message> message = stream(records.spliterator(), false)
                 .filter(record -> key.equals(record.key()))
-                .sorted(KafkaWrapper::compareConsRecords)
+                .sorted(ConsumerRecordComparator.DIRECT.get())
                 .map(ConsumerRecord::value)
                 .findFirst();
         @SuppressWarnings("unchecked") // Expect caller to be aware of the type.
@@ -152,8 +145,10 @@ public class KafkaWrapper {
     }
 
     public void write(Topic topic, Object id, Message value) {
+        final int partition = partitionFor(topic, id);
         final Message key = toMessage(id);
         final ProducerRecord<Message, Message> record = new ProducerRecord<>(topic.getName(),
+                                                                             partition,
                                                                              key,
                                                                              value);
         final Future<?> ack = producer.send(record);
@@ -176,8 +171,49 @@ public class KafkaWrapper {
         producer.send(record);
     }
 
-    private static int compareConsRecords(ConsumerRecord<?, ?> left,
-                                          ConsumerRecord<?, ?> right) {
-        return compare(right.timestamp(), left.timestamp());
+    private void ensureSubscriptionOnto(Topic topic, int partition) {
+        final String topicName = topic.getName();
+        final Collection<TopicPartition> assignment = consumer.assignment();
+        final TopicPartition newPartition = new TopicPartition(topicName, partition);
+        if (!assignment.contains(newPartition)) {
+            consumer.unsubscribe();
+            consumer.assign(singleton(newPartition));
+        }
+        consumer.seekToBeginning(singleton(newPartition));
+    }
+
+    private void ensureSubscriptionOnto(Topic topic) {
+        final String topicName = topic.getName();
+        final Collection<String> subscription = consumer.subscription();
+        if (!subscription.contains(topicName)) {
+            consumer.unsubscribe();
+            consumer.subscribe(singleton(topicName));
+        }
+        final Collection<TopicPartition> partitions =
+                producer.partitionsFor(topicName)
+                        .parallelStream()
+                        .map(pi -> new TopicPartition(pi.topic(), pi.partition()))
+                        .collect(toSet());
+        consumer.poll(0);
+        consumer.seekToBeginning(partitions);
+    }
+
+    private int partitionFor(Topic topic, Object id) {
+        final int partitionCount = producer.partitionsFor(topic.getName()).size();
+        return Math.abs(id.hashCode()) % partitionCount;
+    }
+
+    private enum ConsumerRecordComparator implements Supplier<Comparator<ConsumerRecord<?, ?>>> {
+        DIRECT {
+            @Override
+            public Comparator<ConsumerRecord<?, ?>> get() {
+                return ConsumerRecordComparator::compareConsRecords;
+            }
+        };
+
+        private static int compareConsRecords(ConsumerRecord<?, ?> left,
+                                              ConsumerRecord<?, ?> right) {
+            return compare(right.timestamp(), left.timestamp());
+        }
     }
 }

@@ -53,7 +53,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
     @Override
     protected int readEventCountAfterLastSnapshot(I id) {
         final Topic topic = Topic.forEventCountAfterSnapshot(aggregateClass, id);
-        final int eventCount = storage.<UInt32Value>readLast(topic)
+        final int eventCount = storage.<UInt32Value>read(topic, id)
                                       .map(UInt32Value::getValue)
                                       .orElse(0);
         return eventCount;
