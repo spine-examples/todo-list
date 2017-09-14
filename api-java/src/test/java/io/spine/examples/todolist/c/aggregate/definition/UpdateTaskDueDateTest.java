@@ -25,15 +25,15 @@ import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.TaskDueDateUpdateFailed;
+import io.spine.examples.todolist.TaskDueDateUpdateRejected;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskDueDate;
-import io.spine.examples.todolist.c.failures.Rejections;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDueDate;
+import io.spine.examples.todolist.c.rejection.Rejections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -68,7 +68,7 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDueDate failure " +
+    @DisplayName("throw CannotUpdateTaskDueDate rejection " +
             "upon an attempt to update the due date of the completed task")
     void cannotUpdateCompletedTaskDueDate() {
         final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
@@ -76,12 +76,13 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
 
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate, envelopeOf(updateTaskDueDateCmd)));
+                                         () -> dispatchCommand(aggregate,
+                                                               envelopeOf(updateTaskDueDateCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDueDate.class));
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDueDate failure " +
+    @DisplayName("throw CannotUpdateTaskDueDate rejection " +
             "upon an attempt to update the due date of the deleted task")
     void cannotUpdateDeletedTaskDueDate() {
         final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
@@ -89,7 +90,8 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
 
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate, envelopeOf(updateTaskDueDateCmd)));
+                                         () -> dispatchCommand(aggregate,
+                                                               envelopeOf(updateTaskDueDateCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDueDate.class));
     }
 
@@ -97,8 +99,8 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
     @DisplayName("produce TaskDueDateUpdated event")
     void produceEvent() {
         final UpdateTaskDueDate updateTaskDueDateCmd = updateTaskDueDateInstance(taskId);
-        final List<? extends Message> messageList = dispatchCommand(aggregate,
-                                                             envelopeOf(updateTaskDueDateCmd));
+        final List<? extends Message> messageList =
+                dispatchCommand(aggregate, envelopeOf(updateTaskDueDateCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDueDateUpdated.class, messageList.get(0)
                                                           .getClass());
@@ -124,27 +126,28 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
     }
 
     @Test
-    @DisplayName("produce CannotUpdateTaskDueDate failure")
-    void produceFailure() {
+    @DisplayName("produce CannotUpdateTaskDueDate rejection")
+    void produceRejection() {
         final Timestamp expectedDueDate = getCurrentTime();
         final Timestamp newDueDate = getCurrentTime();
 
         final UpdateTaskDueDate updateTaskDueDate =
                 updateTaskDueDateInstance(taskId, expectedDueDate, newDueDate);
         final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate, envelopeOf(updateTaskDueDate)));
+                                         () -> dispatchCommand(aggregate,
+                                                               envelopeOf(updateTaskDueDate)));
         final Throwable cause = Throwables.getRootCause(t);
         assertThat(cause, instanceOf(CannotUpdateTaskDueDate.class));
 
         final Rejections.CannotUpdateTaskDueDate cannotUpdateTaskDueDate =
                 ((CannotUpdateTaskDueDate) cause).getMessageThrown();
 
-        final TaskDueDateUpdateFailed dueDateUpdateFailed = cannotUpdateTaskDueDate.getUpdateFailed();
-        final TaskId actualTaskId = dueDateUpdateFailed.getFailureDetails()
-                                                       .getTaskId();
+        final TaskDueDateUpdateRejected details = cannotUpdateTaskDueDate.getRejectionDetails();
+        final TaskId actualTaskId = details.getCommandDetails()
+                                           .getTaskId();
         assertEquals(taskId, actualTaskId);
 
-        final ValueMismatch mismatch = dueDateUpdateFailed.getDueDateMismatch();
+        final ValueMismatch mismatch = details.getDueDateMismatch();
 
         assertEquals(newDueDate, unpack(mismatch.getNewValue()));
         assertEquals(expectedDueDate, unpack(mismatch.getExpected()));

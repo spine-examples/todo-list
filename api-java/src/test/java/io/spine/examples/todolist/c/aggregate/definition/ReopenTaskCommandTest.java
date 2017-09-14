@@ -27,7 +27,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.ReopenTask;
-import io.spine.examples.todolist.c.failures.CannotReopenTask;
+import io.spine.examples.todolist.c.rejection.CannotReopenTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,7 +59,7 @@ public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
     }
 
     @Test
-    @DisplayName("throw CannotReopenTask failure upon an attempt to reopen not completed task")
+    @DisplayName("throw CannotReopenTask rejection upon an attempt to reopen not completed task")
     void cannotReopenNotCompletedTask() {
         dispatchCreateTaskCmd();
 

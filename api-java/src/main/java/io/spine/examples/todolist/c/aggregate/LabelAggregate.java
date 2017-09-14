@@ -33,7 +33,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.events.LabelCreated;
 import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
-import io.spine.examples.todolist.c.failures.CannotUpdateLabelDetails;
+import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
@@ -41,7 +41,7 @@ import io.spine.server.command.Assign;
 import java.util.Collections;
 import java.util.List;
 
-import static io.spine.examples.todolist.c.aggregate.failures.LabelAggregateFailures.throwCannotUpdateLabelDetailsFailure;
+import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRejections.throwCannotUpdateLabelDetails;
 
 /**
  * The aggregate managing the state of a {@link TaskLabel}.
@@ -92,7 +92,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
             final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
             final ValueMismatch mismatch = unexpectedValue(expectedLabelDetails,
                                                            actualLabelDetails, newLabelDetails);
-            throwCannotUpdateLabelDetailsFailure(cmd, mismatch);
+            throwCannotUpdateLabelDetails(cmd, mismatch);
         }
 
         final LabelId labelId = cmd.getId();

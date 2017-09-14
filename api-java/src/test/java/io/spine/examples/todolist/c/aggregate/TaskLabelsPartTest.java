@@ -35,8 +35,8 @@ import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
 import io.spine.examples.todolist.c.events.LabelAssignedToTask;
 import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
-import io.spine.examples.todolist.c.failures.CannotAssignLabelToTask;
-import io.spine.examples.todolist.c.failures.CannotRemoveLabelFromTask;
+import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
+import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.grpc.MemoizingObserver;
 import io.spine.grpc.StreamObservers;
@@ -109,7 +109,7 @@ class TaskLabelsPartTest {
         }
 
         @Test
-        @DisplayName("throw CannotAssignLabelToTask failure " +
+        @DisplayName("throw CannotAssignLabelToTask rejection " +
                 "upon an attempt to assign the label to the deleted task")
         void cannotAssignLabelToDeletedTask() {
             createBasicTask();
@@ -120,7 +120,7 @@ class TaskLabelsPartTest {
         }
 
         @Test
-        @DisplayName("throw CannotAssignLabelToTask failure " +
+        @DisplayName("throw CannotAssignLabelToTask rejection " +
                 "upon an attempt to assign the label to the completed task")
         void cannotAssignLabelToCompletedTask() {
             createBasicTask();
@@ -181,7 +181,7 @@ class TaskLabelsPartTest {
         }
 
         @Test
-        @DisplayName("throw CannotRemoveLabelFromTask failure " +
+        @DisplayName("throw CannotRemoveLabelFromTask rejection " +
                 "upon an attempt to remove the not assigned label")
         void cannotRemoveNotExistingLabel() {
             assertThrows(CannotRemoveLabelFromTask.class,
@@ -189,7 +189,7 @@ class TaskLabelsPartTest {
         }
 
         @Test
-        @DisplayName("throw CannotRemoveLabelFromTask failure " +
+        @DisplayName("throw CannotRemoveLabelFromTask rejection " +
                 "upon an attempt to remove the label from the completed task")
         void cannotRemoveLabelFromCompletedTask() {
             createBasicTask();
@@ -201,7 +201,7 @@ class TaskLabelsPartTest {
         }
 
         @Test
-        @DisplayName("throw CannotRemoveLabelFromTask failure " +
+        @DisplayName("throw CannotRemoveLabelFromTask rejection " +
                 "upon an attempt to remove the label from the deleted task")
         void cannotRemoveLabelFromDeletedTask() {
             createBasicTask();

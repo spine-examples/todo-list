@@ -31,8 +31,8 @@ import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
 import io.spine.examples.todolist.c.events.LabelAssignedToTask;
 import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
-import io.spine.examples.todolist.c.failures.CannotAssignLabelToTask;
-import io.spine.examples.todolist.c.failures.CannotRemoveLabelFromTask;
+import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
+import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
 import io.spine.server.aggregate.AggregatePart;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
@@ -43,8 +43,8 @@ import java.util.List;
 
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidAssignLabelToTaskCommand;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidTaskStatusToRemoveLabel;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotAssignLabelToTaskFailure;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskLabelsPartFailures.throwCannotRemoveLabelFromTaskFailure;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAssignLabelToTask;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotRemoveLabelFromTask;
 import static java.util.Collections.singletonList;
 
 /**
@@ -77,7 +77,7 @@ public class TaskLabelsPart
                                                   .contains(labelId);
         final boolean isValidTaskStatus = isValidTaskStatusToRemoveLabel(taskState.getTaskStatus());
         if (!isLabelAssigned || !isValidTaskStatus) {
-            throwCannotRemoveLabelFromTaskFailure(cmd);
+            throwCannotRemoveLabelFromTask(cmd);
         }
 
         final LabelRemovedFromTask labelRemoved = LabelRemovedFromTask.newBuilder()
@@ -96,7 +96,7 @@ public class TaskLabelsPart
         final boolean isValid = isValidAssignLabelToTaskCommand(state.getTaskStatus());
 
         if (!isValid) {
-            throwCannotAssignLabelToTaskFailure(cmd);
+            throwCannotAssignLabelToTask(cmd);
         }
 
         final LabelAssignedToTask labelAssigned = LabelAssignedToTask.newBuilder()

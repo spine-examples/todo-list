@@ -18,26 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.c.aggregate.failures;
+package io.spine.examples.todolist.c.aggregate.rejection;
 
-import io.spine.examples.todolist.FailedTaskCommandDetails;
+import io.spine.examples.todolist.RejectedTaskCommandDetails;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.ChangeStatusFailures;
-import io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.TaskCreationFailures;
-import io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures;
+import io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections;
+import io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
-import io.spine.examples.todolist.c.failures.CannotCreateDraft;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskDueDate;
+import io.spine.examples.todolist.c.rejection.CannotCreateDraft;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDescription;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDueDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.TaskCreationFailures.throwCannotCreateDraftFailure;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTaskDescription;
-import static io.spine.examples.todolist.c.aggregate.failures.TaskPartFailures.UpdateFailures.throwCannotUpdateTaskDueDate;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.TaskCreationRejections.throwCannotCreateDraft;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDescription;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDueDate;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,86 +52,86 @@ class TaskPartRejectionsTest {
     @Test
     @DisplayName("have the private constructor")
     void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(TaskPartFailures.class);
+        assertHasPrivateParameterlessCtor(TaskPartRejections.class);
     }
 
     @Nested
-    @DisplayName("ChangeStatusFailures should")
-    class ChangeStatusFailuresTest {
+    @DisplayName("ChangeStatusRejections should")
+    class ChangeStatusRejectionsTest {
 
         @Test
         @DisplayName("have the private constructor")
         void havePrivateConstructor() {
-            assertHasPrivateParameterlessCtor(ChangeStatusFailures.class);
+            assertHasPrivateParameterlessCtor(ChangeStatusRejections.class);
         }
     }
 
     @Nested
-    @DisplayName("TaskCreationFailures should")
-    class TaskCreationFailuresTest {
+    @DisplayName("TaskCreationRejections should")
+    class TaskCreationRejectionsTest {
 
         @Test
         @DisplayName("have the private constructor")
         void havePrivateConstructor() {
-            assertHasPrivateParameterlessCtor(TaskCreationFailures.class);
+            assertHasPrivateParameterlessCtor(TaskPartRejections.TaskCreationRejections.class);
         }
 
         @Test
-        @DisplayName("throw CannotCreateDraft failure")
-        void throwCannotCreateDraft() {
+        @DisplayName("throw CannotCreateDraft rejection")
+        void throwCannotCreateDraftRejection() {
             final CreateDraft cmd = CreateDraft.newBuilder()
                                                .setId(taskId)
                                                .build();
-            final CannotCreateDraft failure = assertThrows(CannotCreateDraft.class,
-                                                           () -> throwCannotCreateDraftFailure(
-                                                                   cmd));
-            final TaskId actual = failure.getMessageThrown()
-                                         .getCreateDraftFailed()
-                                         .getFailureDetails()
-                                         .getTaskId();
+            final CannotCreateDraft rejection = assertThrows(CannotCreateDraft.class,
+                                                             () -> throwCannotCreateDraft(cmd));
+            final TaskId actual = rejection.getMessageThrown()
+                                           .getRejectionDetails()
+                                           .getCommandDetails()
+                                           .getTaskId();
             assertEquals(taskId, actual);
         }
     }
 
     @Nested
-    @DisplayName("UpdateFailures should")
-    class UpdateFailuresTest {
+    @DisplayName("UpdateRejections should")
+    class UpdateRejectionsTest {
 
         @Test
         @DisplayName("have the private constructor")
         void havePrivateConstructor() {
-            assertHasPrivateParameterlessCtor(UpdateFailures.class);
+            assertHasPrivateParameterlessCtor(UpdateRejections.class);
         }
 
         @Test
-        @DisplayName("throw CannotUpdateTaskDueDate failure")
-        void throwCannotUpdateTaskDueDateFailure() {
+        @DisplayName("throw CannotUpdateTaskDueDate rejection")
+        void throwCannotUpdateTaskDueDateRejection() {
             final UpdateTaskDueDate cmd = UpdateTaskDueDate.newBuilder()
                                                            .setId(taskId)
                                                            .build();
-            final CannotUpdateTaskDueDate failure =
+            final CannotUpdateTaskDueDate rejection =
                     assertThrows(CannotUpdateTaskDueDate.class,
                                  () -> throwCannotUpdateTaskDueDate(cmd));
-            final FailedTaskCommandDetails failedCommand = failure.getMessageThrown()
-                                                                  .getUpdateFailed()
-                                                                  .getFailureDetails();
-            final TaskId actualId = failedCommand.getTaskId();
+            final RejectedTaskCommandDetails commandDetails = rejection.getMessageThrown()
+                                                                       .getRejectionDetails()
+                                                                       .getCommandDetails();
+            final TaskId actualId = commandDetails.getTaskId();
             assertEquals(taskId, actualId);
         }
 
         @Test
-        @DisplayName("throw CannotUpdateTaskDescription failure")
-        void throwCannotUpdateTaskDescriptionFailure() {
+        @DisplayName("throw CannotUpdateTaskDescription rejection")
+        void throwCannotUpdateTaskDescriptionRejection() {
             final UpdateTaskDescription cmd = UpdateTaskDescription.newBuilder()
                                                                    .setId(taskId)
                                                                    .build();
-            final CannotUpdateTaskDescription failure =
+            final CannotUpdateTaskDescription rejection =
                     assertThrows(CannotUpdateTaskDescription.class,
                                  () -> throwCannotUpdateTaskDescription(cmd));
-            final FailedTaskCommandDetails failedCommand = failure.getMessageThrown()
-                                                                  .getUpdateFailed()
-                                                                  .getFailureDetails();
-            final TaskId actualId = failedCommand.getTaskId();
+            final RejectedTaskCommandDetails commandDetails = rejection.getMessageThrown()
+                                                                       .getRejectionDetails()
+                                                                       .getCommandDetails();
+
+            final TaskId actualId = commandDetails.getTaskId();
             assertEquals(taskId, actualId);
         }
     }

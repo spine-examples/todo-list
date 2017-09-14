@@ -28,7 +28,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.events.TaskCompleted;
-import io.spine.examples.todolist.c.failures.CannotCompleteTask;
+import io.spine.examples.todolist.c.rejection.CannotCompleteTask;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,7 +87,7 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     }
 
     @Test
-    @DisplayName("throw CannotCompleteTask failure upon an attempt to complete the deleted task")
+    @DisplayName("throw CannotCompleteTask rejection upon an attempt to complete the deleted task")
     void cannotCompleteDeletedTask() {
         dispatchCreateTaskCmd();
 
@@ -99,7 +99,7 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     }
 
     @Test
-    @DisplayName("throw CannotCompleteTask failure upon " +
+    @DisplayName("throw CannotCompleteTask rejection upon " +
             "an attempt to complete the task in draft state")
     void cannotCompleteDraft() {
         final CreateDraft createDraftCmd = createDraftInstance(taskId);

@@ -26,15 +26,15 @@ import io.spine.core.Command;
 import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
-import io.spine.examples.todolist.LabelDetailsUpdateFailed;
+import io.spine.examples.todolist.LabelDetailsUpdateRejected;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.events.LabelCreated;
 import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
-import io.spine.examples.todolist.c.failures.CannotUpdateLabelDetails;
-import io.spine.examples.todolist.c.failures.Rejections;
+import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
+import io.spine.examples.todolist.c.rejection.Rejections;
 import io.spine.server.aggregate.AggregateCommandTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -160,7 +160,7 @@ class LabelAggregateTest {
         }
 
         @Test
-        @DisplayName("produce CannotUpdateLabelDetails failure " +
+        @DisplayName("produce CannotUpdateLabelDetails rejection " +
                 "when the label details does not match expected")
         void cannotUpdateLabelDetails() {
             final LabelDetails expectedLabelDetails = LabelDetails.newBuilder()
@@ -174,18 +174,18 @@ class LabelAggregateTest {
             final UpdateLabelDetails updateLabelDetails =
                     updateLabelDetailsInstance(getLabelId(), expectedLabelDetails, newLabelDetails);
             createCommand(updateLabelDetails);
-            final CannotUpdateLabelDetails failure =
+            final CannotUpdateLabelDetails rejection =
                     assertThrows(CannotUpdateLabelDetails.class,
                                  () -> aggregate.handle(commandMessage().get()));
             final Rejections.CannotUpdateLabelDetails cannotUpdateLabelDetails =
-                    failure.getMessageThrown();
-            final LabelDetailsUpdateFailed labelDetailsUpdateFailed =
-                    cannotUpdateLabelDetails.getUpdateFailed();
-            final LabelId actualLabelId = labelDetailsUpdateFailed.getFailureDetails()
-                                                                  .getLabelId();
+                    rejection.getMessageThrown();
+            final LabelDetailsUpdateRejected rejectionDetails =
+                    cannotUpdateLabelDetails.getRejectionDetails();
+            final LabelId actualLabelId = rejectionDetails.getCommandDetails()
+                                                          .getLabelId();
             assertEquals(getLabelId(), actualLabelId);
 
-            final ValueMismatch mismatch = labelDetailsUpdateFailed.getLabelDetailsMismatch();
+            final ValueMismatch mismatch = rejectionDetails.getLabelDetailsMismatch();
             assertEquals(pack(expectedLabelDetails), mismatch.getExpected());
             assertEquals(pack(newLabelDetails), mismatch.getNewValue());
 
@@ -197,7 +197,7 @@ class LabelAggregateTest {
         }
     }
 
-    private static abstract class LabelAggregateCommandTest<C extends Message>
+    private abstract static class LabelAggregateCommandTest<C extends Message>
             extends AggregateCommandTest<C, LabelAggregate> {
 
         private LabelId labelId;

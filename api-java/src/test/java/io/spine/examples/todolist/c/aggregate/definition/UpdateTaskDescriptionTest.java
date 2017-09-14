@@ -24,7 +24,7 @@ import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
 import com.google.protobuf.StringValue;
 import io.spine.change.ValueMismatch;
-import io.spine.examples.todolist.DescriptionUpdateFailed;
+import io.spine.examples.todolist.DescriptionUpdateRejected;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CompleteTask;
@@ -32,8 +32,8 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
-import io.spine.examples.todolist.c.failures.CannotUpdateTaskDescription;
-import io.spine.examples.todolist.c.failures.Rejections;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDescription;
+import io.spine.examples.todolist.c.rejection.Rejections;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -87,7 +87,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDescription failure " +
+    @DisplayName("throw CannotUpdateTaskDescription rejection " +
             "upon an attempt to update the description of the deleted task")
     void cannotUpdateDeletedTaskDescription() {
         dispatchCreateTaskCmd();
@@ -104,7 +104,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     }
 
     @Test
-    @DisplayName("throw CannotUpdateTaskDescription failure " +
+    @DisplayName("throw CannotUpdateTaskDescription rejection " +
             "upon an attempt to update the description of the completed task")
     void cannotUpdateCompletedTaskDescription() {
         dispatchCreateTaskCmd();
@@ -137,8 +137,8 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     }
 
     @Test
-    @DisplayName("produce CannotUpdateTaskDescription failure")
-    void produceFailure() {
+    @DisplayName("produce CannotUpdateTaskDescription rejection")
+    void produceRejection() {
         final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createBasicTask));
 
@@ -155,18 +155,18 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         assertThat(cause, instanceOf(CannotUpdateTaskDescription.class));
 
         @SuppressWarnings("ConstantConditions") // Instance type checked before.
-        final Rejections.CannotUpdateTaskDescription failure =
+        final Rejections.CannotUpdateTaskDescription rejection =
                 ((CannotUpdateTaskDescription) cause).getMessageThrown();
-        final DescriptionUpdateFailed descriptionUpdateFailed = failure.getUpdateFailed();
-        final TaskId actualTaskId = descriptionUpdateFailed.getFailureDetails()
-                                                           .getTaskId();
+        final DescriptionUpdateRejected rejectionDetails = rejection.getRejectionDetails();
+        final TaskId actualTaskId = rejectionDetails.getCommandDetails()
+                                                    .getTaskId();
         assertEquals(taskId, actualTaskId);
 
         final StringValue expectedStringValue = toMessage(expectedValue);
         final StringValue actualStringValue = toMessage(actualValue);
         final StringValue newStringValue = toMessage(newValue);
 
-        final ValueMismatch mismatch = descriptionUpdateFailed.getDescriptionMismatch();
+        final ValueMismatch mismatch = rejectionDetails.getDescriptionMismatch();
         assertEquals(expectedStringValue, unpack(mismatch.getExpected()));
         assertEquals(actualStringValue, unpack(mismatch.getActual()));
         assertEquals(newStringValue, unpack(mismatch.getNewValue()));
