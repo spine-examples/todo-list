@@ -23,10 +23,12 @@ package io.spine.server.storage.kafka;
 import com.google.protobuf.Message;
 import com.google.protobuf.StringValue;
 import io.spine.server.entity.Entity;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
 
@@ -44,6 +46,7 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.protobuf.TypeConverter.toMessage;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
 import static java.lang.Long.compare;
@@ -51,40 +54,78 @@ import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toSet;
 
 /**
+ * A wrapper for {@link KafkaConsumer} and {@link KafkaProducer} instances.
+ *
+ * <p>The high-level architecture is following:
+ * <ul>
+ *     <li>Each message type has a separate Kafka topic.
+ *     <li>The records written into a single topic are distributed between all the topic partitions
+ *         based on the {@code hashCode()} of the record key. A single partition may hold records
+ *         with different keys, but all the records with the same key are put into the same
+ *         partition.
+ *     <li>Unless an ID is specified for a read operation, the read is conducted through all
+ *         the partitions of a given topic.
+ *     <li>If a record is supposed to be read with {@link #readAll(Class)} method, it should be
+ *         written with {@link #write(Class, Topic, Object, Message)}.
+ *     <li>Unless specified otherwise, the read operations are not lazy and fetch all the requested
+ *         data in place.
+ * </ul>
+ *
+ * <p>As a general note, the {@link KafkaConsumer} at a point in time is assigned only to the topic
+ * partitions required at the current moment. All reads
+ * {@linkplain KafkaConsumer#seekToBeginning seek} the consumer pointer in a partition to
+ * the beginning. So, each read operation may poll the whole partition from the broker.
+ *
+ * <p>The wrapper takes care of synchronizing the methods of {@link KafkaConsumer} when required.
+ *
  * @author Dmytro Dashenkov
  */
 public class KafkaWrapper {
 
-    private final KafkaProducer<Message, Message> producer;
-    private final KafkaConsumer<Message, Message> consumer;
+    private final Producer<Message, Message> producer;
+    private final Consumer<Message, Message> consumer;
     private final Consistency consistencyLevel;
     private final long pollAwait;
 
     // TODO:2017-09-14:dmytro.dashenkov: Should be fair?
     private final Lock lock = new ReentrantLock();
 
-    public KafkaWrapper(KafkaProducer<Message, Message> producer,
-                        KafkaConsumer<Message, Message> consumer,
+    /**
+     * Craetes new instance of {@code KafkaWrapper}.
+     *
+     * @param producer         the {@link Producer} send the records to Kafka
+     * @param consumer         the {@link Consumer} fetch the records from Kafka
+     * @param consistencyLevel the level of data consistency from the write operations. If set to
+     *                         {@link Consistency#STRONG STRONG}, the {@code write} methods block
+     *                         the execution until the record acknowledgement. See {@code acks}
+     *                         property in the producer config for more on the record
+     *                         acknowledgement
+     * @param maxPollAwait     the maximum time a read operation may block the thread for; must be
+     *                         a positive (i.e. non-{@linkplain Duration#isNegative() negative}
+     *                         and non-{@linkplain Duration#isZero() zero}) duration; see
+     *                         {@link Consumer#poll(long)} for more details
+     */
+    public KafkaWrapper(Producer<Message, Message> producer,
+                        Consumer<Message, Message> consumer,
                         Consistency consistencyLevel,
                         Duration maxPollAwait) {
-        this.producer = producer;
-        this.consumer = consumer;
-        this.consistencyLevel = consistencyLevel;
+        this.producer = checkNotNull(producer);
+        this.consumer = checkNotNull(consumer);
+        this.consistencyLevel = checkNotNull(consistencyLevel);
         checkArgument(!maxPollAwait.isNegative() && !maxPollAwait.isZero(),
                       "Max poll await must be a positive Duration.");
         this.pollAwait = maxPollAwait.toMillis();
     }
 
-    public <M extends Message> Optional<M> readLast(Topic topic) {
-        final Iterable<ConsumerRecord<Message, Message>> records = doRead(topic);
-        final Optional<Message> lastMsg = stream(records)
-                .max(ConsumerRecordComparator.DIRECT.get())
-                .map(ConsumerRecord::value);
-        @SuppressWarnings("unchecked") // Expect caller to be aware of the type.
-        final Optional<M> result = (Optional<M>) lastMsg;
-        return result;
-    }
-
+    /**
+     * Reads all the records under the given Kafka topic.
+     *
+     * <p>The result is sorted by the {@linkplain ConsumerRecord#timestamp() record timestamp}.
+     *
+     * @param topic the topic to fetch
+     * @param <M>   the type of the records stored in within the topic
+     * @return an non-lazy iterator over the records under the given topic
+     */
     public <M extends Message> Iterator<M> read(Topic topic) {
         final Iterable<ConsumerRecord<Message, Message>> records = doRead(topic);
         final Iterator<Message> messages = stream(records)
@@ -96,6 +137,40 @@ public class KafkaWrapper {
         return result;
     }
 
+    /**
+     * Reads all the records corresponding to the state type of a given {@link Entity}.
+     *
+     * <p>In order to be read by this method, a record should belong to a topic marked as the state
+     * of the given Entity. To mark a topic as an Entity state, write a record into this topic with
+     * the {@link #write(Class, Topic, Object, Message)} specifying the required Entity class.
+     *
+     * <p>Consider the following example:
+     * <pre>
+     *     {@code
+     *     final Topic topic = Topic.ofValue("my-topic");
+     *     final String idA = ...
+     *     final Customer recordA = ...
+     *     final String idA = ...
+     *     final Customer recordA = ...
+     *     wrapper.write(CustomerProjection.class, topic, idA, recordA);
+     *     wrapper.write(topic, idB, recordB);
+     *     }
+     * </pre>
+     *
+     * <p>In the example above, when reading records with {@code readAll(CustomerProjection.class)}
+     * call, both {@code recordA} and {@code recordB} are returned, since the topic
+     * {@code "my-topic"} has already been marked to belong to the {@code CustomerProjection} state
+     * type. Though, if both {@code recordA} and {@code recordB} were written with
+     * {@link #write(Topic, Object, Message)}, then the call
+     * {@code readAll(CustomerProjection.class)} returns none of them.
+     *
+     * <p>The resulting iterator is partially lazy, i.e. the partitions are fetched in a lazy
+     * manner, but the records are fetched all at once.
+     *
+     * @param type the class of {@link Entity} to get the states for
+     * @param <M>  the type of the result
+     * @return an iterator of the
+     */
     public <M extends Message> Iterator<M> readAll(Class<? extends Entity> type) {
         final Topic topicOfTopics = Topic.forType(type);
         final Iterable<ConsumerRecord<Message, Message>> records = doRead(topicOfTopics);
@@ -117,6 +192,15 @@ public class KafkaWrapper {
         return result;
     }
 
+    /**
+     * Reads a single record by its ID from the given topic.
+     *
+     * @param topic the topic to read from
+     * @param id    the ID to read by
+     * @param <M>   the type of the record
+     * @return the latest record with the given ID or {@link Optional#empty()} if there is no such
+     *         record
+     */
     public <M extends Message> Optional<M> read(Topic topic, Object id) {
         final int partition = partitionFor(topic, id);
         final Iterable<ConsumerRecord<Message, Message>> records = doRead(topic, partition);
@@ -131,11 +215,57 @@ public class KafkaWrapper {
         return result;
     }
 
+    /**
+     * Reads the last record written to the given topic.
+     *
+     * <p>The latest record is the record with the biggest
+     * {@linkplain ConsumerRecord#timestamp() timestamp} value.
+     *
+     * @param topic the topic to look up
+     * @param <M> the type of the record
+     * @return the latest record in the given topic or {@link Optional#empty()} if the topic has
+     *         no records
+     */
+    public <M extends Message> Optional<M> readLast(Topic topic) {
+        final Iterable<ConsumerRecord<Message, Message>> records = doRead(topic);
+        final Optional<Message> lastMsg = stream(records)
+                .max(ConsumerRecordComparator.DIRECT.get())
+                .map(ConsumerRecord::value);
+        @SuppressWarnings("unchecked") // Expect caller to be aware of the type.
+        final Optional<M> result = (Optional<M>) lastMsg;
+        return result;
+    }
+
+    /**
+     * Writes the given record to the given topic.
+     *
+     * <p>Calling this method marks the given topic as state of the given {@link Entity} class.
+     *
+     * @param entityClass the type of the entity to bind this record to
+     * @param topic       the topic to write to
+     * @param id          the ID to store the record under
+     * @param value       the record to write
+     * @see #readAll(Class)
+     * @see #write(Topic, Object, Message)
+     */
     public void write(Class<? extends Entity> entityClass, Topic topic, Object id, Message value) {
         writeToSuperTopic(entityClass, topic);
         write(topic, id, value);
     }
 
+    /**
+     * Writes the given record to the given topic.
+     *
+     * <p>If the {@linkplain Consistency consistency level} of this wrapper instance is
+     * {@link Consistency#EVENTUAL EVENTUAL}, the method exists immediately after sending
+     * the record to Kafka. Otherwise, the method blocks the thread until the Kafka acknowledges
+     * the record.
+     *
+     * @param topic       the topic to write to
+     * @param id          the ID to store the record under
+     * @param value       the record to write
+     * @see Producer#send(ProducerRecord)
+     */
     public void write(Topic topic, Object id, Message value) {
         final int partition = partitionFor(topic, id);
         final Message key = toMessage(id);
@@ -153,6 +283,12 @@ public class KafkaWrapper {
         }
     }
 
+    /**
+     * Writes the given class -> topic mapping to the super-topic (a.k.a. topic of topics).
+     *
+     * <p>The super-topic contains the mapping of the Entity types to all the topics that store
+     * the state of a that Entity types.
+     */
     private void writeToSuperTopic(Class<? extends Entity> entityClass, Topic topic) {
         final Topic topicOfTopics = Topic.forType(entityClass);
         final StringValue topicValue = StringValue.newBuilder()
@@ -204,6 +340,15 @@ public class KafkaWrapper {
         return executeAndPoll(() -> ensureSubscriptionOnto(topicPartition), topic);
     }
 
+    /**
+     * Executes the given {@link Runnable} and {@linkplain Consumer#poll(long) polls} the records
+     * under the given topic atomically.
+     *
+     * <p>The runnable typically subscribes the {@link #consumer} onto the required topic or its
+     * partition(s).
+     *
+     * <p>Both the call to Runnable and polling are made in a single sync context.
+     */
     private Iterable<ConsumerRecord<Message, Message>> executeAndPoll(Runnable toExecute,
                                                                       Topic toPoll) {
         final ConsumerRecords<Message, Message> all;
@@ -223,6 +368,10 @@ public class KafkaWrapper {
         return StreamSupport.stream(records.spliterator(), false);
     }
 
+    /**
+     * The {@linkplain ConsumerRecord#timestamp() timestamp} comparator for {@link ConsumerRecord}
+     * supplier.
+     */
     private enum ConsumerRecordComparator implements Supplier<Comparator<ConsumerRecord<?, ?>>> {
         DIRECT {
             @Override
