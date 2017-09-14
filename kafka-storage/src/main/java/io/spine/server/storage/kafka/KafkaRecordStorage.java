@@ -68,7 +68,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
     @SuppressWarnings("Guava") // Spine Java 7 API
     @Override
     protected Optional<EntityRecord> readRecord(I id) {
-        final Topic topic = Topic.forRecord(entityClass, id);
+        final Topic topic = Topic.forRecord(entityClass);
         final EntityRecord record = storage.<EntityRecord>read(topic, id).orElse(null);
         return fromNullable(record);
     }
@@ -120,7 +120,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
 
     @Override
     protected void writeRecord(I id, EntityRecordWithColumns record) {
-        final Topic topic = Topic.forRecord(entityClass, id);
+        final Topic topic = Topic.forRecord(entityClass);
         storage.write(entityClass, topic, id, record.getRecord());
     }
 

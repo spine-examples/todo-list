@@ -52,7 +52,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     protected int readEventCountAfterLastSnapshot(I id) {
-        final Topic topic = Topic.forEventCountAfterSnapshot(aggregateClass, id);
+        final Topic topic = Topic.forEventCountAfterSnapshot(aggregateClass);
         final int eventCount = storage.<UInt32Value>read(topic, id)
                                       .map(UInt32Value::getValue)
                                       .orElse(0);
@@ -61,7 +61,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     protected void writeEventCountAfterLastSnapshot(I id, int eventCount) {
-        final Topic topic = Topic.forEventCountAfterSnapshot(aggregateClass, id);
+        final Topic topic = Topic.forEventCountAfterSnapshot(aggregateClass);
         final UInt32Value msg = UInt32Value.newBuilder()
                                            .setValue(eventCount)
                                            .build();
@@ -70,7 +70,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     protected void writeRecord(I id, AggregateEventRecord record) {
-        final Topic topic = Topic.forAggregateRecord(aggregateClass, id);
+        final Topic topic = Topic.forAggregateRecord(aggregateClass);
         Object key = null;
         if (record.getKindCase() == EVENT) {
             key = record.getEvent().getId();
@@ -85,7 +85,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     protected Iterator<AggregateEventRecord> historyBackward(I id) {
-        final Topic topic = Topic.forAggregateRecord(aggregateClass, id);
+        final Topic topic = Topic.forAggregateRecord(aggregateClass);
         return storage.read(topic);
     }
 
