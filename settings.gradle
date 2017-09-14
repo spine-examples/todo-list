@@ -2,7 +2,13 @@ include 'api-java'
 include 'model'
 include 'client'
 include 'server'
-include 'cli-app'
+include 'todo-cli'
 include 'cli-core'
 include 'testutil-api'
 include 'testutil-cli'
+
+include ':local-inmem'
+project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+
+include ':local-jdbc'
+project(':local-jdbc').projectDir = new File('./deployment/local-jdbc')

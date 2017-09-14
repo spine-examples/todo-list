@@ -193,12 +193,12 @@ subprojects {
         main {
             proto.srcDirs = ["${sourcesRootDir}/main/proto"]
             java.srcDirs = [generatedJavaDir, generatedSpineDir, "${sourcesRootDir}/main/java"]
-            resources.srcDirs = ["${generatedRootDir}/main/resources"]
+            resources.srcDirs = ["${generatedRootDir}/main/resources", "${sourcesRootDir}/main/resources"]
         }
         test {
             proto.srcDirs = ["${sourcesRootDir}/test/proto"]
             java.srcDirs = [generatedTestJavaDir, generatedTestSpineDir, "${sourcesRootDir}/test/java"]
-            resources.srcDirs = ["${generatedRootDir}/test/resources"]
+            resources.srcDirs = ["${generatedRootDir}/test/resources", "${sourcesRootDir}/test/resources"]
         }
     }
 
