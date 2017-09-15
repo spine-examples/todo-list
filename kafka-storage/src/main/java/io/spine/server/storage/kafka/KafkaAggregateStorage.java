@@ -108,6 +108,6 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     public Iterator<I> index() {
-        throw new UnsupportedOperationException("Method index unimplemented!");
+        throw new UnsupportedOperationException("Method index is unimplemented!");
     }
 }

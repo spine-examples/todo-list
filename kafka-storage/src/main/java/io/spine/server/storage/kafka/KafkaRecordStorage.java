@@ -64,7 +64,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
 
     @Override
     public boolean delete(I id) {
-        throw new UnsupportedOperationException("Method delete unimplemented!");
+        throw new UnsupportedOperationException("Method delete is unimplemented!");
     }
 
     @SuppressWarnings("Guava") // Spine Java 7 API
@@ -117,7 +117,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
 
     @Override
     protected Iterator<EntityRecord> readAllRecords(EntityQuery<I> query, FieldMask fieldMask) {
-        throw new UnsupportedOperationException("Method readAllRecords unimplemented!");
+        throw new UnsupportedOperationException("Method readAllRecords is unimplemented!");
     }
 
     @Override
@@ -134,7 +134,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
 
     @Override
     public Iterator<I> index() {
-        throw new UnsupportedOperationException("Method index unimplemented!");
+        throw new UnsupportedOperationException("Method index is unimplemented!");
     }
 
     KafkaWrapper getKafkaStorage() {

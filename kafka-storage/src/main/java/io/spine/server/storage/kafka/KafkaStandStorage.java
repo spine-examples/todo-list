@@ -59,12 +59,12 @@ public class KafkaStandStorage extends StandStorage {
 
     @Override
     public Iterator<EntityRecord> readAllByType(TypeUrl type) {
-        throw new UnsupportedOperationException("Method readAllByType unimplemented!");
+        throw new UnsupportedOperationException("Method readAllByType is unimplemented!");
     }
 
     @Override
     public Iterator<EntityRecord> readAllByType(TypeUrl type, FieldMask fieldMask) {
-        throw new UnsupportedOperationException("Method readAllByType unimplemented!");
+        throw new UnsupportedOperationException("Method readAllByType is unimplemented!");
     }
 
     @Override
