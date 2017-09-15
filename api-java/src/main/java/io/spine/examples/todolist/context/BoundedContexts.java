@@ -33,6 +33,7 @@ import io.spine.server.event.EventBus;
 import io.spine.server.event.EventEnricher;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.kafka.KafkaStorageFactory;
+import io.spine.server.storage.memory.InMemoryStorageFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,8 +42,8 @@ import java.util.Properties;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
-import static java.time.temporal.ChronoUnit.MILLIS;
 import static io.spine.util.Exceptions.newIllegalStateException;
+import static java.time.temporal.ChronoUnit.MILLIS;
 
 /**
  * Utilities for creation the {@link BoundedContext} instances.
@@ -158,7 +159,7 @@ public final class BoundedContexts {
      * <p>If the file is not found, an {@link NullPointerException} is thrown.
      */
     private static Properties loadProperties(String filename) {
-        final ClassLoader loader = TodoListBoundedContext.class.getClassLoader();
+        final ClassLoader loader = BoundedContexts.class.getClassLoader();
         final InputStream rawProperties = loader.getResourceAsStream(filename);
         checkNotNull(rawProperties, "Could not load properties file %s from classpath.", filename);
 
