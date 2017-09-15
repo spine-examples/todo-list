@@ -82,5 +82,5 @@ may take some time to create all of them.
 The other option is to create the topics _manually_. For that, you need to create the topic with 
 the same name as it would be done by the library (see `io.spine.server.storage.kafka.Topic`) and 
 specify the number of partitions for that particular topic. This may be your case if you know that
-there will be _many more_ or _many fewer_ records than the average in this particular topic 
-(a topic typically represents a single type of a domain model).
+there will be _many more_ or _many fewer_ records than average in this particular topic (a topic 
+typically represents a single type of a domain model).
