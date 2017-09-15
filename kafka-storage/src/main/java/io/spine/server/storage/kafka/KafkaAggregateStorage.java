@@ -54,6 +54,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     protected int readEventCountAfterLastSnapshot(I id) {
+        checkNotClosed();
         final Topic topic = Topic.forEventCountAfterSnapshot(aggregateClass);
         final int eventCount = storage.<UInt32Value>read(topic, id)
                                       .map(UInt32Value::getValue)
@@ -63,6 +64,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     protected void writeEventCountAfterLastSnapshot(I id, int eventCount) {
+        checkNotClosed();
         final Topic topic = Topic.forEventCountAfterSnapshot(aggregateClass);
         final UInt32Value msg = UInt32Value.newBuilder()
                                            .setValue(eventCount)
@@ -72,6 +74,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     protected void writeRecord(I id, AggregateEventRecord record) {
+        checkNotClosed();
         final Topic topic = Topic.forAggregateRecord(aggregateClass);
         Object key = null;
         if (record.getKindCase() == EVENT) {
@@ -87,6 +90,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     protected Iterator<AggregateEventRecord> historyBackward(I id) {
+        checkNotClosed();
         final Topic topic = Topic.forAggregateRecord(aggregateClass);
         return storage.read(topic);
     }
@@ -94,6 +98,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
     @SuppressWarnings("Guava") // Spine API for Java 7.
     @Override
     public Optional<LifecycleFlags> readLifecycleFlags(I id) {
+        checkNotClosed();
         final Topic topic = Topic.forLifecycleFlags(aggregateClass);
         final LifecycleFlags result = storage.<LifecycleFlags>read(topic, id)
                                              .orElse(null);
@@ -102,6 +107,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
     @Override
     public void writeLifecycleFlags(I id, LifecycleFlags flags) {
+        checkNotClosed();
         final Topic topic = Topic.forLifecycleFlags(aggregateClass);
         storage.write(topic, id, flags);
     }

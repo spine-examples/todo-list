@@ -25,6 +25,7 @@ import io.spine.server.aggregate.AggregateStorage;
 import io.spine.server.aggregate.AggregateStorageShould;
 import io.spine.server.entity.Entity;
 import io.spine.test.aggregate.ProjectId;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 
 import static io.spine.server.storage.kafka.given.KafkaStorageTestEnv.getStorageFactory;
@@ -46,5 +47,23 @@ public class KafkaAggregateStorageTest extends AggregateStorageShould {
     @Override
     protected AggregateStorage<ProjectId> getStorage(Class<? extends Entity> cls) {
         return getStorage();
+    }
+
+    @Disabled("tests unimplemented index() method")
+    @Override
+    public void index_all_IDs() {
+        super.index_all_IDs();
+    }
+
+    @Disabled("tests unimplemented index() method")
+    @Override
+    public void have_immutable_index() {
+        super.have_immutable_index();
+    }
+
+    @Disabled("tests unimplemented index() method")
+    @Override
+    public void have_index_on_ID() {
+        super.have_index_on_ID();
     }
 }
