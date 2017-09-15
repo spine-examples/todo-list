@@ -80,7 +80,7 @@ public final class BoundedContexts {
 
     /**
      * Creates the {@link BoundedContext} instance
-     * using {@code InMemoryStorageFactory} for a single tenant.
+     * using {@code KafkaStorageFactory} for a single tenant.
      *
      * @return the {@link BoundedContext} instance
      */

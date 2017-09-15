@@ -11,5 +11,5 @@ dependencies {
     testCompile group: 'io.spine', name: 'spine-server', version: spineVersion, classifier: 'test'
 
     // Old JUnit used in core-java.
-    compile 'junit:junit:4.8.2'
+    compile 'org.junit.vintage:junit-vintage-engine:4.12.0'
 }
