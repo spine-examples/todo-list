@@ -36,6 +36,11 @@ import static io.spine.server.storage.kafka.Consistency.STRONG;
 import static java.time.temporal.ChronoUnit.MILLIS;
 
 /**
+ * A local {@link Server} using {@link KafkaStorageFactory}.
+ *
+ * <p>The server exposes its {@code gRPC API} at
+ * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
+ *
  * @author Dmytro Dashenkov
  */
 public class LocalKafkaServer {
@@ -73,7 +78,7 @@ public class LocalKafkaServer {
      * <p>If the file is not found, an {@link NullPointerException} is thrown.
      */
     private static Properties loadProperties(String filename) {
-        final ClassLoader loader = BoundedContexts.class.getClassLoader();
+        final ClassLoader loader = LocalKafkaServer.class.getClassLoader();
         final InputStream rawProperties = loader.getResourceAsStream(filename);
         checkNotNull(rawProperties, "Could not load properties file %s from classpath.", filename);
 
