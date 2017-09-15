@@ -6,7 +6,7 @@ _Disclaimer:_ the following document may contain large amount of Apache Kafka-sp
 Please make sure to read the [official doc](https://kafka.apache.org/documentation/) before
 diving in.
 
-#### Pre-requirements:
+### Pre-requirements:
  - a copy of [the latest Kafka distribution](https://kafka.apache.org/downloads);
  - Kafka configuration files for:
    - Apache Zookeeper (e.g. the one found under the `config` dir of the Kafka distribution);
@@ -14,14 +14,14 @@ diving in.
    - [Kafka producer](https://kafka.apache.org/documentation/#producerconfigs);
    - [Kafka consumer](https://kafka.apache.org/documentation/#consumerconfigs).
    
-#### Getting started
+### Getting started
 
-##### Entry point
+#### Entry point
 
 To use Kafka Storage for your Spine application, create an instance of `KafkaStorageFactory` and 
-pass it to your Bounded Context on creation.
+pass it to your `BoundedContext` on creation.
 
-The `KafkaStorageFactory` demands a `Properties` for producer and consumer configurations. See 
+The `KafkaStorageFactory` demands `Properties` for producer and consumer configurations. See 
 [the doc](https://kafka.apache.org/documentation/) for the detailed description of the configs.
 The required configurations are:
  - for Producer config:
@@ -44,11 +44,11 @@ This turns off the Kafka "long poll" mechanism and dramatically speeds up read o
 Also, `KafkaStorageFactory` requires two more parameters to initialize:
  - `consistencyLevel` - the **thread local** consistency, i.e. whether or not to block until 
  acknowledgement the execution after the write operations;
- - `maxPollAwait` - the maximum time the consumer wait to get the data fetched from the broker. 
+ - `maxPollAwait` - the maximum time the consumer waits to get the data fetched from the broker. 
  In practice, this parameter depends on the throughput of your Kafka cluster and network. For 
  a broker running locally, _100ms_ should be enough.
  
-##### Broker configurations
+#### Broker configurations
 
 These are the **required** Kafka broker configs:
 ```properties
@@ -60,7 +60,7 @@ These options are required to make sure all the data persists.
 Please see [the broker config description](https://kafka.apache.org/documentation/#brokerconfigs) 
 for the options required by Kafka itself.
 
-##### Partition count
+#### Partition count
 
 The broker configuration `num.partitions` is _very_ important for the Kafka Storage.
 As the library creates Kafka topics dynamically, the configuration determines how many partitions 
@@ -73,14 +73,14 @@ Generally speaking, you should make the number of partitions as big as possible.
 are:
  - some [Kafka internal issues](https://www.confluent.io/blog/how-to-choose-the-number-of-topicspartitions-in-a-kafka-cluster/)
  when syncing the data between the brokers;
- - the volume of the disk on the broker machines, as each partition (even empty) takes _21MB_ data 
- for the metadata.
+ - the volume of the disk on the broker machines, as each partition (even empty) takes _21MB_ of 
+ space for the metadata.
  
 Also note that the partitions are created once the first record is written into the topic and it 
 may take some time to create all of them.
 
 The other option is to create the topics _manually_. For that, you need to create the topic with 
 the same name as it would be done by the library (see `io.spine.server.storage.kafka.Topic`) and 
-specify the number of partitions for that particular topic. This may be your case, if you know that
-there will be many more or many fewer records in this particular topic (a opic typically represents
-a single type of a domain model).
+specify the number of partitions for that particular topic. This may be your case if you know that
+there will be _many more_ or _many fewer_ records than the average in this particular topic 
+(a topic typically represents a single type of a domain model).
