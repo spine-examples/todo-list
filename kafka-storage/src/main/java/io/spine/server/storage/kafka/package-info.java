@@ -21,8 +21,20 @@
 /**
  * This package contains the basic classes of the Apache Kafka based
  * {@link io.spine.server.storage.Storage Storage} implementation.
+ *
+ * The implementation has several limitations:
+ * <ul>
+ *     <li>Method {@link io.spine.server.storage.Storage#index() Storage.index()} is not
+ *         implemented in any of the {@linkplain io.spine.server.storage.Storage storage} classes.
+ *     <li>{@link io.spine.server.stand.StandStorage#readAllByType StandStorage.readAllByType(...)}
+ *         methods are not implemented.
+ *     <li>Most read operations are non-lazy and may cause memory overflow issues.
+ * </ul>
  */
+@Experimental
 @ParametersAreNonnullByDefault
 package io.spine.server.storage.kafka;
+
+import io.spine.annotation.Experimental;
 
 import javax.annotation.ParametersAreNonnullByDefault;
