@@ -52,6 +52,7 @@ import static java.time.temporal.ChronoUnit.MILLIS;
  */
 public final class BoundedContexts {
 
+    // TODO:2017-09-15:dmytro.dashenkov: Use storage factory switch.
     private static final String KAFKA_PRODUCER_PROPS_PATH = "config/kafka-producer.properties";
     private static final String KAFKA_CONSUMER_PROPS_PATH = "config/kafka-consumer.properties";
     private static final Duration POLL_AWAIT = Duration.of(50, MILLIS);
