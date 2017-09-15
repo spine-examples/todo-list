@@ -33,9 +33,18 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
+ * An implementation of Kafka {@link Serializer} and {@link Deserializer} interfaces handing
+ * the {@link Message} records.
+ *
+ * <p>When serialized, the value is packed into {@link Any} and returned as
+ * {@linkplain Any#toByteArray() bytes}.
+ *
+ * <p>When deserialized, the {@link Any} value is parsed from the given bytes and the actual
+ * message is extracted.
+ *
  * @author Dmytro Dashenkov
  */
-public class MessageSerializer implements Serializer<Message>, Deserializer<Message> {
+public final class MessageSerializer implements Serializer<Message>, Deserializer<Message> {
 
     private static final byte[] EMPTY_BITES = {};
 
@@ -43,6 +52,11 @@ public class MessageSerializer implements Serializer<Message>, Deserializer<Mess
         // Prevent direct instantiation and insure no parameter ctor (required by Kafka)
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @implSpec Performs no action.
+     */
     @Override
     public void configure(Map<String, ?> configs, boolean isKey) {
         // NoOp
@@ -75,19 +89,33 @@ public class MessageSerializer implements Serializer<Message>, Deserializer<Mess
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @implSpec Performs no action.
+     */
     @Override
     public void close() {
         // NoOp
     }
 
+    /**
+     * Returns an instance of {@code MessageSerializer} as a {@link Serializer}.
+     */
     public static Serializer<Message> serializer() {
         return Default.INSTANCE.value;
     }
 
+    /**
+     * Returns an instance of {@code MessageSerializer} as a {@link Deserializer}.
+     */
     public static Deserializer<Message> deserializer() {
         return Default.INSTANCE.value;
     }
 
+    /**
+     * The enum singleton value holder for type {@code MessageSerializer}.
+     */
     private enum Default {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")

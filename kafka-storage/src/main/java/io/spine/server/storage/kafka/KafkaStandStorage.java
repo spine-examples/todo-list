@@ -43,6 +43,8 @@ import static com.google.common.collect.Iterables.transform;
 import static com.google.common.collect.Iterators.transform;
 
 /**
+ * A Kafka based implementation of {@link StandStorage}.
+ *
  * @author Dmytro Dashenkov
  */
 public class KafkaStandStorage extends StandStorage {

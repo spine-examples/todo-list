@@ -31,6 +31,8 @@ import javax.annotation.Nullable;
 import java.util.Iterator;
 
 /**
+ * A Kafka based implementation of {@link ProjectionStorage}.
+ *
  * @author Dmytro Dashenkov
  */
 public class KafkaProjectionStorage<I> extends ProjectionStorage<I> {

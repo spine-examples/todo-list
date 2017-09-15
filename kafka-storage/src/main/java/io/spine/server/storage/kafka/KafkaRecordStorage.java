@@ -45,6 +45,8 @@ import static com.google.common.collect.Lists.newLinkedList;
 import static io.spine.protobuf.AnyPacker.pack;
 
 /**
+ * A Kafka based implementation of {@link RecordStorage}.
+ *
  * @author Dmytro Dashenkov
  */
 public class KafkaRecordStorage<I> extends RecordStorage<I> {

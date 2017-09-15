@@ -47,6 +47,4 @@ public class LocalKafkaServer {
         final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
     }
-
-
 }

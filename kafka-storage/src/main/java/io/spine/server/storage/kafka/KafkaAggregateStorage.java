@@ -35,6 +35,8 @@ import static io.spine.server.aggregate.AggregateEventRecord.KindCase.EVENT;
 import static io.spine.server.aggregate.AggregateEventRecord.KindCase.SNAPSHOT;
 
 /**
+ * A Kafka based implementation of {@link AggregateStorage}.
+ *
  * @author Dmytro Dashenkov
  */
 public class KafkaAggregateStorage<I> extends AggregateStorage<I> {

@@ -41,6 +41,10 @@ import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
 
 /**
+ * The Apache Kafka based {@link StorageFactory} implementation.
+ *
+ * <p>The storage does not support multitenancy.
+ *
  * @author Dmytro Dashenkov
  */
 public class KafkaStorageFactory implements StorageFactory {
@@ -117,10 +121,13 @@ public class KafkaStorageFactory implements StorageFactory {
     }
 
     @Override
-    public void close() throws Exception {
-
+    public void close() {
+        // NOP
     }
 
+    /**
+     * The {@link Entity} type stored in {@link KafkaStandStorage}.
+     */
     private static class StandStorageRecord extends AbstractEntity<Message, EntityRecord> {
 
         protected StandStorageRecord(Message id) {

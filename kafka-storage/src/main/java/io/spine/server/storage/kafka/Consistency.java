@@ -21,11 +21,22 @@
 package io.spine.server.storage.kafka;
 
 /**
+ * The consistency level supported across the given {@link KafkaWrapper}.
+ *
+ * <p>{@link #STRONG} value reports the strong consistency, meaning that the write operations of
+ * the {@code KafkaWrapper} block the execution until Kafka acknowledges the sent message.
+ *
  * @author Dmytro Dashenkov
  */
 public enum Consistency {
 
+    /**
+     * Eventual consistency on the given {@link KafkaWrapper}.
+     */
     EVENTUAL,
-    STRONG;
 
+    /**
+     * Strong consistency on the given {@link KafkaWrapper}.
+     */
+    STRONG
 }

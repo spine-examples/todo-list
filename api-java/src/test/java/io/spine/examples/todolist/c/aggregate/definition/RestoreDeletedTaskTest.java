@@ -92,7 +92,8 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         aggregate = new TaskPart(root);
     }
 
-    @Disabled
+    @Disabled("uses unsupported features")
+        // As the test uses Entity Query feature which is is not supported in the Kafka storage
     @Test
     @DisplayName("produce LabelledTaskRestored event")
     void produceEvent() {
