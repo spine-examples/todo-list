@@ -32,18 +32,10 @@ import io.spine.server.BoundedContext;
 import io.spine.server.event.EventBus;
 import io.spine.server.event.EventEnricher;
 import io.spine.server.storage.StorageFactory;
-import io.spine.server.storage.kafka.KafkaStorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.Duration;
-import java.util.Properties;
-
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.server.storage.kafka.Consistency.STRONG;
 import static io.spine.util.Exceptions.newIllegalStateException;
-import static java.time.temporal.ChronoUnit.MILLIS;
 
 /**
  * Utilities for creation the {@link BoundedContext} instances.
@@ -53,26 +45,10 @@ import static java.time.temporal.ChronoUnit.MILLIS;
  */
 public final class BoundedContexts {
 
-    /** The default name of the {@code BoundedContext}. */
-    private static final String KAFKA_PRODUCER_PROPS_PATH = "config/kafka-producer.properties";
-    private static final String KAFKA_CONSUMER_PROPS_PATH = "config/kafka-consumer.properties";
-    private static final Duration POLL_AWAIT = Duration.of(50, MILLIS);
-
     /** The name of the Bounded Context. */
     private static final String NAME = "TodoListBoundedContext";
     private static final StorageFactory IN_MEMORY_FACTORY =
             InMemoryStorageFactory.newInstance(NAME, false);
-
-    private static final StorageFactory storageFactory;
-
-    static {
-        final Properties producerConfig = loadProperties(KAFKA_PRODUCER_PROPS_PATH);
-        final Properties consumerConfig = loadProperties(KAFKA_CONSUMER_PROPS_PATH);
-        storageFactory = new KafkaStorageFactory(producerConfig,
-                                                 consumerConfig,
-                                                 STRONG,
-                                                 POLL_AWAIT);
-    }
 
     private BoundedContexts() {
         // Disable instantiation from outside.
@@ -151,33 +127,5 @@ public final class BoundedContexts {
                              .setName(NAME)
                              .setEventBus(eventBus)
                              .build();
-    }
-
-    /**
-     * Loads {@code .properties} file from the classpath by the given filename.
-     *
-     * <p>If the file is not found, an {@link NullPointerException} is thrown.
-     */
-    private static Properties loadProperties(String filename) {
-        final ClassLoader loader = BoundedContexts.class.getClassLoader();
-        final InputStream rawProperties = loader.getResourceAsStream(filename);
-        checkNotNull(rawProperties, "Could not load properties file %s from classpath.", filename);
-
-        final Properties result = new Properties();
-
-        try (InputStream props = rawProperties) {
-            result.load(props);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        return result;
-    }
-
-    /** The holder for the singleton reference. */
-    private enum Singleton {
-        INSTANCE;
-
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final BoundedContext value = create();
     }
 }
