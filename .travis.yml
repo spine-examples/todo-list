@@ -10,7 +10,7 @@ before_install:
   - chmod +x kafka/bin/kafka-topics.sh
 
 install:
-  - eval(kafka/bin/zookeeper-server-start.sh config/zookeeper.properties)
+  - kafka/bin/zookeeper-server-start.sh config/zookeeper.properties
   - kafka/bin/kafka-server-start.sh config/kafka-server.properties
 
 script:
