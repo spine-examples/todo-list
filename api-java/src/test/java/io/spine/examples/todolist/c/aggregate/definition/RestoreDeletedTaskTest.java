@@ -45,7 +45,6 @@ import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
 import io.spine.server.event.EventStreamQuery;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -92,8 +91,6 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         aggregate = new TaskPart(root);
     }
 
-    @Disabled("uses unsupported features")
-        // As the test uses Entity Query feature which is is not supported in the Kafka storage
     @Test
     @DisplayName("produce LabelledTaskRestored event")
     void produceEvent() {
