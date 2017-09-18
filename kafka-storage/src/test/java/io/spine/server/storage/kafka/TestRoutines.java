@@ -29,6 +29,8 @@ import static java.lang.String.format;
 import static org.junit.Assert.assertEquals;
 
 /**
+ * The test routines for the kafka-storage test suites.
+ *
  * @author Dmytro Dashenkov
  */
 final class TestRoutines {
@@ -55,12 +57,18 @@ final class TestRoutines {
         // Prevent utility class instantiation.
     }
 
+    /**
+     * Prepares the environment for the kafka-storage tests.
+     */
     static void beforeEach() {
         // NoOp fo now.
         // When needed to run some routine each time before *each* test case,
         // add the routine to this method.
     }
 
+    /**
+     * Cleans up the test environment in order for the following tests to run properly.
+     */
     static void afterEach() {
         try {
             final File tmpFile = Files.createTempFile("kafka-test", "topics")

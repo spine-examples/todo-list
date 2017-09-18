@@ -87,11 +87,10 @@ public class KafkaWrapper {
     private final Consistency consistencyLevel;
     private final long pollAwait;
 
-    // TODO:2017-09-14:dmytro.dashenkov: Should be fair?
     private final Lock lock = new ReentrantLock();
 
     /**
-     * Craetes new instance of {@code KafkaWrapper}.
+     * Creates new instance of {@code KafkaWrapper}.
      *
      * @param producer         the {@link Producer} send the records to Kafka
      * @param consumer         the {@link Consumer} fetch the records from Kafka
@@ -325,6 +324,16 @@ public class KafkaWrapper {
         consumer.seekToBeginning(partitions);
     }
 
+    /**
+     * Assigns a record to a partition based on the record ID.
+     *
+     * <p>The distribution of the records between the partitions is proportional to
+     * the {@link Object#hashCode() Object.hashCode()} distribution of the ID type.
+     *
+     * @param topic the topic or the records
+     * @param id the ID of the record
+     * @return the partition number for the record with given ID
+     */
     private int partitionFor(Topic topic, Object id) {
         final int partitionCount = producer.partitionsFor(topic.getName())
                                            .size();

@@ -48,8 +48,15 @@ public final class MessageSerializer implements Serializer<Message>, Deserialize
 
     private static final byte[] EMPTY_BITES = {};
 
-    private MessageSerializer() {
-        // Prevent direct instantiation and insure no parameter ctor (required by Kafka)
+    /**
+     * Crates a new instance of the {@code MessageSerializer}.
+     *
+     * @deprecated use {@link #serializer()} and {@link #deserializer()} methods instead
+     */
+    @SuppressWarnings("DeprecatedIsStillUsed")
+    @Deprecated
+    public MessageSerializer() {
+        // Required by Kafka.
     }
 
     /**
@@ -118,7 +125,7 @@ public final class MessageSerializer implements Serializer<Message>, Deserialize
      */
     private enum Default {
         INSTANCE;
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
+        @SuppressWarnings({"NonSerializableFieldInSerializableClass", "deprecation"})
         private final MessageSerializer value = new MessageSerializer();
     }
 }

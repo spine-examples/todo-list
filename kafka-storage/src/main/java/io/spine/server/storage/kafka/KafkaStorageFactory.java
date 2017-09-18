@@ -109,8 +109,8 @@ public class KafkaStorageFactory implements StorageFactory {
     }
 
     @Override
-    public <I> ProjectionStorage<I> createProjectionStorage(
-            Class<? extends Projection<I, ?, ?>> projectionClass) {
+    public <I> ProjectionStorage<I>
+    createProjectionStorage(Class<? extends Projection<I, ?, ?>> projectionClass) {
         final KafkaRecordStorage<I> recordStorage = createRecordStorage(projectionClass);
         return new KafkaProjectionStorage<>(recordStorage, isMultitenant());
     }

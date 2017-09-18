@@ -30,7 +30,7 @@ import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_LAST
 import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_LIFECYCLE_FLAGS;
 
 /**
- * A tiny type for a Kafka topic.
+ * An Apache Kafka topic.
  *
  * <p>It's not recommended to implement this interface. Use {@link Topic#ofValue(String)}
  * to instantiate this type. All the static methods of this type return a carefully implemented
