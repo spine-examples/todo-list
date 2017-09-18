@@ -25,18 +25,28 @@ import io.spine.server.aggregate.AggregateStorage;
 import io.spine.server.aggregate.AggregateStorageShould;
 import io.spine.server.entity.Entity;
 import io.spine.test.aggregate.ProjectId;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
 
 import static io.spine.server.storage.kafka.given.KafkaStorageTestEnv.getStorageFactory;
 
 /**
  * @author Dmytro Dashenkov
  */
-@DisplayName("KafkaAggregateStorage should")
-public class KafkaAggregateStorageTest extends AggregateStorageShould {
+public class KafkaAggregateStorageShould extends AggregateStorageShould {
 
     private static final KafkaStorageFactory storageFactory = getStorageFactory();
+
+    @Before
+    public void beforeEach() {
+        TestRoutines.beforeEach();
+    }
+
+    @After
+    public void afterEach() {
+        TestRoutines.afterEach();
+    }
 
     @Override
     protected <I> AggregateStorage<I> getStorage(Class<? extends I> idClass,
@@ -52,18 +62,15 @@ public class KafkaAggregateStorageTest extends AggregateStorageShould {
     @Disabled("tests unimplemented index() method")
     @Override
     public void index_all_IDs() {
-        super.index_all_IDs();
     }
 
     @Disabled("tests unimplemented index() method")
     @Override
     public void have_immutable_index() {
-        super.have_immutable_index();
     }
 
     @Disabled("tests unimplemented index() method")
     @Override
     public void have_index_on_ID() {
-        super.have_index_on_ID();
     }
 }

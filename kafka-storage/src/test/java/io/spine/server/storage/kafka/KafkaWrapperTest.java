@@ -82,19 +82,6 @@ class KafkaWrapperTest {
     @AfterEach
     void tearDown() throws IOException, InterruptedException {
         TestRoutines.afterEach();
-//        final Collection<String> topicNames = wrapper.getTopicNames();
-//        final Runtime runtime = getRuntime();
-//        final Collection<Process> processes = new ArrayList<>(topicNames.size());
-//        for (String topic : topicNames) {
-//            final Process process = runtime.exec(new String[] {
-//                    "bin/kafka-topics.sh",
-//                    "--zookeeper", "localhost:2181",
-//                    "--delete", "--topic", topic});
-//            processes.add(process);
-//        }
-//        for (Process process : processes) {
-//            process.waitFor();
-//        }
     }
 
     @Test

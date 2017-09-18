@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Dmytro Dashenkov
  */
-public final class TestRoutines {
+final class TestRoutines {
 
     private static final File KAFKA_BIN_DIR;
 
@@ -47,7 +47,6 @@ public final class TestRoutines {
     // TODO:2017-09-11:dmytro.dashenkov: handle Windows too.
     private static final String LIST_TOPICS_CMD =
             "/kafka-topics.sh --zookeeper localhost:2181 --list";
-
     private static final String DELETE_TOPIC_CMD_TEMPLATE =
             "/kafka-topics.sh --zookeeper localhost:2181 --delete --topic %s";
     private static final String KAFKA_INTERNAL_TOPIC_PREFIX = "__";
@@ -56,11 +55,13 @@ public final class TestRoutines {
         // Prevent utility class instantiation.
     }
 
-    public static void beforeEach() {
-
+    static void beforeEach() {
+        // NoOp fo now.
+        // When needed to run some routine each time before *each* test case,
+        // add the routine to this method.
     }
 
-    public static void afterEach() {
+    static void afterEach() {
         try {
             final File tmpFile = Files.createTempFile("kafka-test", "topics")
                                       .toFile();
@@ -71,6 +72,7 @@ public final class TestRoutines {
             Files.lines(tmpFile.toPath())
                  .filter(topic -> !topic.startsWith(KAFKA_INTERNAL_TOPIC_PREFIX))
                  .forEach(TestRoutines::deleteTopic);
+            tmpFile.delete();
         } catch (IOException | InterruptedException e) {
             throw new IllegalStateException(e);
         }
