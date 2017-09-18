@@ -20,39 +20,76 @@
 
 package io.spine.server.storage.kafka;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.lang.String.format;
+import static org.junit.Assert.assertEquals;
+
 /**
  * @author Dmytro Dashenkov
  */
 public final class TestRoutines {
 
-    private static final Runtime runtime = Runtime.getRuntime();
+    private static final File KAFKA_BIN_DIR;
+
+    static {
+        try {
+            KAFKA_BIN_DIR = new File("../kafka/bin").getCanonicalFile();
+            checkNotNull(KAFKA_BIN_DIR);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    // TODO:2017-09-11:dmytro.dashenkov: handle Windows too.
+    private static final String LIST_TOPICS_CMD =
+            "/kafka-topics.sh --zookeeper localhost:2181 --list";
+
+    private static final String DELETE_TOPIC_CMD_TEMPLATE =
+            "/kafka-topics.sh --zookeeper localhost:2181 --delete --topic %s";
+    private static final String KAFKA_INTERNAL_TOPIC_PREFIX = "__";
 
     private TestRoutines() {
         // Prevent utility class instantiation.
     }
 
     public static void beforeEach() {
-//        try {
-//            // TODO:2017-09-11:dmytro.dashenkov: handle Windows too.
-//            runtime.exec(
-//                    "../kafka/bin/kafka-server-start.sh ../config/kafka-server.properties");
-//        } catch (IOException e) {
-//            throw new IllegalStateException(e);
-//        }
+
     }
 
     public static void afterEach() {
-//        try {
-//            // TODO:2017-09-11:dmytro.dashenkov: handle Windows too.
-//            final Process process = runtime.exec("../kafka/bin/kafka-server-stop.sh");
-//            process.waitFor();
-//            final File storage = new File("/tmp/kafka-logs");
-//            Files.walk(storage.toPath(), FOLLOW_LINKS)
-//                 .sorted(Comparator.reverseOrder())
-//                 .map(Path::toFile)
-//                 .forEachOrdered(File::delete);
-//        } catch (IOException | InterruptedException e) {
-//            throw new IllegalStateException(e);
-//        }
+        try {
+            final File tmpFile = Files.createTempFile("kafka-test", "topics")
+                                      .toFile();
+            final Process process = new ProcessBuilder(prepareCmd(LIST_TOPICS_CMD))
+                    .redirectOutput(tmpFile)
+                    .start();
+            process.waitFor();
+            Files.lines(tmpFile.toPath())
+                 .filter(topic -> !topic.startsWith(KAFKA_INTERNAL_TOPIC_PREFIX))
+                 .forEach(TestRoutines::deleteTopic);
+        } catch (IOException | InterruptedException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static void deleteTopic(String topic) {
+        final String[] cmd = prepareCmd(format(DELETE_TOPIC_CMD_TEMPLATE, topic));
+        try {
+            assertEquals(0, Runtime.getRuntime()
+                                   .exec(cmd)
+                                   .waitFor());
+        } catch (InterruptedException | IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static String[] prepareCmd(String kafkaScriptCommand) {
+        final String cmd = KAFKA_BIN_DIR.getAbsolutePath() + kafkaScriptCommand;
+        final String[] result = cmd.split(" ");
+        return result;
     }
 }
