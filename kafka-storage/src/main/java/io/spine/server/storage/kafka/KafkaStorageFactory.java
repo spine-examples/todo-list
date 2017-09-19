@@ -38,8 +38,10 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import java.time.Duration;
 import java.util.Properties;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 /**
  * The Apache Kafka based {@link StorageFactory} implementation.
@@ -50,17 +52,32 @@ import static io.spine.server.storage.kafka.MessageSerializer.serializer;
  */
 public class KafkaStorageFactory implements StorageFactory {
 
+    /**
+     * The default limit for the Kafka consumer to fetch the data from brokers.
+     *
+     * <p>The value is equal to 1 second.
+     *
+     * @see Builder#setMaxPollAwait(Duration)
+     */
+    private static final Duration DEFAULT_MAX_POLL_AWAIT = Duration.of(1, SECONDS);
+
     private final KafkaWrapper storage;
 
-    // TODO:2017-09-04:dmytro.dashenkov: Replace with builder.
-    public KafkaStorageFactory(Properties producerConfig,
-                               Properties consumerConfig,
-                               Consistency consistencyLevel,
-                               Duration maxPollAwait) {
+    protected KafkaStorageFactory(Properties producerConfig,
+                                  Properties consumerConfig,
+                                  Consistency consistencyLevel,
+                                  Duration maxPollAwait) {
         this.storage = createStorage(producerConfig,
                                      consumerConfig,
                                      consistencyLevel,
                                      maxPollAwait);
+    }
+
+    private KafkaStorageFactory(Builder builder) {
+        this(builder.producerConfig,
+             builder.consumerConfig,
+             builder.consistencyLevel,
+             builder.maxPollAwait);
     }
 
     private static KafkaWrapper createStorage(Properties producerConfig,
@@ -124,6 +141,79 @@ public class KafkaStorageFactory implements StorageFactory {
     @Override
     public void close() {
         // NOP
+    }
+
+    /**
+     * Creates a new instance of {@link KafkaStorageFactory.Builder}.
+     */
+    public static Builder newBuilder() {
+        return new Builder();
+    }
+
+    /**
+     * The builder type for constructing instances of {@code KafkaStorageFactory}.
+     */
+    public static class Builder {
+
+        private Properties producerConfig;
+        private Properties consumerConfig;
+        private Consistency consistencyLevel = Consistency.STRONG;
+        private Duration maxPollAwait = DEFAULT_MAX_POLL_AWAIT;
+
+        private Builder() {
+            // Prevent direct instantiation.
+        }
+
+        /**
+         * Specifies the Kafka producer config to use in the storage.
+         *
+         * @return self for method chaining
+         */
+        public Builder setProducerConfig(Properties producerConfig) {
+            this.producerConfig = checkNotNull(producerConfig);
+            return this;
+        }
+
+        /**
+         * Specifies the Kafka consumer config to use in the storage.
+         *
+         * @return self for method chaining
+         */
+        public Builder setConsumerConfig(Properties consumerConfig) {
+            this.consumerConfig = checkNotNull(consumerConfig);
+            return this;
+        }
+
+        /**
+         * Specifies the {@link Consistency} level.
+         *
+         * <p>The default value is {@link Consistency#STRONG STRONG}.
+         *
+         * @return self for method chaining
+         */
+        public Builder setConsistencyLevel(Consistency consistencyLevel) {
+            this.consistencyLevel = checkNotNull(consistencyLevel);
+            return this;
+        }
+
+        /**
+         * Specifies the maximum await on poll.
+         *
+         * <p>This is the duration of the consumer retry attempts. If no data is fetched,
+         * the consumer tries to fetch data more as many times as it can until this time passes.
+         *
+         * <p>The default value is {@link KafkaStorageFactory#DEFAULT_MAX_POLL_AWAIT}.
+         *
+         * @return self for method chaining
+         */
+        public Builder setMaxPollAwait(Duration duration) {
+            this.maxPollAwait = checkNotNull(duration);
+            return this;
+        }
+
+        public KafkaStorageFactory build() {
+            return new KafkaStorageFactory(this);
+        }
     }
 
     /**

@@ -26,8 +26,8 @@ import io.spine.server.storage.kafka.MessageSerializer;
 import java.time.Duration;
 import java.util.Properties;
 
-import static io.spine.server.storage.kafka.Consistency.STRONG;
 import static java.time.temporal.ChronoUnit.MILLIS;
+import static org.apache.kafka.clients.consumer.ConsumerConfig.FETCH_MAX_WAIT_MS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.GROUP_ID_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG;
 import static org.apache.kafka.clients.consumer.ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG;
@@ -45,8 +45,9 @@ public class KafkaStorageTestEnv {
     private static final String SERIALIZER_NAME = MessageSerializer.class.getName();
     private static final String ALL = "all";
     private static final String CONSUMER_GROUP_ID = "0";
+    private static final String BROKER_IDLE_ON_POLL = "0";
 
-    private static final Duration TEST_POLL_AWAIT = Duration.of(600, MILLIS);
+    private static final Duration TEST_POLL_AWAIT = Duration.of(50, MILLIS);
 
     private static final Properties producerConfig = new Properties();
     private static final Properties consumerConfig = new Properties();
@@ -66,6 +67,7 @@ public class KafkaStorageTestEnv {
         consumerConfig.put(KEY_DESERIALIZER_CLASS_CONFIG, SERIALIZER_NAME);
         consumerConfig.put(VALUE_DESERIALIZER_CLASS_CONFIG, SERIALIZER_NAME);
         consumerConfig.put(GROUP_ID_CONFIG, CONSUMER_GROUP_ID);
+        consumerConfig.put(FETCH_MAX_WAIT_MS_CONFIG, BROKER_IDLE_ON_POLL);
     }
 
     private KafkaStorageTestEnv() {
@@ -93,9 +95,11 @@ public class KafkaStorageTestEnv {
     private enum StorageFactorySingleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final KafkaStorageFactory value = new KafkaStorageFactory(producerConfig,
-                                                                          consumerConfig,
-                                                                          STRONG,
-                                                                          TEST_POLL_AWAIT);
+        private final KafkaStorageFactory value =
+                KafkaStorageFactory.newBuilder()
+                                   .setProducerConfig(producerConfig)
+                                   .setConsumerConfig(consumerConfig)
+                                   .setMaxPollAwait(TEST_POLL_AWAIT)
+                                   .build();
     }
 }

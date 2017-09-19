@@ -54,10 +54,13 @@ public class LocalKafkaServer {
     static {
         final Properties producerConfig = loadProperties(KAFKA_PRODUCER_PROPS_PATH);
         final Properties consumerConfig = loadProperties(KAFKA_CONSUMER_PROPS_PATH);
-        final StorageFactory defaultStorageFactory = new KafkaStorageFactory(producerConfig,
-                                                                             consumerConfig,
-                                                                             STRONG,
-                                                                             POLL_AWAIT);
+        final StorageFactory defaultStorageFactory =
+                KafkaStorageFactory.newBuilder()
+                                   .setProducerConfig(producerConfig)
+                                   .setConsumerConfig(consumerConfig)
+                                   .setMaxPollAwait(POLL_AWAIT)
+                                   .setConsistencyLevel(STRONG)
+                                   .build();
         injectStorageFactory(defaultStorageFactory);
     }
 
