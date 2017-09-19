@@ -70,7 +70,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
     @SuppressWarnings("Guava") // Spine Java 7 API
     @Override
     protected Optional<EntityRecord> readRecord(I id) {
-        final Topic topic = Topic.forRecord(entityClass);
+        final Topic topic = Topic.forRecordOfType(entityClass);
         final EntityRecord record = storage.<EntityRecord>read(topic, id).orElse(null);
         return fromNullable(record);
     }
@@ -104,7 +104,8 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
 
     @Override
     protected Iterator<EntityRecord> readAllRecords(FieldMask fieldMask) {
-        final Iterator<EntityRecord> result = storage.readAll(entityClass);
+        final Topic topic = Topic.forRecordOfType(entityClass);
+        final Iterator<EntityRecord> result = storage.read(topic);
         final Iterator<EntityRecord> filtered = filter(result, record -> {
             checkNotNull(record);
             final LifecycleFlags flags = record.getLifecycleFlags();
@@ -122,8 +123,8 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
 
     @Override
     protected void writeRecord(I id, EntityRecordWithColumns record) {
-        final Topic topic = Topic.forRecord(entityClass);
-        storage.write(entityClass, topic, id, record.getRecord());
+        final Topic topic = Topic.forRecordOfType(entityClass);
+        storage.write(topic, id, record.getRecord());
     }
 
     @Override

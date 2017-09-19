@@ -21,6 +21,7 @@
 package io.spine.server.storage.kafka;
 
 import com.google.protobuf.Message;
+import com.google.protobuf.StringValue;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.AggregateStorage;
 import io.spine.server.entity.AbstractEntity;
@@ -92,7 +93,7 @@ public class KafkaStorageFactory implements StorageFactory {
 
     @Override
     public StandStorage createStandStorage() {
-        final KafkaRecordStorage<Message> delegate = createRecordStorage(StandStorageRecord.class);
+        final KafkaRecordStorage<StringValue> delegate = createRecordStorage(StandStorageRecord.class);
         return new KafkaStandStorage(delegate, isMultitenant());
     }
 
@@ -128,9 +129,9 @@ public class KafkaStorageFactory implements StorageFactory {
     /**
      * The {@link Entity} type stored in {@link KafkaStandStorage}.
      */
-    private static class StandStorageRecord extends AbstractEntity<Message, EntityRecord> {
+    private static class StandStorageRecord extends AbstractEntity<StringValue, EntityRecord> {
 
-        protected StandStorageRecord(Message id) {
+        protected StandStorageRecord(StringValue id) {
             super(id);
         }
     }

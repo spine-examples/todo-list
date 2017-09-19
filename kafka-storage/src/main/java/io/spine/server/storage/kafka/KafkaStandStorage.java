@@ -22,8 +22,8 @@ package io.spine.server.storage.kafka;
 
 import com.google.common.base.Converter;
 import com.google.common.base.Optional;
+import com.google.common.collect.Iterators;
 import com.google.protobuf.FieldMask;
-import com.google.protobuf.Message;
 import com.google.protobuf.StringValue;
 import io.spine.server.entity.EntityRecord;
 import io.spine.server.entity.storage.EntityRecordWithColumns;
@@ -33,14 +33,13 @@ import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
 import io.spine.type.TypeUrl;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Iterables.transform;
-import static com.google.common.collect.Iterators.transform;
+import static com.google.common.collect.Maps.newHashMapWithExpectedSize;
 
 /**
  * A Kafka based implementation of {@link StandStorage}.
@@ -49,9 +48,9 @@ import static com.google.common.collect.Iterators.transform;
  */
 public class KafkaStandStorage extends StandStorage {
 
-    private final KafkaRecordStorage<Message> delegate;
+    private final KafkaRecordStorage<StringValue> delegate;
 
-    protected KafkaStandStorage(KafkaRecordStorage<Message> delegate,
+    protected KafkaStandStorage(KafkaRecordStorage<StringValue> delegate,
                                 boolean multitenant) {
         super(multitenant);
         this.delegate = delegate;
@@ -69,14 +68,14 @@ public class KafkaStandStorage extends StandStorage {
 
     @Override
     public boolean delete(AggregateStateId id) {
-        final Message key = checkNotNull(IdTransformer.direct().convert(id));
+        final StringValue key = checkNotNull(IdTransformer.direct().convert(id));
         return delegate.delete(key);
     }
 
     @SuppressWarnings("Guava") // Spine Java 7 API
     @Override
     protected Optional<EntityRecord> readRecord(AggregateStateId id) {
-        final Message key = checkNotNull(IdTransformer.direct().convert(id));
+        final StringValue key = checkNotNull(IdTransformer.direct().convert(id));
         return delegate.readRecord(key);
     }
 
@@ -87,7 +86,7 @@ public class KafkaStandStorage extends StandStorage {
             //  1. Executed lazily.
             //  2. Shorter notation.
             //  3. Potentially less GC overhead.
-        final Iterable<Message> keys = transform(ids, IdTransformer.direct()::convert);
+        final Iterable<StringValue> keys = transform(ids, IdTransformer.direct()::convert);
         return delegate.readMultipleRecords(keys);
     }
 
@@ -96,7 +95,7 @@ public class KafkaStandStorage extends StandStorage {
                                                          FieldMask fieldMask) {
         @SuppressWarnings("StaticPseudoFunctionalStyleMethod")
             // See readMultipleRecords(Iterable) for description.
-        final Iterable<Message> keys = transform(ids, IdTransformer.direct()::convert);
+        final Iterable<StringValue> keys = transform(ids, IdTransformer.direct()::convert);
         return delegate.readMultipleRecords(keys, fieldMask);
     }
 
@@ -112,16 +111,17 @@ public class KafkaStandStorage extends StandStorage {
 
     @Override
     protected void writeRecord(AggregateStateId id, EntityRecordWithColumns record) {
-        final Message key = checkNotNull(IdTransformer.direct().convert(id));
+        final StringValue key = checkNotNull(IdTransformer.direct().convert(id));
         delegate.writeRecord(key, record);
     }
 
     @Override
     protected void writeRecords(Map<AggregateStateId, EntityRecordWithColumns> records) {
-        final Map<Message, EntityRecordWithColumns> mapToWrite = new HashMap<>(records.size());
-        final Function<AggregateStateId, Message> keyMapper = IdTransformer.direct()::convert;
+        final Map<StringValue, EntityRecordWithColumns> mapToWrite =
+                newHashMapWithExpectedSize(records.size());
+        final Function<AggregateStateId, StringValue> keyMapper = IdTransformer.direct()::convert;
         for (Map.Entry<AggregateStateId, EntityRecordWithColumns> entry : records.entrySet()) {
-            final Message newKey = keyMapper.apply(entry.getKey());
+            final StringValue newKey = keyMapper.apply(entry.getKey());
             mapToWrite.put(newKey, entry.getValue());
         }
         delegate.writeRecords(mapToWrite);
@@ -129,10 +129,10 @@ public class KafkaStandStorage extends StandStorage {
 
     @Override
     public Iterator<AggregateStateId> index() {
-        return transform(delegate.index(), IdTransformer.reverseDirection()::convert);
+        return Iterators.transform(delegate.index(), IdTransformer.reverseDirection());
     }
 
-    private static class IdTransformer extends Converter<AggregateStateId, Message> {
+    private static class IdTransformer extends Converter<AggregateStateId, StringValue> {
 
         private static final Stringifier<AggregateStateId> stringifier;
 
@@ -152,28 +152,27 @@ public class KafkaStandStorage extends StandStorage {
         }
 
         @Override
-        protected Message doForward(AggregateStateId aggregateStateId) {
+        protected StringValue doForward(AggregateStateId aggregateStateId) {
             final String stringId = stringifier.convert(aggregateStateId);
             checkNotNull(stringId);
-            final Message messageId = StringValue.newBuilder()
-                                                 .setValue(stringId)
-                                                 .build();
+            final StringValue messageId = StringValue.newBuilder()
+                                                     .setValue(stringId)
+                                                     .build();
             return messageId;
         }
 
         @Override
-        protected AggregateStateId doBackward(Message message) {
-            final StringValue stringValueId = (StringValue) message;
-            final String stringId = stringValueId.getValue();
+        protected AggregateStateId doBackward(StringValue stringValue) {
+            final String stringId = stringValue.getValue();
             final AggregateStateId result = stringifier.reverse().convert(stringId);
             return result;
         }
 
-        private static Converter<AggregateStateId, Message> direct() {
+        private static Converter<AggregateStateId, StringValue> direct() {
             return Singleton.INSTANCE.value;
         }
 
-        private static Converter<Message, AggregateStateId> reverseDirection() {
+        private static Converter<StringValue, AggregateStateId> reverseDirection() {
             return Singleton.INSTANCE.value.reverse();
         }
 

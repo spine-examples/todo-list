@@ -41,6 +41,9 @@ import static io.spine.server.aggregate.AggregateEventRecord.KindCase.SNAPSHOT;
  */
 public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
 
+    private static final String DEFAULT_RECORD_ERROR_TEMPLATE =
+            "Passed AggregateEventRecord is neither an EVENT nor a SNAPSHOT. Value is: %s";
+
     private final Class<? extends Aggregate<I, ?, ?>> aggregateClass;
     private final KafkaWrapper storage;
 
@@ -83,9 +86,9 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
             key = topic.getName();
         }
         checkArgument(key != null,
-                      "Passed AggregateEventRecord is neither EVENT not SNAPSHOT. Value is: %s",
+                      DEFAULT_RECORD_ERROR_TEMPLATE,
                       record);
-        storage.write(aggregateClass, topic, key, record);
+        storage.write(topic, key, record);
     }
 
     @Override

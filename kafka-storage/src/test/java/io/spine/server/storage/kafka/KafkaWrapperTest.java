@@ -23,10 +23,6 @@ package io.spine.server.storage.kafka;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.Message;
 import com.google.protobuf.StringValue;
-import com.google.protobuf.UInt64Value;
-import io.spine.server.entity.AbstractEntity;
-import io.spine.server.entity.AbstractVersionableEntity;
-import io.spine.server.entity.Entity;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.junit.jupiter.api.AfterEach;
@@ -91,7 +87,7 @@ class KafkaWrapperTest {
                                         .setValue(42)
                                         .build();
         final Topic topic = Topic.ofValue("KafkaWrapperTest-writeAndReadData");
-        wrapper.write(TestEntity.class, topic, value, value);
+        wrapper.write(topic, value, value);
         final Optional<Int32Value> readResult = wrapper.readLast(topic);
         assertTrue(readResult.isPresent());
         final Int32Value readMessage = readResult.get();
@@ -104,41 +100,11 @@ class KafkaWrapperTest {
         final int count = 5;
         final Collection<Int32Value> values = createValues(count);
         final Topic topic = Topic.ofValue("KafkaWrapperTest-writeAndReadBulk");
-        values.forEach(value -> wrapper.write(TestEntity.class, topic, value, value));
+        values.forEach(value -> wrapper.write(topic, value, value));
         final Iterator<Int32Value> readValues = wrapper.read(topic);
         final Collection<Int32Value> readList = newArrayList(readValues);
         assertEquals(values.size(), readList.size());
         assertTrue(values.containsAll(readList));
-    }
-
-    @Test
-    @DisplayName("read all records of a certain Entity type")
-    void readAllByEntityType() {
-        /**
-         * A test {@link io.spine.server.entity.Entity Entity} type with a explicit class name,
-         * non-accessible from the outer context.
-         */
-        class UniqueEntity extends AbstractVersionableEntity<String, UInt64Value> {
-            protected UniqueEntity(String id) {
-                super(id);
-            }
-        }
-        final Class<? extends Entity> cls = UniqueEntity.class;
-        final Topic topic1 = Topic.ofValue("KafkaWrapperTest-readAllByEntityType1");
-        final int count1 = 5;
-        final Collection<Int32Value> values1 = createValues(count1);
-        final Topic topic2 = Topic.ofValue("KafkaWrapperTest-readAllByEntityType2");
-        final int count2 = 4;
-        final Collection<Int32Value> values2 = createValues(count2, count1);
-
-        values1.forEach(value -> wrapper.write(cls, topic1, value, value));
-        values2.forEach(value -> wrapper.write(cls, topic2, value, value));
-
-        final Iterator<Int32Value> readValues = wrapper.readAll(cls);
-        final Collection<Int32Value> readList = newArrayList(readValues);
-        assertEquals(count1 + count2, readList.size());
-        assertTrue(readList.containsAll(values1));
-        assertTrue(readList.containsAll(values2));
     }
 
     @Test
@@ -152,8 +118,8 @@ class KafkaWrapperTest {
                                           .setValue(271)
                                           .build();
         final String id = "Hidden_Math_Constant";
-        wrapper.write(TestEntity.class, topic, id, first);
-        wrapper.write(TestEntity.class, topic, id, last);
+        wrapper.write(topic, id, first);
+        wrapper.write(topic, id, last);
 
         @SuppressWarnings("ConstantConditions") // Call `get()` without `isPresent()` check:
                                                 // OK for test as we expect the value to be present
@@ -230,11 +196,5 @@ class KafkaWrapperTest {
                                  .build());
         }
         return values;
-    }
-
-    private static class TestEntity extends AbstractEntity<String, Int32Value> {
-        protected TestEntity(String id) {
-            super(id);
-        }
     }
 }

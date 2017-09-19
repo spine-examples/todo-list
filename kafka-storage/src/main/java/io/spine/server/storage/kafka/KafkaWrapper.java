@@ -21,8 +21,6 @@
 package io.spine.server.storage.kafka;
 
 import com.google.protobuf.Message;
-import com.google.protobuf.StringValue;
-import io.spine.server.entity.Entity;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -65,8 +63,6 @@ import static java.util.stream.Collectors.toSet;
  *         partition.
  *     <li>Unless an ID is specified for a read operation, the read is conducted through all
  *         the partitions of a given topic.
- *     <li>If a record is supposed to be read with {@link #readAll(Class)} method, it should be
- *         written with {@link #write(Class, Topic, Object, Message)}.
  *     <li>Unless specified otherwise, the read operations are not lazy and fetch all the requested
  *         data in place.
  * </ul>
@@ -123,66 +119,11 @@ public class KafkaWrapper {
      *
      * @param topic the topic to fetch
      * @param <M>   the type of the records stored in within the topic
-     * @return an non-lazy iterator over the records under the given topic
+     * @return a non-lazy iterator over the records under the given topic
      */
     public <M extends Message> Iterator<M> read(Topic topic) {
         final Iterable<ConsumerRecord<Message, Message>> records = doRead(topic);
         final Iterator<Message> messages = stream(records)
-                .sorted(ConsumerRecordComparator.DIRECT.get())
-                .map(ConsumerRecord::value)
-                .iterator();
-        @SuppressWarnings("unchecked") // Expect caller to be aware of the type.
-        final Iterator<M> result = (Iterator<M>) messages;
-        return result;
-    }
-
-    /**
-     * Reads all the records corresponding to the state type of a given {@link Entity}.
-     *
-     * <p>In order to be read by this method, a record should belong to a topic marked as the state
-     * of the given Entity. To mark a topic as an Entity state, write a record into this topic with
-     * the {@link #write(Class, Topic, Object, Message)} specifying the required Entity class.
-     *
-     * <p>Consider the following example:
-     * <pre>
-     *     {@code
-     *     final Topic topic = Topic.ofValue("my-topic");
-     *     final String idA = ...
-     *     final Customer recordA = ...
-     *     final String idA = ...
-     *     final Customer recordA = ...
-     *     wrapper.write(CustomerProjection.class, topic, idA, recordA);
-     *     wrapper.write(topic, idB, recordB);
-     *     }
-     * </pre>
-     *
-     * <p>In the example above, when reading records with {@code readAll(CustomerProjection.class)}
-     * call, both {@code recordA} and {@code recordB} are returned, since the topic
-     * {@code "my-topic"} has already been marked to belong to the {@code CustomerProjection} state
-     * type. Though, if both {@code recordA} and {@code recordB} were written with
-     * {@link #write(Topic, Object, Message)}, then the call
-     * {@code readAll(CustomerProjection.class)} returns none of them.
-     *
-     * <p>The resulting iterator is partially lazy, i.e. the partitions are fetched in a lazy
-     * manner, but the records are fetched all at once.
-     *
-     * @param type the class of {@link Entity} to get the states for
-     * @param <M>  the type of the result
-     * @return an iterator of the
-     */
-    public <M extends Message> Iterator<M> readAll(Class<? extends Entity> type) {
-        final Topic topicOfTopics = Topics.superTopic(type);
-        final Iterable<ConsumerRecord<Message, Message>> records = doRead(topicOfTopics);
-        final Iterator<Message> messages = stream(records)
-                .map(ConsumerRecord::value)
-                .distinct()
-                .map(msg -> {
-                    final String topicName = ((StringValue) msg).getValue();
-                    final Topic topic = Topic.ofValue(topicName);
-                    final Iterable<ConsumerRecord<Message, Message>> result = doRead(topic);
-                    return result;
-                })
-                .flatMap(KafkaWrapper::stream)
                 .sorted(ConsumerRecordComparator.DIRECT.get())
                 .map(ConsumerRecord::value)
                 .iterator();
@@ -238,23 +179,6 @@ public class KafkaWrapper {
     /**
      * Writes the given record to the given topic.
      *
-     * <p>Calling this method marks the given topic as state of the given {@link Entity} class.
-     *
-     * @param entityClass the type of the entity to bind this record to
-     * @param topic       the topic to write to
-     * @param id          the ID to store the record under
-     * @param value       the record to write
-     * @see #readAll(Class)
-     * @see #write(Topic, Object, Message)
-     */
-    public void write(Class<? extends Entity> entityClass, Topic topic, Object id, Message value) {
-        writeToSuperTopic(entityClass, topic);
-        write(topic, id, value);
-    }
-
-    /**
-     * Writes the given record to the given topic.
-     *
      * <p>If the {@linkplain Consistency consistency level} of this wrapper instance is
      * {@link Consistency#EVENTUAL EVENTUAL}, the method exists immediately after sending
      * the record to Kafka. Otherwise, the method blocks the thread until the Kafka acknowledges
@@ -280,22 +204,6 @@ public class KafkaWrapper {
                 throw new IllegalStateException(e);
             }
         }
-    }
-
-    /**
-     * Writes the given class -> topic mapping to the super-topic (a.k.a. topic of topics).
-     *
-     * <p>The super-topic contains the mapping of the Entity types to all the topics that store
-     * the state of a that Entity types.
-     */
-    private void writeToSuperTopic(Class<? extends Entity> entityClass, Topic topic) {
-        final Topic topicOfTopics = Topics.superTopic(entityClass);
-        final StringValue topicValue = StringValue.newBuilder()
-                                                  .setValue(topic.getName())
-                                                  .build();
-        final ProducerRecord<Message, Message> record =
-                new ProducerRecord<>(topicOfTopics.getName(), topicValue, topicValue);
-        producer.send(record);
     }
 
     private void ensureSubscriptionOnto(TopicPartition topicPartition) {

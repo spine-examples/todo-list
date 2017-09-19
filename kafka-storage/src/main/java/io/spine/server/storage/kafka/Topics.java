@@ -22,14 +22,9 @@ package io.spine.server.storage.kafka;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import com.google.protobuf.Message;
-import io.spine.server.entity.Entity;
-import io.spine.type.TypeName;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static io.spine.server.entity.Entity.GenericParameter.STATE;
 
 /**
  * An internal utility for creating the {@link Topic} instances.
@@ -46,7 +41,7 @@ final class Topics {
     }
 
     /**
-     * Escapes the given string deleting the characters which may appear in a Java class name* but
+     * Escapes the given string deleting the characters which may appear in a Java class name, but
      * are not allowed for a topic name.
      */
     private static String escape(String topic) {
@@ -118,42 +113,6 @@ final class Topics {
 
         ValueTopic(String value) {
             this.value = escape(value);
-        }
-
-        @Override
-        public String getName() {
-            return value;
-        }
-    }
-
-    /**
-     * Creates a new super-topic instance for the given Entity class.
-     */
-    static Topic superTopic(Class<? extends Entity> entityClass) {
-        @SuppressWarnings("unchecked") // Guaranteed by the `STATE` contract.
-        final Class<? extends Message> stateClass =
-                (Class<? extends Message>) STATE.getArgumentIn(entityClass);
-        final TypeName typeName = TypeName.of(stateClass);
-        final Topic topic = new SuperTopic(typeName);
-        return topic;
-    }
-
-    /**
-     * An implementation of the {@link Topic} interface representing a super-topic.
-     *
-     * <p>All the instances of super-topic have the name consisting of the {@code "_TYPE_"} prefix
-     * and the given type name.
-     *
-     * @see KafkaWrapper#readAll(Class) for more on the super-topics
-     */
-    private static final class SuperTopic extends AbstractTopic {
-
-        private static final String PREFIX = "_TYPE_";
-
-        private final String value;
-
-        SuperTopic(TypeName type) {
-            this.value = PREFIX + type;
         }
 
         @Override
