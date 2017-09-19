@@ -23,6 +23,8 @@ package io.spine.server.storage.kafka;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
@@ -35,15 +37,11 @@ import static org.junit.Assert.assertEquals;
  */
 final class TestRoutines {
 
-    private static final File KAFKA_BIN_DIR;
+    private static final Path KAFKA_BIN_DIR;
 
     static {
-        try {
-            KAFKA_BIN_DIR = new File("../kafka/bin").getCanonicalFile();
-            checkNotNull(KAFKA_BIN_DIR);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
+        KAFKA_BIN_DIR = Paths.get("../kafka/bin").toAbsolutePath();
+        checkNotNull(KAFKA_BIN_DIR);
     }
 
     // TODO:2017-09-11:dmytro.dashenkov: handle Windows too.
@@ -70,6 +68,10 @@ final class TestRoutines {
      * Cleans up the test environment in order for the following tests to run properly.
      */
     static void afterEach() {
+        markAllTopicsForDeletion();
+    }
+
+    private static void markAllTopicsForDeletion() {
         try {
             final File tmpFile = Files.createTempFile("kafka-test", "topics")
                                       .toFile();
@@ -98,7 +100,7 @@ final class TestRoutines {
     }
 
     private static String[] prepareCmd(String kafkaScriptCommand) {
-        final String cmd = KAFKA_BIN_DIR.getAbsolutePath() + kafkaScriptCommand;
+        final String cmd = KAFKA_BIN_DIR.toString() + kafkaScriptCommand;
         final String[] result = cmd.split(" ");
         return result;
     }
