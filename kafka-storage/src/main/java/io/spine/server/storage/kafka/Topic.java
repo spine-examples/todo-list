@@ -53,7 +53,7 @@ public interface Topic {
      * @param ofType the type of record
      * @return new instance of {@link Topic}
      */
-    static Topic forRecord(Class<?> ofType) {
+    static Topic forRecordOfType(Class<?> ofType) {
         return FOR_ENTITY_RECORD.create(ofType);
     }
 
@@ -78,7 +78,8 @@ public interface Topic {
     }
 
     /**
-     * Creates an instance of {@link Topic} for the records of entity of given type.
+     * Creates an instance of {@link Topic} for storing the event count after last snapshot for
+     * the entities of the given type.
      *
      * @param ofType the type of record
      * @return new instance of {@link Topic}
@@ -88,7 +89,8 @@ public interface Topic {
     }
 
     /**
-     * Creates an instance of {@link Topic} for the records of entity of given type.
+     * Creates an instance of {@link Topic} for the timestamp of the last handled by the repository
+     * of the Projections of that type event.
      *
      * @param ofType the type of record
      * @return new instance of {@link Topic}

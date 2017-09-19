@@ -33,7 +33,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * An implementation of Kafka {@link Serializer} and {@link Deserializer} interfaces handing
+ * An implementation of Kafka {@link Serializer} and {@link Deserializer} interfaces handling
  * the {@link Message} records.
  *
  * <p>When serialized, the value is packed into {@link Any} and returned as
