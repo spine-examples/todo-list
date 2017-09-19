@@ -31,6 +31,7 @@ import java.util.Iterator;
 
 import static com.google.common.base.Optional.fromNullable;
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.server.aggregate.AggregateEventRecord.KindCase.EVENT;
 import static io.spine.server.aggregate.AggregateEventRecord.KindCase.SNAPSHOT;
 
@@ -58,6 +59,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
     @Override
     protected int readEventCountAfterLastSnapshot(I id) {
         checkNotClosed();
+        checkNotNull(id);
         final Topic topic = Topic.forEventCountAfterSnapshot(aggregateClass);
         final int eventCount = storage.<UInt32Value>read(topic, id)
                                       .map(UInt32Value::getValue)
@@ -68,6 +70,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
     @Override
     protected void writeEventCountAfterLastSnapshot(I id, int eventCount) {
         checkNotClosed();
+        checkNotNull(id);
         final Topic topic = Topic.forEventCountAfterSnapshot(aggregateClass);
         final UInt32Value msg = UInt32Value.newBuilder()
                                            .setValue(eventCount)
@@ -78,6 +81,8 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
     @Override
     protected void writeRecord(I id, AggregateEventRecord record) {
         checkNotClosed();
+        checkNotNull(id);
+        checkNotNull(record);
         final Topic topic = Topic.forAggregateRecord(aggregateClass);
         Object key = null;
         if (record.getKindCase() == EVENT) {
@@ -94,6 +99,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
     @Override
     protected Iterator<AggregateEventRecord> historyBackward(I id) {
         checkNotClosed();
+        checkNotNull(id);
         final Topic topic = Topic.forAggregateRecord(aggregateClass);
         return storage.read(topic);
     }
@@ -102,6 +108,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
     @Override
     public Optional<LifecycleFlags> readLifecycleFlags(I id) {
         checkNotClosed();
+        checkNotNull(id);
         final Topic topic = Topic.forLifecycleFlags(aggregateClass);
         final LifecycleFlags result = storage.<LifecycleFlags>read(topic, id)
                                              .orElse(null);
@@ -111,6 +118,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
     @Override
     public void writeLifecycleFlags(I id, LifecycleFlags flags) {
         checkNotClosed();
+        checkNotNull(id);
         final Topic topic = Topic.forLifecycleFlags(aggregateClass);
         storage.write(topic, id, flags);
     }
