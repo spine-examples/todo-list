@@ -52,6 +52,12 @@ public final class BoundedContexts {
 
     private static final StorageFactorySwitch storageFactorySwitch = newInstance(NAME, false);
 
+    @SuppressWarnings("Guava") // Spine Java 7 API.
+    private static final Supplier<StorageFactory> FAILING_STORAGE_SUPPLIER = () -> {
+        throw newIllegalStateException(
+                "Use BoundedContexts.create(StorageFactory) in production code.");
+    };
+
     private BoundedContexts() {
         // Disable instantiation from outside.
     }
@@ -64,11 +70,14 @@ public final class BoundedContexts {
      * Creates the {@link BoundedContext} instance using the {@code StorageFactory} from
      * the {@link StorageFactorySwitch}.
      *
-     * <p>Use {@link #injectStorageFactory(StorageFactory)} to override the used
+     * <p>Use {@link #create(StorageFactory)} method for the production environment.
+     *
+     * <p>Use {@link #injectStorageFactory(StorageFactory)} in tests to override the used
      * {@code StorageFactory} implementation.
      *
-     * @return the {@link BoundedContext} instance
+     * @return new test {@link BoundedContext} instance
      */
+    @VisibleForTesting
     public static BoundedContext create() {
         final StorageFactory storageFactory = storageFactorySwitch.get();
         final BoundedContext result = create(storageFactory);
@@ -124,18 +133,22 @@ public final class BoundedContexts {
     }
 
     /**
-     * Injects the given {@link StorageFactory} implementation.
+     * Injects the given {@link StorageFactory} implementation for tests.
      *
-     * <p>After calling this method, invocation of {@link #create()} creates create a
-     * {@code BoundedContext} with the passed {@code StorageFactory}.
+     * <p>To specify the {@link StorageFactory} implementation for the production code,
+     * use {@link #create(StorageFactory)}.
+     *
+     * <p>After calling this method, invocation of {@link #create()} in the test environment
+     * creates a {@code BoundedContext} with the passed {@code StorageFactory}.
      *
      * @param storageFactory the default {@code StorageFactory} to create the BoundedContexts for
      */
+    @SuppressWarnings("unused") // Used for temporal test purposes
+    @VisibleForTesting
     public static void injectStorageFactory(StorageFactory storageFactory) {
         checkNotNull(storageFactory);
-        @SuppressWarnings("Guava") // Spine Java 7 API.
-        final Supplier<StorageFactory> storageFactorySupplier = () -> storageFactory;
-        storageFactorySwitch.init(storageFactorySupplier, storageFactorySupplier);
+        storageFactorySwitch.init(FAILING_STORAGE_SUPPLIER,
+                                  () -> storageFactory);
     }
 
     @SuppressWarnings("Guava" /* Spine API is Java 7-based

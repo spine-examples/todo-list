@@ -33,7 +33,6 @@ import java.util.Properties;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.context.BoundedContexts.create;
-import static io.spine.examples.todolist.context.BoundedContexts.injectStorageFactory;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
 import static java.time.temporal.ChronoUnit.MILLIS;
 
@@ -50,18 +49,17 @@ public class LocalKafkaServer {
     private static final String KAFKA_PRODUCER_PROPS_PATH = "config/kafka-producer.properties";
     private static final String KAFKA_CONSUMER_PROPS_PATH = "config/kafka-consumer.properties";
     private static final Duration POLL_AWAIT = Duration.of(50, MILLIS);
+    private static final StorageFactory defaultStorageFactory;
 
     static {
         final Properties producerConfig = loadProperties(KAFKA_PRODUCER_PROPS_PATH);
         final Properties consumerConfig = loadProperties(KAFKA_CONSUMER_PROPS_PATH);
-        final StorageFactory defaultStorageFactory =
-                KafkaStorageFactory.newBuilder()
-                                   .setProducerConfig(producerConfig)
-                                   .setConsumerConfig(consumerConfig)
-                                   .setMaxPollAwait(POLL_AWAIT)
-                                   .setConsistencyLevel(STRONG)
-                                   .build();
-        injectStorageFactory(defaultStorageFactory);
+        defaultStorageFactory = KafkaStorageFactory.newBuilder()
+                                                   .setProducerConfig(producerConfig)
+                                                   .setConsumerConfig(consumerConfig)
+                                                   .setMaxPollAwait(POLL_AWAIT)
+                                                   .setConsistencyLevel(STRONG)
+                                                   .build();
     }
 
     private LocalKafkaServer() {
@@ -69,7 +67,7 @@ public class LocalKafkaServer {
     }
 
     public static void main(String[] args) throws IOException {
-        final BoundedContext boundedContext = create();
+        final BoundedContext boundedContext = create(defaultStorageFactory);
         final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
     }
