@@ -30,6 +30,8 @@ import io.spine.server.storage.RecordStorage;
 import javax.annotation.Nullable;
 import java.util.Iterator;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * A Kafka based implementation of {@link ProjectionStorage}.
  *
@@ -47,6 +49,8 @@ public class KafkaProjectionStorage<I> extends ProjectionStorage<I> {
 
     @Override
     protected void writeLastHandledEventTime(Timestamp time) {
+        checkNotClosed();
+        checkNotNull(time);
         final KafkaWrapper storage = delegate.getKafkaStorage();
         final Class<? extends Entity> cls = delegate.getEntityClass();
         final Topic topic = Topic.forLastHandledEventTime(cls);
@@ -56,6 +60,7 @@ public class KafkaProjectionStorage<I> extends ProjectionStorage<I> {
     @Nullable
     @Override
     protected Timestamp readLastHandledEventTime() {
+        checkNotClosed();
         final KafkaWrapper storage = delegate.getKafkaStorage();
         final Class<? extends Entity> cls = delegate.getEntityClass();
         final Topic topic = Topic.forLastHandledEventTime(cls);
