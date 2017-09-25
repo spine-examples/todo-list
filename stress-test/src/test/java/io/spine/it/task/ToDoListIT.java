@@ -55,8 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DisplayName("")
-public class TaskIT extends BaseIT {
+public class ToDoListIT extends BaseIT {
     private TodoClient client;
 
     @BeforeEach
@@ -160,12 +159,14 @@ public class TaskIT extends BaseIT {
         client.assignLabel(assignLabelToTask);
 
         final List<TaskItem> draftTasks = client.getDraftTasksView()
-                                               .getDraftTasks()
-                                               .getItemsList();
+                                                .getDraftTasks()
+                                                .getItemsList();
 
         assertEquals(1, draftTasks.size());
-        assertEquals(newDueDate, draftTasks.get(0).getDueDate());
-        assertEquals(newPriority, draftTasks.get(0).getPriority());
+        assertEquals(newDueDate, draftTasks.get(0)
+                                           .getDueDate());
+        assertEquals(newPriority, draftTasks.get(0)
+                                            .getPriority());
     }
 
     @Test
@@ -193,13 +194,13 @@ public class TaskIT extends BaseIT {
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(basicTask.getId());
         client.restore(restoreDeletedTask);
 
-
         final List<TaskItem> labeledTasks = client.getLabelledTasksView()
                                                   .get(0)
                                                   .getLabelledTasks()
                                                   .getItemsList();
 
         assertEquals(1, labeledTasks.size());
-        assertEquals(newPriority, labeledTasks.get(0).getPriority());
+        assertEquals(newPriority, labeledTasks.get(0)
+                                              .getPriority());
     }
 }

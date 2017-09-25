@@ -17,7 +17,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 dependencies {
-    compile project(path: ':client')
+    testCompile project(path: ':client')
+    testCompile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+    testCompile group: 'io.spine', name: 'jdbc-rdbms', version: spineVersion
     testCompile project(path: ':testutil-api')
 }

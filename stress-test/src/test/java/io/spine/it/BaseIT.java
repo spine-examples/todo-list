@@ -20,8 +20,6 @@
 
 package io.spine.it;
 
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
@@ -29,7 +27,6 @@ import io.spine.examples.todolist.client.CommandLineTodoClient;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.client.builder.CommandBuilder;
 import io.spine.examples.todolist.context.BoundedContexts;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
 import io.spine.util.Exceptions;
@@ -37,11 +34,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static io.spine.Identifier.newUuid;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
@@ -53,6 +48,26 @@ public class BaseIT {
 
     private Server server;
     private TodoClient client;
+
+    protected static CreateBasicLabel createBasicLabel() {
+        return CommandBuilder.label()
+                             .createLabel()
+                             .setTitle(LABEL_TITLE)
+                             .build();
+    }
+
+    protected static CreateDraft createDraft() {
+        return CommandBuilder.task()
+                             .createDraft()
+                             .build();
+    }
+
+    protected static CreateBasicTask createBasicTask() {
+        return CommandBuilder.task()
+                             .createTask()
+                             .setDescription(newDescription(DESCRIPTION))
+                             .build();
+    }
 
     @BeforeEach
     protected void setUp() throws InterruptedException {
@@ -81,65 +96,6 @@ public class BaseIT {
 
         serverThread.start();
         serverStartLatch.await(100, TimeUnit.MILLISECONDS);
-    }
-
-    protected static CreateBasicLabel createBasicLabel() {
-        return CommandBuilder.label()
-                             .createLabel()
-                             .setTitle(LABEL_TITLE)
-                             .build();
-    }
-
-    protected static CreateDraft createDraft() {
-        return CommandBuilder.task()
-                             .createDraft()
-                             .build();
-    }
-
-    protected static CreateBasicTask createBasicTask() {
-        return CommandBuilder.task()
-                             .createTask()
-                             .setDescription(newDescription(DESCRIPTION))
-                             .build();
-    }
-
-    static TaskId createWrongTaskId() {
-        return TaskId.newBuilder()
-                     .setValue(newUuid())
-                     .build();
-    }
-
-    static LabelId createWrongTaskLabelId() {
-        return LabelId.newBuilder()
-                      .setValue(newUuid())
-                      .build();
-    }
-
-    static LabelledTasksView getLabelledTasksView(List<LabelledTasksView> tasksViewList) {
-        LabelledTasksView result = LabelledTasksView.getDefaultInstance();
-
-        for (LabelledTasksView labelledView : tasksViewList) {
-            final boolean isEmpty = labelledView.getLabelId()
-                                                .getValue()
-                                                .isEmpty();
-            if (!isEmpty) {
-                result = labelledView;
-            }
-        }
-
-        return result;
-    }
-
-    CreateBasicTask createTask() {
-        final CreateBasicTask createTask = createBasicTask();
-        getClient().create(createTask);
-        return createTask;
-    }
-
-    CreateBasicLabel createLabel() {
-        final CreateBasicLabel createLabel = createBasicLabel();
-        getClient().create(createLabel);
-        return createLabel;
     }
 
     public TodoClient getClient() {
