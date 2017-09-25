@@ -18,4 +18,10 @@ script:
   - ./gradlew codeCoverageReport
 
 after_success:
+  - kafka/bin/kafka-server-stop.sh
+  - kafka/bin/zookeeper-server-stop.sh
   - bash <(curl -s https://codecov.io/bash)
+
+after_failure:
+  - kafka/bin/kafka-server-stop.sh
+  - kafka/bin/zookeeper-server-stop.sh
