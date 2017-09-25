@@ -49,27 +49,28 @@ public class LocalKafkaServer {
     private static final String KAFKA_PRODUCER_PROPS_PATH = "config/kafka-producer.properties";
     private static final String KAFKA_CONSUMER_PROPS_PATH = "config/kafka-consumer.properties";
     private static final Duration POLL_AWAIT = Duration.of(50, MILLIS);
-    private static final StorageFactory defaultStorageFactory;
-
-    static {
-        final Properties producerConfig = loadProperties(KAFKA_PRODUCER_PROPS_PATH);
-        final Properties consumerConfig = loadProperties(KAFKA_CONSUMER_PROPS_PATH);
-        defaultStorageFactory = KafkaStorageFactory.newBuilder()
-                                                   .setProducerConfig(producerConfig)
-                                                   .setConsumerConfig(consumerConfig)
-                                                   .setMaxPollAwait(POLL_AWAIT)
-                                                   .setConsistencyLevel(STRONG)
-                                                   .build();
-    }
 
     private LocalKafkaServer() {
         // Prevent utility class instantiation.
     }
 
     public static void main(String[] args) throws IOException {
-        final BoundedContext boundedContext = create(defaultStorageFactory);
+        final StorageFactory factory = createKafkaStorage();
+        final BoundedContext boundedContext = create(factory);
         final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
+    }
+
+    private static StorageFactory createKafkaStorage() {
+        final Properties producerConfig = loadProperties(KAFKA_PRODUCER_PROPS_PATH);
+        final Properties consumerConfig = loadProperties(KAFKA_CONSUMER_PROPS_PATH);
+        final StorageFactory result = KafkaStorageFactory.newBuilder()
+                                                         .setProducerConfig(producerConfig)
+                                                         .setConsumerConfig(consumerConfig)
+                                                         .setMaxPollAwait(POLL_AWAIT)
+                                                         .setConsistencyLevel(STRONG)
+                                                         .build();
+        return result;
     }
 
     /**

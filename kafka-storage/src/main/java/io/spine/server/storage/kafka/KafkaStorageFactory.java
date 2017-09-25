@@ -63,6 +63,7 @@ public class KafkaStorageFactory implements StorageFactory {
 
     private final KafkaWrapper storage;
 
+    // Extensibility API.
     protected KafkaStorageFactory(Properties producerConfig,
                                   Properties consumerConfig,
                                   Consistency consistencyLevel,

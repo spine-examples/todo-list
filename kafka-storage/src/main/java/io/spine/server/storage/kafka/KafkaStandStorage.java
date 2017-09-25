@@ -81,11 +81,12 @@ public class KafkaStandStorage extends StandStorage {
 
     @Override
     protected Iterator<EntityRecord> readMultipleRecords(Iterable<AggregateStateId> ids) {
-        @SuppressWarnings("StaticPseudoFunctionalStyleMethod")
-            // Better in several reasons:
-            //  1. Executed lazily.
-            //  2. Shorter notation.
-            //  3. Potentially less GC overhead.
+        @SuppressWarnings("StaticPseudoFunctionalStyleMethod"
+            /* Better in several reasons:
+                 1. Executed lazily.
+                 2. Shorter notation.
+                 3. Potentially less GC overhead.
+            */)
         final Iterable<StringValue> keys = transform(ids, IdTransformer.direct()::convert);
         return delegate.readMultipleRecords(keys);
     }

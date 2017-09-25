@@ -30,7 +30,10 @@ import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_LAST
 import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_LIFECYCLE_FLAGS;
 
 /**
- * An Apache Kafka topic.
+ * An Apache Kafka <a href="https://kafka.apache.org/documentation/#intro_topics">topic</a>.
+ *
+ * <p>A topic is the main category in the Kafka type system. A topic typically represents a single
+ * type of data, equivalent to a table in a relational database.
  *
  * <p>It's not recommended to implement this interface. Use {@link Topic#ofValue(String)}
  * to instantiate this type. All the static methods of this type return a carefully implemented
