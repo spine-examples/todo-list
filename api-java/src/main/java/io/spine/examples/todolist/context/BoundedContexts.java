@@ -22,6 +22,7 @@ package io.spine.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
+import com.google.common.base.Supplier;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
@@ -32,9 +33,10 @@ import io.spine.server.BoundedContext;
 import io.spine.server.event.EventBus;
 import io.spine.server.event.EventEnricher;
 import io.spine.server.storage.StorageFactory;
-import io.spine.server.storage.memory.InMemoryStorageFactory;
+import io.spine.server.storage.StorageFactorySwitch;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.server.storage.StorageFactorySwitch.newInstance;
 import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
@@ -45,23 +47,40 @@ import static io.spine.util.Exceptions.newIllegalStateException;
  */
 public final class BoundedContexts {
 
-    /** The default name of the {@code BoundedContext}. */
+    /** The name of the Bounded Context. */
     private static final String NAME = "TodoListBoundedContext";
-    private static final StorageFactory IN_MEMORY_FACTORY =
-            InMemoryStorageFactory.newInstance(NAME, false);
+
+    private static final StorageFactorySwitch storageFactorySwitch = newInstance(NAME, false);
+
+    @SuppressWarnings("Guava") // Spine Java 7 API.
+    private static final Supplier<StorageFactory> FAILING_STORAGE_SUPPLIER = () -> {
+        throw newIllegalStateException(
+                "Use BoundedContexts.create(StorageFactory) in production code.");
+    };
 
     private BoundedContexts() {
         // Disable instantiation from outside.
     }
 
+    public static String getDefaultName() {
+        return NAME;
+    }
+
     /**
-     * Creates the {@link BoundedContext} instance
-     * using {@code InMemoryStorageFactory} for a single tenant.
+     * Creates the {@link BoundedContext} instance using the {@code StorageFactory} from
+     * the {@link StorageFactorySwitch}.
      *
-     * @return the {@link BoundedContext} instance
+     * <p>Use {@link #create(StorageFactory)} method for the production environment.
+     *
+     * <p>Use {@link #injectStorageFactory(StorageFactory)} in tests to override the used
+     * {@code StorageFactory} implementation.
+     *
+     * @return new test {@link BoundedContext} instance
      */
+    @VisibleForTesting
     public static BoundedContext create() {
-        final BoundedContext result = create(IN_MEMORY_FACTORY);
+        final StorageFactory storageFactory = storageFactorySwitch.get();
+        final BoundedContext result = create(storageFactory);
         return result;
     }
 
@@ -113,6 +132,25 @@ public final class BoundedContexts {
         return eventBus;
     }
 
+    /**
+     * Injects the given {@link StorageFactory} implementation for tests.
+     *
+     * <p>To specify the {@link StorageFactory} implementation for the production code,
+     * use {@link #create(StorageFactory)}.
+     *
+     * <p>After calling this method, invocation of {@link #create()} in the test environment
+     * creates a {@code BoundedContext} with the passed {@code StorageFactory}.
+     *
+     * @param storageFactory the default {@code StorageFactory} to create the BoundedContexts for
+     */
+    @SuppressWarnings("unused") // Used for temporal test purposes
+    @VisibleForTesting
+    public static void injectStorageFactory(StorageFactory storageFactory) {
+        checkNotNull(storageFactory);
+        storageFactorySwitch.init(FAILING_STORAGE_SUPPLIER,
+                                  () -> storageFactory);
+    }
+
     @SuppressWarnings("Guava" /* Spine API is Java 7-based
                                  and uses `Optional` from Google Guava. */)
     @VisibleForTesting
@@ -121,7 +159,6 @@ public final class BoundedContexts {
         if (!storageFactory.isPresent()) {
             throw newIllegalStateException("EventBus does not specify a StorageFactory.");
         }
-
         return BoundedContext.newBuilder()
                              .setStorageFactorySupplier(storageFactory::get)
                              .setName(NAME)

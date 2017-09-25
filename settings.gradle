@@ -6,9 +6,13 @@ include 'todo-cli'
 include 'cli-core'
 include 'testutil-api'
 include 'testutil-cli'
+include 'kafka-storage'
 
 include ':local-inmem'
 project(':local-inmem').projectDir = new File('./deployment/local-inmem')
 
 include ':local-jdbc'
 project(':local-jdbc').projectDir = new File('./deployment/local-jdbc')
+
+include ':local-kafka'
+project(':local-kafka').projectDir = new File('./deployment/local-kafka')

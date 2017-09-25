@@ -5,10 +5,25 @@ jdk:
 
 before_install:
   - chmod +x gradlew
+  - chmod +x kafka/bin/zookeeper-server-start.sh
+  - chmod +x kafka/bin/zookeeper-server-stop.sh
+  - chmod +x kafka/bin/kafka-server-start.sh
+  - chmod +x kafka/bin/kafka-server-stop.sh
+  - chmod +x kafka/bin/kafka-topics.sh
+
+install:
+  - kafka/bin/zookeeper-server-start.sh config/zookeeper.properties &
+  - kafka/bin/kafka-server-start.sh config/kafka-server.properties &
 
 script:
   - ./gradlew build --stacktrace
   - ./gradlew codeCoverageReport
 
 after_success:
+  - kafka/bin/kafka-server-stop.sh
+  - kafka/bin/zookeeper-server-stop.sh
   - bash <(curl -s https://codecov.io/bash)
+
+after_failure:
+  - kafka/bin/kafka-server-stop.sh
+  - kafka/bin/zookeeper-server-stop.sh
