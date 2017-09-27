@@ -66,6 +66,8 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @see <a href="https://cloud.google.com/sdk/gcloud/">gcloud tool</a>
  * @see <a href="https://cloud.google.com/sql/docs/mysql/quickstart">Cloud SQL instance creation</a>
  */
+@SuppressWarnings("DuplicateStringLiteralInspection" /* To avoid creation of a dumb base module
+                                                        for servers in different modules. */)
 public class LocalCloudSqlServer {
 
     private static final String DB_PROPERTIES_FILE = "cloud-sql.properties";

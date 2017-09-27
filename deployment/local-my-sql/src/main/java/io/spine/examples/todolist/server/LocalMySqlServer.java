@@ -59,6 +59,8 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  * @author Dmytro Grankin
  */
+@SuppressWarnings("DuplicateStringLiteralInspection" /* To avoid creation of a dumb base module
+                                                        for servers in different modules. */)
 public class LocalMySqlServer {
 
     private static final String DB_PROPERTIES_FILE = "jdbc-storage.properties";
