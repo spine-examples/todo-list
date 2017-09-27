@@ -25,7 +25,7 @@ dependencies {
     compile project(path: ':server')
 }
 
-// A task to run the server. See `LocalJdbcServer` for the details.
+// A task to run the server. See `LocalMySqlServer` for the details.
 task runServer(dependsOn: jar, type: JavaExec) {
     if(project.hasProperty('conf')){
         args(conf.split(','))

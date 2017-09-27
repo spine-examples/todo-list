@@ -25,18 +25,18 @@ import io.spine.server.storage.StorageFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.server.LocalJdbcServer.createBoundedContext;
-import static io.spine.examples.todolist.server.LocalJdbcServer.getDefaultArguments;
+import static io.spine.examples.todolist.server.LocalMySqlServer.createBoundedContext;
+import static io.spine.examples.todolist.server.LocalMySqlServer.getDefaultArguments;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.Assert.assertFalse;
 
-@DisplayName("LocalJdbcServer should")
-class LocalJdbcServerTest {
+@DisplayName("LocalMySqlServer should")
+class LocalMySqlServerTest {
 
     @Test
     @DisplayName("have the private constructor")
     void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(LocalJdbcServer.class);
+        assertHasPrivateParameterlessCtor(LocalMySqlServer.class);
     }
 
     @Test

@@ -59,14 +59,14 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  * @author Dmytro Grankin
  */
-public class LocalJdbcServer {
+public class LocalMySqlServer {
 
     private static final String DB_PROPERTIES_FILE = "jdbc-storage.properties";
     private static final Properties properties = getProperties(DB_PROPERTIES_FILE);
 
     private static final String DB_URL_FORMAT = "%s/%s?useSSL=false";
 
-    private LocalJdbcServer() {
+    private LocalMySqlServer() {
         // Prevent instantiation of this class.
     }
 
@@ -152,8 +152,8 @@ public class LocalJdbcServer {
 
     private static Properties getProperties(String propertiesFile) {
         final Properties properties = new Properties();
-        final InputStream stream = LocalJdbcServer.class.getClassLoader()
-                                                        .getResourceAsStream(propertiesFile);
+        final InputStream stream = LocalMySqlServer.class.getClassLoader()
+                                                         .getResourceAsStream(propertiesFile);
         try {
             properties.load(stream);
         } catch (IOException e) {
@@ -169,6 +169,6 @@ public class LocalJdbcServer {
     private enum LogSingleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = getLogger(LocalJdbcServer.class);
+        private final Logger value = getLogger(LocalMySqlServer.class);
     }
 }
