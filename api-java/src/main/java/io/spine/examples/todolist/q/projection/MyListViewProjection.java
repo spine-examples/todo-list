@@ -63,9 +63,12 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     /**
      * As long as there is just a single end-user in the app,
      * the {@link MyListViewProjection} is a singleton.
+     *
+     * <p>The {@code ID} value should be the same for all JVMs
+     * to support work with the same projection from execution to execution.
      */
     public static final TaskListId ID = TaskListId.newBuilder()
-                                                  .setValue(newUuid())
+                                                  .setValue("MyListViewProjectSingleton")
                                                   .build();
 
     /**
