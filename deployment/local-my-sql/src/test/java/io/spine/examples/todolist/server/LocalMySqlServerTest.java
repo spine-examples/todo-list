@@ -26,9 +26,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.server.LocalMySqlServer.createBoundedContext;
+import static io.spine.examples.todolist.server.LocalMySqlServer.getActualArguments;
 import static io.spine.examples.todolist.server.LocalMySqlServer.getDefaultArguments;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("LocalMySqlServer should")
 class LocalMySqlServerTest {
@@ -37,6 +42,25 @@ class LocalMySqlServerTest {
     @DisplayName("have the private constructor")
     void havePrivateCtor() {
         assertHasPrivateParameterlessCtor(LocalMySqlServer.class);
+    }
+
+    @Test
+    @DisplayName("return default arguments on invalid custom arguments")
+    void returnDefaultArguments() {
+        final String[] customArguments = {"firstArg", "secondArg"};
+        assertNotEquals(customArguments.length, getDefaultArguments().length);
+
+        final String[] actualArguments = getActualArguments(customArguments);
+        assertArrayEquals(getDefaultArguments(), actualArguments);
+    }
+
+    @Test
+    @DisplayName("return specified arguments if match length requirements")
+    void returnSpecifiedArguments() {
+        final int requiredLength = getDefaultArguments().length;
+        final String[] customArguments = new String[requiredLength];
+        final String[] actualArguments = getActualArguments(customArguments);
+        assertEquals(customArguments, actualArguments);
     }
 
     @Test

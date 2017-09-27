@@ -77,7 +77,8 @@ public class LocalMySqlServer {
         server.start();
     }
 
-    private static String[] getActualArguments(String[] commandLineArguments) {
+    @VisibleForTesting
+    static String[] getActualArguments(String[] commandLineArguments) {
         final String[] defaultArguments = getDefaultArguments();
         if (commandLineArguments.length != defaultArguments.length) {
             log().info("The specified arguments don't match the length requirement. " +
