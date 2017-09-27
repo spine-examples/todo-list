@@ -45,7 +45,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * JdbcStorageFactory}, {@code MySQL} in particular.
  *
  * <p>To run the server from a command-line run the command as follows:
- * {@code gradle :local-jdbc:runServer -Pconf=db_name,username,password}
+ * {@code gradle :local-my-sql:runServer -Pconf=db_name,username,password}
  *
  * <p>If the parameters were not specified to a command or the server was ran directly,
  * {@linkplain #getDefaultArguments() default arguments} will be used.

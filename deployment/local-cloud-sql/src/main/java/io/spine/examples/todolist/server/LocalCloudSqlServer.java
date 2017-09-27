@@ -44,7 +44,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * A local {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
  * JdbcStorageFactory} with {@code Cloud SQL} instance as a data source.
  *
- * <p>To run the server successfully:
+ * <p>To run the server successfully (for the detailed explanation see {@code README.md}):
  * <ol>
  *     <li>Install {@code gcloud} tool.</li>
  *     <li>Authenticate using {@code gcloud}. {@code Cloud SQL client} role is required.</li>
@@ -53,7 +53,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * </ol>
  *
  * <p>To run the server from a command-line run the command as follows:
- * {@code gradle :local-jdbc:runServer -Pconf=db_name,username,password,instance_connection_name}
+ * {@code gradle :local-cloud-sql:runServer -Pconf=instance_connection_name,db_name,username,password}
  *
  * <p>If the parameters were not specified to a command or the server was ran directly,
  * {@linkplain #getDefaultArguments() default arguments} will be used.
@@ -116,13 +116,13 @@ public class LocalCloudSqlServer {
     private static DataSource createDataSource(String[] args) {
         final HikariConfig config = new HikariConfig();
 
-        final String dbName = args[0];
-        final String username = args[1];
-        final String password = args[2];
-        final String instance = args[3];
+        final String instanceConnectionName = args[0];
+        final String dbName = args[1];
+        final String username = args[2];
+        final String password = args[3];
 
         log().info("Start `DataSource` creation. The following parameters will be used:");
-        final String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName, instance);
+        final String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName, instanceConnectionName);
         config.setJdbcUrl(dbUrl);
         log().info("JDBC URL: {}", dbUrl);
 
@@ -156,11 +156,11 @@ public class LocalCloudSqlServer {
 
     @VisibleForTesting
     static String[] getDefaultArguments() {
+        final String instance = properties.getProperty("db.instance");
         final String dbName = properties.getProperty("db.name");
         final String username = properties.getProperty("db.username");
         final String password = properties.getProperty("db.password");
-        final String instance = properties.getProperty("db.instance");
-        return new String[]{dbName, username, password, instance};
+        return new String[]{instance, dbName, username, password};
     }
 
     private static Properties getProperties(String propertiesFile) {
