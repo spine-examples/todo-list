@@ -1,19 +1,19 @@
 # local-cloud-sql
 
-A local server, which uses Google Cloud SQL.
+A local server, which uses a remote database within Google Cloud SQL.
 
 ### Preliminary configuration
 
 ##### Cloud Platform project
 
-* [Select or create](https://console.cloud.google.com/cloud-resource-manager?_ga=2.85931665.-903606831.1506333808)
+* [Select or create](https://console.cloud.google.com/cloud-resource-manager)
     a Cloud Platform project.
 * [Enable](https://support.google.com/cloud/answer/6293499#enable-billing) billing for your project.
 
 ##### Cloud SQL
 
-* [Enable](https://console.cloud.google.com/flows/enableapi?apiid=sqladmin&redirect=https:%2F%2Fconsole.cloud.google.com&_ga=2.93339541.-903606831.1506333808) the Cloud SQL Administration API.
-* [Create](https://console.cloud.google.com/projectselector/sql/instances?_ga=2.55533475.-903606831.1506333808) 
+* [Enable](https://console.cloud.google.com/flows/enableapi?apiid=sqladmin) the Cloud SQL Administration API.
+* [Create](https://console.cloud.google.com/sql/instances) 
 a Cloud SQL instance.
 * Create a SQL database on your Cloud SQL instance.
     * In the [Google Cloud Platform Console](https://console.cloud.google.com),
