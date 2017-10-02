@@ -1,5 +1,5 @@
 #
-# API configuration of Google Cloud Endpoints
+# API configuration of Google Cloud Endpoints.
 #
 # Below, replace MY_PROJECT_ID with your Google Cloud Project ID.
 #
@@ -12,14 +12,21 @@ config_version: 3
 #
 # Name of the service configuration.
 #
-name: hellogrpc.endpoints.MY_PROJECT_ID.cloud.goog
+name: todolist.spine-dev.cloud.goog
 
 #
 # API title to appear in the user interface (Google Cloud Console).
 #
-title: ToDOList Cloud Endpoints
+title: Todo list
 
+# Spine gRPC services.
 apis:
   - name: spine.client.CommandService
   - name: spine.client.QueryService
   - name: spine.client.SubscriptionService
+
+usage:
+  rules:
+  # All methods can be called without an API Key.
+    - selector: "*"
+      allow_unregistered_calls: true
