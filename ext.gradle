@@ -39,6 +39,7 @@ project.ext {
     servletApiVersion = '3.1.0'
     gcloudJavaVersion = '0.2.8'
     cloudSqlSocketFactoryVersion = '1.0.4'
+    shadowJarVersion = '2.0.1'
 
     // Test scope third party dependencies' versions
     jUnitPlatformVersion = '1.0.0-RC3'
