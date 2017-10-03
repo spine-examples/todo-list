@@ -1,21 +1,21 @@
 #
-# API configuration of Google Cloud Endpoints.
+# An API configuration of Google Cloud Endpoints.
 #
-# Below, replace MY_PROJECT_ID with your Google Cloud Project ID.
+# Below, replace `MY_PROJECT_ID` with your Google Cloud Project ID.
 #
 
-# The configuration schema is defined by service.proto file
+# The configuration schema is defined by `service.proto` file
 # https://github.com/googleapis/googleapis/blob/master/google/api/service.proto
 type: google.api.Service
 config_version: 3
 
 #
-# Name of the service configuration.
+# The name of the service configuration.
 #
-name: hellogrpc.endpoints.spine-dev.cloud.goog
+name: todolist.endpoints.MY_PROJECT_ID.cloud.goog
 
 #
-# API title to appear in the user interface (Google Cloud Console).
+# The API title to appear in the user interface (Google Cloud Console).
 #
 title: Todo list
 
@@ -27,6 +27,6 @@ apis:
 
 usage:
   rules:
-    # All methods can be called without an API Key.
+    # All the methods can be called without an API Key.
     - selector: "*"
       allow_unregistered_calls: true

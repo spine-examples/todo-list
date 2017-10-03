@@ -54,7 +54,7 @@ To configure a Google Cloud Platform project for this sample, the following role
 
     ```bash
     GCLOUD_PROJECT=$(curl -s "http://metadata.google.internal/computeMetadata/v1/project/project-id" -H "Metadata-Flavor: Google")
-    SERVICE_NAME=hellogrpc.endpoints.${GCLOUD_PROJECT}.cloud.goog
+    SERVICE_NAME=todolist.endpoints.${GCLOUD_PROJECT}.cloud.goog
     SERVICE_CONFIG_ID=<Your Cloud Endpoints config ID>
     ```
 
