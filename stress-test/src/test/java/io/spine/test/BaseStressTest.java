@@ -18,11 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.test.performance;
+package io.spine.test;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.client.CommandLineTodoClient;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.client.builder.CommandBuilder;
@@ -39,7 +41,6 @@ import org.slf4j.Logger;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -49,18 +50,35 @@ import java.util.concurrent.TimeUnit;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
+import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
+import static java.util.Objects.nonNull;
+import static junit.framework.TestCase.fail;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class BasePT {
+/**
+ * Base class for integration and performance tests. Encapsulates server, clients setup logic.
+ *
+ * Contains {@link #getClients() method getClients} to access clients.
+ *
+ * Use {@link #asyncPerformanceTest(ToDoCommand, Integer) asyncPerformanceTest method} to execute
+ * operation in multithreaded environment.
+ *
+ * @author Dmitry Ganzha
+ */
+public class BaseStressTest {
+    private static final String STORAGE_TYPE_PROPERTY_KEY = "storage.type";
+    private static final String STORAGE_TYPE_IN_MEMORY = "in-memory";
+    private static final String STORAGE_TYPE_JDBC = "jdbc";
     private static final String DB_PROPERTIES_FILE = "jdbc-storage.properties";
     private static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
     private static final int NUMBER_OF_CLIENTS = 20;
     private static final String DB_URL_FORMAT = "%s/%s?useSSL=false&serverTimezone=UTC";
-    private static final Logger log = getLogger(BasePT.class);
+    private static final Logger log = getLogger(BaseStressTest.class);
+
     private final TodoClient[] clients = new TodoClient[NUMBER_OF_CLIENTS];
     private Server server;
     private TodoClient client;
@@ -117,8 +135,8 @@ public class BasePT {
 
     private Properties getProperties(String propertiesFile) {
         final Properties properties = new Properties();
-        final InputStream stream = BasePT.class.getClassLoader()
-                                               .getResourceAsStream(propertiesFile);
+        final InputStream stream = BaseStressTest.class.getClassLoader()
+                                                       .getResourceAsStream(propertiesFile);
         try {
             properties.load(stream);
         } catch (IOException e) {
@@ -129,7 +147,7 @@ public class BasePT {
 
     @BeforeEach
     protected void setUp() throws InterruptedException {
-        final BoundedContext boundedContextInMemory = BoundedContexts.create();
+        final BoundedContext boundedContextInMemory = createBoundedContext();
         server = new Server(PORT, boundedContextInMemory);
         startServer();
         client = new CommandLineTodoClient(HOST, PORT);
@@ -160,6 +178,20 @@ public class BasePT {
         serverStartLatch.await(100, TimeUnit.MILLISECONDS);
     }
 
+    private BoundedContext createBoundedContext() {
+        final String storageType = System.getProperty(STORAGE_TYPE_PROPERTY_KEY);
+        BoundedContext boundedContext = null;
+        if (!nonNull(storageType) || storageType.equals(STORAGE_TYPE_IN_MEMORY)) {
+            boundedContext = BoundedContexts.create();
+        } else if (storageType.equals(STORAGE_TYPE_JDBC)) {
+            boundedContext = BoundedContexts.create(createStorageFactory());
+        } else {
+            fail("Property storage.type contains not supported storage type, read README.md to find" +
+                         " supported storage types.");
+        }
+        return boundedContext;
+    }
+
     protected TodoClient getClient() {
         return client;
     }
@@ -171,7 +203,8 @@ public class BasePT {
     protected void asyncPerformanceTest(ToDoCommand command, Integer numberOfRequests) throws
                                                                                        InterruptedException {
         final ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime()
-                                                                   .availableProcessors() * 2);
+                                                                         .availableProcessors() *
+                                                                          2);
         final CountDownLatch latch = new CountDownLatch(numberOfRequests);
         for (int i = 0; i < numberOfRequests; i++) {
             final int iterationIndex = i;
@@ -185,6 +218,19 @@ public class BasePT {
         } finally {
             pool.shutdownNow();
         }
+    }
+
+    protected static CreateBasicLabel createBasicLabel() {
+        return CommandBuilder.label()
+                             .createLabel()
+                             .setTitle(LABEL_TITLE)
+                             .build();
+    }
+
+    protected static CreateDraft createDraft() {
+        return CommandBuilder.task()
+                             .createDraft()
+                             .build();
     }
 
     protected interface ToDoCommand {

@@ -23,14 +23,13 @@ hs_err_pid*
 .gradle/
 
 # Generated source code
-**/generated/
+generated/
 
 # Gradle build files
 build/
-*/build/
 
 # IDEA build files
-**/out/
+out/
 
 # Spine temp arfifact storage
 .spine/

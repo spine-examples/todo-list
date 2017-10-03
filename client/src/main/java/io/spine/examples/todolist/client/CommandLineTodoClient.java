@@ -62,6 +62,7 @@ import static java.util.stream.Collectors.toList;
  * Implementation of the command line gRPC client.
  *
  * @author Illia Shepilov
+ * @author Dmitry Ganzha
  */
 @SuppressWarnings("OverlyCoupledClass")
 public class CommandLineTodoClient implements TodoClient {

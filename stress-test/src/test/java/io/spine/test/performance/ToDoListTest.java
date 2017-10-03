@@ -24,6 +24,7 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.test.BaseStressTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ToDoListPT extends BasePT {
+/**
+ * @author Dmitry Ganzha
+ */
+public class ToDoListTest extends BaseStressTest {
 
     @Test
     @Disabled
@@ -69,4 +73,3 @@ public class ToDoListPT extends BasePT {
         assertEquals(expected, tasks.size());
     }
 }
-
