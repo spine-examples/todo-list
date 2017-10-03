@@ -42,49 +42,62 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * A local {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
- * JdbcStorageFactory}, {@code MySQL} in particular.
+ * JdbcStorageFactory} with {@code Cloud SQL} instance as a data source.
+ *
+ * <p>To run the server successfully (for the detailed explanation see {@code README.md}):
+ * <ol>
+ *     <li>Install {@code gcloud} tool.</li>
+ *     <li>Authenticate using {@code gcloud}. {@code Cloud SQL client} role is required.</li>
+ *     <li>Create a Cloud SQL instance.</li>
+ *     <li>Create a database.</li>
+ * </ol>
  *
  * <p>To run the server from a command-line run the command as follows:
- * {@code gradle :local-jdbc:runServer -Pconf=db_name,username,password}
+ * {@code gradle :local-cloud-sql:runServer -Pconf=instance_connection_name,db_name,username,password}
  *
  * <p>If the parameters were not specified to a command or the server was ran directly,
  * {@linkplain #getDefaultArguments() default arguments} will be used.
- * The arguments are stored in the properties file {@code jdbc-storage.properties}.
- *
- * <p>As the server uses {@code MySQL}, the database with the specified name should be created
- * and the username and password should be correct.
+ * The arguments are stored in the properties file {@code cloud-sql.properties}.
  *
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
  *
  * @author Dmytro Grankin
+ * @see <a href="https://cloud.google.com/sdk/gcloud/">gcloud tool</a>
+ * @see <a href="https://cloud.google.com/sql/docs/mysql/quickstart">Cloud SQL instance creation</a>
  */
-public class LocalJdbcServer {
+@SuppressWarnings("DuplicateStringLiteralInspection" /* To avoid creation of a dumb base module
+                                                        for servers in different modules. */)
+public class LocalCloudSqlServer {
 
-    private static final String DB_PROPERTIES_FILE = "jdbc-storage.properties";
+    private static final String DB_PROPERTIES_FILE = "cloud-sql.properties";
     private static final Properties properties = getProperties(DB_PROPERTIES_FILE);
 
-    private static final String DB_URL_FORMAT = "%s/%s?useSSL=false";
+    private static final String DB_URL_FORMAT = "%s//google/%s?cloudSqlInstance=%s&" +
+            "useSSL=false&socketFactory=com.google.cloud.sql.mysql.SocketFactory";
 
-    private LocalJdbcServer() {
+    private LocalCloudSqlServer() {
         // Prevent instantiation of this class.
     }
 
     public static void main(String[] args) throws IOException {
-        final String[] actualArguments;
-        final int expectedArgumentsLength = 3;
-        if (args.length != expectedArgumentsLength) {
-            actualArguments = getDefaultArguments();
-            log().info("The specified arguments don't match the length requirement. " +
-                               "Required arguments size: {}. Default arguments will be used: {}.",
-                       expectedArgumentsLength, actualArguments);
-        } else {
-            actualArguments = args;
-        }
-
+        final String[] actualArguments = getActualArguments(args);
         final BoundedContext boundedContext = createBoundedContext(actualArguments);
         final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
+    }
+
+    @VisibleForTesting
+    static String[] getActualArguments(String[] commandLineArguments) {
+        final String[] defaultArguments = getDefaultArguments();
+        if (commandLineArguments.length != defaultArguments.length) {
+            log().info("The specified arguments don't match the length requirement. " +
+                               "Required arguments size: {}. Default arguments will be used: {}.",
+                       defaultArguments.length, defaultArguments);
+            return defaultArguments;
+        } else {
+            return commandLineArguments;
+        }
     }
 
     @VisibleForTesting
@@ -103,12 +116,13 @@ public class LocalJdbcServer {
     private static DataSource createDataSource(String[] args) {
         final HikariConfig config = new HikariConfig();
 
-        final String dbName = args[0];
-        final String username = args[1];
-        final String password = args[2];
+        final String instanceConnectionName = args[0];
+        final String dbName = args[1];
+        final String username = args[2];
+        final String password = args[3];
 
         log().info("Start `DataSource` creation. The following parameters will be used:");
-        final String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName);
+        final String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName, instanceConnectionName);
         config.setJdbcUrl(dbUrl);
         log().info("JDBC URL: {}", dbUrl);
 
@@ -142,16 +156,17 @@ public class LocalJdbcServer {
 
     @VisibleForTesting
     static String[] getDefaultArguments() {
+        final String instance = properties.getProperty("db.instance");
         final String dbName = properties.getProperty("db.name");
         final String username = properties.getProperty("db.username");
         final String password = properties.getProperty("db.password");
-        return new String[]{dbName, username, password};
+        return new String[]{instance, dbName, username, password};
     }
 
     private static Properties getProperties(String propertiesFile) {
         final Properties properties = new Properties();
-        final InputStream stream = LocalJdbcServer.class.getClassLoader()
-                                                        .getResourceAsStream(propertiesFile);
+        final InputStream stream = LocalCloudSqlServer.class.getClassLoader()
+                                                            .getResourceAsStream(propertiesFile);
         try {
             properties.load(stream);
         } catch (IOException e) {
@@ -167,6 +182,6 @@ public class LocalJdbcServer {
     private enum LogSingleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = getLogger(LocalJdbcServer.class);
+        private final Logger value = getLogger(LocalCloudSqlServer.class);
     }
 }

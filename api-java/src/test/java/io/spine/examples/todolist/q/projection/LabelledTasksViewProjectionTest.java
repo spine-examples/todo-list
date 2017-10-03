@@ -83,7 +83,8 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
 
     @BeforeEach
     void setUp() {
-        final StorageFactorySwitch storageFactorySwitch = newInstance("test", false);
+        final StorageFactorySwitch storageFactorySwitch = newInstance(
+                BoundedContext.newName("test"), false);
         final StorageFactory storageFactory = storageFactorySwitch.get();
         final EventEnricher eventEnricher = eventEnricherInstance();
         final EventBus.Builder eventBusBuilder = newEventBusBuilder(storageFactory, eventEnricher);

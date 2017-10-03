@@ -36,7 +36,7 @@ public class ToDoListPT extends BasePT {
     @Test
     @DisplayName("Create multiple tasks via multiple clients concurrently")
     void firstFlow() throws InterruptedException {
-        TodoClient[] clients = getClients();
+        final TodoClient[] clients = getClients();
         final int numberOfRequests = 1000;
         asyncPerformanceTest(iterationNumber -> {
             final CreateBasicTask basicTask = createBasicTask();
@@ -55,7 +55,7 @@ public class ToDoListPT extends BasePT {
     @DisplayName("Create multiple tasks via multiple clients concurrently and retrieve aggregate " +
             "state")
     void secondFlow() throws InterruptedException {
-        TodoClient[] clients = getClients();
+        final TodoClient[] clients = getClients();
         final int numberOfRequests = 1000;
         asyncPerformanceTest(iterationNumber -> {
             final CreateBasicTask basicTask = createBasicTask();

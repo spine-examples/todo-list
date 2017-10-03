@@ -6,11 +6,13 @@ include 'todo-cli'
 include 'cli-core'
 include 'testutil-api'
 include 'testutil-cli'
+include 'stress-test'
 
 include ':local-inmem'
 project(':local-inmem').projectDir = new File('./deployment/local-inmem')
 
-include ':local-jdbc'
-project(':local-jdbc').projectDir = new File('./deployment/local-jdbc')
+include ':local-my-sql'
+project(':local-my-sql').projectDir = new File('./deployment/local-my-sql')
 
-include 'stress-test'
+include ':local-cloud-sql'
+project(':local-cloud-sql').projectDir = new File('./deployment/local-cloud-sql')
