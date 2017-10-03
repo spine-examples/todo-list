@@ -31,7 +31,7 @@ To configure a Google Cloud Platform project for this sample, the following role
 1. Build a docker image for gRPC server and store in your Container Registry:
 
     ```bash
-    gcloud container builds submit --tag gcr.io/${GCLOUD_PROJECT_NAME}/java-grpc-hello:1.0 .
+    gcloud container builds submit --tag gcr.io/${GCLOUD_PROJECT_NAME}/todolist-gce:1.0 .
     ```
 
 1. Create a Compute Engine instance and ssh in:
@@ -40,14 +40,14 @@ To configure a Google Cloud Platform project for this sample, the following role
     # Creates a firewall rule to allow access through the port #80.
     gcloud compute firewall-rules create http-server --allow tcp:80
  
-    gcloud compute instances create grpc-host \
+    gcloud compute instances create todolist-server \
        --image-family gci-stable \
        --image-project google-containers \
        --tags http-server \
        --machine-type f1-micro \
        --zone europe-west1-b
     
-    gcloud compute ssh grpc-host
+    gcloud compute ssh todolist-server
     ```
 
 1. Go the the popped up window. Set some variables to make commands easier:
@@ -62,7 +62,7 @@ To configure a Google Cloud Platform project for this sample, the following role
 
     ```bash
     /usr/share/google/dockercfg_update.sh
-    docker run -d --name=grpc-hello gcr.io/${GCLOUD_PROJECT}/java-grpc-hello:1.0
+    docker run -d --name=todolist-gce gcr.io/${GCLOUD_PROJECT}/todolist-gce:1.0
     ```
 
 1. Run the Endpoints proxy:
@@ -70,12 +70,12 @@ To configure a Google Cloud Platform project for this sample, the following role
     ```bash
     docker run --detach --name=esp \
         -p 80:9000 \
-        --link=grpc-hello:grpc-hello \
+        --link=todolist-gce:todolist-gce \
         gcr.io/endpoints-release/endpoints-runtime:1 \
         -s ${SERVICE_NAME} \
         -v ${SERVICE_CONFIG_ID} \
         -P 9000 \
-        -a grpc://grpc-hello:50051
+        -a grpc://todolist-gce:50051
     ```
 
 1. Back on the local machine, get the external IP of the GCE instance:
