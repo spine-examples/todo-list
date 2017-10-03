@@ -27,7 +27,12 @@ dependencies {
     testCompile project(path: ':testutil-api')
 }
 
+// A task to run the client. See `ClientApp` for the details.
 task runTodoClient(dependsOn: jar, type: JavaExec) {
+    if(project.hasProperty('conf')){
+        args(conf.split(','))
+    }
+
     standardInput = System.in
     main = 'io.spine.examples.todolist.ClientApp'
     classpath = sourceSets.main.runtimeClasspath

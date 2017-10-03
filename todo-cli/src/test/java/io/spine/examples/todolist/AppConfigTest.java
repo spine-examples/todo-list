@@ -20,10 +20,19 @@
 
 package io.spine.examples.todolist;
 
+import io.spine.examples.todolist.client.CommandLineTodoClient;
+import io.spine.examples.todolist.client.TodoClient;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.examples.todolist.AppConfig.init;
+import static io.spine.examples.todolist.AppConfig.setClient;
+import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.test.Tests.nullRef;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author Dmytro Grankin
@@ -31,9 +40,29 @@ import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 @DisplayName("AppConfig should")
 class AppConfigTest {
 
+    @BeforeEach
+    void setUp() {
+        setClient(nullRef());
+    }
+
     @Test
     @DisplayName("have the private constructor")
     void havePrivateCtor() {
         assertHasPrivateParameterlessCtor(AppConfig.class);
+    }
+
+    @Test
+    @DisplayName("throw if was not initialized")
+    void throwIfWasNotInitialized() {
+        assertThrows(IllegalStateException.class, AppConfig::getClient);
+    }
+
+    @Test
+    @DisplayName("allow initialization only once")
+    void allowInitOnlyOnce() {
+        final TodoClient client = new CommandLineTodoClient(HOST, DEFAULT_CLIENT_SERVICE_PORT);
+        init(client);
+
+        assertThrows(IllegalStateException.class, () -> init(client));
     }
 }
