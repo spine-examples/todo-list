@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -51,6 +52,7 @@ import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.lang.String.format;
+import static java.util.Arrays.stream;
 import static org.slf4j.LoggerFactory.getLogger;
 
 public class BasePT {
@@ -140,6 +142,7 @@ public class BasePT {
     protected void tearDown() {
         server.shutdown();
         getClient().shutdown();
+        stream(getClients()).forEach(TodoClient::shutdown);
     }
 
     private void startServer() throws InterruptedException {

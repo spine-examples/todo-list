@@ -24,6 +24,7 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.TaskItem;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -34,10 +35,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ToDoListPT extends BasePT {
 
     @Test
-    @DisplayName("Create multiple tasks via multiple clients concurrently")
+    @Disabled
+    @DisplayName("Create tasks concurrently and retrieve projection")
     void firstFlow() throws InterruptedException {
         final TodoClient[] clients = getClients();
-        final int numberOfRequests = 1000;
+        final int numberOfRequests = 100;
         asyncPerformanceTest(iterationNumber -> {
             final CreateBasicTask basicTask = createBasicTask();
             clients[iterationNumber % clients.length].create(basicTask);
@@ -52,11 +54,10 @@ public class ToDoListPT extends BasePT {
     }
 
     @Test
-    @DisplayName("Create multiple tasks via multiple clients concurrently and retrieve aggregate " +
-            "state")
+    @DisplayName("Create tasks concurrently and retrieve aggregate state")
     void secondFlow() throws InterruptedException {
         final TodoClient[] clients = getClients();
-        final int numberOfRequests = 1000;
+        final int numberOfRequests = 100;
         asyncPerformanceTest(iterationNumber -> {
             final CreateBasicTask basicTask = createBasicTask();
             clients[iterationNumber % clients.length].create(basicTask);

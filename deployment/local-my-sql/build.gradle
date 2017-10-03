@@ -19,8 +19,8 @@
  */
 
 dependencies {
-    compile group: 'io.spine', name: 'jdbc-rdbms', version: '0.9.64-SNAPSHOT'
-    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+    compile group: 'io.spine', name: 'jdbc-rdbms', version: spineJdbcStorageVersion
+    compile group: 'mysql', name: 'mysql-connector-java', version: mysqlDriverVersion
 
     compile project(path: ':server')
 }
