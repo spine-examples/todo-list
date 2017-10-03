@@ -87,5 +87,5 @@ To configure a Google Cloud Platform project for this sample, the following role
 1. Run the client:
 
     ```bash
-    gradle runTodoClient -Pconf=<IP of GCE Instance>,80
+    gradlew runTodoClient -Pconf=<IP of GCE Instance>,80
     ```

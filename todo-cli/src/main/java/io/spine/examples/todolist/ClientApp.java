@@ -48,8 +48,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class ClientApp {
 
-    private static final String DEFAULT_HOST = HOST;
     private static final int ARGUMENTS_AMOUNT = 2;
+    private static final String DEFAULT_HOST = HOST;
+    private static final int DEFAULT_PORT = DEFAULT_CLIENT_SERVICE_PORT;
 
     private ClientApp() {
         // Prevent instantiation of this class.
@@ -73,9 +74,9 @@ public class ClientApp {
         if (arguments.length != ARGUMENTS_AMOUNT) {
             log().info("Expected arguments amount is {}. " +
                                "Default arguments will be used, hostname: {} and port: {}.",
-                       DEFAULT_HOST, DEFAULT_CLIENT_SERVICE_PORT);
+                       ARGUMENTS_AMOUNT, DEFAULT_HOST, DEFAULT_PORT);
             hostname = DEFAULT_HOST;
-            port = DEFAULT_CLIENT_SERVICE_PORT;
+            port = DEFAULT_PORT;
         } else {
             hostname = arguments[0];
             port = Integer.parseInt(arguments[1]);

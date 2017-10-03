@@ -41,7 +41,7 @@ dependencies {
     protobuf group: 'io.spine', name: 'spine-client', version: spineVersion
 }
 
-mainClassName = "io.spine.examples.todolist.server.EndpointsCloudSqlServer"
+mainClassName = "io.spine.examples.todolist.server.ComputeCloudSqlServer"
 
 // A task to build a `uber-jar`.
 shadowJar {
