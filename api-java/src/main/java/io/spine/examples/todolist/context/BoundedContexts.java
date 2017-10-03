@@ -22,6 +22,7 @@ package io.spine.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
+import io.spine.core.BoundedContextName;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
@@ -47,8 +48,9 @@ public final class BoundedContexts {
 
     /** The default name of the {@code BoundedContext}. */
     private static final String NAME = "TodoListBoundedContext";
+
     private static final StorageFactory IN_MEMORY_FACTORY =
-            InMemoryStorageFactory.newInstance(NAME, false);
+            InMemoryStorageFactory.newInstance(BoundedContext.newName(NAME), false);
 
     private BoundedContexts() {
         // Disable instantiation from outside.

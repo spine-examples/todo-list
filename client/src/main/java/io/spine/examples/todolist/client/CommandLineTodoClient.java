@@ -30,6 +30,7 @@ import io.spine.client.grpc.CommandServiceGrpc;
 import io.spine.client.grpc.QueryServiceGrpc;
 import io.spine.core.Command;
 import io.spine.core.UserId;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -48,13 +49,14 @@ import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.time.ZoneOffsets;
-import io.spine.util.Exceptions;
 
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static io.spine.Identifier.newUuid;
+import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of the command line gRPC client.
@@ -192,7 +194,7 @@ public class CommandLineTodoClient implements TodoClient {
                    : messages.get(0)
                              .unpack(MyListView.class);
         } catch (InvalidProtocolBufferException e) {
-            throw Exceptions.illegalStateWithCauseOf(e);
+            throw illegalStateWithCauseOf(e);
         }
     }
 
@@ -212,7 +214,7 @@ public class CommandLineTodoClient implements TodoClient {
 
             return result;
         } catch (InvalidProtocolBufferException e) {
-            throw Exceptions.illegalStateWithCauseOf(e);
+            throw illegalStateWithCauseOf(e);
         }
     }
 
@@ -228,8 +230,27 @@ public class CommandLineTodoClient implements TodoClient {
                    : messages.get(0)
                              .unpack(DraftTasksView.class);
         } catch (InvalidProtocolBufferException e) {
-            throw Exceptions.illegalStateWithCauseOf(e);
+            throw illegalStateWithCauseOf(e);
         }
+    }
+
+    @Override
+    public List<Task> getTasks() {
+        final Query query = requestFactory.query()
+                                          .all(Task.class);
+        final List<Any> messages = queryService.read(query)
+                                               .getMessagesList();
+        final List<Task> result = messages.stream()
+                                          .map(any -> {
+                                              try {
+                                                  return any.unpack(Task.class);
+                                              } catch (InvalidProtocolBufferException e) {
+                                                  throw illegalStateWithCauseOf(e);
+                                              }
+                                          })
+                                          .collect(toList());
+
+        return result;
     }
 
     @Override
@@ -238,7 +259,7 @@ public class CommandLineTodoClient implements TodoClient {
             channel.shutdown()
                    .awaitTermination(TIMEOUT, SECONDS);
         } catch (InterruptedException e) {
-            throw Exceptions.illegalStateWithCauseOf(e);
+            throw illegalStateWithCauseOf(e);
         }
     }
 

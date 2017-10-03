@@ -18,12 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.pt.task;
+package io.spine.test.performance;
 
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.TaskItem;
-import io.spine.pt.BasePT;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -37,7 +37,7 @@ public class ToDoListPT extends BasePT {
     @DisplayName("Create multiple tasks via multiple clients concurrently")
     void firstFlow() throws InterruptedException {
         TodoClient[] clients = getClients();
-        final int numberOfRequests = 2;
+        final int numberOfRequests = 1000;
         asyncPerformanceTest(iterationNumber -> {
             final CreateBasicTask basicTask = createBasicTask();
             clients[iterationNumber % clients.length].create(basicTask);
@@ -49,6 +49,23 @@ public class ToDoListPT extends BasePT {
 
         final int expected = numberOfRequests;
         assertEquals(expected, taskItems.size());
+    }
+
+    @Test
+    @DisplayName("Create multiple tasks via multiple clients concurrently and retrieve aggregate " +
+            "state")
+    void secondFlow() throws InterruptedException {
+        TodoClient[] clients = getClients();
+        final int numberOfRequests = 1000;
+        asyncPerformanceTest(iterationNumber -> {
+            final CreateBasicTask basicTask = createBasicTask();
+            clients[iterationNumber % clients.length].create(basicTask);
+        }, numberOfRequests);
+
+        final List<Task> tasks = getClient().getTasks();
+
+        final int expected = numberOfRequests;
+        assertEquals(expected, tasks.size());
     }
 }
 

@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.pt;
+package io.spine.test.performance;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -127,8 +127,8 @@ public class BasePT {
 
     @BeforeEach
     protected void setUp() throws InterruptedException {
-        BoundedContext boundedContextLocal = BoundedContexts.create(createStorageFactory());
-        server = new Server(PORT, boundedContextLocal);
+        BoundedContext boundedContextInMemory = BoundedContexts.create();
+        server = new Server(PORT, boundedContextInMemory);
         startServer();
         client = new CommandLineTodoClient(HOST, PORT);
         for (int i = 0; i < NUMBER_OF_CLIENTS; i++) {

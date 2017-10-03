@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.it.task;
+package io.spine.test.integration;
 
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.TaskPriority;
@@ -35,7 +35,7 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.TaskItem;
-import io.spine.it.BaseIT;
+import io.spine.test.integration.BaseIT;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

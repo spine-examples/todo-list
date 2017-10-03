@@ -19,8 +19,9 @@
  */
 
 dependencies {
-    testCompile project(path: ':client')
+    compile project(path: ':client')
+
     testCompile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
-    testCompile group: 'io.spine', name: 'jdbc-rdbms', version: spineVersion
+    testCompile group: 'io.spine', name: 'jdbc-rdbms', version: '0.9.64-SNAPSHOT'
     testCompile project(path: ':testutil-api')
 }
