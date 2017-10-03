@@ -12,7 +12,7 @@ config_version: 3
 #
 # Name of the service configuration.
 #
-name: todolist.spine-dev.cloud.goog
+name: hellogrpc.endpoints.spine-dev.cloud.goog
 
 #
 # API title to appear in the user interface (Google Cloud Console).
@@ -27,6 +27,6 @@ apis:
 
 usage:
   rules:
-  # All methods can be called without an API Key.
+    # All methods can be called without an API Key.
     - selector: "*"
       allow_unregistered_calls: true

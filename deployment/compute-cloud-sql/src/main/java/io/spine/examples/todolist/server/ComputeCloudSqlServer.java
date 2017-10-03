@@ -29,9 +29,9 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 /**
  * @author Dmytro Grankin
  */
-public class EndpointsCloudSqlServer {
+public class ComputeCloudSqlServer {
 
-    private EndpointsCloudSqlServer() {
+    private ComputeCloudSqlServer() {
         // Prevent instantiation of this class.
     }
 
