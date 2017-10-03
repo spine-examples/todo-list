@@ -129,7 +129,7 @@ public class BasePT {
 
     @BeforeEach
     protected void setUp() throws InterruptedException {
-        BoundedContext boundedContextInMemory = BoundedContexts.create();
+        final BoundedContext boundedContextInMemory = BoundedContexts.create();
         server = new Server(PORT, boundedContextInMemory);
         startServer();
         client = new CommandLineTodoClient(HOST, PORT);
@@ -170,7 +170,7 @@ public class BasePT {
 
     protected void asyncPerformanceTest(ToDoCommand command, Integer numberOfRequests) throws
                                                                                        InterruptedException {
-        ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime()
+        final ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime()
                                                                    .availableProcessors() * 2);
         final CountDownLatch latch = new CountDownLatch(numberOfRequests);
         for (int i = 0; i < numberOfRequests; i++) {
