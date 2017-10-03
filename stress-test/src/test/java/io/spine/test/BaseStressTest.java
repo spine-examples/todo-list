@@ -170,7 +170,7 @@ public class BaseStressTest {
                 server.start();
                 serverStartLatch.countDown();
             } catch (IOException e) {
-                throw Exceptions.illegalStateWithCauseOf(e);
+                throw illegalStateWithCauseOf(e);
             }
         });
 
