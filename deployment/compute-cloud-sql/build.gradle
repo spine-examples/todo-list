@@ -46,8 +46,8 @@ mainClassName = "io.spine.examples.todolist.server.EndpointsCloudSqlServer"
 // A task to build a `uber-jar`.
 shadowJar {
 
-    // To avoid addition of `all` suffix to the .jar file name.
-    classifier = null
+    // To avoid addition of `-all` suffix to the .jar file name.
+    classifier = ""
 
     // Merge multiple property files with a same name into one file.
     //
