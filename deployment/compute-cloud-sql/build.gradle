@@ -35,6 +35,10 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
     compile project(path: ':server')
+
+    // A Protobuf dependency to generate descriptor for Spine gRPC services.
+    // This descriptor is required to configure gRPC services for a Google Cloud Endpoint.
+    protobuf group: 'io.spine', name: 'spine-client', version: spineVersion
 }
 
 mainClassName = "io.spine.examples.todolist.server.EndpointsCloudSqlServer"
@@ -54,5 +58,21 @@ shadowJar {
     // which will cause a wrong behavior.
     mergeServiceFiles {
         path = "*.properties"
+    }
+}
+
+// Enable Protobuf descriptor generation.
+// The descriptor is required to configure a Google Cloud Endpoint.
+protobuf {
+    generateProtoTasks {
+        all().each { final task ->
+            task.plugins {
+                task.generateDescriptorSet = true
+
+                // The extension `.desc` is not supported in the Endpoints configuration deployment.
+                // One of the supported extensions is `.pb`.
+                task.descriptorSetOptions.path = "$projectDir/build/descriptors/spine_grpc_services.pb"
+            }
+        }
     }
 }
