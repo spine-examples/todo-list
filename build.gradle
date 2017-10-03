@@ -243,8 +243,6 @@ subprojects {
 
         filters {
             includeClassNamePatterns '.*Test'
-            includeClassNamePatterns '.*IT'
-            includeClassNamePatterns '.*PT'
         }
     }
 
