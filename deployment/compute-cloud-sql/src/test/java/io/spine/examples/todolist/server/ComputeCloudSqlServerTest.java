@@ -18,31 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.examples.todolist.server;
 
-final def SPINE_VERSION = '0.9.64-SNAPSHOT'
+import io.spine.server.BoundedContext;
+import io.spine.server.storage.StorageFactory;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-project.ext {
-    // TODOList version
-    appVersion = SPINE_VERSION
+import static io.spine.examples.todolist.server.ComputeCloudSqlServer.createBoundedContext;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.Assert.assertFalse;
 
-    // Spine dependencies' versions
-    spineVersion = SPINE_VERSION
-    spineBaseVersion = '0.9.55-SNAPSHOT'
+@DisplayName("ComputeCloudSqlServer should")
+class ComputeCloudSqlServerTest {
 
-    // Main scope third party dependencies' versions
-    protobufGradlePluginVersion = '0.8.3'
-    appEngineVersion = '1.9.42'
-    guavaVersion = '20.0'
-    protobufVersion = '3.2.0'
-    gRpcVersion = '1.1.2'
-    slf4jVersion = '1.7.21'
-    servletApiVersion = '3.1.0'
-    gcloudJavaVersion = '0.2.8'
-    cloudSqlSocketFactoryVersion = '1.0.4'
-    shadowJarVersion = '2.0.1'
-    mySQLConnectorVersion = '6.0.6'
+    @Test
+    @DisplayName("have the private constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(ComputeCloudSqlServer.class);
+    }
 
-    // Test scope third party dependencies' versions
-    jUnitPlatformVersion = '1.0.0-RC3'
-    jUnitVersion = '5.0.0-RC3'
+    @Test
+    @DisplayName("create signletenant BoundedContext")
+    void createSingletenantBoundedContext() {
+        final BoundedContext boundedContext = createBoundedContext();
+        final StorageFactory storageFactory = boundedContext.getStorageFactory();
+        assertFalse(storageFactory.isMultitenant());
+    }
 }

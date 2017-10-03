@@ -44,6 +44,7 @@ To configure a Google Cloud Platform project for this sample, the following role
        --image-family gci-stable \
        --image-project google-containers \
        --tags http-server \
+       --scopes=default,sql-admin,storage-rw \
        --machine-type f1-micro \
        --zone europe-west1-b
     
