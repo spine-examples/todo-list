@@ -35,7 +35,7 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.TaskItem;
-import io.spine.test.BaseStressTest;
+import io.spine.test.AbstractIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,7 +59,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmitry Ganzha
  */
 @DisplayName("TodoList Integration Test")
-public class ToDoListTest extends BaseStressTest {
+public class ToDoListTest extends AbstractIntegrationTest {
     private TodoClient client;
 
     @BeforeEach

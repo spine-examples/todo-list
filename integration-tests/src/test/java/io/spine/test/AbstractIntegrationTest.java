@@ -61,14 +61,14 @@ import static org.slf4j.LoggerFactory.getLogger;
 /**
  * Base class for integration and performance tests. Encapsulates server, clients setup logic.
  *
- * Contains {@link #getClients() method getClients} to access clients.
+ * <p>Contains {@link #getClients() method getClients} to access clients.
  *
- * Use {@link #asyncPerformanceTest(ToDoCommand, Integer) asyncPerformanceTest method} to execute
+ * <p>Use {@link #asyncPerformanceTest(ToDoCommand, Integer) asyncPerformanceTest method} to execute
  * operation in multithreaded environment.
  *
  * @author Dmitry Ganzha
  */
-public class BaseStressTest {
+public abstract class AbstractIntegrationTest {
     private static final String STORAGE_TYPE_PROPERTY_KEY = "storage.type";
     private static final String STORAGE_TYPE_IN_MEMORY = "in-memory";
     private static final String STORAGE_TYPE_JDBC = "jdbc";
@@ -76,7 +76,7 @@ public class BaseStressTest {
     private static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
     private static final int NUMBER_OF_CLIENTS = 20;
     private static final String DB_URL_FORMAT = "%s//%s:%s/%s?useSSL=false&serverTimezone=UTC";
-    private static final Logger LOGGER = getLogger(BaseStressTest.class);
+    private static final Logger LOGGER = getLogger(AbstractIntegrationTest.class);
     private static final Properties DB_CONFIG_PROPERTIES = getProperties(DB_PROPERTIES_FILE);
 
     private final TodoClient[] clients = new TodoClient[NUMBER_OF_CLIENTS];
@@ -105,8 +105,8 @@ public class BaseStressTest {
 
     private static Properties getProperties(String propertiesFile) {
         final Properties properties = new Properties();
-        final InputStream stream = BaseStressTest.class.getClassLoader()
-                                                       .getResourceAsStream(propertiesFile);
+        final InputStream stream = AbstractIntegrationTest.class.getClassLoader()
+                                                                .getResourceAsStream(propertiesFile);
         try {
             properties.load(stream);
         } catch (IOException e) {

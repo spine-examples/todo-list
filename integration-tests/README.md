@@ -1,4 +1,4 @@
-# stress-test
+# integration-tests
 
 A module which contains Integration and Performance Tests.
 

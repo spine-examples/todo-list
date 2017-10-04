@@ -24,7 +24,7 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.TaskItem;
-import io.spine.test.BaseStressTest;
+import io.spine.test.AbstractIntegrationTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @author Dmitry Ganzha
  */
 @DisplayName("TodoList Performance Test")
-public class ToDoListTest extends BaseStressTest {
+public class ToDoListTest extends AbstractIntegrationTest {
 
     @Test
     @Disabled
