@@ -20,10 +20,10 @@
 
 package io.spine.examples.todolist.repository;
 
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
-import io.spine.examples.todolist.c.aggregate.TaskPart;
-import io.spine.server.aggregate.AggregatePartRepository;
+        import io.spine.examples.todolist.TaskId;
+        import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
+        import io.spine.examples.todolist.c.aggregate.TaskPart;
+        import io.spine.server.aggregate.AggregatePartRepository;
 
 /**
  * Repository for the {@link TaskPart}.

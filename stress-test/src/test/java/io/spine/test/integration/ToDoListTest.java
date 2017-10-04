@@ -58,6 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Dmitry Ganzha
  */
+@DisplayName("TodoList Integration Test")
 public class ToDoListTest extends BaseStressTest {
     private TodoClient client;
 
@@ -95,7 +96,8 @@ public class ToDoListTest extends BaseStressTest {
     }
 
     @Test
-    @DisplayName("Create task -> Create label -> Assign label -> Complete task -> Reopen task -> Remove label")
+    @DisplayName("Create task -> Create label -> Assign label -> Complete task -> Reopen task " +
+            "-> Remove label")
     void secondFlow() {
         final CreateBasicTask basicTask = createBasicTask();
         client.create(basicTask);
@@ -137,7 +139,8 @@ public class ToDoListTest extends BaseStressTest {
     }
 
     @Test
-    @DisplayName("Create draft -> Update due date -> Update priority -> Create label -> Assign label")
+    @DisplayName("Create draft -> Update due date -> Update priority -> Create label " +
+            "-> Assign label")
     void thirdFlow() {
         final CreateDraft draftTask = createDraft();
         client.create(draftTask);
@@ -173,7 +176,8 @@ public class ToDoListTest extends BaseStressTest {
     }
 
     @Test
-    @DisplayName("Create task -> Create label -> Assign label -> Update priority -> Delete task -> Restore deleted task")
+    @DisplayName("Create task -> Create label -> Assign label -> Update priority -> Delete task " +
+            "-> Restore deleted task")
     void fourthFlow() {
         final CreateBasicTask basicTask = createBasicTask();
         client.create(basicTask);

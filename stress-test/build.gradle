@@ -23,5 +23,26 @@ dependencies {
 
     testCompile group: 'mysql', name: 'mysql-connector-java', version: mysqlDriverVersion
     testCompile group: 'io.spine', name: 'jdbc-rdbms', version: spineJdbcStorageVersion
+    testCompile group: 'org.junit.platform', name: 'junit-platform-console-standalone',
+            version: jUnitPlatformVersion
+
     testCompile project(path: ':testutil-api')
+}
+
+task integrationTest(type: JavaExec) {
+    description = 'Runs integration tests.'
+    classpath = project.sourceSets.test.runtimeClasspath
+    main 'org.junit.platform.console.ConsoleLauncher'
+    args '--scan-class-path'
+    args "--reports-dir=$buildDir/test-results/junit-integrationTest"
+    args '--exclude-package=io.spine.test.performance'
+}
+
+task performanceTest(type: JavaExec) {
+    description = 'Runs performance tests.'
+    classpath = project.sourceSets.test.runtimeClasspath
+    main 'org.junit.platform.console.ConsoleLauncher'
+    args '--scan-class-path'
+    args "--reports-dir=$buildDir/test-results/junit-performanceTest"
+    args '--exclude-package=io.spine.test.integration'
 }

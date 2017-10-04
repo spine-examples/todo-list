@@ -33,7 +33,6 @@ import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
-import io.spine.util.Exceptions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.slf4j.Logger;
@@ -76,8 +75,9 @@ public class BaseStressTest {
     private static final String DB_PROPERTIES_FILE = "jdbc-storage.properties";
     private static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
     private static final int NUMBER_OF_CLIENTS = 20;
-    private static final String DB_URL_FORMAT = "%s/%s?useSSL=false&serverTimezone=UTC";
-    private static final Logger log = getLogger(BaseStressTest.class);
+    private static final String DB_URL_FORMAT = "%s//%s:%s/%s?useSSL=false&serverTimezone=UTC";
+    private static final Logger LOGGER = getLogger(BaseStressTest.class);
+    private static final Properties DB_CONFIG_PROPERTIES = getProperties(DB_PROPERTIES_FILE);
 
     private final TodoClient[] clients = new TodoClient[NUMBER_OF_CLIENTS];
     private Server server;
@@ -90,50 +90,20 @@ public class BaseStressTest {
                              .build();
     }
 
-    private StorageFactory createStorageFactory() {
-        return JdbcStorageFactory.newBuilder()
-                                 .setDataSource(createDataSource())
-                                 .setMultitenant(false)
-                                 .build();
+    protected static CreateBasicLabel createBasicLabel() {
+        return CommandBuilder.label()
+                             .createLabel()
+                             .setTitle(LABEL_TITLE)
+                             .build();
     }
 
-    private DataSource createDataSource() {
-        final HikariConfig config = new HikariConfig();
-        final String[] args = getDefaultArguments();
-
-        final String dbName = args[0];
-        final String username = args[1];
-        final String password = args[2];
-
-        log.info("Start `DataSource` creation. The following parameters will be used:");
-        final String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName);
-        config.setJdbcUrl(dbUrl);
-        log.info("JDBC URL: {}", dbUrl);
-
-        config.setUsername(username);
-        log.info("Username: {}", username);
-
-        config.setPassword(password);
-        log.info("Password: {}", password);
-
-        final DataSource dataSource = new HikariDataSource(config);
-        return dataSource;
+    protected static CreateDraft createDraft() {
+        return CommandBuilder.task()
+                             .createDraft()
+                             .build();
     }
 
-    private String getDbUrlPrefix() {
-        final String prefix = "jdbc:mysql://localhost";
-        return prefix;
-    }
-
-    private String[] getDefaultArguments() {
-        final Properties properties = getProperties(DB_PROPERTIES_FILE);
-        final String dbName = properties.getProperty("db.name");
-        final String username = properties.getProperty("db.username");
-        final String password = properties.getProperty("db.password");
-        return new String[]{dbName, username, password};
-    }
-
-    private Properties getProperties(String propertiesFile) {
+    private static Properties getProperties(String propertiesFile) {
         final Properties properties = new Properties();
         final InputStream stream = BaseStressTest.class.getClassLoader()
                                                        .getResourceAsStream(propertiesFile);
@@ -143,6 +113,38 @@ public class BaseStressTest {
             throw illegalStateWithCauseOf(e);
         }
         return properties;
+    }
+
+    private StorageFactory createStorageFactory() {
+        return JdbcStorageFactory.newBuilder()
+                                 .setDataSource(createDataSource())
+                                 .setMultitenant(false)
+                                 .build();
+    }
+
+    private DataSource createDataSource() {
+        final HikariConfig config = new HikariConfig();
+
+        final String prefix = DB_CONFIG_PROPERTIES.getProperty("db.prefix");
+        final String dbName = DB_CONFIG_PROPERTIES.getProperty("db.name");
+        final String username = DB_CONFIG_PROPERTIES.getProperty("db.username");
+        final String password = DB_CONFIG_PROPERTIES.getProperty("db.password");
+        final String host = DB_CONFIG_PROPERTIES.getProperty("db.host");
+        final String port = DB_CONFIG_PROPERTIES.getProperty("db.port");
+
+        LOGGER.info("Start `DataSource` creation. The following parameters will be used:");
+        final String dbUrl = format(DB_URL_FORMAT, prefix, host, port, dbName);
+        config.setJdbcUrl(dbUrl);
+        LOGGER.info("JDBC URL: {}", dbUrl);
+
+        config.setUsername(username);
+        LOGGER.info("Username: {}", username);
+
+        config.setPassword(password);
+        LOGGER.info("Password: {}", password);
+
+        final DataSource dataSource = new HikariDataSource(config);
+        return dataSource;
     }
 
     @BeforeEach
@@ -186,8 +188,8 @@ public class BaseStressTest {
         } else if (storageType.equals(STORAGE_TYPE_JDBC)) {
             boundedContext = BoundedContexts.create(createStorageFactory());
         } else {
-            fail("Property storage.type contains not supported storage type, read README.md to find" +
-                         " supported storage types.");
+            fail("Property storage.type contains not supported storage type, read README.md to " +
+                         "find supported storage types.");
         }
         return boundedContext;
     }
@@ -200,8 +202,8 @@ public class BaseStressTest {
         return clients;
     }
 
-    protected void asyncPerformanceTest(ToDoCommand command, Integer numberOfRequests) throws
-                                                                                       InterruptedException {
+    protected void asyncPerformanceTest(ToDoCommand command, Integer numberOfRequests)
+            throws InterruptedException {
         final ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime()
                                                                          .availableProcessors() *
                                                                           2);
@@ -218,19 +220,6 @@ public class BaseStressTest {
         } finally {
             pool.shutdownNow();
         }
-    }
-
-    protected static CreateBasicLabel createBasicLabel() {
-        return CommandBuilder.label()
-                             .createLabel()
-                             .setTitle(LABEL_TITLE)
-                             .build();
-    }
-
-    protected static CreateDraft createDraft() {
-        return CommandBuilder.task()
-                             .createDraft()
-                             .build();
     }
 
     protected interface ToDoCommand {

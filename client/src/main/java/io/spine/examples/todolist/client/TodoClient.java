@@ -170,7 +170,7 @@ public interface TodoClient {
     DraftTasksView getDraftTasksView();
 
     /**
-     * Obtains the list of the {@link Task}.
+     * Obtains all {@linkplain Task tasks} in the system.
      *
      * @return the list of the {@code Task}
      */

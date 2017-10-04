@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * @author Dmitry Ganzha
  */
+@DisplayName("TodoList Performance Test")
 public class ToDoListTest extends BaseStressTest {
 
     @Test

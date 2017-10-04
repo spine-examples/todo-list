@@ -238,7 +238,6 @@ subprojects {
             directory '${sourceRootDir}/test/java'
             aPackage 'io.spine.examples.todolist'
             aPackage 'io.spine.cli'
-            aPackage 'io.spine.test'
         }
 
         filters {
