@@ -2,21 +2,48 @@
 
 A server for deploying to Google Compute Engine, which uses a remote database within Google Cloud SQL.
 
-### Permissions
-To configure a Google Cloud Platform project for this sample, the following roles are required:
-* `Editor`, to deploy a Cloud Endpoints configuration.
-* `ComputeImageUser`, to create and run a Compute Engine instance. 
+### Configure a Cloud Platform project
 
-### Enable Cloud Platform APIs
-* [Enable](https://console.cloud.google.com/endpoints) Endpoints API.
-* [Enable](https://console.cloud.google.com/flows/enableapi?apiid=compute_component)
- the Compute Engine API.
-* [Enable](https://console.cloud.google.com/flows/enableapi?apiid=sqladmin)
- the Cloud SQL Administration API.
+1. [Select or create](https://console.cloud.google.com/cloud-resource-manager)
+    a Cloud Platform project.
+1. [Enable](https://support.google.com/cloud/answer/6293499#enable-billing) billing for your project.
+1. Enable the following roles for your Cloud Platform account (The roles can be configured [here](https://console.cloud.google.com/iam-admin/iam/)):
+    * `Editor`, to deploy a Cloud Endpoints configuration and work with Cloud SQL.
+    * `ComputeImageUser`, to create and run a Compute Engine instance.
+1. Enable APIs:
+    * [Endpoints API](https://console.cloud.google.com/endpoints).
+    * [Compute Engine API](https://console.cloud.google.com/flows/enableapi?apiid=compute_component).
+    * [Cloud SQL Administration API](https://console.cloud.google.com/flows/enableapi?apiid=sqladmin).
 
 ### Create a Cloud SQL instance
 
+1. [Create](https://console.cloud.google.com/sql/instances) 
+a Cloud SQL instance.
+1. Create a SQL database on your Cloud SQL instance.
+    * In the [Google Cloud Platform Console](https://console.cloud.google.com),
+     click the Cloud Shell icon in the upper right corner.
+     
+        When the Cloud Shell finishes initializing, you should see:
+      
+        `Welcome to Cloud Shell! Type "help" to get started.
+        username@example-id:~$`
+      
+    * At the Cloud Shell prompt, connect to your Cloud SQL instance:
+      
+        `gcloud sql connect myinstance --user=username`
+    * Enter the password for the `username`.
+      
+        You should see the mysql prompt.
+      
+    * Create a SQL database on your Cloud SQL instance:
+    
+        `CREATE DATABASE dbName;`
+
 ### Deploy a Cloud Endpoints configuration and Docker image for gRPC server
+
+1. Install the latest [Google Cloud SDK](https://cloud.google.com/sdk/docs/#install_the_latest_cloud_tools_version_cloudsdk_current_version).
+
+1. Authorize `gcloud` to access Google Cloud Platform, e.g. using `gcloud auth login` command.
 
 1. Build the code:
     ```bash
@@ -45,7 +72,7 @@ To configure a Google Cloud Platform project for this sample, the following role
     gcloud container builds submit --tag gcr.io/${GCLOUD_PROJECT_NAME}/todolist-gce:1.0 .
     ```
 
-### Create and configure a Compute Engine instance
+### Create a Compute Engine instance and connect a client
 
 1. Create a Compute Engine instance and ssh in:
 
