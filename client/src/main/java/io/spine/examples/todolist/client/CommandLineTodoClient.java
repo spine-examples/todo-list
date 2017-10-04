@@ -22,6 +22,7 @@ package io.spine.examples.todolist.client;
 
 import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Message;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.spine.client.ActorRequestFactory;
@@ -30,6 +31,7 @@ import io.spine.client.grpc.CommandServiceGrpc;
 import io.spine.client.grpc.QueryServiceGrpc;
 import io.spine.core.Command;
 import io.spine.core.UserId;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -48,18 +50,19 @@ import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.time.ZoneOffsets;
-import io.spine.util.Exceptions;
 
 import java.util.List;
 
-import static com.google.common.collect.Lists.newArrayList;
 import static io.spine.Identifier.newUuid;
+import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of the command line gRPC client.
  *
  * @author Illia Shepilov
+ * @author Dmitry Ganzha
  */
 @SuppressWarnings("OverlyCoupledClass")
 public class CommandLineTodoClient implements TodoClient {
@@ -182,54 +185,52 @@ public class CommandLineTodoClient implements TodoClient {
 
     @Override
     public MyListView getMyListView() {
-        try {
-            final Query query = requestFactory.query()
-                                              .all(MyListView.class);
-            final List<Any> messages = queryService.read(query)
-                                                   .getMessagesList();
-            return messages.isEmpty()
-                   ? MyListView.getDefaultInstance()
-                   : messages.get(0)
-                             .unpack(MyListView.class);
-        } catch (InvalidProtocolBufferException e) {
-            throw Exceptions.illegalStateWithCauseOf(e);
-        }
+        final Query query = requestFactory.query()
+                                          .all(MyListView.class);
+        final List<Any> messages = queryService.read(query)
+                                               .getMessagesList();
+        return messages.isEmpty()
+               ? MyListView.getDefaultInstance()
+               : convertAnyToMessage(messages.get(0), MyListView.class);
     }
 
     @Override
     public List<LabelledTasksView> getLabelledTasksView() {
-        try {
-            final Query query = requestFactory.query()
-                                              .all(LabelledTasksView.class);
-            final List<Any> messages = queryService.read(query)
-                                                   .getMessagesList();
-            final List<LabelledTasksView> result = newArrayList();
+        final Query query = requestFactory.query()
+                                          .all(LabelledTasksView.class);
+        final List<Any> messages = queryService.read(query)
+                                               .getMessagesList();
+        final List<LabelledTasksView> result = messages
+                .stream()
+                .map(any -> convertAnyToMessage(any, LabelledTasksView.class))
+                .collect(toList());
 
-            for (Any any : messages) {
-                final LabelledTasksView labelledView = any.unpack(LabelledTasksView.class);
-                result.add(labelledView);
-            }
-
-            return result;
-        } catch (InvalidProtocolBufferException e) {
-            throw Exceptions.illegalStateWithCauseOf(e);
-        }
+        return result;
     }
 
     @Override
     public DraftTasksView getDraftTasksView() {
-        try {
-            final Query query = requestFactory.query()
-                                              .all(DraftTasksView.class);
-            final List<Any> messages = queryService.read(query)
-                                                   .getMessagesList();
-            return messages.isEmpty()
-                   ? DraftTasksView.getDefaultInstance()
-                   : messages.get(0)
-                             .unpack(DraftTasksView.class);
-        } catch (InvalidProtocolBufferException e) {
-            throw Exceptions.illegalStateWithCauseOf(e);
-        }
+        final Query query = requestFactory.query()
+                                          .all(DraftTasksView.class);
+        final List<Any> messages = queryService.read(query)
+                                               .getMessagesList();
+        return messages.isEmpty()
+               ? DraftTasksView.getDefaultInstance()
+               : convertAnyToMessage(messages.get(0), DraftTasksView.class);
+    }
+
+    @Override
+    public List<Task> getTasks() {
+        final Query query = requestFactory.query()
+                                          .all(Task.class);
+        final List<Any> messages = queryService.read(query)
+                                               .getMessagesList();
+        final List<Task> result = messages
+                .stream()
+                .map(any -> convertAnyToMessage(any, Task.class))
+                .collect(toList());
+
+        return result;
     }
 
     @Override
@@ -238,7 +239,7 @@ public class CommandLineTodoClient implements TodoClient {
             channel.shutdown()
                    .awaitTermination(TIMEOUT, SECONDS);
         } catch (InterruptedException e) {
-            throw Exceptions.illegalStateWithCauseOf(e);
+            throw illegalStateWithCauseOf(e);
         }
     }
 
@@ -258,5 +259,13 @@ public class CommandLineTodoClient implements TodoClient {
                                                               .setZoneOffset(ZoneOffsets.UTC)
                                                               .build();
         return result;
+    }
+
+    private <M extends Message> M convertAnyToMessage(Any any, Class<M> messageClass) {
+        try {
+            return any.unpack(messageClass);
+        } catch (InvalidProtocolBufferException e) {
+            throw illegalStateWithCauseOf(e);
+        }
     }
 }

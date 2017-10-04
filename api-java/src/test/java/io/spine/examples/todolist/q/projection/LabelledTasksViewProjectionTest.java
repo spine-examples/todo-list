@@ -74,8 +74,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Illia Shepilov
+ * @author Dmitry Ganzha
  */
 class LabelledTasksViewProjectionTest extends ProjectionTest {
+
+    private static final String BOUNDED_CONTEXT_NAME = "TodoListBoundedContext";
 
     private ProjectionRepository<LabelId, LabelledTasksViewProjection,
             LabelledTasksView> repository;
@@ -83,7 +86,8 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
 
     @BeforeEach
     void setUp() {
-        final StorageFactorySwitch storageFactorySwitch = newInstance("test", false);
+        final StorageFactorySwitch storageFactorySwitch = newInstance(
+                BoundedContext.newName(BOUNDED_CONTEXT_NAME), false);
         final StorageFactory storageFactory = storageFactorySwitch.get();
         final EventEnricher eventEnricher = eventEnricherInstance();
         final EventBus.Builder eventBusBuilder = newEventBusBuilder(storageFactory, eventEnricher);
