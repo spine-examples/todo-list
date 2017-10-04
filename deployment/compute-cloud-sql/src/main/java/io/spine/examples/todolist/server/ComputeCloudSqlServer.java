@@ -44,6 +44,8 @@ import static org.slf4j.LoggerFactory.getLogger;
  * A Compute Engine {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
  * JdbcStorageFactory} for working with Cloud SQL.
  *
+ * <p>If you want to run this server locally, use {@code LocalCloudSqlServer} instead.
+ *
  * <p>For the details, see the {@code README.md}.
  *
  * @author Dmytro Grankin
@@ -55,7 +57,8 @@ public class ComputeCloudSqlServer {
     private static final String DB_PROPERTIES_FILE = "cloud-sql.properties";
     private static final Properties properties = getProperties(DB_PROPERTIES_FILE);
 
-    private static final String DB_URL_FORMAT = "%s/%s?useSSL=false";
+    private static final String DB_URL_FORMAT = "%s//google/%s?cloudSqlInstance=%s&" +
+            "useSSL=false&socketFactory=com.google.cloud.sql.mysql.SocketFactory";
 
     private ComputeCloudSqlServer() {
         // Prevent instantiation of this class.
@@ -83,12 +86,13 @@ public class ComputeCloudSqlServer {
     private static DataSource createDataSource() {
         final HikariConfig config = new HikariConfig();
 
+        final String instanceConnectionName = properties.getProperty("db.instance");
         final String dbName = properties.getProperty("db.name");
         final String username = properties.getProperty("db.username");
         final String password = properties.getProperty("db.password");
 
         log().info("Start `DataSource` creation. The following parameters will be used:");
-        final String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName);
+        final String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName, instanceConnectionName);
         config.setJdbcUrl(dbUrl);
         log().info("JDBC URL: {}", dbUrl);
 
