@@ -7,7 +7,16 @@ To configure a Google Cloud Platform project for this sample, the following role
 * `Editor`, to deploy a Cloud Endpoints configuration.
 * `ComputeImageUser`, to create and run a Compute Engine instance. 
 
-### Start up process
+### Enable Cloud Platform APIs
+* [Enable](https://console.cloud.google.com/endpoints) Endpoints API.
+* [Enable](https://console.cloud.google.com/flows/enableapi?apiid=compute_component)
+ the Compute Engine API.
+* [Enable](https://console.cloud.google.com/flows/enableapi?apiid=sqladmin)
+ the Cloud SQL Administration API.
+
+### Create a Cloud SQL instance
+
+### Deploy a Cloud Endpoints configuration and Docker image for gRPC server
 
 1. Build the code:
     ```bash
@@ -21,6 +30,8 @@ To configure a Google Cloud Platform project for this sample, the following role
 
 1. Edit `api_config.yaml`. Replace `MY_PROJECT_ID` with your project id.
 
+1. Edit `src/main/resources/cloud-sql.properties` according to the Cloud SQL instance configuration.
+
 1. Deploy a service config to Service Management:
 
     ```bash
@@ -33,6 +44,8 @@ To configure a Google Cloud Platform project for this sample, the following role
     ```bash
     gcloud container builds submit --tag gcr.io/${GCLOUD_PROJECT_NAME}/todolist-gce:1.0 .
     ```
+
+### Create and configure a Compute Engine instance
 
 1. Create a Compute Engine instance and ssh in:
 
