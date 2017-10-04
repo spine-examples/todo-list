@@ -19,7 +19,7 @@
  */
 
 
-final def SPINE_VERSION = '0.9.64-SNAPSHOT'
+final def SPINE_VERSION = '0.9.71-SNAPSHOT'
 
 project.ext {
     // TODOList version
@@ -27,6 +27,7 @@ project.ext {
 
     // Spine dependencies' versions
     spineVersion = SPINE_VERSION
+    spineJdbcStorageVersion = '0.9.64-SNAPSHOT'
     spineBaseVersion = '0.9.55-SNAPSHOT'
 
     // Main scope third party dependencies' versions
@@ -39,8 +40,9 @@ project.ext {
     servletApiVersion = '3.1.0'
     gcloudJavaVersion = '0.2.8'
     cloudSqlSocketFactoryVersion = '1.0.4'
+    mysqlDriverVersion = '6.0.6'
 
     // Test scope third party dependencies' versions
-    jUnitPlatformVersion = '1.0.0-RC3'
-    jUnitVersion = '5.0.0-RC3'
+    jUnitPlatformVersion = '1.0.0'
+    jUnitVersion = '5.0.0'
 }
