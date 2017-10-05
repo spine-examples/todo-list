@@ -25,18 +25,18 @@ import io.spine.cli.Screen;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.LocalClient.initCli;
+import static io.spine.examples.todolist.ClientApp.initCli;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static io.spine.test.Tests.nullRef;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@DisplayName("LocalClient should")
-class LocalClientTest {
+@DisplayName("ClientApp should")
+class ClientAppTest {
 
     @Test
     @DisplayName("have the private constructor")
     void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(LocalClient.class);
+        assertHasPrivateParameterlessCtor(ClientApp.class);
     }
 
     @Test

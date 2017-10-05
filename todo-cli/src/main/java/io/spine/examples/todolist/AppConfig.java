@@ -20,12 +20,12 @@
 
 package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.client.CommandLineTodoClient;
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.server.Server;
 
-import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Configuration of the client application.
@@ -34,19 +34,32 @@ import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
  */
 public class AppConfig {
 
-    private static final TodoClient CLIENT = new CommandLineTodoClient(HOST,
-                                                                       DEFAULT_CLIENT_SERVICE_PORT);
+    private static TodoClient todoClient = null;
 
     private AppConfig() {
         // Prevent instantiation of this class.
     }
 
+    public static void init(TodoClient client) {
+        if (todoClient != null) {
+            throw new IllegalStateException("AppConfig is already initialized.");
+        } else {
+            todoClient = checkNotNull(client);
+        }
+    }
+
+    @VisibleForTesting
+    public static void setClient(TodoClient client) {
+        todoClient = client;
+    }
+
     /**
      * Obtains {@link TodoClient} for communication with the {@link Server}.
      *
-     * @return the client interface
+     * @return the todoClient interface
      */
     public static TodoClient getClient() {
-        return CLIENT;
+        checkState(todoClient != null);
+        return todoClient;
     }
 }

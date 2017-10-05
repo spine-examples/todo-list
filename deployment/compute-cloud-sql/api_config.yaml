@@ -1,0 +1,32 @@
+#
+# An API configuration of Google Cloud Endpoints.
+#
+# Below, replace `MY_PROJECT_ID` with your Google Cloud Project ID.
+#
+
+# The configuration schema is defined by `service.proto` file
+# https://github.com/googleapis/googleapis/blob/master/google/api/service.proto
+type: google.api.Service
+config_version: 3
+
+#
+# The name of the service configuration.
+#
+name: todolist.endpoints.MY_PROJECT_ID.cloud.goog
+
+#
+# The API title to appear in the user interface (Google Cloud Console).
+#
+title: Todo list
+
+# Spine gRPC services.
+apis:
+  - name: spine.client.CommandService
+  - name: spine.client.QueryService
+  - name: spine.client.SubscriptionService
+
+usage:
+  rules:
+    # All the methods can be called without an API Key.
+    - selector: "*"
+      allow_unregistered_calls: true

@@ -16,3 +16,6 @@ project(':local-my-sql').projectDir = new File('./deployment/local-my-sql')
 
 include ':local-cloud-sql'
 project(':local-cloud-sql').projectDir = new File('./deployment/local-cloud-sql')
+
+include ':compute-cloud-sql'
+project(':compute-cloud-sql').projectDir = new File('./deployment/compute-cloud-sql')

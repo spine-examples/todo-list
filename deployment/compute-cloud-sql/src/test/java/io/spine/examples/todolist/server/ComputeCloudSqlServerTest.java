@@ -18,51 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.server;
 
-import io.spine.examples.todolist.client.CommandLineTodoClient;
-import io.spine.examples.todolist.client.TodoClient;
-import org.junit.jupiter.api.BeforeEach;
+import io.spine.server.BoundedContext;
+import io.spine.server.storage.StorageFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.AppConfig.init;
-import static io.spine.examples.todolist.AppConfig.setClient;
-import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
+import static io.spine.examples.todolist.server.ComputeCloudSqlServer.createBoundedContext;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
-import static io.spine.test.Tests.nullRef;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.Assert.assertFalse;
 
-/**
- * @author Dmytro Grankin
- */
-@DisplayName("AppConfig should")
-class AppConfigTest {
-
-    @BeforeEach
-    void setUp() {
-        setClient(nullRef());
-    }
+@DisplayName("ComputeCloudSqlServer should")
+class ComputeCloudSqlServerTest {
 
     @Test
     @DisplayName("have the private constructor")
     void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(AppConfig.class);
+        assertHasPrivateParameterlessCtor(ComputeCloudSqlServer.class);
     }
 
     @Test
-    @DisplayName("throw if was not initialized")
-    void throwIfWasNotInitialized() {
-        assertThrows(IllegalStateException.class, AppConfig::getClient);
-    }
-
-    @Test
-    @DisplayName("allow initialization only once")
-    void allowInitOnlyOnce() {
-        final TodoClient client = new CommandLineTodoClient(HOST, DEFAULT_CLIENT_SERVICE_PORT);
-        init(client);
-
-        assertThrows(IllegalStateException.class, () -> init(client));
+    @DisplayName("create signletenant BoundedContext")
+    void createSingletenantBoundedContext() {
+        final BoundedContext boundedContext = createBoundedContext();
+        final StorageFactory storageFactory = boundedContext.getStorageFactory();
+        assertFalse(storageFactory.isMultitenant());
     }
 }
