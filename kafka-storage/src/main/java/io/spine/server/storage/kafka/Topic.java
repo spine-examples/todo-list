@@ -111,4 +111,8 @@ public interface Topic {
     static Topic ofValue(String topicValue) {
         return new ValueTopic(topicValue);
     }
+
+    static Topic eventTopic() {
+        return Topics.EVENT_TOPIC;
+    }
 }

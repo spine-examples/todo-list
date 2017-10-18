@@ -23,6 +23,10 @@ package io.spine.examples.todolist.context;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
+import io.spine.core.EventClass;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
@@ -32,8 +36,14 @@ import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
 import io.spine.server.event.EventBus;
 import io.spine.server.event.EventEnricher;
+import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.StorageFactorySwitch;
+import io.spine.server.storage.kafka.io.spine.server.catchup.KafkaCatchUp;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.server.storage.StorageFactorySwitch.newInstance;
@@ -100,6 +110,8 @@ public final class BoundedContexts {
         final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
         final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
 
+        startCatchUp(myListViewRepo, tasksViewRepo, draftTasksViewRepo);
+
         final EventBus.Builder eventBus = createEventBus(storageFactory,
                                                          labelAggregateRepo,
                                                          taskRepo,
@@ -114,6 +126,30 @@ public final class BoundedContexts {
         boundedContext.register(draftTasksViewRepo);
 
         return boundedContext;
+    }
+
+    private static void startCatchUp(ProjectionRepository<?, ?, ?>... repos) {
+        final Multimap<EventClass, ProjectionRepository<?, ?, ?>> registry = HashMultimap.create();
+        for (ProjectionRepository<?, ?, ?> repo : repos) {
+            registerEventTypes(registry, repo);
+        }
+        final Multimap<EventClass, ProjectionRepository<?, ?, ?>> immutableRegistry =
+                ImmutableMultimap.copyOf(registry);
+        final Properties streamConfig = new Properties();
+        try {
+            final InputStream in = BoundedContexts.class.getClassLoader().getResourceAsStream("kafka-streams.properties");
+            streamConfig.load(in);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        KafkaCatchUp.start(immutableRegistry, streamConfig);
+    }
+
+    private static void registerEventTypes(
+            Multimap<EventClass, ProjectionRepository<?, ?, ?>> registry,
+            ProjectionRepository<?, ?, ?> repository) {
+        repository.getMessageClasses()
+                  .forEach(eventClass -> registry.put(eventClass, repository));
     }
 
     private static EventBus.Builder createEventBus(StorageFactory storageFactory,
