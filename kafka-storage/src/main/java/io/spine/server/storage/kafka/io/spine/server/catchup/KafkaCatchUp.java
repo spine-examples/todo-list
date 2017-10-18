@@ -36,6 +36,8 @@ import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KStreamBuilder;
 import org.apache.kafka.streams.kstream.TimeWindows;
+import org.apache.kafka.streams.kstream.Windows;
+import org.apache.kafka.streams.kstream.internals.TimeWindow;
 
 import java.util.Collection;
 import java.util.Map;
@@ -50,6 +52,9 @@ import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
  * @author Dmytro Dashenkov
  */
 public final class KafkaCatchUp {
+
+    private static final long WINDOW_SIZE_MS = 2000;
+    private static final Windows<TimeWindow> windows = TimeWindows.of(WINDOW_SIZE_MS);
 
     private KafkaCatchUp() {
         // Prevent utility class instantiation.
@@ -70,7 +75,7 @@ public final class KafkaCatchUp {
               .groupByKey()
               .aggregate(KafkaCatchUp::voidInstance,
                          KafkaCatchUp::aggregateAndCount,
-                         TimeWindows.of(2000),
+                         windows,
                          VoidSerde.INSTANCE);
         final KafkaStreams streams = new KafkaStreams(builder, streamConfig);
         streams.start();
