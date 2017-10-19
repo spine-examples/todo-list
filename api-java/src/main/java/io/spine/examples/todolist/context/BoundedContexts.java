@@ -39,7 +39,7 @@ import io.spine.server.event.EventEnricher;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.StorageFactorySwitch;
-import io.spine.server.storage.kafka.io.spine.server.catchup.KafkaCatchUp;
+import io.spine.server.catchup.KafkaCatchUp;
 
 import java.io.IOException;
 import java.io.InputStream;
