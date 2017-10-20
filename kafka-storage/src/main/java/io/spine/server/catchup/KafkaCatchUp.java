@@ -21,18 +21,17 @@
 package io.spine.server.catchup;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
 import com.google.protobuf.Message;
 import io.spine.core.Event;
 import io.spine.core.EventClass;
 import io.spine.core.EventEnvelope;
-import io.spine.core.Events;
 import io.spine.server.event.EventDispatcher;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.storage.kafka.KafkaWrapper;
 import io.spine.server.storage.kafka.Topic;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
+import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
@@ -41,17 +40,19 @@ import org.apache.kafka.streams.kstream.KStreamBuilder;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.apache.kafka.streams.kstream.Windows;
 import org.apache.kafka.streams.kstream.internals.TimeWindow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
-import static java.util.stream.Collectors.toSet;
 import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
+import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
 
 /**
  * @author Dmytro Dashenkov
@@ -65,53 +66,54 @@ public final class KafkaCatchUp {
         // Prevent utility class instantiation.
     }
 
-    public static void start(Multimap<EventClass, ProjectionRepository<?, ?, ?>> repoRegistry,
-                             Properties streamConfig) {
+    public static void start(ProjectionRepository<?, ?, ?> repository, Properties streamConfig) {
+        checkNotNull(repository);
+        final Properties config = copy(streamConfig);
+        final String repositoryKey = repositoryKey(repository);
+        config.setProperty(APPLICATION_ID_CONFIG, repositoryKey);
+        doStart(repository, repositoryKey, config);
+    }
+
+    private static void doStart(ProjectionRepository<?, ?, ?> repository,
+                                String repositoryKey,
+                                Properties streamConfig) {
         final KStreamBuilder builder = new KStreamBuilder();
         final Serde<Message> messageSerde = serdeFrom(serializer(), deserializer());
-        final String topicName = Topic.eventTopic().getName();
         final KStream<Message, Message> stream =
-                builder.stream(messageSerde, messageSerde, topicName);
-        stream.map((Message key, Message value) -> mapToRepositories(value, repoRegistry))
-              .filter((repos, event) -> !repos.isEmpty())
-              .flatMap((repos, event) -> repos.stream()
-                                              .map(repo -> new KeyValue<>(repo, event))
-                                              .collect(toSet()))
-              .groupByKey()
+                builder.stream(messageSerde, messageSerde, Topic.eventTopic().getName());
+        final Set<EventClass> handledClasses = repository.getMessageClasses();
+        stream.filter((key, value) -> handledClasses.contains(EventClass.of(value)))
+              .map((key, value) -> new KeyValue<>(repositoryKey, value))
+              .groupByKey(Serdes.String(), messageSerde)
               .aggregate(KafkaCatchUp::voidInstance,
-                         KafkaCatchUp::dispatchEvent,
+                         (key, value, aggregate) -> dispatchEvent(repository, (Event) value),
                          windows,
-                         VoidSerde.INSTANCE);
+                         VoidSerde.INSTANCE.cast());
         final KafkaStreams streams = new KafkaStreams(builder, streamConfig);
+        streams.cleanUp();
         streams.start();
+        log().info("Starting catch up for {} projection.", repositoryKey);
     }
 
-    private static KeyValue<Collection<ProjectionRepository<?, ?, ?>>, Event> mapToRepositories(
-            Message eventValue,
-            Multimap<EventClass, ProjectionRepository<?, ?, ?>> repoRegistry) {
-        final Event event = (Event) eventValue;
-        return new KeyValue<>(getRepos(event, repoRegistry), event);
-    }
-
-    private static Collection<ProjectionRepository<?, ?, ?>>
-    getRepos(Event event, Multimap<EventClass, ProjectionRepository<?, ?, ?>> repoRegistry) {
-        final EventClass eventCls = eventClass(event);
-        final Collection<ProjectionRepository<?, ?, ?>> result = repoRegistry.get(eventCls);
+    @SuppressWarnings("UseOfPropertiesAsHashtable") // OK in this case.
+    private static Properties copy(Properties properties) {
+        checkNotNull(properties);
+        final Properties result = new Properties();
+        result.putAll(properties);
         return result;
     }
 
-    private static EventClass eventClass(Event of) {
-        final Message eventMsg = Events.getMessage(of);
-        final EventClass eventCls = EventClass.of(eventMsg);
-        return eventCls;
-    }
-
     private static Void dispatchEvent(ProjectionRepository<?, ?, ?> repo,
-                                      Event event,
-                                      Void stub) {
+                                      Event event) {
         final EventEnvelope envelope = EventEnvelope.of(event);
         repo.dispatch(envelope);
-        return stub;
+        log().info("Dispatched event {} with {}.", envelope.getOuterObject(), repo.getClass().getName());
+        return voidInstance();
+    }
+
+    private static String repositoryKey(ProjectionRepository<?, ?, ?> repository) {
+        final String typeName = repository.getEntityStateType().getTypeName();
+        return typeName;
     }
 
     private static Void voidInstance() {
@@ -119,8 +121,8 @@ public final class KafkaCatchUp {
     }
 
     @SuppressWarnings("unchecked") // OK since the dispatcher never produces any IDs.
-    private static <I> EventDispatcher<I> dispatcher(Set<EventClass> messageClasses,
-                                                     KafkaWrapper kafka) {
+    public static <I> EventDispatcher<I> dispatcher(Set<EventClass> messageClasses,
+                                                    KafkaWrapper kafka) {
         return (EventDispatcher<I>) new KafkaEventDispatcher(messageClasses, kafka);
     }
 
@@ -155,7 +157,7 @@ public final class KafkaCatchUp {
         }
     }
 
-    private enum VoidSerde implements Serde<Void>, Serializer<Void>, Deserializer<Void> {
+    private enum VoidSerde implements Serde<Object>, Serializer<Object>, Deserializer<Object> {
 
         INSTANCE;
 
@@ -167,12 +169,12 @@ public final class KafkaCatchUp {
         }
 
         @Override
-        public byte[] serialize(String topic, Void data) {
+        public byte[] serialize(String topic, Object data) {
             return DATA;
         }
 
         @Override
-        public Void deserialize(String topic, byte[] data) {
+        public Object deserialize(String topic, byte[] data) {
             return voidInstance();
         }
 
@@ -182,13 +184,28 @@ public final class KafkaCatchUp {
         }
 
         @Override
-        public Serializer<Void> serializer() {
+        public Serializer<Object> serializer() {
             return this;
         }
 
         @Override
-        public Deserializer<Void> deserializer() {
+        public Deserializer<Object> deserializer() {
             return this;
         }
+
+        @SuppressWarnings("unchecked")
+        private <T> Serde<T> cast() {
+            return (Serde<T>) this;
+        }
+    }
+
+    private static Logger log() {
+        return LogSingleton.INSTANCE.value;
+    }
+
+    private enum LogSingleton {
+        INSTANCE;
+        @SuppressWarnings("NonSerializableFieldInSerializableClass")
+        private final Logger value = LoggerFactory.getLogger(KafkaCatchUp.class);
     }
 }

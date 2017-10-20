@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.locks.Lock;
@@ -46,8 +47,12 @@ import java.util.stream.StreamSupport;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.protobuf.TypeConverter.toMessage;
+import static io.spine.server.storage.kafka.Consistency.EVENTUAL;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
+import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
+import static io.spine.server.storage.kafka.MessageSerializer.serializer;
 import static java.lang.Long.compare;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toSet;
 
@@ -78,12 +83,38 @@ import static java.util.stream.Collectors.toSet;
  */
 public class KafkaWrapper {
 
+    public static final Duration DEFAULT_POLL_AWAIT = Duration.of(1, SECONDS);
+
     private final Producer<Message, Message> producer;
     private final Consumer<Message, Message> consumer;
     private final Consistency consistencyLevel;
     private final long pollAwait;
 
     private final Lock lock = new ReentrantLock();
+
+    // TODO:2017-10-19:dmytro.dashenkov: Document.
+    public static KafkaWrapper create(Properties producerConfig,
+                                      Properties consumerConfig) {
+        return create(producerConfig, consumerConfig, EVENTUAL, DEFAULT_POLL_AWAIT);
+    }
+
+    // TODO:2017-10-19:dmytro.dashenkov: Document.
+    public static KafkaWrapper create(Properties producerConfig,
+                                      Properties consumerConfig,
+                                      Consistency consistency,
+                                      Duration maxPollAwait) {
+        final KafkaProducer<Message, Message> producer = new KafkaProducer<>(producerConfig,
+                                                                             serializer(),
+                                                                             serializer());
+        final KafkaConsumer<Message, Message> consumer = new KafkaConsumer<>(consumerConfig,
+                                                                             deserializer(),
+                                                                             deserializer());
+        final KafkaWrapper kafkaWrapper = new KafkaWrapper(producer,
+                                                           consumer,
+                                                           consistency,
+                                                           maxPollAwait);
+        return kafkaWrapper;
+    }
 
     /**
      * Creates new instance of {@code KafkaWrapper}.
@@ -100,10 +131,10 @@ public class KafkaWrapper {
      *                         and non-{@linkplain Duration#isZero() zero}) duration; see
      *                         {@link Consumer#poll(long)} for more details
      */
-    public KafkaWrapper(Producer<Message, Message> producer,
-                        Consumer<Message, Message> consumer,
-                        Consistency consistencyLevel,
-                        Duration maxPollAwait) {
+    protected KafkaWrapper(Producer<Message, Message> producer,
+                           Consumer<Message, Message> consumer,
+                           Consistency consistencyLevel,
+                           Duration maxPollAwait) {
         this.producer = checkNotNull(producer);
         this.consumer = checkNotNull(consumer);
         this.consistencyLevel = checkNotNull(consistencyLevel);
