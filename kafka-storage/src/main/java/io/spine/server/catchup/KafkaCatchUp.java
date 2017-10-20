@@ -103,11 +103,12 @@ public final class KafkaCatchUp {
         return result;
     }
 
-    private static Void dispatchEvent(ProjectionRepository<?, ?, ?> repo,
-                                      Event event) {
+    private static Void dispatchEvent(ProjectionRepository<?, ?, ?> repo, Event event) {
         final EventEnvelope envelope = EventEnvelope.of(event);
         repo.dispatch(envelope);
-        log().info("Dispatched event {} with {}.", envelope.getOuterObject(), repo.getClass().getName());
+        log().info("Dispatched event {} with {}.",
+                   envelope.getOuterObject(),
+                   repo.getClass().getName());
         return voidInstance();
     }
 
