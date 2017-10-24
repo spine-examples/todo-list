@@ -9,6 +9,7 @@ dependencies {
     compile group: 'org.apache.kafka', name: 'kafka-streams', version: kafkaVersion
 
     testCompile group: 'io.spine', name: 'spine-server', version: spineVersion, classifier: 'test'
+    testCompile project(path: ':client')
 
     // Old JUnit used in core-java.
     compile 'org.junit.vintage:junit-vintage-engine:4.12.0'

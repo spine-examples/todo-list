@@ -24,6 +24,7 @@ import com.google.common.base.Optional;
 import com.google.protobuf.UInt32Value;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.AggregateEventRecord;
+import io.spine.server.aggregate.AggregateReadRequest;
 import io.spine.server.aggregate.AggregateStorage;
 import io.spine.server.entity.LifecycleFlags;
 
@@ -97,9 +98,10 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
     }
 
     @Override
-    protected Iterator<AggregateEventRecord> historyBackward(I id) {
+    protected Iterator<AggregateEventRecord> historyBackward(AggregateReadRequest<I> request) {
         checkNotClosed();
-        checkNotNull(id);
+        checkNotNull(request);
+        // TODO:2017-10-24:dmytro.dashenkov: Fix.
         final Topic topic = Topic.forAggregateRecord(aggregateClass);
         return storage.read(topic);
     }
