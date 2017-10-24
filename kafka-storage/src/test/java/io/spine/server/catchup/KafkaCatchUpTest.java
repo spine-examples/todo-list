@@ -27,6 +27,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.client.CommandLineTodoClient;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.TaskItem;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -53,6 +54,22 @@ class KafkaCatchUpTest {
     private final TodoClient client =
             new CommandLineTodoClient("localhost", DEFAULT_CLIENT_SERVICE_PORT);
 
+    /**
+     * Tests if the projection repositories get the events from the write side.
+     *
+     * <p>High level flow is as follows:
+     * <ol>
+     *     <li>Start Kafka brokers.
+     *     <li>Create topic for events with name {@code spine.core.Event}.
+     *     <li>Start TodoList server.
+     *     <li>Post several commands from the client.
+     *     <li>Fetch the projection state.
+     *     <li>Check the consistency of the read side with the write side.
+     * </ol>
+     *
+     * <p>Note that the first 3 items of the flow above are not performed automatically.
+     */
+    @Disabled("integration test with big context")
     @Test
     @DisplayName("handle concurrent commands")
     void testCommandInMultipleThreads() throws InterruptedException {
@@ -64,7 +81,7 @@ class KafkaCatchUpTest {
             executor.execute(() -> client.create(createTask(text)));
             taskTexts.add(text);
         }
-        executor.awaitTermination(5, SECONDS);
+        executor.awaitTermination(2, SECONDS);
 
         final Collection<TaskItem> tasks = client.getMyListView()
                                                  .getMyList()
@@ -72,7 +89,7 @@ class KafkaCatchUpTest {
         final Collection<String> taskContents = tasks.stream()
                                                      .map(task -> task.getDescription().getValue())
                                                      .collect(toList());
-        assertThat(taskTexts, containsInAnyOrder(taskContents.toArray(EMPTY_STRING_ARRAY)));
+        assertThat(taskContents, containsInAnyOrder(taskTexts.toArray(EMPTY_STRING_ARRAY)));
     }
 
     private static CreateBasicTask createTask(String text) {
