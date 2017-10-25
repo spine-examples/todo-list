@@ -1,5 +1,5 @@
 /*
- * Copyright 2016, TeamDev Ltd. All rights reserved.
+ * Copyright 2017, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,18 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    compile group: 'io.spine', name: 'jdbc-rdbms', version: '0.9.76-SNAPSHOT'
-    compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
+/**
+ * This package contains classes used to perform the read-side catch up basing on Kafka.
+ */
+@ParametersAreNonnullByDefault
+package io.spine.server.catchup;
 
-    compile project(path: ':server')
-}
-
-// A task to run the server. See `LocalJdbcServer` for the details.
-task runServer(dependsOn: jar, type: JavaExec) {
-    if(project.hasProperty('conf')){
-        args(conf.split(','))
-    }
-    main = 'io.spine.examples.todolist.server.LocalJdbcServer'
-    classpath = sourceSets.main.runtimeClasspath
-}
+import javax.annotation.ParametersAreNonnullByDefault;

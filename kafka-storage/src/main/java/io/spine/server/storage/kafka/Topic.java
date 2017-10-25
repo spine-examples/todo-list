@@ -111,4 +111,13 @@ public interface Topic {
     static Topic ofValue(String topicValue) {
         return new ValueTopic(topicValue);
     }
+
+    /**
+     * Creates a topic for all the events in the system.
+     *
+     * @return topic with name {@code spine.core.Event}
+     */
+    static Topic eventTopic() {
+        return Topics.EVENT_TOPIC;
+    }
 }

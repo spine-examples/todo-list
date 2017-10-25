@@ -80,7 +80,7 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
         // TODO:2017-09-04:dmytro.dashenkov: Optimize.
         final List<EntityRecord> records = newLinkedList();
         for (I id : ids) {
-            records.add(read(id).orNull());
+            records.add(readRecord(id).orNull());
         }
         return records.iterator();
     }
@@ -90,8 +90,8 @@ public class KafkaRecordStorage<I> extends RecordStorage<I> {
         // TODO:2017-09-04:dmytro.dashenkov: Optimize.
         final List<EntityRecord> records = newLinkedList();
         for (I id : ids) {
-            final EntityRecord record = read(id).transform(maskState(fieldMask)::apply)
-                                                .orNull();
+            final EntityRecord record = readRecord(id).transform(maskState(fieldMask)::apply)
+                                                      .orNull();
             records.add(record);
         }
         return records.iterator();

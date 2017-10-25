@@ -20,21 +20,12 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.server.BoundedContext;
-import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.kafka.KafkaStorageFactory;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.time.Duration;
-import java.util.Properties;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.context.BoundedContexts.create;
-import static io.spine.server.storage.kafka.Consistency.STRONG;
-import static java.time.temporal.ChronoUnit.MILLIS;
 
 /**
  * A local {@link Server} using {@link KafkaStorageFactory}.
@@ -46,50 +37,13 @@ import static java.time.temporal.ChronoUnit.MILLIS;
  */
 public class LocalKafkaServer {
 
-    private static final String KAFKA_PRODUCER_PROPS_PATH = "config/kafka-producer.properties";
-    private static final String KAFKA_CONSUMER_PROPS_PATH = "config/kafka-consumer.properties";
-    private static final Duration POLL_AWAIT = Duration.of(50, MILLIS);
-
     private LocalKafkaServer() {
         // Prevent utility class instantiation.
     }
 
     public static void main(String[] args) throws IOException {
-        final StorageFactory factory = createKafkaStorage();
-        final BoundedContext boundedContext = create(factory);
+        final BoundedContext boundedContext = KafkaBoundedContexts.create();
         final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
-    }
-
-    private static StorageFactory createKafkaStorage() {
-        final Properties producerConfig = loadProperties(KAFKA_PRODUCER_PROPS_PATH);
-        final Properties consumerConfig = loadProperties(KAFKA_CONSUMER_PROPS_PATH);
-        final StorageFactory result = KafkaStorageFactory.newBuilder()
-                                                         .setProducerConfig(producerConfig)
-                                                         .setConsumerConfig(consumerConfig)
-                                                         .setMaxPollAwait(POLL_AWAIT)
-                                                         .setConsistencyLevel(STRONG)
-                                                         .build();
-        return result;
-    }
-
-    /**
-     * Loads {@code .properties} file from the classpath by the given filename.
-     *
-     * <p>If the file is not found, an {@link NullPointerException} is thrown.
-     */
-    private static Properties loadProperties(String filename) {
-        final ClassLoader loader = BoundedContexts.class.getClassLoader();
-        final InputStream rawProperties = loader.getResourceAsStream(filename);
-        checkNotNull(rawProperties, "Could not load properties file %s from classpath.", filename);
-
-        final Properties result = new Properties();
-
-        try (InputStream props = rawProperties) {
-            result.load(props);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        return result;
     }
 }

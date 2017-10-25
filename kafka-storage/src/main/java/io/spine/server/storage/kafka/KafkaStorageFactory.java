@@ -20,7 +20,6 @@
 
 package io.spine.server.storage.kafka;
 
-import com.google.protobuf.Message;
 import com.google.protobuf.StringValue;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.AggregateStorage;
@@ -32,15 +31,11 @@ import io.spine.server.projection.Projection;
 import io.spine.server.projection.ProjectionStorage;
 import io.spine.server.stand.StandStorage;
 import io.spine.server.storage.StorageFactory;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
 
 import java.time.Duration;
 import java.util.Properties;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
-import static io.spine.server.storage.kafka.MessageSerializer.serializer;
 import static java.time.temporal.ChronoUnit.SECONDS;
 
 /**
@@ -68,10 +63,10 @@ public class KafkaStorageFactory implements StorageFactory {
                                   Properties consumerConfig,
                                   Consistency consistencyLevel,
                                   Duration maxPollAwait) {
-        this.storage = createStorage(producerConfig,
-                                     consumerConfig,
-                                     consistencyLevel,
-                                     maxPollAwait);
+        this.storage = KafkaWrapper.create(producerConfig,
+                                           consumerConfig,
+                                           consistencyLevel,
+                                           maxPollAwait);
     }
 
     private KafkaStorageFactory(Builder builder) {
@@ -79,23 +74,6 @@ public class KafkaStorageFactory implements StorageFactory {
              builder.consumerConfig,
              builder.consistencyLevel,
              builder.maxPollAwait);
-    }
-
-    private static KafkaWrapper createStorage(Properties producerConfig,
-                                              Properties consumerConfig,
-                                              Consistency consistencyLevel,
-                                              Duration maxPollAwait) {
-        final KafkaProducer<Message, Message> producer = new KafkaProducer<>(producerConfig,
-                                                                             serializer(),
-                                                                             serializer());
-        final KafkaConsumer<Message, Message> consumer = new KafkaConsumer<>(consumerConfig,
-                                                                             deserializer(),
-                                                                             deserializer());
-        final KafkaWrapper kafkaWrapper = new KafkaWrapper(producer,
-                                                           consumer,
-                                                           consistencyLevel,
-                                                           maxPollAwait);
-        return kafkaWrapper;
     }
 
     @Override

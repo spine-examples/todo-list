@@ -23,6 +23,7 @@ package io.spine.examples.todolist.context;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
+import io.spine.core.BoundedContextName;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
@@ -49,8 +50,10 @@ public final class BoundedContexts {
 
     /** The name of the Bounded Context. */
     private static final String NAME = "TodoListBoundedContext";
+    private static final BoundedContextName BOUNDED_CONTEXT_NAME = BoundedContext.newName(NAME);
 
-    private static final StorageFactorySwitch storageFactorySwitch = newInstance(NAME, false);
+    private static final StorageFactorySwitch storageFactorySwitch =
+            newInstance(BOUNDED_CONTEXT_NAME, false);
 
     @SuppressWarnings("Guava") // Spine Java 7 API.
     private static final Supplier<StorageFactory> FAILING_STORAGE_SUPPLIER = () -> {
@@ -93,6 +96,7 @@ public final class BoundedContexts {
      */
     public static BoundedContext create(StorageFactory storageFactory) {
         checkNotNull(storageFactory);
+
         final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
         final TaskRepository taskRepo = new TaskRepository();
         final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
@@ -105,7 +109,6 @@ public final class BoundedContexts {
                                                          taskRepo,
                                                          taskLabelsRepo);
         final BoundedContext boundedContext = createBoundedContext(eventBus);
-
         boundedContext.register(taskRepo);
         boundedContext.register(taskLabelsRepo);
         boundedContext.register(labelAggregateRepo);

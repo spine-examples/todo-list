@@ -35,6 +35,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.locks.Lock;
@@ -46,8 +47,12 @@ import java.util.stream.StreamSupport;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.protobuf.TypeConverter.toMessage;
+import static io.spine.server.storage.kafka.Consistency.EVENTUAL;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
+import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
+import static io.spine.server.storage.kafka.MessageSerializer.serializer;
 import static java.lang.Long.compare;
+import static java.time.temporal.ChronoUnit.SECONDS;
 import static java.util.Collections.singleton;
 import static java.util.stream.Collectors.toSet;
 
@@ -78,12 +83,70 @@ import static java.util.stream.Collectors.toSet;
  */
 public class KafkaWrapper {
 
+    public static final Duration DEFAULT_POLL_AWAIT = Duration.of(1, SECONDS);
+
     private final Producer<Message, Message> producer;
     private final Consumer<Message, Message> consumer;
     private final Consistency consistencyLevel;
     private final long pollAwait;
 
     private final Lock lock = new ReentrantLock();
+
+    /**
+     * Creates a new instance of {@code KafkaWrapper}.
+     *
+     * <p>This method is an overload of
+     * {@link #create(Properties, Properties, Consistency, Duration)} with the recommended values
+     * of the omitted arguments. A call to this method with parameters {@code producerConfig} and
+     * {@code consumerConfig} is equivalent to
+     * {@code KafkaWrapper.create(producerConfig, consumerConfig, Consistency.EVENTUAL, Duration.of(1, SECONDS))}.
+     * In other words, the resulting {@code KafkaWrapper} will block the thread on read ops for at
+     * most 1 second (approximately) and won't block it on write ops.
+     *
+     *
+     * @param producerConfig the Kafka producer config to use in the resulting {@code KafkaWrapper}
+     * @param consumerConfig the Kafka consumer config to use in the resulting {@code KafkaWrapper}
+     * @return a new instance of {@code KafkaWrapper}
+     */
+    public static KafkaWrapper create(Properties producerConfig,
+                                      Properties consumerConfig) {
+        return create(producerConfig, consumerConfig, EVENTUAL, DEFAULT_POLL_AWAIT);
+    }
+
+    /**
+     * Creates a new instance of {@code KafkaWrapper}.
+     *
+     * <p>The passed configs serve for instantiating {@link KafkaProducer} and
+     * {@link KafkaProducer} to use in the resulting {@code KafkaWrapper}.
+     *
+     * <p>Both the {@code KafkaProducer} and {@code KafkaProducer} use {@link MessageSerializer}
+     * for serialization and deserialization of both keys and values.
+     *
+     * @param producerConfig the Kafka producer config to use in the resulting {@code KafkaWrapper}
+     * @param consumerConfig the Kafka consumer config to use in the resulting {@code KafkaWrapper}
+     * @param consistency    the {@link Consistency} level; if set to
+     *                       {@link Consistency#STRONG STRONG}, the write operations on
+     *                       the resulting {@code KafkaWrapper} will be blocking
+     * @param maxPollAwait   the maximum time a read operation may block the calling thread for
+     *                       while waiting for the results
+     * @return a new instance of {@code KafkaWrapper}
+     */
+    public static KafkaWrapper create(Properties producerConfig,
+                                      Properties consumerConfig,
+                                      Consistency consistency,
+                                      Duration maxPollAwait) {
+        final KafkaProducer<Message, Message> producer = new KafkaProducer<>(producerConfig,
+                                                                             serializer(),
+                                                                             serializer());
+        final KafkaConsumer<Message, Message> consumer = new KafkaConsumer<>(consumerConfig,
+                                                                             deserializer(),
+                                                                             deserializer());
+        final KafkaWrapper kafkaWrapper = new KafkaWrapper(producer,
+                                                           consumer,
+                                                           consistency,
+                                                           maxPollAwait);
+        return kafkaWrapper;
+    }
 
     /**
      * Creates new instance of {@code KafkaWrapper}.
@@ -100,10 +163,10 @@ public class KafkaWrapper {
      *                         and non-{@linkplain Duration#isZero() zero}) duration; see
      *                         {@link Consumer#poll(long)} for more details
      */
-    public KafkaWrapper(Producer<Message, Message> producer,
-                        Consumer<Message, Message> consumer,
-                        Consistency consistencyLevel,
-                        Duration maxPollAwait) {
+    protected KafkaWrapper(Producer<Message, Message> producer,
+                           Consumer<Message, Message> consumer,
+                           Consistency consistencyLevel,
+                           Duration maxPollAwait) {
         this.producer = checkNotNull(producer);
         this.consumer = checkNotNull(consumer);
         this.consistencyLevel = checkNotNull(consistencyLevel);

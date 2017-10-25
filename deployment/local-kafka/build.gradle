@@ -19,7 +19,6 @@
  */
 
 dependencies {
-    compile group: 'io.spine', name: 'jdbc-rdbms', version: spineVersion
     compile project(path: ':kafka-storage')
     compile project(path: ':server')
 }
