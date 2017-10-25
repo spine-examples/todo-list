@@ -101,7 +101,7 @@ public class KafkaWrapper {
      * {@code consumerConfig} is equivalent to
      * {@code KafkaWrapper.create(producerConfig, consumerConfig, Consistency.EVENTUAL, Duration.of(1, SECONDS))}.
      * In other words, the resulting {@code KafkaWrapper} will block the thread on read ops for at
-     * most 1 second (approximately) and won't block it on write operations.
+     * most 1 second (approximately) and won't block it on write ops.
      *
      *
      * @param producerConfig the Kafka producer config to use in the resulting {@code KafkaWrapper}
