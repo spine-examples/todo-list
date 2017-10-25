@@ -102,6 +102,7 @@ public class KafkaAggregateStorage<I> extends AggregateStorage<I> {
         checkNotClosed();
         checkNotNull(request);
         // TODO:2017-10-24:dmytro.dashenkov: Fix.
+        // https://github.com/SpineEventEngine/todo-list/issues/37
         final Topic topic = Topic.forAggregateRecord(aggregateClass);
         return storage.read(topic);
     }
