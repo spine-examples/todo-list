@@ -20,30 +20,36 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.server.BoundedContext;
-import io.spine.server.storage.kafka.KafkaStorageFactory;
+import io.spine.examples.todolist.context.BoundedContexts;
 
 import java.io.IOException;
-
-import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
- * A local {@link Server} using {@link KafkaStorageFactory}.
- *
- * <p>The server exposes its {@code gRPC API} at
- * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
+ * A utility for working with the config files contained in the classpath.
  *
  * @author Dmytro Dashenkov
  */
-public class LocalKafkaServer {
+final class ConfigFiles {
 
-    private LocalKafkaServer() {
+    private ConfigFiles() {
         // Prevent utility class instantiation.
     }
 
-    public static void main(String[] args) throws IOException {
-        final BoundedContext boundedContext = KafkaBoundedContexts.create();
-        final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
-        server.start();
+    /**
+     * Reads a {@code .properties} file from the classpath by the given path.
+     *
+     * @param path the file path (including extension)
+     * @return the loaded {@link Properties}
+     */
+    static Properties loadConfig(String path) {
+        final Properties props = new Properties();
+        try (InputStream in = BoundedContexts.class.getClassLoader().getResourceAsStream(path)) {
+            props.load(in);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        return props;
     }
 }

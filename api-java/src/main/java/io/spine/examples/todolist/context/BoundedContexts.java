@@ -24,7 +24,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import io.spine.core.BoundedContextName;
-import io.spine.core.EventClass;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
@@ -32,25 +31,14 @@ import io.spine.examples.todolist.repository.MyListViewRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
-import io.spine.server.catchup.KafkaCatchUp;
 import io.spine.server.event.EventBus;
-import io.spine.server.event.EventDispatcher;
 import io.spine.server.event.EventEnricher;
-import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.StorageFactorySwitch;
-import io.spine.server.storage.kafka.KafkaWrapper;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-import java.util.Set;
-import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.server.storage.StorageFactorySwitch.newInstance;
 import static io.spine.util.Exceptions.newIllegalStateException;
-import static java.util.stream.Collectors.toSet;
 
 /**
  * Utilities for creation the {@link BoundedContext} instances.
@@ -108,14 +96,13 @@ public final class BoundedContexts {
      */
     public static BoundedContext create(StorageFactory storageFactory) {
         checkNotNull(storageFactory);
+
         final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
         final TaskRepository taskRepo = new TaskRepository();
         final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
         final MyListViewRepository myListViewRepo = new MyListViewRepository();
         final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
         final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
-
-        startCatchUp(myListViewRepo, tasksViewRepo, draftTasksViewRepo);
 
         final EventBus.Builder eventBus = createEventBus(storageFactory,
                                                          labelAggregateRepo,
@@ -129,37 +116,7 @@ public final class BoundedContexts {
         boundedContext.register(tasksViewRepo);
         boundedContext.register(draftTasksViewRepo);
 
-        final EventBus bus = boundedContext.getEventBus();
-        bus.unregister(myListViewRepo);
-        bus.unregister(tasksViewRepo);
-        bus.unregister(draftTasksViewRepo);
-
-        final EventDispatcher<?> dispatcher = createDispatcher(myListViewRepo,
-                                                               tasksViewRepo,
-                                                               draftTasksViewRepo);
-        boundedContext.getEventBus().register(dispatcher);
-
         return boundedContext;
-    }
-
-    private static EventDispatcher<?> createDispatcher(EventDispatcher<?>... typeSuppliers) {
-        final Set<EventClass> eventClasses =
-                Stream.of(typeSuppliers)
-                      .flatMap(dispatcher -> dispatcher.getMessageClasses().stream())
-                      .distinct()
-                      .collect(toSet());
-        final KafkaWrapper kafkaWrapper = KafkaWrapper.create(
-                loadProps("config/kafka-producer.properties"),
-                loadProps("config/kafka-consumer.properties"));
-        final EventDispatcher<?> dispatcher = KafkaCatchUp.dispatcher(eventClasses, kafkaWrapper);
-        return dispatcher;
-    }
-
-    private static void startCatchUp(ProjectionRepository<?, ?, ?>... repos) {
-        final Properties config = loadProps("kafka-streams.properties");
-        for (ProjectionRepository<?, ?, ?> repo : repos) {
-            KafkaCatchUp.start(repo, config);
-        }
     }
 
     private static EventBus.Builder createEventBus(StorageFactory storageFactory,
@@ -210,15 +167,5 @@ public final class BoundedContexts {
                              .setName(NAME)
                              .setEventBus(eventBus)
                              .build();
-    }
-
-    private static Properties loadProps(String path) {
-        final Properties props = new Properties();
-        try (InputStream in = BoundedContexts.class.getClassLoader().getResourceAsStream(path)) {
-            props.load(in);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        return props;
     }
 }
