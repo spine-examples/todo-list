@@ -34,8 +34,9 @@ import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.kafka.KafkaStorageFactory;
 import io.spine.server.storage.kafka.KafkaWrapper;
-import io.spine.server.storage.memory.InMemoryStorageFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Properties;
@@ -67,8 +68,8 @@ final class KafkaBoundedContexts {
     private static final Properties consumerConfig;
 
     static {
-        producerConfig = Configurations.load(KAFKA_PRODUCER_PROPS_PATH);
-        consumerConfig = Configurations.load(KAFKA_CONSUMER_PROPS_PATH);
+        producerConfig = loadConfig(KAFKA_PRODUCER_PROPS_PATH);
+        consumerConfig = loadConfig(KAFKA_CONSUMER_PROPS_PATH);
         storageFactory = KafkaStorageFactory.newBuilder()
                                             .setProducerConfig(producerConfig)
                                             .setConsumerConfig(consumerConfig)
@@ -95,7 +96,7 @@ final class KafkaBoundedContexts {
             "ConstantConditions" // Checked within the stream via filter(...).
     })
     static BoundedContext create() {
-        final BoundedContext boundedContext = BoundedContexts.create(InMemoryStorageFactory.newInstance(BoundedContext.newName("test"), false));
+        final BoundedContext boundedContext = BoundedContexts.create(storageFactory);
         final Collection<ProjectionRepository<?, ?, ?>> projectionRepos =
                 Stream.of(MyListView.class, LabelledTasksView.class, DraftTasksView.class)
                       .map(boundedContext::findRepository)
@@ -122,9 +123,26 @@ final class KafkaBoundedContexts {
     }
 
     private static void startCatchUp(Collection<ProjectionRepository<?, ?, ?>> repos) {
-        final Properties config = Configurations.load(KAFKA_STREAMS_PROPS_PATH);
+        final Properties config = loadConfig(KAFKA_STREAMS_PROPS_PATH);
         for (ProjectionRepository<?, ?, ?> repo : repos) {
             KafkaCatchUp.start(repo, config);
         }
+    }
+
+    /**
+     * Reads a {@code .properties} file from the classpath by the given path.
+     *
+     * @param path the file path (including extension)
+     * @return the loaded {@link Properties}
+     */
+    private static Properties loadConfig(String path) {
+        final ClassLoader loader = KafkaBoundedContexts.class.getClassLoader();
+        final Properties props = new Properties();
+        try (InputStream in = loader.getResourceAsStream(path)) {
+            props.load(in);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        return props;
     }
 }
