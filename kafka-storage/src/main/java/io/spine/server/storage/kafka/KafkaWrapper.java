@@ -92,13 +92,45 @@ public class KafkaWrapper {
 
     private final Lock lock = new ReentrantLock();
 
-    // TODO:2017-10-19:dmytro.dashenkov: Document.
+    /**
+     * Creates a new instance of {@code KafkaWrapper}.
+     *
+     * <p>This method is an overload of
+     * {@link #create(Properties, Properties, Consistency, Duration)} with the recommended values
+     * of the missing arguments. A call to this method with parameters {@code producerConfig} and
+     * {@code consumerConfig} is equivalent to
+     * {@code KafkaWrapper.create(producerConfig, consumerConfig, Consistency.EVENTUAL, Duration.of(1, SECONDS))}.
+     * In other words, the resulting {@code KafkaWrapper} will block the thread on read ops for at
+     * most 1 second (approximately) and won't block it on write operations.
+     *
+     *
+     * @param producerConfig the Kafka producer config to use in the resulting {@code KafkaWrapper}
+     * @param consumerConfig the Kafka consumer config to use in the resulting {@code KafkaWrapper}
+     * @return a new instance of {@code KafkaWrapper}
+     */
     public static KafkaWrapper create(Properties producerConfig,
                                       Properties consumerConfig) {
         return create(producerConfig, consumerConfig, EVENTUAL, DEFAULT_POLL_AWAIT);
     }
 
-    // TODO:2017-10-19:dmytro.dashenkov: Document.
+    /**
+     * Creates a new instance of {@code KafkaWrapper}.
+     *
+     * <p>The passed configs serve for instantiating {@link KafkaProducer} and
+     * {@link KafkaProducer} to use in the resulting {@code KafkaWrapper}.
+     *
+     * <p>Both the {@code KafkaProducer} and {@code KafkaProducer} use {@link MessageSerializer}
+     * for serialization and deserialization of both keys and values.
+     *
+     * @param producerConfig the Kafka producer config to use in the resulting {@code KafkaWrapper}
+     * @param consumerConfig the Kafka consumer config to use in the resulting {@code KafkaWrapper}
+     * @param consistency    the {@link Consistency} level; if set to
+     *                       {@link Consistency#STRONG STRONG}, the write operations on
+     *                       the resulting {@code KafkaWrapper} will be blocking
+     * @param maxPollAwait   the maximum time a read operation may block the calling thread for
+     *                       while waiting for the results
+     * @return a new instance of {@code KafkaWrapper}
+     */
     public static KafkaWrapper create(Properties producerConfig,
                                       Properties consumerConfig,
                                       Consistency consistency,
