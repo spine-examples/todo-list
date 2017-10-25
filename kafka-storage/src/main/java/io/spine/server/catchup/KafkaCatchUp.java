@@ -110,7 +110,7 @@ public final class KafkaCatchUp {
      * <a href="https://kafka.apache.org/documentation/streams/">Kafka Stream topology</a>.
      * It's recommended that the source topic with name {@link Topic#eventTopic() spine.core.Event}
      * exists before this method is called; otherwise the catch up process might be delayed while
-     * Kafka is creating the topic. The created topology may create intermediate topics.
+     * Kafka is creating the topic. The new topology may spawn intermediate topics.
      *
      * <p>As soon as the topology is started, the events from the write side will be dispatched to
      * read side.
