@@ -25,13 +25,13 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * A utility for working with the config files contained in the classpath.
+ * A utility for working with the configuration files contained in the classpath.
  *
  * @author Dmytro Dashenkov
  */
-final class ConfigFiles {
+final class Configurations {
 
-    private ConfigFiles() {
+    private Configurations() {
         // Prevent utility class instantiation.
     }
 
@@ -41,9 +41,9 @@ final class ConfigFiles {
      * @param path the file path (including extension)
      * @return the loaded {@link Properties}
      */
-    static Properties loadConfig(String path) {
+    static Properties load(String path) {
         final Properties props = new Properties();
-        try (InputStream in = ConfigFiles.class.getClassLoader().getResourceAsStream(path)) {
+        try (InputStream in = Configurations.class.getClassLoader().getResourceAsStream(path)) {
             props.load(in);
         } catch (IOException e) {
             throw new IllegalStateException(e);

@@ -62,10 +62,12 @@ final class KafkaBoundedContexts {
     private static final String KAFKA_STREAMS_PROPS_PATH = "config/kafka-streams.properties";
     private static final Duration POLL_AWAIT = Duration.of(50, MILLIS);
     private static final StorageFactory storageFactory;
+    private static final Properties producerConfig;
+    private static final Properties consumerConfig;
 
     static {
-        final Properties producerConfig = ConfigFiles.loadConfig(KAFKA_PRODUCER_PROPS_PATH);
-        final Properties consumerConfig = ConfigFiles.loadConfig(KAFKA_CONSUMER_PROPS_PATH);
+        producerConfig = Configurations.load(KAFKA_PRODUCER_PROPS_PATH);
+        consumerConfig = Configurations.load(KAFKA_CONSUMER_PROPS_PATH);
         storageFactory = KafkaStorageFactory.newBuilder()
                                             .setProducerConfig(producerConfig)
                                             .setConsumerConfig(consumerConfig)
@@ -113,15 +115,13 @@ final class KafkaBoundedContexts {
                              .flatMap(dispatcher -> dispatcher.getMessageClasses().stream())
                              .distinct()
                              .collect(toSet());
-        final KafkaWrapper kafkaWrapper = KafkaWrapper.create(
-                ConfigFiles.loadConfig(KAFKA_PRODUCER_PROPS_PATH),
-                ConfigFiles.loadConfig(KAFKA_CONSUMER_PROPS_PATH));
+        final KafkaWrapper kafkaWrapper = KafkaWrapper.create(producerConfig, consumerConfig);
         final EventDispatcher<?> dispatcher = KafkaCatchUp.dispatcher(eventClasses, kafkaWrapper);
         eventBus.register(dispatcher);
     }
 
     private static void startCatchUp(Collection<ProjectionRepository<?, ?, ?>> repos) {
-        final Properties config = ConfigFiles.loadConfig(KAFKA_STREAMS_PROPS_PATH);
+        final Properties config = Configurations.load(KAFKA_STREAMS_PROPS_PATH);
         for (ProjectionRepository<?, ?, ?> repo : repos) {
             KafkaCatchUp.start(repo, config);
         }
