@@ -19,7 +19,7 @@
  */
 
 dependencies {
-    compile group: 'io.spine', name: 'jdbc-rdbms', version: spineVersion
+    compile group: 'io.spine', name: 'jdbc-rdbms', version: '0.9.76-SNAPSHOT'
     compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.6'
 
     compile project(path: ':server')
