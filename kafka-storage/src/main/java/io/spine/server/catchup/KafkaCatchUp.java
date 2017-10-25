@@ -69,7 +69,7 @@ import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
  *     name {@code spine.core.Event}.
  *     <li>All the events are grouped by the target {@code ProjectionRepository} and dispatched
  *     into the repository synchronously.
- *     <li>The repository handles the events by their own.
+ *     <li>The repository handles the events by its own.
  * </ol>
  *
  * @author Dmytro Dashenkov
@@ -94,7 +94,7 @@ public final class KafkaCatchUp {
      * The source topic with name {@link Topic#eventTopic() spine.core.Event} should exist before
      * this method is called. The topology may create intermediate topics.
      *
-     * <p>As soon as the topology is started, the event from the write side will be dispatched to
+     * <p>As soon as the topology is started, the events from the write side will be dispatched to
      * read side.
      *
      * <p>In case if you are adding a new Projection type to the system, no specific steps are
@@ -189,7 +189,7 @@ public final class KafkaCatchUp {
     }
 
     /**
-     * Creates an event dispatcher publishing all the retrieves events into Kafka
+     * Creates an event dispatcher publishing all the retrieved events into Kafka
      * {@link Topic#eventTopic() spine.core.Event} topic.
      *
      * <p>It's required to {@linkplain io.spine.server.event.EventBus#register register} this
@@ -243,7 +243,7 @@ public final class KafkaCatchUp {
          * topic as a key-value pair:
          * {@link EventEnvelope#getId()} -> {@link EventEnvelope#getOuterObject()}.
          *
-         * @return empty {@link Collection}
+         * @return an empty set
          */
         @Override
         public Set<Object> dispatch(EventEnvelope envelope) {
@@ -268,7 +268,7 @@ public final class KafkaCatchUp {
 
     /**
      * A {@link Serde} implementation as well as {@link Serializer} and {@link Deserializer}
-     * implementation for {@link Object}.
+     * implementation for type {@link Object}.
      *
      * <p>As a {@link Serializer}, transforms any object including {@code null}s into an empty byte
      * array.

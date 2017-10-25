@@ -18,6 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * This package contains classes used to perform the read-side catch up basing on Kafka.
+ */
 @ParametersAreNonnullByDefault
 package io.spine.server.catchup;
 
