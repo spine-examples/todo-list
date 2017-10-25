@@ -70,7 +70,7 @@ import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
  *     name {@code spine.core.Event}.
  *     <li>All the events are grouped by the target {@code ProjectionRepository} and dispatched
  *     into the repository synchronously.
- *     <li>The repository handles the events by its own.
+ *     <li>The repository handles the events on its own.
  * </ol>
  *
  * @author Dmytro Dashenkov
@@ -202,7 +202,7 @@ public final class KafkaCatchUp {
     }
 
     /**
-     * Returns {@code null}; performs to action.
+     * Returns {@code null}; performs no action.
      *
      * <p>Use this method as a stub when an instance of {@link Void} is required.
      *
