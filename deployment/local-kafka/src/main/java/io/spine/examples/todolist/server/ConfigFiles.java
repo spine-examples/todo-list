@@ -20,8 +20,6 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.examples.todolist.context.BoundedContexts;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -45,7 +43,7 @@ final class ConfigFiles {
      */
     static Properties loadConfig(String path) {
         final Properties props = new Properties();
-        try (InputStream in = BoundedContexts.class.getClassLoader().getResourceAsStream(path)) {
+        try (InputStream in = ConfigFiles.class.getClassLoader().getResourceAsStream(path)) {
             props.load(in);
         } catch (IOException e) {
             throw new IllegalStateException(e);
