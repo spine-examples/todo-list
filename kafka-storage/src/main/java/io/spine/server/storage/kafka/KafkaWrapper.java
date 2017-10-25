@@ -97,7 +97,7 @@ public class KafkaWrapper {
      *
      * <p>This method is an overload of
      * {@link #create(Properties, Properties, Consistency, Duration)} with the recommended values
-     * of the missing arguments. A call to this method with parameters {@code producerConfig} and
+     * of the omitted arguments. A call to this method with parameters {@code producerConfig} and
      * {@code consumerConfig} is equivalent to
      * {@code KafkaWrapper.create(producerConfig, consumerConfig, Consistency.EVENTUAL, Duration.of(1, SECONDS))}.
      * In other words, the resulting {@code KafkaWrapper} will block the thread on read ops for at

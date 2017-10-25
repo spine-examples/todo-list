@@ -34,6 +34,7 @@ import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.kafka.KafkaStorageFactory;
 import io.spine.server.storage.kafka.KafkaWrapper;
+import io.spine.server.storage.memory.InMemoryStorageFactory;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -94,7 +95,7 @@ final class KafkaBoundedContexts {
             "ConstantConditions" // Checked within the stream via filter(...).
     })
     static BoundedContext create() {
-        final BoundedContext boundedContext = BoundedContexts.create(storageFactory);
+        final BoundedContext boundedContext = BoundedContexts.create(InMemoryStorageFactory.newInstance(BoundedContext.newName("test"), false));
         final Collection<ProjectionRepository<?, ?, ?>> projectionRepos =
                 Stream.of(MyListView.class, LabelledTasksView.class, DraftTasksView.class)
                       .map(boundedContext::findRepository)

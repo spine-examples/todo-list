@@ -44,6 +44,7 @@ import org.apache.kafka.streams.kstream.Windows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -76,7 +77,23 @@ import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
  */
 public final class KafkaCatchUp {
 
+    /**
+     * The Kafka Streams {@link org.apache.kafka.streams.kstream.Window Window} size.
+     *
+     * @see #windows
+     */
     private static final long WINDOW_SIZE_MS = 2000;
+
+    /**
+     * The Kafka Streams {@linkplain Windows Window factory}.
+     *
+     * <p>This factory is used to window the events during the catch up.
+     *
+     * <p>The events are widowed by non-overlapping 2 second windows and then processed. This
+     * allows us to reduce the time lap between the events which were produced chronologically
+     * closely, but, for some reason, arrive to the processing topology with a more significant
+     * time distance.
+     */
     private static final Windows<?> windows = TimeWindows.of(WINDOW_SIZE_MS);
 
     private KafkaCatchUp() {
@@ -89,10 +106,11 @@ public final class KafkaCatchUp {
      * <p>Call this method on the server start up for all the Projection Repositories or when
      * setting up a repository of a new projection type.
      *
-     * <p>This method starts a
+     * <p>This method builds and starts a
      * <a href="https://kafka.apache.org/documentation/streams/">Kafka Stream topology</a>.
-     * The source topic with name {@link Topic#eventTopic() spine.core.Event} should exist before
-     * this method is called. The topology may create intermediate topics.
+     * It's recommended that the source topic with name {@link Topic#eventTopic() spine.core.Event}
+     * exists before this method is called; otherwise the catch up process might be delayed while
+     * Kafka is creating the topic. The created topology may create intermediate topics.
      *
      * <p>As soon as the topology is started, the events from the write side will be dispatched to
      * read side.
@@ -104,10 +122,10 @@ public final class KafkaCatchUp {
      * <p>The passed {@code streamConfig} should not contain {@code application.id} attribute, as
      * it's assigned automatically depending on the repository type.
      *
-     * <p>Note: it may take a few seconds before the Kafka Streams topology starts serving. Do not
-     * rely on an immediate start.
+     * <p>It may take a few seconds before the Kafka Streams topology starts serving. Do not rely
+     * on an immediate start.
      *
-     * <p>Note: it is required to add {@linkplain #dispatcher Kafka event dispatcher} to
+     * <p>It is required to add {@linkplain #dispatcher Kafka event dispatcher} to
      * the {@link io.spine.server.event.EventBus EventBus} to make the Kafka catch up work.
      *
      * @param repository   the {@link ProjectionRepository} to catch up
@@ -165,7 +183,9 @@ public final class KafkaCatchUp {
      *
      * @param repo  the {@link ProjectionRepository} to dispatch the event with
      * @param event the event to dispatch
+     * @return {@link #voidInstance()}
      */
+    @Nullable
     private static Void dispatchEvent(ProjectionRepository<?, ?, ?> repo, Event event) {
         final EventEnvelope envelope = EventEnvelope.of(event);
         repo.dispatch(envelope);
@@ -182,8 +202,13 @@ public final class KafkaCatchUp {
     }
 
     /**
-     * @return an instance of {@link Void} class at compile time and {@code null} at runtime.
+     * Returns {@code null}; performs to action.
+     *
+     * <p>Use this method as a stub when an instance of {@link Void} is required.
+     *
+     * @return always {@code null}
      */
+    @Nullable
     private static Void voidInstance() {
         return null;
     }
@@ -304,7 +329,7 @@ public final class KafkaCatchUp {
          * @return empty byte array
          */
         @Override
-        public byte[] serialize(String topic, Object data) {
+        public byte[] serialize(String topic, @Nullable Object data) {
             return DATA;
         }
 
@@ -316,6 +341,7 @@ public final class KafkaCatchUp {
          *
          * @return {@link #voidInstance()}
          */
+        @Nullable
         @Override
         public Object deserialize(String topic, byte[] data) {
             return voidInstance();
