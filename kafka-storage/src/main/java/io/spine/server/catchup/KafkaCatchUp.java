@@ -65,9 +65,9 @@ import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
  * <p>The general flow of the catch up is following:
  * <ol>
  *     <li>An event is dispatched by the {@link io.spine.server.event.EventBus EventBus} into
- *     the {@linkplain #dispatcher(Collection, KafkaWrapper) Kafka event dispatcher}.
+ *     the {@link KafkaEventDispatcher}.
  *     <li>The dispatcher publishes the event into a dedicated Kafka {@linkplain Topic topic} with
- *     name {@code spine.core.Event}.
+ *     name {@code R.spine.core.Event}.
  *     <li>All the events are grouped by the target {@code ProjectionRepository} and dispatched
  *     into the repository synchronously.
  *     <li>The repository handles the events on its own.
@@ -83,6 +83,8 @@ public final class KafkaCatchUp {
      * @see #windows
      */
     private static final long WINDOW_SIZE_MS = 2000;
+
+    private static final Topic EVENT_TOPIC = Topic.ofValue("R.spine.core.Event");
 
     /**
      * The Kafka Streams {@linkplain Windows Window factory}.
@@ -108,7 +110,7 @@ public final class KafkaCatchUp {
      *
      * <p>This method builds and starts a
      * <a href="https://kafka.apache.org/documentation/streams/">Kafka Stream topology</a>.
-     * It's recommended that the source topic with name {@link Topic#eventTopic() spine.core.Event}
+     * It's recommended that the source topic with name {@code R.spine.core.Event}
      * exists before this method is called; otherwise the catch up process might be delayed while
      * Kafka is creating the topic. The new topology may spawn intermediate topics.
      *
@@ -117,7 +119,7 @@ public final class KafkaCatchUp {
      *
      * <p>In case if you are adding a new Projection type to the system, no specific steps are
      * required. The newly created topology will start processing from the first event found in
-     * {@code spine.core.Event} topic.
+     * {@code R.spine.core.Event} topic.
      *
      * <p>The passed {@code streamConfig} should not contain {@code application.id} attribute, as
      * it's assigned automatically depending on the repository type.
@@ -125,13 +127,13 @@ public final class KafkaCatchUp {
      * <p>It may take a few seconds before the Kafka Streams topology starts serving. Do not rely
      * on an immediate start.
      *
-     * <p>It is required to add {@linkplain #dispatcher Kafka event dispatcher} to
+     * <p>It is required to add {@link KafkaEventDispatcher} to
      * the {@link io.spine.server.event.EventBus EventBus} to make the Kafka catch up work.
      *
      * @param repository   the {@link ProjectionRepository} to catch up
      * @param streamConfig the Kafka Streams configuration containing {@code bootstrap.servers}
      *                     property and (optionally) other Streams configs
-     * @see #dispatcher(Collection, KafkaWrapper)
+     * @see KafkaEventDispatcher
      */
     public static void start(ProjectionRepository<?, ?, ?> repository, Properties streamConfig) {
         checkNotNull(repository);
@@ -147,7 +149,7 @@ public final class KafkaCatchUp {
         final KStreamBuilder builder = new KStreamBuilder();
         final Serde<Message> messageSerde = serdeFrom(serializer(), deserializer());
         final KStream<Message, Message> stream =
-                builder.stream(messageSerde, messageSerde, Topic.eventTopic().getName());
+                builder.stream(messageSerde, messageSerde, EVENT_TOPIC.getName());
         stream.filter((key, value) -> handledClasses.contains(EventClass.of(value)))
               .map((key, value) -> new KeyValue<>(repositoryKey, value))
               .groupByKey(Serdes.String(), messageSerde)
@@ -215,7 +217,7 @@ public final class KafkaCatchUp {
 
     /**
      * Creates an event dispatcher publishing all the retrieved events into Kafka
-     * {@link Topic#eventTopic() spine.core.Event} topic.
+     * {@code R.spine.core.Event} topic.
      *
      * <p>It's required to {@linkplain io.spine.server.event.EventBus#register register} this
      * dispatcher in your {@code EventBus} to make Kafka-based catch up work properly.
@@ -238,8 +240,8 @@ public final class KafkaCatchUp {
     }
 
     /**
-     * An event dispatcher publishing the dispatched events into the
-     * {@link Topic#eventTopic() spine.core.Event} topic.
+     * An event dispatcher publishing the dispatched events into the {@code R.spine.core.Event}
+     * topic.
      *
      * @see #dispatcher(Collection, KafkaWrapper) for external instantiation
      */
@@ -264,7 +266,7 @@ public final class KafkaCatchUp {
          * {@inheritDoc}
          *
          * @implSpec
-         * Publishes the given {@linkplain EventEnvelope event} into the {@code spine.core.Event}
+         * Publishes the given {@linkplain EventEnvelope event} into the {@code R.spine.core.Event}
          * topic as a key-value pair:
          * {@link EventEnvelope#getId()} -> {@link EventEnvelope#getOuterObject()}.
          *
@@ -274,7 +276,7 @@ public final class KafkaCatchUp {
         public Set<Object> dispatch(EventEnvelope envelope) {
             final Message id = envelope.getId();
             final Message event = envelope.getOuterObject();
-            kafka.write(Topic.eventTopic(), id, event);
+            kafka.write(EVENT_TOPIC, id, event);
             return Collections.emptySet();
         }
 

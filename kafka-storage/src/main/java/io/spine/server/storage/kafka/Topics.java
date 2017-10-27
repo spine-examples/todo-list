@@ -22,8 +22,6 @@ package io.spine.server.storage.kafka;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
-import io.spine.core.Event;
-import io.spine.type.TypeName;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,8 +35,6 @@ final class Topics {
 
     private static final char SEPARATOR = '_';
     private static final Pattern INVALID_TOPIC_CHARS = Pattern.compile("[$@]");
-
-    static final Topic EVENT_TOPIC = new ValueTopic(TypeName.of(Event.class).value());
 
     private Topics() {
         // Prevent utility class instantiation.
