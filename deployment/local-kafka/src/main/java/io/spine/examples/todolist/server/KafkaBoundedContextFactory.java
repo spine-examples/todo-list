@@ -61,7 +61,7 @@ import static java.util.stream.Collectors.toSet;
  *
  * @author Dmytro Dashenkov
  */
-final class KafkaBoundedContextFactory extends BoundedContextFactory {
+public final class KafkaBoundedContextFactory extends BoundedContextFactory {
 
     private static final String KAFKA_STREAMS_PROPS_PATH = "config/kafka-streams.properties";
     private static final Properties streamsConfig;

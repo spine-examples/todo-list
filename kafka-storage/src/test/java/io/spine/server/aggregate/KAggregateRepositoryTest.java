@@ -20,10 +20,43 @@
 
 package io.spine.server.aggregate;
 
+import com.google.common.base.Optional;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskLabel;
+import io.spine.examples.todolist.c.aggregate.LabelAggregate;
+import io.spine.examples.todolist.server.KafkaBoundedContextFactory;
+import io.spine.server.BoundedContext;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static com.google.common.base.Preconditions.checkState;
+
 /**
  * @author Dmytro Dashenkov
  */
-public class KAggregateRepositoryTest {
+@DisplayName("KAggregateRepository should")
+class KAggregateRepositoryTest {
 
+    private static AggregateRepository<LabelId, LabelAggregate> repository = null;
 
+    @BeforeAll
+    static void setUp() {
+        final BoundedContext boundedContext = KafkaBoundedContextFactory.instance().create();
+        @SuppressWarnings({
+                "unchecked", // Logically checked
+                "Guava" // Spine Java 7 API
+        })
+        final Optional<? extends AggregateRepository<LabelId, LabelAggregate>> repo =
+                (Optional<? extends AggregateRepository<LabelId, LabelAggregate>>)
+                        boundedContext.findRepository(TaskLabel.class);
+        checkState(repo.isPresent());
+        repository = repo.get();
+    }
+
+    @DisplayName("apply events onto an Aggregate")
+    @Test
+    void testEventsApplying() {
+
+    }
 }
