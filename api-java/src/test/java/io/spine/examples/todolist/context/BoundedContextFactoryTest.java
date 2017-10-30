@@ -25,17 +25,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.context.BoundedContextFactory.createBoundedContext;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("BoundedContextFactory should")
 class BoundedContextFactoryTest {
-
-    @Test
-    @DisplayName("have the private parameterless constructor")
-    void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(BoundedContextFactory.class);
-    }
 
     @Test
     @DisplayName("not create BoundedContext from EventBus.Builder without a StorageFactory")
