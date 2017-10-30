@@ -25,7 +25,6 @@ import com.google.protobuf.Any;
 import com.google.protobuf.Message;
 import io.spine.core.Event;
 import io.spine.core.EventEnvelope;
-import io.spine.core.EventId;
 import io.spine.server.entity.EntityClass;
 import io.spine.server.storage.kafka.KafkaWrapper;
 import io.spine.server.storage.kafka.Topic;
@@ -44,30 +43,80 @@ import org.apache.kafka.streams.state.KeyValueStore;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static io.spine.Identifier.unpack;
 import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
-import static java.lang.String.format;
 import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
 import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
 
 /**
+ * An {@link AggregateRepository} which applies the dispatched events through a Kafka Streams
+ * topology.
+ *
+ * <p>Each subclass of {@code KAggregateRepository} starts a Kafka Streams processor on
+ * the constructor invocation.
+ *
+ * <p>To enable the Kafka-based Aggregate loading, extend {@code KAggregateRepository} instead of
+ * extending {@code AggregateRepository} directly.
+ *
+ * <p>Unlike the base implementation of {@link AggregateRepository}, {@code KAggregateRepository}
+ * never replays the existing events upon an {@link Aggregate} loading. Instead, it creates
+ * a {@link Snapshot} upon each event dispatched to a given instance of {@code Aggregate} and
+ * stores it in the {@linkplain org.apache.kafka.streams.processor.StateStore Kafka Streams
+ * topology state store). The {@code Aggregate} instances are loaded by reading the
+ * {@link Snapshot} from the store.
+ *
+ * <p>All the events dispatched to the repository are published into a single topic with name
+ * {@code W.spine.core.Event} and then consumed from the topic by the repository itself,
+ * redistributed by the repository type and event
+ * {@link io.spine.core.EventContext#getProducerId() producerId}.
+ *
+ * <p>It's recommended that the {@code W.spine.core.Event} topic exists before the application
+ * start. It should have at least as many partitions as there are instances of
+ * {@code KAggregateRepository} in the system. Also, consider having several replicas of the topic
+ * (i.e. set {@code replication-factor} to a number greater than 1).
+ *
+ * <p>The Streams topology may also create auxiliary topics.
+ *
+ *
  * @author Dmytro Dashenkov
+ * @see AggregateRepository for the detailed description of the Aggregate Repositories, type params
+ *                          and more
  */
 public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         extends AggregateRepository<I, A> {
 
+    /**
+     * The Kafka topic for all the write-side events.
+     *
+     * <p>The events arrive into the topic unordered and are partitioned randomly.
+     */
     private static final Topic EVENT_TOPIC = Topic.ofValue("W.spine.core.Event");
+
+    /**
+     * The Kafka topic for the aggregate events.
+     *
+     * <p>The events are partitioned by the Aggregate ID, so the events of a single aggregate are
+     * processed sequentially.
+     */
     private static final Topic AGGREGATE_EVENTS_TOPIC = Topic.ofValue("aggregate-events");
 
     private final AggregateAssembler assembler;
     private final Stringifier<I> idStringifier;
     private final KafkaWrapper kafka;
 
+    /**
+     * Creates a new instance of {@code KAggregateRepository}.
+     *
+     * <p>Also, starts the Kafka Streams processing topology.
+     *
+     * @param streamConfig the Kafka Streams configuration containing {@code bootstrap.servers}
+     *                     property and (optionally) other Streams configs
+     * @param kafka        the {@link KafkaWrapper} instance used to publish the events
+     */
     @SuppressWarnings("ThisEscapedInObjectConstruction") // OK since the whole control
     protected KAggregateRepository(Properties streamConfig, KafkaWrapper kafka) {
         super();
@@ -75,7 +124,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         startKStream(streamConfig);
         @SuppressWarnings("unchecked") // Logically checked.
         final Class<I> idClass = (Class<I>) entityClass().getIdClass();
-        @SuppressWarnings("Guava")
+        @SuppressWarnings("Guava") // Spine Java 7 API.
         final Optional<Stringifier<I>> stringifier = StringifierRegistry.getInstance()
                                                                         .get(idClass);
         checkState(stringifier.isPresent(),
@@ -84,19 +133,56 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         this.assembler = this.new AggregateAssembler();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return always {@code 1}
+     * @implSpec It is obligatory for {@code KAggregateRepository} to create {@linkplain Snapshot snapshots}
+     * upon each aggregate event, so the method is never used in practice.
+     * @deprecated does not make sense for the {@code KAggregateRepository} implementation
+     */
+    @Deprecated
+    @Override
+    protected final int getSnapshotTrigger() {
+        return 1;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return always empty set
+     * @implSpec Publishes the given {@linkplain EventEnvelope event} into the {@code W.spine.core.Event}
+     * Kafka topic as a key-value pair:
+     * <pre>
+     * {@linkplain #repositoryKey() Repository type} -> {@link EventEnvelope#getOuterObject()}.
+     * </pre>
+     */
     @Override
     public final Set<I> dispatchEvent(EventEnvelope envelope) {
-        final EventId eventId = envelope.getId();
+        final String repoKey = repositoryKey();
         final Event event = envelope.getOuterObject();
-        kafka.write(EVENT_TOPIC, eventId, event);
+        kafka.write(EVENT_TOPIC, repoKey, event);
         return Collections.emptySet();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @implSpec Stores the given {@link Aggregate} into the Kafka topology state store.
+     */
     @Override
     protected final void store(A aggregate) {
         assembler.writeAggregate(aggregate);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @implSpec
+     * Reads the aggregate state {@linkplain Snapshot snapshot} from the Kafka Streams state store
+     * and restores the {@link Aggregate} instance
+     * {@linkplain AggregateTransaction transactionally}
+     */
     @SuppressWarnings("Guava") // Spine Java 7 API.
     @Override
     final Optional<A> load(I id) {
@@ -108,38 +194,38 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         final Properties streamConfig = prepareConfig(config, repositoryKey);
         final KStreamBuilder builder = new KStreamBuilder();
         final Serde<Message> messageSerde = serdeFrom(serializer(), deserializer());
-        final KStream<Message, Message> stream = builder.stream(messageSerde,
-                                                                messageSerde,
-                                                                EVENT_TOPIC.getName());
+        final KStream<String, Message> stream = builder.stream(Serdes.String(),
+                                                               messageSerde,
+                                                               EVENT_TOPIC.getName());
         buildTopology(stream, messageSerde);
         final KafkaStreams streams = new KafkaStreams(builder, streamConfig);
         streams.start();
     }
 
-    private void buildTopology(KStream<Message, Message> stream,
+    private void buildTopology(KStream<String, Message> stream,
                                Serde<? extends Message> messageSerde) {
         @SuppressWarnings("unchecked")
         final Serde<Event> eventServe = (Serde<Event>) messageSerde;
-        stream.map((key, value) -> {
+        final String repoKey = repositoryKey();
+        stream.filter((key, value) -> repoKey.equals(key))
+              .map((key, value) -> {
                   final Event event = (Event) value;
-                  final String newKey = aggregateIdFromEvent(event);
+                  final String newKey = producerIdString(event);
                   return new KeyValue<>(newKey, event);
               })
               .through(Serdes.String(), eventServe, AGGREGATE_EVENTS_TOPIC.getName())
               .process(() -> assembler);
     }
 
+    /**
+     * @return a string identifier of this {@code AggregateRepository} type (defined by the type of
+     *         the {@code Aggregate})
+     */
     private String repositoryKey() {
         final EntityClass<?> cls = entityClass();
         final String typeName = cls.getStateType()
                                    .getTypeName();
         return typeName;
-    }
-
-    private String aggregateIdFromEvent(Event event) {
-        final String producerId = producerIdString(event);
-        final String typeKey = repositoryKey();
-        return format("%s-%s", typeKey, producerId);
     }
 
     private String producerIdString(Event event) {
@@ -148,6 +234,23 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         return aggIdString;
     }
 
+    /**
+     * Dispatches the given {@link EventEnvelope}.
+     *
+     * <p>This method uses the {@linkplain AggregateRepository#dispatchEvent super} implementation
+     * to dispatch the event.
+     *
+     * <p>Acts if
+     * <pre>
+     * {@code
+     *     private void doDispatchEvent(EventEnvelope envelope) {
+     *         super.dispatchEvent(envelope);
+     *     }
+     * }
+     * </pre>
+     *
+     * @param envelope the event to be dispatched by this repository
+     */
     private void doDispatchEvent(EventEnvelope envelope) {
         super.dispatchEvent(envelope);
     }
@@ -167,6 +270,10 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         return result;
     }
 
+    /**
+     * The Kafka Stream {@link org.apache.kafka.streams.processor.Processor Processor} storing
+     * the Aggregate states and applying the new events to the aggregates.
+     */
     private class AggregateAssembler extends AbstractProcessor<String, Event> {
 
         private static final String STATE_STORE_NAME = "aggregate-state-store";
@@ -187,14 +294,14 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
             KAggregateRepository.this.doDispatchEvent(envelope);
         }
 
-        @SuppressWarnings("Guava") // For consistency inside the class.
+        @SuppressWarnings("Guava") // For consistency within the class.
         private Optional<A> readAggregate(I id) {
             final Snapshot snapshot = aggregateStateStore.get(idStringifier.convert(id));
             if (snapshot == null) {
                 return Optional.absent();
             }
             final A aggregate = create(id);
-            inTx(aggregate, tx -> aggregate.restore(snapshot));
+            inTx(aggregate, () -> aggregate.restore(snapshot));
             return Optional.of(aggregate);
         }
 
@@ -205,9 +312,9 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
             aggregateStateStore.put(stringId, snapshot);
         }
 
-        private void inTx(A aggregate, Consumer<AggregateTransaction> transactionalOp) {
+        private void inTx(A aggregate, Runnable transactionalOp) {
             final AggregateTransaction tx = AggregateTransaction.start(aggregate);
-            transactionalOp.accept(tx);
+            transactionalOp.run();
             tx.commit();
         }
     }
