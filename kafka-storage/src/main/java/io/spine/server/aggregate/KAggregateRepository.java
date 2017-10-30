@@ -28,8 +28,7 @@ import io.spine.core.EventEnvelope;
 import io.spine.server.entity.EntityClass;
 import io.spine.server.storage.kafka.KafkaWrapper;
 import io.spine.server.storage.kafka.Topic;
-import io.spine.string.Stringifier;
-import io.spine.string.StringifierRegistry;
+import io.spine.string.Stringifiers;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
@@ -45,8 +44,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
-import static io.spine.Identifier.unpack;
 import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
 import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
@@ -105,7 +102,6 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     private static final Topic AGGREGATE_EVENTS_TOPIC = Topic.ofValue("aggregate-events");
 
     private final AggregateAssembler assembler;
-    private final Stringifier<I> idStringifier;
     private final KafkaWrapper kafka;
 
     /**
@@ -122,14 +118,6 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         super();
         this.kafka = kafka;
         startKStream(streamConfig);
-        @SuppressWarnings("unchecked") // Logically checked.
-        final Class<I> idClass = (Class<I>) entityClass().getIdClass();
-        @SuppressWarnings("Guava") // Spine Java 7 API.
-        final Optional<Stringifier<I>> stringifier = StringifierRegistry.getInstance()
-                                                                        .get(idClass);
-        checkState(stringifier.isPresent(),
-                   "Stringifier for type {} is not registered.", idClass.getName());
-        this.idStringifier = stringifier.get();
         this.assembler = this.new AggregateAssembler();
     }
 
@@ -226,9 +214,9 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         return typeName;
     }
 
-    private String producerIdString(Event event) {
+    private static String producerIdString(Event event) {
         final Any aggregateEvent = event.getContext().getProducerId();
-        final String aggIdString = idStringifier.convert(unpack(aggregateEvent));
+        final String aggIdString = Stringifiers.toString(aggregateEvent);
         return aggIdString;
     }
 
@@ -294,7 +282,8 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
 
         @SuppressWarnings("Guava") // For consistency within the class.
         private Optional<AggregateStateRecord> readAggregate(I id) {
-            final Snapshot snapshot = aggregateStateStore.get(idStringifier.convert(id));
+            final String stringKey = Stringifiers.toString(id);
+            final Snapshot snapshot = aggregateStateStore.get(stringKey);
             if (snapshot == null) {
                 return Optional.absent();
             }
@@ -306,7 +295,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
 
         private void writeAggregate(A aggregate) {
             final I id = aggregate.getId();
-            final String stringId = idStringifier.convert(id);
+            final String stringId = Stringifiers.toString(id);
             final Snapshot snapshot = aggregate.toSnapshot();
             aggregateStateStore.put(stringId, snapshot);
         }
