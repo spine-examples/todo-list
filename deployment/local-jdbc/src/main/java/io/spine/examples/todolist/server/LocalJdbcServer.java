@@ -24,7 +24,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.spine.Environment;
-import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.examples.todolist.context.BoundedContextFactory;
 import io.spine.server.BoundedContext;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
@@ -90,7 +90,7 @@ public class LocalJdbcServer {
     @VisibleForTesting
     static BoundedContext createBoundedContext(String[] args) {
         final StorageFactory storageFactory = createStorageFactory(args);
-        return BoundedContexts.create(storageFactory);
+        return BoundedContextFactory.instance(storageFactory).create();
     }
 
     private static StorageFactory createStorageFactory(String[] args) {

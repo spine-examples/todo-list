@@ -32,9 +32,9 @@ import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
 import io.spine.examples.todolist.c.aggregate.TaskPart;
-import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
+import io.spine.server.aggregate.AggregateRepository;
 import io.spine.server.event.EventBus;
 import io.spine.server.event.EventEnricher;
 
@@ -51,7 +51,7 @@ public class TodoListEnrichments {
 
     private final TaskRepository taskRepo;
     private final TaskLabelsRepository taskLabelsRepo;
-    private final LabelAggregateRepository labelRepository;
+    private final AggregateRepository<LabelId, LabelAggregate> labelRepository;
 
     private TodoListEnrichments(Builder builder) {
         this.taskRepo = builder.taskRepo;
@@ -157,7 +157,7 @@ public class TodoListEnrichments {
 
         private TaskRepository taskRepo;
         private TaskLabelsRepository taskLabelsRepo;
-        private LabelAggregateRepository labelRepository;
+        private AggregateRepository<LabelId, LabelAggregate> labelRepository;
 
         private Builder() {
         }
@@ -174,7 +174,8 @@ public class TodoListEnrichments {
             return this;
         }
 
-        public Builder setLabelRepository(LabelAggregateRepository labelRepository) {
+        public Builder setLabelRepository(
+                AggregateRepository<LabelId, LabelAggregate> labelRepository) {
             checkNotNull(labelRepository);
             this.labelRepository = labelRepository;
             return this;

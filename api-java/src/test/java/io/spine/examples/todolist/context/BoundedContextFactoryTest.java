@@ -21,21 +21,20 @@
 package io.spine.examples.todolist.context;
 
 import io.spine.server.event.EventBus;
-import io.spine.test.Tests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.context.BoundedContexts.createBoundedContext;
+import static io.spine.examples.todolist.context.BoundedContextFactory.createBoundedContext;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DisplayName("BoundedContexts should")
-class BoundedContextsTest {
+@DisplayName("BoundedContextFactory should")
+class BoundedContextFactoryTest {
 
     @Test
     @DisplayName("have the private parameterless constructor")
     void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(BoundedContexts.class);
+        assertHasPrivateParameterlessCtor(BoundedContextFactory.class);
     }
 
     @Test

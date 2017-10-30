@@ -20,14 +20,14 @@
 
 package io.spine.examples.todolist.server;
 
+import io.spine.examples.todolist.context.BoundedContextFactory;
 import io.spine.server.BoundedContext;
 import io.spine.server.storage.StorageFactory;
 
 import java.io.IOException;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.context.BoundedContexts.create;
-import static io.spine.examples.todolist.context.BoundedContexts.getDefaultName;
+import static io.spine.examples.todolist.context.BoundedContextFactory.getDefaultName;
 import static io.spine.server.storage.memory.InMemoryStorageFactory.newInstance;
 
 /**
@@ -46,9 +46,10 @@ public class LocalInMemoryServer {
     }
 
     public static void main(String[] args) throws IOException {
-        final StorageFactory storageFactory = newInstance(BoundedContext.newName(getDefaultName()),
+        final StorageFactory storageFactory = newInstance(getDefaultName(),
                                                           false);
-        final BoundedContext boundedContext = create(storageFactory);
+        final BoundedContext boundedContext = BoundedContextFactory.instance(storageFactory)
+                                                                   .create();
         final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
     }

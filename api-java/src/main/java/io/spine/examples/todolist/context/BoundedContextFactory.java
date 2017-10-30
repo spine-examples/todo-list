@@ -24,6 +24,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import io.spine.core.BoundedContextName;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
@@ -31,12 +33,13 @@ import io.spine.examples.todolist.repository.MyListViewRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
+import io.spine.server.aggregate.AggregateRepository;
 import io.spine.server.event.EventBus;
 import io.spine.server.event.EventEnricher;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.StorageFactorySwitch;
+import io.spine.server.storage.memory.InMemoryStorageFactory;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.server.storage.StorageFactorySwitch.newInstance;
 import static io.spine.util.Exceptions.newIllegalStateException;
 
@@ -46,58 +49,83 @@ import static io.spine.util.Exceptions.newIllegalStateException;
  * @author Illia Shepilov
  * @author Dmytro Grankin
  */
-public final class BoundedContexts {
+public class BoundedContextFactory {
 
     /** The name of the Bounded Context. */
     private static final String NAME = "TodoListBoundedContext";
     private static final BoundedContextName BOUNDED_CONTEXT_NAME = BoundedContext.newName(NAME);
 
-    private static final StorageFactorySwitch storageFactorySwitch =
-            newInstance(BOUNDED_CONTEXT_NAME, false);
-
+    /**
+     * Default production scope scope {@link StorageFactory} supplier.
+     *
+     * <p>Throws an {@link IllegalStateException} on any invocation, as the {@link StorageFactory}
+     * for production should be specified explicitly.
+     */
     @SuppressWarnings("Guava") // Spine Java 7 API.
     private static final Supplier<StorageFactory> FAILING_STORAGE_SUPPLIER = () -> {
         throw newIllegalStateException(
-                "Use BoundedContexts.create(StorageFactory) in production code.");
+                "Use BoundedContextFactory.create(StorageFactory) in production code.");
     };
 
-    private BoundedContexts() {
-        // Disable instantiation from outside.
+    /**
+     * Default test scope {@link StorageFactory} supplier.
+     *
+     * <p>Creates a new {@link InMemoryStorageFactory}.
+     */
+    @SuppressWarnings("Guava") // Spine Java 7 API.
+    private static final Supplier<StorageFactory> IN_MEM_STORAGE_SUPPLIER =
+            () -> InMemoryStorageFactory.newInstance(BOUNDED_CONTEXT_NAME, false);
+
+    private final StorageFactorySwitch storageFactorySwitch;
+
+    public static BoundedContextName getDefaultName() {
+        return BOUNDED_CONTEXT_NAME;
     }
 
-    public static String getDefaultName() {
-        return NAME;
+    protected BoundedContextFactory(StorageFactorySwitch storageFactorySwitch) {
+        this.storageFactorySwitch = storageFactorySwitch;
+    }
+
+    /**
+     * Retrieves a test instance of {@code BoundedContextFactory}.
+     *
+     * <p>The instance uses the {@linkplain InMemoryStorageFactory in-memory storage} by default.
+     *
+     * <p>For the production instance call {@link #instance(StorageFactory)}.
+     *
+     * @return an instance of {@code BoundedContextFactory} for tests
+     */
+    @VisibleForTesting
+    public static BoundedContextFactory instance() {
+        return Default.INSTANCE.value;
+    }
+
+    /**
+     * Retrieves an instance of {@code BoundedContextFactory} with the given
+     * {@linkplain StorageFactory storage} implantation.
+     *
+     * @param storageFactory the {@link StorageFactory} to use in the created
+     *                       {@linkplain BoundedContext bounded contexts}
+     * @return an instance of {@code BoundedContextFactory}
+     */
+    public static BoundedContextFactory instance(StorageFactory storageFactory) {
+        final StorageFactorySwitch storageSwitch = newInstance(BOUNDED_CONTEXT_NAME, false)
+                .init(() -> storageFactory, () -> storageFactory);
+        final BoundedContextFactory factory = new BoundedContextFactory(storageSwitch);
+        return factory;
     }
 
     /**
      * Creates the {@link BoundedContext} instance using the {@code StorageFactory} from
-     * the {@link StorageFactorySwitch}.
-     *
-     * <p>Use {@link #create(StorageFactory)} method for the production environment.
-     *
-     * <p>Use {@link #injectStorageFactory(StorageFactory)} in tests to override the used
-     * {@code StorageFactory} implementation.
+     * the {@link #storageFactorySwitch}.
      *
      * @return new test {@link BoundedContext} instance
      */
-    @VisibleForTesting
-    public static BoundedContext create() {
+    public final BoundedContext create() {
         final StorageFactory storageFactory = storageFactorySwitch.get();
-        final BoundedContext result = create(storageFactory);
-        return result;
-    }
 
-    /**
-     * Creates a new instance of the {@link BoundedContext}
-     * using the specified {@link StorageFactory}.
-     *
-     * @param storageFactory the storage factory to use
-     * @return the bounded context created with the storage factory
-     */
-    public static BoundedContext create(StorageFactory storageFactory) {
-        checkNotNull(storageFactory);
-
-        final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
+        final AggregateRepository<LabelId, LabelAggregate> labelAggregateRepo =
+                labelAggregateRepository();
         final TaskRepository taskRepo = new TaskRepository();
         final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
         final MyListViewRepository myListViewRepo = new MyListViewRepository();
@@ -116,11 +144,28 @@ public final class BoundedContexts {
         boundedContext.register(tasksViewRepo);
         boundedContext.register(draftTasksViewRepo);
 
+        onCreateBoundedContext(boundedContext);
+
         return boundedContext;
     }
 
+    /**
+     * A trigger method for extending {@link #create()} method logic.
+     *
+     * <p>This method is called after an instance on {@link BoundedContext} is created and all
+     * the repositories are registered.
+     *
+     * @implSpec
+     * Performs no action by default.
+     *
+     * @param bc the created {@link BoundedContext}
+     */
+    protected void onCreateBoundedContext(BoundedContext bc) {
+        // NoOp
+    }
+
     private static EventBus.Builder createEventBus(StorageFactory storageFactory,
-                                                   LabelAggregateRepository labelRepo,
+                                                   AggregateRepository<LabelId, LabelAggregate> labelRepo,
                                                    TaskRepository taskRepo,
                                                    TaskLabelsRepository labelsRepo) {
         final EventEnricher enricher = TodoListEnrichments.newBuilder()
@@ -136,22 +181,17 @@ public final class BoundedContexts {
     }
 
     /**
-     * Injects the given {@link StorageFactory} implementation for tests.
+     * Creates an {@link AggregateRepository} for the {@link LabelAggregate}.
      *
-     * <p>To specify the {@link StorageFactory} implementation for the production code,
-     * use {@link #create(StorageFactory)}.
+     * <p>Override this method to inject a custom repository implementation.
      *
-     * <p>After calling this method, invocation of {@link #create()} in the test environment
-     * creates a {@code BoundedContext} with the passed {@code StorageFactory}.
+     * @implSpec
+     * The default implementation creates an instance of {@link LabelAggregateRepository}.
      *
-     * @param storageFactory the default {@code StorageFactory} to create the BoundedContexts for
+     * @return an repository for {@link LabelAggregate}
      */
-    @SuppressWarnings("unused") // Used for temporal test purposes
-    @VisibleForTesting
-    public static void injectStorageFactory(StorageFactory storageFactory) {
-        checkNotNull(storageFactory);
-        storageFactorySwitch.init(FAILING_STORAGE_SUPPLIER,
-                                  () -> storageFactory);
+    protected AggregateRepository<LabelId, LabelAggregate> labelAggregateRepository() {
+        return new LabelAggregateRepository();
     }
 
     @SuppressWarnings("Guava" /* Spine API is Java 7-based
@@ -167,5 +207,18 @@ public final class BoundedContexts {
                              .setName(NAME)
                              .setEventBus(eventBus)
                              .build();
+    }
+
+    private enum Default {
+        INSTANCE;
+
+        @SuppressWarnings("NonSerializableFieldInSerializableClass")
+        private final BoundedContextFactory value = new BoundedContextFactory(defaultSwitch());
+
+        private static StorageFactorySwitch defaultSwitch() {
+            final StorageFactorySwitch result = newInstance(BOUNDED_CONTEXT_NAME, false);
+            result.init(FAILING_STORAGE_SUPPLIER, IN_MEM_STORAGE_SUPPLIER);
+            return result;
+        }
     }
 }

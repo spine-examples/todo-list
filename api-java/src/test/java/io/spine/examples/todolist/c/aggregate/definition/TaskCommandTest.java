@@ -26,7 +26,7 @@ import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.aggregate.TaskPart;
-import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.examples.todolist.context.BoundedContextFactory;
 import io.spine.server.BoundedContext;
 import io.spine.server.aggregate.AggregatePartCommandTest;
 
@@ -53,7 +53,7 @@ abstract class TaskCommandTest<C extends Message> extends AggregatePartCommandTe
 
     @Override
     protected TaskPart createAggregatePart() {
-        final BoundedContext boundedContext = BoundedContexts.create();
+        final BoundedContext boundedContext = BoundedContextFactory.instance().create();
         taskId = createTaskId();
         final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, taskId);
         return new TaskPart(root);

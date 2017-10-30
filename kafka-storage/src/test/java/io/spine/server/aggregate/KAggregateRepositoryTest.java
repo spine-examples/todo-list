@@ -18,32 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server;
-
-import io.spine.server.BoundedContext;
-import io.spine.server.storage.kafka.KafkaStorageFactory;
-
-import java.io.IOException;
-
-import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+package io.spine.server.aggregate;
 
 /**
- * A local {@link Server} using {@link KafkaStorageFactory}.
- *
- * <p>The server exposes its {@code gRPC API} at
- * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
- *
  * @author Dmytro Dashenkov
  */
-public class LocalKafkaServer {
+public class KAggregateRepositoryTest {
 
-    private LocalKafkaServer() {
-        // Prevent utility class instantiation.
-    }
 
-    public static void main(String[] args) throws IOException {
-        final BoundedContext boundedContext = KafkaBoundedContextFactory.instance().create();
-        final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
-        server.start();
-    }
 }

@@ -37,7 +37,7 @@ import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
 import io.spine.examples.todolist.c.events.LabelledTaskRestored;
 import io.spine.examples.todolist.c.rejection.CannotRestoreDeletedTask;
-import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.examples.todolist.context.BoundedContextFactory;
 import io.spine.grpc.MemoizingObserver;
 import io.spine.grpc.StreamObservers;
 import io.spine.protobuf.AnyPacker;
@@ -85,7 +85,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
     public void setUp() {
         super.setUp();
         responseObserver = StreamObservers.memoizingObserver();
-        boundedContext = BoundedContexts.create();
+        boundedContext = BoundedContextFactory.instance().create();
         commandBus = boundedContext.getCommandBus();
         final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, taskId);
         aggregate = new TaskPart(root);
