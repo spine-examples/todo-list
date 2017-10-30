@@ -21,7 +21,6 @@
 package io.spine.server.aggregate;
 
 import com.google.common.base.Optional;
-import com.google.protobuf.Any;
 import com.google.protobuf.Message;
 import io.spine.core.Event;
 import io.spine.core.EventEnvelope;
@@ -32,7 +31,6 @@ import io.spine.string.Stringifiers;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
-import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KStreamBuilder;
 import org.apache.kafka.streams.processor.AbstractProcessor;
@@ -67,17 +65,11 @@ import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
  * {@link Snapshot} from the store.
  *
  * <p>All the events dispatched to the repository are published into a single topic with name
- * {@code W.spine.core.Event} and then consumed from the topic by the repository itself,
- * redistributed by the repository type and event
- * {@link io.spine.core.EventContext#getProducerId() producerId}.
- *
- * <p>It's recommended that the {@code W.spine.core.Event} topic exists before the application
- * start. It should have at least as many partitions as there are instances of
- * {@code KAggregateRepository} in the system. Also, consider having several replicas of the topic
- * (i.e. set {@code replication-factor} to a number greater than 1).
- *
- * <p>The Streams topology may also create auxiliary topics.
- *
+ * {@code W.spine.core.Event} and then consumed from the topic by the repository itself. It's
+ * recommended that the {@code W.spine.core.Event} topic exists before the application start. It
+ * should have at least as many partitions as there are subtypes of {@code KAggregateRepository}
+ * in the system. Also, consider having several replicas of the topic (i.e. set
+ * {@code replication-factor} to a number greater than 1).
  *
  * @author Dmytro Dashenkov
  * @see AggregateRepository for the detailed description of the Aggregate Repositories, type params
@@ -92,14 +84,6 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      * <p>The events arrive into the topic unordered and are partitioned randomly.
      */
     private static final Topic EVENT_TOPIC = Topic.ofValue("W.spine.core.Event");
-
-    /**
-     * The Kafka topic for the aggregate events.
-     *
-     * <p>The events are partitioned by the Aggregate ID, so the events of a single aggregate are
-     * processed sequentially.
-     */
-    private static final Topic AGGREGATE_EVENTS_TOPIC = Topic.ofValue("aggregate-events");
 
     private final AggregateAssembler assembler;
     private final KafkaWrapper kafka;
@@ -176,30 +160,20 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     }
 
     private void startKStream(Properties config) {
-        final String repositoryKey = repositoryKey();
-        final Properties streamConfig = prepareConfig(config, repositoryKey);
         final KStreamBuilder builder = new KStreamBuilder();
         final Serde<Message> messageSerde = serdeFrom(serializer(), deserializer());
         final KStream<String, Message> stream = builder.stream(Serdes.String(),
                                                                messageSerde,
                                                                EVENT_TOPIC.getName());
-        buildTopology(stream, messageSerde);
+        final String repositoryKey = repositoryKey();
+        buildTopology(stream, repositoryKey);
+        final Properties streamConfig = prepareConfig(config, repositoryKey);
         final KafkaStreams streams = new KafkaStreams(builder, streamConfig);
         streams.start();
     }
 
-    private void buildTopology(KStream<String, Message> stream,
-                               Serde<? extends Message> messageSerde) {
-        @SuppressWarnings("unchecked")
-        final Serde<Event> eventServe = (Serde<Event>) messageSerde;
-        final String repoKey = repositoryKey();
-        stream.filter((key, value) -> repoKey.equals(key))
-              .map((key, value) -> {
-                  final Event event = (Event) value;
-                  final String newKey = producerIdString(event);
-                  return new KeyValue<>(newKey, event);
-              })
-              .through(Serdes.String(), eventServe, AGGREGATE_EVENTS_TOPIC.getName())
+    private void buildTopology(KStream<String, Message> stream, String repositoryKey) {
+        stream.filter((key, value) -> repositoryKey.equals(key))
               .process(() -> assembler);
     }
 
@@ -212,12 +186,6 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         final String typeName = cls.getStateType()
                                    .getTypeName();
         return typeName;
-    }
-
-    private static String producerIdString(Event event) {
-        final Any aggregateEvent = event.getContext().getProducerId();
-        final String aggIdString = Stringifiers.toString(aggregateEvent);
-        return aggIdString;
     }
 
     /**
@@ -260,7 +228,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      * The Kafka Stream {@link org.apache.kafka.streams.processor.Processor Processor} storing
      * the Aggregate states and applying the new events to the aggregates.
      */
-    private class AggregateAssembler extends AbstractProcessor<String, Event> {
+    private class AggregateAssembler extends AbstractProcessor<String, Message> {
 
         private static final String STATE_STORE_NAME = "aggregate-state-store";
 
@@ -275,8 +243,9 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         }
 
         @Override
-        public void process(String key, Event value) {
-            final EventEnvelope envelope = EventEnvelope.of(value);
+        public void process(String key, Message value) {
+            final Event event = (Event) value;
+            final EventEnvelope envelope = EventEnvelope.of(event);
             KAggregateRepository.this.doDispatchEvent(envelope);
         }
 
