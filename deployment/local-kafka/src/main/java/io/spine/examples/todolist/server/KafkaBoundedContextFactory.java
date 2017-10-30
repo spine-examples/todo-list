@@ -22,11 +22,14 @@ package io.spine.examples.todolist.server;
 
 import com.google.common.base.Optional;
 import io.spine.core.EventClass;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.examples.todolist.context.BoundedContextFactory;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.server.BoundedContext;
+import io.spine.server.aggregate.AggregateRepository;
 import io.spine.server.catchup.KafkaCatchUp;
 import io.spine.server.event.EventBus;
 import io.spine.server.event.EventDispatcher;
@@ -60,26 +63,26 @@ import static java.util.stream.Collectors.toSet;
  */
 final class KafkaBoundedContextFactory extends BoundedContextFactory {
 
-    private static final String KAFKA_PRODUCER_PROPS_PATH = "config/kafka-producer.properties";
-    private static final String KAFKA_CONSUMER_PROPS_PATH = "config/kafka-consumer.properties";
     private static final String KAFKA_STREAMS_PROPS_PATH = "config/kafka-streams.properties";
-    private static final Duration POLL_AWAIT = Duration.of(50, MILLIS);
-    private static final Properties producerConfig;
-    private static final Properties consumerConfig;
+    private static final Properties streamsConfig;
     private static final StorageFactorySwitch storageFactorySwitch;
+    private static final KafkaWrapper kafka;
 
     static {
-        producerConfig = loadConfig(KAFKA_PRODUCER_PROPS_PATH);
-        consumerConfig = loadConfig(KAFKA_CONSUMER_PROPS_PATH);
+        final Properties producerConfig = loadConfig("config/kafka-producer.properties");
+        final Properties consumerConfig = loadConfig("config/kafka-consumer.properties");
+        final Duration storagePollAwait = Duration.of(50, MILLIS);
         final StorageFactory storageFactory = KafkaStorageFactory.newBuilder()
                                                                  .setProducerConfig(producerConfig)
                                                                  .setConsumerConfig(consumerConfig)
-                                                                 .setMaxPollAwait(POLL_AWAIT)
+                                                                 .setMaxPollAwait(storagePollAwait)
                                                                  .setConsistencyLevel(STRONG)
                                                                  .build();
         storageFactorySwitch = StorageFactorySwitch.newInstance(getDefaultName(), false)
                                                    .init(() -> storageFactory,
                                                          () -> storageFactory);
+        kafka = KafkaWrapper.create(producerConfig, consumerConfig);
+        streamsConfig = loadConfig(KAFKA_STREAMS_PROPS_PATH);
     }
 
     private KafkaBoundedContextFactory() {
@@ -96,6 +99,17 @@ final class KafkaBoundedContextFactory extends BoundedContextFactory {
     @Override
     protected void onCreateBoundedContext(BoundedContext boundedContext) {
         setupCatchUp(boundedContext);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @implSpec
+     * Creates a new instance of {@link LabelKAggregateRepository}.
+     */
+    @Override
+    protected AggregateRepository<LabelId, LabelAggregate> labelAggregateRepository() {
+        return new LabelKAggregateRepository(streamsConfig, kafka);
     }
 
     @SuppressWarnings({
@@ -122,15 +136,13 @@ final class KafkaBoundedContextFactory extends BoundedContextFactory {
                              .flatMap(dispatcher -> dispatcher.getMessageClasses().stream())
                              .distinct()
                              .collect(toSet());
-        final KafkaWrapper kafkaWrapper = KafkaWrapper.create(producerConfig, consumerConfig);
-        final EventDispatcher<?> dispatcher = KafkaCatchUp.dispatcher(eventClasses, kafkaWrapper);
+        final EventDispatcher<?> dispatcher = KafkaCatchUp.dispatcher(eventClasses, kafka);
         eventBus.register(dispatcher);
     }
 
     private static void startCatchUp(Iterable<ProjectionRepository<?, ?, ?>> repos) {
-        final Properties config = loadConfig(KAFKA_STREAMS_PROPS_PATH);
         for (ProjectionRepository<?, ?, ?> repo : repos) {
-            KafkaCatchUp.start(repo, config);
+            KafkaCatchUp.start(repo, streamsConfig);
         }
     }
 
