@@ -179,13 +179,11 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      * {@inheritDoc}
      *
      * @implSpec
-     * Reads the aggregate state {@linkplain Snapshot snapshot} from the Kafka Streams state store
-     * and restores the {@link Aggregate} instance
-     * {@linkplain AggregateTransaction transactionally}
+     * Reads the aggregate state {@linkplain Snapshot snapshot} from the Kafka Streams state store.
      */
     @SuppressWarnings("Guava") // Spine Java 7 API.
     @Override
-    final Optional<A> load(I id) {
+    protected final Optional<AggregateStateRecord> loadState(I id) {
         return assembler.readAggregate(id);
     }
 
@@ -295,14 +293,15 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         }
 
         @SuppressWarnings("Guava") // For consistency within the class.
-        private Optional<A> readAggregate(I id) {
+        private Optional<AggregateStateRecord> readAggregate(I id) {
             final Snapshot snapshot = aggregateStateStore.get(idStringifier.convert(id));
             if (snapshot == null) {
                 return Optional.absent();
             }
-            final A aggregate = create(id);
-            inTx(aggregate, () -> aggregate.restore(snapshot));
-            return Optional.of(aggregate);
+            final AggregateStateRecord result = AggregateStateRecord.newBuilder()
+                                                                    .setSnapshot(snapshot)
+                                                                    .build();
+            return Optional.of(result);
         }
 
         private void writeAggregate(A aggregate) {
@@ -310,12 +309,6 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
             final String stringId = idStringifier.convert(id);
             final Snapshot snapshot = aggregate.toSnapshot();
             aggregateStateStore.put(stringId, snapshot);
-        }
-
-        private void inTx(A aggregate, Runnable transactionalOp) {
-            final AggregateTransaction tx = AggregateTransaction.start(aggregate);
-            transactionalOp.run();
-            tx.commit();
         }
     }
 }
