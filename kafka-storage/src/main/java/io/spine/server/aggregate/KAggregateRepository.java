@@ -22,28 +22,40 @@ package io.spine.server.aggregate;
 
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
+import com.google.protobuf.StringValue;
+import io.spine.Identifier;
+import io.spine.base.ThrowableMessage;
+import io.spine.core.Command;
+import io.spine.core.CommandEnvelope;
 import io.spine.core.Event;
 import io.spine.core.EventEnvelope;
+import io.spine.core.MessageEnvelope;
+import io.spine.core.Rejection;
+import io.spine.core.RejectionEnvelope;
 import io.spine.server.entity.EntityClass;
 import io.spine.server.storage.kafka.KafkaWrapper;
 import io.spine.server.storage.kafka.Topic;
 import io.spine.string.Stringifiers;
 import org.apache.kafka.common.serialization.Serde;
-import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KStreamBuilder;
 import org.apache.kafka.streams.processor.AbstractProcessor;
 import org.apache.kafka.streams.processor.ProcessorContext;
+import org.apache.kafka.streams.processor.StateStoreSupplier;
 import org.apache.kafka.streams.state.KeyValueStore;
+import org.apache.kafka.streams.state.Stores;
 
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Throwables.getRootCause;
 import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
+import static io.spine.util.Exceptions.newIllegalArgumentException;
 import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
 import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
 
@@ -65,8 +77,8 @@ import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
  * {@link Snapshot} from the store.
  *
  * <p>All the events dispatched to the repository are published into a single topic with name
- * {@code W.spine.core.Event} and then consumed from the topic by the repository itself. It's
- * recommended that the {@code W.spine.core.Event} topic exists before the application start. It
+ * {@code spine.server.aggregate.letters} and then consumed from the topic by the repository itself. It's
+ * recommended that the {@code spine.server.aggregate.letters} topic exists before the application start. It
  * should have at least as many partitions as there are subtypes of {@code KAggregateRepository}
  * in the system. Also, consider having several replicas of the topic (i.e. set
  * {@code replication-factor} to a number greater than 1).
@@ -79,11 +91,10 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         extends AggregateRepository<I, A> {
 
     /**
-     * The Kafka topic for all the write-side events.
-     *
-     * <p>The events arrive into the topic unordered and are partitioned randomly.
+     * The Kafka topic for all the events, commands and rejections dispatched into 
+     * {@code KAggregateRepository}.
      */
-    private static final Topic EVENT_TOPIC = Topic.ofValue("W.spine.core.Event");
+    private static final Topic AGGREGATE_LETTERS = Topic.ofValue("spine.server.aggregate.letters");
 
     private final AggregateAssembler assembler;
     private final KafkaWrapper kafka;
@@ -123,18 +134,59 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      * {@inheritDoc}
      *
      * @return always empty set
-     * @implSpec Publishes the given {@linkplain EventEnvelope event} into the {@code W.spine.core.Event}
-     * Kafka topic as a key-value pair:
+     * @implSpec Publishes the given {@linkplain EventEnvelope event} into 
+     * the {@code spine.server.aggregate.letters} Kafka topic as a key-value pair:
      * <pre>
      * {@linkplain #repositoryKey() Repository type} -> {@link EventEnvelope#getOuterObject()}.
      * </pre>
      */
     @Override
     public final Set<I> dispatchEvent(EventEnvelope envelope) {
-        final String repoKey = repositoryKey();
-        final Event event = envelope.getOuterObject();
-        kafka.write(EVENT_TOPIC, repoKey, event);
+        dispatchLetter(envelope);
         return Collections.emptySet();
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @return always empty set
+     * @implSpec Publishes the given {@linkplain RejectionEnvelope rejection} into 
+     * the {@code spine.server.aggregate.letters} Kafka topic as a key-value pair:
+     * <pre>
+     * {@linkplain #repositoryKey() Repository type} -> {@link RejectionEnvelope#getOuterObject()}.
+     * </pre>
+     */
+    @Override
+    public Set<I> dispatchRejection(RejectionEnvelope envelope) {
+        dispatchLetter(envelope);
+        return Collections.emptySet();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return the default value of the ID according to {@link Identifier#getDefaultValue(Class)}
+     * @implSpec Publishes the given {@linkplain CommandEnvelope command} into
+     * the {@code spine.server.aggregate.letters} Kafka topic as a key-value pair:
+     * <pre>
+     * {@linkplain #repositoryKey() Repository type} -> {@link CommandEnvelope#getOuterObject()}.
+     * </pre>
+     */
+    @Override
+    public I dispatch(CommandEnvelope envelope) {
+        dispatchLetter(envelope);
+        return Identifier.getDefaultValue(getIdClass());
+    }
+
+    /**
+     * Publishes the given envelope into the Kafka {@code spine.server.aggregate.letters} topic.
+     *
+     * @param msg the envelope to be dispatched
+     */
+    private void dispatchLetter(MessageEnvelope<?, ? extends Message, ?> msg) {
+        final String repositoryKey = repositoryKey();
+        final Message letter = msg.getOuterObject();
+        kafka.write(AGGREGATE_LETTERS, repositoryKey, letter);
     }
 
     /**
@@ -162,9 +214,15 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     private void startKStream(Properties config) {
         final KStreamBuilder builder = new KStreamBuilder();
         final Serde<Message> messageSerde = serdeFrom(serializer(), deserializer());
-        final KStream<String, Message> stream = builder.stream(Serdes.String(),
-                                                               messageSerde,
-                                                               EVENT_TOPIC.getName());
+        final StateStoreSupplier<?> supl = Stores.create(AggregateAssembler.STATE_STORE_NAME)
+                                                 .withStringKeys()
+                                                 .withValues(messageSerde)
+                                                 .persistent()
+                                                 .build();
+        builder.addStateStore(supl);
+        final KStream<Message, Message> stream = builder.stream(messageSerde,
+                                                                messageSerde,
+                                                                AGGREGATE_LETTERS.getName());
         final String repositoryKey = repositoryKey();
         buildTopology(stream, repositoryKey);
         final Properties streamConfig = prepareConfig(config, repositoryKey);
@@ -172,9 +230,12 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         streams.start();
     }
 
-    private void buildTopology(KStream<String, Message> stream, String repositoryKey) {
-        stream.filter((key, value) -> repositoryKey.equals(key))
-              .process(() -> assembler);
+    private void buildTopology(KStream<Message, Message> stream, String repositoryKey) {
+        stream.filter((key, value) -> {
+            final StringValue genericKey = (StringValue) key;
+            final boolean result = repositoryKey.equals(genericKey.getValue());
+            return result;
+        }).process(() -> assembler, AggregateAssembler.STATE_STORE_NAME);
     }
 
     /**
@@ -206,7 +267,33 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      * @param envelope the event to be dispatched by this repository
      */
     private void doDispatchEvent(EventEnvelope envelope) {
-        super.dispatchEvent(envelope);
+        logErrors(super::dispatchEvent, envelope);
+    }
+
+    private void doDispatchRejection(RejectionEnvelope envelope) {
+        logErrors(super::dispatchRejection, envelope);
+    }
+
+    private void doDispatchCommand(CommandEnvelope envelope) {
+        logErrors(super::dispatch, envelope);
+    }
+
+    private <E extends MessageEnvelope<?, ? ,?>> void logErrors(Consumer<E> task, E msg) {
+        try {
+            task.accept(msg);
+            log().info("Acknowledged {} (ID: {}).",
+                       msg.getMessageClass(),
+                       Identifier.toString(msg.getId()));
+        } catch (RuntimeException e) {
+            final Throwable cause = getRootCause(e);
+            if (cause instanceof ThrowableMessage) {
+                // TODO:2017-10-31:dmytro.dashenkov: Post to RejectionBus?
+                logError("Rejection encountered wile processing %s (ID: %s). " +
+                                 "KAggregateRepository does not support rejections.", msg, e);
+            } else {
+                logError("Error while processing message %s (ID: %s).", msg, e);
+            }
+        }
     }
 
     private static Properties prepareConfig(Properties configTemplate,
@@ -228,7 +315,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      * The Kafka Stream {@link org.apache.kafka.streams.processor.Processor Processor} storing
      * the Aggregate states and applying the new events to the aggregates.
      */
-    private class AggregateAssembler extends AbstractProcessor<String, Message> {
+    private class AggregateAssembler extends AbstractProcessor<Message, Message> {
 
         private static final String STATE_STORE_NAME = "aggregate-state-store";
 
@@ -240,13 +327,29 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
             super.init(context);
             this.aggregateStateStore =
                     (KeyValueStore<String, Snapshot>) context.getStateStore(STATE_STORE_NAME);
+            checkNotNull(aggregateStateStore);
         }
 
+        @SuppressWarnings({"IfStatementWithTooManyBranches", "ChainOfInstanceofChecks"})
+            // OK for this method, since we should have a *single* processor for all the state
+            // changing messages.
         @Override
-        public void process(String key, Message value) {
-            final Event event = (Event) value;
-            final EventEnvelope envelope = EventEnvelope.of(event);
-            KAggregateRepository.this.doDispatchEvent(envelope);
+        public void process(Message ignoredKey, Message value) {
+            if (value instanceof Event) {
+                final EventEnvelope envelope = EventEnvelope.of((Event) value);
+                KAggregateRepository.this.doDispatchEvent(envelope);
+            } else if (value instanceof Rejection) {
+                final RejectionEnvelope envelope = RejectionEnvelope.of((Rejection) value);
+                KAggregateRepository.this.doDispatchRejection(envelope);
+            } else if (value instanceof Command) {
+                final CommandEnvelope envelope = CommandEnvelope.of((Command) value);
+                KAggregateRepository.this.doDispatchCommand(envelope);
+            } else {
+                throw newIllegalArgumentException(
+                        "Expected Command, Event or Rejection but encountered %s.",
+                        value
+                );
+            }
         }
 
         @SuppressWarnings("Guava") // For consistency within the class.
