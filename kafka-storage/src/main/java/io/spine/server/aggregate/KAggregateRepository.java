@@ -37,6 +37,7 @@ import io.spine.server.storage.kafka.KafkaWrapper;
 import io.spine.server.storage.kafka.Topic;
 import io.spine.string.Stringifiers;
 import org.apache.kafka.common.serialization.Serde;
+import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.Consumed;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
@@ -220,7 +221,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         final Serde<Message> messageSerde = serdeFrom(serializer(), deserializer());
         final KeyValueBytesStoreSupplier supplier =
                 persistentKeyValueStore(AggregateAssembler.STATE_STORE_NAME);
-        builder.addStateStore(keyValueStoreBuilder(supplier, messageSerde, messageSerde));
+        builder.addStateStore(keyValueStoreBuilder(supplier, Serdes.String(), messageSerde));
         final KStream<Message, Message> stream = builder.stream(AGGREGATE_LETTERS.getName(),
                                                                 Consumed.with(messageSerde,
                                                                               messageSerde));
