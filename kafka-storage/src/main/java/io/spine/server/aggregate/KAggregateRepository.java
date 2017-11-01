@@ -207,7 +207,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      */
     @SuppressWarnings("Guava") // Spine Java 7 API.
     @Override
-    protected final Optional<AggregateStateRecord> loadState(I id) {
+    protected final Optional<AggregateStateRecord> fetchHistory(I id) {
         return assembler.readAggregate(id);
     }
 
