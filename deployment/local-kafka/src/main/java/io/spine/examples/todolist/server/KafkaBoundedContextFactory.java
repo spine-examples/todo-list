@@ -92,8 +92,7 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
     /**
      * {@inheritDoc}
      *
-     * @implSpec
-     * Invokes the {@link KafkaCatchUp} start. See the {@linkplain KafkaCatchUp#start doc} for
+     * @implSpec Invokes the {@link KafkaCatchUp} start. See the {@linkplain KafkaCatchUp#start doc} for
      * the preconditions of a successful call.
      */
     @Override
@@ -104,8 +103,7 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
     /**
      * {@inheritDoc}
      *
-     * @implSpec
-     * Creates a new instance of {@link LabelKAggregateRepository}.
+     * @implSpec Creates a new instance of {@link LabelKAggregateRepository}.
      */
     @Override
     protected AggregateRepository<LabelId, LabelAggregate> labelAggregateRepository() {
@@ -163,6 +161,9 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
         return props;
     }
 
+    /**
+     * Retrieves an instance of {@code KafkaBoundedContextFactory}.
+     */
     public static KafkaBoundedContextFactory instance() {
         return Singleton.INSTANCE.value;
     }

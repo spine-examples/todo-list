@@ -28,14 +28,17 @@ import io.spine.server.storage.kafka.KafkaWrapper;
 import java.util.Properties;
 
 /**
+ * An implementation of a repository for {@link LabelAggregate} derived from
+ * {@link KAggregateRepository}.
+ *
  * @author Dmytro Dashenkov
  */
-public class LabelKAggregateRepository extends KAggregateRepository<LabelId, LabelAggregate> {
+class LabelKAggregateRepository extends KAggregateRepository<LabelId, LabelAggregate> {
 
     /**
      * @see KAggregateRepository#KAggregateRepository(Properties, KafkaWrapper)
      */
-    protected LabelKAggregateRepository(Properties streamConfig, KafkaWrapper kafka) {
+    LabelKAggregateRepository(Properties streamConfig, KafkaWrapper kafka) {
         super(streamConfig, kafka);
     }
 }

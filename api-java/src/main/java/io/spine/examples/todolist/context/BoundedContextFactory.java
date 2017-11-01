@@ -102,7 +102,7 @@ public class BoundedContextFactory {
 
     /**
      * Retrieves an instance of {@code BoundedContextFactory} with the given
-     * {@linkplain StorageFactory storage} implantation.
+     * {@linkplain StorageFactory storage} implementation.
      *
      * @param storageFactory the {@link StorageFactory} to use in the created
      *                       {@linkplain BoundedContext bounded contexts}
@@ -155,10 +155,8 @@ public class BoundedContextFactory {
      * <p>This method is called after an instance on {@link BoundedContext} is created and all
      * the repositories are registered.
      *
-     * @implSpec
-     * Performs no action by default.
-     *
      * @param bc the created {@link BoundedContext}
+     * @implSpec Performs no action by default.
      */
     protected void onCreateBoundedContext(BoundedContext bc) {
         // NoOp
@@ -183,21 +181,19 @@ public class BoundedContextFactory {
     /**
      * Creates an {@link AggregateRepository} for the {@link LabelAggregate}.
      *
-     * <p>Override this method to inject a custom repository implementation.
-     *
-     * @implSpec
-     * The default implementation creates an instance of {@link LabelAggregateRepository}.
+     * <p>Override this method to inject a custom repository implementation into the created
+     * {@linkplain BoundedContext bounded contexts}.
      *
      * @return an repository for {@link LabelAggregate}
+     * @implSpec The default implementation creates an instance of {@link LabelAggregateRepository}.
      */
     protected AggregateRepository<LabelId, LabelAggregate> labelAggregateRepository() {
         return new LabelAggregateRepository();
     }
 
-    @SuppressWarnings("Guava" /* Spine API is Java 7-based
-                                 and uses `Optional` from Google Guava. */)
     @VisibleForTesting
     static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
+        @SuppressWarnings("Guava") // Spine Java 7 API.
         final Optional<StorageFactory> storageFactory = eventBus.getStorageFactory();
         if (!storageFactory.isPresent()) {
             throw newIllegalStateException("EventBus does not specify a StorageFactory.");
@@ -209,6 +205,13 @@ public class BoundedContextFactory {
                              .build();
     }
 
+    /**
+     * A singleton enum holding the default instance of {@code BoundedContextFactory} used for
+     * tests.
+     *
+     * @see #instance() for public access to the default instance
+     * @see #instance(StorageFactory) for the production instances of {@code BoundedContextFactory}
+     */
     private enum Default {
         INSTANCE;
 

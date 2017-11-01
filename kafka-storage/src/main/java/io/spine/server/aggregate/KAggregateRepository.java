@@ -77,11 +77,12 @@ import static org.apache.kafka.streams.state.Stores.persistentKeyValueStore;
  * topology state store). The {@code Aggregate} instances are loaded by reading the
  * {@link Snapshot} from the store.
  *
- * <p>All the events dispatched to the repository are published into a single topic with name
- * {@code spine.server.aggregate.letters} and then consumed from the topic by the repository
- * itself. It's recommended that the {@code spine.server.aggregate.letters} topic exists before
- * the application start. It should have at least as many partitions as there are subtypes of
- * {@code KAggregateRepository} in the system. Also, consider having several replicas of the topic
+ * <p>All the commands, events and rejections dispatched to the repository are published into
+ * a single Kafka topic with name {@code spine.server.aggregate.letters} and then consumed from
+ * the topic by the repository itself. It's recommended that
+ * the {@code spine.server.aggregate.letters} topic exists before the application start. It should
+ * have at least as many partitions as there are subtypes of {@code KAggregateRepository} in the
+ * system. Also, consider having several replicas of the topic
  * (i.e. set {@code replication-factor} to a number greater than 1).
  *
  * <p>Unlike the {@linkplain AggregateRepository base implementation}, none of
@@ -117,8 +118,8 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     protected KAggregateRepository(Properties streamConfig, KafkaWrapper kafka) {
         super();
         this.kafka = kafka;
-        startKStream(streamConfig);
         this.assembler = this.new AggregateAssembler();
+        startKStream(streamConfig);
     }
 
     /**
@@ -315,7 +316,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     }
 
     /**
-     * Executes the given {@linkplain Consumer dispatching task} with the given
+     * Executes the given dispatching task with the given
      * {@linkplain MessageEnvelope message argument} and catches and logs all the runtime
      * exceptions thrown by the {@code task}.
      *
@@ -336,7 +337,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
 
     /**
      * The Kafka Stream {@link org.apache.kafka.streams.processor.Processor Processor} storing
-     * the Aggregate states and applying the new events to the aggregates.
+     * the Aggregate states and dispatching the letters to Aggregates.
      */
     private class AggregateAssembler extends AbstractProcessor<Message, Message> {
 

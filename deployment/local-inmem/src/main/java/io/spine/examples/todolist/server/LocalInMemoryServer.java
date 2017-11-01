@@ -46,8 +46,7 @@ public class LocalInMemoryServer {
     }
 
     public static void main(String[] args) throws IOException {
-        final StorageFactory storageFactory = newInstance(getDefaultName(),
-                                                          false);
+        final StorageFactory storageFactory = newInstance(getDefaultName(), false);
         final BoundedContext boundedContext = BoundedContextFactory.instance(storageFactory)
                                                                    .create();
         final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
