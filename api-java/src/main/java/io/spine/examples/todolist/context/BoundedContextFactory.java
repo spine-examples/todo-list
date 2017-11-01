@@ -56,7 +56,7 @@ public class BoundedContextFactory {
     private static final BoundedContextName BOUNDED_CONTEXT_NAME = BoundedContext.newName(NAME);
 
     /**
-     * Default production scope scope {@link StorageFactory} supplier.
+     * Default production scope {@link StorageFactory} supplier.
      *
      * <p>Throws an {@link IllegalStateException} on any invocation, as the {@link StorageFactory}
      * for production should be specified explicitly.
