@@ -24,7 +24,6 @@ import com.google.common.base.Optional;
 import com.google.protobuf.Message;
 import com.google.protobuf.StringValue;
 import io.spine.Identifier;
-import io.spine.base.ThrowableMessage;
 import io.spine.core.Command;
 import io.spine.core.CommandEnvelope;
 import io.spine.core.Event;
@@ -52,7 +51,6 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Throwables.getRootCause;
 import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
 import static io.spine.util.Exceptions.newIllegalArgumentException;
@@ -77,11 +75,15 @@ import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
  * {@link Snapshot} from the store.
  *
  * <p>All the events dispatched to the repository are published into a single topic with name
- * {@code spine.server.aggregate.letters} and then consumed from the topic by the repository itself. It's
- * recommended that the {@code spine.server.aggregate.letters} topic exists before the application start. It
- * should have at least as many partitions as there are subtypes of {@code KAggregateRepository}
- * in the system. Also, consider having several replicas of the topic (i.e. set
- * {@code replication-factor} to a number greater than 1).
+ * {@code spine.server.aggregate.letters} and then consumed from the topic by the repository
+ * itself. It's recommended that the {@code spine.server.aggregate.letters} topic exists before
+ * the application start. It should have at least as many partitions as there are subtypes of
+ * {@code KAggregateRepository} in the system. Also, consider having several replicas of the topic
+ * (i.e. set {@code replication-factor} to a number greater than 1).
+ *
+ * <p>Unlike the {@linkplain AggregateRepository base implementation}, none of
+ * the {@code dispatch*} methods of this class propagate exceptions thrown while handling
+ * the dispatched message.
  *
  * @author Dmytro Dashenkov
  * @see AggregateRepository for the detailed description of the Aggregate Repositories, type params
@@ -270,29 +272,65 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         logErrors(super::dispatchEvent, envelope);
     }
 
+    /**
+     * Dispatches the given {@link RejectionEnvelope}.
+     *
+     * <p>This method uses the {@linkplain AggregateRepository#dispatchRejection super}
+     * implementation to dispatch the rejection.
+     *
+     * <p>Acts if
+     * <pre>
+     * {@code
+     *     private void doDispatchRejection(RejectionEnvelope envelope) {
+     *         super.dispatchRejection(envelope);
+     *     }
+     * }
+     * </pre>
+     *
+     * @param envelope the rejection to be dispatched by this repository
+     */
     private void doDispatchRejection(RejectionEnvelope envelope) {
         logErrors(super::dispatchRejection, envelope);
     }
 
+    /**
+     * Dispatches the given {@link CommandEnvelope}.
+     *
+     * <p>This method uses the {@linkplain AggregateRepository#dispatch super} implementation
+     * to dispatch the command.
+     *
+     * <p>Acts if
+     * <pre>
+     * {@code
+     *     private void doDispatchEvent(CommandEnvelope envelope) {
+     *         super.dispatch(envelope);
+     *     }
+     * }
+     * </pre>
+     *
+     * @param envelope the command to be dispatched by this repository
+     */
     private void doDispatchCommand(CommandEnvelope envelope) {
         logErrors(super::dispatch, envelope);
     }
 
-    private <E extends MessageEnvelope<?, ? ,?>> void logErrors(Consumer<E> task, E msg) {
+    /**
+     * Executes the given {@linkplain Consumer dispatching task} with the given
+     * {@linkplain MessageEnvelope message argument} and catches and logs all the runtime
+     * exceptions thrown by the {@code task}.
+     *
+     * @param task the {@link Consumer} to execute
+     * @param argument the {@code task} argument
+     * @param <E> the type of the {@code argument} for the {@code task}
+     */
+    private <E extends MessageEnvelope<?, ? ,?>> void logErrors(Consumer<E> task, E argument) {
         try {
-            task.accept(msg);
+            task.accept(argument);
             log().info("Acknowledged {} (ID: {}).",
-                       msg.getMessageClass(),
-                       Identifier.toString(msg.getId()));
+                       argument.getMessageClass(),
+                       Identifier.toString(argument.getId()));
         } catch (RuntimeException e) {
-            final Throwable cause = getRootCause(e);
-            if (cause instanceof ThrowableMessage) {
-                // TODO:2017-10-31:dmytro.dashenkov: Post to RejectionBus?
-                logError("Rejection encountered wile processing %s (ID: %s). " +
-                                 "KAggregateRepository does not support rejections.", msg, e);
-            } else {
-                logError("Error while processing message %s (ID: %s).", msg, e);
-            }
+            logError("Error while processing %s (ID: %s).", argument, e);
         }
     }
 
