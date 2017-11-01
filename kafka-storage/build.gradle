@@ -1,7 +1,7 @@
 group 'io.spine'
 
 ext {
-    kafkaVersion = '0.11.0.0'
+    kafkaVersion = '1.0.0'
 }
 
 dependencies {

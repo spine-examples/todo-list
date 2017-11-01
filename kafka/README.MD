@@ -3,4 +3,4 @@ of Kafka, please [update](https://kafka.apache.org/downloads) the contents of th
 
 _No additional set up is required when downloading a compiled distribution._
 
-_Current version of Kafka is **0.11.0.1**._
+_Current version of Kafka is **1.0.0**._

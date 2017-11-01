@@ -36,10 +36,13 @@ import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.Serializer;
+import org.apache.kafka.streams.Consumed;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.KStreamBuilder;
+import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.kstream.Serialized;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.apache.kafka.streams.kstream.Windows;
 import org.slf4j.Logger;
@@ -146,18 +149,19 @@ public final class KafkaCatchUp {
                                 String repositoryKey,
                                 Properties streamConfig) {
         final Set<EventClass> handledClasses = repository.getMessageClasses();
-        final KStreamBuilder builder = new KStreamBuilder();
+        final StreamsBuilder builder = new StreamsBuilder();
         final Serde<Message> messageSerde = serdeFrom(serializer(), deserializer());
-        final KStream<Message, Message> stream =
-                builder.stream(messageSerde, messageSerde, EVENT_TOPIC.getName());
+        final KStream<Message, Message> stream = builder.stream(EVENT_TOPIC.getName(),
+                                                                Consumed.with(messageSerde,
+                                                                              messageSerde));
         stream.filter((key, value) -> handledClasses.contains(EventClass.of(value)))
               .map((key, value) -> new KeyValue<>(repositoryKey, value))
-              .groupByKey(Serdes.String(), messageSerde)
+              .groupByKey(Serialized.with(Serdes.String(), messageSerde))
+              .windowedBy(windows)
               .aggregate(KafkaCatchUp::voidInstance,
                          (key, value, aggregate) -> dispatchEvent(repository, (Event) value),
-                         windows,
-                         VoidSerde.INSTANCE);
-        final KafkaStreams streams = new KafkaStreams(builder, streamConfig);
+                         Materialized.with(VoidSerde.cast(), VoidSerde.cast()));
+        final KafkaStreams streams = new KafkaStreams(builder.build(), streamConfig);
         streams.start();
         log().info("Starting catch up for {} projection.", repositoryKey);
     }
@@ -363,6 +367,11 @@ public final class KafkaCatchUp {
         @Override
         public Deserializer<Object> deserializer() {
             return this;
+        }
+
+        @SuppressWarnings("unchecked") // OK for the `VoidSerde`.
+        private static <T> Serde<T> cast() {
+            return (Serde<T>) INSTANCE;
         }
     }
 

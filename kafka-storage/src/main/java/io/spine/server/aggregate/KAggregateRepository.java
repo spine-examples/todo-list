@@ -37,14 +37,14 @@ import io.spine.server.storage.kafka.KafkaWrapper;
 import io.spine.server.storage.kafka.Topic;
 import io.spine.string.Stringifiers;
 import org.apache.kafka.common.serialization.Serde;
+import org.apache.kafka.streams.Consumed;
 import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.KStreamBuilder;
 import org.apache.kafka.streams.processor.AbstractProcessor;
 import org.apache.kafka.streams.processor.ProcessorContext;
-import org.apache.kafka.streams.processor.StateStoreSupplier;
+import org.apache.kafka.streams.state.KeyValueBytesStoreSupplier;
 import org.apache.kafka.streams.state.KeyValueStore;
-import org.apache.kafka.streams.state.Stores;
 
 import java.util.Collections;
 import java.util.Properties;
@@ -56,6 +56,8 @@ import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
 import static io.spine.util.Exceptions.newIllegalArgumentException;
 import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
+import static org.apache.kafka.streams.state.Stores.keyValueStoreBuilder;
+import static org.apache.kafka.streams.state.Stores.persistentKeyValueStore;
 
 /**
  * An {@link AggregateRepository} which applies the dispatched events through a Kafka Streams
@@ -214,21 +216,18 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     }
 
     private void startKStream(Properties config) {
-        final KStreamBuilder builder = new KStreamBuilder();
+        final StreamsBuilder builder = new StreamsBuilder();
         final Serde<Message> messageSerde = serdeFrom(serializer(), deserializer());
-        final StateStoreSupplier<?> supl = Stores.create(AggregateAssembler.STATE_STORE_NAME)
-                                                 .withStringKeys()
-                                                 .withValues(messageSerde)
-                                                 .persistent()
-                                                 .build();
-        builder.addStateStore(supl);
-        final KStream<Message, Message> stream = builder.stream(messageSerde,
-                                                                messageSerde,
-                                                                AGGREGATE_LETTERS.getName());
+        final KeyValueBytesStoreSupplier supplier =
+                persistentKeyValueStore(AggregateAssembler.STATE_STORE_NAME);
+        builder.addStateStore(keyValueStoreBuilder(supplier, messageSerde, messageSerde));
+        final KStream<Message, Message> stream = builder.stream(AGGREGATE_LETTERS.getName(),
+                                                                Consumed.with(messageSerde,
+                                                                              messageSerde));
         final String repositoryKey = repositoryKey();
         buildTopology(stream, repositoryKey);
         final Properties streamConfig = KafkaStreamsConfigs.prepareConfig(config, repositoryKey);
-        final KafkaStreams streams = new KafkaStreams(builder, streamConfig);
+        final KafkaStreams streams = new KafkaStreams(builder.build(), streamConfig);
         streams.start();
     }
 
