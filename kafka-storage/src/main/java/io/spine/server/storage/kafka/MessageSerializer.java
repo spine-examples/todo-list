@@ -30,8 +30,6 @@ import org.apache.kafka.common.serialization.Serializer;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 /**
  * An implementation of Kafka {@link Serializer} and {@link Deserializer} interfaces handling
  * the {@link Message} records.
@@ -46,7 +44,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class MessageSerializer implements Serializer<Message>, Deserializer<Message> {
 
-    private static final byte[] EMPTY_BITES = {};
+    private static final byte[] EMPTY_BYTES = {};
 
     /**
      * Crates a new instance of the {@code MessageSerializer}.
@@ -71,9 +69,8 @@ public final class MessageSerializer implements Serializer<Message>, Deserialize
 
     @Nullable
     @Override
-    public Message deserialize(String topic, byte[] data) {
-        checkNotNull(data);
-        if (data.length == 0) {
+    public Message deserialize(String topic, @Nullable byte[] data) {
+        if (data == null || data.length == 0) {
             return null;
         }
         final Any packed;
@@ -89,7 +86,7 @@ public final class MessageSerializer implements Serializer<Message>, Deserialize
     @Override
     public byte[] serialize(String topic, Message data) {
         if (data == null) {
-            return EMPTY_BITES;
+            return EMPTY_BYTES;
         }
         final Any packed = AnyPacker.pack(data);
         final byte[] result = packed.toByteArray();
