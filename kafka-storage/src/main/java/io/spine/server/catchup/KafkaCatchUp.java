@@ -27,6 +27,7 @@ import io.spine.core.EventClass;
 import io.spine.core.EventEnvelope;
 import io.spine.core.MessageEnvelope;
 import io.spine.server.event.EventDispatcher;
+import io.spine.server.kafka.KafkaStreamsConfigs;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.storage.kafka.KafkaWrapper;
 import io.spine.server.storage.kafka.Topic;
@@ -56,7 +57,6 @@ import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
 import static java.lang.String.format;
 import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
-import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
 
 /**
  * A utility for configuring the {@linkplain ProjectionRepository projection repository} catch up
@@ -138,7 +138,7 @@ public final class KafkaCatchUp {
     public static void start(ProjectionRepository<?, ?, ?> repository, Properties streamConfig) {
         checkNotNull(repository);
         final String repositoryKey = repositoryKey(repository);
-        final Properties config = prepareConfig(streamConfig, repositoryKey);
+        final Properties config = KafkaStreamsConfigs.prepareConfig(streamConfig, repositoryKey);
         doStart(repository, repositoryKey, config);
     }
 
@@ -160,21 +160,6 @@ public final class KafkaCatchUp {
         final KafkaStreams streams = new KafkaStreams(builder, streamConfig);
         streams.start();
         log().info("Starting catch up for {} projection.", repositoryKey);
-    }
-
-    private static Properties prepareConfig(Properties configTemplate,
-                                            String applicationId) {
-        final Properties result = copy(configTemplate);
-        result.setProperty(APPLICATION_ID_CONFIG, applicationId);
-        return result;
-    }
-
-    @SuppressWarnings("UseOfPropertiesAsHashtable") // OK in this case.
-    private static Properties copy(Properties properties) {
-        checkNotNull(properties);
-        final Properties result = new Properties();
-        result.putAll(properties);
-        return result;
     }
 
     /**

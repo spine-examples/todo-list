@@ -32,6 +32,7 @@ import io.spine.core.MessageEnvelope;
 import io.spine.core.Rejection;
 import io.spine.core.RejectionEnvelope;
 import io.spine.server.entity.EntityClass;
+import io.spine.server.kafka.KafkaStreamsConfigs;
 import io.spine.server.storage.kafka.KafkaWrapper;
 import io.spine.server.storage.kafka.Topic;
 import io.spine.string.Stringifiers;
@@ -55,7 +56,6 @@ import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
 import static io.spine.util.Exceptions.newIllegalArgumentException;
 import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
-import static org.apache.kafka.streams.StreamsConfig.APPLICATION_ID_CONFIG;
 
 /**
  * An {@link AggregateRepository} which applies the dispatched events through a Kafka Streams
@@ -227,7 +227,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
                                                                 AGGREGATE_LETTERS.getName());
         final String repositoryKey = repositoryKey();
         buildTopology(stream, repositoryKey);
-        final Properties streamConfig = prepareConfig(config, repositoryKey);
+        final Properties streamConfig = KafkaStreamsConfigs.prepareConfig(config, repositoryKey);
         final KafkaStreams streams = new KafkaStreams(builder, streamConfig);
         streams.start();
     }
@@ -332,21 +332,6 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         } catch (RuntimeException e) {
             logError("Error while processing %s (ID: %s).", argument, e);
         }
-    }
-
-    private static Properties prepareConfig(Properties configTemplate,
-                                            String applicationId) {
-        final Properties result = copy(configTemplate);
-        result.setProperty(APPLICATION_ID_CONFIG, applicationId);
-        return result;
-    }
-
-    @SuppressWarnings("UseOfPropertiesAsHashtable") // OK in this case.
-    private static Properties copy(Properties properties) {
-        checkNotNull(properties);
-        final Properties result = new Properties();
-        result.putAll(properties);
-        return result;
     }
 
     /**
