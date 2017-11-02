@@ -37,6 +37,9 @@ import java.util.Properties;
 public class TaskLabelsKRepository
         extends KAggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> {
 
+    /**
+     * @see KAggregatePartRepository#KAggregatePartRepository(Properties, KafkaWrapper)
+     */
     public TaskLabelsKRepository(Properties streamConfig,
                                     KafkaWrapper kafka) {
         super(streamConfig, kafka);
