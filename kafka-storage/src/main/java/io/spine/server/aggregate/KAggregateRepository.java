@@ -52,10 +52,6 @@ import java.util.function.Consumer;
  * system. Also, consider having several replicas of the topic
  * (i.e. set {@code replication-factor} to a number greater than 1).
  *
- * <p>Unlike the {@linkplain AggregateRepository base implementation}, none of
- * the {@code dispatch*} methods of this class propagate exceptions thrown while handling
- * the dispatched message.
- *
  * @author Dmytro Dashenkov
  * @see AggregateRepository for the detailed description of the Aggregate Repositories, type params
  *                          and more
