@@ -35,33 +35,17 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * An {@link AggregateRepository} which applies the dispatched events through a Kafka Streams
+ * An {@link AggregatePartRepository} which applies the dispatched events through a Kafka Streams
  * topology.
  *
- * <p>Each subclass of {@code KAggregateRepository} starts a Kafka Streams processor on
- * the constructor invocation.
- *
- * <p>To enable the Kafka-based Aggregate loading, extend {@code KAggregateRepository} instead of
- * extending {@code AggregateRepository} directly.
- *
- * <p>All the commands, events and rejections dispatched to the repository are published into
- * a single Kafka topic with name {@code spine.server.aggregate.messages} and then consumed from
- * the topic by the repository itself. It's recommended that
- * the {@code spine.server.aggregate.messages} topic exists before the application start. It should
- * have at least as many partitions as there are subtypes of {@code KAggregateRepository} in the
- * system. Also, consider having several replicas of the topic
- * (i.e. set {@code replication-factor} to a number greater than 1).
- *
- * <p>Unlike the {@linkplain AggregateRepository base implementation}, none of
- * the {@code dispatch*} methods of this class propagate exceptions thrown while handling
- * the dispatched message.
+ * <p>This class is an analogy of {@link KAggregateRepository} but for {@link AggregatePart}.
  *
  * @author Dmytro Dashenkov
- * @see AggregateRepository for the detailed description of the Aggregate Repositories, type params
- *                          and more
  */
-public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
-        extends AggregateRepository<I, A> implements KafkaAggregateRepository {
+public abstract class KAggregatePartRepository<I,
+                                               A extends AggregatePart<I, ?, ?, R>,
+                                               R extends AggregateRoot<I>>
+        extends AggregatePartRepository<I, A, R> implements KafkaAggregateRepository {
 
     private final KafkaWrapper kafka;
 
@@ -75,7 +59,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      * @param kafka        the {@link KafkaWrapper} instance used to publish the events
      */
     @SuppressWarnings("ThisEscapedInObjectConstruction") // OK since the whole control
-    protected KAggregateRepository(Properties streamConfig, KafkaWrapper kafka) {
+    protected KAggregatePartRepository(Properties streamConfig, KafkaWrapper kafka) {
         super();
         this.kafka = kafka;
         KafkaAggregateLoading.start(this, streamConfig);
@@ -131,6 +115,12 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
 
     @Internal
     @Override
+    public void dispatchCommandNow(CommandEnvelope envelope) {
+        logErrors(super::dispatch, envelope);
+    }
+
+    @Internal
+    @Override
     public void dispatchEventNow(EventEnvelope envelope) {
         logErrors(super::dispatchEvent, envelope);
     }
@@ -139,12 +129,6 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     @Override
     public void dispatchRejectionNow(RejectionEnvelope envelope) {
         logErrors(super::dispatchRejection, envelope);
-    }
-
-    @Internal
-    @Override
-    public void dispatchCommandNow(CommandEnvelope envelope) {
-        logErrors(super::dispatch, envelope);
     }
 
     @Internal
