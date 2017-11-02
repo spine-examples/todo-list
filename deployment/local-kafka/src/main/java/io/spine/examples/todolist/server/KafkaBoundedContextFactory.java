@@ -100,8 +100,8 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
     /**
      * {@inheritDoc}
      *
-     * @implSpec Invokes the {@link KafkaCatchUp} start. See the {@linkplain KafkaCatchUp#start doc} for
-     * the preconditions of a successful call.
+     * @implSpec Invokes the {@link KafkaCatchUp} start. See the
+     * {@linkplain KafkaCatchUp#start doc} for the preconditions of a successful call.
      */
     @Override
     protected void onCreateBoundedContext(BoundedContext boundedContext) {
