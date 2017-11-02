@@ -29,21 +29,32 @@ import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelDetailsChange;
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.Task;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
+import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
+import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.server.KafkaBoundedContextFactory;
+import io.spine.examples.todolist.server.repository.LabelKAggregateRepository;
+import io.spine.examples.todolist.server.repository.TaskKRepository;
 import io.spine.server.BoundedContext;
 import io.spine.server.entity.Repository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
+import java.util.stream.Stream;
+
 import static com.google.common.base.Preconditions.checkState;
 import static io.spine.Identifier.newUuid;
 import static io.spine.examples.todolist.LabelColor.GRAY;
 import static io.spine.examples.todolist.LabelColor.RED;
+import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -53,25 +64,21 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("KAggregateRepository should")
 class KAggregateRepositoryTest {
 
-    private static KAggregateRepository<LabelId, LabelAggregate> repository = null;
+    private static LabelKAggregateRepository labelRepository = null;
+    private static TaskKRepository taskRepository = null;
 
     @BeforeAll
     static void setUp() {
         final BoundedContext boundedContext = KafkaBoundedContextFactory.instance()
                                                                         .create();
-        @SuppressWarnings("Guava") // Spine Java 7 API
-        final Optional<Repository> repo = boundedContext.findRepository(TaskLabel.class);
-        checkState(repo.isPresent());
-        @SuppressWarnings("unchecked") // Logically checked.
-        final KAggregateRepository<LabelId, LabelAggregate> aggregateRepository =
-                (KAggregateRepository<LabelId, LabelAggregate>) repo.get();
-        repository = aggregateRepository;
+        labelRepository = repository(boundedContext, TaskLabel.class);
+        taskRepository = repository(boundedContext, Task.class);
     }
 
     @DisplayName("apply events onto an Aggregate")
     @Test
     void testEventsApplying() {
-        final LabelId id = newId();
+        final LabelId id = newLabelId();
 
         // Dispatch 2 events
         final LabelDetails initialDtls = LabelDetails.newBuilder()
@@ -82,7 +89,7 @@ class KAggregateRepositoryTest {
                                                            .setLabelId(id)
                                                            .setLabelTitle(initialDtls.getTitle())
                                                            .build();
-        dispatchCommand(createCmd);
+        dispatchLabelCommand(createCmd);
         final LabelDetails newLabelDtls = LabelDetails.newBuilder()
                                                       .setColor(LabelColor.GREEN)
                                                       .setTitle("Label ABC")
@@ -95,7 +102,7 @@ class KAggregateRepositoryTest {
                                                                .setId(id)
                                                                .setLabelDetailsChange(change)
                                                                .build();
-        dispatchCommand(updateCmd);
+        dispatchLabelCommand(updateCmd);
 
         // Wait
         waitTime(3000L);
@@ -109,8 +116,8 @@ class KAggregateRepositoryTest {
 
     @Test
     void testApplyingEventToDifferentAggregates() {
-        final LabelId firstId = newId();
-        final LabelId secondId = newId();
+        final LabelId firstId = newLabelId();
+        final LabelId secondId = newLabelId();
 
         final LabelDetails initialFirstDetails = LabelDetails.newBuilder()
                                                              .setTitle("first")
@@ -130,8 +137,8 @@ class KAggregateRepositoryTest {
                                 .setLabelId(secondId)
                                 .setLabelTitle(initialSecondDetails.getTitle())
                                 .build();
-        dispatchCommand(firstLabelCreated);
-        dispatchCommand(secondLabelCreated);
+        dispatchLabelCommand(firstLabelCreated);
+        dispatchLabelCommand(secondLabelCreated);
 
         final LabelDetails firstDetails = LabelDetails.newBuilder()
                                                       .setTitle("Label EFG")
@@ -147,7 +154,7 @@ class KAggregateRepositoryTest {
                                   .setId(firstId)
                                   .setLabelDetailsChange(firstChange)
                                   .build();
-        dispatchCommand(firstDetailsUpdated);
+        dispatchLabelCommand(firstDetailsUpdated);
 
         final LabelDetails secondDetails = LabelDetails.newBuilder()
                                                        .setTitle("Label HIJ")
@@ -163,7 +170,7 @@ class KAggregateRepositoryTest {
                                   .setId(secondId)
                                   .setLabelDetailsChange(secondChange)
                                   .build();
-        dispatchCommand(secondDetailsUpdated);
+        dispatchLabelCommand(secondDetailsUpdated);
 
         waitTime(4000L);
 
@@ -178,15 +185,66 @@ class KAggregateRepositoryTest {
         assertEquals(secondDetails.getColor(), secondLabel.getColor());
     }
 
-    private static void dispatchCommand(Message commandMsg) {
+    @DisplayName("dispatch messages independently")
+    @Test
+    void testIndependence() {
+        final int instanceCount = 5;
+        final Collection<TaskId> taskIds = Stream.generate(KAggregateRepositoryTest::newTaskId)
+                                                 .limit(instanceCount)
+                                                 .collect(toList());
+        final Collection<LabelId> labelIds = Stream.generate(KAggregateRepositoryTest::newLabelId)
+                                                   .limit(instanceCount)
+                                                   .collect(toList());
+        taskIds.parallelStream()
+               .unordered()
+               .map(taskId ->  CreateBasicTask.newBuilder().setId(taskId).build())
+               .forEach(KAggregateRepositoryTest::dispatchTaskCommand);
+        labelIds.parallelStream()
+                .unordered()
+                .map(labelId -> CreateBasicLabel.newBuilder()
+                                                .setLabelId(labelId)
+                                                .setLabelTitle(labelId.getValue())
+                                                .build())
+                .forEach(KAggregateRepositoryTest::dispatchLabelCommand);
+
+        waitTime(5000);
+
+        taskIds.stream()
+               .map(KAggregateRepositoryTest::fetch)
+               .map(Aggregate::getState)
+               .forEach(state -> assertEquals(state.getTaskStatus(), TaskStatus.FINALIZED));
+        labelIds.stream()
+                .map(KAggregateRepositoryTest::fetch)
+                .map(Aggregate::getState)
+                .forEach(state -> assertEquals(state.getId().getValue(), state.getTitle()));
+    }
+
+    private static void dispatchLabelCommand(Message commandMsg) {
+        dispatchCommand(labelRepository, commandMsg);
+    }
+
+    private static void dispatchTaskCommand(Message commandMsg) {
+        dispatchCommand(taskRepository, commandMsg);
+    }
+
+    private static void dispatchCommand(AggregateRepository<?, ?> repository, Message commandMsg) {
         repository.dispatch(commandEnvelope(commandMsg));
     }
 
     private static LabelAggregate fetch(LabelId id) {
+        return fetchAggregate(labelRepository, id);
+    }
+
+    private static TaskPart fetch(TaskId id) {
+        return fetchAggregate(taskRepository, id);
+    }
+
+    private static <I, A extends Aggregate<I, ?, ?>> A fetchAggregate(
+            AggregateRepository<I, A> repository, I id) {
         @SuppressWarnings("Guava") // Spine Java 7 API.
-        final Optional<LabelAggregate> aggregateOptional = repository.find(id);
+        final Optional<A> aggregateOptional = repository.find(id);
         assertTrue(aggregateOptional.isPresent());
-        final LabelAggregate aggregate = aggregateOptional.get();
+        final A aggregate = aggregateOptional.get();
         assertEquals(id, aggregate.getId());
         return aggregate;
     }
@@ -198,10 +256,16 @@ class KAggregateRepositoryTest {
         return CommandEnvelope.of(command);
     }
 
-    private static LabelId newId() {
+    private static LabelId newLabelId() {
         return LabelId.newBuilder()
                       .setValue(newUuid())
                       .build();
+    }
+
+    private static TaskId newTaskId() {
+        return TaskId.newBuilder()
+                     .setValue(newUuid())
+                     .build();
     }
 
     private static void waitTime(long millis) {
@@ -210,5 +274,16 @@ class KAggregateRepositoryTest {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static <R extends AggregateRepository<?, ?>> R repository(
+            BoundedContext boundedContext,
+            Class<? extends Message> aggregateType) {
+        @SuppressWarnings("Guava") // Spine Java 7 API
+        final Optional<Repository> repo = boundedContext.findRepository(aggregateType);
+        checkState(repo.isPresent());
+        @SuppressWarnings("unchecked") // Logically checked.
+        final R repository = (R) repo.get();
+        return repository;
     }
 }
