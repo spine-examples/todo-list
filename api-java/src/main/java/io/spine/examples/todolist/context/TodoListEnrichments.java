@@ -30,10 +30,10 @@ import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
+import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
 import io.spine.examples.todolist.c.aggregate.TaskPart;
-import io.spine.examples.todolist.repository.TaskLabelsRepository;
-import io.spine.examples.todolist.repository.TaskRepository;
+import io.spine.server.aggregate.AggregatePartRepository;
 import io.spine.server.aggregate.AggregateRepository;
 import io.spine.server.event.EventBus;
 import io.spine.server.event.EventEnricher;
@@ -49,8 +49,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
                            // until the migration of Spine to Java 8 is performed.
 public class TodoListEnrichments {
 
-    private final TaskRepository taskRepo;
-    private final TaskLabelsRepository taskLabelsRepo;
+    private final AggregatePartRepository<TaskId, TaskPart, TaskAggregateRoot> taskRepo;
+    private final AggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> taskLabelsRepo;
     private final AggregateRepository<LabelId, LabelAggregate> labelRepository;
 
     private TodoListEnrichments(Builder builder) {
@@ -155,20 +155,24 @@ public class TodoListEnrichments {
      */
     public static class Builder {
 
-        private TaskRepository taskRepo;
-        private TaskLabelsRepository taskLabelsRepo;
+        private AggregatePartRepository<TaskId, TaskPart, TaskAggregateRoot> taskRepo;
+        private AggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> taskLabelsRepo;
         private AggregateRepository<LabelId, LabelAggregate> labelRepository;
 
         private Builder() {
         }
 
-        public Builder setTaskRepository(TaskRepository definitionRepository) {
+        public Builder setTaskRepository(
+                AggregatePartRepository<TaskId, TaskPart, TaskAggregateRoot>
+                        definitionRepository) {
             checkNotNull(definitionRepository);
             this.taskRepo = definitionRepository;
             return this;
         }
 
-        public Builder setTaskLabelsRepository(TaskLabelsRepository taskLabelsRepository) {
+        public Builder setTaskLabelsRepository(
+                AggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot>
+                        taskLabelsRepository) {
             checkNotNull(taskLabelsRepository);
             this.taskLabelsRepo = taskLabelsRepository;
             return this;

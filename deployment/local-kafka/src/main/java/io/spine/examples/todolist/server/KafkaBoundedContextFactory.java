@@ -23,12 +23,17 @@ package io.spine.examples.todolist.server;
 import com.google.common.base.Optional;
 import io.spine.core.EventClass;
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
+import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
+import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
+import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.context.BoundedContextFactory;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.server.BoundedContext;
+import io.spine.server.aggregate.AggregatePartRepository;
 import io.spine.server.aggregate.AggregateRepository;
 import io.spine.server.catchup.KafkaCatchUp;
 import io.spine.server.event.EventBus;
@@ -108,6 +113,17 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
     @Override
     protected AggregateRepository<LabelId, LabelAggregate> labelAggregateRepository() {
         return new LabelKAggregateRepository(streamsConfig, kafka);
+    }
+
+    @Override
+    protected AggregatePartRepository<TaskId, TaskPart, TaskAggregateRoot> taskRepository() {
+        return new TaskKRepository(streamsConfig, kafka);
+    }
+
+    @Override
+    protected AggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot>
+    taskLabelsRepository() {
+        return new TaskLabelsKRepository(streamsConfig, kafka);
     }
 
     @SuppressWarnings({

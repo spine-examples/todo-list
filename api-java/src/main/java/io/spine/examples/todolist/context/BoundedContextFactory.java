@@ -25,7 +25,11 @@ import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
 import io.spine.core.BoundedContextName;
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
+import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
+import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
+import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
@@ -33,6 +37,7 @@ import io.spine.examples.todolist.repository.MyListViewRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
+import io.spine.server.aggregate.AggregatePartRepository;
 import io.spine.server.aggregate.AggregateRepository;
 import io.spine.server.event.EventBus;
 import io.spine.server.event.EventEnricher;
@@ -126,8 +131,10 @@ public class BoundedContextFactory {
 
         final AggregateRepository<LabelId, LabelAggregate> labelAggregateRepo =
                 labelAggregateRepository();
-        final TaskRepository taskRepo = new TaskRepository();
-        final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
+        final AggregatePartRepository<TaskId, TaskPart, TaskAggregateRoot> taskRepo =
+                taskRepository();
+        final AggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> taskLabelsRepo =
+                taskLabelsRepository();
         final MyListViewRepository myListViewRepo = new MyListViewRepository();
         final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
         final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
@@ -162,10 +169,11 @@ public class BoundedContextFactory {
         // NoOp
     }
 
-    private static EventBus.Builder createEventBus(StorageFactory storageFactory,
-                                                   AggregateRepository<LabelId, LabelAggregate> labelRepo,
-                                                   TaskRepository taskRepo,
-                                                   TaskLabelsRepository labelsRepo) {
+    private static EventBus.Builder createEventBus(
+            StorageFactory storageFactory,
+            AggregateRepository<LabelId, LabelAggregate> labelRepo,
+            AggregatePartRepository<TaskId, TaskPart, TaskAggregateRoot> taskRepo,
+            AggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> labelsRepo) {
         final EventEnricher enricher = TodoListEnrichments.newBuilder()
                                                           .setLabelRepository(labelRepo)
                                                           .setTaskRepository(taskRepo)
@@ -189,6 +197,33 @@ public class BoundedContextFactory {
      */
     protected AggregateRepository<LabelId, LabelAggregate> labelAggregateRepository() {
         return new LabelAggregateRepository();
+    }
+
+    /**
+     * Creates an {@link AggregatePartRepository} for the {@link TaskPart}.
+     *
+     * <p>Override this method to inject a custom repository implementation into the created
+     * {@linkplain BoundedContext bounded contexts}.
+     *
+     * @return an repository for {@link TaskPart}
+     * @implSpec The default implementation creates an instance of {@link TaskRepository}.
+     */
+    protected AggregatePartRepository<TaskId, TaskPart, TaskAggregateRoot> taskRepository() {
+        return new TaskRepository();
+    }
+
+    /**
+     * Creates an {@link AggregatePartRepository} for the {@link TaskLabelsPart}.
+     *
+     * <p>Override this method to inject a custom repository implementation into the created
+     * {@linkplain BoundedContext bounded contexts}.
+     *
+     * @return an repository for {@link TaskLabelsPart}
+     * @implSpec The default implementation creates an instance of {@link TaskLabelsRepository}.
+     */
+    protected AggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot>
+    taskLabelsRepository() {
+        return new TaskLabelsRepository();
     }
 
     @VisibleForTesting
