@@ -38,7 +38,7 @@ import java.util.function.Consumer;
  * An {@link AggregatePartRepository} which applies the dispatched events through a Kafka Streams
  * topology.
  *
- * <p>This class is an analogy of {@link KAggregateRepository} but for {@link AggregatePart}.
+ * <p>This class is an analogy of {@link KAggregateRepository} for {@link AggregatePart}.
  *
  * @author Dmytro Dashenkov
  */
