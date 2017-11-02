@@ -62,9 +62,9 @@ import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
  * extending {@code AggregateRepository} directly.
  *
  * <p>All the commands, events and rejections dispatched to the repository are published into
- * a single Kafka topic with name {@code spine.server.aggregate.letters} and then consumed from
+ * a single Kafka topic with name {@code spine.server.aggregate.messages} and then consumed from
  * the topic by the repository itself. It's recommended that
- * the {@code spine.server.aggregate.letters} topic exists before the application start. It should
+ * the {@code spine.server.aggregate.messages} topic exists before the application start. It should
  * have at least as many partitions as there are subtypes of {@code KAggregateRepository} in the
  * system. Also, consider having several replicas of the topic
  * (i.e. set {@code replication-factor} to a number greater than 1).
@@ -109,7 +109,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      *
      * @return always empty set
      * @implSpec Publishes the given {@linkplain EventEnvelope event} into 
-     * the {@code spine.server.aggregate.letters} Kafka topic as a key-value pair:
+     * the {@code spine.server.aggregate.messages} Kafka topic as a key-value pair:
      * <pre>
      * {@linkplain #repositoryKey() Repository type} -> {@link EventEnvelope#getOuterObject()}.
      * </pre>
@@ -125,7 +125,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      * 
      * @return always empty set
      * @implSpec Publishes the given {@linkplain RejectionEnvelope rejection} into 
-     * the {@code spine.server.aggregate.letters} Kafka topic as a key-value pair:
+     * the {@code spine.server.aggregate.messages} Kafka topic as a key-value pair:
      * <pre>
      * {@linkplain #repositoryKey() Repository type} -> {@link RejectionEnvelope#getOuterObject()}.
      * </pre>
@@ -141,7 +141,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      *
      * @return the default value of the ID according to {@link Identifier#getDefaultValue(Class)}
      * @implSpec Publishes the given {@linkplain CommandEnvelope command} into
-     * the {@code spine.server.aggregate.letters} Kafka topic as a key-value pair:
+     * the {@code spine.server.aggregate.messages} Kafka topic as a key-value pair:
      * <pre>
      * {@linkplain #repositoryKey() Repository type} -> {@link CommandEnvelope#getOuterObject()}.
      * </pre>
@@ -153,14 +153,14 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     }
 
     /**
-     * Publishes the given envelope into the Kafka {@code spine.server.aggregate.letters} topic.
+     * Publishes the given envelope into the Kafka {@code spine.server.aggregate.messages} topic.
      *
      * @param msg the envelope to be dispatched
      */
     private void dispatchMessage(MessageEnvelope<?, ? extends Message, ?> msg) {
         final String repositoryKey = repositoryKey();
-        final Message letter = msg.getOuterObject();
-        kafka.write(AGGREGATE_MESSAGES, repositoryKey, letter);
+        final Message message = msg.getOuterObject();
+        kafka.write(AGGREGATE_MESSAGES, repositoryKey, message);
     }
 
     private void startKStream(Properties config) {
