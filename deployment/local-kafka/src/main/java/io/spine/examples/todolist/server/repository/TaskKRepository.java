@@ -18,27 +18,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server;
+package io.spine.examples.todolist.server.repository;
 
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
-import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
+import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.server.aggregate.KAggregatePartRepository;
 import io.spine.server.storage.kafka.KafkaWrapper;
 
 import java.util.Properties;
 
 /**
- * An implementation of a repository for {@link TaskLabelsPart} derived from
+ * An implementation of a repository for {@link TaskPart} derived from
  * {@link KAggregatePartRepository}.
  *
  * @author Dmytro Dashenkov
  */
-class TaskLabelsKRepository
-        extends KAggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> {
+public class TaskKRepository
+        extends KAggregatePartRepository<TaskId, TaskPart, TaskAggregateRoot> {
 
-    TaskLabelsKRepository(Properties streamConfig,
-                                    KafkaWrapper kafka) {
+    public TaskKRepository(Properties streamConfig,
+                              KafkaWrapper kafka) {
         super(streamConfig, kafka);
     }
 }

@@ -18,27 +18,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server;
+package io.spine.examples.todolist.server.repository;
 
-import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.c.aggregate.LabelAggregate;
-import io.spine.server.aggregate.KAggregateRepository;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
+import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
+import io.spine.server.aggregate.KAggregatePartRepository;
 import io.spine.server.storage.kafka.KafkaWrapper;
 
 import java.util.Properties;
 
 /**
- * An implementation of a repository for {@link LabelAggregate} derived from
- * {@link KAggregateRepository}.
+ * An implementation of a repository for {@link TaskLabelsPart} derived from
+ * {@link KAggregatePartRepository}.
  *
  * @author Dmytro Dashenkov
  */
-class LabelKAggregateRepository extends KAggregateRepository<LabelId, LabelAggregate> {
+public class TaskLabelsKRepository
+        extends KAggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> {
 
-    /**
-     * @see KAggregateRepository#KAggregateRepository(Properties, KafkaWrapper)
-     */
-    LabelKAggregateRepository(Properties streamConfig, KafkaWrapper kafka) {
+    public TaskLabelsKRepository(Properties streamConfig,
+                                    KafkaWrapper kafka) {
         super(streamConfig, kafka);
     }
 }
