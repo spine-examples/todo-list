@@ -22,7 +22,6 @@ package io.spine.examples.todolist;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.client.TodoClient;
-import io.spine.examples.todolist.server.Server;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -54,7 +53,7 @@ public class AppConfig {
     }
 
     /**
-     * Obtains {@link TodoClient} for communication with the {@link Server}.
+     * Obtains {@link TodoClient} for communication with the {@code Server}.
      *
      * @return the todoClient interface
      */
