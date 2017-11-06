@@ -170,7 +170,6 @@ subprojects {
 
         compile group: 'io.spine', name: 'spine-base', version: spineBaseVersion
         compile group: 'io.spine', name: 'spine-client', version: spineVersion
-        compile group: 'io.spine', name: 'spine-server', version: spineVersion
         compileOnly group: 'io.spine.tools', name: 'spine-model-assembler', version: spineVersion
 
         testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'

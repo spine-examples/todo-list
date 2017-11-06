@@ -27,6 +27,7 @@ dependencies {
             version: jUnitPlatformVersion
 
     testCompile project(path: ':testutil-api')
+    testCompile project(path: ':server')
 }
 
 task integrationTest(type: JavaExec) {

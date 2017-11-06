@@ -25,6 +25,7 @@ dependencies {
     compile project(path: ':cli-core')
     testCompile project(path: ':testutil-cli')
     testCompile project(path: ':testutil-api')
+    testCompile project(path: ':server')
 }
 
 // A task to run the client. See `ClientApp` for the details.

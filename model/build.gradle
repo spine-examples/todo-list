@@ -19,3 +19,4 @@
  */
 
 apply from: generateDescriptorSetPlugin
+apply from: "$rootDir/scripts/publish.gradle"
