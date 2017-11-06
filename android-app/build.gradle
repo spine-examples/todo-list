@@ -39,6 +39,16 @@ allprojects {
     repositories {
         google()
         jcenter()
+
+        mavenLocal()
+
+        maven {
+            url = "http://maven.teamdev.com/repository/spine"
+        }
+
+        maven {
+            url = "http://maven.teamdev.com/repository/spine-snapshots"
+        }
     }
 }
 
