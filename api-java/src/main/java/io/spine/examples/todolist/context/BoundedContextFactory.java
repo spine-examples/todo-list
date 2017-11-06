@@ -83,7 +83,11 @@ public class BoundedContextFactory {
 
     private final StorageFactorySwitch storageFactorySwitch;
 
-    public static BoundedContextName getDefaultName() {
+    /**
+     * @return the {@link BoundedContextName} of the TodoList BoundedContext
+     * @see #NAME
+     */
+    public static BoundedContextName getBoundedContextName() {
         return BOUNDED_CONTEXT_NAME;
     }
 
@@ -151,7 +155,7 @@ public class BoundedContextFactory {
         boundedContext.register(tasksViewRepo);
         boundedContext.register(draftTasksViewRepo);
 
-        onCreateBoundedContext(boundedContext);
+        onBoundedContestCreated(boundedContext);
 
         return boundedContext;
     }
@@ -165,7 +169,7 @@ public class BoundedContextFactory {
      * @param bc the created {@link BoundedContext}
      * @implSpec Performs no action by default.
      */
-    protected void onCreateBoundedContext(BoundedContext bc) {
+    protected void onBoundedContestCreated(BoundedContext bc) {
         // NoOp
     }
 

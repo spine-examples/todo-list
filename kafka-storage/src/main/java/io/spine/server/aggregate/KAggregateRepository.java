@@ -46,10 +46,14 @@ import java.util.function.Consumer;
  *
  * <p>All the commands, events and rejections dispatched to the repository are published into
  * a single Kafka topic with name {@code spine.server.aggregate.messages} and then consumed from
- * the topic by the repository itself. It's recommended that
- * the {@code spine.server.aggregate.messages} topic exists before the application start. It should
- * have at least as many partitions as there are subtypes of {@code KAggregateRepository} in the
- * system. Also, consider having several replicas of the topic
+ * the topic by the repository itself. Kafka message consumption mechanism is built in a way that
+ * all the records with the same key are consumed by the same processor instance. Thereby no race
+ * conditions happen when several messages targeting a single {@code Aggregate} instance are
+ * sent to the system simultaneously.
+ *
+ * <p>It's recommended that the {@code spine.server.aggregate.messages} topic exists before
+ * the application start. It should have at least as many partitions as there are subtypes of
+ * {@code KAggregateRepository} in the system. Also, consider having several replicas of the topic
  * (i.e. set {@code replication-factor} to a number greater than 1).
  *
  * @author Dmytro Dashenkov
@@ -128,19 +132,19 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     @Internal
     @Override
     public void dispatchEventNow(EventEnvelope envelope) {
-        logErrors(super::dispatchEvent, envelope);
+        applyAndCatch(super::dispatchEvent, envelope);
     }
 
     @Internal
     @Override
     public void dispatchRejectionNow(RejectionEnvelope envelope) {
-        logErrors(super::dispatchRejection, envelope);
+        applyAndCatch(super::dispatchRejection, envelope);
     }
 
     @Internal
     @Override
     public void dispatchCommandNow(CommandEnvelope envelope) {
-        logErrors(super::dispatch, envelope);
+        applyAndCatch(super::dispatch, envelope);
     }
 
     @Internal
@@ -169,12 +173,12 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      */
     @SuppressWarnings("DuplicateStringLiteralInspection")
         // OK for the log messages. Duplicate in `KAggregateRepository`.
-    private <E extends MessageEnvelope<?, ? ,?>> void logErrors(Consumer<E> task, E argument) {
+    private <E extends MessageEnvelope<?, ? ,?>> void applyAndCatch(Consumer<E> task, E argument) {
         try {
             task.accept(argument);
-            log().info("Acknowledged {} (ID: {}).",
-                       argument.getMessageClass(),
-                       Identifier.toString(argument.getId()));
+            log().trace("Acknowledged {} (ID: {}).",
+                        argument.getMessageClass(),
+                        Identifier.toString(argument.getId()));
         } catch (RuntimeException e) {
             logError("Error while processing %s (ID: %s).", argument, e);
         }

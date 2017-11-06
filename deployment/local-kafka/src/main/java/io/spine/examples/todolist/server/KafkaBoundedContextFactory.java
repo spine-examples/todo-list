@@ -72,21 +72,61 @@ import static java.util.stream.Collectors.toSet;
 public final class KafkaBoundedContextFactory extends BoundedContextFactory {
 
     private static final String KAFKA_STREAMS_PROPS_PATH = "config/kafka-streams.properties";
+    private static final String KAFKA_PRODUCER_PROPS_PATH = "config/kafka-producer.properties";
+    private static final String KAFKA_CONSUMER_PROPS_PATH = "config/kafka-consumer.properties";
+
+    /**
+     * The Kafka Streams configurations loaded from {@link #KAFKA_STREAMS_PROPS_PATH}.
+     */
     private static final Properties streamsConfig;
+
+    /**
+     * The maximum time the storage poll operations may wait for the results to be returned.
+     *
+     * <p>Note that this is NOT the poll await used by the {@linkplain KafkaCatchUp catch up} and
+     * {@linkplain io.spine.server.aggregate.KAggregateRepository aggregate loading} routines.
+     * Those use the {@linkplain KafkaWrapper#DEFAULT_POLL_AWAIT default value}.
+     *
+     * @see KafkaStorageFactory.Builder#setMaxPollAwait(Duration)
+     */
+    private static final Duration STORAGE_MAX_POLL_AWAIT = Duration.of(50, MILLIS);
+
+    /**
+     * The {@link StorageFactorySwitch} containing the {@link KafkaStorageFactory} for both test
+     * and production environments.
+     *
+     * <p>The {@linkplain io.spine.server.storage.Storage storages} produces by these factories use
+     * {@link #STORAGE_MAX_POLL_AWAIT} as the max poll await and
+     * {@linkplain io.spine.server.storage.kafka.Consistency#STRONG block} the thread upon write
+     * operations.
+     *
+     * <p>The storage configurations may be found under paths {@link #KAFKA_PRODUCER_PROPS_PATH}
+     * and {@link #KAFKA_CONSUMER_PROPS_PATH}.
+     */
     private static final StorageFactorySwitch storageFactorySwitch;
+
+    /**
+     * The {@link KafkaWrapper} instance used while the {@linkplain KafkaCatchUp catch up} and
+     * {@linkplain io.spine.server.aggregate.KAggregateRepository aggregate loading} for publishing
+     * messages to Kafka.
+     *
+     * <p>This {@link KafkaWrapper} uses
+     * the {@linkplain KafkaWrapper#create(Properties, Properties) default values} for
+     * the {@link io.spine.server.storage.kafka.Consistency Consistency} and poll await.
+     */
     private static final KafkaWrapper kafka;
 
     static {
-        final Properties producerConfig = loadConfig("config/kafka-producer.properties");
-        final Properties consumerConfig = loadConfig("config/kafka-consumer.properties");
-        final Duration storagePollAwait = Duration.of(50, MILLIS);
-        final StorageFactory storageFactory = KafkaStorageFactory.newBuilder()
-                                                                 .setProducerConfig(producerConfig)
-                                                                 .setConsumerConfig(consumerConfig)
-                                                                 .setMaxPollAwait(storagePollAwait)
-                                                                 .setConsistencyLevel(STRONG)
-                                                                 .build();
-        storageFactorySwitch = StorageFactorySwitch.newInstance(getDefaultName(), false)
+        final Properties producerConfig = loadConfig(KAFKA_PRODUCER_PROPS_PATH);
+        final Properties consumerConfig = loadConfig(KAFKA_CONSUMER_PROPS_PATH);
+        final StorageFactory storageFactory =
+                KafkaStorageFactory.newBuilder()
+                                   .setProducerConfig(producerConfig)
+                                   .setConsumerConfig(consumerConfig)
+                                   .setMaxPollAwait(STORAGE_MAX_POLL_AWAIT)
+                                   .setConsistencyLevel(STRONG)
+                                   .build();
+        storageFactorySwitch = StorageFactorySwitch.newInstance(getBoundedContextName(), false)
                                                    .init(() -> storageFactory,
                                                          () -> storageFactory);
         kafka = KafkaWrapper.create(producerConfig, consumerConfig);
@@ -104,7 +144,7 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
      * {@linkplain KafkaCatchUp#start doc} for the preconditions of a successful call.
      */
     @Override
-    protected void onCreateBoundedContext(BoundedContext boundedContext) {
+    protected void onBoundedContestCreated(BoundedContext boundedContext) {
         setupCatchUp(boundedContext);
     }
 

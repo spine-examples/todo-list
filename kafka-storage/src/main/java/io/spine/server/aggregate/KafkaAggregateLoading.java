@@ -63,7 +63,16 @@ final class KafkaAggregateLoading {
     }
 
     /**
-     * Starts the Aggregate loading for the given {@link KafkaAggregateRepository}.
+     * Starts the Kafka Streams based Aggregate loading for the given
+     * {@link KafkaAggregateRepository}.
+     *
+     * <p>Starts a Kafka Streams topology which sends all the messages dispatched to a single
+     * {@link AggregateRepository} to a single processing instance, where those are applied onto
+     * the entities.
+     *
+     * <p>In other words, if two instances of the application receive two commands to a single
+     * {@code AggregateRepository}, the commands are sent through Kafka to a single instance
+     * which dispatches them to the {@code AggregateRepository}.
      *
      * @param repository the repository to start the Aggregate loading for
      * @param config the Kafka Streams config

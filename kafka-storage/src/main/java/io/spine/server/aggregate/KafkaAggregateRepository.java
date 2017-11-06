@@ -33,6 +33,10 @@ import io.spine.server.storage.kafka.KafkaWrapper;
  * <p>Note that all the methods of this interface are {@linkplain Internal internal}. Please use
  * the basic {@link AggregateRepository} API instead.
  *
+ * <p>The methods {@code dispatch*Now} dispatch the messages directly to the receiver repository
+ * in counterpart to the basic {@link AggregateRepository} API methods which send the messages to
+ * Kafka.
+ *
  * @author Dmytro Dashenkov
  * @see KAggregateRepository
  * @see KAggregatePartRepository

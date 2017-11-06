@@ -44,7 +44,7 @@ public final class KafkaStreamsConfigs {
      * the {@link org.apache.kafka.streams.StreamsConfig#APPLICATION_ID_CONFIG application.id}
      * configuration to the given properties.
      *
-     * <p>Note: this method creates a defencive copy of the passed {@link Properties} instead of
+     * <p>Note: this method creates a defensive copy of the passed {@link Properties} instead of
      * modifying the passed one.
      *
      * @param config        the Kafka Streams configuration

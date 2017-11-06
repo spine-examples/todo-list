@@ -38,7 +38,8 @@ import java.util.function.Consumer;
  * An {@link AggregatePartRepository} which applies the dispatched events through a Kafka Streams
  * topology.
  *
- * <p>This class is an analogy of {@link KAggregateRepository} for {@link AggregatePart}.
+ * <p>This class plays the same role to {@link AggregatePart} as the {@link KAggregateRepository}
+ * to {@link Aggregate}.
  *
  * @author Dmytro Dashenkov
  */
@@ -116,19 +117,19 @@ public abstract class KAggregatePartRepository<I,
     @Internal
     @Override
     public void dispatchCommandNow(CommandEnvelope envelope) {
-        logErrors(super::dispatch, envelope);
+        applyAndCatch(super::dispatch, envelope);
     }
 
     @Internal
     @Override
     public void dispatchEventNow(EventEnvelope envelope) {
-        logErrors(super::dispatchEvent, envelope);
+        applyAndCatch(super::dispatchEvent, envelope);
     }
 
     @Internal
     @Override
     public void dispatchRejectionNow(RejectionEnvelope envelope) {
-        logErrors(super::dispatchRejection, envelope);
+        applyAndCatch(super::dispatchRejection, envelope);
     }
 
     @Internal
@@ -157,12 +158,12 @@ public abstract class KAggregatePartRepository<I,
      */
     @SuppressWarnings("DuplicateStringLiteralInspection")
         // OK for the log messages. Duplicate in `KAggregateRepository`.
-    private <E extends MessageEnvelope<?, ? ,?>> void logErrors(Consumer<E> task, E argument) {
+    private <E extends MessageEnvelope<?, ? ,?>> void applyAndCatch(Consumer<E> task, E argument) {
         try {
             task.accept(argument);
-            log().info("Acknowledged {} (ID: {}).",
-                       argument.getMessageClass(),
-                       Identifier.toString(argument.getId()));
+            log().trace("Acknowledged {} (ID: {}).",
+                        argument.getMessageClass(),
+                        Identifier.toString(argument.getId()));
         } catch (RuntimeException e) {
             logError("Error while processing %s (ID: %s).", argument, e);
         }
