@@ -30,6 +30,9 @@ import io.spine.server.storage.kafka.KafkaWrapper;
  * An {@link AggregateRepository} that uses Apache Kafka for dispatching the messages to
  * the Aggregates.
  *
+ * <p>This interface should only be implemented by
+ * the {@linkplain AggregateRepository Aggregate repositories} based on Kafka.
+ *
  * <p>Note that all the methods of this interface are {@linkplain Internal internal}. Please use
  * the basic {@link AggregateRepository} API instead.
  *

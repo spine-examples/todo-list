@@ -65,7 +65,11 @@ import static java.util.stream.Collectors.toSet;
  *
  * <p>This implementation of {@link BoundedContextFactory} uses Kafka-based
  * {@linkplain KafkaStorageFactory storage}, {@linkplain KafkaCatchUp catch up} and
- * {@linkplain io.spine.server.aggregate.KAggregateRepository aggregate loading}.
+ * {@linkplain io.spine.server.aggregate.KAggregateRepository aggregate message dispatching}.
+ *
+ * <p>Note that all three Kafka-based components: storage, catch up and aggregate message
+ * dispatching are independent, i.e. one of them may be used on a system where others two are
+ * absent. There is no visible gain in reliability or performance from using all three together.
  *
  * @author Dmytro Dashenkov
  */

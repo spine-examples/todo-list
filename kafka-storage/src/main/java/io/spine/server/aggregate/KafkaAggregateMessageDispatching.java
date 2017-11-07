@@ -46,11 +46,11 @@ import static io.spine.util.Exceptions.newIllegalArgumentException;
 import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
 
 /**
- * A utility for loading the {@link Aggregate} instances using Apache Kafka Streams.
+ * A utility for dispatching commands, events and rejections to {@code Aggregate}s.
  *
  * @author Dmytro Dashenkov
  */
-final class KafkaAggregateLoading {
+final class KafkaAggregateMessageDispatching {
 
     /**
      * The Kafka topic for all the events, commands and rejections dispatched into
@@ -58,12 +58,12 @@ final class KafkaAggregateLoading {
      */
     private static final Topic AGGREGATE_MESSAGES = ofValue("spine.server.aggregate.messages");
 
-    private KafkaAggregateLoading() {
+    private KafkaAggregateMessageDispatching() {
         // Prevent utility class instantiation.
     }
 
     /**
-     * Starts the Kafka Streams based Aggregate loading for the given
+     * Starts the Kafka Streams based Aggregate message dispatching with the given
      * {@link KafkaAggregateRepository}.
      *
      * <p>Starts a Kafka Streams topology which sends all the messages dispatched to a single
@@ -71,11 +71,13 @@ final class KafkaAggregateLoading {
      * the entities.
      *
      * <p>In other words, if two instances of the application receive two commands to a single
-     * {@code AggregateRepository}, the commands are sent through Kafka to a single instance
-     * which dispatches them to the {@code AggregateRepository}.
+     * {@code Aggregate}, the commands are sent through Kafka to a single instance which dispatches
+     * them to the {@code Aggregate} by
+     * {@linkplain KafkaAggregateRepository#dispatchCommandNow means} of
+     * the {@code AggregateRepository}.
      *
-     * @param repository the repository to start the Aggregate loading for
-     * @param config the Kafka Streams config
+     * @param repository the repository to start the Aggregate message dispatching with
+     * @param config     the Kafka Streams config
      */
     static void start(KafkaAggregateRepository repository, Properties config) {
         final StreamsBuilder builder = new StreamsBuilder();
@@ -93,7 +95,7 @@ final class KafkaAggregateLoading {
      * Publishes the given envelope into the Kafka {@code spine.server.aggregate.messages} topic.
      *
      * @param repository the repository which should handle the published message
-     * @param msg the envelope to be dispatched
+     * @param msg        the envelope to be dispatched
      */
     static void dispatchMessage(KafkaAggregateRepository repository,
                                 MessageEnvelope<?, ? extends Message, ?> msg) {

@@ -28,10 +28,12 @@ import io.spine.server.storage.kafka.KafkaWrapper;
 import java.util.Properties;
 
 /**
- * An implementation of a repository for {@link LabelAggregate} derived from
- * {@link KAggregateRepository}.
+ * An {@code AggregateRepository} for {@link LabelAggregate} which performs the message dispatching
+ * through Kafka.
  *
  * @author Dmytro Dashenkov
+ * @see io.spine.server.aggregate.KAggregateRepository for the detailes on the message
+ *      dispatching
  */
 public class LabelKAggregateRepository extends KAggregateRepository<LabelId, LabelAggregate> {
 

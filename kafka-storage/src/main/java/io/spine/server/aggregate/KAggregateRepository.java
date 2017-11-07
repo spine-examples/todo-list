@@ -34,22 +34,23 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * An {@link AggregateRepository} which applies the dispatched events through a Kafka Streams
- * topology.
+ * An {@link AggregateRepository} which dispatches messages through a Kafka Streams topology.
  *
  * <p>Each subclass of {@code KAggregateRepository} starts a Kafka Streams processor on
  * the constructor invocation.
  *
- * <p>To enable the Kafka-based Aggregate loading, extend {@code KAggregateRepository} instead of
+ * <p>To enable the Kafka-based message dispatching, extend {@code KAggregateRepository} instead of
  * extending {@code AggregateRepository} directly.
  *
  * <p>All the commands, events and rejections dispatched to the repository are published into
  * a single Kafka topic with name {@code spine.server.aggregate.messages} and then consumed from
- * the topic by the repository itself. Kafka message consumption mechanism is built in a way that
- * all the records with the same key are consumed by the same processor instance. Thereby no race
- * conditions happen when several messages targeting a single {@code Aggregate} instance are
- * sent to the system simultaneously.
+ * the topic by the repository itself. The Kafka processing topology for this topic is built in
+ * a way that all the messages targeting the same {@code Aggregate} are consumed by the same
+ * processor instance. Thereby no race conditions happen when several messages targeting a single
+ * {@code Aggregate} instance are sent to the system simultaneously.
  *
  * <p>It's recommended that the {@code spine.server.aggregate.messages} topic exists before
  * the application start. It should have at least as many partitions as there are subtypes of
@@ -77,8 +78,8 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     @SuppressWarnings("ThisEscapedInObjectConstruction") // OK since the whole control
     protected KAggregateRepository(Properties streamConfig, KafkaWrapper kafka) {
         super();
-        this.kafka = kafka;
-        KafkaAggregateLoading.start(this, streamConfig);
+        this.kafka = checkNotNull(kafka);
+        KafkaAggregateMessageDispatching.start(this, streamConfig);
     }
 
     /**
@@ -93,7 +94,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      */
     @Override
     public final Set<I> dispatchEvent(EventEnvelope envelope) {
-        KafkaAggregateLoading.dispatchMessage(this, envelope);
+        KafkaAggregateMessageDispatching.dispatchMessage(this, envelope);
         return Collections.emptySet();
     }
 
@@ -109,7 +110,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      */
     @Override
     public Set<I> dispatchRejection(RejectionEnvelope envelope) {
-        KafkaAggregateLoading.dispatchMessage(this, envelope);
+        KafkaAggregateMessageDispatching.dispatchMessage(this, envelope);
         return Collections.emptySet();
     }
 
@@ -125,7 +126,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      */
     @Override
     public I dispatch(CommandEnvelope envelope) {
-        KafkaAggregateLoading.dispatchMessage(this, envelope);
+        KafkaAggregateMessageDispatching.dispatchMessage(this, envelope);
         return Identifier.getDefaultValue(getIdClass());
     }
 

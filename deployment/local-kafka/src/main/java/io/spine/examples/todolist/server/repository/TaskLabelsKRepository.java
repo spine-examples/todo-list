@@ -29,10 +29,12 @@ import io.spine.server.storage.kafka.KafkaWrapper;
 import java.util.Properties;
 
 /**
- * An implementation of a repository for {@link TaskLabelsPart} derived from
- * {@link KAggregatePartRepository}.
+ * An {@code AggregatePartRepository} for {@link TaskLabelsPart} which performs the message
+ * dispatching through Kafka.
  *
  * @author Dmytro Dashenkov
+ * @see io.spine.server.aggregate.KAggregatePartRepository for the detailes on the message
+ *      dispatching
  */
 public class TaskLabelsKRepository
         extends KAggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> {

@@ -42,6 +42,7 @@ import java.util.function.Consumer;
  * to {@link Aggregate}.
  *
  * @author Dmytro Dashenkov
+ * @see KAggregateRepository for further description of the Kafka-based repositories behavior
  */
 public abstract class KAggregatePartRepository<I,
                                                A extends AggregatePart<I, ?, ?, R>,
@@ -63,7 +64,7 @@ public abstract class KAggregatePartRepository<I,
     protected KAggregatePartRepository(Properties streamConfig, KafkaWrapper kafka) {
         super();
         this.kafka = kafka;
-        KafkaAggregateLoading.start(this, streamConfig);
+        KafkaAggregateMessageDispatching.start(this, streamConfig);
     }
 
     /**
@@ -78,7 +79,7 @@ public abstract class KAggregatePartRepository<I,
      */
     @Override
     public final Set<I> dispatchEvent(EventEnvelope envelope) {
-        KafkaAggregateLoading.dispatchMessage(this, envelope);
+        KafkaAggregateMessageDispatching.dispatchMessage(this, envelope);
         return Collections.emptySet();
     }
 
@@ -94,7 +95,7 @@ public abstract class KAggregatePartRepository<I,
      */
     @Override
     public Set<I> dispatchRejection(RejectionEnvelope envelope) {
-        KafkaAggregateLoading.dispatchMessage(this, envelope);
+        KafkaAggregateMessageDispatching.dispatchMessage(this, envelope);
         return Collections.emptySet();
     }
 
@@ -110,7 +111,7 @@ public abstract class KAggregatePartRepository<I,
      */
     @Override
     public I dispatch(CommandEnvelope envelope) {
-        KafkaAggregateLoading.dispatchMessage(this, envelope);
+        KafkaAggregateMessageDispatching.dispatchMessage(this, envelope);
         return Identifier.getDefaultValue(getIdClass());
     }
 
