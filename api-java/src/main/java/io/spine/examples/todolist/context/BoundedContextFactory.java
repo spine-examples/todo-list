@@ -143,10 +143,10 @@ public class BoundedContextFactory {
         final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
         final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
 
-        final EventBus.Builder eventBus = createEventBus(storageFactory,
-                                                         labelAggregateRepo,
-                                                         taskRepo,
-                                                         taskLabelsRepo);
+        final EventEnricher eventEnricher = createEventEnricher(taskRepo,
+                                                                taskLabelsRepo,
+                                                                labelAggregateRepo);
+        final EventBus.Builder eventBus = createEventBus(storageFactory, eventEnricher);
         final BoundedContext boundedContext = createBoundedContext(eventBus);
         boundedContext.register(taskRepo);
         boundedContext.register(taskLabelsRepo);
@@ -173,21 +173,21 @@ public class BoundedContextFactory {
         // NoOp
     }
 
-    private static EventBus.Builder createEventBus(
-            StorageFactory storageFactory,
-            AggregateRepository<LabelId, LabelAggregate> labelRepo,
-            AggregatePartRepository<TaskId, TaskPart, TaskAggregateRoot> taskRepo,
-            AggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> labelsRepo) {
-        final EventEnricher enricher = TodoListEnrichments.newBuilder()
-                                                          .setLabelRepository(labelRepo)
-                                                          .setTaskRepository(taskRepo)
-                                                          .setTaskLabelsRepository(labelsRepo)
-                                                          .build()
-                                                          .createEnricher();
+    private static EventBus.Builder createEventBus(StorageFactory storageFactory,
+                                                   EventEnricher eventEnricher) {
         final EventBus.Builder eventBus = EventBus.newBuilder()
-                                                  .setEnricher(enricher)
+                                                  .setEnricher(eventEnricher)
                                                   .setStorageFactory(storageFactory);
         return eventBus;
+    }
+
+    private static EventEnricher createEventEnricher(AggregateRepository<?, ?>... repositories) {
+        final TodoListEnrichments.Builder enricher = TodoListEnrichments.newBuilder();
+        for (AggregateRepository<?, ?> repo : repositories) {
+            enricher.addRepository(repo);
+        }
+        final EventEnricher result = enricher.build().createEnricher();
+        return result;
     }
 
     /**

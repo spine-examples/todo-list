@@ -29,6 +29,9 @@ import io.spine.core.EventEnvelope;
 import io.spine.core.Versions;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.aggregate.LabelAggregate;
+import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
+import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.c.enrichments.DetailsEnrichment;
 import io.spine.examples.todolist.c.enrichments.LabelsListEnrichment;
 import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
@@ -66,13 +69,19 @@ class TodoListEnrichmentsTest {
         final TaskRepository taskRepo = mock(TaskRepository.class);
         final LabelAggregateRepository labelRepo = mock(LabelAggregateRepository.class);
         final TaskLabelsRepository taskLabelsRepo = mock(TaskLabelsRepository.class);
+
         when(taskRepo.find(any(TaskId.class))).thenReturn(Optional.absent());
         when(labelRepo.find(any(LabelId.class))).thenReturn(Optional.absent());
         when(taskLabelsRepo.find(any(TaskId.class))).thenReturn(Optional.absent());
+
+        when(taskRepo.getEntityClass()).thenReturn(TaskPart.class);
+        when(labelRepo.getEntityClass()).thenReturn(LabelAggregate.class);
+        when(taskLabelsRepo.getEntityClass()).thenReturn(TaskLabelsPart.class);
+
         enricher = TodoListEnrichments.newBuilder()
-                                      .setTaskRepository(taskRepo)
-                                      .setLabelRepository(labelRepo)
-                                      .setTaskLabelsRepository(taskLabelsRepo)
+                                      .addRepository(taskRepo)
+                                      .addRepository(labelRepo)
+                                      .addRepository(taskLabelsRepo)
                                       .build()
                                       .createEnricher();
     }
