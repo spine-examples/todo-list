@@ -31,7 +31,7 @@ import java.util.Properties;
  * through Kafka.
  *
  * @author Dmytro Dashenkov
- * @see io.spine.server.aggregate.KAggregateRepository for the detailes on the message
+ * @see io.spine.server.aggregate.KAggregateRepository for the details on the message
  *      dispatching
  */
 public class LabelKAggregateRepository extends KAggregateRepository<LabelId, LabelAggregate> {
