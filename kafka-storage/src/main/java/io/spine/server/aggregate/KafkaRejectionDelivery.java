@@ -30,7 +30,7 @@ import io.spine.core.RejectionEnvelope;
  *
  * @author Dmytro Dashenkov
  */
-class KafkaRejectionDelivery<I, A extends Aggregate<I, ?, ?>>
+final class KafkaRejectionDelivery<I, A extends Aggregate<I, ?, ?>>
         extends AggregateRejectionDelivery<I, A> {
 
     private final KafkaAggregateMessageDispatcher<I> dispatcher;

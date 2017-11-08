@@ -49,7 +49,7 @@ public abstract class KAggregatePartRepository<I,
      *
      * @param streamConfig   the Kafka Streams configuration containing {@code bootstrap.servers}
      *                       property and (optionally) other Streams configs
-     * @param producerConfig the Kafka Producer config
+     * @param producerConfig the Kafka Producer configuration
      */
     @SuppressWarnings("ThisEscapedInObjectConstruction") // OK since the whole control
     protected KAggregatePartRepository(Properties streamConfig, Properties producerConfig) {

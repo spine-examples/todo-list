@@ -30,7 +30,7 @@ import io.spine.core.EventEnvelope;
  *
  * @author Dmytro Dashenkov
  */
-class KafkaEventDelivery<I, A extends Aggregate<I, ?, ?>> extends AggregateEventDelivery<I, A> {
+final class KafkaEventDelivery<I, A extends Aggregate<I, ?, ?>> extends AggregateEventDelivery<I, A> {
 
     private final KafkaAggregateMessageDispatcher<I> dispatcher;
 

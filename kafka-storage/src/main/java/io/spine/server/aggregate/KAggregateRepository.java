@@ -44,8 +44,13 @@ import java.util.Properties;
  * {@code repository} is an instance of {@code KAggregateRepository}. It's recommended that
  * the topic with such mane exists before the application start. It should have at least as many
  * partitions as there are instances of this specific type of {@code KAggregateRepository} in
- * the system for better performance. Also, consider having several replicas of the topic
- * (i.e. set {@code replication-factor} to a number greater than 1).
+ * the system. Also, consider having several replicas of the topic (i.e. set
+ * {@code replication-factor} to a number greater than 1).
+ *
+ * <p>Note: once you define the number of partitions for Kafka topic, do not change it. This
+ * constraint is connected to the way records are distributed among the Kafka topic partitions.
+ * Once the partition number is changed, the instance applying the messages may also change,
+ * causing race conditions and inconsistent states.
  *
  * @param <I> the type of the aggregate IDs
  * @param <A> the type of the aggregates managed by this repository
@@ -66,7 +71,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      *
      * @param streamConfig   the Kafka Streams configuration containing {@code bootstrap.servers}
      *                       property and (optionally) other Streams configs
-     * @param producerConfig the Kafka Producer config
+     * @param producerConfig the Kafka Producer configuration
      */
     @SuppressWarnings("ThisEscapedInObjectConstruction") // OK since the whole control
     protected KAggregateRepository(Properties streamConfig, Properties producerConfig) {

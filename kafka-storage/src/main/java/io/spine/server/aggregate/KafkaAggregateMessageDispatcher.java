@@ -50,6 +50,7 @@ import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
 /**
  * Dispatches aggregate messages to the target {@code Aggregate} instances through Kafka.
  *
+ * @param <I> the type of the aggregate IDs to which the messages are dispatched
  * @author Dmytro Dashenkov
  */
 final class KafkaAggregateMessageDispatcher<I> {
@@ -72,7 +73,6 @@ final class KafkaAggregateMessageDispatcher<I> {
         this.kafkaStreamsConfig = prepareConfig(streamProperties, applicationId(repository));
         this.kafkaTopic = Topic.forAggregateMessages(repository.getEntityStateType());
     }
-
 
     private static <I> KafkaProducer<I, Message> createProducer(Properties config,
                                                                 Serde<I> idSerde) {
@@ -167,6 +167,11 @@ final class KafkaAggregateMessageDispatcher<I> {
         return new Builder<>();
     }
 
+    /**
+     * A builder for the {@code KafkaAggregateMessageDispatcher} instances.
+     *
+     * @param <I> the type parameter of the resulting {@code KafkaAggregateMessageDispatcher}
+     */
     static final class Builder<I> {
 
         private Properties kafkaProducerConfig;
@@ -178,26 +183,51 @@ final class KafkaAggregateMessageDispatcher<I> {
             // Prevent direct instantiation.
         }
 
+        /**
+         * @param kafkaProducerConfig the Kafka Producer configuration to build
+         *                            {@link KafkaProducer} instances with
+         * @return self for method chaining
+         */
         Builder<I> setKafkaProducerConfig(Properties kafkaProducerConfig) {
             this.kafkaProducerConfig = checkNotNull(kafkaProducerConfig);
             return this;
         }
 
-        Builder<I> setKafkaStreamsConfig(Properties config) {
-            this.kafkaStreamsConfig = checkNotNull(config);
+        /**
+         * @param kafkaStreamsConfig the Kafka Streams config to start the Streams topology with;
+         *                           {@code bootstrap.servers} is the only required property for
+         *                           the config
+         * @return self for method chaining
+         */
+        Builder<I> setKafkaStreamsConfig(Properties kafkaStreamsConfig) {
+            this.kafkaStreamsConfig = checkNotNull(kafkaStreamsConfig);
             return this;
         }
 
+        /**
+         * @param repository the {@link AggregateRepository} to dispatch the messages with
+         * @return self for method chaining
+         */
         Builder<I> setRepository(AggregateRepository<I, ?> repository) {
             this.repository = checkNotNull(repository);
             return this;
         }
 
+        /**
+         * @param idClass the class of ID of Aggregates which are the dispatching target
+         * @return self for method chaining
+         */
         Builder<I> setIdClass(Class<I> idClass) {
             this.idClass = checkNotNull(idClass);
             return this;
         }
 
+        /**
+         * Creates a new instance of {@code KafkaAggregateMessageDispatcher}.
+         *
+         * @return new instance of {@code KafkaAggregateMessageDispatcher} with the given
+         *         parameters
+         */
         KafkaAggregateMessageDispatcher<I> build() {
             return new KafkaAggregateMessageDispatcher<>(this);
         }

@@ -30,7 +30,7 @@ import io.spine.core.CommandEnvelope;
  *
  * @author Dmytro Dashenkov
  */
-class KafkaCommandDelivery<I, A extends Aggregate<I, ?, ?>>
+final class KafkaCommandDelivery<I, A extends Aggregate<I, ?, ?>>
         extends AggregateCommandDelivery<I, A> {
 
     private final KafkaAggregateMessageDispatcher<I> dispatcher;
