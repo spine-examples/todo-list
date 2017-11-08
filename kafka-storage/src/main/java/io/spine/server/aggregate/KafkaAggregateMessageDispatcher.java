@@ -68,8 +68,8 @@ final class KafkaAggregateMessageDispatcher<I> {
         final Properties producerConfig = checkNotNull(builder.kafkaProducerConfig);
         this.kafkaProducer = createProducer(producerConfig, idSerde);
         final Properties streamProperties = checkNotNull(builder.kafkaStreamsConfig);
-        this.kafkaStreamsConfig = prepareConfig(streamProperties, applicationId());
         this.repository = checkNotNull(builder.repository);
+        this.kafkaStreamsConfig = prepareConfig(streamProperties, applicationId(repository));
         this.kafkaTopic = Topic.forAggregateMessages(repository.getEntityStateType());
     }
 
@@ -159,7 +159,7 @@ final class KafkaAggregateMessageDispatcher<I> {
         }
     }
 
-    private String applicationId() {
+    private static String applicationId(AggregateRepository<?, ?> repository) {
         return repository.getEntityClass().getName();
     }
 
