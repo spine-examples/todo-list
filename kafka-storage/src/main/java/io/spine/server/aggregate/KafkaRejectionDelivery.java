@@ -20,23 +20,29 @@
 
 package io.spine.server.aggregate;
 
-import io.spine.core.CommandEnvelope;
+import io.spine.core.RejectionEnvelope;
 
 /**
+ * An implementation of {@link AggregateRejectionDelivery} based on Kafka.
+ *
+ * <p>The {@link #shouldPostpone(Object, RejectionEnvelope)} method always returns {@code true} and
+ * {@link KafkaAggregateMessageDispatcher#dispatchMessage dispatches} the given message to Kafka.
+ *
  * @author Dmytro Dashenkov
  */
-class CommandDelivery<I, A extends Aggregate<I, ?, ?>> extends AggregateCommandDelivery<I, A> {
+class KafkaRejectionDelivery<I, A extends Aggregate<I, ?, ?>>
+        extends AggregateRejectionDelivery<I, A> {
 
     private final KafkaAggregateMessageDispatcher<I> dispatcher;
 
-    CommandDelivery(AggregateRepository<I, A> repository,
-                    KafkaAggregateMessageDispatcher<I> dispatcher) {
+    KafkaRejectionDelivery(AggregateRepository<I, A> repository,
+                           KafkaAggregateMessageDispatcher<I> dispatcher) {
         super(repository);
         this.dispatcher = dispatcher;
     }
 
     @Override
-    public boolean shouldPostpone(I id, CommandEnvelope envelope) {
+    public boolean shouldPostpone(I id, RejectionEnvelope envelope) {
         dispatcher.dispatchMessage(id, envelope);
         return true;
     }

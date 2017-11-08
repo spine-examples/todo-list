@@ -49,7 +49,7 @@ import static io.spine.util.Exceptions.newIllegalArgumentException;
 import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
 
 /**
- * A utility for dispatching commands, events and rejections to {@code Aggregate}s.
+ * Dispatches aggregate messages to the target {@code Aggregate} instances through Kafka.
  *
  * @author Dmytro Dashenkov
  */

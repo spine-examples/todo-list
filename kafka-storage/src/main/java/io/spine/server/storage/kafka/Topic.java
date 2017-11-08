@@ -20,6 +20,7 @@
 
 package io.spine.server.storage.kafka;
 
+import io.spine.annotation.Internal;
 import io.spine.annotation.SPI;
 import io.spine.server.storage.kafka.Topics.ValueTopic;
 import io.spine.type.TypeUrl;
@@ -52,7 +53,7 @@ public interface Topic {
     String getName();
 
     /**
-     * Creates an instance of {@link Topic} for the records of entity of the given type.
+     * Creates an instance of {@code Topic} for the records of entity of the given type.
      *
      * @param ofType the type of record
      * @return new instance of {@link Topic}
@@ -62,57 +63,71 @@ public interface Topic {
     }
 
     /**
-     * Creates an instance of {@link Topic} for the records of aggregate of the given type.
+     * Creates an instance of {@code Topic} for the records of aggregate of the given type.
      *
      * @param ofType the type of record
-     * @return new instance of {@link Topic}
+     * @return new instance of {@code Topic}
      */
     static Topic forAggregateRecord(Class<?> ofType) {
         return FOR_AGGREGATE_RECORD.create(ofType);
     }
 
     /**
-     * Creates an instance of {@link Topic} for the records of entity of given type.
+     * Creates an instance of {@code Topic} for the records of entity of given type.
      *
      * @param ofType the type of record
-     * @return new instance of {@link Topic}
+     * @return new instance of {@code Topic}
      */
     static Topic forLifecycleFlags(Class<?> ofType) {
         return FOR_LIFECYCLE_FLAGS.create(ofType);
     }
 
     /**
-     * Creates an instance of {@link Topic} for storing the event count after last snapshot for
+     * Creates an instance of {@code Topic} for storing the event count after last snapshot for
      * the entities of the given type.
      *
      * @param ofType the type of record
-     * @return new instance of {@link Topic}
+     * @return new instance of {@code Topic}
      */
     static Topic forEventCountAfterSnapshot(Class<?> ofType) {
         return FOR_EVENT_COUNT_AFTER_SNAPSHOT.create(ofType);
     }
 
     /**
-     * Creates an instance of {@link Topic} for the timestamp of the last handled by the repository
+     * Creates an instance of {@code Topic} for the timestamp of the last handled by the repository
      * of the Projections of that type event.
      *
      * @param ofType the type of record
-     * @return new instance of {@link Topic}
+     * @return new instance of {@code Topic}
      */
     static Topic forLastHandledEventTime(Class<?> ofType) {
         return FOR_LAST_EVENT_TIME.create(ofType);
     }
 
     /**
-     * Creates an instance of {@link Topic} with the given name.
+     * Creates an instance of {@code Topic} with the given name.
      *
      * @param topicValue the name of the topic
-     * @return new instance of {@link Topic}
+     * @return new instance of {@code Topic}
      */
     static Topic ofValue(String topicValue) {
         return new ValueTopic(topicValue);
     }
 
+    /**
+     * Creates an instance of {@code Topic} for the aggregate messages of the given aggregate state
+     * type.
+     *
+     * <p>This topic has the name equal to the {@link TypeUrl#getTypeName()} of the given type url.
+     *
+     * <p>This topic is internal and serves for
+     * the {@linkplain io.spine.server.aggregate.KAggregateRepository Kafka-based aggregate message
+     * dispatching}.
+     *
+     * @param stateTypeUrl the type of the {@code Aggregate} state to store the messages for
+     * @return new instance of {@code Topic}
+     */
+    @Internal
     static Topic forAggregateMessages(TypeUrl stateTypeUrl) {
         return ofValue(stateTypeUrl.getTypeName());
     }

@@ -22,32 +22,37 @@ package io.spine.server.aggregate;
 
 import io.spine.server.storage.kafka.KafkaWrapper;
 
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Properties;
 
 /**
  * An {@link AggregateRepository} which dispatches messages through a Kafka Streams topology.
  *
- * <p>Each subclass of {@code KAggregateRepository} starts a Kafka Streams processor on
- * the constructor invocation.
+ * <p>Each subclass of {@code KAggregateRepository} starts a Kafka Streams processor upon
+ * {@linkplain #onRegistered() registration} in a {@code BoundedContext}.
  *
  * <p>To enable the Kafka-based message dispatching, extend {@code KAggregateRepository} instead of
  * extending {@code AggregateRepository} directly.
  *
  * <p>All the commands, events and rejections dispatched to the repository are published into
- * a single Kafka topic with name {@code spine.server.aggregate.messages} and then consumed from
- * the topic by the repository itself. The Kafka processing topology for this topic is built in
- * a way that all the messages targeting the same {@code Aggregate} are consumed by the same
- * processor instance. Thereby no race conditions happen when several messages targeting a single
- * {@code Aggregate} instance are sent to the system simultaneously.
+ * a dedicated Kafka topic and then consumed by the repository itself. The Kafka processing
+ * topology for this topic is built in a way that all the messages targeting the same
+ * {@code Aggregate} instance are consumed by the same processor instance. Thereby no race
+ * conditions happen when several messages targeting a single {@code Aggregate} are sent to
+ * the system simultaneously.
  *
- * <p>It's recommended that the {@code spine.server.aggregate.messages} topic exists before
- * the application start. It should have at least as many partitions as there are subtypes of
- * {@code KAggregateRepository} in the system. Also, consider having several replicas of the topic
+ * <p>The Kafka topic serving for this repository has the name of the Aggregate type name.
+ * More formally, the name is equal to {@code repository.getEntityStateType().getTypeName()}, where
+ * {@code repository} is an instance of {@code KAggregateRepository}. It's recommended that
+ * the topic with such mane exists before the application start. It should have at least as many
+ * partitions as there are instances of this specific type of {@code KAggregateRepository} in
+ * the system for better performance. Also, consider having several replicas of the topic
  * (i.e. set {@code replication-factor} to a number greater than 1).
  *
+ * @param <I> the type of the aggregate IDs
+ * @param <A> the type of the aggregates managed by this repository
  * @author Dmytro Dashenkov
- * @see AggregateRepository for the detailed description of the Aggregate Repositories, type params
- *                          and more
+ * @see AggregateRepository for the detailed description of the Aggregate Repositories
  */
 public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         extends AggregateRepository<I, A> {
@@ -74,9 +79,9 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
                                                          .setStreamsConfig(streamConfig)
                                                          .setIdClass(getIdClass())
                                                          .build();
-        this.commandDelivery = new CommandDelivery<>(this, dispatcher);
-        this.eventDelivery = new EventDelivery<>(this, dispatcher);
-        this.rejectionDelivery = new RejectionDelivery<>(this, dispatcher);
+        this.commandDelivery = new KafkaCommandDelivery<>(this, dispatcher);
+        this.eventDelivery = new KafkaEventDelivery<>(this, dispatcher);
+        this.rejectionDelivery = new KafkaRejectionDelivery<>(this, dispatcher);
     }
 
     /**
@@ -85,6 +90,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
      * <p>{@code KAggregateRepository.onRegistered()} also starts the Kafka streams processing
      * topology.
      */
+    @OverridingMethodsMustInvokeSuper
     @Override
     public void onRegistered() {
         super.onRegistered();

@@ -22,6 +22,7 @@ package io.spine.server.aggregate;
 
 import io.spine.server.storage.kafka.KafkaWrapper;
 
+import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Properties;
 
 /**
@@ -61,9 +62,9 @@ public abstract class KAggregatePartRepository<I,
                                                          .setStreamsConfig(streamConfig)
                                                          .setIdClass(getIdClass())
                                                          .build();
-        this.commandDelivery = new CommandDelivery<>(this, dispatcher);
-        this.eventDelivery = new EventDelivery<>(this, dispatcher);
-        this.rejectionDelivery = new RejectionDelivery<>(this, dispatcher);
+        this.commandDelivery = new KafkaCommandDelivery<>(this, dispatcher);
+        this.eventDelivery = new KafkaEventDelivery<>(this, dispatcher);
+        this.rejectionDelivery = new KafkaRejectionDelivery<>(this, dispatcher);
     }
 
     /**
@@ -72,6 +73,7 @@ public abstract class KAggregatePartRepository<I,
      * <p>{@code KAggregatePartRepository.onRegistered()} also starts the Kafka streams processing
      * topology.
      */
+    @OverridingMethodsMustInvokeSuper
     @Override
     public void onRegistered() {
         super.onRegistered();
