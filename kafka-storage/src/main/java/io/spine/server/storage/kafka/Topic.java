@@ -22,6 +22,7 @@ package io.spine.server.storage.kafka;
 
 import io.spine.annotation.SPI;
 import io.spine.server.storage.kafka.Topics.ValueTopic;
+import io.spine.type.TypeUrl;
 
 import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_AGGREGATE_RECORD;
 import static io.spine.server.storage.kafka.Topics.PrefixedTopicFactory.FOR_ENTITY_RECORD;
@@ -110,5 +111,9 @@ public interface Topic {
      */
     static Topic ofValue(String topicValue) {
         return new ValueTopic(topicValue);
+    }
+
+    static Topic forAggregateMessages(TypeUrl stateTypeUrl) {
+        return ofValue(stateTypeUrl.getTypeName());
     }
 }

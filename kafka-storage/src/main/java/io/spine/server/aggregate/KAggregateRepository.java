@@ -20,21 +20,9 @@
 
 package io.spine.server.aggregate;
 
-import io.spine.Identifier;
-import io.spine.annotation.Internal;
-import io.spine.core.CommandEnvelope;
-import io.spine.core.EventEnvelope;
-import io.spine.core.MessageEnvelope;
-import io.spine.core.RejectionEnvelope;
-import io.spine.server.entity.EntityClass;
 import io.spine.server.storage.kafka.KafkaWrapper;
 
-import java.util.Collections;
 import java.util.Properties;
-import java.util.Set;
-import java.util.function.Consumer;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * An {@link AggregateRepository} which dispatches messages through a Kafka Streams topology.
@@ -62,14 +50,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *                          and more
  */
 public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
-        extends AggregateRepository<I, A> implements KafkaAggregateRepository {
+        extends AggregateRepository<I, A> {
 
-    private final KafkaWrapper kafka;
+    private final KafkaAggregateMessageDispatcher<I> dispatcher;
+
+    private final AggregateCommandDelivery<I, A> commandDelivery;
+    private final AggregateEventDelivery<I, A> eventDelivery;
+    private final AggregateRejectionDelivery<I, A> rejectionDelivery;
 
     /**
      * Creates a new instance of {@code KAggregateRepository}.
-     *
-     * <p>Also, starts the Kafka Streams processing topology.
      *
      * @param streamConfig the Kafka Streams configuration containing {@code bootstrap.servers}
      *                     property and (optionally) other Streams configs
@@ -78,110 +68,41 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     @SuppressWarnings("ThisEscapedInObjectConstruction") // OK since the whole control
     protected KAggregateRepository(Properties streamConfig, KafkaWrapper kafka) {
         super();
-        this.kafka = checkNotNull(kafka);
-        KafkaAggregateMessageDispatching.start(this, streamConfig);
+        this.dispatcher = KafkaAggregateMessageDispatcher.<I>newBuilder()
+                                                         .setKafka(kafka)
+                                                         .setRepository(this)
+                                                         .setStreamsConfig(streamConfig)
+                                                         .setIdClass(getIdClass())
+                                                         .build();
+        this.commandDelivery = new CommandDelivery<>(this, dispatcher);
+        this.eventDelivery = new EventDelivery<>(this, dispatcher);
+        this.rejectionDelivery = new RejectionDelivery<>(this, dispatcher);
     }
 
     /**
      * {@inheritDoc}
      *
-     * @return always empty set
-     * @implSpec Publishes the given {@linkplain EventEnvelope event} into
-     * the {@code spine.server.aggregate.messages} Kafka topic as a key-value pair:
-     * <pre>
-     * {@linkplain #key() Repository type} -> {@link EventEnvelope#getOuterObject()}.
-     * </pre>
+     * <p>{@code KAggregateRepository.onRegistered()} also starts the Kafka streams processing
+     * topology.
      */
     @Override
-    public final Set<I> dispatchEvent(EventEnvelope envelope) {
-        KafkaAggregateMessageDispatching.dispatchMessage(this, envelope);
-        return Collections.emptySet();
+    public void onRegistered() {
+        super.onRegistered();
+        dispatcher.startDispatching();
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return always empty set
-     * @implSpec Publishes the given {@linkplain RejectionEnvelope rejection} into
-     * the {@code spine.server.aggregate.messages} Kafka topic as a key-value pair:
-     * <pre>
-     * {@linkplain #key() Repository type} -> {@link RejectionEnvelope#getOuterObject()}.
-     * </pre>
-     */
     @Override
-    public Set<I> dispatchRejection(RejectionEnvelope envelope) {
-        KafkaAggregateMessageDispatching.dispatchMessage(this, envelope);
-        return Collections.emptySet();
+    protected final AggregateCommandDelivery<I, A> getCommandEndpointDelivery() {
+        return commandDelivery;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return the default value of the ID according to {@link Identifier#getDefaultValue(Class)}
-     * @implSpec Publishes the given {@linkplain CommandEnvelope command} into
-     * the {@code spine.server.aggregate.messages} Kafka topic as a key-value pair:
-     * <pre>
-     * {@linkplain #key() Repository type} -> {@link CommandEnvelope#getOuterObject()}.
-     * </pre>
-     */
     @Override
-    public I dispatch(CommandEnvelope envelope) {
-        KafkaAggregateMessageDispatching.dispatchMessage(this, envelope);
-        return Identifier.getDefaultValue(getIdClass());
+    protected final AggregateEventDelivery<I, A> getEventEndpointDelivery() {
+        return eventDelivery;
     }
 
-    @Internal
     @Override
-    public void dispatchEventNow(EventEnvelope envelope) {
-        applyAndCatch(super::dispatchEvent, envelope);
-    }
-
-    @Internal
-    @Override
-    public void dispatchRejectionNow(RejectionEnvelope envelope) {
-        applyAndCatch(super::dispatchRejection, envelope);
-    }
-
-    @Internal
-    @Override
-    public void dispatchCommandNow(CommandEnvelope envelope) {
-        applyAndCatch(super::dispatch, envelope);
-    }
-
-    @Internal
-    @Override
-    public String key() {
-        final EntityClass<?> cls = entityClass();
-        final String typeName = cls.getStateType()
-                                   .getTypeName();
-        return typeName;
-    }
-
-    @Internal
-    @Override
-    public KafkaWrapper kafka() {
-        return kafka;
-    }
-
-    /**
-     * Executes the given dispatching task with the given
-     * {@linkplain MessageEnvelope message argument} and catches and logs all the runtime
-     * exceptions thrown by the {@code task}.
-     *
-     * @param task the {@link Consumer} to execute
-     * @param argument the {@code task} argument
-     * @param <E> the type of the {@code argument} for the {@code task}
-     */
-    @SuppressWarnings("DuplicateStringLiteralInspection")
-        // OK for the log messages. Duplicate in `KAggregateRepository`.
-    private <E extends MessageEnvelope<?, ? ,?>> void applyAndCatch(Consumer<E> task, E argument) {
-        try {
-            task.accept(argument);
-            log().trace("Acknowledged {} (ID: {}).",
-                        argument.getMessageClass(),
-                        Identifier.toString(argument.getId()));
-        } catch (RuntimeException e) {
-            logError("Error while processing %s (ID: %s).", argument, e);
-        }
+    protected final AggregateRejectionDelivery<I, A> getRejectionEndpointDelivery() {
+        return rejectionDelivery;
     }
 }
