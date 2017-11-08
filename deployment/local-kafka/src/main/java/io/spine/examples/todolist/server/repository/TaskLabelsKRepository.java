@@ -24,7 +24,6 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
 import io.spine.server.aggregate.KAggregatePartRepository;
-import io.spine.server.storage.kafka.KafkaWrapper;
 
 import java.util.Properties;
 
@@ -40,10 +39,9 @@ public class TaskLabelsKRepository
         extends KAggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> {
 
     /**
-     * @see KAggregatePartRepository#KAggregatePartRepository(Properties, KafkaWrapper)
+     * @see KAggregatePartRepository#KAggregatePartRepository(Properties, Properties)
      */
-    public TaskLabelsKRepository(Properties streamConfig,
-                                    KafkaWrapper kafka) {
-        super(streamConfig, kafka);
+    public TaskLabelsKRepository(Properties streamConfig, Properties producerConfig) {
+        super(streamConfig, producerConfig);
     }
 }

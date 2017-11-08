@@ -20,8 +20,6 @@
 
 package io.spine.server.aggregate;
 
-import io.spine.server.storage.kafka.KafkaWrapper;
-
 import javax.annotation.OverridingMethodsMustInvokeSuper;
 import java.util.Properties;
 
@@ -66,18 +64,18 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     /**
      * Creates a new instance of {@code KAggregateRepository}.
      *
-     * @param streamConfig the Kafka Streams configuration containing {@code bootstrap.servers}
-     *                     property and (optionally) other Streams configs
-     * @param kafka        the {@link KafkaWrapper} instance used to publish the events
+     * @param streamConfig   the Kafka Streams configuration containing {@code bootstrap.servers}
+     *                       property and (optionally) other Streams configs
+     * @param producerConfig the Kafka Producer config
      */
     @SuppressWarnings("ThisEscapedInObjectConstruction") // OK since the whole control
-    protected KAggregateRepository(Properties streamConfig, KafkaWrapper kafka) {
+    protected KAggregateRepository(Properties streamConfig, Properties producerConfig) {
         super();
         this.dispatcher = KafkaAggregateMessageDispatcher.<I>newBuilder()
-                                                         .setKafka(kafka)
                                                          .setRepository(this)
-                                                         .setStreamsConfig(streamConfig)
                                                          .setIdClass(getIdClass())
+                                                         .setKafkaProducerConfig(producerConfig)
+                                                         .setKafkaStreamsConfig(streamConfig)
                                                          .build();
         this.commandDelivery = new KafkaCommandDelivery<>(this, dispatcher);
         this.eventDelivery = new KafkaEventDelivery<>(this, dispatcher);

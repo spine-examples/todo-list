@@ -23,7 +23,6 @@ package io.spine.examples.todolist.server.repository;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.server.aggregate.KAggregateRepository;
-import io.spine.server.storage.kafka.KafkaWrapper;
 
 import java.util.Properties;
 
@@ -38,9 +37,9 @@ import java.util.Properties;
 public class LabelKAggregateRepository extends KAggregateRepository<LabelId, LabelAggregate> {
 
     /**
-     * @see KAggregateRepository#KAggregateRepository(Properties, KafkaWrapper)
+     * @see KAggregateRepository#KAggregateRepository(Properties, Properties)
      */
-    public LabelKAggregateRepository(Properties streamConfig, KafkaWrapper kafka) {
-        super(streamConfig, kafka);
+    public LabelKAggregateRepository(Properties streamConfig, Properties producerConfig) {
+        super(streamConfig, producerConfig);
     }
 }

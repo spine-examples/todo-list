@@ -85,6 +85,11 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
     private static final Properties streamsConfig;
 
     /**
+     * The Kafka Producer configurations loaded from {@link #KAFKA_PRODUCER_PROPS_PATH}.
+     */
+    private static final Properties producerConfig;
+
+    /**
      * The maximum time the storage poll operations may wait for the results to be returned.
      *
      * <p>Note that this is NOT the poll await used by the {@linkplain KafkaCatchUp catch up} and
@@ -121,7 +126,8 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
     private static final KafkaWrapper kafka;
 
     static {
-        final Properties producerConfig = loadConfig(KAFKA_PRODUCER_PROPS_PATH);
+        streamsConfig = loadConfig(KAFKA_STREAMS_PROPS_PATH);
+        producerConfig = loadConfig(KAFKA_PRODUCER_PROPS_PATH);
         final Properties consumerConfig = loadConfig(KAFKA_CONSUMER_PROPS_PATH);
         final StorageFactory storageFactory =
                 KafkaStorageFactory.newBuilder()
@@ -134,7 +140,6 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
                                                    .init(() -> storageFactory,
                                                          () -> storageFactory);
         kafka = KafkaWrapper.create(producerConfig, consumerConfig);
-        streamsConfig = loadConfig(KAFKA_STREAMS_PROPS_PATH);
     }
 
     private KafkaBoundedContextFactory() {
@@ -159,18 +164,18 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
      */
     @Override
     protected AggregateRepository<LabelId, LabelAggregate> labelAggregateRepository() {
-        return new LabelKAggregateRepository(streamsConfig, kafka);
+        return new LabelKAggregateRepository(streamsConfig, producerConfig);
     }
 
     @Override
     protected AggregatePartRepository<TaskId, TaskPart, TaskAggregateRoot> taskRepository() {
-        return new TaskKRepository(streamsConfig, kafka);
+        return new TaskKRepository(streamsConfig, producerConfig);
     }
 
     @Override
     protected AggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot>
     taskLabelsRepository() {
-        return new TaskLabelsKRepository(streamsConfig, kafka);
+        return new TaskLabelsKRepository(streamsConfig, producerConfig);
     }
 
     @SuppressWarnings({

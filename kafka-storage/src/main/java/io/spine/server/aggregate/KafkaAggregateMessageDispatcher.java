@@ -28,9 +28,9 @@ import io.spine.core.EventEnvelope;
 import io.spine.core.MessageEnvelope;
 import io.spine.core.Rejection;
 import io.spine.core.RejectionEnvelope;
-import io.spine.server.storage.kafka.KafkaWrapper;
 import io.spine.server.storage.kafka.Topic;
-import io.spine.string.Stringifiers;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.Consumed;
@@ -44,7 +44,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.server.kafka.KafkaStreamsConfigs.prepareConfig;
 import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
-import static io.spine.string.Stringifiers.fromString;
 import static io.spine.util.Exceptions.newIllegalArgumentException;
 import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
 
@@ -55,19 +54,48 @@ import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
  */
 final class KafkaAggregateMessageDispatcher<I> {
 
-    private final KafkaWrapper kafka;
+    private static final Serde<Message> messageSerde = serdeFrom(serializer(), deserializer());
+
+    private final KafkaProducer<I, Message> kafkaProducer;
+    private final Properties kafkaStreamsConfig;
     private final AggregateRepository<I, ?> repository;
-    private final Properties config;
-    private final Class<I> idClass;
     private final Topic kafkaTopic;
+    private final Serde<I> idSerde;
 
     private KafkaAggregateMessageDispatcher(Builder<I> builder) {
-        this.kafka = checkNotNull(builder.kafka);
+        final Class<I> idClass = checkNotNull(builder.idClass);
+        this.idSerde = idSerde(idClass);
+        final Properties producerConfig = checkNotNull(builder.kafkaProducerConfig);
+        this.kafkaProducer = createProducer(producerConfig, idSerde);
+        final Properties streamProperties = checkNotNull(builder.kafkaStreamsConfig);
+        this.kafkaStreamsConfig = prepareConfig(streamProperties, applicationId());
         this.repository = checkNotNull(builder.repository);
-        final Properties streamProperties = checkNotNull(builder.config);
-        this.config = prepareConfig(streamProperties, applicationId());
-        this.idClass = checkNotNull(builder.idClass);
         this.kafkaTopic = Topic.forAggregateMessages(repository.getEntityStateType());
+    }
+
+
+    private static <I> KafkaProducer<I, Message> createProducer(Properties config,
+                                                                Serde<I> idSerde) {
+        final KafkaProducer<I, Message> producer = new KafkaProducer<>(config,
+                                                                       idSerde.serializer(),
+                                                                       serializer());
+        return producer;
+    }
+
+    @SuppressWarnings({"unchecked", "IfStatementWithTooManyBranches", "ChainOfInstanceofChecks"})
+        // OK for this case.
+    private static <I> Serde<I> idSerde(Class<I> idClass) {
+        final Serde<I> idSerde;
+        if (idClass == String.class) {
+            idSerde = (Serde<I>) Serdes.String();
+        } else if (idClass == Long.class) {
+            idSerde = (Serde<I>) Serdes.Long();
+        } else if (idClass == Integer.class) {
+            idSerde = (Serde<I>) Serdes.Integer();
+        } else {
+            idSerde = (Serde<I>) messageSerde;
+        }
+        return idSerde;
     }
 
     /**
@@ -83,13 +111,11 @@ final class KafkaAggregateMessageDispatcher<I> {
      */
     void startDispatching() {
         final StreamsBuilder builder = new StreamsBuilder();
-        final Serde<String> stringSerde = Serdes.String();
-        final Serde<Message> messageSerde = serdeFrom(serializer(), deserializer());
-        final KStream<String, Message> stream = builder.stream(kafkaTopic.getName(),
-                                                               Consumed.with(stringSerde,
+        final KStream<I, Message> stream = builder.stream(kafkaTopic.getName(),
+                                                               Consumed.with(idSerde,
                                                                              messageSerde));
         buildTopology(stream);
-        final KafkaStreams streams = new KafkaStreams(builder.build(), config);
+        final KafkaStreams streams = new KafkaStreams(builder.build(), kafkaStreamsConfig);
         streams.start();
     }
 
@@ -100,13 +126,14 @@ final class KafkaAggregateMessageDispatcher<I> {
      * @param msg the envelope to be dispatched
      */
     void dispatchMessage(I id, MessageEnvelope<?, ? extends Message, ?> msg) {
-        final String key = idToString(id);
         final Message message = msg.getOuterObject();
-        kafka.write(kafkaTopic, key, message);
+        final ProducerRecord<I, Message> record = new ProducerRecord<>(kafkaTopic.getName(),
+                                                                       id, message);
+        kafkaProducer.send(record);
     }
 
-    private void buildTopology(KStream<String, Message> stream) {
-        stream.foreach((key, value) -> doDispatch(toId(key), value));
+    private void buildTopology(KStream<I, Message> stream) {
+        stream.foreach(this::doDispatch);
     }
 
     @SuppressWarnings({"IfStatementWithTooManyBranches", "ChainOfInstanceofChecks"})
@@ -114,27 +141,22 @@ final class KafkaAggregateMessageDispatcher<I> {
     private void doDispatch(I id, Message message) {
         if (message instanceof Event) {
             final EventEnvelope envelope = EventEnvelope.of((Event) message);
-            repository.getEventEndpointDelivery().deliverNow(id, envelope);
+            repository.getEventEndpointDelivery()
+                      .deliverNow(id, envelope);
         } else if (message instanceof Rejection) {
             final RejectionEnvelope envelope = RejectionEnvelope.of((Rejection) message);
-            repository.getRejectionEndpointDelivery().deliverNow(id, envelope);
+            repository.getRejectionEndpointDelivery()
+                      .deliverNow(id, envelope);
         } else if (message instanceof Command) {
             final CommandEnvelope envelope = CommandEnvelope.of((Command) message);
-            repository.getCommandEndpointDelivery().deliverNow(id, envelope);
+            repository.getCommandEndpointDelivery()
+                      .deliverNow(id, envelope);
         } else {
             throw newIllegalArgumentException(
                     "Expected Command, Event or Rejection but encountered %s.",
                     message
             );
         }
-    }
-
-    private I toId(String idString) {
-        return fromString(idString, idClass);
-    }
-
-    private String idToString(I id) {
-        return Stringifiers.toString(id);
     }
 
     private String applicationId() {
@@ -147,27 +169,27 @@ final class KafkaAggregateMessageDispatcher<I> {
 
     static final class Builder<I> {
 
-        private KafkaWrapper kafka;
+        private Properties kafkaProducerConfig;
         private AggregateRepository<I, ?> repository;
-        private Properties config;
+        private Properties kafkaStreamsConfig;
         private Class<I> idClass;
 
         private Builder() {
             // Prevent direct instantiation.
         }
 
-        Builder<I> setKafka(KafkaWrapper kafka) {
-            this.kafka = checkNotNull(kafka);
+        Builder<I> setKafkaProducerConfig(Properties kafkaProducerConfig) {
+            this.kafkaProducerConfig = checkNotNull(kafkaProducerConfig);
+            return this;
+        }
+
+        Builder<I> setKafkaStreamsConfig(Properties config) {
+            this.kafkaStreamsConfig = checkNotNull(config);
             return this;
         }
 
         Builder<I> setRepository(AggregateRepository<I, ?> repository) {
             this.repository = checkNotNull(repository);
-            return this;
-        }
-
-        Builder<I> setStreamsConfig(Properties config) {
-            this.config = checkNotNull(config);
             return this;
         }
 
