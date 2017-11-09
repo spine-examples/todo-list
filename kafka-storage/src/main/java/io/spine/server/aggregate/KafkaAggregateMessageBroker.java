@@ -55,7 +55,7 @@ import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
 /**
  * Sends aggregate messages to the target {@code Aggregate} instances through Kafka.
  *
- * @param <I> the type of the aggregate IDs to which the messages are dispatched
+ * @param <I> the type of the aggregate IDs to which the messages are sent
  * @author Dmytro Dashenkov
  */
 final class KafkaAggregateMessageBroker<I> {
@@ -98,14 +98,14 @@ final class KafkaAggregateMessageBroker<I> {
     }
 
     /**
-     * Starts the Kafka Streams based Aggregate message dispatching.
+     * Starts the Kafka Streams based Aggregate message delivery.
      *
      * <p>Starts a Kafka Streams topology which sends all the messages dispatched to a single
      * {@link AggregateRepository} to a single processing instance, where those are applied onto
      * the entities.
      *
      * <p>In other words, if two instances of the application receive two commands to a single
-     * {@code Aggregate}, the commands are sent through Kafka to a single instance which dispatches
+     * {@code Aggregate}, the commands are sent through Kafka to a single instance which sends
      * them to the {@code Aggregate}.
      */
     void start() {
@@ -119,10 +119,10 @@ final class KafkaAggregateMessageBroker<I> {
     }
 
     /**
-     * Publishes the given envelope into Kafka.
+     * Sends the given envelope to Kafka.
      *
-     * @param receiverId the ID of the message dispatching target
-     * @param envelope   the envelope to be dispatched
+     * @param receiverId the ID of the message target
+     * @param envelope   the envelope to be sent
      */
     void sendMessage(I receiverId, MessageEnvelope<?, ? extends Message, ?> envelope) {
         final Message message = envelope.getOuterObject();
@@ -260,7 +260,7 @@ final class KafkaAggregateMessageBroker<I> {
         }
 
         /**
-         * @param repository the {@link AggregateRepository} to dispatch the messages with
+         * @param repository the {@link AggregateRepository} to send the messages with
          * @return self for method chaining
          */
         Builder<I> setRepository(AggregateRepository<I, ?> repository) {
@@ -269,7 +269,7 @@ final class KafkaAggregateMessageBroker<I> {
         }
 
         /**
-         * @param idClass the class of ID of Aggregates which are the dispatching target
+         * @param idClass the class of ID of Aggregates which are the message targets
          * @return self for method chaining
          */
         Builder<I> setIdClass(Class<I> idClass) {
