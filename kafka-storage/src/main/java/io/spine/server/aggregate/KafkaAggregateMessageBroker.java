@@ -108,11 +108,11 @@ final class KafkaAggregateMessageBroker<I> {
      * {@code Aggregate}, the commands are sent through Kafka to a single instance which dispatches
      * them to the {@code Aggregate}.
      */
-    void startDispatching() {
+    void start() {
         final StreamsBuilder builder = new StreamsBuilder();
         final KStream<I, Message> stream = builder.stream(kafkaTopic.getName(),
-                                                               Consumed.with(idSerde,
-                                                                             messageSerde));
+                                                          Consumed.with(idSerde,
+                                                                        messageSerde));
         buildTopology(stream);
         final KafkaStreams streams = new KafkaStreams(builder.build(), kafkaStreamsConfig);
         streams.start();
@@ -153,7 +153,7 @@ final class KafkaAggregateMessageBroker<I> {
          */
         private static final
         Map<Class<? extends Message>,
-            Function<? extends Message, ? extends MessageEnvelope<?, ?, ?>>> messageWrappers =
+                Function<? extends Message, ? extends MessageEnvelope<?, ?, ?>>> messageWrappers =
                 ImmutableMap.of(
                         Command.class, message -> CommandEnvelope.of((Command) message),
                         Event.class, message -> EventEnvelope.of((Event) message),
@@ -196,7 +196,8 @@ final class KafkaAggregateMessageBroker<I> {
                           "Expected Command, Event or Rejection but encountered %s.",
                           cls.getName());
             @SuppressWarnings("unchecked")
-            final Function<M, E> wrapper = (Function<M, E>) messageWrappers.get(cls);
+            final Function<M, E> wrapper = (Function<M, E>) messageWrappers.get(
+                    cls);
             return (id, message) -> {
                 @SuppressWarnings("unchecked")
                 final M msg = (M) message;

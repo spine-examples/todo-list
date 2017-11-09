@@ -97,7 +97,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     @Override
     public void onRegistered() {
         super.onRegistered();
-        dispatcher.startDispatching();
+        dispatcher.start();
     }
 
     @Override

@@ -75,7 +75,7 @@ public abstract class KAggregatePartRepository<I,
     @Override
     public void onRegistered() {
         super.onRegistered();
-        dispatcher.startDispatching();
+        dispatcher.start();
     }
 
     @Override
