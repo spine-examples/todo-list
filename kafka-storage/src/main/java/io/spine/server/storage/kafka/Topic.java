@@ -118,7 +118,7 @@ public interface Topic {
      * Creates an instance of {@code Topic} for the aggregate messages of the given aggregate state
      * type.
      *
-     * <p>This topic has the name equal to the {@link TypeUrl#getTypeName()} of the given type url.
+     * <p>This topic has the name equal to the {@link TypeUrl#getTypeName()} of the given type URL.
      *
      * <p>This topic is internal and serves for
      * the {@linkplain io.spine.server.aggregate.KAggregateRepository Kafka-based aggregate message
