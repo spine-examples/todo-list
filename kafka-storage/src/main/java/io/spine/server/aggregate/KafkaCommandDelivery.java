@@ -33,17 +33,17 @@ import io.spine.core.CommandEnvelope;
 final class KafkaCommandDelivery<I, A extends Aggregate<I, ?, ?>>
         extends AggregateCommandDelivery<I, A> {
 
-    private final KafkaAggregateMessageBroker<I> dispatcher;
+    private final KafkaAggregateMessageBroker<I> broker;
 
     KafkaCommandDelivery(AggregateRepository<I, A> repository,
-                         KafkaAggregateMessageBroker<I> dispatcher) {
+                         KafkaAggregateMessageBroker<I> broker) {
         super(repository);
-        this.dispatcher = dispatcher;
+        this.broker = broker;
     }
 
     @Override
     public boolean shouldPostpone(I id, CommandEnvelope envelope) {
-        dispatcher.sendMessage(id, envelope);
+        broker.sendMessage(id, envelope);
         return true;
     }
 }

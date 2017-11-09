@@ -38,7 +38,7 @@ public abstract class KAggregatePartRepository<I,
                                                R extends AggregateRoot<I>>
         extends AggregatePartRepository<I, A, R> {
 
-    private final KafkaAggregateMessageBroker<I> dispatcher;
+    private final KafkaAggregateMessageBroker<I> broker;
 
     private final AggregateCommandDelivery<I, A> commandDelivery;
     private final AggregateEventDelivery<I, A> eventDelivery;
@@ -54,15 +54,15 @@ public abstract class KAggregatePartRepository<I,
     @SuppressWarnings("ThisEscapedInObjectConstruction") // OK since the whole control
     protected KAggregatePartRepository(Properties streamConfig, Properties producerConfig) {
         super();
-        this.dispatcher = KafkaAggregateMessageBroker.<I>newBuilder()
+        this.broker = KafkaAggregateMessageBroker.<I>newBuilder()
                                                          .setRepository(this)
                                                          .setIdClass(getIdClass())
                                                          .setKafkaProducerConfig(producerConfig)
                                                          .setKafkaStreamsConfig(streamConfig)
                                                          .build();
-        this.commandDelivery = new KafkaCommandDelivery<>(this, dispatcher);
-        this.eventDelivery = new KafkaEventDelivery<>(this, dispatcher);
-        this.rejectionDelivery = new KafkaRejectionDelivery<>(this, dispatcher);
+        this.commandDelivery = new KafkaCommandDelivery<>(this, broker);
+        this.eventDelivery = new KafkaEventDelivery<>(this, broker);
+        this.rejectionDelivery = new KafkaRejectionDelivery<>(this, broker);
     }
 
     /**
@@ -75,7 +75,7 @@ public abstract class KAggregatePartRepository<I,
     @Override
     public void onRegistered() {
         super.onRegistered();
-        dispatcher.start();
+        broker.start();
     }
 
     @Override

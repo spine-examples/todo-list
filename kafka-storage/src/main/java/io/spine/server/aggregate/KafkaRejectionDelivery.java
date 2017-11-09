@@ -33,17 +33,17 @@ import io.spine.core.RejectionEnvelope;
 final class KafkaRejectionDelivery<I, A extends Aggregate<I, ?, ?>>
         extends AggregateRejectionDelivery<I, A> {
 
-    private final KafkaAggregateMessageBroker<I> dispatcher;
+    private final KafkaAggregateMessageBroker<I> broker;
 
     KafkaRejectionDelivery(AggregateRepository<I, A> repository,
-                           KafkaAggregateMessageBroker<I> dispatcher) {
+                           KafkaAggregateMessageBroker<I> broker) {
         super(repository);
-        this.dispatcher = dispatcher;
+        this.broker = broker;
     }
 
     @Override
     public boolean shouldPostpone(I id, RejectionEnvelope envelope) {
-        dispatcher.sendMessage(id, envelope);
+        broker.sendMessage(id, envelope);
         return true;
     }
 }

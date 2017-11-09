@@ -32,17 +32,17 @@ import io.spine.core.EventEnvelope;
  */
 final class KafkaEventDelivery<I, A extends Aggregate<I, ?, ?>> extends AggregateEventDelivery<I, A> {
 
-    private final KafkaAggregateMessageBroker<I> dispatcher;
+    private final KafkaAggregateMessageBroker<I> broker;
 
     KafkaEventDelivery(AggregateRepository<I, A> repository,
-                       KafkaAggregateMessageBroker<I> dispatcher) {
+                       KafkaAggregateMessageBroker<I> broker) {
         super(repository);
-        this.dispatcher = dispatcher;
+        this.broker = broker;
     }
 
     @Override
     public boolean shouldPostpone(I id, EventEnvelope envelope) {
-        dispatcher.sendMessage(id, envelope);
+        broker.sendMessage(id, envelope);
         return true;
     }
 }

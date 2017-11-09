@@ -60,7 +60,7 @@ import java.util.Properties;
 public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
         extends AggregateRepository<I, A> {
 
-    private final KafkaAggregateMessageBroker<I> dispatcher;
+    private final KafkaAggregateMessageBroker<I> broker;
 
     private final AggregateCommandDelivery<I, A> commandDelivery;
     private final AggregateEventDelivery<I, A> eventDelivery;
@@ -76,15 +76,15 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     @SuppressWarnings("ThisEscapedInObjectConstruction") // OK since the whole control
     protected KAggregateRepository(Properties streamConfig, Properties producerConfig) {
         super();
-        this.dispatcher = KafkaAggregateMessageBroker.<I>newBuilder()
+        this.broker = KafkaAggregateMessageBroker.<I>newBuilder()
                                                          .setRepository(this)
                                                          .setIdClass(getIdClass())
                                                          .setKafkaProducerConfig(producerConfig)
                                                          .setKafkaStreamsConfig(streamConfig)
                                                          .build();
-        this.commandDelivery = new KafkaCommandDelivery<>(this, dispatcher);
-        this.eventDelivery = new KafkaEventDelivery<>(this, dispatcher);
-        this.rejectionDelivery = new KafkaRejectionDelivery<>(this, dispatcher);
+        this.commandDelivery = new KafkaCommandDelivery<>(this, broker);
+        this.eventDelivery = new KafkaEventDelivery<>(this, broker);
+        this.rejectionDelivery = new KafkaRejectionDelivery<>(this, broker);
     }
 
     /**
@@ -97,7 +97,7 @@ public abstract class KAggregateRepository<I, A extends Aggregate<I, ?, ?>>
     @Override
     public void onRegistered() {
         super.onRegistered();
-        dispatcher.start();
+        broker.start();
     }
 
     @Override
