@@ -64,13 +64,11 @@ final class KafkaAggregateMessageDispatcher<I> {
     private final Serde<I> idSerde;
 
     private KafkaAggregateMessageDispatcher(Builder<I> builder) {
-        final Class<I> idClass = checkNotNull(builder.idClass);
-        this.idSerde = idSerde(idClass);
-        final Properties producerConfig = checkNotNull(builder.kafkaProducerConfig);
-        this.kafkaProducer = createProducer(producerConfig, idSerde);
-        final Properties streamProperties = checkNotNull(builder.kafkaStreamsConfig);
-        this.repository = checkNotNull(builder.repository);
-        this.kafkaStreamsConfig = prepareConfig(streamProperties, applicationId(repository));
+        this.idSerde = idSerde(builder.idClass);
+        this.kafkaProducer = createProducer(builder.kafkaProducerConfig, idSerde);
+        this.repository = builder.repository;
+        this.kafkaStreamsConfig = prepareConfig(builder.kafkaStreamsConfig,
+                                                applicationId(repository));
         this.kafkaTopic = Topic.forAggregateMessages(repository.getEntityStateType());
     }
 
@@ -229,6 +227,10 @@ final class KafkaAggregateMessageDispatcher<I> {
          *         parameters
          */
         KafkaAggregateMessageDispatcher<I> build() {
+            checkNotNull(kafkaProducerConfig);
+            checkNotNull(repository);
+            checkNotNull(kafkaProducerConfig);
+            checkNotNull(idClass);
             return new KafkaAggregateMessageDispatcher<>(this);
         }
     }
