@@ -51,10 +51,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static com.google.common.collect.Maps.newHashMap;
+import static io.spine.server.storage.StorageFactorySwitch.newInstance;
 import static io.spine.server.storage.kafka.Consistency.STRONG;
 import static java.time.temporal.ChronoUnit.MILLIS;
 import static java.util.stream.Collectors.toList;
@@ -80,16 +83,6 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
     private static final String KAFKA_CONSUMER_PROPS_PATH = "config/kafka-consumer.properties";
 
     /**
-     * The Kafka Streams configurations loaded from {@link #KAFKA_STREAMS_PROPS_PATH}.
-     */
-    private static final Properties streamsConfig;
-
-    /**
-     * The Kafka Producer configurations loaded from {@link #KAFKA_PRODUCER_PROPS_PATH}.
-     */
-    private static final Properties producerConfig;
-
-    /**
      * The maximum time the storage poll operations may wait for the results to be returned.
      *
      * <p>Note that this is NOT the poll await used by the {@linkplain KafkaCatchUp catch up} and
@@ -101,20 +94,6 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
     private static final Duration STORAGE_MAX_POLL_AWAIT = Duration.of(50, MILLIS);
 
     /**
-     * The {@link StorageFactorySwitch} containing the {@link KafkaStorageFactory} for both test
-     * and production environments.
-     *
-     * <p>The {@linkplain io.spine.server.storage.Storage storages} produces by these factories use
-     * {@link #STORAGE_MAX_POLL_AWAIT} as the max poll await and
-     * {@linkplain io.spine.server.storage.kafka.Consistency#STRONG block} the thread upon write
-     * operations.
-     *
-     * <p>The storage configurations may be found under paths {@link #KAFKA_PRODUCER_PROPS_PATH}
-     * and {@link #KAFKA_CONSUMER_PROPS_PATH}.
-     */
-    private static final StorageFactorySwitch storageFactorySwitch;
-
-    /**
      * The {@link KafkaWrapper} instance used while the {@linkplain KafkaCatchUp catch up} and
      * {@linkplain io.spine.server.aggregate.KAggregateRepository aggregate loading} for publishing
      * messages to Kafka.
@@ -123,12 +102,38 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
      * the {@linkplain KafkaWrapper#create(Properties, Properties) default values} for
      * the {@link io.spine.server.storage.kafka.Consistency Consistency} and poll await.
      */
-    private static final KafkaWrapper kafka;
+    private final KafkaWrapper kafka;
 
-    static {
-        streamsConfig = loadConfig(KAFKA_STREAMS_PROPS_PATH);
-        producerConfig = loadConfig(KAFKA_PRODUCER_PROPS_PATH);
+    /**
+     * The Kafka Streams configurations loaded from {@link #KAFKA_STREAMS_PROPS_PATH}.
+     */
+    private final Properties streamsConfig;
+
+    /**
+     * The Kafka Producer configurations loaded from {@link #KAFKA_PRODUCER_PROPS_PATH}.
+     */
+    private final Properties producerConfig;
+
+    private KafkaBoundedContextFactory() {
+        super(initializeStorageSwitch(
+                initializeStorageFactory(
+                        loadConfig(KAFKA_PRODUCER_PROPS_PATH),
+                        loadConfig(KAFKA_CONSUMER_PROPS_PATH)
+                )));
+        this.producerConfig = loadConfig(KAFKA_PRODUCER_PROPS_PATH);
+        this.streamsConfig = loadConfig(KAFKA_STREAMS_PROPS_PATH);
         final Properties consumerConfig = loadConfig(KAFKA_CONSUMER_PROPS_PATH);
+        this.kafka = KafkaWrapper.create(producerConfig, consumerConfig);
+    }
+
+    private static StorageFactorySwitch initializeStorageSwitch(StorageFactory storage) {
+        final StorageFactorySwitch result = newInstance(getBoundedContextName(), false);
+        result.init(() -> storage, () -> storage);
+        return result;
+    }
+
+    private static StorageFactory initializeStorageFactory(Properties producerConfig,
+                                                           Properties consumerConfig) {
         final StorageFactory storageFactory =
                 KafkaStorageFactory.newBuilder()
                                    .setProducerConfig(producerConfig)
@@ -136,14 +141,7 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
                                    .setMaxPollAwait(STORAGE_MAX_POLL_AWAIT)
                                    .setConsistencyLevel(STRONG)
                                    .build();
-        storageFactorySwitch = StorageFactorySwitch.newInstance(getBoundedContextName(), false)
-                                                   .init(() -> storageFactory,
-                                                         () -> storageFactory);
-        kafka = KafkaWrapper.create(producerConfig, consumerConfig);
-    }
-
-    private KafkaBoundedContextFactory() {
-        super(storageFactorySwitch);
+        return storageFactory;
     }
 
     /**
@@ -182,7 +180,7 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
             "Guava", // Spine Java 7 API.
             "ConstantConditions" // Checked within the stream via filter(...).
     })
-    private static void setupCatchUp(BoundedContext boundedContext) {
+    private void setupCatchUp(BoundedContext boundedContext) {
         final Collection<ProjectionRepository<?, ?, ?>> projectionRepos =
                 Stream.of(MyListView.class, LabelledTasksView.class, DraftTasksView.class)
                       .map(boundedContext::findRepository)
@@ -194,8 +192,8 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
         startCatchUp(projectionRepos);
     }
 
-    private static void
-    setupDispatchers(EventBus eventBus, Collection<? extends EventDispatcher<?>> typeSuppliers) {
+    private void setupDispatchers(EventBus eventBus,
+                                  Collection<? extends EventDispatcher<?>> typeSuppliers) {
         final Set<EventClass> eventClasses =
                 typeSuppliers.stream()
                              .peek(eventBus::unregister)
@@ -206,7 +204,7 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
         eventBus.register(dispatcher);
     }
 
-    private static void startCatchUp(Iterable<ProjectionRepository<?, ?, ?>> repos) {
+    private void startCatchUp(Iterable<ProjectionRepository<?, ?, ?>> repos) {
         for (ProjectionRepository<?, ?, ?> repo : repos) {
             KafkaCatchUp.start(repo, streamsConfig);
         }
@@ -215,18 +213,56 @@ public final class KafkaBoundedContextFactory extends BoundedContextFactory {
     /**
      * Reads a {@code .properties} file from the classpath by the given path.
      *
+     * <p>Once loaded, the returned {@link Properties} instance is cached and never loaded again.
+     *
      * @param path the file path (including extension)
      * @return the loaded {@link Properties}
      */
     private static Properties loadConfig(String path) {
-        final ClassLoader loader = KafkaBoundedContextFactory.class.getClassLoader();
-        final Properties props = new Properties();
-        try (InputStream in = loader.getResourceAsStream(path)) {
-            props.load(in);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
+        return CachingConfigLoader.INSTANCE.load(path);
+    }
+
+    /**
+     * An object loading {@link Properties} from the classpath.
+     *
+     * <p>Use {@link #load(String)} to enable the value caching.
+     *
+     * <p>Once cached, the resulting {@link Properties} instance is never reloaded. It is
+     * guaranteed that any new invocation of {@link #load(String)} with the same argument returns
+     * the same {@link Properties} instance. More formally,
+     * {@code INSTANCE.load(path) == INSTANCE.load(path)} for any valid {@code path} in classpath.
+     */
+    private enum CachingConfigLoader {
+        INSTANCE;
+
+        private final Map<String, Properties> cache = newHashMap();
+
+        /**
+         * Loads the {@link Properties} from cache or from classpath if the cache does not contain
+         * a value for the given {@code path}.
+         *
+         * @param path the path in classpath to load the {@link Properties} from
+         * @return a {@link Properties} configuration file
+         */
+        private Properties load(String path) {
+            return cache.computeIfAbsent(path, CachingConfigLoader::doLoad);
         }
-        return props;
+
+        /**
+         * Unconditionally loads {@link Properties} from the given {@code path} in classpath.
+         *
+         * @see #load(String)
+         */
+        private static Properties doLoad(String path) {
+            final ClassLoader loader = KafkaBoundedContextFactory.class.getClassLoader();
+            final Properties props = new Properties();
+            try (InputStream in = loader.getResourceAsStream(path)) {
+                props.load(in);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+            return props;
+        }
     }
 
     /**
