@@ -26,24 +26,24 @@ import io.spine.core.RejectionEnvelope;
  * An implementation of {@link AggregateRejectionDelivery} based on Kafka.
  *
  * <p>The {@link #shouldPostpone(Object, RejectionEnvelope)} method always returns {@code true} and
- * {@link KafkaAggregateMessageDispatcher#dispatchMessage dispatches} the given message to Kafka.
+ * {@link KafkaAggregateMessageBroker#sendMessage dispatches} the given message to Kafka.
  *
  * @author Dmytro Dashenkov
  */
 final class KafkaRejectionDelivery<I, A extends Aggregate<I, ?, ?>>
         extends AggregateRejectionDelivery<I, A> {
 
-    private final KafkaAggregateMessageDispatcher<I> dispatcher;
+    private final KafkaAggregateMessageBroker<I> dispatcher;
 
     KafkaRejectionDelivery(AggregateRepository<I, A> repository,
-                           KafkaAggregateMessageDispatcher<I> dispatcher) {
+                           KafkaAggregateMessageBroker<I> dispatcher) {
         super(repository);
         this.dispatcher = dispatcher;
     }
 
     @Override
     public boolean shouldPostpone(I id, RejectionEnvelope envelope) {
-        dispatcher.dispatchMessage(id, envelope);
+        dispatcher.sendMessage(id, envelope);
         return true;
     }
 }

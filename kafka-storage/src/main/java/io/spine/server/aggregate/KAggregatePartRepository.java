@@ -38,7 +38,7 @@ public abstract class KAggregatePartRepository<I,
                                                R extends AggregateRoot<I>>
         extends AggregatePartRepository<I, A, R> {
 
-    private final KafkaAggregateMessageDispatcher<I> dispatcher;
+    private final KafkaAggregateMessageBroker<I> dispatcher;
 
     private final AggregateCommandDelivery<I, A> commandDelivery;
     private final AggregateEventDelivery<I, A> eventDelivery;
@@ -54,7 +54,7 @@ public abstract class KAggregatePartRepository<I,
     @SuppressWarnings("ThisEscapedInObjectConstruction") // OK since the whole control
     protected KAggregatePartRepository(Properties streamConfig, Properties producerConfig) {
         super();
-        this.dispatcher = KafkaAggregateMessageDispatcher.<I>newBuilder()
+        this.dispatcher = KafkaAggregateMessageBroker.<I>newBuilder()
                                                          .setRepository(this)
                                                          .setIdClass(getIdClass())
                                                          .setKafkaProducerConfig(producerConfig)

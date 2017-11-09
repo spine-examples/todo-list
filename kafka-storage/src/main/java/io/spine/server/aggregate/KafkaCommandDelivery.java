@@ -26,24 +26,24 @@ import io.spine.core.CommandEnvelope;
  * An implementation of {@link AggregateCommandDelivery} based on Kafka.
  *
  * <p>The {@link #shouldPostpone(Object, CommandEnvelope)} method always returns {@code true} and
- * {@link KafkaAggregateMessageDispatcher#dispatchMessage dispatches} the given message to Kafka.
+ * {@link KafkaAggregateMessageBroker#sendMessage dispatches} the given message to Kafka.
  *
  * @author Dmytro Dashenkov
  */
 final class KafkaCommandDelivery<I, A extends Aggregate<I, ?, ?>>
         extends AggregateCommandDelivery<I, A> {
 
-    private final KafkaAggregateMessageDispatcher<I> dispatcher;
+    private final KafkaAggregateMessageBroker<I> dispatcher;
 
     KafkaCommandDelivery(AggregateRepository<I, A> repository,
-                         KafkaAggregateMessageDispatcher<I> dispatcher) {
+                         KafkaAggregateMessageBroker<I> dispatcher) {
         super(repository);
         this.dispatcher = dispatcher;
     }
 
     @Override
     public boolean shouldPostpone(I id, CommandEnvelope envelope) {
-        dispatcher.dispatchMessage(id, envelope);
+        dispatcher.sendMessage(id, envelope);
         return true;
     }
 }

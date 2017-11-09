@@ -20,7 +20,9 @@
 
 package io.spine.server.aggregate;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.Message;
+import io.spine.core.ActorMessageEnvelope;
 import io.spine.core.Command;
 import io.spine.core.CommandEnvelope;
 import io.spine.core.Event;
@@ -38,38 +40,47 @@ import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.KStream;
 
+import java.util.Map;
 import java.util.Properties;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.server.kafka.KafkaStreamsConfigs.prepareConfig;
 import static io.spine.server.storage.kafka.MessageSerializer.deserializer;
 import static io.spine.server.storage.kafka.MessageSerializer.serializer;
-import static io.spine.util.Exceptions.newIllegalArgumentException;
 import static org.apache.kafka.common.serialization.Serdes.serdeFrom;
 
 /**
- * Dispatches aggregate messages to the target {@code Aggregate} instances through Kafka.
+ * Sends aggregate messages to the target {@code Aggregate} instances through Kafka.
  *
  * @param <I> the type of the aggregate IDs to which the messages are dispatched
  * @author Dmytro Dashenkov
  */
-final class KafkaAggregateMessageDispatcher<I> {
+final class KafkaAggregateMessageBroker<I> {
 
     private static final Serde<Message> messageSerde = serdeFrom(serializer(), deserializer());
+    private static final Map<Class<?>, Serde<?>> primitiveSerdes = ImmutableMap.of(
+            String.class, Serdes.String(),
+            Long.class, Serdes.Long(),
+            Integer.class, Serdes.Integer()
+    );
 
     private final KafkaProducer<I, Message> kafkaProducer;
     private final Properties kafkaStreamsConfig;
-    private final AggregateRepository<I, ?> repository;
     private final Topic kafkaTopic;
     private final Serde<I> idSerde;
+    private final Courier<I> courier;
 
-    private KafkaAggregateMessageDispatcher(Builder<I> builder) {
+    private KafkaAggregateMessageBroker(Builder<I> builder) {
         this.idSerde = idSerde(builder.idClass);
         this.kafkaProducer = createProducer(builder.kafkaProducerConfig, idSerde);
-        this.repository = builder.repository;
+        final AggregateRepository<I, ?> repository = builder.repository;
         this.kafkaStreamsConfig = prepareConfig(builder.kafkaStreamsConfig,
                                                 applicationId(repository));
         this.kafkaTopic = Topic.forAggregateMessages(repository.getEntityStateType());
+        this.courier = new Courier<>(repository);
     }
 
     private static <I> KafkaProducer<I, Message> createProducer(Properties config,
@@ -80,19 +91,9 @@ final class KafkaAggregateMessageDispatcher<I> {
         return producer;
     }
 
-    @SuppressWarnings({"unchecked", "IfStatementWithTooManyBranches", "ChainOfInstanceofChecks"})
-        // OK for this case.
+    @SuppressWarnings("unchecked") // Logically checked.
     private static <I> Serde<I> idSerde(Class<I> idClass) {
-        final Serde<I> idSerde;
-        if (idClass == String.class) {
-            idSerde = (Serde<I>) Serdes.String();
-        } else if (idClass == Long.class) {
-            idSerde = (Serde<I>) Serdes.Long();
-        } else if (idClass == Integer.class) {
-            idSerde = (Serde<I>) Serdes.Integer();
-        } else {
-            idSerde = (Serde<I>) messageSerde;
-        }
+        final Serde<I> idSerde = (Serde<I>) primitiveSerdes.getOrDefault(idClass, messageSerde);
         return idSerde;
     }
 
@@ -120,45 +121,100 @@ final class KafkaAggregateMessageDispatcher<I> {
     /**
      * Publishes the given envelope into Kafka.
      *
-     * @param id  the ID of the message dispatching target
-     * @param msg the envelope to be dispatched
+     * @param receiverId the ID of the message dispatching target
+     * @param envelope   the envelope to be dispatched
      */
-    void dispatchMessage(I id, MessageEnvelope<?, ? extends Message, ?> msg) {
-        final Message message = msg.getOuterObject();
+    void sendMessage(I receiverId, MessageEnvelope<?, ? extends Message, ?> envelope) {
+        final Message message = envelope.getOuterObject();
         final ProducerRecord<I, Message> record = new ProducerRecord<>(kafkaTopic.getName(),
-                                                                       id, message);
+                                                                       receiverId, message);
         kafkaProducer.send(record);
     }
 
     private void buildTopology(KStream<I, Message> stream) {
-        stream.foreach(this::doDispatch);
-    }
-
-    @SuppressWarnings({"IfStatementWithTooManyBranches", "ChainOfInstanceofChecks"})
-        // OK for this method as we want a *single* processing point for any kind of message.
-    private void doDispatch(I id, Message message) {
-        if (message instanceof Event) {
-            final EventEnvelope envelope = EventEnvelope.of((Event) message);
-            repository.getEventEndpointDelivery()
-                      .deliverNow(id, envelope);
-        } else if (message instanceof Rejection) {
-            final RejectionEnvelope envelope = RejectionEnvelope.of((Rejection) message);
-            repository.getRejectionEndpointDelivery()
-                      .deliverNow(id, envelope);
-        } else if (message instanceof Command) {
-            final CommandEnvelope envelope = CommandEnvelope.of((Command) message);
-            repository.getCommandEndpointDelivery()
-                      .deliverNow(id, envelope);
-        } else {
-            throw newIllegalArgumentException(
-                    "Expected Command, Event or Rejection but encountered %s.",
-                    message
-            );
-        }
+        stream.foreach(courier::deliver);
     }
 
     private static String applicationId(AggregateRepository<?, ?> repository) {
         return repository.getEntityClass().getName();
+    }
+
+    /**
+     * Performs delivery of a given aggregate message to a specified receiver with
+     * the {@link AggregateEndpointDelivery} from the given {@code AggregateRepository}.
+     *
+     * @param <I> the type of the {@code Aggregate} ID that receives the messages
+     */
+    private static class Courier<I> {
+
+        /**
+         * A map of {@code Class<T extends Message>} to lambda converting the message of type
+         * {@code T} to a corresponding {@link MessageEnvelope}.
+         */
+        private static final
+        Map<Class<? extends Message>,
+            Function<? extends Message, ? extends MessageEnvelope<?, ?, ?>>> messageWrappers =
+                ImmutableMap.of(
+                        Command.class, message -> CommandEnvelope.of((Command) message),
+                        Event.class, message -> EventEnvelope.of((Event) message),
+                        Rejection.class, message -> RejectionEnvelope.of((Rejection) message)
+                );
+
+        /**
+         * A map of {@code Class<T extends Message>} to {@link AggregateEndpointDelivery} instance
+         * for type {@code T}.
+         */
+        private final Map<Class<? extends Message>, AggregateEndpointDelivery<?, ?, ?>> deliveries;
+
+        private Courier(AggregateRepository<I, ?> repository) {
+            this.deliveries = ImmutableMap.of(
+                    Command.class, repository.getCommandEndpointDelivery(),
+                    Event.class, repository.getEventEndpointDelivery(),
+                    Rejection.class, repository.getRejectionEndpointDelivery()
+            );
+        }
+
+        /**
+         * Retrieves a {@linkplain BiConsumer} function of {@code receiverId} and {@code message}
+         * that performs the {@code message} delivery.
+         *
+         * @param cls the {@code Class} of the message to deliver
+         * @param <M> the type of the message to deliver
+         * @param <E> the type of the {@linkplain MessageEnvelope envelope} for the given message
+         *            type
+         * @return a {@link BiConsumer} delivering the given {@code message} to the receiver with
+         *         the given ID
+         * @see #deliver(Object, Message)
+         */
+        // "unchecked" warnings suppressed due to internal invariants of `Courier`.
+        private <M extends Message, E extends ActorMessageEnvelope<?, M, ?>> BiConsumer<I, Message>
+        deliveryAction(Class<M> cls) {
+            @SuppressWarnings("unchecked")
+            final AggregateEndpointDelivery<I, ?, E> delivery =
+                    (AggregateEndpointDelivery<I, ?, E>) deliveries.get(cls);
+            checkArgument(delivery != null,
+                          "Expected Command, Event or Rejection but encountered %s.",
+                          cls.getName());
+            @SuppressWarnings("unchecked")
+            final Function<M, E> wrapper = (Function<M, E>) messageWrappers.get(cls);
+            return (id, message) -> {
+                @SuppressWarnings("unchecked")
+                final M msg = (M) message;
+                final E envelope = wrapper.apply(msg);
+                delivery.deliverNow(id, envelope);
+            };
+        }
+
+        /**
+         * Delivers the given {@code message} to the receiver specified by the {@code receiverId}.
+         *
+         * @param receiverId the receiver to deliver the {@code message} to
+         * @param message    the message to deliver
+         */
+        private void deliver(I receiverId, Message message) {
+            final Class<? extends Message> messageClass = message.getClass();
+            deliveryAction(messageClass).accept(receiverId, message);
+        }
     }
 
     static <I> Builder<I> newBuilder() {
@@ -166,9 +222,9 @@ final class KafkaAggregateMessageDispatcher<I> {
     }
 
     /**
-     * A builder for the {@code KafkaAggregateMessageDispatcher} instances.
+     * A builder for the {@code KafkaAggregateMessageBroker} instances.
      *
-     * @param <I> the type parameter of the resulting {@code KafkaAggregateMessageDispatcher}
+     * @param <I> the type parameter of the resulting {@code KafkaAggregateMessageBroker}
      */
     static final class Builder<I> {
 
@@ -221,17 +277,17 @@ final class KafkaAggregateMessageDispatcher<I> {
         }
 
         /**
-         * Creates a new instance of {@code KafkaAggregateMessageDispatcher}.
+         * Creates a new instance of {@code KafkaAggregateMessageBroker}.
          *
-         * @return new instance of {@code KafkaAggregateMessageDispatcher} with the given
+         * @return new instance of {@code KafkaAggregateMessageBroker} with the given
          *         parameters
          */
-        KafkaAggregateMessageDispatcher<I> build() {
+        KafkaAggregateMessageBroker<I> build() {
             checkNotNull(kafkaProducerConfig);
             checkNotNull(repository);
             checkNotNull(kafkaProducerConfig);
             checkNotNull(idClass);
-            return new KafkaAggregateMessageDispatcher<>(this);
+            return new KafkaAggregateMessageBroker<>(this);
         }
     }
 }
