@@ -71,16 +71,15 @@ final class KafkaAggregateMessageBroker<I> {
     private final Properties kafkaStreamsConfig;
     private final Topic kafkaTopic;
     private final Serde<I> idSerde;
-    private final Courier<I> courier;
+    private final AggregateRepository<I, ?> repository;
 
     private KafkaAggregateMessageBroker(Builder<I> builder) {
         this.idSerde = idSerde(builder.idClass);
         this.kafkaProducer = createProducer(builder.kafkaProducerConfig, idSerde);
-        final AggregateRepository<I, ?> repository = builder.repository;
+        this.repository = builder.repository;
         this.kafkaStreamsConfig = prepareConfig(builder.kafkaStreamsConfig,
                                                 applicationId(repository));
         this.kafkaTopic = Topic.forAggregateMessages(repository.getEntityStateType());
-        this.courier = new Courier<>(repository);
     }
 
     private static <I> KafkaProducer<I, Message> createProducer(Properties config,
@@ -132,6 +131,7 @@ final class KafkaAggregateMessageBroker<I> {
     }
 
     private void buildTopology(KStream<I, Message> stream) {
+        final Courier<I> courier = new Courier<>(repository);
         stream.foreach(courier::deliver);
     }
 
