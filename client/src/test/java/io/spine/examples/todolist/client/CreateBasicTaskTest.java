@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of CreateBasicTask command")
-class CreateBasicTaskTest extends CommandLineTodoClientTest {
+class CreateBasicTaskTest extends TodoClientTest {
 
     private TodoClient client;
 

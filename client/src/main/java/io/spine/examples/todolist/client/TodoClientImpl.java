@@ -59,15 +59,14 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 
 /**
- * Implementation of the command line gRPC client.
+ * An implementation of the TodoList gRPC client.
  *
  * @author Illia Shepilov
  * @author Dmitry Ganzha
  */
 @SuppressWarnings("OverlyCoupledClass")
-public class CommandLineTodoClient implements TodoClient {
+final class TodoClientImpl implements TodoClient {
 
-    public static final String HOST = "localhost";
     private static final int TIMEOUT = 10;
 
     private final ManagedChannel channel;
@@ -78,7 +77,7 @@ public class CommandLineTodoClient implements TodoClient {
     /**
      * Construct the client connecting to server at {@code host:port}.
      */
-    public CommandLineTodoClient(String host, int port) {
+    TodoClientImpl(String host, int port) {
         this.requestFactory = actorRequestFactoryInstance();
         this.channel = initChannel(host, port);
         this.commandService = CommandServiceGrpc.newBlockingStub(channel);
@@ -261,7 +260,7 @@ public class CommandLineTodoClient implements TodoClient {
         return result;
     }
 
-    private <M extends Message> M convertAnyToMessage(Any any, Class<M> messageClass) {
+    private static <M extends Message> M convertAnyToMessage(Any any, Class<M> messageClass) {
         try {
             return any.unpack(messageClass);
         } catch (InvalidProtocolBufferException e) {

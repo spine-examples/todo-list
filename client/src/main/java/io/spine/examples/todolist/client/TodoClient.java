@@ -50,6 +50,8 @@ import java.util.List;
  */
 public interface TodoClient {
 
+    String HOST = "localhost";
+
     /**
      * Creates task according to the command data.
      *
@@ -180,4 +182,8 @@ public interface TodoClient {
      * Shutdown the connection channel.
      */
     void shutdown();
+
+    static TodoClient instance(String host, int port) {
+        return new TodoClientImpl(host, port);
+    }
 }

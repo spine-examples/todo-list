@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of AssignLabelToTask command")
-class AssignLabelToTaskTest extends CommandLineTodoClientTest {
+class AssignLabelToTaskTest extends TodoClientTest {
 
     private TodoClient client;
 

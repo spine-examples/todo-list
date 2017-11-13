@@ -25,17 +25,13 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import io.spine.Identifier;
-import io.spine.client.ConnectionConstants;
 import io.spine.core.Ack;
 import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.client.CommandLineTodoClient;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
-import io.spine.protobuf.AnyPacker;
 import io.spine.type.TypeUrl;
-import io.spine.ui.Language;
 
-import static java.lang.String.valueOf;
+import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
         Log.e(TAG, TypeUrl.of(Ack.class).value());
 
-        final TodoClient client = new CommandLineTodoClient("10.0.2.2", ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT);
+        final TodoClient client = TodoClient.instance("10.0.2.2", DEFAULT_CLIENT_SERVICE_PORT);
         findViewById(R.id.btn).setOnClickListener(button -> {
             final CreateDraft command = CreateDraft.newBuilder()
                                                    .setId(TaskId.newBuilder().setValue(Identifier.newUuid()))

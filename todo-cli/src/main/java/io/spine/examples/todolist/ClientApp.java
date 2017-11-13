@@ -24,14 +24,13 @@ import com.google.common.annotations.VisibleForTesting;
 import io.spine.cli.Application;
 import io.spine.cli.Screen;
 import io.spine.cli.view.View;
-import io.spine.examples.todolist.client.CommandLineTodoClient;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.view.MainMenu;
 import org.slf4j.Logger;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.AppConfig.getClient;
-import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
+import static io.spine.examples.todolist.client.TodoClient.HOST;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -41,7 +40,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * <pre>{@code gradle runTodoClient -Pconf=hostname,port}</pre>
  *
  * <p>If the parameters were not specified to a command or the server was ran directly,
- * default {@linkplain io.spine.examples.todolist.client.CommandLineTodoClient#HOST host}
+ * default {@linkplain TodoClient#HOST host}
  * and {@link io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT port} will be used.
  *
  * @author Illia Shepilov
@@ -82,7 +81,7 @@ public class ClientApp {
             port = Integer.parseInt(arguments[1]);
         }
 
-        return new CommandLineTodoClient(hostname, port);
+        return TodoClient.instance(hostname, port);
     }
 
     @VisibleForTesting
