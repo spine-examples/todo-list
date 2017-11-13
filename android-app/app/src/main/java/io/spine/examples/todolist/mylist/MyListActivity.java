@@ -20,26 +20,27 @@
 
 package io.spine.examples.todolist.mylist;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.widget.ImageButton;
-import android.widget.Toast;
 import io.spine.Identifier;
 import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 
-import static android.arch.lifecycle.ViewModelProviders.of;
-
 public class MyListActivity extends AppCompatActivity {
+
+    private MyListViewModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        model = ViewModelProviders.of(this).get(MyListViewModel.class);
         setContentView(R.layout.activity_my_list);
         initToolbar();
         initViews();
@@ -48,11 +49,6 @@ public class MyListActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-        final MyListViewModel model = of(this).get(MyListViewModel.class);
-        model.subscribe(this, data -> {
-            Toast.makeText(getApplicationContext(), String.valueOf(data.getMyList().getItemsCount()), Toast.LENGTH_SHORT).show();
-        });
         model.fetchMyTasks();
     }
 
@@ -64,8 +60,9 @@ public class MyListActivity extends AppCompatActivity {
     private void initViews() {
         final RecyclerView myTaskListView = findViewById(R.id.my_task_list_view);
         myTaskListView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-
-        final MyListViewModel model = of(this).get(MyListViewModel.class);
+        final MyTaskListViewAdapter adapter = new MyTaskListViewAdapter();
+        myTaskListView.setAdapter(adapter);
+        model.subscribe(this, adapter);
 
         final ImageButton button = findViewById(R.id.fab);
         button.setOnClickListener(btn -> model.createTask(collectStubData()));

@@ -27,6 +27,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:background="@color/list_bg_color"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/std_padding"
+        android:paddingTop="@dimen/std_padding"
         tools:showIn="@layout/activity_my_list"
-        tools:context="io.spine.examples.todolist.mylist.MyListActivity">
-</android.support.v7.widget.RecyclerView>
+        tools:context="io.spine.examples.todolist.mylist.MyListActivity"/>

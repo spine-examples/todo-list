@@ -20,4 +20,9 @@
 
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="std_padding">8dp</dimen>
+    <dimen name="half_padding">4dp</dimen>
+
+    <dimen name="small_text">10sp</dimen>
+    <dimen name="min_item_height">72dp</dimen>
 </resources>

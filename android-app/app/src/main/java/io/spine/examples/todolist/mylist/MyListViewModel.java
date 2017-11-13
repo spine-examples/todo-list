@@ -26,32 +26,34 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.connection.Client;
 import io.spine.examples.todolist.q.projection.MyListView;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class MyListViewModel extends ViewModel {
+class MyListViewModel extends ViewModel {
 
     private final MutableLiveData<MyListView> myList = new MutableLiveData<>();
-    private final TodoClient client = TodoClient.instance("35.190.217.65", 80);
+    private final TodoClient client = Client.SINGLETON.value;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
+    // Required by the `ViewModelProviders` utility.
     public MyListViewModel() {
     }
 
-    public void createTask(CreateBasicTask command) {
+    void createTask(CreateBasicTask command) {
         executor.execute(() -> client.create(command));
     }
 
-    public void fetchMyTasks() {
+    void fetchMyTasks() {
         executor.execute(() -> {
             final MyListView myListView = client.getMyListView();
             myList.postValue(myListView);
         });
     }
 
-    public void subscribe(LifecycleOwner owner, Observer<MyListView> observer) {
+    void subscribe(LifecycleOwner owner, Observer<MyListView> observer) {
         myList.observe(owner, observer);
     }
 }
