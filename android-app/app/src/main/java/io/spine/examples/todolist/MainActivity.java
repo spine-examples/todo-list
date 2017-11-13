@@ -23,12 +23,39 @@ package io.spine.examples.todolist;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import io.spine.Identifier;
+import io.spine.client.ConnectionConstants;
+import io.spine.core.Ack;
+import io.spine.examples.todolist.c.commands.CreateDraft;
+import io.spine.examples.todolist.client.CommandLineTodoClient;
+import io.spine.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.q.projection.DraftTasksView;
+import io.spine.protobuf.AnyPacker;
+import io.spine.type.TypeUrl;
+import io.spine.ui.Language;
+
+import static java.lang.String.valueOf;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "AFTER VIEW";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.e(TAG, TypeUrl.of(Ack.class).value());
+
+        final TodoClient client = new CommandLineTodoClient("10.0.2.2", ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT);
+        findViewById(R.id.btn).setOnClickListener(button -> {
+            final CreateDraft command = CreateDraft.newBuilder()
+                                                   .setId(TaskId.newBuilder().setValue(Identifier.newUuid()))
+                                                   .build();
+            client.create(command);
+            final DraftTasksView view = client.getDraftTasksView();
+            Log.e(TAG, view.getDraftTasks().toString());
+        });
     }
 }
