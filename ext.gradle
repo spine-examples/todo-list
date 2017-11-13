@@ -28,7 +28,7 @@ project.ext {
     // Spine dependencies' versions
     spineVersion = SPINE_VERSION
     spineJdbcStorageVersion = '0.9.64-SNAPSHOT'
-    spineBaseVersion = '0.9.79-SNAPSHOT'
+    spineBaseVersion = '0.10.0'
 
     // Main scope third party dependencies' versions
     protobufGradlePluginVersion = '0.8.3'
