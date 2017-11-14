@@ -18,44 +18,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mylist;
+package io.spine.examples.todolist.newtask;
 
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.widget.ImageButton;
+import android.widget.Button;
+import android.widget.EditText;
 import io.spine.examples.todolist.lifecycle.BaseActivity;
 import io.spine.examples.todolist.R;
-import io.spine.examples.todolist.newtask.NewTaskActivity;
+import io.spine.examples.todolist.TaskDescription;
 
-public class MyListActivity extends BaseActivity<MyListViewModel> {
+public class NewTaskActivity extends BaseActivity<NewTaskViewModel> {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_list);
+        setContentView(R.layout.activity_new_task);
         initViews();
     }
 
     @Override
-    protected Class<MyListViewModel> getViewModelClass() {
-        return MyListViewModel.class;
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        model().fetchMyTasks();
+    protected Class<NewTaskViewModel> getViewModelClass() {
+        return NewTaskViewModel.class;
     }
 
     private void initViews() {
-        final RecyclerView myTaskListView = findViewById(R.id.my_task_list_view);
-        myTaskListView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
-        final MyTaskListViewAdapter adapter = new MyTaskListViewAdapter();
-        myTaskListView.setAdapter(adapter);
-        model().subscribe(this, adapter);
+        final EditText taskDescription = findViewById(R.id.new_task_description);
+        final Button createTask = findViewById(R.id.create_task_btn);
+        final Button back = findViewById(R.id.back_btn);
 
-        final ImageButton button = findViewById(R.id.fab);
-        button.setOnClickListener(view -> navigator().navigate(NewTaskActivity.class));
+        createTask.setOnClickListener(button -> {
+            final String descriptionValue = taskDescription.getText().toString();
+            final TaskDescription description = createDescription(descriptionValue);
+            model().createTask(description);
+            navigator().navigateBack();
+        });
+        back.setOnClickListener(button -> navigator().navigateBack());
+    }
+
+    private static TaskDescription createDescription(String value) {
+        final TaskDescription description = TaskDescription.newBuilder()
+                                                           .setValue(value)
+                                                           .build();
+        return description;
     }
 }

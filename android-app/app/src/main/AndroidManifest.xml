@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
           package="io.spine.examples.todolist">
 
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -9,17 +10,18 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
-            android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity
                 android:name=".mylist.MyListActivity"
-                android:label="@string/title_activity_my_list"
+                android:label="@string/my_list"
                 android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
+            <intent-filter android:label="@string/app_name">
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".newtask.NewTaskActivity"
+                  android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 

@@ -18,13 +18,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.connection;
+package io.spine.examples.todolist.lifecycle;
 
+import android.arch.lifecycle.ViewModel;
 import io.spine.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.connection.Clients;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public enum Client {
+import static com.google.common.base.Preconditions.checkNotNull;
 
-    SINGLETON;
-    public final TodoClient value = TodoClient.instance("35.190.217.65", 80);
+public abstract class BaseViewModel extends ViewModel {
+
+    private final TodoClient client = Clients.instance();
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    public BaseViewModel() {
+    }
+
+    protected void execute(Runnable task) {
+        checkNotNull(task);
+        executor.execute(task);
+    }
+
+    protected TodoClient client() {
+        return client;
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        executor.shutdown();
+    }
 }

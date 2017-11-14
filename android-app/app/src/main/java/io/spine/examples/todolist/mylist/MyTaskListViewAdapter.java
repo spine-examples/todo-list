@@ -35,7 +35,6 @@ import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskItem;
-import io.spine.time.Time;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -111,6 +110,8 @@ final class MyTaskListViewAdapter
         private final View colorView;
         private final View root;
 
+        private final Resources resources;
+
         private TaskViewHolder(View itemView) {
             super(itemView);
             this.root = itemView;
@@ -118,6 +119,7 @@ final class MyTaskListViewAdapter
             this.dueDate = itemView.findViewById(R.id.task_due_date);
             this.dueDateLabel = itemView.findViewById(R.id.task_due_date_label);
             this.colorView = itemView.findViewById(R.id.task_label_color_stripe);
+            this.resources = itemView.getResources();
         }
 
         private void bind(TaskItem data) {
@@ -125,8 +127,7 @@ final class MyTaskListViewAdapter
             bindDueDate(data.getDueDate());
             colorView.setBackgroundColor(colorOf(data));
             if (data.getCompleted()) {
-                final Resources res = root.getContext().getResources();
-                root.setBackgroundColor(res.getColor(R.color.completedTaskColor));
+                root.setBackgroundColor(resources.getColor(R.color.completedTaskColor));
             }
         }
 

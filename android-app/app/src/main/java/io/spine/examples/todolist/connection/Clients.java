@@ -18,30 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mylist;
+package io.spine.examples.todolist.connection;
 
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
-import io.spine.examples.todolist.lifecycle.BaseViewModel;
-import io.spine.examples.todolist.q.projection.MyListView;
+import io.spine.examples.todolist.client.TodoClient;
 
-final class MyListViewModel extends BaseViewModel {
+public final class Clients {
 
-    private final MutableLiveData<MyListView> myList = new MutableLiveData<>();
+    private static final String HOST = "10.0.2.2";
+    private static final int PORT = 50051;
 
-    // Required by the `ViewModelProviders` utility.
-    public MyListViewModel() {
+    private Clients() {
+        // Prevent instantiation.
     }
 
-    void fetchMyTasks() {
-        execute(() -> {
-            final MyListView myListView = client().getMyListView();
-            myList.postValue(myListView);
-        });
+    public static TodoClient instance() {
+        return ClientSingleton.INSTANCE.value;
     }
 
-    void subscribe(LifecycleOwner owner, Observer<MyListView> observer) {
-        myList.observe(owner, observer);
+    private enum ClientSingleton {
+        INSTANCE;
+        @SuppressWarnings("NonSerializableFieldInSerializableClass")
+        private final TodoClient value = TodoClient.instance(HOST, PORT);
     }
 }

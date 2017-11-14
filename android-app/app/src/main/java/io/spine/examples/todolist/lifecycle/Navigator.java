@@ -18,30 +18,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mylist;
+package io.spine.examples.todolist.lifecycle;
 
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
-import io.spine.examples.todolist.lifecycle.BaseViewModel;
-import io.spine.examples.todolist.q.projection.MyListView;
+import android.app.Activity;
+import android.content.Intent;
 
-final class MyListViewModel extends BaseViewModel {
+import static com.google.common.base.Preconditions.checkNotNull;
 
-    private final MutableLiveData<MyListView> myList = new MutableLiveData<>();
+public final class Navigator {
 
-    // Required by the `ViewModelProviders` utility.
-    public MyListViewModel() {
+    private final Activity activity;
+
+    private Navigator(Activity activity) {
+        this.activity = activity;
     }
 
-    void fetchMyTasks() {
-        execute(() -> {
-            final MyListView myListView = client().getMyListView();
-            myList.postValue(myListView);
-        });
+    public static Navigator from(Activity activity) {
+        checkNotNull(activity);
+        return new Navigator(activity);
     }
 
-    void subscribe(LifecycleOwner owner, Observer<MyListView> observer) {
-        myList.observe(owner, observer);
+    public void navigate(Class<? extends Activity> activityClass) {
+        final Intent intent = new Intent(activity.getApplicationContext(), activityClass);
+        activity.startActivity(intent);
+    }
+
+    public void navigateBack() {
+        activity.finish();
     }
 }

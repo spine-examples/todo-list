@@ -2,4 +2,8 @@
     <string name="app_name">Todo List</string>
     <string name="title_activity_my_list">MyListActivity</string>
     <string name="due">Due:</string>
+    <string name="create">Create</string>
+    <string name="create_new_task">Create new task</string>
+    <string name="back">Back</string>
+    <string name="my_list">My List</string>
 </resources>

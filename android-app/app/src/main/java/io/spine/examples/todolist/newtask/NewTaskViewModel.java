@@ -18,30 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mylist;
+package io.spine.examples.todolist.newtask;
 
-import android.arch.lifecycle.LifecycleOwner;
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.Observer;
 import io.spine.examples.todolist.lifecycle.BaseViewModel;
-import io.spine.examples.todolist.q.projection.MyListView;
+import io.spine.examples.todolist.TaskDescription;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.CreateBasicTask;
 
-final class MyListViewModel extends BaseViewModel {
+import static io.spine.Identifier.newUuid;
 
-    private final MutableLiveData<MyListView> myList = new MutableLiveData<>();
+final class NewTaskViewModel extends BaseViewModel {
 
-    // Required by the `ViewModelProviders` utility.
-    public MyListViewModel() {
+    public NewTaskViewModel() {
     }
 
-    void fetchMyTasks() {
-        execute(() -> {
-            final MyListView myListView = client().getMyListView();
-            myList.postValue(myListView);
-        });
+    void createTask(TaskDescription description) {
+        final CreateBasicTask command = CreateBasicTask.newBuilder()
+                                                       .setId(newId())
+                                                       .setDescription(description)
+                                                       .build();
+        execute(() -> client().create(command));
     }
 
-    void subscribe(LifecycleOwner owner, Observer<MyListView> observer) {
-        myList.observe(owner, observer);
+    private static TaskId newId() {
+        return TaskId.newBuilder()
+                     .setValue(newUuid())
+                     .build();
     }
 }
