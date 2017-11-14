@@ -20,28 +20,26 @@
 
 package io.spine.examples.todolist.newtask;
 
-import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import io.spine.examples.todolist.lifecycle.BaseActivity;
 import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.TaskDescription;
+import io.spine.examples.todolist.lifecycle.BaseActivity;
 
 public class NewTaskActivity extends BaseActivity<NewTaskViewModel> {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_task);
-        initViews();
-    }
 
     @Override
     protected Class<NewTaskViewModel> getViewModelClass() {
         return NewTaskViewModel.class;
     }
 
-    private void initViews() {
+    @Override
+    protected int getContentView() {
+        return R.layout.activity_new_task;
+    }
+
+    @Override
+    protected void initializeView() {
         final EditText taskDescription = findViewById(R.id.new_task_description);
         final Button createTask = findViewById(R.id.create_task_btn);
         final Button back = findViewById(R.id.back_btn);

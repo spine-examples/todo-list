@@ -20,26 +20,23 @@
 
 package io.spine.examples.todolist.mylist;
 
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageButton;
-import io.spine.examples.todolist.lifecycle.BaseActivity;
 import io.spine.examples.todolist.R;
+import io.spine.examples.todolist.lifecycle.BaseActivity;
 import io.spine.examples.todolist.newtask.NewTaskActivity;
 
 public class MyListActivity extends BaseActivity<MyListViewModel> {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_list);
-        initViews();
+    protected Class<MyListViewModel> getViewModelClass() {
+        return MyListViewModel.class;
     }
 
     @Override
-    protected Class<MyListViewModel> getViewModelClass() {
-        return MyListViewModel.class;
+    protected int getContentView() {
+        return R.layout.activity_my_list;
     }
 
     @Override
@@ -48,7 +45,8 @@ public class MyListActivity extends BaseActivity<MyListViewModel> {
         model().fetchMyTasks();
     }
 
-    private void initViews() {
+    @Override
+    public void initializeView() {
         final RecyclerView myTaskListView = findViewById(R.id.my_task_list_view);
         myTaskListView.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
         final MyTaskListViewAdapter adapter = new MyTaskListViewAdapter();
