@@ -19,8 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".newtask.NewTaskActivity"
-                  android:theme="@style/AppTheme.NoActionBar">
+        <activity
+                android:name=".newtask.NewTaskActivity"
+                android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>
 
