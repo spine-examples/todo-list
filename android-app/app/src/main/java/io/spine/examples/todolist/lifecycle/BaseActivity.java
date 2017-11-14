@@ -63,7 +63,9 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(0, R.anim.slide_right);
+        if (!isTaskRoot()) {
+            overridePendingTransition(0, R.anim.slide_right);
+        }
     }
 
     @StringRes
