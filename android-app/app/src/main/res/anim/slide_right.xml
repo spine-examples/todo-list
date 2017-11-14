@@ -19,20 +19,8 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<android.support.design.widget.AppBarLayout
+<translate
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:theme="@style/AppTheme.AppBarOverlay">
-    <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:gravity="start"
-            app:titleTextColor="@color/textPrimaryColor"
-            app:subtitleTextColor="@color/textSecondaryColor"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
-            app:popupTheme="@style/AppTheme.PopupOverlay"/>
-</android.support.design.widget.AppBarLayout>
+        android:fromXDelta="0%p"
+        android:toXDelta="100%p"
+        android:duration="@android:integer/config_shortAnimTime"/>

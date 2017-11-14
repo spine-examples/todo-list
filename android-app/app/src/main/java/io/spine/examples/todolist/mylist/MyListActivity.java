@@ -35,7 +35,7 @@ public class MyListActivity extends BaseActivity<MyListViewModel> {
     }
 
     @Override
-    protected int getContentView() {
+    protected int getContentViewResource() {
         return R.layout.activity_my_list;
     }
 
@@ -54,6 +54,8 @@ public class MyListActivity extends BaseActivity<MyListViewModel> {
         model().subscribe(this, adapter);
 
         final ImageButton button = findViewById(R.id.fab);
-        button.setOnClickListener(view -> navigator().navigate(NewTaskActivity.class));
+        button.setOnClickListener(view -> navigator().start()
+                                                     .revealing(view)
+                                                     .into(NewTaskActivity.class));
     }
 }

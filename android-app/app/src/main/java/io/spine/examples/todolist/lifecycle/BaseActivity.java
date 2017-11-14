@@ -24,6 +24,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -54,15 +55,26 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         model = ViewModelProviders.of(this).get(getViewModelClass());
-        setContentView(getContentView());
+        setContentView(getContentViewResource());
         initToolbar();
         initializeView();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, R.anim.slide_right);
+    }
+
+    @StringRes
+    protected int getTitleResource() {
+        return R.string.app_name;
     }
 
     protected abstract Class<VM> getViewModelClass();
 
     @LayoutRes
-    protected abstract int getContentView();
+    protected abstract int getContentViewResource();
 
     protected abstract void initializeView();
 
@@ -80,7 +92,7 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(getTitleResource());
         } else {
             Log.w(TAG, "initToolbar: No support ActionBar present");
         }

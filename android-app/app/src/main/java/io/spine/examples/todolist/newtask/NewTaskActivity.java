@@ -34,7 +34,12 @@ public class NewTaskActivity extends BaseActivity<NewTaskViewModel> {
     }
 
     @Override
-    protected int getContentView() {
+    protected int getTitleResource() {
+        return R.string.new_task;
+    }
+
+    @Override
+    protected int getContentViewResource() {
         return R.layout.activity_new_task;
     }
 

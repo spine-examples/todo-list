@@ -21,8 +21,17 @@
 package io.spine.examples.todolist.lifecycle;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.view.View;
+import android.widget.Button;
+import io.spine.examples.todolist.R;
 
+import static android.support.v4.app.ActivityOptionsCompat.makeBasic;
+import static android.support.v4.app.ActivityOptionsCompat.makeClipRevealAnimation;
+import static android.support.v4.app.ActivityOptionsCompat.makeCustomAnimation;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public final class Navigator {
@@ -38,12 +47,31 @@ public final class Navigator {
         return new Navigator(activity);
     }
 
-    public void navigate(Class<? extends Activity> activityClass) {
-        final Intent intent = new Intent(activity.getApplicationContext(), activityClass);
-        activity.startActivity(intent);
+    public NavigationBuilder start() {
+        return new NavigationBuilder();
     }
 
     public void navigateBack() {
         activity.finish();
+    }
+
+    public class NavigationBuilder {
+
+        private ActivityOptionsCompat inAnimation = makeBasic();
+
+        private NavigationBuilder() {
+            // Prevent direct instantiation.
+        }
+
+        public NavigationBuilder revealing(View view) {
+            inAnimation = makeClipRevealAnimation(view, 0, 0, 0, 0);
+            return this;
+        }
+
+        public void into(Class<? extends Activity> activityClass) {
+            final Intent intent = new Intent(activity.getApplicationContext(), activityClass);
+            final Bundle inAnimationBundle = inAnimation.toBundle();
+            activity.startActivity(intent, inAnimationBundle);
+        }
     }
 }
