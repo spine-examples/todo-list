@@ -25,10 +25,19 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.stub.StreamObserver;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.Query;
+import io.spine.client.Subscription;
+import io.spine.client.SubscriptionUpdate;
+import io.spine.client.Topic;
 import io.spine.client.grpc.CommandServiceGrpc;
+import io.spine.client.grpc.CommandServiceGrpc.CommandServiceBlockingStub;
 import io.spine.client.grpc.QueryServiceGrpc;
+import io.spine.client.grpc.QueryServiceGrpc.QueryServiceBlockingStub;
+import io.spine.client.grpc.SubscriptionServiceGrpc;
+import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceBlockingStub;
+import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceStub;
 import io.spine.core.Command;
 import io.spine.core.UserId;
 import io.spine.examples.todolist.Task;
@@ -49,6 +58,7 @@ import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
+import io.spine.protobuf.AnyPacker;
 import io.spine.time.ZoneOffsets;
 
 import java.util.List;
@@ -65,13 +75,15 @@ import static java.util.stream.Collectors.toList;
  * @author Dmitry Ganzha
  */
 @SuppressWarnings("OverlyCoupledClass")
-final class TodoClientImpl implements TodoClient {
+final class TodoClientImpl implements SubscribingTodoClient {
 
     private static final int TIMEOUT = 10;
 
     private final ManagedChannel channel;
-    private final QueryServiceGrpc.QueryServiceBlockingStub queryService;
-    private final CommandServiceGrpc.CommandServiceBlockingStub commandService;
+    private final QueryServiceBlockingStub queryService;
+    private final CommandServiceBlockingStub commandService;
+    private final SubscriptionServiceStub subscriptionService;
+    private final SubscriptionServiceBlockingStub blockingSubscriptionServece;
     private final ActorRequestFactory requestFactory;
 
     /**
@@ -82,6 +94,8 @@ final class TodoClientImpl implements TodoClient {
         this.channel = initChannel(host, port);
         this.commandService = CommandServiceGrpc.newBlockingStub(channel);
         this.queryService = QueryServiceGrpc.newBlockingStub(channel);
+        this.subscriptionService = SubscriptionServiceGrpc.newStub(channel);
+        this.blockingSubscriptionServece = SubscriptionServiceGrpc.newBlockingStub(channel);
     }
 
     @Override
@@ -233,6 +247,18 @@ final class TodoClientImpl implements TodoClient {
     }
 
     @Override
+    public Subscription subscribeToTasks(StreamObserver<MyListView> observer) {
+        final Topic topic = requestFactory.topic()
+                                          .allOf(MyListView.class);
+        return subscribeTo(topic, observer);
+    }
+
+    @Override
+    public void unSubscribe(Subscription subscription) {
+        blockingSubscriptionServece.cancel(subscription);
+    }
+
+    @Override
     public void shutdown() {
         try {
             channel.shutdown()
@@ -240,6 +266,12 @@ final class TodoClientImpl implements TodoClient {
         } catch (InterruptedException e) {
             throw illegalStateWithCauseOf(e);
         }
+    }
+
+    private <M extends Message> Subscription subscribeTo(Topic topic, StreamObserver<M> observer) {
+        final Subscription subscription = blockingSubscriptionServece.subscribe(topic);
+        subscriptionService.activate(subscription, new SubscriptionUpdateObserver<>(observer));
+        return subscription;
     }
 
     private static ManagedChannel initChannel(String host, int port) {
@@ -265,6 +297,34 @@ final class TodoClientImpl implements TodoClient {
             return any.unpack(messageClass);
         } catch (InvalidProtocolBufferException e) {
             throw illegalStateWithCauseOf(e);
+        }
+    }
+
+    private static final class SubscriptionUpdateObserver<M extends Message>
+            implements StreamObserver<SubscriptionUpdate> {
+
+        private final StreamObserver<M> delegate;
+
+        private SubscriptionUpdateObserver(StreamObserver<M> targetObserver) {
+            this.delegate = targetObserver;
+        }
+
+        @Override
+        public void onNext(SubscriptionUpdate value) {
+            value.getUpdatesList()
+                 .stream()
+                 .map(AnyPacker::<M>unpack)
+                 .forEach(delegate::onNext);
+        }
+
+        @Override
+        public void onError(Throwable t) {
+            delegate.onError(t);
+        }
+
+        @Override
+        public void onCompleted() {
+            delegate.onCompleted();
         }
     }
 }

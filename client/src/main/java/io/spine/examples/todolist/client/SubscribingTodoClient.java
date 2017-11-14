@@ -18,38 +18,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.lifecycle;
+package io.spine.examples.todolist.client;
 
-import android.arch.lifecycle.ViewModel;
-import io.spine.examples.todolist.client.SubscribingTodoClient;
-import io.spine.examples.todolist.connection.Clients;
+import io.grpc.stub.StreamObserver;
+import io.spine.client.Subscription;
+import io.spine.examples.todolist.q.projection.MyListView;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+/**
+ * @author Dmytro Dashenkov
+ */
+public interface SubscribingTodoClient extends TodoClient {
 
-import static com.google.common.base.Preconditions.checkNotNull;
+    /**
+     * Subscribes the given {@code observer} onto the updates of the {@link MyListView} entity.
+     *
+     * @param observer the result observer
+     * @return the new {@link Subscription}
+     */
+    Subscription subscribeToTasks(StreamObserver<MyListView> observer);
 
-public abstract class BaseViewModel extends ViewModel {
+    /**
+     * Cancels the given {@code subscription}.
+     *
+     * @param subscription the subscription to cancel
+     */
+    void unSubscribe(Subscription subscription);
 
-    private final SubscribingTodoClient client = Clients.instance();
-
-    private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
-    public BaseViewModel() {
-    }
-
-    protected void execute(Runnable task) {
-        checkNotNull(task);
-        executor.execute(task);
-    }
-
-    protected SubscribingTodoClient client() {
-        return client;
-    }
-
-    @Override
-    protected void onCleared() {
-        super.onCleared();
-        executor.shutdown();
+    static SubscribingTodoClient instance(String host, int port) {
+        return new TodoClientImpl(host, port);
     }
 }

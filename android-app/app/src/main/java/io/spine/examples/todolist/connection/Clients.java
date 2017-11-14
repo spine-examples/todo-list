@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.connection;
 
-import io.spine.examples.todolist.client.TodoClient;
+import io.spine.examples.todolist.client.SubscribingTodoClient;
 
 public final class Clients {
 
@@ -31,13 +31,13 @@ public final class Clients {
         // Prevent instantiation.
     }
 
-    public static TodoClient instance() {
+    public static SubscribingTodoClient instance() {
         return ClientSingleton.INSTANCE.value;
     }
 
     private enum ClientSingleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final TodoClient value = TodoClient.instance(HOST, PORT);
+        private final SubscribingTodoClient value = SubscribingTodoClient.instance(HOST, PORT);
     }
 }

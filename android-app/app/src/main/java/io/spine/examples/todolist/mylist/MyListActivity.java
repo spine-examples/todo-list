@@ -42,7 +42,7 @@ public class MyListActivity extends BaseActivity<MyListViewModel> {
     @Override
     protected void onStart() {
         super.onStart();
-        model().fetchMyTasks();
+        model().subscribeToMyList();
     }
 
     @Override
@@ -57,5 +57,11 @@ public class MyListActivity extends BaseActivity<MyListViewModel> {
         button.setOnClickListener(view -> navigator().start()
                                                      .revealing(view)
                                                      .into(NewTaskActivity.class));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        model().unSubscribeFromMyList();
     }
 }
