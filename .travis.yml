@@ -5,10 +5,14 @@ jdk:
 
 before_install:
   - chmod +x gradlew
+  - chmod +x android-app/gradlew
 
 script:
   - ./gradlew build --stacktrace
   - ./gradlew codeCoverageReport
+  - ./gradlew publishToMavenLocal
+  - cd android-app
+  - ./gradlew build
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
