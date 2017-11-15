@@ -52,7 +52,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIP
 abstract class TodoClientTest {
 
     static final String UPDATED_TASK_DESCRIPTION = "Updated.";
-    private static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
+    static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
 
     private Server server;
     private TodoClient client;
@@ -62,7 +62,7 @@ abstract class TodoClientTest {
         final BoundedContext boundedContext = BoundedContexts.create();
         server = new Server(PORT, boundedContext);
         startServer();
-        client = new TodoClientImpl(HOST, PORT);
+        client = TodoClient.instance(HOST, PORT);
     }
 
     @AfterEach
