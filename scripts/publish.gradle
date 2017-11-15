@@ -20,38 +20,6 @@
 
 // Apply this script to add ability to publish the needed artifacts.
 
-String repositoryUserName = null
-String repositoryUserPassword = null
-
-final String credentialsFileName = 'creadentials.properties'
-
-final Properties properties = new Properties()
-final File credentialsFile = project.file(credentialsFileName)
-if (credentialsFile.exists()) {
-    properties.load(credentialsFile.newDataInputStream())
-    repositoryUserName = properties.getProperty("user.name")
-    repositoryUserPassword = properties.getProperty("user.password")
-}
-
-task checkPublishingCredentials {
-    doLast {
-        if (repositoryUserName == null || repositoryUserPassword == null) {
-            throw new InvalidUserDataException("Please set up valid credentials. " +
-                    "Credentials must be set in '${credentialsFileName}' file in the project\'s root.")
-        }
-        println "Publishing build as ${repositoryUserName}"
-    }
-}
-
-@SuppressWarnings("GroovyAssignabilityCheck")
-// Avoiding `Method call is ambiguous` warning in IDEA.
-void dependPublish() {
-    final Set<Task> credentialsTasks = getTasksByName("readPublishingCredentials", false)
-    project.getTasksByName("publish", false).each { final task ->
-        task.dependsOn credentialsTasks
-    }
-}
-
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
     classifier "sources"
@@ -74,21 +42,3 @@ publishing {
         }
     }
 }
-
-// As per https://discuss.gradle.org/t/maven-publish-specify-a-repo-as-being-a-snapshot-repo/374/2
-final String repositorySuffix = version.endsWith('-SNAPSHOT') ? '-snapshots' : ''
-
-publishing {
-    repositories {
-        maven {
-            url = "http://maven.teamdev.com/repository/spine${repositorySuffix}"
-            credentials {
-                username = "${repositoryUserName}"
-                password = "${repositoryUserPassword}"
-            }
-        }
-    }
-}
-
-dependPublish()
-
