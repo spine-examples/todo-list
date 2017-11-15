@@ -42,7 +42,7 @@ public final class LabelBuilder {
     /**
      * Provides builder for the {@link CreateBasicLabel} command.
      *
-     * @return the {@link CreateBasicLabelBuilder} onstance
+     * @return the {@link CreateBasicLabelBuilder} instance
      */
     public CreateBasicLabelBuilder createLabel() {
         return new CreateBasicLabelBuilder();

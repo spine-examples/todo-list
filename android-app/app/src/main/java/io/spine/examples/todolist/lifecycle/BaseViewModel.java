@@ -75,14 +75,14 @@ public abstract class BaseViewModel extends ViewModel {
     /**
      * Sets the {@code errorCallback} to react on the errors.
      *
-     * <p>The thread of the callback invocation is not known.
+     * <p>The thread of the callback invocation is unknown.
      */
     void setErrorCallback(ErrorCallback errorCallback) {
         this.errorCallback = checkNotNull(errorCallback);
     }
 
     /**
-     * Executes the given {@code task} regarding the possible errors.
+     * Executes the given {@code task} asynchronously.
      *
      * <p>If an error happened during the {@code task} execution it may be either sent to
      * the {@link #errorCallback} if it is <i>supported</i> by the callback, or rethrown otherwise.

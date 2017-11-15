@@ -144,7 +144,7 @@ public interface TodoClient {
     void complete(CompleteTask cmd);
 
     /**
-     * Finalizes draft acording to the command data.
+     * Finalizes draft according to the command data.
      *
      * @param cmd the {@link FinalizeDraft} command
      */

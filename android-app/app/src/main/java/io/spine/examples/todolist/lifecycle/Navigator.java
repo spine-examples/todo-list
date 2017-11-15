@@ -79,6 +79,12 @@ public final class Navigator {
         activity.finish();
     }
 
+    /**
+     * The navigation action builder.
+     *
+     * <p>Provides non-terminal operations for the navigation parameters set up and terminal
+     * operations performing the navigation.
+     */
     public class NavigationBuilder {
 
         /**
@@ -93,7 +99,7 @@ public final class Navigator {
         }
 
         /**
-         * Overrides the appearing animation for the pending {@code Activity} opening with
+         * Overrides the appearing animation for the pending {@code Activity} with
          * a {@linkplain ActivityOptionsCompat#makeClipRevealAnimation reveal} from the given
          * {@code view} animation.
          *

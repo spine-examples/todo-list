@@ -77,7 +77,7 @@ final class MyListViewModel extends BaseViewModel {
     /**
      * Cancels current subscription to the {@link MyListView}.
      *
-     * <p>Performs no action is {@link #subscribeToMyList()} has never been called.
+     * <p>Performs no action if {@link #subscribeToMyList()} has never been called.
      */
     void unSubscribeFromMyList() {
         if (myTasksSubscription != null) {
@@ -90,7 +90,7 @@ final class MyListViewModel extends BaseViewModel {
      * {@link MutableLiveData}.
      *
      * <p>Both {@link StreamObserver#onError(Throwable)} and {@link StreamObserver#onCompleted()}
-     * methods write a message to log and perform to other visible action.
+     * methods log a message and perform to other visible action.
      */
     private static final class MyListStreamObserver implements StreamObserver<MyListView> {
 

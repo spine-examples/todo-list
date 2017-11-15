@@ -83,7 +83,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     private final QueryServiceBlockingStub queryService;
     private final CommandServiceBlockingStub commandService;
     private final SubscriptionServiceStub subscriptionService;
-    private final SubscriptionServiceBlockingStub blockingSubscriptionServece;
+    private final SubscriptionServiceBlockingStub blockingSubscriptionService;
     private final ActorRequestFactory requestFactory;
 
     /**
@@ -95,7 +95,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
         this.commandService = CommandServiceGrpc.newBlockingStub(channel);
         this.queryService = QueryServiceGrpc.newBlockingStub(channel);
         this.subscriptionService = SubscriptionServiceGrpc.newStub(channel);
-        this.blockingSubscriptionServece = SubscriptionServiceGrpc.newBlockingStub(channel);
+        this.blockingSubscriptionService = SubscriptionServiceGrpc.newBlockingStub(channel);
     }
 
     @Override
@@ -255,7 +255,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
 
     @Override
     public void unSubscribe(Subscription subscription) {
-        blockingSubscriptionServece.cancel(subscription);
+        blockingSubscriptionService.cancel(subscription);
     }
 
     @Override
@@ -269,7 +269,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     private <M extends Message> Subscription subscribeTo(Topic topic, StreamObserver<M> observer) {
-        final Subscription subscription = blockingSubscriptionServece.subscribe(topic);
+        final Subscription subscription = blockingSubscriptionService.subscribe(topic);
         subscriptionService.activate(subscription, new SubscriptionUpdateObserver<>(observer));
         return subscription;
     }

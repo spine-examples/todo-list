@@ -121,7 +121,7 @@ final class MyTaskListViewAdapter
     }
 
     /**
-     * The implementation of the {@link RecyclerView.ViewHolder} holding the single
+     * The implementation of the {@link RecyclerView.ViewHolder} holding a single
      * {@link TaskItem} view.
      */
     static class TaskViewHolder extends RecyclerView.ViewHolder {
@@ -147,6 +147,11 @@ final class MyTaskListViewAdapter
             this.resources = itemView.getResources();
         }
 
+        /**
+         * Binds the given {@link TaskItem} to the held view.
+         *
+         * @param data the data to display on the view
+         */
         private void bind(TaskItem data) {
             description.setText(data.getDescription().getValue());
             bindDueDate(data.getDueDate());

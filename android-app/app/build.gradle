@@ -44,7 +44,7 @@ android {
     lintOptions {
         /*
             gRPC uses some `javax` packages that are not included into the Android SDK. Though,
-            this does not provide visible effect on neither compilation nor runtime.
+            this has no visible effect on the application runtime.
         */
         abortOnError false
     }

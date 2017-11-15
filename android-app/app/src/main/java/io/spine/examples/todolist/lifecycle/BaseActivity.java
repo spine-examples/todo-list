@@ -42,6 +42,10 @@ import static com.google.common.base.Preconditions.checkState;
  * The implementation base for all the {@link android.app.Activity Activity} classes of the app.
  *
  * <p>Any {@code Activity} in the app has an associated {@link BaseViewModel ViewModel} instance.
+ * The view model performs all the logic of connecting the view (UI) and the model (gRPC client).
+ *
+ * <p>An {@code Activity} calls the {@code ViewModel} methods to retrieve the data to display,
+ * passes the data from the UI, subscribes on the data updates, etc.
  *
  * @param <VM> the type of the {@code BaseViewModel} associated with this {@code Activity}
  */
@@ -64,7 +68,7 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
             "ThisEscapedInObjectConstruction",
                 // OK since is the last statement in the constructor.
             "ConstructorNotProtectedInAbstractClass"
-                // `public` ctor is required for each implementation.
+                // The default ctor is required for each implementation.
     })
     public BaseActivity() {
         super();
@@ -79,7 +83,7 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
      * <ol>
      *     <li>Associates an instance of {@link BaseViewModel} with this {@code Activity}.
      *     <li>{@linkplain #setContentView(View) Sets the content view} to this {@code Activity}.
-     *     <li>{@linkplain #initToolbar() Initializes} the screen toolbar.
+     *     <li>{@linkplain #initToolbar() Initializes} the action bar.
      *     <li>{@linkplain #initializeView() Initializes} the views upon this {@code Activity}.
      * </ol>
      */

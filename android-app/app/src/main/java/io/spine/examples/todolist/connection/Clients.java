@@ -31,10 +31,10 @@ public final class Clients {
     /**
      * The default host of a gRPC server to connect to.
      *
-     * <p>In debug mode this value may be {@code 10.0.2.2} which is the loopback host for
+     * <p>In debug mode this value may be equal to {@code 10.0.2.2} which is the loopback IP for
      * an Android emulator pointing to the machine localhost.
      *
-     * Read
+     * <p>See
      * <a href="https://developer.android.com/studio/run/emulator-networking.html">the official doc
      * </a> for more info.
      */
