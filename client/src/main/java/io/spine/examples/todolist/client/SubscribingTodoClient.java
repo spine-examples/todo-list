@@ -25,6 +25,9 @@ import io.spine.client.Subscription;
 import io.spine.examples.todolist.q.projection.MyListView;
 
 /**
+ * A TodoList gRPC client able to make calls to
+ * the {@link io.spine.server.SubscriptionService SubscriptionService}.
+ *
  * @author Dmytro Dashenkov
  */
 public interface SubscribingTodoClient extends TodoClient {
@@ -44,6 +47,14 @@ public interface SubscribingTodoClient extends TodoClient {
      */
     void unSubscribe(Subscription subscription);
 
+    /**
+     * Creates a new instance of {@code SubscribingTodoClient}.
+     *
+     * @param host the host of the server to connect to
+     * @param port the port of the server to connect to
+     * @return new subscribing TodoList client
+     * @see TodoClient#instance(String, int)
+     */
     static SubscribingTodoClient instance(String host, int port) {
         return new TodoClientImpl(host, port);
     }
