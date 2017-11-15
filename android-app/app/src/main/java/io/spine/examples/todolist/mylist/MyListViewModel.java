@@ -29,6 +29,9 @@ import io.spine.client.Subscription;
 import io.spine.examples.todolist.lifecycle.BaseViewModel;
 import io.spine.examples.todolist.q.projection.MyListView;
 
+/**
+ * The {@link android.arch.lifecycle.ViewModel ViewModel} of the {@link MyListActivity}.
+ */
 final class MyListViewModel extends BaseViewModel {
 
     private static final String TAG = MyListViewModel.class.getSimpleName();
@@ -41,24 +44,61 @@ final class MyListViewModel extends BaseViewModel {
     public MyListViewModel() {
     }
 
+    /**
+     * Subscribes to the updates of the {@link MyListView} projection.
+     *
+     * <p>After calling this method, the {@linkplain #subscribe subscribed} observers will start to
+     * receive the updates for the data.
+     *
+     * <p>The call initiates a data pull, so the observers will receive the first payload soon
+     * after the {@code subscribeToMyList()} call.
+     */
     void subscribeToMyList() {
         execute(() -> {
             myList.postValue(client().getMyListView());
-            myTasksSubscription = client().subscribeToTasks(new MyListStreamObserver());
+            myTasksSubscription = client().subscribeToTasks(new MyListStreamObserver(myList));
         });
     }
 
+    /**
+     * Subscribes the given {@link Observer} to the updates of the {@link MyListView}.
+     *
+     * <p>The {@link LifecycleOwner} defines the time bounds of the observation, i.e.
+     * the {@code observer} will receive the updates if the {@code owner} is active. See
+     * {@link android.arch.lifecycle.LiveData LiveData} for more details.
+     *
+     * @param owner    the {@link LifecycleOwner} controlling the {@code observer}
+     * @param observer the {@link Observer} to subscribe to the updates
+     */
     void subscribe(LifecycleOwner owner, Observer<MyListView> observer) {
         myList.observe(owner, observer);
     }
 
+    /**
+     * Cancels current subscription to the {@link MyListView}.
+     *
+     * <p>Performs no action is {@link #subscribeToMyList()} has never been called.
+     */
     void unSubscribeFromMyList() {
         if (myTasksSubscription != null) {
             execute(() -> client().unSubscribe(myTasksSubscription));
         }
     }
 
-    private final class MyListStreamObserver implements StreamObserver<MyListView> {
+    /**
+     * The {@link StreamObserver} posting the received values to an instance of
+     * {@link MutableLiveData}.
+     *
+     * <p>Both {@link StreamObserver#onError(Throwable)} and {@link StreamObserver#onCompleted()}
+     * methods write a message to log and perform to other visible action.
+     */
+    private static final class MyListStreamObserver implements StreamObserver<MyListView> {
+
+        private final MutableLiveData<MyListView> myList;
+
+        private MyListStreamObserver(MutableLiveData<MyListView> myList) {
+            this.myList = myList;
+        }
 
         @Override
         public void onNext(MyListView value) {

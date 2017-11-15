@@ -29,6 +29,12 @@ import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.lifecycle.BaseActivity;
 import io.spine.examples.todolist.newtask.NewTaskActivity;
 
+/**
+ * The {@code Activity} displaying
+ * the {@link io.spine.examples.todolist.q.projection.MyListView MyListView} to the user.
+ *
+ * @see MyListViewModel
+ */
 public class MyListActivity extends BaseActivity<MyListViewModel> {
 
     @Override

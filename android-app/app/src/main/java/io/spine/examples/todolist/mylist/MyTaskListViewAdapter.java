@@ -51,9 +51,16 @@ import static io.spine.examples.todolist.LabelColor.GREEN;
 import static io.spine.examples.todolist.LabelColor.RED;
 import static io.spine.validate.Validate.isDefault;
 
+/**
+ * The {@link RecyclerView.Adapter} implementation listening to the {@link MyListView} data updates
+ * and initiating the {@link RecyclerView} updates upon the data updates.
+ */
 final class MyTaskListViewAdapter
         extends Adapter<MyTaskListViewAdapter.TaskViewHolder> implements Observer<MyListView> {
 
+    /**
+     * The map of the {@link LabelColor} enum to the RGB values of the color.
+     */
     private static final Map<LabelColor, Integer> COLORS = ImmutableMap.of(
             RED, 0xFF1111,
             GREEN, 0x11FF11,
@@ -61,6 +68,9 @@ final class MyTaskListViewAdapter
             GRAY, 0x555555
     );
 
+    /**
+     * The cached data currently displayed on the associated view.
+     */
     private final List<TaskItem> data = new ArrayList<>();
 
     @Override
@@ -81,6 +91,11 @@ final class MyTaskListViewAdapter
         return data.size();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Updates the {@linkplain #data cached data} and initiates the view redraw.
+     */
     @Override
     public void onChanged(@Nullable MyListView myListView) {
         data.clear();
@@ -90,6 +105,12 @@ final class MyTaskListViewAdapter
         notifyDataSetChanged();
     }
 
+    /**
+     * Maps the given {@link TaskItem} enum value to the RGB color code.
+     *
+     * @param item the color as an enum value
+     * @return the RGB code of the color
+     */
     private static int colorOf(TaskItem item) {
         final LabelColor color = item.getLabelColor();
         Integer hex = COLORS.get(color);
@@ -99,6 +120,10 @@ final class MyTaskListViewAdapter
         return hex;
     }
 
+    /**
+     * The implementation of the {@link RecyclerView.ViewHolder} holding the single
+     * {@link TaskItem} view.
+     */
     static class TaskViewHolder extends RecyclerView.ViewHolder {
 
         private static final SimpleDateFormat DATE_FORMAT =

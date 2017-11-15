@@ -34,40 +34,87 @@ import static android.support.v4.app.ActivityOptionsCompat.makeClipRevealAnimati
 import static android.support.v4.app.ActivityOptionsCompat.makeCustomAnimation;
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Performs the in-app navigation between activities.
+ */
 public final class Navigator {
 
+    /**
+     * The current {@code Activity} instance.
+     */
     private final Activity activity;
 
     private Navigator(Activity activity) {
         this.activity = activity;
     }
 
+    /**
+     * Creates an instance of {@code Navigator} starting in the given {@code activity}.
+     *
+     * @param activity the {@code activity} to start the navigation from
+     * @return new instance of {@code Navigator}
+     */
     public static Navigator from(Activity activity) {
         checkNotNull(activity);
         return new Navigator(activity);
     }
 
+    /**
+     * Starts the navigation from current {@code activity}.
+     *
+     * <p>This operation is non-terminal and has no visible side effect.
+     *
+     * @see NavigationBuilder for the terminal operations
+     */
     public NavigationBuilder start() {
         return new NavigationBuilder();
     }
 
+    /**
+     * Performs the back navigation.
+     *
+     * Acts if {@code activity.finish();}.
+     */
     public void navigateBack() {
         activity.finish();
     }
 
     public class NavigationBuilder {
 
+        /**
+         * New {@code Activity} appearing animation.
+         *
+         * <p>By default, the system default animation.
+         */
         private ActivityOptionsCompat inAnimation = makeBasic();
 
         private NavigationBuilder() {
             // Prevent direct instantiation.
         }
 
+        /**
+         * Overrides the appearing animation for the pending {@code Activity} opening with
+         * a {@linkplain ActivityOptionsCompat#makeClipRevealAnimation reveal} from the given
+         * {@code view} animation.
+         *
+         * <p>This operation is non-terminal and has no visible side effect.
+         *
+         * @param view the view for the {@code Activity} to reveal from
+         * @return {@code this} reference for method chaining
+         */
         public NavigationBuilder revealing(View view) {
             inAnimation = makeClipRevealAnimation(view, 0, 0, 0, 0);
             return this;
         }
 
+        /**
+         * Specifies the navigation target and starts the {@code Activity} opening.
+         *
+         * <p>This is a terminal operation which causes an {@code Activity} of the given class to
+         * appear.
+         *
+         * @param activityClass the class of the {@code Activity} to start
+         */
         public void into(Class<? extends Activity> activityClass) {
             final Intent intent = new Intent(activity.getApplicationContext(), activityClass);
             final Bundle inAnimationBundle = inAnimation.toBundle();

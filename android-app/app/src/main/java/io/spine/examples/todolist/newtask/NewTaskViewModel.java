@@ -20,18 +20,29 @@
 
 package io.spine.examples.todolist.newtask;
 
-import io.spine.examples.todolist.lifecycle.BaseViewModel;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.lifecycle.BaseViewModel;
 
 import static io.spine.Identifier.newUuid;
 
+/**
+ * The {@link android.arch.lifecycle.ViewModel ViewModel} of the {@link NewTaskActivity}.
+ */
 final class NewTaskViewModel extends BaseViewModel {
 
+    // Required by the `ViewModelProviders` utility.
     public NewTaskViewModel() {
     }
 
+    /**
+     * Creates a new task with the given {@linkplain TaskDescription description}.
+     *
+     * <p>Sends the {@link CreateBasicTask} command through the {@linkplain #client() gRPC client}.
+     *
+     * @param description the new task description
+     */
     void createTask(TaskDescription description) {
         final CreateBasicTask command = CreateBasicTask.newBuilder()
                                                        .setId(newId())
@@ -40,6 +51,12 @@ final class NewTaskViewModel extends BaseViewModel {
         execute(() -> client().create(command));
     }
 
+    /**
+     * Generates a new random {@link TaskId}.
+     *
+     * @return new instance of {@link TaskId} with
+     * a {@linkplain io.spine.Identifier#newUuid() UUID} value.
+     */
     private static TaskId newId() {
         return TaskId.newBuilder()
                      .setValue(newUuid())

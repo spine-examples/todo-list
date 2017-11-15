@@ -32,22 +32,64 @@ import java.util.concurrent.Executors;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.grpc.Status.Code.UNAVAILABLE;
 
+/**
+ * An implementation base for all the {@code ViewModel}s in the app.
+ *
+ * <p>The {@code ViewModel} classes hold data, perform network connections, etc. on the behalf of
+ * the associated view elements (such as {@code Activity}).
+ */
+@SuppressWarnings("AbstractClassWithoutAbstractMethods")
+    // API detail.
 public abstract class BaseViewModel extends ViewModel {
 
     private static final String TAG = BaseViewModel.class.getSimpleName();
 
+    /**
+     * The TodoList gRPC client.
+     */
     private final SubscribingTodoClient client = Clients.instance();
+
+    /**
+     * The {@link ExecutorService} performing the asynchronous operations, such as networking.
+     *
+     * @see #execute(Runnable) for the application
+     */
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    private ErrorObserver errorObserver;
+    /**
+     * A callback notifying the view about the errors.
+     */
+    private ErrorCallback errorCallback;
 
+    /**
+     * Creates an instance of {@code BaseViewModel}.
+     *
+     * <p>A {@code public} constructor is required by the Android framework. Do not instantiate
+     * this class directly.
+     *
+     * @see BaseActivity#model() for instance access
+     */
     public BaseViewModel() {
     }
 
-    void setErrorObserver(ErrorObserver errorObserver) {
-        this.errorObserver = checkNotNull(errorObserver);
+    /**
+     * Sets the {@code errorCallback} to react on the errors.
+     *
+     * <p>The thread of the callback invocation is not known.
+     */
+    void setErrorCallback(ErrorCallback errorCallback) {
+        this.errorCallback = checkNotNull(errorCallback);
     }
 
+    /**
+     * Executes the given {@code task} regarding the possible errors.
+     *
+     * <p>If an error happened during the {@code task} execution it may be either sent to
+     * the {@link #errorCallback} if it is <i>supported</i> by the callback, or rethrown otherwise.
+     *
+     * @param task the operation to execute
+     * @see ErrorCallback for the list of <i>supported</i> errors
+     */
     protected void execute(Runnable task) {
         checkNotNull(task);
         executor.execute(() -> {
@@ -55,8 +97,8 @@ public abstract class BaseViewModel extends ViewModel {
                 task.run();
             } catch (StatusRuntimeException e) {
                 Log.d(TAG, "execute: error task");
-                if (e.getStatus().getCode() == UNAVAILABLE && errorObserver != null) {
-                    errorObserver.onNetworkError();
+                if (e.getStatus().getCode() == UNAVAILABLE && errorCallback != null) {
+                    errorCallback.onNetworkError();
                 } else {
                     throw e;
                 }
@@ -64,17 +106,35 @@ public abstract class BaseViewModel extends ViewModel {
         });
     }
 
+    /**
+     * @return the TodoList client
+     */
     protected SubscribingTodoClient client() {
         return client;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Shuts the {@link #executor} down.
+     */
     @Override
     protected void onCleared() {
         super.onCleared();
         executor.shutdown();
     }
 
-    public interface ErrorObserver {
+    /**
+     * The callback called upon some errors in the {@code ViewModel}.
+     *
+     * <p>Currently, only one type of error is <i>supported</i> - the gRPC network error, a.k.a
+     * {@link StatusRuntimeException} with the {@code Status.Code.UNAVAILABLE} status code.
+     */
+    public interface ErrorCallback {
+
+        /**
+         * The callback called upon the service unavailable error.
+         */
         void onNetworkError();
     }
 }

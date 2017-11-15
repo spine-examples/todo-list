@@ -26,6 +26,11 @@ import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.lifecycle.BaseActivity;
 
+/**
+ * The {@code Activity} allowing the user to create a new task.
+ *
+ * @see NewTaskViewModel
+ */
 public class NewTaskActivity extends BaseActivity<NewTaskViewModel> {
 
     @Override

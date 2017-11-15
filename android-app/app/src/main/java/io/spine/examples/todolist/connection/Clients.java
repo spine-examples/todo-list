@@ -20,21 +20,56 @@
 
 package io.spine.examples.todolist.connection;
 
+import io.spine.client.ConnectionConstants;
 import io.spine.examples.todolist.client.SubscribingTodoClient;
 
+/**
+ * A factory of the TodoList clients.
+ */
 public final class Clients {
 
+    /**
+     * The default host of a gRPC server to connect to.
+     *
+     * <p>In debug mode this value may be {@code 10.0.2.2} which is the loopback host for
+     * an Android emulator pointing to the machine localhost.
+     *
+     * Read
+     * <a href="https://developer.android.com/studio/run/emulator-networking.html">the official doc
+     * </a> for more info.
+     */
     private static final String HOST = "10.0.2.2";
-    private static final int PORT = 50051;
+
+    /**
+     * The default port of a gRPC server to connect to.
+     *
+     * <p>In debug mode may be equal to {@link ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT}.
+     */
+    private static final int PORT = ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
     private Clients() {
         // Prevent instantiation.
     }
 
+    /**
+     * Retrieves an instance of {@link SubscribingTodoClient} connecting to the gRPC server at
+     * {@link #HOST}{@code :}{@link #PORT}.
+     *
+     * <p>Do not call
+     * {@link io.spine.examples.todolist.client.TodoClient#shutdown() shutdown()} on the instances
+     * returned by this method.
+     *
+     * @return an instance of subscribing TodoList client
+     */
     public static SubscribingTodoClient instance() {
         return ClientSingleton.INSTANCE.value;
     }
 
+    /**
+     * The application-wide singleton of the {@link SubscribingTodoClient}.
+     *
+     * <p>The client connects to the server at {@link #HOST}{@code :}{@link #PORT}.
+     */
     private enum ClientSingleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
