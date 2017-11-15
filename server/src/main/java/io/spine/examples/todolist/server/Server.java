@@ -23,6 +23,7 @@ package io.spine.examples.todolist.server;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
+import io.spine.server.SubscriptionService;
 import io.spine.server.transport.GrpcContainer;
 
 import java.io.IOException;
@@ -46,7 +47,15 @@ public class Server {
 
         final CommandService commandService = initCommandService();
         final QueryService queryService = initQueryService();
-        this.grpcContainer = initGrpcContainer(commandService, queryService);
+        final SubscriptionService subscriptionService = initSubscriptionService();
+        this.grpcContainer = initGrpcContainer(commandService, queryService, subscriptionService);
+    }
+
+    private SubscriptionService initSubscriptionService() {
+        final SubscriptionService result = SubscriptionService.newBuilder()
+                                                              .add(boundedContext)
+                                                              .build();
+        return result;
     }
 
     private QueryService initQueryService() {
@@ -64,10 +73,12 @@ public class Server {
     }
 
     private GrpcContainer initGrpcContainer(CommandService commandService,
-                                            QueryService queryService) {
+                                            QueryService queryService,
+                                            SubscriptionService subscriptionService) {
         final GrpcContainer result = GrpcContainer.newBuilder()
                                                   .addService(commandService)
                                                   .addService(queryService)
+                                                  .addService(subscriptionService)
                                                   .setPort(port)
                                                   .build();
         return result;
