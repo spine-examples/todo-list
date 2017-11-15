@@ -22,5 +22,5 @@ the `.apk` file to an Android device and install and start the application.
 ### Connection to the Server
 
 By default, the application connects to the localhost server started on the port `50051`.
-Override this behavior by changing the constants values in 
+Override this behavior by changing the constant values in 
 [`Clients.java`](./app/src/main/java/io/spine/examples/todolist/connection/Clients.java).
