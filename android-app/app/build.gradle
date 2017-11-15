@@ -18,27 +18,45 @@ android {
         }
     }
     compileOptions {
+        /*
+            As TodoList uses Java 8.
+            This is not obligatory for any Spine project that uses Java 7.
+        */
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
 
     packagingOptions {
+        /*
+            Spine auto generated .property files.
+
+            There may be several files with such name in the dependencies. All of them are required
+            for the framework components to function.
+
+            Note that the resulting merged files may contain duplicate entries. There is currently
+            no simple way to avoid those duplicates. Though, their presence does not much harm to
+            the application, except for the larger APK file sizes.
+        */
         merge 'known_types.properties'
         merge 'validation_rules.properties'
     }
 
     lintOptions {
+        /*
+            gRPC uses some `javax` packages that are not included into the Android SDK. Though,
+            this does not provide visible effect on neither compilation nor runtime.
+        */
         abortOnError false
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // Android dependencies
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     implementation "android.arch.lifecycle:extensions:1.0.0"
-
-    implementation "io.spine.examples.todolist:client:$spineVersion"
-
     implementation 'com.android.support:design:26.1.0'
+
+    // TodoList dependency
+    implementation "io.spine.examples.todolist:client:$spineVersion"
 }
