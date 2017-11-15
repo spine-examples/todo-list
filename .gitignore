@@ -15,6 +15,7 @@ hs_err_pid*
 
 # Do not ingore Gradle Wrapper runtime
 !/gradle/wrapper/gradle-wrapper.jar
+!/android-app/gradle/wrapper/gradle-wrapper.jar
 
 # Do not ignore code style settings.
 !/.idea/codeStyleSettings.xml
