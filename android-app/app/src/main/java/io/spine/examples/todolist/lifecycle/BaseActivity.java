@@ -147,7 +147,7 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
      * Initializes the views upon this {@code Activity}.
      *
      * <p>This method is called upon the {@code Activity} {@linkplain #onCreate(Bundle) creation}.
-     * Initialize the UI in this method rather then in {@code onCreate()} method.
+     * Initialize the UI in this method rather than in {@code onCreate()} method.
      */
     protected abstract void initializeView();
 

@@ -268,6 +268,15 @@ final class TodoClientImpl implements SubscribingTodoClient {
         }
     }
 
+    /**
+     * Subscribes the given {@link StreamObserver} to the given topic and activates
+     * the subscription.
+     *
+     * @param topic    the topic to subscribe to
+     * @param observer the observer to subscribe
+     * @param <M>      the type of the result messages
+     * @return the activated subscription
+     */
     private <M extends Message> Subscription subscribeTo(Topic topic, StreamObserver<M> observer) {
         final Subscription subscription = blockingSubscriptionService.subscribe(topic);
         subscriptionService.activate(subscription, new SubscriptionUpdateObserver<>(observer));
@@ -300,6 +309,17 @@ final class TodoClientImpl implements SubscribingTodoClient {
         }
     }
 
+    /**
+     * A {@link StreamObserver} of {@link SubscriptionUpdate} messages translating the message
+     * payload to the given delegate {@code StreamObserver}.
+     *
+     * <p>The errors and completion acknowledgements are translated directly to the delegate.
+     *
+     * <p>The {@linkplain SubscriptionUpdate#getUpdatesList() messages} are unpacked and sent to
+     * the delegate observer one by one.
+     *
+     * @param <M> the type of the delegate observer messages
+     */
     private static final class SubscriptionUpdateObserver<M extends Message>
             implements StreamObserver<SubscriptionUpdate> {
 
