@@ -25,12 +25,14 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import io.spine.examples.todolist.R;
 
+import static android.support.design.widget.Snackbar.LENGTH_LONG;
 import static com.google.common.base.Preconditions.checkState;
 
 public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatActivity {
@@ -39,6 +41,8 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
 
     private final Navigator navigator;
     private VM model;
+
+    private Toolbar toolbar;
 
     @SuppressWarnings({
             "ThisEscapedInObjectConstruction",
@@ -58,6 +62,7 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
         setContentView(getContentViewResource());
         initToolbar();
         initializeView();
+        model.setErrorObserver(this::reportNetworkFailure);
     }
 
     @Override
@@ -89,8 +94,12 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
         return navigator;
     }
 
+    protected void reportNetworkFailure() {
+        Snackbar.make(toolbar, R.string.network_err_msg, LENGTH_LONG).show();
+    }
+
     private void initToolbar() {
-        final Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

@@ -42,7 +42,10 @@ final class MyListViewModel extends BaseViewModel {
     }
 
     void subscribeToMyList() {
-        execute(() -> myTasksSubscription = client().subscribeToTasks(new MyListStreamObserver()));
+        execute(() -> {
+            myList.postValue(client().getMyListView());
+            myTasksSubscription = client().subscribeToTasks(new MyListStreamObserver());
+        });
     }
 
     void subscribe(LifecycleOwner owner, Observer<MyListView> observer) {

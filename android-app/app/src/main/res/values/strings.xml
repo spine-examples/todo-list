@@ -7,4 +7,5 @@
     <string name="new_task">New task</string>
     <string name="back">Back</string>
     <string name="my_list">My List</string>
+    <string name="network_err_msg">Network error happened</string>
 </resources>

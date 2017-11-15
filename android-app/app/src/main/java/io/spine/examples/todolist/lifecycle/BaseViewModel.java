@@ -21,6 +21,8 @@
 package io.spine.examples.todolist.lifecycle;
 
 import android.arch.lifecycle.ViewModel;
+import android.util.Log;
+import io.grpc.StatusRuntimeException;
 import io.spine.examples.todolist.client.SubscribingTodoClient;
 import io.spine.examples.todolist.connection.Clients;
 
@@ -28,19 +30,38 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static io.grpc.Status.Code.UNAVAILABLE;
 
 public abstract class BaseViewModel extends ViewModel {
 
-    private final SubscribingTodoClient client = Clients.instance();
+    private static final String TAG = BaseViewModel.class.getSimpleName();
 
+    private final SubscribingTodoClient client = Clients.instance();
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    private ErrorObserver errorObserver;
 
     public BaseViewModel() {
     }
 
+    void setErrorObserver(ErrorObserver errorObserver) {
+        this.errorObserver = checkNotNull(errorObserver);
+    }
+
     protected void execute(Runnable task) {
         checkNotNull(task);
-        executor.execute(task);
+        executor.execute(() -> {
+            try {
+                task.run();
+            } catch (StatusRuntimeException e) {
+                Log.d(TAG, "execute: error task");
+                if (e.getStatus().getCode() == UNAVAILABLE && errorObserver != null) {
+                    errorObserver.onNetworkError();
+                } else {
+                    throw e;
+                }
+            }
+        });
     }
 
     protected SubscribingTodoClient client() {
@@ -51,5 +72,9 @@ public abstract class BaseViewModel extends ViewModel {
     protected void onCleared() {
         super.onCleared();
         executor.shutdown();
+    }
+
+    public interface ErrorObserver {
+        void onNetworkError();
     }
 }

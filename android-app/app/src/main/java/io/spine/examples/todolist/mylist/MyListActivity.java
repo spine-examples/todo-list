@@ -20,6 +20,8 @@
 
 package io.spine.examples.todolist.mylist;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageButton;
@@ -40,8 +42,8 @@ public class MyListActivity extends BaseActivity<MyListViewModel> {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         model().subscribeToMyList();
     }
 
@@ -61,7 +63,7 @@ public class MyListActivity extends BaseActivity<MyListViewModel> {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         model().unSubscribeFromMyList();
+        super.onDestroy();
     }
 }
