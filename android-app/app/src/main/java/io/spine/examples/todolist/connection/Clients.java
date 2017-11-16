@@ -47,9 +47,8 @@ public final class Clients {
      */
     private static final int PORT = ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 
-    private Clients() {
-        // Prevent instantiation.
-    }
+    // Prevent instantiation.
+    private Clients() {}
 
     /**
      * Retrieves an instance of {@link SubscribingTodoClient} connecting to the gRPC server at
