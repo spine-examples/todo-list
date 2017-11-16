@@ -20,7 +20,6 @@ android {
     compileOptions {
         /*
             As TodoList uses Java 8.
-            This is not obligatory for any Spine project that uses Java 7.
         */
         targetCompatibility 1.8
         sourceCompatibility 1.8
@@ -28,7 +27,7 @@ android {
 
     packagingOptions {
         /*
-            Spine auto generated .property files.
+            Spine auto-generated .property files.
 
             There may be several files with such name in the dependencies. All of them are required
             for the framework components to function.
@@ -43,8 +42,10 @@ android {
 
     lintOptions {
         /*
-            gRPC uses some `javax` packages that are not included into the Android SDK. Though,
-            this has no visible effect on the application runtime.
+            gRPC uses some `javax` packages that are not included into the Android SDK.
+            Nevertheless, this has no visible effect on the application runtime.
+
+            Suppress the compilation failure caused by Android Lint reporting about the packages.
         */
         abortOnError false
     }
