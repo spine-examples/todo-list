@@ -1,6 +1,6 @@
-# TodoList Android Client
+# Todo List Android Client
 
-This module contains the TodoList Android client application.
+This module contains the Todo List Android client application.
 
 ### Building and Running
 
@@ -8,7 +8,7 @@ Provided the required Android specific development
 [environment](https://developer.android.com/studio/index.html), follow these steps to build 
 the application:
 
- 1. Publish the required modules of TodoList core to the Maven local. To do that, execute the 
+ 1. Publish the required modules of Todo List core to the Maven local. To do that, execute the 
  `publishToMavenLocal` Gradle task on the [core Gradle project](../). 
  2. Build the `android-app` module with `./gradlew clean build`.
  
@@ -21,6 +21,6 @@ the `.apk` file to an Android device and install and start the application.
 
 ### Connection to the Server
 
-By default, the application connects to the localhost server started on the port `50051`.
+By default, the application connects to the `localhost` server started on the port `50051`.
 Override this behavior by changing the constant values in 
 [`Clients.java`](./app/src/main/java/io/spine/examples/todolist/connection/Clients.java).
