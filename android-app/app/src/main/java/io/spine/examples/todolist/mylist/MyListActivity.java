@@ -26,7 +26,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageButton;
 import io.spine.examples.todolist.R;
-import io.spine.examples.todolist.lifecycle.BaseActivity;
+import io.spine.examples.todolist.lifecycle.AbstractActivity;
 import io.spine.examples.todolist.newtask.NewTaskActivity;
 
 /**
@@ -35,7 +35,7 @@ import io.spine.examples.todolist.newtask.NewTaskActivity;
  *
  * @see MyListViewModel
  */
-public class MyListActivity extends BaseActivity<MyListViewModel> {
+public class MyListActivity extends AbstractActivity<MyListViewModel> {
 
     @Override
     protected Class<MyListViewModel> getViewModelClass() {

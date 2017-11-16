@@ -41,17 +41,18 @@ import static com.google.common.base.Preconditions.checkState;
 /**
  * The implementation base for all the {@link android.app.Activity Activity} classes of the app.
  *
- * <p>Any {@code Activity} in the app has an associated {@link BaseViewModel ViewModel} instance.
- * The view model performs all the logic of connecting the view (UI) and the model (gRPC client).
+ * <p>Any {@code Activity} in the app has an associated {@link AbstractViewModel ViewModel}
+ * instance. The view model performs all the logic of connecting the view (UI) and the model
+ * (gRPC client).
  *
  * <p>An {@code Activity} calls the {@code ViewModel} methods to retrieve the data to display,
  * passes the data from the UI, subscribes on the data updates, etc.
  *
- * @param <VM> the type of the {@code BaseViewModel} associated with this {@code Activity}
+ * @param <VM> the type of the {@code AbstractViewModel} associated with this {@code Activity}
  */
-public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatActivity {
+public abstract class AbstractActivity<VM extends AbstractViewModel> extends AppCompatActivity {
 
-    private static final String TAG = BaseActivity.class.getSimpleName();
+    private static final String TAG = AbstractActivity.class.getSimpleName();
 
     private final Navigator navigator;
     private VM model;
@@ -59,7 +60,7 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
     private Toolbar toolbar;
 
     /**
-     * Creates an instance of {@code BaseActivity}.
+     * Creates an instance of {@code AbstractActivity}.
      *
      * <p>A {@code public} constructor is required by the Android framework. Do not instantiate
      * this class directly.
@@ -70,7 +71,7 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
             "ConstructorNotProtectedInAbstractClass"
                 // The default ctor is required for each implementation.
     })
-    public BaseActivity() {
+    public AbstractActivity() {
         super();
         this.navigator = Navigator.from(this);
     }
@@ -78,10 +79,10 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
     /**
      * {@inheritDoc}
      *
-     * <p>The {@code BaseActivity} implementation defines the generic flow for the activities
+     * <p>The {@code AbstractActivity} implementation defines the generic flow for the activities
      * to be initialized:
      * <ol>
-     *     <li>Associates an instance of {@link BaseViewModel} with this {@code Activity}.
+     *     <li>Associates an instance of {@link AbstractViewModel} with this {@code Activity}.
      *     <li>{@linkplain #setContentView(View) Sets the content view} to this {@code Activity}.
      *     <li>{@linkplain #initToolbar() Initializes} the action bar.
      *     <li>{@linkplain #initializeView() Initializes} the views upon this {@code Activity}.
@@ -126,7 +127,7 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
     }
 
     /**
-     * Retrieves the class of the {@link BaseViewModel} associated with this {@code Activity}.
+     * Retrieves the class of the {@link AbstractViewModel} associated with this {@code Activity}.
      *
      * @return the class of {@code VM}
      */
@@ -152,7 +153,7 @@ public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatAc
     protected abstract void initializeView();
 
     /**
-     * Retrieves the {@linkplain BaseViewModel} associated with this {@code Activity}.
+     * Retrieves the {@linkplain AbstractViewModel} associated with this {@code Activity}.
      *
      * <p>Make sure to call this method <b>after</b>
      * the {@link #onCreate(Bundle) Activity.onCreate(Bundle)} method, or an

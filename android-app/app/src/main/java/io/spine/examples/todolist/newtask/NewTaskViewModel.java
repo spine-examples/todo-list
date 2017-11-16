@@ -23,18 +23,17 @@ package io.spine.examples.todolist.newtask;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.lifecycle.BaseViewModel;
+import io.spine.examples.todolist.lifecycle.AbstractViewModel;
 
 import static io.spine.Identifier.newUuid;
 
 /**
  * The {@link android.arch.lifecycle.ViewModel ViewModel} of the {@link NewTaskActivity}.
  */
-final class NewTaskViewModel extends BaseViewModel {
+final class NewTaskViewModel extends AbstractViewModel {
 
     // Required by the `ViewModelProviders` utility.
-    public NewTaskViewModel() {
-    }
+    public NewTaskViewModel() {}
 
     /**
      * Creates a new task with the given {@linkplain TaskDescription description}.

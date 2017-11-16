@@ -26,13 +26,13 @@ import android.arch.lifecycle.Observer;
 import android.util.Log;
 import io.grpc.stub.StreamObserver;
 import io.spine.client.Subscription;
-import io.spine.examples.todolist.lifecycle.BaseViewModel;
+import io.spine.examples.todolist.lifecycle.AbstractViewModel;
 import io.spine.examples.todolist.q.projection.MyListView;
 
 /**
  * The {@link android.arch.lifecycle.ViewModel ViewModel} of the {@link MyListActivity}.
  */
-final class MyListViewModel extends BaseViewModel {
+final class MyListViewModel extends AbstractViewModel {
 
     private static final String TAG = MyListViewModel.class.getSimpleName();
 
@@ -41,8 +41,7 @@ final class MyListViewModel extends BaseViewModel {
     private Subscription myTasksSubscription;
 
     // Required by the `ViewModelProviders` utility.
-    public MyListViewModel() {
-    }
+    public MyListViewModel() {}
 
     /**
      * Subscribes to the updates of the {@link MyListView} projection.

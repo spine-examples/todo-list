@@ -24,14 +24,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.TaskDescription;
-import io.spine.examples.todolist.lifecycle.BaseActivity;
+import io.spine.examples.todolist.lifecycle.AbstractActivity;
 
 /**
  * The {@code Activity} allowing the user to create a new task.
  *
  * @see NewTaskViewModel
  */
-public class NewTaskActivity extends BaseActivity<NewTaskViewModel> {
+public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
 
     @Override
     protected Class<NewTaskViewModel> getViewModelClass() {

@@ -61,7 +61,7 @@ public final class Clients {
      *
      * @return an instance of subscribing TodoList client
      */
-    public static SubscribingTodoClient instance() {
+    public static SubscribingTodoClient subscribingInstance() {
         return ClientSingleton.INSTANCE.value;
     }
 

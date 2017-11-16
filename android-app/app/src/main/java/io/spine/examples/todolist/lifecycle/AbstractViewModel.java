@@ -38,16 +38,13 @@ import static io.grpc.Status.Code.UNAVAILABLE;
  * <p>The {@code ViewModel} classes hold data, perform network connections, etc. on the behalf of
  * the associated view elements (such as {@code Activity}).
  */
-@SuppressWarnings("AbstractClassWithoutAbstractMethods")
-    // API detail.
-public abstract class BaseViewModel extends ViewModel {
-
-    private static final String TAG = BaseViewModel.class.getSimpleName();
+@SuppressWarnings("AbstractClassWithoutAbstractMethods") // Prevent direct instantiation.
+public abstract class AbstractViewModel extends ViewModel {
 
     /**
      * The TodoList gRPC client.
      */
-    private final SubscribingTodoClient client = Clients.instance();
+    private final SubscribingTodoClient client = Clients.subscribingInstance();
 
     /**
      * The {@link ExecutorService} performing the asynchronous operations, such as networking.
@@ -62,15 +59,14 @@ public abstract class BaseViewModel extends ViewModel {
     private ErrorCallback errorCallback;
 
     /**
-     * Creates an instance of {@code BaseViewModel}.
+     * Creates an instance of {@code AbstractViewModel}.
      *
      * <p>A {@code public} constructor is required by the Android framework. Do not instantiate
      * this class directly.
      *
-     * @see BaseActivity#model() for instance access
+     * @see AbstractActivity#model() for instance access
      */
-    public BaseViewModel() {
-    }
+    public AbstractViewModel() {}
 
     /**
      * Sets the {@code errorCallback} to react on the errors.
@@ -96,8 +92,8 @@ public abstract class BaseViewModel extends ViewModel {
             try {
                 task.run();
             } catch (StatusRuntimeException e) {
-                Log.d(TAG, "execute: error task");
-                if (e.getStatus().getCode() == UNAVAILABLE && errorCallback != null) {
+                if (e.getStatus()
+                     .getCode() == UNAVAILABLE && errorCallback != null) {
                     errorCallback.onNetworkError();
                 } else {
                     throw e;
