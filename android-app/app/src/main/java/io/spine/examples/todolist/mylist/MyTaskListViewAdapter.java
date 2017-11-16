@@ -22,6 +22,7 @@ package io.spine.examples.todolist.mylist;
 
 import android.arch.lifecycle.Observer;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
@@ -62,10 +63,10 @@ final class MyTaskListViewAdapter
      * The map of the {@link LabelColor} enum to the RGB values of the color.
      */
     private static final Map<LabelColor, Integer> COLORS = ImmutableMap.of(
-            RED, 0xFF1111,
-            GREEN, 0x11FF11,
-            BLUE, 0x1111FF,
-            GRAY, 0x555555
+            RED, Color.RED,
+            GREEN, Color.GREEN,
+            BLUE, Color.BLUE,
+            GRAY, Color.GRAY
     );
 
     /**
