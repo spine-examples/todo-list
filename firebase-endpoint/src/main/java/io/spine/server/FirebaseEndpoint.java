@@ -23,30 +23,96 @@ package io.spine.server;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.WriteBatch;
-import com.google.protobuf.Any;
-import com.google.protobuf.Message;
 import io.grpc.stub.StreamObserver;
 import io.spine.client.EntityStateUpdate;
 import io.spine.client.Subscription;
 import io.spine.client.SubscriptionUpdate;
 import io.spine.client.Target;
 import io.spine.client.Topic;
-import io.spine.string.Stringifiers;
+import io.spine.type.TypeUrl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.collect.ImmutableMap.of;
-import static io.spine.protobuf.AnyPacker.unpack;
 import static java.lang.String.format;
-import static java.util.regex.Pattern.compile;
 
 /**
+ * An endpoint for the entity state updates sent by the {@link SubscriptionService}.
+ *
+ * <h3>Usage</h3>
+ *
+ * <p>This endpoint posts the received messages to
+ * the specified <a href="https://firebase.google.com/docs/firestore/">Cloud Firestore</a>
+ * database.
+ *
+ * <p>Use Cloud Firestore as a subscription update delivery system. When dealing with a number of
+ * subscribers (e.g. end clients), this system should be considered more reliable comparing to
+ * delivering the updates over gRPC with {@code SubscriptionService}.
+ *
+ * <p>To start using the Firebase update delivery, follow these steps:
+ * <ol>
+ *     <li>Go to the <a href="https://console.firebase.google.com">Firebase Console</a>, select
+ *         the desired project and enable Cloud Firestore.
+ *     <li>Create an instance of {@link Firestore} and instantiate {@code FirebaseEndpoint}
+ *         with it.
+ *     <li>{@linkplain io.spine.client.ActorRequestFactory Create} instances of {@code Topic} to
+ *         subscribe to.
+ *     <li>{@linkplain #subscribe(Topic) Subscribe} {@code FirebaseEndpoint} to each of those
+ *         {@code Topic}s.
+ * </ol>
+ *
+ * <a name="protocol"/>
+ *
+ * <h3>Protocol</h3>
+ *
+ * <h4>Location</h4>
+ *
+ * <p>The endpoint writes the received entity state updates to the given Firestore by the following
+ * rules:
+ * <ul>
+ *     <li>A {@linkplain CollectionReference collection} with the name equal to the Protobuf type
+ *         name of the subscription target type is created.
+ *     <li>The {@linkplain DocumentReference documents} in that collection are the state updates.
+ *         There is at most one document for each {@code Entity} instance of the target type in
+ *         the collection.
+ *     <li>When the entity is updated, the appropriate document is updated as well.
+ * </ul>
+ *
+ * <p><b>Example:</b>
+ * <p>Assuming there is the
+ * {@code CustomerAggregate extends Aggregate<CustomerId, Customer, CustomerVBuilder>} entity.
+ * The simplest {@code Topic} looks as follows:
+ * <pre>
+ *     {@code
+ *     final Topic customerTopic = requestFactory.topics().allOf(Customer.class);
+ *     }
+ * </pre>
+ *
+ * <p>Then, if we {@linkplain #subscribe(Topic) subscribe} a {@code FirebaseEndpoint} to this
+ * topic, the documents representing the given entity will be written under.
+ * the {@code /example.customer.Customer/document-key} path. The {@code document-key} here is
+ * a unique key assigned to this instance of {@code Customer} by {@code FirebaseEndpoint}. Note
+ * that the document key is not a valid identifier of a {@code CustomerAggregate} entity. Do NOT
+ * depend any business logic on the document key.
+ *
+ * <h4>Document structure</h4>
+ *
+ * <p>The Firestore documents created by the endpoint have the following structure:
+ * <ul>
+ *     <li>{@code id}:    string;
+ *     <li>{@code bytes}: BLOB.
+ * </ul>
+ *
+ * <p>The {@code id} field contains the {@linkplain io.spine.string.Stringifiers#toString(Object)
+ * string} representation of the entity ID.
+ *
+ * <p>The {@code bytes} field contains the serialized as a byte array entity state message.
+ *
+ * <p>To make it easy for a client to subscribe to a certain document, provide
+ * a custom {@link io.spine.string.Stringifier} for the message ID type.
+ *
  * @author Dmytro Dashenkov
  */
 public final class FirebaseEndpoint {
@@ -59,10 +125,21 @@ public final class FirebaseEndpoint {
         this.subscriptionService = builder.subscriptionService;
     }
 
+    /**
+     * Subscribes this {@code FirebaseEndpoint} to the given {@link Topic}.
+     *
+     * <p>After this method invocation the underlying {@link Firestore} (eventually) starts
+     * receiving the entity state updates for the given {@code topic}.
+     *
+     * <p>See <a href="#protocol">class level doc</a> for the description of the storage protocol.
+     *
+     * @param topic the topic to subscribe to
+     */
     public void subscribe(Topic topic) {
         checkNotNull(topic);
         final Target target = topic.getTarget();
-        final String type = target.getType();
+        final TypeUrl typeUrl = TypeUrl.parse(target.getType());
+        final String type = typeUrl.getTypeName();
         final CollectionReference collectionReference = database.collection(type);
         final StreamObserver<SubscriptionUpdate> updateObserver =
                 new SubscriptionToFirebaseAdapter(collectionReference);
@@ -93,12 +170,12 @@ public final class FirebaseEndpoint {
         }
 
         public Builder setSubscriptionService(SubscriptionService subscriptionService) {
-            this.subscriptionService = subscriptionService;
+            this.subscriptionService = checkNotNull(subscriptionService);
             return this;
         }
 
         public Builder setDatabase(Firestore database) {
-            this.database = database;
+            this.database = checkNotNull(database);
             return this;
         }
 
@@ -109,6 +186,8 @@ public final class FirebaseEndpoint {
          * parameters
          */
         public FirebaseEndpoint build() {
+            checkNotNull(database);
+            checkNotNull(subscriptionService);
             return new FirebaseEndpoint(this);
         }
     }
@@ -156,52 +235,27 @@ public final class FirebaseEndpoint {
      * {@link SubscriptionUpdate}s to the given
      * {@link CollectionReference Cloud Firestore location}.
      *
-     * <p>The published messages are stored in the following format:
-     * <pre>
-     *     {@code
-     *     key: {
-     *         bytes: [ serialized Entity state ]
-     *     }
-     *     }
-     * </pre>
-     *
-     * <p>The {@code key} is the key of the <b>document</b> which stores the data. The data itself
-     * always has a single field named {@link #BYTES_KEY bytes}. The field is a BLOB storing
-     * the serialized representation of the entity state update.
-     *
      * <p>The implementation logs a message upon either
      * {@linkplain StreamObserver#onCompleted() successful} or
      * {@linkplain StreamObserver#onError faulty} stream completion.
+     *
+     * @see FirestoreEntityStateUpdatePublisher
      */
     private static class SubscriptionToFirebaseAdapter
             implements StreamObserver<SubscriptionUpdate> {
 
-        private static final Pattern INVALID_KEY_CHARS = compile("[^\\w\\d]");
-
-        private static final String BYTES_KEY = "bytes";
-
         private final CollectionReference target;
+        private final FirestoreEntityStateUpdatePublisher publisher;
 
         private SubscriptionToFirebaseAdapter(CollectionReference target) {
             this.target = target;
+            this.publisher = new FirestoreEntityStateUpdatePublisher(target);
         }
 
         @Override
         public void onNext(SubscriptionUpdate value) {
             final Collection<EntityStateUpdate> payload = value.getEntityStateUpdatesList();
-            final WriteBatch batch = target.getFirestore().batch();
-            for (EntityStateUpdate update : payload) {
-                final Any updateState = update.getState();
-                final Message message = unpack(updateState);
-                final Map<String, Object> data = of(BYTES_KEY, message.toByteArray());
-                final Any updateId = update.getId();
-                final Message entityId = unpack(updateId);
-                final DocumentReference targetDocument = route(updateId);
-                log().info("Writing state update of type {} (id: {}) into Firestore location {}.",
-                           updateState.getTypeUrl(), entityId, targetDocument.getPath());
-                batch.set(targetDocument, data);
-            }
-            batch.commit();
+            publisher.publish(payload);
         }
 
         @Override
@@ -214,36 +268,6 @@ public final class FirebaseEndpoint {
         @Override
         public void onCompleted() {
             log().info("Subscription with target `{}` has been completed.", target.getPath());
-        }
-
-        private DocumentReference route(Message entityId) {
-            final String id = Stringifiers.toString(entityId);
-            final String documentKey = escapeKey(id);
-            final DocumentReference result = target.document(documentKey);
-            return result;
-        }
-
-        private static String escapeKey(String dirtyKey) {
-            final String trimmedKey = trimUnderscore(dirtyKey);
-            final String result = INVALID_KEY_CHARS.matcher(trimmedKey)
-                                                   .replaceAll("");
-            return result;
-        }
-
-        @SuppressWarnings("BreakStatement") // Natural in this case.
-        private static String trimUnderscore(String key) {
-            int underscoreCounter = 0;
-            for (char character : key.toCharArray()) {
-                if (character == '_') {
-                    underscoreCounter++;
-                } else {
-                    break;
-                }
-            }
-            final String result = underscoreCounter > 0
-                                  ? key.substring(underscoreCounter)
-                                  : key;
-            return result;
         }
     }
 
