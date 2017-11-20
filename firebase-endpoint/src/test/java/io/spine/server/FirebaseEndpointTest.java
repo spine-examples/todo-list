@@ -18,8 +18,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    compile 'com.google.firebase:firebase-admin:5.5.0'
+package io.spine.server;
 
-    testCompile "com.google.guava:guava-testlib:$guavaVersion"
+import com.google.common.testing.NullPointerTester;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+/**
+ * @author Dmytro Dashenkov
+ */
+@DisplayName("FirebaseEndpoint should")
+class FirebaseEndpointTest {
+
+    private FirebaseEndpoint endpoint;
+
+    @BeforeEach
+    void beforeEach() {
+        endpoint = FirebaseEndpoint.newBuilder()
+                                   .setDatabase(null)
+                                   .setSubscriptionService(null)
+                                   .build();
+    }
+
+    @Test
+    @DisplayName("not allow nulls on construction")
+    void testNotNull() {
+        new NullPointerTester().testAllPublicInstanceMethods(FirebaseEndpoint.newBuilder());
+    }
+
+    @Test
+    @DisplayName("deliver the entity state updates")
+    void testDeliver() {
+
+    }
+
+    @Test
+    @DisplayName("transform ID to string with the proper Stringifier")
+    void testStringifyId() {
+
+    }
 }
