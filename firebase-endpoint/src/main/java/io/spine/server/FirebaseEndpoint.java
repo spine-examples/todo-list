@@ -44,6 +44,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableMap.of;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static java.lang.String.format;
+import static java.util.regex.Pattern.compile;
 
 /**
  * @author Dmytro Dashenkov
@@ -112,6 +113,17 @@ public final class FirebaseEndpoint {
         }
     }
 
+    /**
+     * The {@link StreamObserver} implementation which
+     * {@linkplain SubscriptionService#activate activates} all the received {@link Subscription}s.
+     *
+     * <p>After activation the given {@code dataObserver} starts receiving the Entity state
+     * updates.
+     *
+     * <p>The implementation throws a {@link RuntimeException} upon any
+     * {@linkplain StreamObserver#onError error} and handles the
+     * {@linkplain StreamObserver#onCompleted() successful completion} silently.
+     */
     private static class SubscriptionObserver implements StreamObserver<Subscription> {
 
         private final SubscriptionService subscriptionService;
@@ -139,10 +151,32 @@ public final class FirebaseEndpoint {
         }
     }
 
+    /**
+     * An implementation of {@link StreamObserver} publishing the received
+     * {@link SubscriptionUpdate}s to the given
+     * {@link CollectionReference Cloud Firestore location}.
+     *
+     * <p>The published messages are stored in the following format:
+     * <pre>
+     *     {@code
+     *     key: {
+     *         bytes: [ serialized Entity state ]
+     *     }
+     *     }
+     * </pre>
+     *
+     * <p>The {@code key} is the key of the <b>document</b> which stores the data. The data itself
+     * always has a single field named {@link #BYTES_KEY bytes}. The field is a BLOB storing
+     * the serialized representation of the entity state update.
+     *
+     * <p>The implementation logs a message upon either
+     * {@linkplain StreamObserver#onCompleted() successful} or
+     * {@linkplain StreamObserver#onError faulty} stream completion.
+     */
     private static class SubscriptionToFirebaseAdapter
             implements StreamObserver<SubscriptionUpdate> {
 
-        private static final Pattern INVALID_KEY_CHARS = Pattern.compile("[^\\w\\d]");
+        private static final Pattern INVALID_KEY_CHARS = compile("[^\\w\\d]");
 
         private static final String BYTES_KEY = "bytes";
 
