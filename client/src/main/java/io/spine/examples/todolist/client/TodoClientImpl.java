@@ -27,6 +27,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import io.spine.client.ActorRequestFactory;
+import io.spine.client.EntityStateUpdate;
 import io.spine.client.Query;
 import io.spine.client.Subscription;
 import io.spine.client.SubscriptionUpdate;
@@ -315,8 +316,8 @@ final class TodoClientImpl implements SubscribingTodoClient {
      *
      * <p>The errors and completion acknowledgements are translated directly to the delegate.
      *
-     * <p>The {@linkplain SubscriptionUpdate#getUpdatesList() messages} are unpacked and sent to
-     * the delegate observer one by one.
+     * <p>The {@linkplain SubscriptionUpdate#getEntityStateUpdatesList() messages} are unpacked
+     * and sent to the delegate observer one by one.
      *
      * @param <M> the type of the delegate observer messages
      */
@@ -331,8 +332,9 @@ final class TodoClientImpl implements SubscribingTodoClient {
 
         @Override
         public void onNext(SubscriptionUpdate value) {
-            value.getUpdatesList()
+            value.getEntityStateUpdatesList()
                  .stream()
+                 .map(EntityStateUpdate::getState)
                  .map(AnyPacker::<M>unpack)
                  .forEach(delegate::onNext);
         }

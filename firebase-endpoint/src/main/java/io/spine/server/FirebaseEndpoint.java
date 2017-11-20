@@ -27,19 +27,23 @@ import com.google.cloud.firestore.WriteBatch;
 import com.google.protobuf.Any;
 import com.google.protobuf.Message;
 import io.grpc.stub.StreamObserver;
+import io.spine.client.EntityStateUpdate;
 import io.spine.client.Subscription;
 import io.spine.client.SubscriptionUpdate;
 import io.spine.client.Target;
 import io.spine.client.Topic;
+import io.spine.string.Stringifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableMap.of;
 import static io.spine.protobuf.AnyPacker.unpack;
+import static java.lang.String.format;
 
 /**
  * @author Dmytro Dashenkov
@@ -138,6 +142,8 @@ public final class FirebaseEndpoint {
     private static class SubscriptionToFirebaseAdapter
             implements StreamObserver<SubscriptionUpdate> {
 
+        private static final Pattern INVALID_KEY_CHARS = Pattern.compile("[^\\w\\d]");
+
         private static final String BYTES_KEY = "bytes";
 
         private final CollectionReference target;
@@ -148,29 +154,62 @@ public final class FirebaseEndpoint {
 
         @Override
         public void onNext(SubscriptionUpdate value) {
-            final Collection<Any> payload = value.getUpdatesList();
+            final Collection<EntityStateUpdate> payload = value.getEntityStateUpdatesList();
             final WriteBatch batch = target.getFirestore().batch();
-            for (Any msg : payload) {
-                final Message message = unpack(msg);
+            for (EntityStateUpdate update : payload) {
+                final Any updateState = update.getState();
+                final Message message = unpack(updateState);
                 final Map<String, Object> data = of(BYTES_KEY, message.toByteArray());
-                final DocumentReference targetDocument = route(target, msg);
+                final Any updateId = update.getId();
+                final Message entityId = unpack(updateId);
+                final DocumentReference targetDocument = route(updateId);
+                log().info("Writing state update of type {} (id: {}) into Firestore location {}.",
+                           updateState.getTypeUrl(), entityId, targetDocument.getPath());
                 batch.set(targetDocument, data);
             }
             batch.commit();
         }
 
-        private static DocumentReference route(CollectionReference collection, Any msg) {
-            return collection.document();
-        }
-
         @Override
-        public void onError(Throwable t) {
-            throw new RuntimeException(t);
+        public void onError(Throwable error) {
+            log().error(format("Subscription with target `%s` has been completed with an error.",
+                               target.getPath()),
+                        error);
         }
 
         @Override
         public void onCompleted() {
-            // NoOp
+            log().info("Subscription with target `{}` has been completed.", target.getPath());
+        }
+
+        private DocumentReference route(Message entityId) {
+            final String id = Stringifiers.toString(entityId);
+            final String documentKey = escapeKey(id);
+            final DocumentReference result = target.document(documentKey);
+            return result;
+        }
+
+        private static String escapeKey(String dirtyKey) {
+            final String trimmedKey = trimUnderscore(dirtyKey);
+            final String result = INVALID_KEY_CHARS.matcher(trimmedKey)
+                                                   .replaceAll("");
+            return result;
+        }
+
+        @SuppressWarnings("BreakStatement") // Natural in this case.
+        private static String trimUnderscore(String key) {
+            int underscoreCounter = 0;
+            for (char character : key.toCharArray()) {
+                if (character == '_') {
+                    underscoreCounter++;
+                } else {
+                    break;
+                }
+            }
+            final String result = underscoreCounter > 0
+                                  ? key.substring(underscoreCounter)
+                                  : key;
+            return result;
         }
     }
 
