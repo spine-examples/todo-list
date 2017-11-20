@@ -41,10 +41,10 @@ import static java.lang.String.format;
 /**
  * An endpoint for the entity state updates sent by the {@link SubscriptionService}.
  *
- * <h3>Usage</h3>
+ * <h2>Usage</h2>
  *
- * <p>This endpoint posts the received messages to
- * the specified <a href="https://firebase.google.com/docs/firestore/">Cloud Firestore</a>
+ * <p>This endpoint posts the received messages to the specified
+ * <a target="_blank" href="https://firebase.google.com/docs/firestore/">Cloud Firestore^</a>
  * database.
  *
  * <p>Use Cloud Firestore as a subscription update delivery system. When dealing with a number of
@@ -53,8 +53,9 @@ import static java.lang.String.format;
  *
  * <p>To start using the Firebase update delivery, follow these steps:
  * <ol>
- *     <li>Go to the <a href="https://console.firebase.google.com">Firebase Console</a>, select
- *         the desired project and enable Cloud Firestore.
+ *     <li>Go to the
+ *         <a target="_blank" href="https://console.firebase.google.com">Firebase Console^</a>,
+ *         select the desired project and enable Cloud Firestore.
  *     <li>Create an instance of {@link Firestore} and instantiate {@code FirebaseEndpoint}
  *         with it.
  *     <li>{@linkplain io.spine.client.ActorRequestFactory Create} instances of {@code Topic} to
@@ -63,20 +64,20 @@ import static java.lang.String.format;
  *         {@code Topic}s.
  * </ol>
  *
- * <a name="protocol"/>
+ * <a name="protocol"></a>
  *
- * <h3>Protocol</h3>
+ * <h2>Protocol</h2>
  *
- * <h4>Location</h4>
+ * <h3>Location</h3>
  *
  * <p>The endpoint writes the received entity state updates to the given Firestore by the following
  * rules:
  * <ul>
  *     <li>A {@linkplain CollectionReference collection} with the name equal to the Protobuf type
  *         name of the subscription target type is created.
- *     <li>The {@linkplain DocumentReference documents} in that collection are the state updates.
- *         There is at most one document for each {@code Entity} instance of the target type in
- *         the collection.
+ *     <li>The {@linkplain DocumentReference documents} in that collection represent the entity
+ *         states. There is at most one document for each {@code Entity} instance of the target
+ *         type in the collection.
  *     <li>When the entity is updated, the appropriate document is updated as well.
  * </ul>
  *
@@ -85,9 +86,7 @@ import static java.lang.String.format;
  * {@code CustomerAggregate extends Aggregate<CustomerId, Customer, CustomerVBuilder>} entity.
  * The simplest {@code Topic} looks as follows:
  * <pre>
- *     {@code
- *     final Topic customerTopic = requestFactory.topics().allOf(Customer.class);
- *     }
+ *     {@code final Topic customerTopic = requestFactory.topics().allOf(Customer.class);}
  * </pre>
  *
  * <p>Then, if we {@linkplain #subscribe(Topic) subscribe} a {@code FirebaseEndpoint} to this
@@ -97,11 +96,11 @@ import static java.lang.String.format;
  * that the document key is not a valid identifier of a {@code CustomerAggregate} entity. Do NOT
  * depend any business logic on the document key.
  *
- * <h4>Document structure</h4>
+ * <h3>Document structure</h3>
  *
  * <p>The Firestore documents created by the endpoint have the following structure:
  * <ul>
- *     <li>{@code id}:    string;
+ *     <li>{@code id}: string;
  *     <li>{@code bytes}: BLOB.
  * </ul>
  *
