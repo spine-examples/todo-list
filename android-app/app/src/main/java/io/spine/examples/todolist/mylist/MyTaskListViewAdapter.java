@@ -37,6 +37,7 @@ import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,12 +63,26 @@ final class MyTaskListViewAdapter
     /**
      * The map of the {@link LabelColor} enum to the RGB values of the color.
      */
-    private static final Map<LabelColor, Integer> COLORS = ImmutableMap.of(
-            RED, Color.RED,
-            GREEN, Color.GREEN,
-            BLUE, Color.BLUE,
-            GRAY, Color.GRAY
-    );
+    private static final Map<LabelColor, Integer> COLORS;
+
+    static {
+        final int defaultColor = Color.GRAY;
+        final Class<Color> colorConstants = Color.class;
+        final ImmutableMap.Builder<LabelColor, Integer> colors = ImmutableMap.builder();
+        for (LabelColor color : LabelColor.values()) {
+            final String colorName = color.name();
+            try {
+                final Field field = colorConstants.getField(colorName);
+                final int colorCode = (Integer) field.get(null);
+                colors.put(color, colorCode);
+            } catch (NoSuchFieldException ignored) {
+                colors.put(color, defaultColor);
+            } catch (IllegalAccessException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+        COLORS = colors.build();
+    }
 
     /**
      * The cached data currently displayed on the associated view.
