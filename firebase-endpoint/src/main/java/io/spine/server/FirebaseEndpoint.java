@@ -21,9 +21,9 @@
 package io.spine.server;
 
 import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.WriteBatch;
-import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.Any;
 import com.google.protobuf.Message;
 import io.grpc.stub.StreamObserver;
@@ -31,7 +31,6 @@ import io.spine.client.Subscription;
 import io.spine.client.SubscriptionUpdate;
 import io.spine.client.Target;
 import io.spine.client.Topic;
-import io.spine.protobuf.AnyPacker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +38,8 @@ import java.util.Collection;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.ImmutableMap.of;
+import static io.spine.protobuf.AnyPacker.unpack;
 
 /**
  * @author Dmytro Dashenkov
@@ -53,12 +54,16 @@ public final class FirebaseEndpoint {
         this.subscriptionService = builder.subscriptionService;
     }
 
-    public void recend(Topic topic) {
+    public void subscribe(Topic topic) {
         checkNotNull(topic);
         final Target target = topic.getTarget();
         final String type = target.getType();
         final CollectionReference collectionReference = database.collection(type);
-        subscriptionService.subscribe(topic, new SubscriptionObserver(subscriptionService, new SubscriptionToFirebaseAdapter(collectionReference)));
+        final StreamObserver<SubscriptionUpdate> updateObserver =
+                new SubscriptionToFirebaseAdapter(collectionReference);
+        final StreamObserver<Subscription> subscriptionObserver =
+                new SubscriptionObserver(subscriptionService, updateObserver);
+        subscriptionService.subscribe(topic, subscriptionObserver);
     }
 
     /**
@@ -133,6 +138,8 @@ public final class FirebaseEndpoint {
     private static class SubscriptionToFirebaseAdapter
             implements StreamObserver<SubscriptionUpdate> {
 
+        private static final String BYTES_KEY = "bytes";
+
         private final CollectionReference target;
 
         private SubscriptionToFirebaseAdapter(CollectionReference target) {
@@ -144,11 +151,16 @@ public final class FirebaseEndpoint {
             final Collection<Any> payload = value.getUpdatesList();
             final WriteBatch batch = target.getFirestore().batch();
             for (Any msg : payload) {
-                final Message message = AnyPacker.unpack(msg);
-                final Map<String, Object> data = ImmutableMap.of("value", message.toByteArray());
-                batch.set(target.document(), data);
+                final Message message = unpack(msg);
+                final Map<String, Object> data = of(BYTES_KEY, message.toByteArray());
+                final DocumentReference targetDocument = route(target, msg);
+                batch.set(targetDocument, data);
             }
             batch.commit();
+        }
+
+        private static DocumentReference route(CollectionReference collection, Any msg) {
+            return collection.document();
         }
 
         @Override
