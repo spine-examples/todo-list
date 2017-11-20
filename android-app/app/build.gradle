@@ -9,6 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -16,13 +17,47 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        /*
+            As TodoList uses Java 8.
+        */
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
+
+    packagingOptions {
+        /*
+            Spine auto-generated .property files.
+
+            There may be several files with such name in the dependencies. All of them are required
+            for the framework components to function.
+
+            Note that the resulting merged files may contain duplicate entries. There is currently
+            no simple way to avoid those duplicates. Though, their presence does not much harm to
+            the application, except for the larger APK file sizes.
+        */
+        merge 'known_types.properties'
+        merge 'validation_rules.properties'
+    }
+
+    lintOptions {
+        /*
+            gRPC uses some `javax` packages that are not included into the Android SDK.
+            Nevertheless, this has no visible effect on the application runtime.
+
+            Suppress the compilation failure caused by Android Lint reporting about the packages.
+        */
+        abortOnError false
+    }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // Android dependencies
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.1'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    implementation "android.arch.lifecycle:extensions:1.0.0"
+    implementation 'com.android.support:design:26.1.0'
+
+    // TodoList dependency
+    implementation "io.spine.examples.todolist:client:$spineVersion"
 }

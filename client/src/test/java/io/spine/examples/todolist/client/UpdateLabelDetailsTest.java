@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of UpdateLabelDetails command")
-class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
+class UpdateLabelDetailsTest extends TodoClientTest {
 
     private static final String EXPECTED_COLOR = LabelColorView.BLUE_COLOR.getHexColor();
 

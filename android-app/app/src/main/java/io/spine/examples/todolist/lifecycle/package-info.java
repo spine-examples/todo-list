@@ -18,16 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+/**
+ * This package contains several abstract classes defining the central lifecycle entities of
+ * the application as well as the utilities that work with that entities.
+ */
+@ParametersAreNonnullByDefault
+package io.spine.examples.todolist.lifecycle;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-
-public class MainActivity extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of CompleteTask command")
-class CompleteTaskTest extends CommandLineTodoClientTest {
+class CompleteTaskTest extends TodoClientTest {
 
     private TodoClient client;
 

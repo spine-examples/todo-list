@@ -20,5 +20,7 @@
 
 dependencies {
     compile project(path: ':model')
+    compile group: 'io.spine', name: 'spine-server', version: spineVersion
+
     testCompile project(path: ':testutil-api')
 }

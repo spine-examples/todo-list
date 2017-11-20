@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of RestoreDeletedTask command")
-class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
+class RestoreDeletedTaskTest extends TodoClientTest {
 
     private TodoClient client;
 

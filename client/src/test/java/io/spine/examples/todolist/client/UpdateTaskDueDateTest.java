@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of UpdateTaskDueDate command")
-class UpdateTaskDueDateTest extends CommandLineTodoClientTest {
+class UpdateTaskDueDateTest extends TodoClientTest {
 
     private TodoClient client;
 

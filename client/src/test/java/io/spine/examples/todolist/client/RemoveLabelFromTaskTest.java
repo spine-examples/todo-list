@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of RemoveLabelFromTask command")
-class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
+class RemoveLabelFromTaskTest extends TodoClientTest {
 
     private TodoClient client;
 

@@ -18,9 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+apply from: "$rootDir/scripts/publish.gradle"
+
 dependencies {
     compile project(path: ':model')
-    compile project(path: ':server')
-    compile project(path: ':api-java')
     testCompile project(path: ':testutil-api')
+    testCompile project(path: ':server')
 }

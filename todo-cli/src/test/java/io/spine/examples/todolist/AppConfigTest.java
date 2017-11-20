@@ -20,7 +20,6 @@
 
 package io.spine.examples.todolist;
 
-import io.spine.examples.todolist.client.CommandLineTodoClient;
 import io.spine.examples.todolist.client.TodoClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.AppConfig.init;
 import static io.spine.examples.todolist.AppConfig.setClient;
-import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
+import static io.spine.examples.todolist.client.TodoClient.HOST;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static io.spine.test.Tests.nullRef;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -60,7 +59,7 @@ class AppConfigTest {
     @Test
     @DisplayName("allow initialization only once")
     void allowInitOnlyOnce() {
-        final TodoClient client = new CommandLineTodoClient(HOST, DEFAULT_CLIENT_SERVICE_PORT);
+        final TodoClient client = TodoClient.instance(HOST, DEFAULT_CLIENT_SERVICE_PORT);
         init(client);
 
         assertThrows(IllegalStateException.class, () -> init(client));

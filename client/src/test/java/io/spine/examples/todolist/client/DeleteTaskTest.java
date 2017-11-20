@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of DeleteTask command")
-class DeleteTaskTest extends CommandLineTodoClientTest {
+class DeleteTaskTest extends TodoClientTest {
 
     private TodoClient client;
 

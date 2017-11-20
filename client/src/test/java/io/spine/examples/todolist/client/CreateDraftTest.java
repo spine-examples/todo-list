@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of CreateDraft command")
-class CreateDraftTest extends CommandLineTodoClientTest {
+class CreateDraftTest extends TodoClientTest {
 
     private TodoClient client;
 

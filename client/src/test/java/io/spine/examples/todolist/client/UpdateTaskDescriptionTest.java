@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of UpdateTaskDescription command")
-class UpdateTaskDescriptionTest extends CommandLineTodoClientTest {
+class UpdateTaskDescriptionTest extends TodoClientTest {
 
     private TodoClient client;
 

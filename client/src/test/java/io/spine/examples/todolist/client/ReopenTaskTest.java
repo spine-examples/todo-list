@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of ReopenTask command")
-class ReopenTaskTest extends CommandLineTodoClientTest {
+class ReopenTaskTest extends TodoClientTest {
 
     private TodoClient client;
 

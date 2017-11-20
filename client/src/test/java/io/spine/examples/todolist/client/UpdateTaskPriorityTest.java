@@ -44,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 /**
  * @author Illia Shepilov
  */
-class UpdateTaskPriorityTest extends CommandLineTodoClientTest {
+class UpdateTaskPriorityTest extends TodoClientTest {
 
     private TodoClient client;
 

@@ -50,6 +50,8 @@ import java.util.List;
  */
 public interface TodoClient {
 
+    String HOST = "localhost";
+
     /**
      * Creates task according to the command data.
      *
@@ -142,7 +144,7 @@ public interface TodoClient {
     void complete(CompleteTask cmd);
 
     /**
-     * Finalizes draft acording to the command data.
+     * Finalizes draft according to the command data.
      *
      * @param cmd the {@link FinalizeDraft} command
      */
@@ -180,4 +182,17 @@ public interface TodoClient {
      * Shutdown the connection channel.
      */
     void shutdown();
+
+    /**
+     * Creates a new instance of {@code TodoClient}.
+     *
+     * <p>The resulting {@code TodoClient} connects to the server at {@code host:port}.
+     *
+     * @param host the host of the server to connect to
+     * @param port the port of the server to connect to
+     * @return new TodoList client
+     */
+    static TodoClient instance(String host, int port) {
+        return new TodoClientImpl(host, port);
+    }
 }

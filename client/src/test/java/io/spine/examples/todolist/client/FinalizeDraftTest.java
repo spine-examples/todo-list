@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of FinalizeDraft command")
-class FinalizeDraftTest extends CommandLineTodoClientTest {
+class FinalizeDraftTest extends TodoClientTest {
 
     private TodoClient client;
 
