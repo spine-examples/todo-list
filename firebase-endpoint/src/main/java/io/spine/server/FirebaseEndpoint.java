@@ -29,7 +29,6 @@ import io.spine.client.Subscription;
 import io.spine.client.SubscriptionUpdate;
 import io.spine.client.Target;
 import io.spine.client.Topic;
-import io.spine.type.TypeUrl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -137,8 +136,7 @@ public final class FirebaseEndpoint {
     public void subscribe(Topic topic) {
         checkNotNull(topic);
         final Target target = topic.getTarget();
-        final TypeUrl typeUrl = TypeUrl.parse(target.getType());
-        final String type = typeUrl.getTypeName();
+        final String type = target.getType();
         final CollectionReference collectionReference = database.collection(type);
         final StreamObserver<SubscriptionUpdate> updateObserver =
                 new SubscriptionToFirebaseAdapter(collectionReference);

@@ -23,9 +23,11 @@ package io.spine.server;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.WriteBatch;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Any;
 import com.google.protobuf.Message;
 import io.spine.client.EntityStateUpdate;
+import io.spine.server.storage.StorageField;
 import io.spine.string.Stringifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +35,12 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import static com.google.cloud.firestore.Blob.fromBytes;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableMap.of;
 import static io.spine.protobuf.AnyPacker.unpack;
+import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.bytes;
+import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
 import static java.util.regex.Pattern.compile;
 
 /**
@@ -46,9 +51,6 @@ import static java.util.regex.Pattern.compile;
 final class FirestoreEntityStateUpdatePublisher {
 
     private static final Pattern INVALID_KEY_CHARS = compile("[^\\w\\d]");
-
-    private static final String BYTES_KEY = "bytes";
-    private static final String ID_KEY = "id";
 
     private final CollectionReference databaseSlice;
 
@@ -80,8 +82,8 @@ final class FirestoreEntityStateUpdatePublisher {
         final Message message = unpack(updateState);
         final String stringId = Stringifiers.toString(entityId);
         final byte[] stateBytes = message.toByteArray();
-        final Map<String, Object> data = of(BYTES_KEY, stateBytes,
-                                            ID_KEY, stringId);
+        final Map<String, Object> data = of(bytes.toString(), fromBytes(stateBytes),
+                                            id.toString(), stringId);
         final DocumentReference targetDocument = documentFor(stringId);
         log().info("Writing state update of type {} (id: {}) into Firestore location {}.",
                    updateState.getTypeUrl(), entityId, targetDocument.getPath());
@@ -115,6 +117,28 @@ final class FirestoreEntityStateUpdatePublisher {
                               ? key.substring(underscoreCounter)
                               : key;
         return result;
+    }
+
+    /**
+     * The list of fields of the entity state as it is stored to Firestore.
+     */
+    @VisibleForTesting
+    enum EntityStateField implements StorageField {
+
+        /**
+         * The string field for the entity ID.
+         *
+         * <p>The ID is converted to {@code String} with the corresponding
+         * {@link io.spine.string.Stringifier Stringifier}.
+         */
+        id,
+
+        /**
+         * The byte array representation of the entity state.
+         *
+         * @see Message#toByteArray()
+         */
+        bytes
     }
 
     private static Logger log() {
