@@ -177,9 +177,9 @@ public final class FirebaseEndpoint {
         }
 
         /**
-         * Creates a new instance of {@code KafkaAggregateMessageDispatcher}.
+         * Creates a new instance of {@code FirebaseEndpoint}.
          *
-         * @return new instance of {@code KafkaAggregateMessageDispatcher} with the given
+         * @return new instance of {@code FirebaseEndpoint} with the given
          * parameters
          */
         public FirebaseEndpoint build() {
