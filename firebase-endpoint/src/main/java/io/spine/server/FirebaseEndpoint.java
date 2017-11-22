@@ -221,6 +221,7 @@ public final class FirebaseEndpoint {
             throw new RuntimeException(t);
         }
 
+        // NoOp
         @Override
         public void onCompleted() {}
     }
