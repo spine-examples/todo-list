@@ -20,4 +20,3 @@ project(':local-cloud-sql').projectDir = new File('./deployment/local-cloud-sql'
 
 include ':compute-cloud-sql'
 project(':compute-cloud-sql').projectDir = new File('./deployment/compute-cloud-sql')
-
