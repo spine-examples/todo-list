@@ -50,10 +50,11 @@ import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
 import io.spine.string.Stringifiers;
 import io.spine.type.TypeName;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -70,28 +71,37 @@ import static java.util.stream.Collectors.toSet;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Dmytro Dashenkov
  */
+@Tag("CI")
 @DisplayName("FirebaseEndpoint should")
 class FirebaseEndpointTest {
 
     private static final String FIREBASE_SERVICE_ACC_SECRET = "serviceAccount.json";
     private static final String DATABASE_URL = "https://spine-firestore-test.firebaseio.com";
 
+    /**
+     * The {@link Firestore} instance to mirror with an endpoint.
+     *
+     * <p>This field is declared {@code static} to make it accessible in {@link AfterAll @AfterAll}
+     * methods for the test data clean up.
+     */
+    private static Firestore firestore = null;
+
     private final ActorRequestFactory requestFactory =
             TestActorRequestFactory.newInstance(FirebaseEndpointTest.class);
     private FirebaseEndpoint endpoint;
     private BoundedContext boundedContext;
-    private Firestore firestore;
 
     /**
      * Stores all the {@link DocumentReference} instances used for the test suite.
      *
      * <p>It is required to clean up all the data in Cloud Firestore to avoid test failures.
      */
-    private final Collection<DocumentReference> documents = newHashSet();
+    private static final Collection<DocumentReference> documents = newHashSet();
 
     @BeforeAll
     static void beforeAll() throws IOException {
@@ -107,16 +117,18 @@ class FirebaseEndpointTest {
         FirebaseApp.initializeApp(options);
     }
 
-    @AfterEach
-    void afterAll() {
+    @AfterAll
+    static void afterAll() throws ExecutionException, InterruptedException {
         final WriteBatch batch = firestore.batch();
         for (DocumentReference document : documents) {
             batch.delete(document);
         }
-        batch.commit();
+        // Submit the depletion operations and ensure execution.
+        batch.commit().get();
         documents.clear();
     }
 
+    @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
     @BeforeEach
     void beforeEach() {
         firestore = FirestoreClient.getFirestore();
@@ -143,7 +155,7 @@ class FirebaseEndpointTest {
         endpoint.subscribe(topic);
         final TaskId taskId = newId();
         final Task expectedState = createTask(taskId);
-        Thread.sleep(2000L);
+        waitForConsistency();
         final Task actualState = findTask(taskId);
         assertEquals(expectedState, actualState);
     }
@@ -156,6 +168,7 @@ class FirebaseEndpointTest {
         endpoint.subscribe(topic);
         final TaskId taskId = newId();
         createTask(taskId);
+        waitForConsistency();
         final DocumentSnapshot document = findTaskDocument(taskId);
         final String actualId = document.getString(id.toString());
         final Stringifier<TaskId> stringifier = StringifierRegistry.getInstance()
@@ -166,13 +179,13 @@ class FirebaseEndpointTest {
         assertEquals(taskId, readId);
     }
 
-    private Task findTask(TaskId id) throws ExecutionException, InterruptedException {
+    private static Task findTask(TaskId id) throws ExecutionException, InterruptedException {
         final DocumentSnapshot document = findTaskDocument(id);
         final Task task = deserialize(document);
         return task;
     }
 
-    private DocumentSnapshot findTaskDocument(TaskId taskId) throws ExecutionException,
+    private static DocumentSnapshot findTaskDocument(TaskId taskId) throws ExecutionException,
                                                                     InterruptedException {
         final String collectionName = TypeName.of(Task.class)
                                               .value();
@@ -210,6 +223,8 @@ class FirebaseEndpointTest {
     }
 
     private static void registerTaskIdStringifier() {
+        // TODO:2017-11-22:dmytro.dashenkov: Report.
+        @SuppressWarnings("Convert2Diamond") // Cannot be done for an anonymous class.
         final Stringifier<TaskId> stringifier = new Stringifier<TaskId>() {
             @Override
             protected String toString(TaskId genericId) {
@@ -254,5 +269,13 @@ class FirebaseEndpointTest {
         return TaskId.newBuilder()
                      .setValue(newUuid())
                      .build();
+    }
+
+    private static void waitForConsistency() {
+        try {
+            Thread.sleep(2500L);
+        } catch (InterruptedException e) {
+            fail(e.getMessage());
+        }
     }
 }
