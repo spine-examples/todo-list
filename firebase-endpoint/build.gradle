@@ -22,6 +22,6 @@ dependencies {
     compile 'com.google.firebase:firebase-admin:5.5.0'
 
     testCompile project(path: ':api-java')
-    testCompile "io.spine:testuril-server:$spineVersion"
+    testCompile "io.spine:spine-testutil-server:$spineVersion"
     testCompile "com.google.guava:guava-testlib:$guavaVersion"
 }
