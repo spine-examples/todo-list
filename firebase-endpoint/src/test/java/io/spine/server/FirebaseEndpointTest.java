@@ -74,6 +74,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
+ * The {@link FirebaseEndpoint} tests.
+ *
+ * <p>These tests should be executed on CI only, as they rely on the {@code serviceAccount.json}
+ * which is stored encrypted in the Git repository and is decrypted on CI with private environment
+ * keys.
+ *
+ * <p>To run the tests locally, do to the Firebase console, create a new Service account and save
+ * the generated {@code .json} file as
+ * {@code firebase-endpoint/src/test/resources/serviceAccount.json}. Then run tests from IDE.
+ *
  * @author Dmytro Dashenkov
  */
 @Tag("CI")
@@ -108,6 +118,7 @@ class FirebaseEndpointTest {
         final InputStream firebaseSecret =
                 FirebaseEndpointTest.class.getClassLoader()
                                           .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
+        // Check the `serviceAccount.json` file exists.
         assumeNotNull(firebaseSecret);
         final GoogleCredentials credentials = GoogleCredentials.fromStream(firebaseSecret);
         final FirebaseOptions options = new FirebaseOptions.Builder()
