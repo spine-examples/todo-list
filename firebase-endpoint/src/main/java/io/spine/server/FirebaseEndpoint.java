@@ -218,7 +218,7 @@ public final class FirebaseEndpoint {
 
         @Override
         public void onError(Throwable t) {
-            throw new RuntimeException(t);
+            throw new IllegalStateException(t);
         }
 
         // NoOp
