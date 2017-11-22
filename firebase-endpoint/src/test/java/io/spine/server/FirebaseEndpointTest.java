@@ -234,8 +234,6 @@ class FirebaseEndpointTest {
     }
 
     private static void registerTaskIdStringifier() {
-        // TODO:2017-11-22:dmytro.dashenkov: Report.
-        @SuppressWarnings("Convert2Diamond") // Cannot be done for an anonymous class.
         final Stringifier<TaskId> stringifier = new Stringifier<TaskId>() {
             @Override
             protected String toString(TaskId genericId) {
