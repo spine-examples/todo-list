@@ -222,9 +222,7 @@ public final class FirebaseEndpoint {
         }
 
         @Override
-        public void onCompleted() {
-            // NoOp
-        }
+        public void onCompleted() {}
     }
 
     /**

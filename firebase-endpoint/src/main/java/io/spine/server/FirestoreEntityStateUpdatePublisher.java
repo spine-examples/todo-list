@@ -148,7 +148,7 @@ final class FirestoreEntityStateUpdatePublisher {
     private enum LogSingleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = LoggerFactory.getLogger(
-                FirestoreEntityStateUpdatePublisher.class);
+        private final Logger value =
+                LoggerFactory.getLogger(FirestoreEntityStateUpdatePublisher.class);
     }
 }

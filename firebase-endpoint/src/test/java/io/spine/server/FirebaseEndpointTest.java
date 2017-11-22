@@ -80,9 +80,9 @@ import static org.junit.jupiter.api.Assertions.fail;
  * which is stored encrypted in the Git repository and is decrypted on CI with private environment
  * keys.
  *
- * <p>To run the tests locally, do to the Firebase console, create a new Service account and save
+ * <p>To run the tests locally, go to the Firebase console, create a new service account and save
  * the generated {@code .json} file as
- * {@code firebase-endpoint/src/test/resources/serviceAccount.json}. Then run tests from IDE.
+ * {@code firebase-endpoint/src/test/resources/serviceAccount.json}. Then run the tests from IDE.
  *
  * @author Dmytro Dashenkov
  */
@@ -94,7 +94,7 @@ class FirebaseEndpointTest {
     private static final String DATABASE_URL = "https://spine-firestore-test.firebaseio.com";
 
     /**
-     * The {@link Firestore} instance to mirror with an endpoint.
+     * The {@link Firestore} instance to access from the endpoint.
      *
      * <p>This field is declared {@code static} to make it accessible in {@link AfterAll @AfterAll}
      * methods for the test data clean up.
@@ -118,7 +118,7 @@ class FirebaseEndpointTest {
         final InputStream firebaseSecret =
                 FirebaseEndpointTest.class.getClassLoader()
                                           .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
-        // Check the `serviceAccount.json` file exists.
+        // Check if `serviceAccount.json` file exists.
         assumeNotNull(firebaseSecret);
         final GoogleCredentials credentials = GoogleCredentials.fromStream(firebaseSecret);
         final FirebaseOptions options = new FirebaseOptions.Builder()
@@ -155,8 +155,14 @@ class FirebaseEndpointTest {
 
     @Test
     @DisplayName("not allow nulls on construction")
-    void testNotNull() {
+    void testBuilderNotNull() {
         new NullPointerTester().testAllPublicInstanceMethods(FirebaseEndpoint.newBuilder());
+    }
+
+    @Test
+    @DisplayName("not allow null arguments")
+    void testNotNull() {
+        new NullPointerTester().testAllPublicInstanceMethods(endpoint);
     }
 
     @Test
