@@ -89,7 +89,7 @@ import static java.lang.String.format;
  * </pre>
  *
  * <p>Then, if we {@linkplain #subscribe(Topic) subscribe} a {@code FirebaseEndpoint} to this
- * topic, the documents representing the given entity will be written under.
+ * topic, the documents representing the given entity will be written under
  * the {@code /example.customer.Customer/document-key} path. The {@code document-key} here is
  * a unique key assigned to this instance of {@code Customer} by {@code FirebaseEndpoint}. Note
  * that the document key is not a valid identifier of a {@code CustomerAggregate} entity. Do NOT
@@ -106,12 +106,13 @@ import static java.lang.String.format;
  * <p>The {@code id} field contains the {@linkplain io.spine.string.Stringifiers#toString(Object)
  * string} representation of the entity ID.
  *
- * <p>The {@code bytes} field contains the serialized as a byte array entity state message.
+ * <p>The {@code bytes} field contains the serialized entity state.
  *
  * <p>To make it easy for a client to subscribe to a certain document, provide
- * a custom {@link io.spine.string.Stringifier} for the message ID type.
+ * a custom {@link io.spine.string.Stringifier Stringifier} for the message ID type.
  *
  * @author Dmytro Dashenkov
+ * @see SubscriptionService
  */
 public final class FirebaseEndpoint {
 
@@ -162,9 +163,8 @@ public final class FirebaseEndpoint {
         private SubscriptionService subscriptionService;
         private Firestore database;
 
-        private Builder() {
-            // Prevent direct instantiation.
-        }
+        // Prevent direct instantiation.
+        private Builder() {}
 
         public Builder setSubscriptionService(SubscriptionService subscriptionService) {
             this.subscriptionService = checkNotNull(subscriptionService);
