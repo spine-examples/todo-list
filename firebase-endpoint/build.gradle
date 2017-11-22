@@ -22,6 +22,18 @@ dependencies {
     compile 'com.google.firebase:firebase-admin:5.5.0'
 
     testCompile project(path: ':api-java')
-    testCompile "io.spine:spine-testutil-server:$spineVersion"
+    testCompile ("io.spine:spine-testutil-server:$spineVersion") {
+        exclude group: 'junit'
+    }
     testCompile "com.google.guava:guava-testlib:$guavaVersion"
+}
+
+junitPlatform {
+    filters {
+        if (System.env.CI != "true") {
+            tags {
+                exclude "CI"
+            }
+        }
+    }
 }

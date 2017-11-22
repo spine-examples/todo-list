@@ -243,9 +243,8 @@ subprojects {
         logManager 'java.util.logging.LogManager'
 
         selectors {
-            directory '${sourceRootDir}/test/java'
-            aPackage 'io.spine.examples.todolist'
-            aPackage 'io.spine.cli'
+            directory "${sourcesRootDir}/test/java"
+            packages 'io.spine.examples.todolist', 'io.spine.cli', 'io.spine.server'
         }
 
         filters {

@@ -7,6 +7,7 @@ include 'cli-core'
 include 'testutil-api'
 include 'testutil-cli'
 include 'integration-tests'
+include 'firebase-endpoint'
 
 include ':local-inmem'
 project(':local-inmem').projectDir = new File('./deployment/local-inmem')
@@ -19,5 +20,4 @@ project(':local-cloud-sql').projectDir = new File('./deployment/local-cloud-sql'
 
 include ':compute-cloud-sql'
 project(':compute-cloud-sql').projectDir = new File('./deployment/compute-cloud-sql')
-include 'firebase-endpoint'
 
