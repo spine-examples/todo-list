@@ -40,21 +40,22 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <a target="_blank" href="https://firebase.google.com/docs/firestore/">Cloud Firestore^</a>
  * database.
  *
- * <p>Use Cloud Firestore as a subscription update delivery system. When dealing with a number of
- * subscribers (e.g. browser clients), the repeater should be considered more reliable comparing to
- * delivering the updates over gRPC with {@code SubscriptionService}.
+ * <p>Use {@code FirebaseSubscriptionRepeater} as a subscription update delivery system. When
+ * dealing with a number of subscribers (e.g. browser clients), the repeater should be considered
+ * a more reliable solution comparing to delivering the updates over gRPC with
+ * {@code SubscriptionService}.
  *
- * <p>To start using the Firebase repeater, follow these steps:
+ * <p>To start using the repeater, follow these steps:
  * <ol>
  *     <li>Go to the
  *         <a target="_blank" href="https://console.firebase.google.com">Firebase Console^</a>,
  *         select the desired project and enable Cloud Firestore.
- *     <li>Create an instance of {@link Firestore} and pass in to a
+ *     <li>Create an instance of {@link Firestore} and pass it to a
  *         {@code FirebaseSubscriptionRepeater}.
  *     <li>{@linkplain io.spine.client.ActorRequestFactory Create} instances of {@code Topic} to
  *         subscribe to.
- *     <li>{@linkplain #broadcast(Topic) Subscribe} {@code FirebaseSubscriptionRepeater} to each of
- *         those {@code Topic}s.
+ *     <li>{@linkplain #broadcast(Topic) Broadcast} each of those {@code Topic}s with
+ *         the {@code FirebaseSubscriptionRepeater} instance.
  * </ol>
  *
  * <a name="protocol"></a>
@@ -77,17 +78,15 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <p><b>Example:</b>
  * <p>Assuming there is the
  * {@code CustomerAggregate extends Aggregate<CustomerId, Customer, CustomerVBuilder>} entity.
- * The simplest {@code Topic} looks as follows:
+ * The simplest {@code Topic} matching that entity looks like:
  * <pre>
  *     {@code final Topic customerTopic = requestFactory.topics().allOf(Customer.class);}
  * </pre>
  *
- * <p>Then, if we {@linkplain #broadcast(Topic) start broadcasting} this topic with a repeater,
- * the entity state updates start being written under
- * the {@code /example.customer.Customer/document-key} path. The {@code document-key} here is
- * a unique key assigned to this instance of {@code Customer} by the repeater. Note that
- * the document key is not a valid identifier of a {@code CustomerAggregate} entity. Do NOT depend
- * any business logic on the document key.
+ * <p>When the broadcast for {@code customerTopic} is started, the entity state updates are written
+ * under {@code /example.customer.Customer/document-key}. The {@code document-key} here is a unique
+ * key assigned to this instance of {@code Customer} by the repeater. Note that the document key
+ * is not a valid ID of a {@code CustomerAggregate}. Do NOT depend any business logic on its value.
  *
  * <h3>Document structure</h3>
  *
@@ -97,18 +96,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *     <li>{@code bytes}: BLOB.
  * </ul>
  *
- * <p>The {@code id} field contains the {@linkplain io.spine.string.Stringifiers#toString(Object)
- * string} representation of the entity ID.
+ * <p>The {@code id} field contains the {@linkplain io.spine.Identifier#toString(Object) string}
+ * representation of the entity ID.
  *
  * <p>The {@code bytes} field contains the serialized entity state.
  *
- * <p>To make it easy for a client to subscribe to a certain document, provide
- * a custom {@link io.spine.string.Stringifier Stringifier} for the message ID type.
+ * <p>Consider providing a custom {@link io.spine.string.Stringifier Stringifier} for the ID type
+ * if the ID is compound.
  *
  * <h2>Multitenancy</h2>
  *
  * <p>When working with multitenant {@code BoundedContext}s, the topic broadcast should be started
- * for each tenant explicitly. To start broadcasting for a certain tenant do:
+ * for each tenant explicitly. To start the broadcast for a certain tenant do:
  * <pre>
  *     {@code
  *     new TenantAwareOperation(tenantId) {
@@ -161,7 +160,8 @@ public final class FirebaseSubscriptionRepeater {
     }
 
     /**
-     * Creates a new instance of {@code Builder} for {@code FirebaseSubscriptionRepeater} instances.
+     * Creates a new instance of {@code Builder} for {@code FirebaseSubscriptionRepeater}
+     * instances.
      *
      * @return new instance of {@code Builder}
      */
