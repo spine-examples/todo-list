@@ -24,18 +24,12 @@ import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import io.grpc.stub.StreamObserver;
-import io.spine.client.EntityStateUpdate;
 import io.spine.client.Subscription;
 import io.spine.client.SubscriptionUpdate;
 import io.spine.client.Target;
 import io.spine.client.Topic;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.String.format;
 
 /**
  * A client of {@link SubscriptionService} that repeats the received messages to Firebase.
@@ -187,93 +181,5 @@ public final class FirebaseSubscriptionRepeater {
             checkNotNull(subscriptionService);
             return new FirebaseSubscriptionRepeater(this);
         }
-    }
-
-    /**
-     * An implementation of {@link StreamObserver} which
-     * {@linkplain SubscriptionService#activate activates} all the received {@link Subscription}s.
-     *
-     * <p>After activation the given {@code dataObserver} starts receiving the Entity state
-     * updates.
-     *
-     * <p>The implementation throws a {@link RuntimeException} upon any
-     * {@linkplain StreamObserver#onError error} and handles the
-     * {@linkplain StreamObserver#onCompleted() successful completion} silently.
-     */
-    private static class SubscriptionObserver implements StreamObserver<Subscription> {
-
-        private final SubscriptionService subscriptionService;
-        private final StreamObserver<SubscriptionUpdate> dataObserver;
-
-        private SubscriptionObserver(SubscriptionService service,
-                                     StreamObserver<SubscriptionUpdate> dataObserver) {
-            this.subscriptionService = service;
-            this.dataObserver = dataObserver;
-        }
-
-        @Override
-        public void onNext(Subscription subscription) {
-            subscriptionService.activate(subscription, dataObserver);
-        }
-
-        @Override
-        public void onError(Throwable t) {
-            throw new IllegalStateException(t);
-        }
-
-        // NoOp
-        @Override
-        public void onCompleted() {}
-    }
-
-    /**
-     * An implementation of {@link StreamObserver} publishing the received
-     * {@link SubscriptionUpdate}s to the given
-     * {@link CollectionReference Cloud Firestore location}.
-     *
-     * <p>The implementation logs a message upon either
-     * {@linkplain StreamObserver#onCompleted() successful} or
-     * {@linkplain StreamObserver#onError faulty} stream completion.
-     *
-     * @see FirestoreEntityStateUpdatePublisher
-     */
-    private static class SubscriptionToFirebaseAdapter
-            implements StreamObserver<SubscriptionUpdate> {
-
-        private final CollectionReference target;
-        private final FirestoreEntityStateUpdatePublisher publisher;
-
-        private SubscriptionToFirebaseAdapter(CollectionReference target) {
-            this.target = target;
-            this.publisher = new FirestoreEntityStateUpdatePublisher(target);
-        }
-
-        @Override
-        public void onNext(SubscriptionUpdate value) {
-            final Collection<EntityStateUpdate> payload = value.getEntityStateUpdatesList();
-            publisher.publish(payload);
-        }
-
-        @Override
-        public void onError(Throwable error) {
-            log().error(format("Subscription with target `%s` has been completed with an error.",
-                               target.getPath()),
-                        error);
-        }
-
-        @Override
-        public void onCompleted() {
-            log().info("Subscription with target `{}` has been completed.", target.getPath());
-        }
-    }
-
-    private static Logger log() {
-        return LogSingleton.INSTANCE.value;
-    }
-
-    private enum LogSingleton {
-        INSTANCE;
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = LoggerFactory.getLogger(FirebaseSubscriptionRepeater.class);
     }
 }
