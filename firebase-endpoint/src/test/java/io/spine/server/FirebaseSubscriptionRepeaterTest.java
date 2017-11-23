@@ -74,7 +74,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * The {@link FirebaseEndpoint} tests.
+ * The {@link FirebaseSubscriptionRepeater} tests.
  *
  * <p>These tests should be executed on CI only, as they rely on the {@code serviceAccount.json}
  * which is stored encrypted in the Git repository and is decrypted on CI with private environment
@@ -87,8 +87,8 @@ import static org.junit.jupiter.api.Assertions.fail;
  * @author Dmytro Dashenkov
  */
 @Tag("CI")
-@DisplayName("FirebaseEndpoint should")
-class FirebaseEndpointTest {
+@DisplayName("FirebaseSubscriptionRepeater should")
+class FirebaseSubscriptionRepeaterTest {
 
     private static final String FIREBASE_SERVICE_ACC_SECRET = "serviceAccount.json";
     private static final String DATABASE_URL = "https://spine-firestore-test.firebaseio.com";
@@ -102,8 +102,8 @@ class FirebaseEndpointTest {
     private static Firestore firestore = null;
 
     private final ActorRequestFactory requestFactory =
-            TestActorRequestFactory.newInstance(FirebaseEndpointTest.class);
-    private FirebaseEndpoint endpoint;
+            TestActorRequestFactory.newInstance(FirebaseSubscriptionRepeaterTest.class);
+    private FirebaseSubscriptionRepeater endpoint;
     private BoundedContext boundedContext;
 
     /**
@@ -116,8 +116,8 @@ class FirebaseEndpointTest {
     @BeforeAll
     static void beforeAll() throws IOException {
         final InputStream firebaseSecret =
-                FirebaseEndpointTest.class.getClassLoader()
-                                          .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
+                FirebaseSubscriptionRepeaterTest.class.getClassLoader()
+                                                      .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
         // Check if `serviceAccount.json` file exists.
         assumeNotNull(firebaseSecret);
         final GoogleCredentials credentials = GoogleCredentials.fromStream(firebaseSecret);
@@ -147,16 +147,16 @@ class FirebaseEndpointTest {
         final SubscriptionService subscriptionService = SubscriptionService.newBuilder()
                                                                            .add(boundedContext)
                                                                            .build();
-        endpoint = FirebaseEndpoint.newBuilder()
-                                   .setDatabase(firestore)
-                                   .setSubscriptionService(subscriptionService)
-                                   .build();
+        endpoint = FirebaseSubscriptionRepeater.newBuilder()
+                                               .setDatabase(firestore)
+                                               .setSubscriptionService(subscriptionService)
+                                               .build();
     }
 
     @Test
     @DisplayName("not allow nulls on construction")
     void testBuilderNotNull() {
-        new NullPointerTester().testAllPublicInstanceMethods(FirebaseEndpoint.newBuilder());
+        new NullPointerTester().testAllPublicInstanceMethods(FirebaseSubscriptionRepeater.newBuilder());
     }
 
     @Test
@@ -169,7 +169,7 @@ class FirebaseEndpointTest {
     @DisplayName("deliver the entity state updates")
     void testDeliver() throws ExecutionException, InterruptedException {
         final Topic topic = requestFactory.topic().allOf(Task.class);
-        endpoint.subscribe(topic);
+        endpoint.broadcast(topic);
         final TaskId taskId = newId();
         final Task expectedState = createTask(taskId);
         waitForConsistency();
@@ -182,7 +182,7 @@ class FirebaseEndpointTest {
     void testStringifyId() throws ExecutionException, InterruptedException {
         registerTaskIdStringifier();
         final Topic topic = requestFactory.topic().allOf(Task.class);
-        endpoint.subscribe(topic);
+        endpoint.broadcast(topic);
         final TaskId taskId = newId();
         createTask(taskId);
         waitForConsistency();
@@ -276,7 +276,7 @@ class FirebaseEndpointTest {
 
     private static TenantId tenant() {
         return TenantId.newBuilder()
-                       .setValue(FirebaseEndpointTest.class.getSimpleName())
+                       .setValue(FirebaseSubscriptionRepeaterTest.class.getSimpleName())
                        .build();
     }
 

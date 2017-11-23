@@ -38,29 +38,29 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
 /**
- * An endpoint for the entity state updates sent by the {@link SubscriptionService}.
+ * A client of {@link SubscriptionService} that repeats the received messages to Firebase.
  *
  * <h2>Usage</h2>
  *
- * <p>This endpoint posts the received messages to the specified
+ * <p>{@code FirebaseSubscriptionRepeater} broadcasts the received messages within the specified
  * <a target="_blank" href="https://firebase.google.com/docs/firestore/">Cloud Firestore^</a>
  * database.
  *
  * <p>Use Cloud Firestore as a subscription update delivery system. When dealing with a number of
- * subscribers (e.g. end clients), this system should be considered more reliable comparing to
+ * subscribers (e.g. browser clients), the repeater should be considered more reliable comparing to
  * delivering the updates over gRPC with {@code SubscriptionService}.
  *
- * <p>To start using the Firebase update delivery, follow these steps:
+ * <p>To start using the Firebase repeater, follow these steps:
  * <ol>
  *     <li>Go to the
  *         <a target="_blank" href="https://console.firebase.google.com">Firebase Console^</a>,
  *         select the desired project and enable Cloud Firestore.
- *     <li>Create an instance of {@link Firestore} and instantiate {@code FirebaseEndpoint}
- *         with it.
+ *     <li>Create an instance of {@link Firestore} and pass in to a
+ *         {@code FirebaseSubscriptionRepeater}.
  *     <li>{@linkplain io.spine.client.ActorRequestFactory Create} instances of {@code Topic} to
  *         subscribe to.
- *     <li>{@linkplain #subscribe(Topic) Subscribe} {@code FirebaseEndpoint} to each of those
- *         {@code Topic}s.
+ *     <li>{@linkplain #broadcast(Topic) Subscribe} {@code FirebaseSubscriptionRepeater} to each of
+ *         those {@code Topic}s.
  * </ol>
  *
  * <a name="protocol"></a>
@@ -69,7 +69,7 @@ import static java.lang.String.format;
  *
  * <h3>Location</h3>
  *
- * <p>The endpoint writes the received entity state updates to the given Firestore by the following
+ * <p>The repeater writes the received entity state updates to the given Firestore by the following
  * rules:
  * <ul>
  *     <li>A {@linkplain CollectionReference collection} with the name equal to the Protobuf type
@@ -88,16 +88,16 @@ import static java.lang.String.format;
  *     {@code final Topic customerTopic = requestFactory.topics().allOf(Customer.class);}
  * </pre>
  *
- * <p>Then, if we {@linkplain #subscribe(Topic) subscribe} a {@code FirebaseEndpoint} to this
- * topic, the documents representing the given entity will be written under
+ * <p>Then, if we {@linkplain #broadcast(Topic) start broadcasting} this topic with a repeater,
+ * the entity state updates start being written under
  * the {@code /example.customer.Customer/document-key} path. The {@code document-key} here is
- * a unique key assigned to this instance of {@code Customer} by {@code FirebaseEndpoint}. Note
- * that the document key is not a valid identifier of a {@code CustomerAggregate} entity. Do NOT
- * depend any business logic on the document key.
+ * a unique key assigned to this instance of {@code Customer} by the repeater. Note that
+ * the document key is not a valid identifier of a {@code CustomerAggregate} entity. Do NOT depend
+ * any business logic on the document key.
  *
  * <h3>Document structure</h3>
  *
- * <p>The Firestore documents created by the endpoint have the following structure:
+ * <p>The Firestore documents created by the repeater have the following structure:
  * <ul>
  *     <li>{@code id}: string;
  *     <li>{@code bytes}: BLOB.
@@ -114,27 +114,27 @@ import static java.lang.String.format;
  * @author Dmytro Dashenkov
  * @see SubscriptionService
  */
-public final class FirebaseEndpoint {
+public final class FirebaseSubscriptionRepeater {
 
     private final Firestore database;
     private final SubscriptionService subscriptionService;
 
-    private FirebaseEndpoint(Builder builder) {
+    private FirebaseSubscriptionRepeater(Builder builder) {
         this.database = builder.database;
         this.subscriptionService = builder.subscriptionService;
     }
 
     /**
-     * Subscribes this {@code FirebaseEndpoint} to the given {@link Topic}.
+     * Starts broadcasting the given {@link Topic} withing the Cloud Firestore.
      *
      * <p>After this method invocation the underlying {@link Firestore} (eventually) starts
      * receiving the entity state updates for the given {@code topic}.
      *
      * <p>See <a href="#protocol">class level doc</a> for the description of the storage protocol.
      *
-     * @param topic the topic to subscribe to
+     * @param topic the topic to broadcast
      */
-    public void subscribe(Topic topic) {
+    public void broadcast(Topic topic) {
         checkNotNull(topic);
         final Target target = topic.getTarget();
         final String type = target.getType();
@@ -147,7 +147,7 @@ public final class FirebaseEndpoint {
     }
 
     /**
-     * Creates a new instance of {@code Builder} for {@code FirebaseEndpoint} instances.
+     * Creates a new instance of {@code Builder} for {@code FirebaseSubscriptionRepeater} instances.
      *
      * @return new instance of {@code Builder}
      */
@@ -156,7 +156,7 @@ public final class FirebaseEndpoint {
     }
 
     /**
-     * A builder for the {@code FirebaseEndpoint} instances.
+     * A builder for the {@code FirebaseSubscriptionRepeater} instances.
      */
     public static final class Builder {
 
@@ -177,20 +177,20 @@ public final class FirebaseEndpoint {
         }
 
         /**
-         * Creates a new instance of {@code FirebaseEndpoint}.
+         * Creates a new instance of {@code FirebaseSubscriptionRepeater}.
          *
-         * @return new instance of {@code FirebaseEndpoint} with the given
-         * parameters
+         * @return new instance of {@code FirebaseSubscriptionRepeater} with the given
+         *         parameters
          */
-        public FirebaseEndpoint build() {
+        public FirebaseSubscriptionRepeater build() {
             checkNotNull(database);
             checkNotNull(subscriptionService);
-            return new FirebaseEndpoint(this);
+            return new FirebaseSubscriptionRepeater(this);
         }
     }
 
     /**
-     * The {@link StreamObserver} implementation which
+     * An implementation of {@link StreamObserver} which
      * {@linkplain SubscriptionService#activate activates} all the received {@link Subscription}s.
      *
      * <p>After activation the given {@code dataObserver} starts receiving the Entity state
@@ -274,6 +274,6 @@ public final class FirebaseEndpoint {
     private enum LogSingleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = LoggerFactory.getLogger(FirebaseEndpoint.class);
+        private final Logger value = LoggerFactory.getLogger(FirebaseSubscriptionRepeater.class);
     }
 }
