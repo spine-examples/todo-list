@@ -7,7 +7,7 @@ include 'cli-core'
 include 'testutil-api'
 include 'testutil-cli'
 include 'integration-tests'
-include 'firebase-endpoint'
+include 'firebase-repeater'
 
 include ':local-inmem'
 project(':local-inmem').projectDir = new File('./deployment/local-inmem')
