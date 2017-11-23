@@ -105,6 +105,26 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <p>To make it easy for a client to subscribe to a certain document, provide
  * a custom {@link io.spine.string.Stringifier Stringifier} for the message ID type.
  *
+ * <h2>Multitenancy</h2>
+ *
+ * <p>When working with multitenant {@code BoundedContext}s, the topic broadcast should be started
+ * for each tenant explicitly. To start broadcasting for a certain tenant do:
+ * <pre>
+ *     {@code
+ *     new TenantAwareOperation(tenantId) {
+ *         \@Override
+ *         public void run() {
+ *             repeater.broadcast(topic);
+ *         }
+ *     }.execute();
+ *     }
+ * </pre>
+ *
+ * <p>Here the {@code tenantId} is the ID of the tenant to start the broadcast for.
+ *
+ * <p>In a multitenant bounded context, starting a broadcast without specifying an explicit tenant
+ * may cause unpredictable behavior.
+ *
  * @author Dmytro Dashenkov
  * @see SubscriptionService
  */
