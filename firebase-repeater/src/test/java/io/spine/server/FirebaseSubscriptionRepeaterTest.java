@@ -35,16 +35,13 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.TestActorRequestFactory;
 import io.spine.client.Topic;
+import io.spine.core.BoundedContextName;
 import io.spine.core.Command;
 import io.spine.core.CommandEnvelope;
 import io.spine.core.TenantId;
-import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.TaskDescription;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.TaskPart;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.server.entity.Repository;
+import io.spine.server.given.FirebaseRepeaterTestEnv;
+import io.spine.server.given.FirebaseRepeaterTestEnv.CustomerAggregate;
 import io.spine.server.stand.Stand;
 import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
@@ -64,9 +61,11 @@ import java.util.concurrent.ExecutionException;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static io.spine.Identifier.newUuid;
+import static io.spine.server.BoundedContext.newName;
 import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.bytes;
 import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
 import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
+import static io.spine.server.storage.memory.InMemoryStorageFactory.newInstance;
 import static java.util.stream.Collectors.toSet;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -82,7 +81,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  *
  * <p>To run the tests locally, go to the Firebase console, create a new service account and save
  * the generated {@code .json} file as
- * {@code firebase-endpoint/src/test/resources/serviceAccount.json}. Then run the tests from IDE.
+ * {@code firebase-repeater/src/test/resources/serviceAccount.json}. Then run the tests from IDE.
  *
  * @author Dmytro Dashenkov
  */
@@ -94,7 +93,7 @@ class FirebaseSubscriptionRepeaterTest {
     private static final String DATABASE_URL = "https://spine-firestore-test.firebaseio.com";
 
     /**
-     * The {@link Firestore} instance to access from the endpoint.
+     * The {@link Firestore} instance to access from the repeater.
      *
      * <p>This field is declared {@code static} to make it accessible in {@link AfterAll @AfterAll}
      * methods for the test data clean up.
@@ -103,7 +102,7 @@ class FirebaseSubscriptionRepeaterTest {
 
     private final ActorRequestFactory requestFactory =
             TestActorRequestFactory.newInstance(FirebaseSubscriptionRepeaterTest.class);
-    private FirebaseSubscriptionRepeater endpoint;
+    private FirebaseSubscriptionRepeater repeater;
     private BoundedContext boundedContext;
 
     /**
@@ -115,9 +114,9 @@ class FirebaseSubscriptionRepeaterTest {
 
     @BeforeAll
     static void beforeAll() throws IOException {
-        final InputStream firebaseSecret =
-                FirebaseSubscriptionRepeaterTest.class.getClassLoader()
-                                                      .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
+        final InputStream firebaseSecret = FirebaseSubscriptionRepeaterTest.class
+                .getClassLoader()
+                .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
         // Check if `serviceAccount.json` file exists.
         assumeNotNull(firebaseSecret);
         final GoogleCredentials credentials = GoogleCredentials.fromStream(firebaseSecret);
@@ -143,11 +142,17 @@ class FirebaseSubscriptionRepeaterTest {
     @BeforeEach
     void beforeEach() {
         firestore = FirestoreClient.getFirestore();
-        boundedContext = BoundedContexts.create();
+        final BoundedContextName contextName =
+                newName(FirebaseSubscriptionRepeaterTest.class.getSimpleName());
+        boundedContext = BoundedContext.newBuilder()
+                                       .setStorageFactorySupplier(
+                                               () -> newInstance(contextName, true))
+                                       .build();
+        boundedContext.register(new FirebaseRepeaterTestEnv.CustomerRepository());
         final SubscriptionService subscriptionService = SubscriptionService.newBuilder()
                                                                            .add(boundedContext)
                                                                            .build();
-        endpoint = FirebaseSubscriptionRepeater.newBuilder()
+        repeater = FirebaseSubscriptionRepeater.newBuilder()
                                                .setDatabase(firestore)
                                                .setSubscriptionService(subscriptionService)
                                                .build();
@@ -156,24 +161,25 @@ class FirebaseSubscriptionRepeaterTest {
     @Test
     @DisplayName("not allow nulls on construction")
     void testBuilderNotNull() {
-        new NullPointerTester().testAllPublicInstanceMethods(FirebaseSubscriptionRepeater.newBuilder());
+        new NullPointerTester()
+                .testAllPublicInstanceMethods(FirebaseSubscriptionRepeater.newBuilder());
     }
 
     @Test
     @DisplayName("not allow null arguments")
     void testNotNull() {
-        new NullPointerTester().testAllPublicInstanceMethods(endpoint);
+        new NullPointerTester().testAllPublicInstanceMethods(repeater);
     }
 
     @Test
     @DisplayName("deliver the entity state updates")
     void testDeliver() throws ExecutionException, InterruptedException {
-        final Topic topic = requestFactory.topic().allOf(Task.class);
-        endpoint.broadcast(topic);
-        final TaskId taskId = newId();
-        final Task expectedState = createTask(taskId);
+        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
+        repeater.broadcast(topic);
+        final FRCustomerId customerId = newId();
+        final FRCustomer expectedState = createTask(customerId);
         waitForConsistency();
-        final Task actualState = findTask(taskId);
+        final FRCustomer actualState = findTask(customerId);
         assertEquals(expectedState, actualState);
     }
 
@@ -181,109 +187,131 @@ class FirebaseSubscriptionRepeaterTest {
     @DisplayName("transform ID to string with the proper Stringifier")
     void testStringifyId() throws ExecutionException, InterruptedException {
         registerTaskIdStringifier();
-        final Topic topic = requestFactory.topic().allOf(Task.class);
-        endpoint.broadcast(topic);
-        final TaskId taskId = newId();
-        createTask(taskId);
+        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
+        repeater.broadcast(topic);
+        final FRCustomerId customerId = newId();
+        createTask(customerId);
         waitForConsistency();
-        final DocumentSnapshot document = findTaskDocument(taskId);
+        final DocumentSnapshot document = findTaskDocument(customerId);
         final String actualId = document.getString(id.toString());
-        final Stringifier<TaskId> stringifier = StringifierRegistry.getInstance()
-                                                                  .<TaskId>get(TaskId.class)
-                                                                  .orNull();
+        final Stringifier<FRCustomerId> stringifier =
+                StringifierRegistry.getInstance()
+                                   .<FRCustomerId>get(FRCustomerId.class)
+                                   .orNull();
         assertNotNull(stringifier);
-        final TaskId readId = stringifier.reverse().convert(actualId);
-        assertEquals(taskId, readId);
+        final FRCustomerId readId = stringifier.reverse().convert(actualId);
+        assertEquals(customerId, readId);
     }
 
-    private static Task findTask(TaskId id) throws ExecutionException, InterruptedException {
+    @Test
+    @DisplayName("partition records of different tenants")
+    void testMultitenancy() {
+//        registerTaskIdStringifier();
+//        final InternetDomain tenantDomain = InternetDomain.newBuilder()
+//                                                          .setValue("example.org")
+//                                                          .build();
+//        final EmailAddress tenantEmail = EmailAddress.newBuilder()
+//                                                     .setValue("user@example.org")
+//                                                     .build();
+//        final TenantId firstTenant = TenantId.newBuilder()
+//                                             .setDomain(tenantDomain)
+//                                             .build();
+//        final TenantId secondDomain = TenantId.newBuilder()
+//                                              .setEmail(tenantEmail)
+//                                              .build();
+
+    }
+
+    private static FRCustomer findTask(FRCustomerId id)
+            throws ExecutionException, InterruptedException {
         final DocumentSnapshot document = findTaskDocument(id);
-        final Task task = deserialize(document);
-        return task;
+        final FRCustomer customer = deserialize(document);
+        return customer;
     }
 
-    private static DocumentSnapshot findTaskDocument(TaskId taskId) throws ExecutionException,
-                                                                    InterruptedException {
-        final String collectionName = TypeName.of(Task.class)
+    private static DocumentSnapshot findTaskDocument(FRCustomerId customerId)
+            throws ExecutionException, InterruptedException {
+        final String collectionName = TypeName.of(FRCustomer.class)
                                               .value();
         final QuerySnapshot collection = firestore.collection(collectionName).get().get();
         final Collection<DocumentSnapshot> messages =
                 collection.getDocuments()
                           .stream()
                           .peek(document -> documents.add(document.getReference()))
-                          .filter(document -> idEquals(document, taskId))
+                          .filter(document -> idEquals(document, customerId))
                           .collect(toSet());
         assertEquals(1, messages.size());
         final DocumentSnapshot document = messages.iterator().next();
         return document;
     }
 
-    private Task createTask(TaskId taskId) {
+    private FRCustomer createTask(FRCustomerId customerId) {
+        return createTask(customerId, defaultTenant());
+    }
+
+    private FRCustomer createTask(FRCustomerId customerId, TenantId tenantId) {
         @SuppressWarnings("unchecked")
-        final Repository<TaskId, TaskPart> taskRepository =
-                boundedContext.findRepository(Task.class).orNull();
-        assertNotNull(taskRepository);
-        final TaskPart aggregateInstance = taskRepository.create(taskId);
-        final TaskDescription description = TaskDescription.newBuilder()
-                                                           .setValue("Test description")
-                                                           .build();
-        final CreateBasicTask cmd = CreateBasicTask.newBuilder()
-                                                   .setId(taskId)
-                                                   .setDescription(description)
-                                                   .build();
+        final Repository<FRCustomerId, CustomerAggregate> repository =
+                boundedContext.findRepository(FRCustomer.class).orNull();
+        assertNotNull(repository);
+        final CustomerAggregate aggregateInstance = repository.create(customerId);
+        final FRCreateCustomer cmd = FRCreateCustomer.newBuilder()
+                                                     .setId(customerId)
+                                                     .build();
         final Command command = requestFactory.command()
                                               .create(cmd);
         dispatchCommand(aggregateInstance, CommandEnvelope.of(command));
         final Stand stand = boundedContext.getStand();
-        stand.post(tenant(), aggregateInstance);
+        stand.post(tenantId, aggregateInstance);
         return aggregateInstance.getState();
     }
 
     private static void registerTaskIdStringifier() {
-        final Stringifier<TaskId> stringifier = new Stringifier<TaskId>() {
+        final Stringifier<FRCustomerId> stringifier = new Stringifier<FRCustomerId>() {
             @Override
-            protected String toString(TaskId genericId) {
-                return genericId.getValue();
+            protected String toString(FRCustomerId genericId) {
+                return genericId.getUid();
             }
 
             @Override
-            protected TaskId fromString(String stringId) {
-                return TaskId.newBuilder()
-                             .setValue(stringId)
-                             .build();
+            protected FRCustomerId fromString(String stringId) {
+                return FRCustomerId.newBuilder()
+                                   .setUid(stringId)
+                                   .build();
             }
         };
-        StringifierRegistry.getInstance().register(stringifier, TaskId.class);
+        StringifierRegistry.getInstance()
+                           .register(stringifier, FRCustomerId.class);
     }
 
-    private static boolean idEquals(DocumentSnapshot document, TaskId taskId) {
+    private static boolean idEquals(DocumentSnapshot document, FRCustomerId customerId) {
         final Object actualId = document.get(id.toString());
-        final String expectedIdString = Stringifiers.toString(taskId);
+        final String expectedIdString = Stringifiers.toString(customerId);
         return expectedIdString.equals(actualId);
     }
 
-    private static Task deserialize(DocumentSnapshot document) {
+    private static FRCustomer deserialize(DocumentSnapshot document) {
         final Blob blob = document.getBlob(bytes.toString());
         assertNotNull(blob);
         final byte[] bytes = blob.toBytes();
         try {
-            final Task task = Task.parseFrom(bytes);
-            return task;
+            final FRCustomer result = FRCustomer.parseFrom(bytes);
+            return result;
         } catch (InvalidProtocolBufferException e) {
             throw new IllegalArgumentException(e);
         }
     }
 
-    private static TenantId tenant() {
+    private static TenantId defaultTenant() {
         return TenantId.newBuilder()
                        .setValue(FirebaseSubscriptionRepeaterTest.class.getSimpleName())
                        .build();
     }
 
-    private static TaskId newId() {
-        return TaskId.newBuilder()
-                     .setValue(newUuid())
-                     .build();
+    private static FRCustomerId newId() {
+        return FRCustomerId.newBuilder()
+                           .setUid(newUuid())
+                           .build();
     }
 
     private static void waitForConsistency() {
