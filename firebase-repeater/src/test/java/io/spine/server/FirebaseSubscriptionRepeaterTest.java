@@ -32,6 +32,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Message;
+import io.spine.Identifier;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.TestActorRequestFactory;
 import io.spine.client.Topic;
@@ -44,7 +46,6 @@ import io.spine.server.storage.StorageFactory;
 import io.spine.server.tenant.TenantAwareOperation;
 import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
-import io.spine.string.Stringifiers;
 import io.spine.type.TypeName;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -64,9 +65,11 @@ import static com.google.common.collect.Sets.newHashSet;
 import static io.spine.server.BoundedContext.newName;
 import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.bytes;
 import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
+import static io.spine.server.given.FirebaseRepeaterTestEnv.createSession;
 import static io.spine.server.given.FirebaseRepeaterTestEnv.createTask;
 import static io.spine.server.given.FirebaseRepeaterTestEnv.newId;
-import static io.spine.server.given.FirebaseRepeaterTestEnv.registerTaskIdStringifier;
+import static io.spine.server.given.FirebaseRepeaterTestEnv.newSessionId;
+import static io.spine.server.given.FirebaseRepeaterTestEnv.registerSessionIdStringifier;
 import static io.spine.server.storage.memory.InMemoryStorageFactory.newInstance;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -169,35 +172,34 @@ class FirebaseSubscriptionRepeaterTest {
         final FRCustomerId customerId = newId();
         final FRCustomer expectedState = createTask(customerId, boundedContext);
         waitForConsistency();
-        final FRCustomer actualState = findTask(customerId);
+        final FRCustomer actualState = findCustomer(customerId);
         assertEquals(expectedState, actualState);
     }
 
     @Test
     @DisplayName("transform ID to string with the proper Stringifier")
     void testStringifyId() throws ExecutionException, InterruptedException {
-        registerTaskIdStringifier();
-        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
+        registerSessionIdStringifier();
+        final Topic topic = requestFactory.topic().allOf(FRSession.class);
         repeater.broadcast(topic);
-        final FRCustomerId customerId = newId();
-        createTask(customerId, boundedContext);
+        final FRSessionId sessionId = newSessionId();
+        createSession(sessionId, boundedContext);
         waitForConsistency();
-        final DocumentSnapshot document = findTaskDocument(customerId);
+        final DocumentSnapshot document = findDocument(FRSession.class, sessionId);
         final String actualId = document.getString(id.toString());
-        final Stringifier<FRCustomerId> stringifier =
+        final Stringifier<FRSessionId> stringifier =
                 StringifierRegistry.getInstance()
-                                   .<FRCustomerId>get(FRCustomerId.class)
+                                   .<FRSessionId>get(FRSessionId.class)
                                    .orNull();
         assertNotNull(stringifier);
-        final FRCustomerId readId = stringifier.reverse().convert(actualId);
-        assertEquals(customerId, readId);
+        final FRSessionId readId = stringifier.reverse().convert(actualId);
+        assertEquals(sessionId, readId);
     }
 
     @Test
     @DisplayName("partition records of different tenants")
     void testMultitenancy() throws ExecutionException, InterruptedException {
         init(true);
-        registerTaskIdStringifier();
         final InternetDomain tenantDomain = InternetDomain.newBuilder()
                                                           .setValue("example.org")
                                                           .build();
@@ -220,7 +222,7 @@ class FirebaseSubscriptionRepeaterTest {
         final FRCustomerId customerId = newId();
         createTask(customerId, boundedContext, secondTenant);
         waitForConsistency();
-        final Optional<?> document = tryFindTaskDocument(customerId);
+        final Optional<?> document = tryFindDocument(FRCustomer.class, customerId);
         assertFalse(document.isPresent());
     }
 
@@ -234,6 +236,7 @@ class FirebaseSubscriptionRepeaterTest {
                                        .setStorageFactorySupplier(() -> storageFactory)
                                        .build();
         boundedContext.register(new FirebaseRepeaterTestEnv.CustomerRepository());
+        boundedContext.register(new FirebaseRepeaterTestEnv.SessionRepository());
         final SubscriptionService subscriptionService = SubscriptionService.newBuilder()
                                                                            .add(boundedContext)
                                                                            .build();
@@ -243,35 +246,36 @@ class FirebaseSubscriptionRepeaterTest {
                                                .build();
     }
 
-    private static FRCustomer findTask(FRCustomerId id)
+    private static FRCustomer findCustomer(FRCustomerId id)
             throws ExecutionException, InterruptedException {
-        final DocumentSnapshot document = findTaskDocument(id);
+        final DocumentSnapshot document = findDocument(FRCustomer.class, id);
         final FRCustomer customer = deserialize(document);
         return customer;
     }
 
-    private static DocumentSnapshot findTaskDocument(FRCustomerId customerId)
+    private static DocumentSnapshot findDocument(Class<? extends Message> msgClass, Message id)
             throws ExecutionException, InterruptedException {
-        return tryFindTaskDocument(customerId)
+        return tryFindDocument(msgClass, id)
                 .orElseThrow(NoSuchElementException::new);
     }
 
-    private static Optional<DocumentSnapshot> tryFindTaskDocument(FRCustomerId customerId)
+    private static Optional<DocumentSnapshot> tryFindDocument(Class<? extends Message> msgClass,
+                                                              Message id)
             throws ExecutionException, InterruptedException {
-        final String collectionName = TypeName.of(FRCustomer.class).value();
+        final String collectionName = TypeName.of(msgClass).value();
         final QuerySnapshot collection = firestore.collection(collectionName).get().get();
         final Optional<DocumentSnapshot> result =
                 collection.getDocuments()
                           .stream()
                           .peek(document -> documents.add(document.getReference()))
-                          .filter(document -> idEquals(document, customerId))
+                          .filter(document -> idEquals(document, id))
                           .findAny();
         return result;
     }
 
-    private static boolean idEquals(DocumentSnapshot document, FRCustomerId customerId) {
+    private static boolean idEquals(DocumentSnapshot document, Message customerId) {
         final Object actualId = document.get(id.toString());
-        final String expectedIdString = Stringifiers.toString(customerId);
+        final String expectedIdString = Identifier.toString(customerId);
         return expectedIdString.equals(actualId);
     }
 

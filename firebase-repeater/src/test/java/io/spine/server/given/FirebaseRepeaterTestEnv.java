@@ -20,9 +20,16 @@
 
 package io.spine.server.given;
 
+import com.google.protobuf.Duration;
+import com.google.protobuf.Message;
+import com.google.protobuf.Timestamp;
+import com.google.protobuf.util.Timestamps;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.CommandFactory;
 import io.spine.core.CommandEnvelope;
+import io.spine.core.Event;
+import io.spine.core.EventContext;
+import io.spine.core.Subscribe;
 import io.spine.core.TenantId;
 import io.spine.core.UserId;
 import io.spine.people.PersonName;
@@ -34,20 +41,31 @@ import io.spine.server.FRCustomerCreated;
 import io.spine.server.FRCustomerId;
 import io.spine.server.FRCustomerNameChanged;
 import io.spine.server.FRCustomerVBuilder;
+import io.spine.server.FRSession;
+import io.spine.server.FRSessionId;
+import io.spine.server.FRSessionVBuilder;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.AggregateRepository;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
+import io.spine.server.command.TestEventFactory;
+import io.spine.server.entity.Entity;
 import io.spine.server.entity.Repository;
+import io.spine.server.projection.Projection;
+import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.stand.Stand;
 import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
+import io.spine.time.Time;
 
+import java.text.ParseException;
 import java.util.stream.Stream;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static io.spine.Identifier.newUuid;
 import static io.spine.client.TestActorRequestFactory.newInstance;
 import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
+import static io.spine.server.projection.ProjectionEventDispatcher.dispatch;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -62,6 +80,8 @@ public final class FirebaseRepeaterTestEnv {
                                                    .setValue("Firebase repeater test")
                                                    .build();
     private static final ActorRequestFactory defaultRequestFactory = newInstance(TEST_ACTOR);
+    private static final TestEventFactory eventFactory =
+            TestEventFactory.newInstance(FirebaseRepeaterTestEnv.class);
 
     // Prevent utility class instantiation.
     private FirebaseRepeaterTestEnv() {
@@ -73,26 +93,61 @@ public final class FirebaseRepeaterTestEnv {
                            .build();
     }
 
-    public static void registerTaskIdStringifier() {
-        final Stringifier<FRCustomerId> stringifier = new Stringifier<FRCustomerId>() {
+    public static FRSessionId newSessionId() {
+        return FRSessionId.newBuilder()
+                          .setCustomerId(newId())
+                          .setStartTime(Time.getCurrentTime())
+                          .build();
+    }
+
+    public static void registerSessionIdStringifier() {
+        final Stringifier<FRSessionId> stringifier = new Stringifier<FRSessionId>() {
+            private static final String SEPARATOR = "::";
+
             @Override
-            protected String toString(FRCustomerId genericId) {
-                return genericId.getUid();
+            protected String toString(FRSessionId genericId) {
+                final String customerUid = genericId.getCustomerId().getUid();
+                final String timestamp = Timestamps.toString(genericId.getStartTime());
+                return customerUid + SEPARATOR + timestamp;
             }
 
             @Override
-            protected FRCustomerId fromString(String stringId) {
-                return FRCustomerId.newBuilder()
-                                   .setUid(stringId)
-                                   .build();
+            protected FRSessionId fromString(String stringId) {
+                @SuppressWarnings("DynamicRegexReplaceableByCompiledPattern") // OK for tests.
+                final String[] parts = stringId.split(SEPARATOR);
+                checkArgument(parts.length == 2);
+                final FRCustomerId customerId = FRCustomerId.newBuilder()
+                                                            .setUid(parts[0])
+                                                            .build();
+                final Timestamp timestamp;
+                try {
+                    timestamp = Timestamps.parse(parts[1]);
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+                final FRSessionId result = FRSessionId.newBuilder()
+                                                      .setCustomerId(customerId)
+                                                      .setStartTime(timestamp)
+                                                      .build();
+                return result;
             }
         };
         StringifierRegistry.getInstance()
-                           .register(stringifier, FRCustomerId.class);
+                           .register(stringifier, FRSessionId.class);
     }
 
     public static FRCustomer createTask(FRCustomerId customerId, BoundedContext boundedContext) {
         return createTask(customerId, boundedContext, defaultRequestFactory);
+    }
+
+    public static void createSession(FRSessionId sessionId, BoundedContext boundedContext) {
+        final SessionProjection projection =
+                createEntity(sessionId, boundedContext, FRSession.class);
+        final FRCustomerCreated eventMsg = createdEvent(sessionId.getCustomerId());
+        final Event event = eventFactory.createEvent(eventMsg);
+        dispatch(projection, event);
+        final Stand stand = boundedContext.getStand();
+        stand.post(defaultTenant(), projection);
     }
 
     public static FRCustomer createTask(FRCustomerId customerId,
@@ -104,7 +159,8 @@ public final class FirebaseRepeaterTestEnv {
     private static FRCustomer createTask(FRCustomerId customerId,
                                          BoundedContext boundedContext,
                                          ActorRequestFactory requestFactory) {
-        final CustomerAggregate aggregate = createFreshAggregate(customerId, boundedContext);
+        final CustomerAggregate aggregate =
+                createEntity(customerId, boundedContext, FRCustomer.class);
         final CommandFactory commandFactory = requestFactory.command();
         Stream.of(createCommand(customerId), updateCommand(customerId))
               .map(commandFactory::create)
@@ -115,14 +171,14 @@ public final class FirebaseRepeaterTestEnv {
         return aggregate.getState();
     }
 
-    private static CustomerAggregate createFreshAggregate(FRCustomerId id,
-                                                          BoundedContext boundedContext) {
+    private static <I, E extends Entity<I, S>, S extends Message> E
+    createEntity(I id, BoundedContext boundedContext, Class<S> stateClass) {
         @SuppressWarnings("unchecked")
-        final Repository<FRCustomerId, CustomerAggregate> repository =
-                boundedContext.findRepository(FRCustomer.class).orNull();
+        final Repository<I, E> repository =
+                boundedContext.findRepository(stateClass).orNull();
         assertNotNull(repository);
-        final CustomerAggregate aggregateInstance = repository.create(id);
-        return aggregateInstance;
+        final E projection = repository.create(id);
+        return projection;
     }
 
     private static ActorRequestFactory requestFactory(TenantId tenantId) {
@@ -149,6 +205,13 @@ public final class FirebaseRepeaterTestEnv {
         return updateCmd;
     }
 
+    private static FRCustomerCreated createdEvent(FRCustomerId id) {
+        final FRCustomerCreated createCmd = FRCustomerCreated.newBuilder()
+                                                             .setId(id)
+                                                             .build();
+        return createCmd;
+    }
+
     private static TenantId defaultTenant() {
         return TenantId.newBuilder()
                        .setValue("Default tenant")
@@ -165,9 +228,7 @@ public final class FirebaseRepeaterTestEnv {
         @SuppressWarnings("unused") // Reflective access.
         @Assign
         FRCustomerCreated handle(FRCreateCustomer command) {
-            return FRCustomerCreated.newBuilder()
-                                    .setId(command.getId())
-                                    .build();
+            return createdEvent(command.getId());
         }
 
         @SuppressWarnings("unused") // Reflective access.
@@ -192,6 +253,32 @@ public final class FirebaseRepeaterTestEnv {
     }
 
     public static class CustomerRepository
-            extends AggregateRepository<FRCustomerId, CustomerAggregate> {
+            extends AggregateRepository<FRCustomerId, CustomerAggregate> {}
+
+    public static class SessionProjection
+            extends Projection<FRSessionId, FRSession, FRSessionVBuilder> {
+
+        protected SessionProjection(FRSessionId id) {
+            super(id);
+        }
+
+        @SuppressWarnings("unused") // Reflective access.
+        @Subscribe
+        void on(FRCustomerCreated event, EventContext context) {
+            getBuilder().setDuration(mockLogic(context));
+        }
+
+        private static Duration mockLogic(EventContext context) {
+            final Timestamp currentTime = Time.getCurrentTime();
+            final Timestamp eventTime = context.getTimestamp();
+            final long durationSeconds = eventTime.getSeconds() - currentTime.getSeconds();
+            final Duration duration = Duration.newBuilder()
+                                              .setSeconds(durationSeconds)
+                                              .build();
+            return duration;
+        }
     }
+
+    public static class SessionRepository
+            extends ProjectionRepository<FRSessionId, SessionProjection, FRSession> {}
 }

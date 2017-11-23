@@ -26,9 +26,9 @@ import com.google.cloud.firestore.WriteBatch;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Any;
 import com.google.protobuf.Message;
+import io.spine.Identifier;
 import io.spine.client.EntityStateUpdate;
 import io.spine.server.storage.StorageField;
-import io.spine.string.Stringifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,13 +80,13 @@ final class FirestoreEntityStateUpdatePublisher {
         final Any updateState = update.getState();
         final Message entityId = unpack(updateId);
         final Message message = unpack(updateState);
-        final String stringId = Stringifiers.toString(entityId);
+        final String stringId = Identifier.toString(entityId);
         final byte[] stateBytes = message.toByteArray();
         final Map<String, Object> data = of(bytes.toString(), fromBytes(stateBytes),
                                             id.toString(), stringId);
         final DocumentReference targetDocument = documentFor(stringId);
         log().info("Writing state update of type {} (id: {}) into Firestore location {}.",
-                   updateState.getTypeUrl(), entityId, targetDocument.getPath());
+                   updateState.getTypeUrl(), stringId, targetDocument.getPath());
         batch.set(targetDocument, data);
     }
 
@@ -128,8 +128,8 @@ final class FirestoreEntityStateUpdatePublisher {
         /**
          * The string field for the entity ID.
          *
-         * <p>The ID is converted to {@code String} with the corresponding
-         * {@link io.spine.string.Stringifier Stringifier}.
+         * <p>The ID is converted to {@code String} by the rules of
+         * {@link io.spine.Identifier#toString(Object) Identifier.toString(id)}.
          */
         id,
 
