@@ -75,7 +75,9 @@ import static org.junit.Assume.assumeNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
 
 /**
  * The {@link FirebaseSubscriptionRepeater} tests.
@@ -162,6 +164,20 @@ class FirebaseSubscriptionRepeaterTest {
     @DisplayName("not allow null arguments")
     void testNotNull() {
         new NullPointerTester().testAllPublicInstanceMethods(repeater);
+    }
+
+    @Test
+    @DisplayName("accept only one of Firestore of DocumentReference on construction")
+    void testAcceptOnlyOneLocation() {
+        final SubscriptionService subscriptionService = mock(SubscriptionService.class);
+        final DocumentReference location = firestore.collection("test_collection")
+                                                    .document("test_document");
+        final FirebaseSubscriptionRepeater.Builder builder =
+                FirebaseSubscriptionRepeater.newBuilder()
+                                            .setSubscriptionService(subscriptionService)
+                                            .setDatabase(firestore)
+                                            .setDatabaseLocation(location);
+        assertThrows(IllegalStateException.class, builder::build);
     }
 
     @Test
