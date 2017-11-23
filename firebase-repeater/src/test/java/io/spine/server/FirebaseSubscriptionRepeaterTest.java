@@ -36,13 +36,12 @@ import io.spine.client.ActorRequestFactory;
 import io.spine.client.TestActorRequestFactory;
 import io.spine.client.Topic;
 import io.spine.core.BoundedContextName;
-import io.spine.core.Command;
-import io.spine.core.CommandEnvelope;
 import io.spine.core.TenantId;
-import io.spine.server.entity.Repository;
+import io.spine.net.EmailAddress;
+import io.spine.net.InternetDomain;
 import io.spine.server.given.FirebaseRepeaterTestEnv;
-import io.spine.server.given.FirebaseRepeaterTestEnv.CustomerAggregate;
-import io.spine.server.stand.Stand;
+import io.spine.server.storage.StorageFactory;
+import io.spine.server.tenant.TenantAwareOperation;
 import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
 import io.spine.string.Stringifiers;
@@ -57,18 +56,21 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static io.spine.Identifier.newUuid;
 import static io.spine.server.BoundedContext.newName;
 import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.bytes;
 import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
-import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
+import static io.spine.server.given.FirebaseRepeaterTestEnv.createTask;
+import static io.spine.server.given.FirebaseRepeaterTestEnv.newId;
+import static io.spine.server.given.FirebaseRepeaterTestEnv.registerTaskIdStringifier;
 import static io.spine.server.storage.memory.InMemoryStorageFactory.newInstance;
-import static java.util.stream.Collectors.toSet;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -85,6 +87,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  *
  * @author Dmytro Dashenkov
  */
+@SuppressWarnings("ClassWithTooManyMethods")
 @Tag("CI")
 @DisplayName("FirebaseSubscriptionRepeater should")
 class FirebaseSubscriptionRepeaterTest {
@@ -142,20 +145,7 @@ class FirebaseSubscriptionRepeaterTest {
     @BeforeEach
     void beforeEach() {
         firestore = FirestoreClient.getFirestore();
-        final BoundedContextName contextName =
-                newName(FirebaseSubscriptionRepeaterTest.class.getSimpleName());
-        boundedContext = BoundedContext.newBuilder()
-                                       .setStorageFactorySupplier(
-                                               () -> newInstance(contextName, true))
-                                       .build();
-        boundedContext.register(new FirebaseRepeaterTestEnv.CustomerRepository());
-        final SubscriptionService subscriptionService = SubscriptionService.newBuilder()
-                                                                           .add(boundedContext)
-                                                                           .build();
-        repeater = FirebaseSubscriptionRepeater.newBuilder()
-                                               .setDatabase(firestore)
-                                               .setSubscriptionService(subscriptionService)
-                                               .build();
+        init(false);
     }
 
     @Test
@@ -177,7 +167,7 @@ class FirebaseSubscriptionRepeaterTest {
         final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
         repeater.broadcast(topic);
         final FRCustomerId customerId = newId();
-        final FRCustomer expectedState = createTask(customerId);
+        final FRCustomer expectedState = createTask(customerId, boundedContext);
         waitForConsistency();
         final FRCustomer actualState = findTask(customerId);
         assertEquals(expectedState, actualState);
@@ -190,7 +180,7 @@ class FirebaseSubscriptionRepeaterTest {
         final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
         repeater.broadcast(topic);
         final FRCustomerId customerId = newId();
-        createTask(customerId);
+        createTask(customerId, boundedContext);
         waitForConsistency();
         final DocumentSnapshot document = findTaskDocument(customerId);
         final String actualId = document.getString(id.toString());
@@ -205,21 +195,52 @@ class FirebaseSubscriptionRepeaterTest {
 
     @Test
     @DisplayName("partition records of different tenants")
-    void testMultitenancy() {
-//        registerTaskIdStringifier();
-//        final InternetDomain tenantDomain = InternetDomain.newBuilder()
-//                                                          .setValue("example.org")
-//                                                          .build();
-//        final EmailAddress tenantEmail = EmailAddress.newBuilder()
-//                                                     .setValue("user@example.org")
-//                                                     .build();
-//        final TenantId firstTenant = TenantId.newBuilder()
-//                                             .setDomain(tenantDomain)
-//                                             .build();
-//        final TenantId secondDomain = TenantId.newBuilder()
-//                                              .setEmail(tenantEmail)
-//                                              .build();
+    void testMultitenancy() throws ExecutionException, InterruptedException {
+        init(true);
+        registerTaskIdStringifier();
+        final InternetDomain tenantDomain = InternetDomain.newBuilder()
+                                                          .setValue("example.org")
+                                                          .build();
+        final EmailAddress tenantEmail = EmailAddress.newBuilder()
+                                                     .setValue("user@example.org")
+                                                     .build();
+        final TenantId firstTenant = TenantId.newBuilder()
+                                             .setDomain(tenantDomain)
+                                             .build();
+        final TenantId secondTenant = TenantId.newBuilder()
+                                              .setEmail(tenantEmail)
+                                              .build();
+        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
+        new TenantAwareOperation(firstTenant) {
+            @Override
+            public void run() {
+                repeater.broadcast(topic);
+            }
+        }.execute();
+        final FRCustomerId customerId = newId();
+        createTask(customerId, boundedContext, secondTenant);
+        waitForConsistency();
+        final Optional<?> document = tryFindTaskDocument(customerId);
+        assertFalse(document.isPresent());
+    }
 
+    private void init(boolean multitenant) {
+        final BoundedContextName contextName =
+                newName(FirebaseSubscriptionRepeaterTest.class.getSimpleName());
+        final StorageFactory storageFactory = newInstance(contextName, multitenant);
+        boundedContext = BoundedContext.newBuilder()
+                                       .setName(contextName.getValue())
+                                       .setMultitenant(multitenant)
+                                       .setStorageFactorySupplier(() -> storageFactory)
+                                       .build();
+        boundedContext.register(new FirebaseRepeaterTestEnv.CustomerRepository());
+        final SubscriptionService subscriptionService = SubscriptionService.newBuilder()
+                                                                           .add(boundedContext)
+                                                                           .build();
+        repeater = FirebaseSubscriptionRepeater.newBuilder()
+                                               .setDatabase(firestore)
+                                               .setSubscriptionService(subscriptionService)
+                                               .build();
     }
 
     private static FRCustomer findTask(FRCustomerId id)
@@ -231,57 +252,21 @@ class FirebaseSubscriptionRepeaterTest {
 
     private static DocumentSnapshot findTaskDocument(FRCustomerId customerId)
             throws ExecutionException, InterruptedException {
-        final String collectionName = TypeName.of(FRCustomer.class)
-                                              .value();
+        return tryFindTaskDocument(customerId)
+                .orElseThrow(NoSuchElementException::new);
+    }
+
+    private static Optional<DocumentSnapshot> tryFindTaskDocument(FRCustomerId customerId)
+            throws ExecutionException, InterruptedException {
+        final String collectionName = TypeName.of(FRCustomer.class).value();
         final QuerySnapshot collection = firestore.collection(collectionName).get().get();
-        final Collection<DocumentSnapshot> messages =
+        final Optional<DocumentSnapshot> result =
                 collection.getDocuments()
                           .stream()
                           .peek(document -> documents.add(document.getReference()))
                           .filter(document -> idEquals(document, customerId))
-                          .collect(toSet());
-        assertEquals(1, messages.size());
-        final DocumentSnapshot document = messages.iterator().next();
-        return document;
-    }
-
-    private FRCustomer createTask(FRCustomerId customerId) {
-        return createTask(customerId, defaultTenant());
-    }
-
-    private FRCustomer createTask(FRCustomerId customerId, TenantId tenantId) {
-        @SuppressWarnings("unchecked")
-        final Repository<FRCustomerId, CustomerAggregate> repository =
-                boundedContext.findRepository(FRCustomer.class).orNull();
-        assertNotNull(repository);
-        final CustomerAggregate aggregateInstance = repository.create(customerId);
-        final FRCreateCustomer cmd = FRCreateCustomer.newBuilder()
-                                                     .setId(customerId)
-                                                     .build();
-        final Command command = requestFactory.command()
-                                              .create(cmd);
-        dispatchCommand(aggregateInstance, CommandEnvelope.of(command));
-        final Stand stand = boundedContext.getStand();
-        stand.post(tenantId, aggregateInstance);
-        return aggregateInstance.getState();
-    }
-
-    private static void registerTaskIdStringifier() {
-        final Stringifier<FRCustomerId> stringifier = new Stringifier<FRCustomerId>() {
-            @Override
-            protected String toString(FRCustomerId genericId) {
-                return genericId.getUid();
-            }
-
-            @Override
-            protected FRCustomerId fromString(String stringId) {
-                return FRCustomerId.newBuilder()
-                                   .setUid(stringId)
-                                   .build();
-            }
-        };
-        StringifierRegistry.getInstance()
-                           .register(stringifier, FRCustomerId.class);
+                          .findAny();
+        return result;
     }
 
     private static boolean idEquals(DocumentSnapshot document, FRCustomerId customerId) {
@@ -300,18 +285,6 @@ class FirebaseSubscriptionRepeaterTest {
         } catch (InvalidProtocolBufferException e) {
             throw new IllegalArgumentException(e);
         }
-    }
-
-    private static TenantId defaultTenant() {
-        return TenantId.newBuilder()
-                       .setValue(FirebaseSubscriptionRepeaterTest.class.getSimpleName())
-                       .build();
-    }
-
-    private static FRCustomerId newId() {
-        return FRCustomerId.newBuilder()
-                           .setUid(newUuid())
-                           .build();
     }
 
     private static void waitForConsistency() {

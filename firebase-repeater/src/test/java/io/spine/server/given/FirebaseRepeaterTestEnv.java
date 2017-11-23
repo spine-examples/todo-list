@@ -20,6 +20,13 @@
 
 package io.spine.server.given;
 
+import io.spine.client.ActorRequestFactory;
+import io.spine.client.CommandFactory;
+import io.spine.core.CommandEnvelope;
+import io.spine.core.TenantId;
+import io.spine.core.UserId;
+import io.spine.people.PersonName;
+import io.spine.server.BoundedContext;
 import io.spine.server.FRChangeCustomerName;
 import io.spine.server.FRCreateCustomer;
 import io.spine.server.FRCustomer;
@@ -31,6 +38,17 @@ import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.AggregateRepository;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
+import io.spine.server.entity.Repository;
+import io.spine.server.stand.Stand;
+import io.spine.string.Stringifier;
+import io.spine.string.StringifierRegistry;
+
+import java.util.stream.Stream;
+
+import static io.spine.Identifier.newUuid;
+import static io.spine.client.TestActorRequestFactory.newInstance;
+import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test environment for
@@ -38,7 +56,104 @@ import io.spine.server.command.Assign;
  *
  * @author Dmytro Dashenkov
  */
-public class FirebaseRepeaterTestEnv {
+public final class FirebaseRepeaterTestEnv {
+
+    private static final UserId TEST_ACTOR = UserId.newBuilder()
+                                                   .setValue("Firebase repeater test")
+                                                   .build();
+    private static final ActorRequestFactory defaultRequestFactory = newInstance(TEST_ACTOR);
+
+    // Prevent utility class instantiation.
+    private FirebaseRepeaterTestEnv() {
+    }
+
+    public static FRCustomerId newId() {
+        return FRCustomerId.newBuilder()
+                           .setUid(newUuid())
+                           .build();
+    }
+
+    public static void registerTaskIdStringifier() {
+        final Stringifier<FRCustomerId> stringifier = new Stringifier<FRCustomerId>() {
+            @Override
+            protected String toString(FRCustomerId genericId) {
+                return genericId.getUid();
+            }
+
+            @Override
+            protected FRCustomerId fromString(String stringId) {
+                return FRCustomerId.newBuilder()
+                                   .setUid(stringId)
+                                   .build();
+            }
+        };
+        StringifierRegistry.getInstance()
+                           .register(stringifier, FRCustomerId.class);
+    }
+
+    public static FRCustomer createTask(FRCustomerId customerId, BoundedContext boundedContext) {
+        return createTask(customerId, boundedContext, defaultRequestFactory);
+    }
+
+    public static FRCustomer createTask(FRCustomerId customerId,
+                                        BoundedContext boundedContext,
+                                        TenantId tenantId) {
+        return createTask(customerId, boundedContext, requestFactory(tenantId));
+    }
+
+    private static FRCustomer createTask(FRCustomerId customerId,
+                                         BoundedContext boundedContext,
+                                         ActorRequestFactory requestFactory) {
+        final CustomerAggregate aggregate = createFreshAggregate(customerId, boundedContext);
+        final CommandFactory commandFactory = requestFactory.command();
+        Stream.of(createCommand(customerId), updateCommand(customerId))
+              .map(commandFactory::create)
+              .map(CommandEnvelope::of)
+              .forEach(cmd -> dispatchCommand(aggregate, cmd));
+        final Stand stand = boundedContext.getStand();
+        stand.post(defaultTenant(), aggregate);
+        return aggregate.getState();
+    }
+
+    private static CustomerAggregate createFreshAggregate(FRCustomerId id,
+                                                          BoundedContext boundedContext) {
+        @SuppressWarnings("unchecked")
+        final Repository<FRCustomerId, CustomerAggregate> repository =
+                boundedContext.findRepository(FRCustomer.class).orNull();
+        assertNotNull(repository);
+        final CustomerAggregate aggregateInstance = repository.create(id);
+        return aggregateInstance;
+    }
+
+    private static ActorRequestFactory requestFactory(TenantId tenantId) {
+        final ActorRequestFactory factory = newInstance(TEST_ACTOR, tenantId);
+        return factory;
+    }
+
+    private static FRCreateCustomer createCommand(FRCustomerId id) {
+        final FRCreateCustomer createCmd = FRCreateCustomer.newBuilder()
+                                                           .setId(id)
+                                                           .build();
+        return createCmd;
+    }
+
+    private static FRChangeCustomerName updateCommand(FRCustomerId id) {
+        final PersonName newName = PersonName.newBuilder()
+                                             .setGivenName("John")
+                                             .setFamilyName("Doe")
+                                             .build();
+        final FRChangeCustomerName updateCmd = FRChangeCustomerName.newBuilder()
+                                                                   .setId(id)
+                                                                   .setNewName(newName)
+                                                                   .build();
+        return updateCmd;
+    }
+
+    private static TenantId defaultTenant() {
+        return TenantId.newBuilder()
+                       .setValue("Default tenant")
+                       .build();
+    }
 
     public static class CustomerAggregate
             extends Aggregate<FRCustomerId, FRCustomer, FRCustomerVBuilder> {
@@ -47,6 +162,7 @@ public class FirebaseRepeaterTestEnv {
             super(id);
         }
 
+        @SuppressWarnings("unused") // Reflective access.
         @Assign
         FRCustomerCreated handle(FRCreateCustomer command) {
             return FRCustomerCreated.newBuilder()
@@ -54,6 +170,7 @@ public class FirebaseRepeaterTestEnv {
                                     .build();
         }
 
+        @SuppressWarnings("unused") // Reflective access.
         @Assign
         FRCustomerNameChanged handle(FRChangeCustomerName command) {
             return FRCustomerNameChanged.newBuilder()
@@ -61,11 +178,13 @@ public class FirebaseRepeaterTestEnv {
                                         .build();
         }
 
+        @SuppressWarnings("unused") // Reflective access.
         @Apply
         private void on(FRCustomerCreated event) {
             getBuilder().setId(event.getId());
         }
 
+        @SuppressWarnings("unused") // Reflective access.
         @Apply
         private void on(FRCustomerNameChanged event) {
             getBuilder().setName(event.getNewName());
@@ -73,5 +192,6 @@ public class FirebaseRepeaterTestEnv {
     }
 
     public static class CustomerRepository
-            extends AggregateRepository<FRCustomerId, CustomerAggregate> {}
+            extends AggregateRepository<FRCustomerId, CustomerAggregate> {
+    }
 }
