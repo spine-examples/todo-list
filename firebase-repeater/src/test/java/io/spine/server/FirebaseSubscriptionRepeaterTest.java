@@ -22,6 +22,7 @@ package io.spine.server;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Blob;
+import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
@@ -60,6 +61,7 @@ import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static io.spine.server.BoundedContext.newName;
@@ -71,13 +73,13 @@ import static io.spine.server.given.FirebaseRepeaterTestEnv.newId;
 import static io.spine.server.given.FirebaseRepeaterTestEnv.newSessionId;
 import static io.spine.server.given.FirebaseRepeaterTestEnv.registerSessionIdStringifier;
 import static io.spine.server.storage.memory.InMemoryStorageFactory.newInstance;
+import static java.lang.String.format;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.Mockito.mock;
 
 /**
  * The {@link FirebaseSubscriptionRepeater} tests.
@@ -112,6 +114,7 @@ class FirebaseSubscriptionRepeaterTest {
             TestActorRequestFactory.newInstance(FirebaseSubscriptionRepeaterTest.class);
     private FirebaseSubscriptionRepeater repeater;
     private BoundedContext boundedContext;
+    private SubscriptionService subscriptionService;
 
     /**
      * Stores all the {@link DocumentReference} instances used for the test suite.
@@ -169,7 +172,6 @@ class FirebaseSubscriptionRepeaterTest {
     @Test
     @DisplayName("accept only one of Firestore of DocumentReference on construction")
     void testAcceptOnlyOneLocation() {
-        final SubscriptionService subscriptionService = mock(SubscriptionService.class);
         final DocumentReference location = firestore.collection("test_collection")
                                                     .document("test_document");
         final FirebaseSubscriptionRepeater.Builder builder =
@@ -188,7 +190,7 @@ class FirebaseSubscriptionRepeaterTest {
         final FRCustomerId customerId = newId();
         final FRCustomer expectedState = createTask(customerId, boundedContext);
         waitForConsistency();
-        final FRCustomer actualState = findCustomer(customerId);
+        final FRCustomer actualState = findCustomer(customerId, firestore::collection);
         assertEquals(expectedState, actualState);
     }
 
@@ -201,7 +203,9 @@ class FirebaseSubscriptionRepeaterTest {
         final FRSessionId sessionId = newSessionId();
         createSession(sessionId, boundedContext);
         waitForConsistency();
-        final DocumentSnapshot document = findDocument(FRSession.class, sessionId);
+        final DocumentSnapshot document = findDocument(FRSession.class,
+                                                       sessionId,
+                                                       firestore::collection);
         final String actualId = document.getString(id.toString());
         final Stringifier<FRSessionId> stringifier =
                 StringifierRegistry.getInstance()
@@ -238,9 +242,30 @@ class FirebaseSubscriptionRepeaterTest {
         final FRCustomerId customerId = newId();
         createTask(customerId, boundedContext, secondTenant);
         waitForConsistency();
-        final Optional<?> document = tryFindDocument(FRCustomer.class, customerId);
+        final Optional<?> document = tryFindDocument(FRCustomer.class,
+                                                     customerId,
+                                                     firestore::collection);
         assertFalse(document.isPresent());
     }
+
+    @Test
+    @DisplayName("allow to specify a custom document to work with")
+    void testDeliverWithCustomLocation() throws ExecutionException, InterruptedException {
+        final DocumentReference customLocation = firestore.document("custom/location");
+        final FirebaseSubscriptionRepeater repeater =
+                FirebaseSubscriptionRepeater.newBuilder()
+                                            .setSubscriptionService(subscriptionService)
+                                            .setDatabaseLocation(customLocation)
+                                            .build();
+        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
+        repeater.broadcast(topic);
+        final FRCustomerId customerId = newId();
+        final FRCustomer expectedState = createTask(customerId, boundedContext);
+        waitForConsistency();
+        final FRCustomer actualState = findCustomer(customerId, customLocation::collection);
+        assertEquals(expectedState, actualState);
+    }
+
 
     private void init(boolean multitenant) {
         final BoundedContextName contextName =
@@ -253,33 +278,38 @@ class FirebaseSubscriptionRepeaterTest {
                                        .build();
         boundedContext.register(new FirebaseRepeaterTestEnv.CustomerRepository());
         boundedContext.register(new FirebaseRepeaterTestEnv.SessionRepository());
-        final SubscriptionService subscriptionService = SubscriptionService.newBuilder()
-                                                                           .add(boundedContext)
-                                                                           .build();
+        subscriptionService = SubscriptionService.newBuilder()
+                                                 .add(boundedContext)
+                                                 .build();
         repeater = FirebaseSubscriptionRepeater.newBuilder()
                                                .setDatabase(firestore)
                                                .setSubscriptionService(subscriptionService)
                                                .build();
     }
 
-    private static FRCustomer findCustomer(FRCustomerId id)
+    private static FRCustomer findCustomer(FRCustomerId id,
+                                           Function<String, CollectionReference> collectionAccess)
             throws ExecutionException, InterruptedException {
-        final DocumentSnapshot document = findDocument(FRCustomer.class, id);
+        final DocumentSnapshot document = findDocument(FRCustomer.class, id, collectionAccess);
         final FRCustomer customer = deserialize(document);
         return customer;
     }
 
-    private static DocumentSnapshot findDocument(Class<? extends Message> msgClass, Message id)
+    private static DocumentSnapshot
+    findDocument(Class<? extends Message> msgClass, Message id,
+                 Function<String, CollectionReference> collectionAccess)
             throws ExecutionException, InterruptedException {
-        return tryFindDocument(msgClass, id)
-                .orElseThrow(NoSuchElementException::new);
+        return tryFindDocument(msgClass, id, collectionAccess)
+                .orElseThrow(() -> new NoSuchElementException(
+                        format("Record with ID %s not found", id)));
     }
 
-    private static Optional<DocumentSnapshot> tryFindDocument(Class<? extends Message> msgClass,
-                                                              Message id)
+    private static Optional<DocumentSnapshot>
+    tryFindDocument(Class<? extends Message> msgClass, Message id,
+                    Function<String, CollectionReference> collectionAccess)
             throws ExecutionException, InterruptedException {
         final String collectionName = TypeName.of(msgClass).value();
-        final QuerySnapshot collection = firestore.collection(collectionName).get().get();
+        final QuerySnapshot collection = collectionAccess.apply(collectionName).get().get();
         final Optional<DocumentSnapshot> result =
                 collection.getDocuments()
                           .stream()
@@ -309,7 +339,7 @@ class FirebaseSubscriptionRepeaterTest {
 
     private static void waitForConsistency() {
         try {
-            Thread.sleep(2500L);
+            Thread.sleep(3000L);
         } catch (InterruptedException e) {
             fail(e.getMessage());
         }
