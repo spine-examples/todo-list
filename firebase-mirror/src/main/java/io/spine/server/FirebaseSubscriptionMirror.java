@@ -41,7 +41,7 @@ import static com.google.common.base.Preconditions.checkState;
  *
  * <h2>Usage</h2>
  *
- * <p>{@code FirebaseSubscriptionMirror} reflects the received messages within the specified
+ * <p>{@code FirebaseSubscriptionMirror} reflects the received messages into the specified
  * <a target="_blank" href="https://firebase.google.com/docs/firestore/">Cloud Firestore^</a>
  * database.
  *
@@ -72,16 +72,15 @@ import static com.google.common.base.Preconditions.checkState;
  * <p>The mirror writes the received entity state updates to the given Firestore by the following
  * rules:
  * <ul>
- *     <li>A {@linkplain CollectionReference collection} with the name equal to the Protobuf type
- *         name of the subscription target type is created.
+ *     <li>A {@linkplain CollectionReference collection} is created per entity type. The name of
+ *         the collection is equal to the Protobuf type name of the entity state.
  *     <li>The {@linkplain DocumentReference documents} in that collection represent the entity
- *         states. There is at most one document for each {@code Entity} instance of the target
- *         type in the collection.
+ *         states. There is at most one document for each {@code Entity} instance in the collection.
  *     <li>When the entity is updated, the appropriate document is updated as well.
  * </ul>
  *
  * <p><b>Example:</b>
- * <p>Assuming there is the
+ * <p>Assume there is the
  * {@code CustomerAggregate extends Aggregate<CustomerId, Customer, CustomerVBuilder>} entity.
  * The simplest {@code Topic} matching that entity looks like:
  * <pre>
@@ -90,8 +89,9 @@ import static com.google.common.base.Preconditions.checkState;
  *
  * <p>After starting reflecting the {@code customerTopic}, the entity state updates will be written
  * under {@code /example.customer.Customer/document-key}. The {@code document-key} here is a unique
- * key assigned to this instance of {@code Customer} by the mirror. Note that the document key
- * is not a valid {@code CustomerAggregate} ID. Do NOT depend any business logic on its value.
+ * key assigned to this instance of {@code Customer} by the mirror. Note that
+ * the {@code document-key} is not a valid {@code CustomerAggregate} ID. Do NOT depend any business
+ * logic on its value.
  *
  * <h3>Document structure</h3>
  *
@@ -109,13 +109,13 @@ import static com.google.common.base.Preconditions.checkState;
  * <p>Consider providing a custom {@link io.spine.string.Stringifier Stringifier} for the ID type
  * if the ID is compound.
  *
+ * <a name="multitenancy"></a>
+ *
  * <h2>Multitenancy</h2>
  *
  * <p>When working with multitenant {@code BoundedContext}s, reflecting a topic should be started
- * explicitly for each tenant. To to that, use {@link #reflect(Topic, TenantId)} instead of
+ * explicitly for each tenant. To do that, use {@link #reflect(Topic, TenantId)} instead of
  * {@link #reflect(Topic)}.
- *
- * <p>Here the {@code tenantId} is the ID of the tenant to start the reflect for.
  *
  * <p>In a multitenant bounded context, starting a reflect without specifying an explicit tenant
  * may cause unpredictable behavior.
@@ -138,8 +138,8 @@ import static com.google.common.base.Preconditions.checkState;
  *
  * <p>When specifying a custom database location, all
  * the <a href="#protocol">generated collections</a> will be placed under the given location
- * (i.e. be <a href="https://firebase.google.com/docs/firestore/data-model">sub-collections</a> of
- * the given document).
+ * (i.e. be <a target="_blank" href="https://firebase.google.com/docs/firestore/data-model">
+ * sub-collections^</a> of the given document).
  *
  * @author Dmytro Dashenkov
  * @see SubscriptionService
@@ -162,13 +162,16 @@ public final class FirebaseSubscriptionMirror {
     /**
      * Starts reflecting the given {@link Topic} into the Cloud Firestore.
      *
-     * <p>After this method invocation the underlying {@link Firestore} (eventually) starts
+     * <p>After this method invocation, the underlying {@link Firestore} (eventually) starts
      * receiving the entity state updates for the given {@code topic}.
      *
      * <p>See <a href="#protocol">class level doc</a> for the description of the storage protocol.
      *
+     * <p><i>Warning:</i> DO NOT use this method in multi-tenant bounded contexts. Use
+     * {@link #reflect(Topic, TenantId)} instead.
+     *
      * @param topic the topic to reflect
-     * @see #reflect(Topic, TenantId) for multitenant bounded contexts
+     * @see #reflect(Topic, TenantId)
      */
     public void reflect(Topic topic) {
         checkNotNull(topic);
@@ -195,7 +198,8 @@ public final class FirebaseSubscriptionMirror {
      *
      * @param topic    the topic to reflect
      * @param tenantId the tenant whose entity updates will be reflected
-     * @see #reflect(Topic) for single-tenant bounded contexts
+     * @see #reflect(Topic)
+     * @see <a href="#multitenancy">multitenancy note</a>
      */
     public void reflect(Topic topic, TenantId tenantId) {
         new TenantAwareOperation(tenantId) {
@@ -232,7 +236,7 @@ public final class FirebaseSubscriptionMirror {
         private Builder() {}
 
         /**
-         * Sets a {@link SubscriptionService} to use in the build mirror.
+         * Sets a {@link SubscriptionService} to use in the built mirror.
          *
          * <p>Note that the service is not a gRPC stub but the implementation itself. This allows
          * not to deploy a {@code SubscriptionService} at all, but just use it in memory.
@@ -249,15 +253,15 @@ public final class FirebaseSubscriptionMirror {
         /**
          * Sets the database to the built mirror.
          *
-         * <p>Either this method of {@link #setDatabaseLocation(DocumentReference)} must be called,
+         * <p>Either this method or {@link #setDatabaseLocation(DocumentReference)} must be called,
          * but not both.
          *
-         * <p>In case if this method is called, the generated by repeated collections will be
+         * <p>In case if this method is called, the generated by the mirror collections will be
          * located in the database root.
          *
          * @param database the {@link Firestore} to use
          * @return self for method chaining
-         * @see #setDatabaseLocation(DocumentReference) for an alternative option
+         * @see #setDatabaseLocation(DocumentReference)
          */
         public Builder setDatabase(Firestore database) {
             this.database = checkNotNull(database);
@@ -267,14 +271,14 @@ public final class FirebaseSubscriptionMirror {
         /**
          * Sets the custom database location to the built mirror.
          *
-         * <p>Either this method of {@link #setDatabase(Firestore)} must be called, but not both.
+         * <p>Either this method or {@link #setDatabase(Firestore)} must be called, but not both.
          *
-         * <p>In case if this method is called, the generated by repeated collections will be
+         * <p>In case if this method is called, the generated by the mirror collections will be
          * located under the specified document.
          *
          * @param location the {@link DocumentReference} to write the data into
          * @return self for method chaining
-         * @see #setDatabase(Firestore) for an alternative option
+         * @see #setDatabase(Firestore)
          */
         public Builder setDatabaseLocation(DocumentReference location) {
             this.location = checkNotNull(location);
