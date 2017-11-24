@@ -39,26 +39,26 @@ import static com.google.common.base.Preconditions.checkState;
  *
  * <h2>Usage</h2>
  *
- * <p>{@code FirebaseSubscriptionRepeater} broadcasts the received messages within the specified
+ * <p>{@code FirebaseSubscriptionMirror} broadcasts the received messages within the specified
  * <a target="_blank" href="https://firebase.google.com/docs/firestore/">Cloud Firestore^</a>
  * database.
  *
- * <p>Use {@code FirebaseSubscriptionRepeater} as a subscription update delivery system. When
- * dealing with a number of subscribers (e.g. browser clients), the repeater should be considered
+ * <p>Use {@code FirebaseSubscriptionMirror} as a subscription update delivery system. When
+ * dealing with a number of subscribers (e.g. browser clients), the mirror should be considered
  * a more reliable solution comparing to delivering the updates over gRPC with
  * {@code SubscriptionService}.
  *
- * <p>To start using the repeater, follow these steps:
+ * <p>To start using the mirror, follow these steps:
  * <ol>
  *     <li>Go to the
  *         <a target="_blank" href="https://console.firebase.google.com">Firebase Console^</a>,
  *         select the desired project and enable Cloud Firestore.
  *     <li>Create an instance of {@link Firestore} and pass it to a
- *         {@code FirebaseSubscriptionRepeater}.
+ *         {@code FirebaseSubscriptionMirror}.
  *     <li>{@linkplain io.spine.client.ActorRequestFactory Create} instances of {@code Topic} to
  *         subscribe to.
- *     <li>{@linkplain #broadcast(Topic) Broadcast} each of those {@code Topic}s with
- *         the {@code FirebaseSubscriptionRepeater} instance.
+ *     <li>{@linkplain #reflect(Topic) Broadcast} each of those {@code Topic}s with
+ *         the {@code FirebaseSubscriptionMirror} instance.
  * </ol>
  *
  * <a name="protocol"></a>
@@ -67,7 +67,7 @@ import static com.google.common.base.Preconditions.checkState;
  *
  * <h3>Location</h3>
  *
- * <p>The repeater writes the received entity state updates to the given Firestore by the following
+ * <p>The mirror writes the received entity state updates to the given Firestore by the following
  * rules:
  * <ul>
  *     <li>A {@linkplain CollectionReference collection} with the name equal to the Protobuf type
@@ -86,14 +86,14 @@ import static com.google.common.base.Preconditions.checkState;
  *     {@code final Topic customerTopic = requestFactory.topics().allOf(Customer.class);}
  * </pre>
  *
- * <p>When the broadcast for {@code customerTopic} is started, the entity state updates are written
+ * <p>When the reflect for {@code customerTopic} is started, the entity state updates are written
  * under {@code /example.customer.Customer/document-key}. The {@code document-key} here is a unique
- * key assigned to this instance of {@code Customer} by the repeater. Note that the document key
+ * key assigned to this instance of {@code Customer} by the mirror. Note that the document key
  * is not a valid ID of a {@code CustomerAggregate}. Do NOT depend any business logic on its value.
  *
  * <h3>Document structure</h3>
  *
- * <p>The Firestore documents created by the repeater have the following structure:
+ * <p>The Firestore documents created by the mirror have the following structure:
  * <ul>
  *     <li>{@code id}: string;
  *     <li>{@code bytes}: BLOB.
@@ -109,28 +109,28 @@ import static com.google.common.base.Preconditions.checkState;
  *
  * <h2>Multitenancy</h2>
  *
- * <p>When working with multitenant {@code BoundedContext}s, the topic broadcast should be started
- * for each tenant explicitly. To start the broadcast for a certain tenant do:
+ * <p>When working with multitenant {@code BoundedContext}s, the topic reflect should be started
+ * for each tenant explicitly. To start the reflect for a certain tenant do:
  * <pre>
  *     {@code
  *     new TenantAwareOperation(tenantId) {
  *         \@Override
  *         public void run() {
- *             repeater.broadcast(topic);
+ *             mirror.reflect(topic);
  *         }
  *     }.execute();
  *     }
  * </pre>
  *
- * <p>Here the {@code tenantId} is the ID of the tenant to start the broadcast for.
+ * <p>Here the {@code tenantId} is the ID of the tenant to start the reflect for.
  *
- * <p>In a multitenant bounded context, starting a broadcast without specifying an explicit tenant
+ * <p>In a multitenant bounded context, starting a reflect without specifying an explicit tenant
  * may cause unpredictable behavior.
  *
  * @author Dmytro Dashenkov
  * @see SubscriptionService
  */
-public final class FirebaseSubscriptionRepeater {
+public final class FirebaseSubscriptionMirror {
 
     private final SubscriptionService subscriptionService;
 
@@ -139,7 +139,7 @@ public final class FirebaseSubscriptionRepeater {
     @Nullable
     private final DocumentReference location;
 
-    private FirebaseSubscriptionRepeater(Builder builder) {
+    private FirebaseSubscriptionMirror(Builder builder) {
         this.subscriptionService = builder.subscriptionService;
         this.database = builder.database;
         this.location = builder.location;
@@ -153,9 +153,9 @@ public final class FirebaseSubscriptionRepeater {
      *
      * <p>See <a href="#protocol">class level doc</a> for the description of the storage protocol.
      *
-     * @param topic the topic to broadcast
+     * @param topic the topic to reflect
      */
-    public void broadcast(Topic topic) {
+    public void reflect(Topic topic) {
         checkNotNull(topic);
         final Target target = topic.getTarget();
         final String type = target.getType();
@@ -174,7 +174,7 @@ public final class FirebaseSubscriptionRepeater {
     }
 
     /**
-     * Creates a new instance of {@code Builder} for {@code FirebaseSubscriptionRepeater}
+     * Creates a new instance of {@code Builder} for {@code FirebaseSubscriptionMirror}
      * instances.
      *
      * @return new instance of {@code Builder}
@@ -184,7 +184,7 @@ public final class FirebaseSubscriptionRepeater {
     }
 
     /**
-     * A builder for the {@code FirebaseSubscriptionRepeater} instances.
+     * A builder for the {@code FirebaseSubscriptionMirror} instances.
      */
     public static final class Builder {
 
@@ -199,7 +199,7 @@ public final class FirebaseSubscriptionRepeater {
         private Builder() {}
 
         /**
-         * Sets a {@link SubscriptionService} to use in the build repeater.
+         * Sets a {@link SubscriptionService} to use in the build mirror.
          *
          * <p>Note that the service is not a gRPC stub but the implementation itself. This allows
          * not to deploy a {@code SubscriptionService} at all, but just use it in memory.
@@ -214,7 +214,7 @@ public final class FirebaseSubscriptionRepeater {
         }
 
         /**
-         * Sets the database to the built repeater.
+         * Sets the database to the built mirror.
          *
          * <p>Either this method of {@link #setDatabaseLocation(DocumentReference)} must be called,
          * but not both.
@@ -232,7 +232,7 @@ public final class FirebaseSubscriptionRepeater {
         }
 
         /**
-         * Sets the custom database location to the built repeater.
+         * Sets the custom database location to the built mirror.
          *
          * <p>Either this method of {@link #setDatabase(Firestore)} must be called, but not both.
          *
@@ -249,16 +249,16 @@ public final class FirebaseSubscriptionRepeater {
         }
 
         /**
-         * Creates a new instance of {@code FirebaseSubscriptionRepeater}.
+         * Creates a new instance of {@code FirebaseSubscriptionMirror}.
          *
-         * @return new instance of {@code FirebaseSubscriptionRepeater} with the given
+         * @return new instance of {@code FirebaseSubscriptionMirror} with the given
          *         parameters
          */
-        public FirebaseSubscriptionRepeater build() {
+        public FirebaseSubscriptionMirror build() {
             checkNotNull(subscriptionService);
             checkState((database != null) ^ (location != null),
                        "Either database or databaseLocation must be set, but not both.");
-            return new FirebaseSubscriptionRepeater(this);
+            return new FirebaseSubscriptionMirror(this);
         }
     }
 }

@@ -44,6 +44,7 @@ import io.spine.server.FRCustomerVBuilder;
 import io.spine.server.FRSession;
 import io.spine.server.FRSessionId;
 import io.spine.server.FRSessionVBuilder;
+import io.spine.server.FirebaseSubscriptionMirror;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.AggregateRepository;
 import io.spine.server.aggregate.Apply;
@@ -70,21 +71,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Test environment for
- * the {@link io.spine.server.FirebaseSubscriptionRepeater FirebaseSubscriptionRepeater} tests.
+ * the {@link FirebaseSubscriptionMirror FirebaseSubscriptionMirror} tests.
  *
  * @author Dmytro Dashenkov
  */
-public final class FirebaseRepeaterTestEnv {
+public final class FirebaseMirrorTestEnv {
 
     private static final UserId TEST_ACTOR = UserId.newBuilder()
-                                                   .setValue("Firebase repeater test")
+                                                   .setValue("Firebase mirror test")
                                                    .build();
     private static final ActorRequestFactory defaultRequestFactory = newInstance(TEST_ACTOR);
     private static final TestEventFactory eventFactory =
-            TestEventFactory.newInstance(FirebaseRepeaterTestEnv.class);
+            TestEventFactory.newInstance(FirebaseMirrorTestEnv.class);
 
     // Prevent utility class instantiation.
-    private FirebaseRepeaterTestEnv() {
+    private FirebaseMirrorTestEnv() {
     }
 
     public static FRCustomerId newId() {

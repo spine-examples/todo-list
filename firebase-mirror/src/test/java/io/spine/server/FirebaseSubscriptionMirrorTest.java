@@ -42,7 +42,7 @@ import io.spine.core.BoundedContextName;
 import io.spine.core.TenantId;
 import io.spine.net.EmailAddress;
 import io.spine.net.InternetDomain;
-import io.spine.server.given.FirebaseRepeaterTestEnv;
+import io.spine.server.given.FirebaseMirrorTestEnv;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.tenant.TenantAwareOperation;
 import io.spine.string.Stringifier;
@@ -67,11 +67,11 @@ import static com.google.common.collect.Sets.newHashSet;
 import static io.spine.server.BoundedContext.newName;
 import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.bytes;
 import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
-import static io.spine.server.given.FirebaseRepeaterTestEnv.createSession;
-import static io.spine.server.given.FirebaseRepeaterTestEnv.createTask;
-import static io.spine.server.given.FirebaseRepeaterTestEnv.newId;
-import static io.spine.server.given.FirebaseRepeaterTestEnv.newSessionId;
-import static io.spine.server.given.FirebaseRepeaterTestEnv.registerSessionIdStringifier;
+import static io.spine.server.given.FirebaseMirrorTestEnv.createSession;
+import static io.spine.server.given.FirebaseMirrorTestEnv.createTask;
+import static io.spine.server.given.FirebaseMirrorTestEnv.newId;
+import static io.spine.server.given.FirebaseMirrorTestEnv.newSessionId;
+import static io.spine.server.given.FirebaseMirrorTestEnv.registerSessionIdStringifier;
 import static io.spine.server.storage.memory.InMemoryStorageFactory.newInstance;
 import static java.lang.String.format;
 import static org.junit.Assume.assumeNotNull;
@@ -82,7 +82,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * The {@link FirebaseSubscriptionRepeater} tests.
+ * The {@link FirebaseSubscriptionMirror} tests.
  *
  * <p>These tests should be executed on CI only, as they rely on the {@code serviceAccount.json}
  * which is stored encrypted in the Git repository and is decrypted on CI with private environment
@@ -90,20 +90,20 @@ import static org.junit.jupiter.api.Assertions.fail;
  *
  * <p>To run the tests locally, go to the Firebase console, create a new service account and save
  * the generated {@code .json} file as
- * {@code firebase-repeater/src/test/resources/serviceAccount.json}. Then run the tests from IDE.
+ * {@code firebase-mirror/src/test/resources/serviceAccount.json}. Then run the tests from IDE.
  *
  * @author Dmytro Dashenkov
  */
 @SuppressWarnings("ClassWithTooManyMethods")
 @Tag("CI")
-@DisplayName("FirebaseSubscriptionRepeater should")
-class FirebaseSubscriptionRepeaterTest {
+@DisplayName("FirebaseSubscriptionMirror should")
+class FirebaseSubscriptionMirrorTest {
 
     private static final String FIREBASE_SERVICE_ACC_SECRET = "serviceAccount.json";
     private static final String DATABASE_URL = "https://spine-firestore-test.firebaseio.com";
 
     /**
-     * The {@link Firestore} instance to access from the repeater.
+     * The {@link Firestore} instance to access from the mirror.
      *
      * <p>This field is declared {@code static} to make it accessible in {@link AfterAll @AfterAll}
      * methods for the test data clean up.
@@ -111,8 +111,8 @@ class FirebaseSubscriptionRepeaterTest {
     private static Firestore firestore = null;
 
     private final ActorRequestFactory requestFactory =
-            TestActorRequestFactory.newInstance(FirebaseSubscriptionRepeaterTest.class);
-    private FirebaseSubscriptionRepeater repeater;
+            TestActorRequestFactory.newInstance(FirebaseSubscriptionMirrorTest.class);
+    private FirebaseSubscriptionMirror mirror;
     private BoundedContext boundedContext;
     private SubscriptionService subscriptionService;
 
@@ -125,7 +125,7 @@ class FirebaseSubscriptionRepeaterTest {
 
     @BeforeAll
     static void beforeAll() throws IOException {
-        final InputStream firebaseSecret = FirebaseSubscriptionRepeaterTest.class
+        final InputStream firebaseSecret = FirebaseSubscriptionMirrorTest.class
                 .getClassLoader()
                 .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
         // Check if `serviceAccount.json` file exists.
@@ -160,13 +160,13 @@ class FirebaseSubscriptionRepeaterTest {
     @DisplayName("not allow nulls on construction")
     void testBuilderNotNull() {
         new NullPointerTester()
-                .testAllPublicInstanceMethods(FirebaseSubscriptionRepeater.newBuilder());
+                .testAllPublicInstanceMethods(FirebaseSubscriptionMirror.newBuilder());
     }
 
     @Test
     @DisplayName("not allow null arguments")
     void testNotNull() {
-        new NullPointerTester().testAllPublicInstanceMethods(repeater);
+        new NullPointerTester().testAllPublicInstanceMethods(mirror);
     }
 
     @Test
@@ -174,11 +174,11 @@ class FirebaseSubscriptionRepeaterTest {
     void testAcceptOnlyOneLocation() {
         final DocumentReference location = firestore.collection("test_collection")
                                                     .document("test_document");
-        final FirebaseSubscriptionRepeater.Builder builder =
-                FirebaseSubscriptionRepeater.newBuilder()
-                                            .setSubscriptionService(subscriptionService)
-                                            .setDatabase(firestore)
-                                            .setDatabaseLocation(location);
+        final FirebaseSubscriptionMirror.Builder builder =
+                FirebaseSubscriptionMirror.newBuilder()
+                                          .setSubscriptionService(subscriptionService)
+                                          .setDatabase(firestore)
+                                          .setDatabaseLocation(location);
         assertThrows(IllegalStateException.class, builder::build);
     }
 
@@ -186,7 +186,7 @@ class FirebaseSubscriptionRepeaterTest {
     @DisplayName("deliver the entity state updates")
     void testDeliver() throws ExecutionException, InterruptedException {
         final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
-        repeater.broadcast(topic);
+        mirror.reflect(topic);
         final FRCustomerId customerId = newId();
         final FRCustomer expectedState = createTask(customerId, boundedContext);
         waitForConsistency();
@@ -199,7 +199,7 @@ class FirebaseSubscriptionRepeaterTest {
     void testStringifyId() throws ExecutionException, InterruptedException {
         registerSessionIdStringifier();
         final Topic topic = requestFactory.topic().allOf(FRSession.class);
-        repeater.broadcast(topic);
+        mirror.reflect(topic);
         final FRSessionId sessionId = newSessionId();
         createSession(sessionId, boundedContext);
         waitForConsistency();
@@ -236,7 +236,7 @@ class FirebaseSubscriptionRepeaterTest {
         new TenantAwareOperation(firstTenant) {
             @Override
             public void run() {
-                repeater.broadcast(topic);
+                mirror.reflect(topic);
             }
         }.execute();
         final FRCustomerId customerId = newId();
@@ -252,13 +252,13 @@ class FirebaseSubscriptionRepeaterTest {
     @DisplayName("allow to specify a custom document to work with")
     void testDeliverWithCustomLocation() throws ExecutionException, InterruptedException {
         final DocumentReference customLocation = firestore.document("custom/location");
-        final FirebaseSubscriptionRepeater repeater =
-                FirebaseSubscriptionRepeater.newBuilder()
-                                            .setSubscriptionService(subscriptionService)
-                                            .setDatabaseLocation(customLocation)
-                                            .build();
+        final FirebaseSubscriptionMirror mirror =
+                FirebaseSubscriptionMirror.newBuilder()
+                                          .setSubscriptionService(subscriptionService)
+                                          .setDatabaseLocation(customLocation)
+                                          .build();
         final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
-        repeater.broadcast(topic);
+        mirror.reflect(topic);
         final FRCustomerId customerId = newId();
         final FRCustomer expectedState = createTask(customerId, boundedContext);
         waitForConsistency();
@@ -269,22 +269,22 @@ class FirebaseSubscriptionRepeaterTest {
 
     private void init(boolean multitenant) {
         final BoundedContextName contextName =
-                newName(FirebaseSubscriptionRepeaterTest.class.getSimpleName());
+                newName(FirebaseSubscriptionMirrorTest.class.getSimpleName());
         final StorageFactory storageFactory = newInstance(contextName, multitenant);
         boundedContext = BoundedContext.newBuilder()
                                        .setName(contextName.getValue())
                                        .setMultitenant(multitenant)
                                        .setStorageFactorySupplier(() -> storageFactory)
                                        .build();
-        boundedContext.register(new FirebaseRepeaterTestEnv.CustomerRepository());
-        boundedContext.register(new FirebaseRepeaterTestEnv.SessionRepository());
+        boundedContext.register(new FirebaseMirrorTestEnv.CustomerRepository());
+        boundedContext.register(new FirebaseMirrorTestEnv.SessionRepository());
         subscriptionService = SubscriptionService.newBuilder()
                                                  .add(boundedContext)
                                                  .build();
-        repeater = FirebaseSubscriptionRepeater.newBuilder()
-                                               .setDatabase(firestore)
-                                               .setSubscriptionService(subscriptionService)
-                                               .build();
+        mirror = FirebaseSubscriptionMirror.newBuilder()
+                                             .setDatabase(firestore)
+                                             .setSubscriptionService(subscriptionService)
+                                             .build();
     }
 
     private static FRCustomer findCustomer(FRCustomerId id,
