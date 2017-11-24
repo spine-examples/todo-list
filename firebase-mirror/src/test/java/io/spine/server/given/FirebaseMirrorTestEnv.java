@@ -20,6 +20,11 @@
 
 package io.spine.server.given;
 
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.cloud.FirestoreClient;
 import com.google.protobuf.Duration;
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
@@ -59,6 +64,8 @@ import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
 import io.spine.time.Time;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.stream.Stream;
 
@@ -67,6 +74,7 @@ import static io.spine.Identifier.newUuid;
 import static io.spine.client.TestActorRequestFactory.newInstance;
 import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static io.spine.server.projection.ProjectionEventDispatcher.dispatch;
+import static org.junit.Assume.assumeNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
@@ -77,12 +85,17 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 public final class FirebaseMirrorTestEnv {
 
+    private static final String FIREBASE_SERVICE_ACC_SECRET = "serviceAccount.json";
+    private static final String DATABASE_URL = "https://spine-firestore-test.firebaseio.com";
+
     private static final UserId TEST_ACTOR = UserId.newBuilder()
                                                    .setValue("Firebase mirror test")
                                                    .build();
     private static final ActorRequestFactory defaultRequestFactory = newInstance(TEST_ACTOR);
     private static final TestEventFactory eventFactory =
             TestEventFactory.newInstance(FirebaseMirrorTestEnv.class);
+
+    private static Firestore firestore = null;
 
     // Prevent utility class instantiation.
     private FirebaseMirrorTestEnv() {
@@ -99,6 +112,30 @@ public final class FirebaseMirrorTestEnv {
                           .setCustomerId(newId())
                           .setStartTime(Time.getCurrentTime())
                           .build();
+    }
+
+    @SuppressWarnings("NonThreadSafeLazyInitialization") // OK for a test.
+    public static Firestore getFirestore() {
+        if (firestore == null) {
+            final InputStream firebaseSecret = FirebaseMirrorTestEnv.class
+                    .getClassLoader()
+                    .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
+            // Check if `serviceAccount.json` file exists.
+            assumeNotNull(firebaseSecret);
+            final GoogleCredentials credentials;
+            try {
+                credentials = GoogleCredentials.fromStream(firebaseSecret);
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
+            final FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setDatabaseUrl(DATABASE_URL)
+                    .setCredentials(credentials)
+                    .build();
+            FirebaseApp.initializeApp(options);
+            firestore = FirestoreClient.getFirestore();
+        }
+        return firestore;
     }
 
     public static void registerSessionIdStringifier() {

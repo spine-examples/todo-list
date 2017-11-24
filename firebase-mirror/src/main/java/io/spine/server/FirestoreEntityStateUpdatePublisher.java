@@ -55,7 +55,7 @@ final class FirestoreEntityStateUpdatePublisher {
     private final CollectionReference databaseSlice;
 
     FirestoreEntityStateUpdatePublisher(CollectionReference databaseSlice) {
-        this.databaseSlice = databaseSlice;
+        this.databaseSlice = checkNotNull(databaseSlice);
     }
 
     /**

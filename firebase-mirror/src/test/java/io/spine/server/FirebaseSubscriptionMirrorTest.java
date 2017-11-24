@@ -20,7 +20,6 @@
 
 package io.spine.server;
 
-import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Blob;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
@@ -29,8 +28,6 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteBatch;
 import com.google.common.testing.NullPointerTester;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
@@ -55,7 +52,6 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -68,12 +64,12 @@ import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateFie
 import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
 import static io.spine.server.given.FirebaseMirrorTestEnv.createSession;
 import static io.spine.server.given.FirebaseMirrorTestEnv.createTask;
+import static io.spine.server.given.FirebaseMirrorTestEnv.getFirestore;
 import static io.spine.server.given.FirebaseMirrorTestEnv.newId;
 import static io.spine.server.given.FirebaseMirrorTestEnv.newSessionId;
 import static io.spine.server.given.FirebaseMirrorTestEnv.registerSessionIdStringifier;
 import static io.spine.server.storage.memory.InMemoryStorageFactory.newInstance;
 import static java.lang.String.format;
-import static org.junit.Assume.assumeNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -98,16 +94,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 @DisplayName("FirebaseSubscriptionMirror should")
 class FirebaseSubscriptionMirrorTest {
 
-    private static final String FIREBASE_SERVICE_ACC_SECRET = "serviceAccount.json";
-    private static final String DATABASE_URL = "https://spine-firestore-test.firebaseio.com";
-
     /**
      * The {@link Firestore} instance to access from the mirror.
      *
      * <p>This field is declared {@code static} to make it accessible in {@link AfterAll @AfterAll}
      * methods for the test data clean up.
      */
-    private static Firestore firestore = null;
+    private static Firestore firestore = getFirestore();
 
     private final ActorRequestFactory requestFactory =
             TestActorRequestFactory.newInstance(FirebaseSubscriptionMirrorTest.class);
@@ -124,17 +117,7 @@ class FirebaseSubscriptionMirrorTest {
 
     @BeforeAll
     static void beforeAll() throws IOException {
-        final InputStream firebaseSecret = FirebaseSubscriptionMirrorTest.class
-                .getClassLoader()
-                .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
-        // Check if `serviceAccount.json` file exists.
-        assumeNotNull(firebaseSecret);
-        final GoogleCredentials credentials = GoogleCredentials.fromStream(firebaseSecret);
-        final FirebaseOptions options = new FirebaseOptions.Builder()
-                .setDatabaseUrl(DATABASE_URL)
-                .setCredentials(credentials)
-                .build();
-        FirebaseApp.initializeApp(options);
+
     }
 
     @AfterAll

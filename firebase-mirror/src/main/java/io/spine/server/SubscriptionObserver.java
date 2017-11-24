@@ -24,6 +24,8 @@ import io.grpc.stub.StreamObserver;
 import io.spine.client.Subscription;
 import io.spine.client.SubscriptionUpdate;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * An implementation of {@link StreamObserver} which
  * {@linkplain SubscriptionService#activate activates} all the received {@link Subscription}s.
@@ -42,12 +44,13 @@ final class SubscriptionObserver implements StreamObserver<Subscription> {
 
     SubscriptionObserver(SubscriptionService service,
                          StreamObserver<SubscriptionUpdate> dataObserver) {
-        this.subscriptionService = service;
-        this.dataObserver = dataObserver;
+        this.subscriptionService = checkNotNull(service);
+        this.dataObserver = checkNotNull(dataObserver);
     }
 
     @Override
     public void onNext(Subscription subscription) {
+        checkNotNull(subscription);
         subscriptionService.activate(subscription, dataObserver);
     }
 
