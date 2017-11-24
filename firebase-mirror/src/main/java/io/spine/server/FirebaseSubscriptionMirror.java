@@ -28,6 +28,8 @@ import io.spine.client.Subscription;
 import io.spine.client.SubscriptionUpdate;
 import io.spine.client.Target;
 import io.spine.client.Topic;
+import io.spine.core.TenantId;
+import io.spine.server.tenant.TenantAwareOperation;
 
 import javax.annotation.Nullable;
 
@@ -35,11 +37,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * A client of {@link SubscriptionService} that repeats the received messages to Firebase.
+ * A client of {@link SubscriptionService} that mirrors the received messages to Firebase.
  *
  * <h2>Usage</h2>
  *
- * <p>{@code FirebaseSubscriptionMirror} broadcasts the received messages within the specified
+ * <p>{@code FirebaseSubscriptionMirror} reflects the received messages within the specified
  * <a target="_blank" href="https://firebase.google.com/docs/firestore/">Cloud Firestore^</a>
  * database.
  *
@@ -56,9 +58,9 @@ import static com.google.common.base.Preconditions.checkState;
  *     <li>Create an instance of {@link Firestore} and pass it to a
  *         {@code FirebaseSubscriptionMirror}.
  *     <li>{@linkplain io.spine.client.ActorRequestFactory Create} instances of {@code Topic} to
- *         subscribe to.
- *     <li>{@linkplain #reflect(Topic) Broadcast} each of those {@code Topic}s with
- *         the {@code FirebaseSubscriptionMirror} instance.
+ *         reflect.
+ *     <li>{@linkplain #reflect(Topic) Reflect} each of those {@code Topic}s with
+ *         the {@code FirebaseSubscriptionMirror} instance into the Cloud Firestore.
  * </ol>
  *
  * <a name="protocol"></a>
@@ -86,10 +88,10 @@ import static com.google.common.base.Preconditions.checkState;
  *     {@code final Topic customerTopic = requestFactory.topics().allOf(Customer.class);}
  * </pre>
  *
- * <p>When the reflect for {@code customerTopic} is started, the entity state updates are written
+ * <p>After starting reflecting the {@code customerTopic}, the entity state updates will be written
  * under {@code /example.customer.Customer/document-key}. The {@code document-key} here is a unique
  * key assigned to this instance of {@code Customer} by the mirror. Note that the document key
- * is not a valid ID of a {@code CustomerAggregate}. Do NOT depend any business logic on its value.
+ * is not a valid {@code CustomerAggregate} ID. Do NOT depend any business logic on its value.
  *
  * <h3>Document structure</h3>
  *
@@ -109,23 +111,35 @@ import static com.google.common.base.Preconditions.checkState;
  *
  * <h2>Multitenancy</h2>
  *
- * <p>When working with multitenant {@code BoundedContext}s, the topic reflect should be started
- * for each tenant explicitly. To start the reflect for a certain tenant do:
- * <pre>
- *     {@code
- *     new TenantAwareOperation(tenantId) {
- *         \@Override
- *         public void run() {
- *             mirror.reflect(topic);
- *         }
- *     }.execute();
- *     }
- * </pre>
+ * <p>When working with multitenant {@code BoundedContext}s, reflecting a topic should be started
+ * explicitly for each tenant. To to that, use {@link #reflect(Topic, TenantId)} instead of
+ * {@link #reflect(Topic)}.
  *
  * <p>Here the {@code tenantId} is the ID of the tenant to start the reflect for.
  *
  * <p>In a multitenant bounded context, starting a reflect without specifying an explicit tenant
  * may cause unpredictable behavior.
+ *
+ * <p>It may be convenient to have a separate Firebase project for each tenant. If this is not
+ * possible, use a custom database location instead:
+ * <pre>
+ *     {@code
+ *     final Topic topic = // retrieve desired topic.
+ *     final TenantId tenant = // get the tenant ID e.g. from ActorContext.
+ *     final DocumentReference location = // dedicate a document for this tenant
+ *     final FirebaseSubscriptionMirror mirror =
+ *             FirebaseSubscriptionMirror.newBuilder()
+ *                                       .setSubscriptionService(service)
+ *                                       .setDatabaseLocation(location)
+ *                                       .build();
+ *     mirror.reflect(topic, tenant);
+ *     }
+ * </pre>
+ *
+ * <p>When specifying a custom database location, all
+ * the <a href="#protocol">generated collections</a> will be placed under the given location
+ * (i.e. be <a href="https://firebase.google.com/docs/firestore/data-model">sub-collections</a> of
+ * the given document).
  *
  * @author Dmytro Dashenkov
  * @see SubscriptionService
@@ -146,7 +160,7 @@ public final class FirebaseSubscriptionMirror {
     }
 
     /**
-     * Starts broadcasting the given {@link Topic} withing the Cloud Firestore.
+     * Starts reflecting the given {@link Topic} into the Cloud Firestore.
      *
      * <p>After this method invocation the underlying {@link Firestore} (eventually) starts
      * receiving the entity state updates for the given {@code topic}.
@@ -154,6 +168,7 @@ public final class FirebaseSubscriptionMirror {
      * <p>See <a href="#protocol">class level doc</a> for the description of the storage protocol.
      *
      * @param topic the topic to reflect
+     * @see #reflect(Topic, TenantId) for multitenant bounded contexts
      */
     public void reflect(Topic topic) {
         checkNotNull(topic);
@@ -171,6 +186,24 @@ public final class FirebaseSubscriptionMirror {
         final StreamObserver<Subscription> subscriptionObserver =
                 new SubscriptionObserver(subscriptionService, updateObserver);
         subscriptionService.subscribe(topic, subscriptionObserver);
+    }
+
+    /**
+     * Starts reflecting the given {@link Topic} into the Cloud Firestore for the given tenant.
+     *
+     * <p>Only the entity state updates of the given tenant will be reflected into Firebase.
+     *
+     * @param topic    the topic to reflect
+     * @param tenantId the tenant whose entity updates will be reflected
+     * @see #reflect(Topic) for single-tenant bounded contexts
+     */
+    public void reflect(Topic topic, TenantId tenantId) {
+        new TenantAwareOperation(tenantId) {
+            @Override
+            public void run() {
+                reflect(topic);
+            }
+        }.execute();
     }
 
     /**

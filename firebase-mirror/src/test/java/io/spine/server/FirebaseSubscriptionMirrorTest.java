@@ -44,7 +44,6 @@ import io.spine.net.EmailAddress;
 import io.spine.net.InternetDomain;
 import io.spine.server.given.FirebaseMirrorTestEnv;
 import io.spine.server.storage.StorageFactory;
-import io.spine.server.tenant.TenantAwareOperation;
 import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
 import io.spine.type.TypeName;
@@ -233,12 +232,7 @@ class FirebaseSubscriptionMirrorTest {
                                               .setEmail(tenantEmail)
                                               .build();
         final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
-        new TenantAwareOperation(firstTenant) {
-            @Override
-            public void run() {
-                mirror.reflect(topic);
-            }
-        }.execute();
+        mirror.reflect(topic, firstTenant);
         final FRCustomerId customerId = newId();
         createTask(customerId, boundedContext, secondTenant);
         waitForConsistency();
