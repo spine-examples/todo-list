@@ -287,6 +287,21 @@ class FirebaseSubscriptionMirrorTest {
                                              .build();
     }
 
+    /**
+     * Finds a {@code FRCustomer} with the given ID.
+     *
+     * <p>The collection of {@code FRCustomer} records is retrieved with the given
+     * {@code collectionAccess} function.
+     *
+     * <p>Note that the {@code collectionAccess} accepts a short name of the collection (not
+     * the whole path).
+     *
+     * @param id the {@code FRCustomer} ID to search by
+     * @param collectionAccess a function retrieving
+     *                         the {@linkplain CollectionReference collection} which holds the
+     *                         {@code FRCustomer}
+     * @return the found {@code FRCustomer}
+     */
     private static FRCustomer findCustomer(FRCustomerId id,
                                            Function<String, CollectionReference> collectionAccess)
             throws ExecutionException, InterruptedException {
@@ -295,6 +310,14 @@ class FirebaseSubscriptionMirrorTest {
         return customer;
     }
 
+    /**
+     * Finds a {@link DocumentReference} containing the given ID.
+     *
+     * <p>Unlike {@link #tryFindDocument(Class, Message, Function)}, this method throws
+     * a {@link NoSuchElementException} if the searched document is not found.
+     *
+     * @see #tryFindDocument(Class, Message, Function)
+     */
     private static DocumentSnapshot
     findDocument(Class<? extends Message> msgClass, Message id,
                  Function<String, CollectionReference> collectionAccess)
@@ -304,6 +327,20 @@ class FirebaseSubscriptionMirrorTest {
                         format("Record with ID %s not found", id)));
     }
 
+    /**
+     * Finds a {@link DocumentReference} containing the given ID.
+     *
+     * <p>The document is looked up in the {@linkplain CollectionReference collection} returned by
+     * the given {@code collectionAccess} function. The collection should have the Protobuf type
+     * name of the message of the specified {@code msgClass}.
+     *
+     * @param msgClass the type of the message stored in the searched document
+     * @param id the ID of the message stored in the searched document
+     * @param collectionAccess a function retrieving
+     *                         the {@linkplain CollectionReference collection} which holds the
+     *                         document
+     * @return the searched document or {@code Optional.empty()} if no such document is found
+     */
     private static Optional<DocumentSnapshot>
     tryFindDocument(Class<? extends Message> msgClass, Message id,
                     Function<String, CollectionReference> collectionAccess)
