@@ -45,13 +45,11 @@ import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
 import io.spine.type.TypeName;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -115,11 +113,6 @@ class FirebaseSubscriptionMirrorTest {
      */
     private static final Collection<DocumentReference> documents = newHashSet();
 
-    @BeforeAll
-    static void beforeAll() throws IOException {
-
-    }
-
     @AfterAll
     static void afterAll() throws ExecutionException, InterruptedException {
         final WriteBatch batch = firestore.batch();
@@ -127,7 +120,8 @@ class FirebaseSubscriptionMirrorTest {
             batch.delete(document);
         }
         // Submit the depletion operations and ensure execution.
-        batch.commit().get();
+        batch.commit()
+             .get();
         documents.clear();
     }
 
@@ -243,7 +237,6 @@ class FirebaseSubscriptionMirrorTest {
         assertEquals(expectedState, actualState);
     }
 
-
     private void init(boolean multitenant) {
         final BoundedContextName contextName =
                 newName(FirebaseSubscriptionMirrorTest.class.getSimpleName());
@@ -259,9 +252,9 @@ class FirebaseSubscriptionMirrorTest {
                                                  .add(boundedContext)
                                                  .build();
         mirror = FirebaseSubscriptionMirror.newBuilder()
-                                             .setDatabase(firestore)
-                                             .setSubscriptionService(subscriptionService)
-                                             .build();
+                                           .setDatabase(firestore)
+                                           .setSubscriptionService(subscriptionService)
+                                           .build();
     }
 
     /**
@@ -273,7 +266,7 @@ class FirebaseSubscriptionMirrorTest {
      * <p>Note that the {@code collectionAccess} accepts a short name of the collection (not
      * the whole path).
      *
-     * @param id the {@code FRCustomer} ID to search by
+     * @param id               the {@code FRCustomer} ID to search by
      * @param collectionAccess a function retrieving
      *                         the {@linkplain CollectionReference collection} which holds the
      *                         {@code FRCustomer}
@@ -281,7 +274,8 @@ class FirebaseSubscriptionMirrorTest {
      */
     private static FRCustomer findCustomer(FRCustomerId id,
                                            Function<String, CollectionReference> collectionAccess)
-            throws ExecutionException, InterruptedException {
+            throws ExecutionException,
+                   InterruptedException {
         final DocumentSnapshot document = findDocument(FRCustomer.class, id, collectionAccess);
         final FRCustomer customer = deserialize(document);
         return customer;
@@ -298,7 +292,8 @@ class FirebaseSubscriptionMirrorTest {
     private static DocumentSnapshot
     findDocument(Class<? extends Message> msgClass, Message id,
                  Function<String, CollectionReference> collectionAccess)
-            throws ExecutionException, InterruptedException {
+            throws ExecutionException,
+                   InterruptedException {
         return tryFindDocument(msgClass, id, collectionAccess)
                 .orElseThrow(() -> new NoSuchElementException(
                         format("Record with ID %s not found", id)));
@@ -311,8 +306,8 @@ class FirebaseSubscriptionMirrorTest {
      * the given {@code collectionAccess} function. The collection should have the Protobuf type
      * name of the message of the specified {@code msgClass}.
      *
-     * @param msgClass the type of the message stored in the searched document
-     * @param id the ID of the message stored in the searched document
+     * @param msgClass         the type of the message stored in the searched document
+     * @param id               the ID of the message stored in the searched document
      * @param collectionAccess a function retrieving
      *                         the {@linkplain CollectionReference collection} which holds the
      *                         document
@@ -321,9 +316,11 @@ class FirebaseSubscriptionMirrorTest {
     private static Optional<DocumentSnapshot>
     tryFindDocument(Class<? extends Message> msgClass, Message id,
                     Function<String, CollectionReference> collectionAccess)
-            throws ExecutionException, InterruptedException {
+            throws ExecutionException,
+                   InterruptedException {
         final String collectionName = TypeName.of(msgClass).value();
-        final QuerySnapshot collection = collectionAccess.apply(collectionName).get().get();
+        final QuerySnapshot collection = collectionAccess.apply(collectionName)
+                                                         .get().get();
         final Optional<DocumentSnapshot> result =
                 collection.getDocuments()
                           .stream()

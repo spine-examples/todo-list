@@ -63,8 +63,8 @@ final class SubscriptionToFirebaseAdapter
     @Override
     public void onError(Throwable error) {
         log().error(format("Subscription with target `%s` has been completed with an error.",
-                                                        target.getPath()),
-                                                 error);
+                           target.getPath()),
+                    error);
     }
 
     @Override

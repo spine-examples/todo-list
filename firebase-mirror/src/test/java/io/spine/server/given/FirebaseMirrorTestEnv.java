@@ -144,7 +144,8 @@ public final class FirebaseMirrorTestEnv {
 
             @Override
             protected String toString(FRSessionId genericId) {
-                final String customerUid = genericId.getCustomerId().getUid();
+                final String customerUid = genericId.getCustomerId()
+                                                    .getUid();
                 final String timestamp = Timestamps.toString(genericId.getStartTime());
                 return customerUid + SEPARATOR + timestamp;
             }
@@ -211,9 +212,9 @@ public final class FirebaseMirrorTestEnv {
 
     private static <I, E extends Entity<I, S>, S extends Message> E
     createEntity(I id, BoundedContext boundedContext, Class<S> stateClass) {
-        @SuppressWarnings("unchecked")
-        final Repository<I, E> repository =
-                boundedContext.findRepository(stateClass).orNull();
+        @SuppressWarnings("unchecked") final Repository<I, E> repository =
+                boundedContext.findRepository(stateClass)
+                              .orNull();
         assertNotNull(repository);
         final E projection = repository.create(id);
         return projection;
@@ -291,7 +292,8 @@ public final class FirebaseMirrorTestEnv {
     }
 
     public static class CustomerRepository
-            extends AggregateRepository<FRCustomerId, CustomerAggregate> {}
+            extends AggregateRepository<FRCustomerId, CustomerAggregate> {
+    }
 
     public static class SessionProjection
             extends Projection<FRSessionId, FRSession, FRSessionVBuilder> {
@@ -318,5 +320,6 @@ public final class FirebaseMirrorTestEnv {
     }
 
     public static class SessionRepository
-            extends ProjectionRepository<FRSessionId, SessionProjection, FRSession> {}
+            extends ProjectionRepository<FRSessionId, SessionProjection, FRSession> {
+    }
 }
