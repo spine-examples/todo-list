@@ -307,8 +307,7 @@ public final class FirebaseMirrorTestEnv {
     }
 
     public static class CustomerRepository
-            extends AggregateRepository<FRCustomerId, CustomerAggregate> {
-    }
+            extends AggregateRepository<FRCustomerId, CustomerAggregate> {}
 
     public static class SessionProjection
             extends Projection<FRSessionId, FRSession, FRSessionVBuilder> {
@@ -335,6 +334,5 @@ public final class FirebaseMirrorTestEnv {
     }
 
     public static class SessionRepository
-            extends ProjectionRepository<FRSessionId, SessionProjection, FRSession> {
-    }
+            extends ProjectionRepository<FRSessionId, SessionProjection, FRSession> {}
 }
