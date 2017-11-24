@@ -72,7 +72,8 @@ public class SubscriptionToFirebaseAdapterTest {
     void testParams() throws NoSuchMethodException {
         final StreamObserver<?> observer = new SubscriptionToFirebaseAdapter(target());
         new NullPointerTester()
-                .ignore(StreamObserver.class.getMethod("onError", Throwable.class))
+                .ignore(SubscriptionToFirebaseAdapter.class.getMethod("onError",
+                                                                      Throwable.class))
                 .testAllPublicInstanceMethods(observer);
     }
 

@@ -142,7 +142,10 @@ class FirebaseSubscriptionMirrorTest {
     @Test
     @DisplayName("not allow null arguments")
     void testNotNull() {
-        new NullPointerTester().testAllPublicInstanceMethods(mirror);
+        new NullPointerTester()
+                .setDefault(TenantId.class, TenantId.getDefaultInstance())
+                .setDefault(Topic.class, Topic.getDefaultInstance())
+                .testAllPublicInstanceMethods(mirror);
     }
 
     @Test
