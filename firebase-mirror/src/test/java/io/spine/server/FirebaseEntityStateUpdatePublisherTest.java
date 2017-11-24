@@ -81,5 +81,7 @@ class FirebaseEntityStateUpdatePublisherTest {
         assertNotNull(state);
         final FRCustomer actualState = FRCustomer.parseFrom(stateBlob.toBytes());
         assertEquals(expectedState, actualState);
+
+        document.getReference().delete();
     }
 }
