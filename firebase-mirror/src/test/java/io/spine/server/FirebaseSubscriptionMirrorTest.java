@@ -28,7 +28,6 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteBatch;
 import com.google.common.testing.NullPointerTester;
-import com.google.firebase.cloud.FirestoreClient;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import io.spine.Identifier;
@@ -72,7 +71,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * The {@link FirebaseSubscriptionMirror} tests.
@@ -98,7 +96,7 @@ class FirebaseSubscriptionMirrorTest {
      * <p>This field is declared {@code static} to make it accessible in {@link AfterAll @AfterAll}
      * methods for the test data clean up.
      */
-    private static Firestore firestore = getFirestore();
+    private static final Firestore firestore = getFirestore();
 
     private final ActorRequestFactory requestFactory =
             TestActorRequestFactory.newInstance(FirebaseSubscriptionMirrorTest.class);
@@ -128,8 +126,7 @@ class FirebaseSubscriptionMirrorTest {
     @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
     @BeforeEach
     void beforeEach() {
-        firestore = FirestoreClient.getFirestore();
-        init(false);
+        initializeEnvironment(false);
     }
 
     @Test
@@ -168,7 +165,7 @@ class FirebaseSubscriptionMirrorTest {
         mirror.reflect(topic);
         final FRCustomerId customerId = newId();
         final FRCustomer expectedState = createTask(customerId, boundedContext);
-        waitForConsistency();
+        FirebaseMirrorTestEnv.waitForConsistency();
         final FRCustomer actualState = findCustomer(customerId, firestore::collection);
         assertEquals(expectedState, actualState);
     }
@@ -181,7 +178,7 @@ class FirebaseSubscriptionMirrorTest {
         mirror.reflect(topic);
         final FRSessionId sessionId = newSessionId();
         createSession(sessionId, boundedContext);
-        waitForConsistency();
+        FirebaseMirrorTestEnv.waitForConsistency();
         final DocumentSnapshot document = findDocument(FRSession.class,
                                                        sessionId,
                                                        firestore::collection);
@@ -198,7 +195,7 @@ class FirebaseSubscriptionMirrorTest {
     @Test
     @DisplayName("partition records of different tenants")
     void testMultitenancy() throws ExecutionException, InterruptedException {
-        init(true);
+        initializeEnvironment(true);
         final InternetDomain tenantDomain = InternetDomain.newBuilder()
                                                           .setValue("example.org")
                                                           .build();
@@ -215,7 +212,7 @@ class FirebaseSubscriptionMirrorTest {
         mirror.reflect(topic, firstTenant);
         final FRCustomerId customerId = newId();
         createTask(customerId, boundedContext, secondTenant);
-        waitForConsistency();
+        FirebaseMirrorTestEnv.waitForConsistency();
         final Optional<?> document = tryFindDocument(FRCustomer.class,
                                                      customerId,
                                                      firestore::collection);
@@ -235,12 +232,12 @@ class FirebaseSubscriptionMirrorTest {
         mirror.reflect(topic);
         final FRCustomerId customerId = newId();
         final FRCustomer expectedState = createTask(customerId, boundedContext);
-        waitForConsistency();
+        FirebaseMirrorTestEnv.waitForConsistency();
         final FRCustomer actualState = findCustomer(customerId, customLocation::collection);
         assertEquals(expectedState, actualState);
     }
 
-    private void init(boolean multitenant) {
+    private void initializeEnvironment(boolean multitenant) {
         final BoundedContextName contextName =
                 newName(FirebaseSubscriptionMirrorTest.class.getSimpleName());
         final StorageFactory storageFactory = newInstance(contextName, multitenant);
@@ -348,14 +345,6 @@ class FirebaseSubscriptionMirrorTest {
             return result;
         } catch (InvalidProtocolBufferException e) {
             throw new IllegalArgumentException(e);
-        }
-    }
-
-    private static void waitForConsistency() {
-        try {
-            Thread.sleep(3000L);
-        } catch (InterruptedException e) {
-            fail(e.getMessage());
         }
     }
 }
