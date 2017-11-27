@@ -126,33 +126,63 @@ import static java.util.stream.Collectors.toSet;
  *
  * <h2>Multitenancy</h2>
  *
- * <p>When working with multitenant {@code BoundedContext}s, reflecting a topic should be started
- * explicitly for each tenant. To do that, use {@link #reflect(Topic, TenantId)} instead of
- * {@link #reflect(Topic)}.
- *
- * <p>In a multitenant bounded context, starting a reflect without specifying an explicit tenant
- * may cause unpredictable behavior.
+ * <p>When working with multitenant {@code BoundedContext}s, reflecting is started:
+ * <ul>
+ *     <li>for the specified in {@code Topic.context.tenant_id} if it's present;
+ *     <li>for all the tenants in the given bounded contexts is the tenant is not specified in
+ *         the {@code Topic}.
+ * </ul>
  *
  * <p>It may be convenient to have a separate Firebase project for each tenant. If this is not
  * possible, use a custom firestore document instead:
  * <pre>
  *     {@code
- *     final Topic topic = // retrieve desired topic.
- *     final TenantId tenant = // get the tenant ID e.g. from ActorContext.
- *     final DocumentReference document = // dedicate a document for this tenant
+ *     final Topic topic = // Retrieve desired topic.
+ *     final TenantId tenant = // Get the tenant ID e.g. from ActorContext.
+ *     final DocumentReference document = // Dedicate a document for this tenant.
  *     final FirebaseSubscriptionMirror mirror =
  *             FirebaseSubscriptionMirror.newBuilder()
  *                                       .setSubscriptionService(service)
  *                                       .setFirestoreDocument(document)
+ *                                       .addBoundedContext(myBoundedContext)
  *                                       .build();
- *     mirror.reflect(topic, tenant);
+ *     mirror.reflect(topic);
  *     }
  * </pre>
  *
  * <p>When specifying a custom firestore document, all
  * the <a href="#protocol">generated collections</a> will be placed under the given document
- * (i.e. be <a target="_blank" href="https://firebase.google.com/docs/firestore/data-model">
- * sub-collections^</a> of the given document).
+ * (i.e. be <a target="_blank"
+ * href="https://firebase.google.com/docs/firestore/data-model#subcollections">sub-collections^</a>
+ * of the given document).
+ *
+ * <p>Also, it is possible to specify not a single document, but a function mapping
+ * the {@code Topic}s to the documents. For example, it may be convenient to map each actor (user)
+ * to a separate document and setup the security rules in a way that only that user may read
+ * the records under that document. Example:
+ * <pre>
+ *     {@code
+ *     final Topic topic = // Retrieve desired topic.
+ *     final TenantId tenant = // Get the tenant ID e.g. from ActorContext.
+ *     final CollectionReference root = // Dedicate a collection for all the topics.
+ *     final Function<Topic, Document> locator = topic -> {
+ *         // Each user has own document.
+ *         final String userId = topic.getContext().getActor().getValue();
+ *         return collection.document(userId);
+ *     };
+ *     final FirebaseSubscriptionMirror mirror =
+ *             FirebaseSubscriptionMirror.newBuilder()
+ *                                       .setSubscriptionService(service)
+ *                                       .setLocatorFunction(locator)
+ *                                       .addBoundedContext(myBoundedContext)
+ *                                       .build();
+ *     mirror.reflect(topic);
+ *     }
+ * </pre>
+ *
+ * <p>In this example, each user has a dedicated document. Note the Firestore document
+ * <a target="_blank" href="https://firebase.google.com/docs/firestore/quotas">name limitations^</a>
+ * when generating custom documents.
  *
  * @author Dmytro Dashenkov
  * @see SubscriptionService
@@ -188,7 +218,6 @@ public final class FirebaseSubscriptionMirror {
      * <p>See <a href="#protocol">class level doc</a> for the description of the storage protocol.
      *
      * @param topic the topic to reflect
-     * @see #reflect(Topic, TenantId)
      */
     public void reflect(Topic topic) {
         checkNotNull(topic);
