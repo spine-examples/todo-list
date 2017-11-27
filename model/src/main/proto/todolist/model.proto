@@ -32,7 +32,6 @@ option java_generate_equals_and_hash = true;
 
 import "google/protobuf/timestamp.proto";
 
-
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
 import "todolist/values.proto";
@@ -105,4 +104,30 @@ message TaskLabel {
     //
     // Optional. Defaults to the `LabelColor.LC_UNDEFINED`.
     LabelColor color = 3;
+}
+
+message TaskCreation {
+
+    TaskCreationId id = 1 [(required) = true];
+
+    Stage stage = 2 [(required) = true];
+
+    TaskId task_id = 3 [(required) = true];
+
+    enum Stage {
+
+        TCS_UNKNOWN = 0;
+
+        STARED = 1;
+
+        DESCRIPTION_SET = 2;
+
+        PIORITY_SET = 3;
+
+        DUE_DATE_SET = 4;
+
+        LABELS_ADDED = 5;
+
+        COMPLETED = 6;
+    }
 }
