@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.server;
+package io.spine.server.firebase;
 
 import com.google.cloud.firestore.CollectionReference;
 import io.grpc.stub.StreamObserver;

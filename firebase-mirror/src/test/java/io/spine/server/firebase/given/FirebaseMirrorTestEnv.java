@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.server.given;
+package io.spine.server.firebase.given;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Firestore;
@@ -39,17 +39,6 @@ import io.spine.core.TenantId;
 import io.spine.core.UserId;
 import io.spine.people.PersonName;
 import io.spine.server.BoundedContext;
-import io.spine.server.FRChangeCustomerName;
-import io.spine.server.FRCreateCustomer;
-import io.spine.server.FRCustomer;
-import io.spine.server.FRCustomerCreated;
-import io.spine.server.FRCustomerId;
-import io.spine.server.FRCustomerNameChanged;
-import io.spine.server.FRCustomerVBuilder;
-import io.spine.server.FRSession;
-import io.spine.server.FRSessionId;
-import io.spine.server.FRSessionVBuilder;
-import io.spine.server.FirebaseSubscriptionMirror;
 import io.spine.server.aggregate.Aggregate;
 import io.spine.server.aggregate.AggregateRepository;
 import io.spine.server.aggregate.Apply;
@@ -57,6 +46,17 @@ import io.spine.server.command.Assign;
 import io.spine.server.command.TestEventFactory;
 import io.spine.server.entity.Entity;
 import io.spine.server.entity.Repository;
+import io.spine.server.firebase.FRChangeCustomerName;
+import io.spine.server.firebase.FRCreateCustomer;
+import io.spine.server.firebase.FRCustomer;
+import io.spine.server.firebase.FRCustomerCreated;
+import io.spine.server.firebase.FRCustomerId;
+import io.spine.server.firebase.FRCustomerNameChanged;
+import io.spine.server.firebase.FRCustomerVBuilder;
+import io.spine.server.firebase.FRSession;
+import io.spine.server.firebase.FRSessionId;
+import io.spine.server.firebase.FRSessionVBuilder;
+import io.spine.server.firebase.FirebaseSubscriptionMirror;
 import io.spine.server.projection.Projection;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.stand.Stand;

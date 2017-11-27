@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.server;
+package io.spine.server.firebase;
 
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
@@ -29,6 +29,7 @@ import io.spine.client.SubscriptionUpdate;
 import io.spine.client.Target;
 import io.spine.client.Topic;
 import io.spine.core.TenantId;
+import io.spine.server.SubscriptionService;
 import io.spine.server.tenant.TenantAwareOperation;
 
 import javax.annotation.Nullable;

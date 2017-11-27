@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.server;
+package io.spine.server.firebase;
 
 import com.google.common.testing.NullPointerTester;
 import io.grpc.stub.StreamObserver;
@@ -26,6 +26,8 @@ import io.spine.Identifier;
 import io.spine.client.Subscription;
 import io.spine.client.SubscriptionId;
 import io.spine.client.SubscriptionUpdate;
+import io.spine.server.SubscriptionService;
+import io.spine.server.firebase.SubscriptionObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

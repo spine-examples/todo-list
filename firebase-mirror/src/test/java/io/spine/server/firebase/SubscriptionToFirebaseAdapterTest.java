@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.server;
+package io.spine.server.firebase;
 
 import com.google.cloud.firestore.CollectionReference;
 import com.google.common.testing.NullPointerTester;
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static io.spine.protobuf.TypeConverter.toAny;
-import static io.spine.server.given.FirebaseMirrorTestEnv.getFirestore;
+import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.getFirestore;
 
 /**
  * @author Dmytro Dashenkov

@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.server;
+package io.spine.server.firebase;
 
 import com.google.cloud.firestore.Blob;
 import com.google.cloud.firestore.CollectionReference;
@@ -38,7 +38,9 @@ import io.spine.core.BoundedContextName;
 import io.spine.core.TenantId;
 import io.spine.net.EmailAddress;
 import io.spine.net.InternetDomain;
-import io.spine.server.given.FirebaseMirrorTestEnv;
+import io.spine.server.BoundedContext;
+import io.spine.server.SubscriptionService;
+import io.spine.server.firebase.given.FirebaseMirrorTestEnv;
 import io.spine.server.storage.StorageFactory;
 import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
@@ -57,14 +59,8 @@ import java.util.function.Function;
 
 import static com.google.common.collect.Sets.newHashSet;
 import static io.spine.server.BoundedContext.newName;
-import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.bytes;
-import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
-import static io.spine.server.given.FirebaseMirrorTestEnv.createSession;
-import static io.spine.server.given.FirebaseMirrorTestEnv.createTask;
-import static io.spine.server.given.FirebaseMirrorTestEnv.getFirestore;
-import static io.spine.server.given.FirebaseMirrorTestEnv.newId;
-import static io.spine.server.given.FirebaseMirrorTestEnv.newSessionId;
-import static io.spine.server.given.FirebaseMirrorTestEnv.registerSessionIdStringifier;
+import static io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField.bytes;
+import static io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
 import static io.spine.server.storage.memory.InMemoryStorageFactory.newInstance;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -96,7 +92,7 @@ class FirebaseSubscriptionMirrorTest {
      * <p>This field is declared {@code static} to make it accessible in {@link AfterAll @AfterAll}
      * methods for the test data clean up.
      */
-    private static final Firestore firestore = getFirestore();
+    private static final Firestore firestore = FirebaseMirrorTestEnv.getFirestore();
 
     private final ActorRequestFactory requestFactory =
             TestActorRequestFactory.newInstance(FirebaseSubscriptionMirrorTest.class);
@@ -163,8 +159,8 @@ class FirebaseSubscriptionMirrorTest {
     void testDeliver() throws ExecutionException, InterruptedException {
         final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
         mirror.reflect(topic);
-        final FRCustomerId customerId = newId();
-        final FRCustomer expectedState = createTask(customerId, boundedContext);
+        final FRCustomerId customerId = FirebaseMirrorTestEnv.newId();
+        final FRCustomer expectedState = FirebaseMirrorTestEnv.createTask(customerId, boundedContext);
         FirebaseMirrorTestEnv.waitForConsistency();
         final FRCustomer actualState = findCustomer(customerId, firestore::collection);
         assertEquals(expectedState, actualState);
@@ -173,11 +169,11 @@ class FirebaseSubscriptionMirrorTest {
     @Test
     @DisplayName("transform ID to string with the proper Stringifier")
     void testStringifyId() throws ExecutionException, InterruptedException {
-        registerSessionIdStringifier();
+        FirebaseMirrorTestEnv.registerSessionIdStringifier();
         final Topic topic = requestFactory.topic().allOf(FRSession.class);
         mirror.reflect(topic);
-        final FRSessionId sessionId = newSessionId();
-        createSession(sessionId, boundedContext);
+        final FRSessionId sessionId = FirebaseMirrorTestEnv.newSessionId();
+        FirebaseMirrorTestEnv.createSession(sessionId, boundedContext);
         FirebaseMirrorTestEnv.waitForConsistency();
         final DocumentSnapshot document = findDocument(FRSession.class,
                                                        sessionId,
@@ -210,8 +206,8 @@ class FirebaseSubscriptionMirrorTest {
                                               .build();
         final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
         mirror.reflect(topic, firstTenant);
-        final FRCustomerId customerId = newId();
-        createTask(customerId, boundedContext, secondTenant);
+        final FRCustomerId customerId = FirebaseMirrorTestEnv.newId();
+        FirebaseMirrorTestEnv.createTask(customerId, boundedContext, secondTenant);
         FirebaseMirrorTestEnv.waitForConsistency();
         final Optional<?> document = tryFindDocument(FRCustomer.class,
                                                      customerId,
@@ -230,8 +226,8 @@ class FirebaseSubscriptionMirrorTest {
                                           .build();
         final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
         mirror.reflect(topic);
-        final FRCustomerId customerId = newId();
-        final FRCustomer expectedState = createTask(customerId, boundedContext);
+        final FRCustomerId customerId = FirebaseMirrorTestEnv.newId();
+        final FRCustomer expectedState = FirebaseMirrorTestEnv.createTask(customerId, boundedContext);
         FirebaseMirrorTestEnv.waitForConsistency();
         final FRCustomer actualState = findCustomer(customerId, customLocation::collection);
         assertEquals(expectedState, actualState);

@@ -18,11 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.server;
+package io.spine.server.firebase;
 
 import io.grpc.stub.StreamObserver;
 import io.spine.client.Subscription;
 import io.spine.client.SubscriptionUpdate;
+import io.spine.server.SubscriptionService;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 

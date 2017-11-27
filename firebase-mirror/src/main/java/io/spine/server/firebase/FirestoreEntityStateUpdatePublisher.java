@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.server;
+package io.spine.server.firebase;
 
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
@@ -42,8 +42,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableMap.of;
 import static io.spine.protobuf.AnyPacker.unpack;
-import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.bytes;
-import static io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
+import static io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField.bytes;
+import static io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
 import static java.util.regex.Pattern.compile;
 
 /**

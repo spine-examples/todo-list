@@ -19,32 +19,27 @@
 //
 syntax = "proto3";
 
-package spine.server;
+package spine.server.firebase;
 
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.server";
+option java_package = "io.spine.server.firebase";
 option java_generate_equals_and_hash = true;
 option java_multiple_files = true;
-option java_outer_classname = "FirebaseRepeaterSessionProto";
-
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/duration.proto";
+option java_outer_classname = "FRCustomerEventsProto";
 
 import "spine/people/person_name.proto";
-import "spine/server/customer.proto";
+import "spine/server/firebase/customer.proto";
 
-message FRSessionId {
+message FRCustomerCreated {
 
-    spine.server.FRCustomerId customer_id = 1;
-
-    google.protobuf.Timestamp start_time = 2;
+    spine.server.firebase.FRCustomerId id = 1;
 }
 
-message FRSession {
+message FRCustomerNameChanged {
 
-    FRSessionId id = 1;
+    spine.server.firebase.FRCustomerId id = 1;
 
-    google.protobuf.Duration duration = 2;
+    spine.people.PersonName new_name = 2;
 }

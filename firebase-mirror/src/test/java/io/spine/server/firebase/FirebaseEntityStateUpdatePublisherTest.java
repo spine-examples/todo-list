@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.server;
+package io.spine.server.firebase;
 
 import com.google.cloud.firestore.Blob;
 import com.google.cloud.firestore.CollectionReference;
@@ -27,7 +27,8 @@ import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.spine.Identifier;
 import io.spine.client.EntityStateUpdate;
-import io.spine.server.FirestoreEntityStateUpdatePublisher.EntityStateField;
+import io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField;
+import io.spine.server.firebase.given.FirebaseMirrorTestEnv;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -35,9 +36,6 @@ import org.junit.jupiter.api.Test;
 import java.util.concurrent.ExecutionException;
 
 import static io.spine.protobuf.AnyPacker.pack;
-import static io.spine.server.given.FirebaseMirrorTestEnv.getFirestore;
-import static io.spine.server.given.FirebaseMirrorTestEnv.newId;
-import static io.spine.server.given.FirebaseMirrorTestEnv.waitForConsistency;
 import static java.util.Collections.singleton;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -50,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class FirebaseEntityStateUpdatePublisherTest {
 
     private static final CollectionReference targetCollection =
-            getFirestore().collection("test_records");
+            FirebaseMirrorTestEnv.getFirestore().collection("test_records");
 
     @Test
     @DisplayName("escape illegal chars in key")
@@ -63,15 +61,15 @@ class FirebaseEntityStateUpdatePublisherTest {
         final String expectedId = "id001_foobar";
         final Any id = Identifier.pack(rawId);
         final FRCustomer expectedState = FRCustomer.newBuilder()
-                                                 .setId(newId())
-                                                 .build();
+                                                   .setId(FirebaseMirrorTestEnv.newId())
+                                                   .build();
         final Any state = pack(expectedState);
         final EntityStateUpdate update = EntityStateUpdate.newBuilder()
                                                           .setId(id)
                                                           .setState(state)
                                                           .build();
         publisher.publish(singleton(update));
-        waitForConsistency();
+        FirebaseMirrorTestEnv.waitForConsistency();
         final DocumentSnapshot document = targetCollection.document(expectedId)
                                                           .get().get();
         final String entityStateId = document.getString(EntityStateField.id.toString());

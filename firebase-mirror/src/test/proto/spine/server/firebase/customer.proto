@@ -19,27 +19,26 @@
 //
 syntax = "proto3";
 
-package spine.server;
+package spine.server.firebase;
 
 import "spine/options.proto";
 
 option (type_url_prefix) = "type.spine.io";
-option java_package = "io.spine.server";
+option java_package = "io.spine.server.firebase";
 option java_generate_equals_and_hash = true;
 option java_multiple_files = true;
-option java_outer_classname = "FRCustomerEventsProto";
+option java_outer_classname = "FirebaseRepeaterCustomerProto";
 
 import "spine/people/person_name.proto";
-import "spine/server/customer.proto";
 
-message FRCustomerCreated {
+message FRCustomerId {
 
-    spine.server.FRCustomerId id = 1;
+    string uid = 1;
 }
 
-message FRCustomerNameChanged {
+message FRCustomer {
 
-    spine.server.FRCustomerId id = 1;
+    FRCustomerId id = 1;
 
-    spine.people.PersonName new_name = 2;
+    spine.people.PersonName name = 2;
 }
