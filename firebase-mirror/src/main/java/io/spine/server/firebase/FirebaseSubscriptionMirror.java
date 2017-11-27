@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -167,11 +168,15 @@ public final class FirebaseSubscriptionMirror {
 
     private final Collection<TenantIndex> tenantStore;
 
+    @Nullable
+    private final Function<Topic, DocumentReference> locator;
+
     private FirebaseSubscriptionMirror(Builder builder) {
         this.subscriptionService = builder.subscriptionService;
         this.firestore = builder.firestore;
         this.document = builder.document;
         this.tenantStore = builder.getTenantIndexes();
+        this.locator = builder.locator;
     }
 
     /**
@@ -233,20 +238,27 @@ public final class FirebaseSubscriptionMirror {
      * @param topic the topic to reflect
      */
     private void doReflect(Topic topic) {
-        final Target target = topic.getTarget();
-        final String key = toKey(target);
-        final CollectionReference collectionReference;
-        if (firestore == null) {
-            checkNotNull(document);
-            collectionReference = document.collection(key);
-        } else {
-            collectionReference = firestore.collection(key);
-        }
+        final CollectionReference collectionReference = collection(topic);
         final StreamObserver<SubscriptionUpdate> updateObserver =
                 new SubscriptionToFirebaseAdapter(collectionReference);
         final StreamObserver<Subscription> subscriptionObserver =
                 new SubscriptionObserver(subscriptionService, updateObserver);
         subscriptionService.subscribe(topic, subscriptionObserver);
+    }
+
+    private CollectionReference collection(Topic topic) {
+        final String collectionKey = toKey(topic.getTarget());
+        final CollectionReference result;
+        if (locator != null) {
+            final DocumentReference document = locator.apply(topic);
+            result = document.collection(collectionKey);
+        } else if (document != null) {
+            result = document.collection(collectionKey);
+        } else {
+            checkNotNull(firestore);
+            result = firestore.collection(collectionKey);
+        }
+        return result;
     }
 
     private static String toKey(Target target) {
@@ -278,6 +290,8 @@ public final class FirebaseSubscriptionMirror {
         private Firestore firestore;
         @Nullable
         private DocumentReference document;
+
+        private Function<Topic, DocumentReference> locator;
 
         // Prevent direct instantiation.
         private Builder() {}
@@ -340,9 +354,22 @@ public final class FirebaseSubscriptionMirror {
          * @param boundedContext the {@link BoundedContext} to reflect entities from
          * @return self for method chaining
          */
-        public Builder addBounedContext(BoundedContext boundedContext) {
+        public Builder addBoundedContext(BoundedContext boundedContext) {
             checkNotNull(boundedContext);
             this.boundedContexts.add(boundedContext);
+            return this;
+        }
+
+        /**
+         * Sets a custom function mapping a {@code Topic} to the {@code DocumentReference} which
+         * should be the parent to this topic collection.
+         *
+         * @param locator the topic to location function
+         * @return self for method chaining
+         */
+        public Builder setLocatorFunction(Function<Topic, DocumentReference> locator) {
+            checkNotNull(locator);
+            this.locator = locator;
             return this;
         }
 

@@ -150,7 +150,7 @@ class FirebaseSubscriptionMirrorTest {
                 FirebaseSubscriptionMirror.newBuilder()
                                           .setSubscriptionService(subscriptionService)
                                           .setFirestore(firestore)
-                                          .addBounedContext(boundedContext)
+                                          .addBoundedContext(boundedContext)
                                           .setFirestoreDocument(location);
         assertThrows(IllegalStateException.class, builder::build);
     }
@@ -277,7 +277,7 @@ class FirebaseSubscriptionMirrorTest {
                 FirebaseSubscriptionMirror.newBuilder()
                                           .setSubscriptionService(subscriptionService)
                                           .setFirestoreDocument(customLocation)
-                                          .addBounedContext(boundedContext)
+                                          .addBoundedContext(boundedContext)
                                           .build();
         final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
         mirror.reflect(topic);
@@ -297,7 +297,7 @@ class FirebaseSubscriptionMirrorTest {
         mirror = FirebaseSubscriptionMirror.newBuilder()
                                            .setFirestore(firestore)
                                            .setSubscriptionService(subscriptionService)
-                                           .addBounedContext(boundedContext)
+                                           .addBoundedContext(boundedContext)
                                            .build();
     }
 
