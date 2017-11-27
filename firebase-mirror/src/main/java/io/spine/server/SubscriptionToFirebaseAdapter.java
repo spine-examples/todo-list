@@ -41,6 +41,7 @@ import static java.lang.String.format;
  * {@linkplain StreamObserver#onCompleted() successful} or
  * {@linkplain StreamObserver#onError faulty} stream completion.
  *
+ * @author Dmytro Dashenkov
  * @see FirestoreEntityStateUpdatePublisher
  */
 final class SubscriptionToFirebaseAdapter

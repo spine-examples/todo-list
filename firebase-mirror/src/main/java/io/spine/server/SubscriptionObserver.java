@@ -36,6 +36,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * <p>The implementation throws a {@link RuntimeException} upon any
  * {@linkplain StreamObserver#onError error} and handles the
  * {@linkplain StreamObserver#onCompleted() successful completion} silently.
+ *
+ * @author Dmytro Dashenkov
  */
 final class SubscriptionObserver implements StreamObserver<Subscription> {
 
