@@ -288,8 +288,7 @@ public final class FirebaseSubscriptionMirror {
         /**
          * Creates a new instance of {@code FirebaseSubscriptionMirror}.
          *
-         * @return new instance of {@code FirebaseSubscriptionMirror} with the given
-         *         parameters
+         * @return new instance of {@code FirebaseSubscriptionMirror} with the given parameters
          */
         public FirebaseSubscriptionMirror build() {
             checkNotNull(subscriptionService);
