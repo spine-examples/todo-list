@@ -409,11 +409,17 @@ public final class FirebaseSubscriptionMirror {
          */
         public FirebaseSubscriptionMirror build() {
             checkNotNull(subscriptionService);
-            checkState((firestore != null) ^ (document != null),
-                       "Either Firestore or Firestore Document must be set, but not both.");
+            checkLocationSettings();
             checkState(!boundedContexts.isEmpty(),
                        "At least one BoundedContext should be specified.");
             return new FirebaseSubscriptionMirror(this);
+        }
+
+        private void checkLocationSettings() {
+            checkState(
+                    (firestore != null) ^ (document != null) ^ (locator != null),
+                    "Only one of Firestore or Firestore Document or locator function must be set."
+            );
         }
 
         private Collection<TenantIndex> getTenantIndexes() {

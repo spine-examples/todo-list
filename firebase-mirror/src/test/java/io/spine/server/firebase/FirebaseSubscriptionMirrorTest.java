@@ -33,6 +33,7 @@ import com.google.protobuf.Message;
 import io.spine.Identifier;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.Topic;
+import io.spine.core.ActorContext;
 import io.spine.core.TenantId;
 import io.spine.net.EmailAddress;
 import io.spine.net.InternetDomain;
@@ -286,6 +287,31 @@ class FirebaseSubscriptionMirrorTest {
         FirebaseMirrorTestEnv.waitForConsistency();
         final FRCustomer actualState = findCustomer(customerId, customLocation::collection);
         assertEquals(expectedState, actualState);
+    }
+
+    @Test
+    @DisplayName("allow to specify a custom document per topic")
+    void testCustomLocator() throws ExecutionException, InterruptedException {
+        final Function<Topic, DocumentReference> locator = topic -> {
+            final ActorContext context = topic.getContext();
+            final String userId = context.getActor().getValue();
+            return firestore.collection("user_subscriptions").document(userId);
+        };
+        final FirebaseSubscriptionMirror mirror =
+                FirebaseSubscriptionMirror.newBuilder()
+                                          .setSubscriptionService(subscriptionService)
+                                          .setLocatorFunction(locator)
+                                          .addBoundedContext(boundedContext)
+                                          .build();
+        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
+        mirror.reflect(topic);
+        final FRCustomerId customerId = newId();
+        final FRCustomer expectedState = createTask(customerId, boundedContext);
+        FirebaseMirrorTestEnv.waitForConsistency();
+        final DocumentReference expectedDocument = locator.apply(topic);
+        final FRCustomer actualState = findCustomer(customerId, expectedDocument::collection);
+        assertEquals(expectedState, actualState);
+
     }
 
     private void initializeEnvironment(boolean multitenant) {
