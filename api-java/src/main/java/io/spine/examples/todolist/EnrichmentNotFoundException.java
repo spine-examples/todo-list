@@ -21,7 +21,7 @@
 package io.spine.examples.todolist;
 
 /**
- * An exception thrown when enrichment cannot be found in {@link io.spine.base.EventContext}.
+ * An exception thrown when enrichment cannot be found in {@link io.spine.core.EventContext}.
  *
  * @author Illia Shepilov
  */
