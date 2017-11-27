@@ -24,6 +24,7 @@ import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.WriteBatch;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.CharMatcher;
 import com.google.protobuf.Any;
 import com.google.protobuf.Message;
 import io.spine.Identifier;
@@ -36,6 +37,8 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.google.cloud.firestore.Blob.fromBytes;
+import static com.google.common.base.CharMatcher.is;
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableMap.of;
 import static io.spine.protobuf.AnyPacker.unpack;
@@ -51,6 +54,7 @@ import static java.util.regex.Pattern.compile;
 final class FirestoreEntityStateUpdatePublisher {
 
     private static final Pattern INVALID_KEY_CHARS = compile("[^\\w\\d]");
+    private static final char INVALID_KEY_LEADING_CHAR = '_';
 
     private final CollectionReference databaseSlice;
 
@@ -100,23 +104,14 @@ final class FirestoreEntityStateUpdatePublisher {
         final String trimmedKey = trimUnderscore(dirtyKey);
         final String result = INVALID_KEY_CHARS.matcher(trimmedKey)
                                                .replaceAll("");
+        checkArgument(!result.isEmpty(), "Key `%s` is invalid.", dirtyKey);
         return result;
     }
 
-    @SuppressWarnings("BreakStatement") // Natural in this case.
     private static String trimUnderscore(String key) {
-        int underscoreCounter = 0;
-        for (char character : key.toCharArray()) {
-            if (character == '_') {
-                underscoreCounter++;
-            } else {
-                break;
-            }
-        }
-        final String result = underscoreCounter > 0
-                              ? key.substring(underscoreCounter)
-                              : key;
-        return result;
+        final CharMatcher matcher = is(INVALID_KEY_LEADING_CHAR);
+        final String trimmed = matcher.trimLeadingFrom(key);
+        return trimmed;
     }
 
     /**
