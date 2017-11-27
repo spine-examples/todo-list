@@ -31,6 +31,7 @@ import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.CommandFactory;
+import io.spine.core.BoundedContextName;
 import io.spine.core.CommandEnvelope;
 import io.spine.core.Event;
 import io.spine.core.EventContext;
@@ -60,6 +61,7 @@ import io.spine.server.firebase.FirebaseSubscriptionMirror;
 import io.spine.server.projection.Projection;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.stand.Stand;
+import io.spine.server.storage.StorageFactory;
 import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
 import io.spine.time.Time;
@@ -72,8 +74,10 @@ import java.util.stream.Stream;
 import static com.google.common.base.Preconditions.checkArgument;
 import static io.spine.Identifier.newUuid;
 import static io.spine.client.TestActorRequestFactory.newInstance;
+import static io.spine.server.BoundedContext.newName;
 import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static io.spine.server.projection.ProjectionEventDispatcher.dispatch;
+import static io.spine.server.storage.memory.InMemoryStorageFactory.newInstance;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -207,7 +211,8 @@ public final class FirebaseMirrorTestEnv {
               .map(CommandEnvelope::of)
               .forEach(cmd -> dispatchCommand(aggregate, cmd));
         final Stand stand = boundedContext.getStand();
-        stand.post(defaultTenant(), aggregate);
+        final TenantId tenantId = requestFactory.getTenantId();
+        stand.post(tenantId == null ? defaultTenant() : tenantId, aggregate);
         return aggregate.getState();
     }
 
@@ -270,6 +275,19 @@ public final class FirebaseMirrorTestEnv {
         } catch (InterruptedException e) {
             fail(e.getMessage());
         }
+    }
+
+    public static BoundedContext createBoundedContext(String name, boolean multitenant) {
+        final BoundedContextName contextName = newName(name);
+        final StorageFactory storageFactory = newInstance(contextName, multitenant);
+        final BoundedContext result = BoundedContext.newBuilder()
+                                                    .setName(name)
+                                                    .setMultitenant(multitenant)
+                                                    .setStorageFactorySupplier(() -> storageFactory)
+                                                    .build();
+        result.register(new CustomerRepository());
+        result.register(new SessionRepository());
+        return result;
     }
 
     public static class CustomerAggregate

@@ -32,19 +32,16 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import io.spine.Identifier;
 import io.spine.client.ActorRequestFactory;
-import io.spine.client.TestActorRequestFactory;
 import io.spine.client.Topic;
-import io.spine.core.BoundedContextName;
 import io.spine.core.TenantId;
 import io.spine.net.EmailAddress;
 import io.spine.net.InternetDomain;
 import io.spine.server.BoundedContext;
 import io.spine.server.SubscriptionService;
 import io.spine.server.firebase.given.FirebaseMirrorTestEnv;
-import io.spine.server.storage.StorageFactory;
 import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
-import io.spine.type.TypeName;
+import io.spine.type.TypeUrl;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -58,15 +55,18 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
 import static com.google.common.collect.Sets.newHashSet;
-import static io.spine.server.BoundedContext.newName;
+import static io.spine.client.TestActorRequestFactory.newInstance;
 import static io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField.bytes;
 import static io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
-import static io.spine.server.storage.memory.InMemoryStorageFactory.newInstance;
+import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.createBoundedContext;
+import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.createTask;
+import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.newId;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The {@link FirebaseSubscriptionMirror} tests.
@@ -95,7 +95,7 @@ class FirebaseSubscriptionMirrorTest {
     private static final Firestore firestore = FirebaseMirrorTestEnv.getFirestore();
 
     private final ActorRequestFactory requestFactory =
-            TestActorRequestFactory.newInstance(FirebaseSubscriptionMirrorTest.class);
+            newInstance(FirebaseSubscriptionMirrorTest.class);
     private FirebaseSubscriptionMirror mirror;
     private BoundedContext boundedContext;
     private SubscriptionService subscriptionService;
@@ -149,8 +149,19 @@ class FirebaseSubscriptionMirrorTest {
         final FirebaseSubscriptionMirror.Builder builder =
                 FirebaseSubscriptionMirror.newBuilder()
                                           .setSubscriptionService(subscriptionService)
-                                          .setDatabase(firestore)
-                                          .setDatabaseLocation(location);
+                                          .setFirestore(firestore)
+                                          .addBounedContext(boundedContext)
+                                          .setFirestoreDocument(location);
+        assertThrows(IllegalStateException.class, builder::build);
+    }
+
+    @Test
+    @DisplayName("require at least one BoundedContext on construction")
+    void testRequireBCInstance() {
+        final FirebaseSubscriptionMirror.Builder builder =
+                FirebaseSubscriptionMirror.newBuilder()
+                                          .setSubscriptionService(subscriptionService)
+                                          .setFirestore(firestore);
         assertThrows(IllegalStateException.class, builder::build);
     }
 
@@ -159,8 +170,8 @@ class FirebaseSubscriptionMirrorTest {
     void testDeliver() throws ExecutionException, InterruptedException {
         final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
         mirror.reflect(topic);
-        final FRCustomerId customerId = FirebaseMirrorTestEnv.newId();
-        final FRCustomer expectedState = FirebaseMirrorTestEnv.createTask(customerId, boundedContext);
+        final FRCustomerId customerId = newId();
+        final FRCustomer expectedState = createTask(customerId, boundedContext);
         FirebaseMirrorTestEnv.waitForConsistency();
         final FRCustomer actualState = findCustomer(customerId, firestore::collection);
         assertEquals(expectedState, actualState);
@@ -204,15 +215,58 @@ class FirebaseSubscriptionMirrorTest {
         final TenantId secondTenant = TenantId.newBuilder()
                                               .setEmail(tenantEmail)
                                               .build();
+        boundedContext.getTenantIndex()
+                      .keep(firstTenant);
         final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
-        mirror.reflect(topic, firstTenant);
-        final FRCustomerId customerId = FirebaseMirrorTestEnv.newId();
-        FirebaseMirrorTestEnv.createTask(customerId, boundedContext, secondTenant);
+        mirror.reflect(topic);
+        final FRCustomerId customerId = newId();
+        createTask(customerId, boundedContext, secondTenant);
         FirebaseMirrorTestEnv.waitForConsistency();
         final Optional<?> document = tryFindDocument(FRCustomer.class,
                                                      customerId,
                                                      firestore::collection);
         assertFalse(document.isPresent());
+    }
+
+    @Test
+    @DisplayName("use TenantId from ActorContext if specified")
+    void testSpecifiedTenant() throws ExecutionException, InterruptedException {
+        initializeEnvironment(true);
+        final InternetDomain tenantDomain = InternetDomain.newBuilder()
+                                                          .setValue("example.com")
+                                                          .build();
+        final EmailAddress tenantEmail = EmailAddress.newBuilder()
+                                                     .setValue("user@example.com")
+                                                     .build();
+        final String tenantValue = "user-id";
+        final TenantId firstTenant = TenantId.newBuilder()
+                                             .setDomain(tenantDomain)
+                                             .build();
+        final TenantId secondTenant = TenantId.newBuilder()
+                                              .setEmail(tenantEmail)
+                                              .build();
+        final TenantId thirdTenant = TenantId.newBuilder()
+                                             .setValue(tenantValue)
+                                             .build();
+        boundedContext.getTenantIndex()
+                      .keep(firstTenant);
+        final ActorRequestFactory requestFactory = newInstance(this.requestFactory.getActor(),
+                                                               thirdTenant);
+        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
+        mirror.reflect(topic);
+        final FRCustomerId firstCustomerId = newId();
+        final FRCustomerId secondCustomerId = newId();
+        final FRCustomerId thirdCustomerId = newId();
+        createTask(firstCustomerId, boundedContext, firstTenant);
+        createTask(secondCustomerId, boundedContext, secondTenant);
+        createTask(thirdCustomerId, boundedContext, thirdTenant);
+        FirebaseMirrorTestEnv.waitForConsistency();
+        assertFalse(tryFindDocument(FRCustomer.class, firstCustomerId, firestore::collection)
+                            .isPresent());
+        assertFalse(tryFindDocument(FRCustomer.class, secondCustomerId, firestore::collection)
+                            .isPresent());
+        assertTrue(tryFindDocument(FRCustomer.class, thirdCustomerId, firestore::collection)
+                            .isPresent());
     }
 
     @Test
@@ -222,34 +276,28 @@ class FirebaseSubscriptionMirrorTest {
         final FirebaseSubscriptionMirror mirror =
                 FirebaseSubscriptionMirror.newBuilder()
                                           .setSubscriptionService(subscriptionService)
-                                          .setDatabaseLocation(customLocation)
+                                          .setFirestoreDocument(customLocation)
+                                          .addBounedContext(boundedContext)
                                           .build();
         final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
         mirror.reflect(topic);
-        final FRCustomerId customerId = FirebaseMirrorTestEnv.newId();
-        final FRCustomer expectedState = FirebaseMirrorTestEnv.createTask(customerId, boundedContext);
+        final FRCustomerId customerId = newId();
+        final FRCustomer expectedState = createTask(customerId, boundedContext);
         FirebaseMirrorTestEnv.waitForConsistency();
         final FRCustomer actualState = findCustomer(customerId, customLocation::collection);
         assertEquals(expectedState, actualState);
     }
 
     private void initializeEnvironment(boolean multitenant) {
-        final BoundedContextName contextName =
-                newName(FirebaseSubscriptionMirrorTest.class.getSimpleName());
-        final StorageFactory storageFactory = newInstance(contextName, multitenant);
-        boundedContext = BoundedContext.newBuilder()
-                                       .setName(contextName.getValue())
-                                       .setMultitenant(multitenant)
-                                       .setStorageFactorySupplier(() -> storageFactory)
-                                       .build();
-        boundedContext.register(new FirebaseMirrorTestEnv.CustomerRepository());
-        boundedContext.register(new FirebaseMirrorTestEnv.SessionRepository());
+        final String name = FirebaseSubscriptionMirrorTest.class.getSimpleName();
+        boundedContext = createBoundedContext(name, multitenant);
         subscriptionService = SubscriptionService.newBuilder()
                                                  .add(boundedContext)
                                                  .build();
         mirror = FirebaseSubscriptionMirror.newBuilder()
-                                           .setDatabase(firestore)
+                                           .setFirestore(firestore)
                                            .setSubscriptionService(subscriptionService)
+                                           .addBounedContext(boundedContext)
                                            .build();
     }
 
@@ -314,7 +362,8 @@ class FirebaseSubscriptionMirrorTest {
                     Function<String, CollectionReference> collectionAccess)
             throws ExecutionException,
                    InterruptedException {
-        final String collectionName = TypeName.of(msgClass).value();
+        final TypeUrl typeUrl = TypeUrl.of(msgClass);
+        final String collectionName = typeUrl.getPrefix() + '_' + typeUrl.getTypeName();
         final QuerySnapshot collection = collectionAccess.apply(collectionName)
                                                          .get().get();
         final Optional<DocumentSnapshot> result =

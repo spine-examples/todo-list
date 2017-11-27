@@ -29,13 +29,24 @@ import io.spine.client.SubscriptionUpdate;
 import io.spine.client.Target;
 import io.spine.client.Topic;
 import io.spine.core.TenantId;
+import io.spine.server.BoundedContext;
 import io.spine.server.SubscriptionService;
 import io.spine.server.tenant.TenantAwareOperation;
+import io.spine.server.tenant.TenantIndex;
+import io.spine.server.tenant.TenantIndex.TenantIdConsumer;
+import io.spine.type.TypeUrl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
+import java.util.Collection;
+import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Sets.newHashSet;
+import static io.spine.validate.Validate.isDefault;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * A client of {@link SubscriptionService} that mirrors the received messages to Firebase.
@@ -44,7 +55,7 @@ import static com.google.common.base.Preconditions.checkState;
  *
  * <p>{@code FirebaseSubscriptionMirror} reflects the received messages into the specified
  * <a target="_blank" href="https://firebase.google.com/docs/firestore/">Cloud Firestore^</a>
- * database.
+ * firestore.
  *
  * <p>Use {@code FirebaseSubscriptionMirror} as a subscription update delivery system. When
  * dealing with a number of subscribers (e.g. browser clients), the mirror should be considered
@@ -122,23 +133,23 @@ import static com.google.common.base.Preconditions.checkState;
  * may cause unpredictable behavior.
  *
  * <p>It may be convenient to have a separate Firebase project for each tenant. If this is not
- * possible, use a custom database location instead:
+ * possible, use a custom firestore document instead:
  * <pre>
  *     {@code
  *     final Topic topic = // retrieve desired topic.
  *     final TenantId tenant = // get the tenant ID e.g. from ActorContext.
- *     final DocumentReference location = // dedicate a document for this tenant
+ *     final DocumentReference document = // dedicate a document for this tenant
  *     final FirebaseSubscriptionMirror mirror =
  *             FirebaseSubscriptionMirror.newBuilder()
  *                                       .setSubscriptionService(service)
- *                                       .setDatabaseLocation(location)
+ *                                       .setFirestoreDocument(document)
  *                                       .build();
  *     mirror.reflect(topic, tenant);
  *     }
  * </pre>
  *
- * <p>When specifying a custom database location, all
- * the <a href="#protocol">generated collections</a> will be placed under the given location
+ * <p>When specifying a custom firestore document, all
+ * the <a href="#protocol">generated collections</a> will be placed under the given document
  * (i.e. be <a target="_blank" href="https://firebase.google.com/docs/firestore/data-model">
  * sub-collections^</a> of the given document).
  *
@@ -150,14 +161,17 @@ public final class FirebaseSubscriptionMirror {
     private final SubscriptionService subscriptionService;
 
     @Nullable
-    private final Firestore database;
+    private final Firestore firestore;
     @Nullable
-    private final DocumentReference location;
+    private final DocumentReference document;
+
+    private final Collection<TenantIndex> tenantStore;
 
     private FirebaseSubscriptionMirror(Builder builder) {
         this.subscriptionService = builder.subscriptionService;
-        this.database = builder.database;
-        this.location = builder.location;
+        this.firestore = builder.firestore;
+        this.document = builder.document;
+        this.tenantStore = builder.getTenantIndexes();
     }
 
     /**
@@ -168,28 +182,32 @@ public final class FirebaseSubscriptionMirror {
      *
      * <p>See <a href="#protocol">class level doc</a> for the description of the storage protocol.
      *
-     * <p><i>Warning:</i> DO NOT use this method in multi-tenant bounded contexts. Use
-     * {@link #reflect(Topic, TenantId)} instead.
-     *
      * @param topic the topic to reflect
      * @see #reflect(Topic, TenantId)
      */
     public void reflect(Topic topic) {
         checkNotNull(topic);
-        final Target target = topic.getTarget();
-        final String type = target.getType();
-        final CollectionReference collectionReference;
-        if (database == null) {
-            checkNotNull(location);
-            collectionReference = location.collection(type);
+        final TenantId topicTenant = topic.getContext()
+                                          .getTenantId();
+        final TenantIdConsumer operation = reflectFunction(topic);
+        final String targetType = topic.getTarget().getType();
+        if (isDefault(topicTenant)) {
+            log().info("Starting reflecting type {} for all tenants.", targetType);
+            tenantStore.forEach(tenantIndex -> tenantIndex.forEachTenant(operation));
         } else {
-            collectionReference = database.collection(type);
+            log().info("Starting reflecting type {} for tenant {}.", targetType, topicTenant);
+            operation.accept(topicTenant);
         }
-        final StreamObserver<SubscriptionUpdate> updateObserver =
-                new SubscriptionToFirebaseAdapter(collectionReference);
-        final StreamObserver<Subscription> subscriptionObserver =
-                new SubscriptionObserver(subscriptionService, updateObserver);
-        subscriptionService.subscribe(topic, subscriptionObserver);
+    }
+
+    /**
+     * Partially applies {@link #reflect(Topic, TenantId)} method to the given {@code topic}.
+     *
+     * @param topic the topic to reflect
+     * @return a function
+     */
+    private TenantIdConsumer reflectFunction(Topic topic) {
+        return tenantId -> reflect(topic, tenantId);
     }
 
     /**
@@ -199,16 +217,42 @@ public final class FirebaseSubscriptionMirror {
      *
      * @param topic    the topic to reflect
      * @param tenantId the tenant whose entity updates will be reflected
-     * @see #reflect(Topic)
-     * @see <a href="#multitenancy">multitenancy note</a>
      */
-    public void reflect(Topic topic, TenantId tenantId) {
+    private void reflect(Topic topic, TenantId tenantId) {
         new TenantAwareOperation(tenantId) {
             @Override
             public void run() {
-                reflect(topic);
+                doReflect(topic);
             }
         }.execute();
+    }
+
+    /**
+     * Starts reflecting {@code topic} for the current tenant.
+     *
+     * @param topic the topic to reflect
+     */
+    private void doReflect(Topic topic) {
+        final Target target = topic.getTarget();
+        final String key = toKey(target);
+        final CollectionReference collectionReference;
+        if (firestore == null) {
+            checkNotNull(document);
+            collectionReference = document.collection(key);
+        } else {
+            collectionReference = firestore.collection(key);
+        }
+        final StreamObserver<SubscriptionUpdate> updateObserver =
+                new SubscriptionToFirebaseAdapter(collectionReference);
+        final StreamObserver<Subscription> subscriptionObserver =
+                new SubscriptionObserver(subscriptionService, updateObserver);
+        subscriptionService.subscribe(topic, subscriptionObserver);
+    }
+
+    private static String toKey(Target target) {
+        final TypeUrl typeUrl = TypeUrl.parse(target.getType());
+        final String type = typeUrl.getPrefix() + '_' + typeUrl.getTypeName();
+        return type;
     }
 
     /**
@@ -226,12 +270,14 @@ public final class FirebaseSubscriptionMirror {
      */
     public static final class Builder {
 
+        private final Set<BoundedContext> boundedContexts = newHashSet();
+
         private SubscriptionService subscriptionService;
 
         @Nullable
-        private Firestore database;
+        private Firestore firestore;
         @Nullable
-        private DocumentReference location;
+        private DocumentReference document;
 
         // Prevent direct instantiation.
         private Builder() {}
@@ -252,37 +298,51 @@ public final class FirebaseSubscriptionMirror {
         }
 
         /**
-         * Sets the database to the built mirror.
+         * Sets the firestore to the built mirror.
          *
-         * <p>Either this method or {@link #setDatabaseLocation(DocumentReference)} must be called,
+         * <p>Either this method or {@link #setFirestoreDocument(DocumentReference)} must be called,
          * but not both.
          *
          * <p>In case if this method is called, the generated by the mirror collections will be
-         * located in the database root.
+         * located in the firestore root.
          *
          * @param database the {@link Firestore} to use
          * @return self for method chaining
-         * @see #setDatabaseLocation(DocumentReference)
+         * @see #setFirestoreDocument(DocumentReference)
          */
-        public Builder setDatabase(Firestore database) {
-            this.database = checkNotNull(database);
+        public Builder setFirestore(Firestore database) {
+            this.firestore = checkNotNull(database);
             return this;
         }
 
         /**
-         * Sets the custom database location to the built mirror.
+         * Sets the custom firestore document to the built mirror.
          *
-         * <p>Either this method or {@link #setDatabase(Firestore)} must be called, but not both.
+         * <p>Either this method or {@link #setFirestore(Firestore)} must be called, but not both.
          *
          * <p>In case if this method is called, the generated by the mirror collections will be
          * located under the specified document.
          *
-         * @param location the {@link DocumentReference} to write the data into
+         * @param document the {@link DocumentReference} to write the data into
          * @return self for method chaining
-         * @see #setDatabase(Firestore)
+         * @see #setFirestore(Firestore)
          */
-        public Builder setDatabaseLocation(DocumentReference location) {
-            this.location = checkNotNull(location);
+        public Builder setFirestoreDocument(DocumentReference document) {
+            this.document = checkNotNull(document);
+            return this;
+        }
+
+        /**
+         * Adds the {@code boundedContext} to this mirror.
+         *
+         * <p>At least one BoundedContext should be specified to build a mirror.
+         *
+         * @param boundedContext the {@link BoundedContext} to reflect entities from
+         * @return self for method chaining
+         */
+        public Builder addBounedContext(BoundedContext boundedContext) {
+            checkNotNull(boundedContext);
+            this.boundedContexts.add(boundedContext);
             return this;
         }
 
@@ -293,9 +353,28 @@ public final class FirebaseSubscriptionMirror {
          */
         public FirebaseSubscriptionMirror build() {
             checkNotNull(subscriptionService);
-            checkState((database != null) ^ (location != null),
-                       "Either database or databaseLocation must be set, but not both.");
+            checkState((firestore != null) ^ (document != null),
+                       "Either Firestore or Firestore Document must be set, but not both.");
+            checkState(!boundedContexts.isEmpty(),
+                       "At least one BoundedContext should be specified.");
             return new FirebaseSubscriptionMirror(this);
         }
+
+        private Collection<TenantIndex> getTenantIndexes() {
+            final Set<TenantIndex> result = boundedContexts.stream()
+                                                           .map(BoundedContext::getTenantIndex)
+                                                           .collect(toSet());
+            return result;
+        }
+    }
+
+    private static Logger log() {
+        return LogSingleton.INSTANCE.value;
+    }
+
+    private enum LogSingleton {
+        INSTANCE;
+        @SuppressWarnings("NonSerializableFieldInSerializableClass")
+        private final Logger value = LoggerFactory.getLogger(FirebaseSubscriptionMirror.class);
     }
 }
