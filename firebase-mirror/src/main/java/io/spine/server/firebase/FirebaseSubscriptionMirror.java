@@ -31,9 +31,8 @@ import io.spine.client.Topic;
 import io.spine.core.TenantId;
 import io.spine.server.BoundedContext;
 import io.spine.server.SubscriptionService;
+import io.spine.server.event.EventSubscriber;
 import io.spine.server.tenant.TenantAwareOperation;
-import io.spine.server.tenant.TenantIndex;
-import io.spine.server.tenant.TenantIndex.TenantIdConsumer;
 import io.spine.type.TypeUrl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,12 +40,13 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.Sets.newConcurrentHashSet;
 import static com.google.common.collect.Sets.newHashSet;
-import static io.spine.validate.Validate.isDefault;
 import static java.util.stream.Collectors.toSet;
 
 /**
@@ -195,18 +195,42 @@ public final class FirebaseSubscriptionMirror {
     private final Firestore firestore;
     @Nullable
     private final DocumentReference document;
-
-    private final Collection<TenantIndex> tenantStore;
-
     @Nullable
     private final Function<Topic, DocumentReference> locator;
 
+    private final Set<TenantId> knownTenants;
+    private final Set<Topic> subscriptionTopics;
+
     private FirebaseSubscriptionMirror(Builder builder) {
-        this.subscriptionService = builder.subscriptionService;
+        this.subscriptionTopics = newConcurrentHashSet();
         this.firestore = builder.firestore;
+        this.subscriptionService = builder.subscriptionService;
         this.document = builder.document;
-        this.tenantStore = builder.getTenantIndexes();
         this.locator = builder.locator;
+        final Collection<BoundedContext> contexts = newHashSet(builder.boundedContexts);
+        this.knownTenants = newConcurrentHashSet();
+        final EventSubscriber tenantEventSubscriber = createTenantEventSubscriber();
+        contexts.stream()
+                .map(BoundedContext::getIntegrationBus)
+                .forEach(bus -> bus.register(tenantEventSubscriber));
+        this.knownTenants.addAll(getAllTenants(contexts));
+    }
+
+    private EventSubscriber createTenantEventSubscriber() {
+        final Consumer<TenantId> tenantCallback = tenantId -> {
+            subscriptionTopics.forEach(topic -> reflect(topic, tenantId));
+            knownTenants.add(tenantId);
+        };
+        final TenantEventSubscriber result = new TenantEventSubscriber(tenantCallback);
+        return result;
+    }
+
+    private static Set<TenantId> getAllTenants(Collection<BoundedContext> contexts) {
+        final Set<TenantId> result = contexts.stream()
+                                             .map(BoundedContext::getTenantIndex)
+                                             .flatMap(index -> index.getAll().stream())
+                                             .collect(toSet());
+        return result;
     }
 
     /**
@@ -221,17 +245,9 @@ public final class FirebaseSubscriptionMirror {
      */
     public void reflect(Topic topic) {
         checkNotNull(topic);
-        final TenantId topicTenant = topic.getContext()
-                                          .getTenantId();
-        final TenantIdConsumer operation = reflectFunction(topic);
-        final String targetType = topic.getTarget().getType();
-        if (isDefault(topicTenant)) {
-            log().info("Starting reflecting type {} for all tenants.", targetType);
-            tenantStore.forEach(tenantIndex -> tenantIndex.forEachTenant(operation));
-        } else {
-            log().info("Starting reflecting type {} for tenant {}.", targetType, topicTenant);
-            operation.accept(topicTenant);
-        }
+        subscriptionTopics.add(topic);
+        final Consumer<TenantId> operation = reflectFunction(topic);
+        knownTenants.forEach(operation);
     }
 
     /**
@@ -240,7 +256,7 @@ public final class FirebaseSubscriptionMirror {
      * @param topic the topic to reflect
      * @return a function
      */
-    private TenantIdConsumer reflectFunction(Topic topic) {
+    private Consumer<TenantId> reflectFunction(Topic topic) {
         return tenantId -> reflect(topic, tenantId);
     }
 
@@ -420,13 +436,6 @@ public final class FirebaseSubscriptionMirror {
                     (firestore != null) ^ (document != null) ^ (locator != null),
                     "Only one of Firestore or Firestore Document or locator function must be set."
             );
-        }
-
-        private Collection<TenantIndex> getTenantIndexes() {
-            final Set<TenantIndex> result = boundedContexts.stream()
-                                                           .map(BoundedContext::getTenantIndex)
-                                                           .collect(toSet());
-            return result;
         }
     }
 

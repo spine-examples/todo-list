@@ -67,7 +67,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The {@link FirebaseSubscriptionMirror} tests.
@@ -227,47 +226,6 @@ class FirebaseSubscriptionMirrorTest {
                                                      customerId,
                                                      firestore::collection);
         assertFalse(document.isPresent());
-    }
-
-    @Test
-    @DisplayName("use TenantId from ActorContext if specified")
-    void testSpecifiedTenant() throws ExecutionException, InterruptedException {
-        initializeEnvironment(true);
-        final InternetDomain tenantDomain = InternetDomain.newBuilder()
-                                                          .setValue("example.com")
-                                                          .build();
-        final EmailAddress tenantEmail = EmailAddress.newBuilder()
-                                                     .setValue("user@example.com")
-                                                     .build();
-        final String tenantValue = "user-id";
-        final TenantId firstTenant = TenantId.newBuilder()
-                                             .setDomain(tenantDomain)
-                                             .build();
-        final TenantId secondTenant = TenantId.newBuilder()
-                                              .setEmail(tenantEmail)
-                                              .build();
-        final TenantId thirdTenant = TenantId.newBuilder()
-                                             .setValue(tenantValue)
-                                             .build();
-        boundedContext.getTenantIndex()
-                      .keep(firstTenant);
-        final ActorRequestFactory requestFactory = newInstance(this.requestFactory.getActor(),
-                                                               thirdTenant);
-        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
-        mirror.reflect(topic);
-        final FRCustomerId firstCustomerId = newId();
-        final FRCustomerId secondCustomerId = newId();
-        final FRCustomerId thirdCustomerId = newId();
-        createTask(firstCustomerId, boundedContext, firstTenant);
-        createTask(secondCustomerId, boundedContext, secondTenant);
-        createTask(thirdCustomerId, boundedContext, thirdTenant);
-        FirebaseMirrorTestEnv.waitForConsistency();
-        assertFalse(tryFindDocument(FRCustomer.class, firstCustomerId, firestore::collection)
-                            .isPresent());
-        assertFalse(tryFindDocument(FRCustomer.class, secondCustomerId, firestore::collection)
-                            .isPresent());
-        assertTrue(tryFindDocument(FRCustomer.class, thirdCustomerId, firestore::collection)
-                            .isPresent());
     }
 
     @Test
