@@ -142,7 +142,7 @@ class FirebaseSubscriptionMirrorTest {
     }
 
     @Test
-    @DisplayName("accept only one of Firestore of DocumentReference on construction")
+    @DisplayName("accept only one of Firestore or DocumentReference on construction")
     void testAcceptOnlyOneLocation() {
         final DocumentReference location = firestore.collection("test_collection")
                                                     .document("test_document");
