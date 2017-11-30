@@ -28,18 +28,24 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteBatch;
 import com.google.common.testing.NullPointerTester;
+import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import io.spine.Identifier;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.Topic;
 import io.spine.core.ActorContext;
+import io.spine.core.BoundedContextName;
+import io.spine.core.Event;
 import io.spine.core.TenantId;
 import io.spine.net.EmailAddress;
 import io.spine.net.InternetDomain;
 import io.spine.server.BoundedContext;
 import io.spine.server.SubscriptionService;
+import io.spine.server.command.TestEventFactory;
 import io.spine.server.firebase.given.FirebaseMirrorTestEnv;
+import io.spine.server.integration.ExternalMessage;
+import io.spine.server.tenant.TenantAdded;
 import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
 import io.spine.type.TypeUrl;
@@ -56,17 +62,22 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
 import static com.google.common.collect.Sets.newHashSet;
+import static io.spine.Identifier.newUuid;
 import static io.spine.client.TestActorRequestFactory.newInstance;
+import static io.spine.grpc.StreamObservers.noOpObserver;
+import static io.spine.protobuf.AnyPacker.pack;
 import static io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField.bytes;
 import static io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
 import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.createBoundedContext;
 import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.createTask;
 import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.newId;
+import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.waitForConsistency;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * The {@link FirebaseSubscriptionMirror} tests.
@@ -106,6 +117,8 @@ class FirebaseSubscriptionMirrorTest {
      * <p>It is required to clean up all the data in Cloud Firestore to avoid test failures.
      */
     private static final Collection<DocumentReference> documents = newHashSet();
+    private final TestEventFactory eventFactory =
+            TestEventFactory.newInstance(FirebaseSubscriptionMirrorTest.class);
 
     @AfterAll
     static void afterAll() throws ExecutionException, InterruptedException {
@@ -269,7 +282,47 @@ class FirebaseSubscriptionMirrorTest {
         final DocumentReference expectedDocument = locator.apply(topic);
         final FRCustomer actualState = findCustomer(customerId, expectedDocument::collection);
         assertEquals(expectedState, actualState);
+    }
 
+    @Test
+    @DisplayName("starts reflecting for newly created tenants")
+    void testCatchNewTenants() throws ExecutionException, InterruptedException {
+        initializeEnvironment(true);
+        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
+        mirror.reflect(topic);
+        assertTrue(boundedContext.getTenantIndex()
+                                 .getAll()
+                                 .isEmpty());
+        final TenantId newTenant = TenantId.newBuilder()
+                                           .setValue(newUuid())
+                                           .build();
+        addTenant(newTenant);
+        waitForConsistency();
+        final FRCustomerId id = newId();
+        createTask(id, boundedContext, newTenant);
+        waitForConsistency();
+        final FRCustomer readState = findCustomer(id, firestore::collection);
+        assertNotNull(readState);
+    }
+
+    private void addTenant(TenantId tenantId) {
+        final TenantAdded eventMsg = TenantAdded.newBuilder()
+                                                .setId(tenantId)
+                                                .build();
+        final Event event = eventFactory.createEvent(eventMsg);
+        final ActorContext actorContext = event.getContext()
+                                               .getCommandContext()
+                                               .getActorContext();
+        final BoundedContextName contextName = boundedContext.getName();
+        final Any id = pack(event.getId());
+        final ExternalMessage externalMessage = ExternalMessage.newBuilder()
+                                                               .setBoundedContextName(contextName)
+                                                               .setId(id)
+                                                               .setOriginalMessage(pack(event))
+                                                               .setActorContext(actorContext)
+                                                               .build();
+        boundedContext.getIntegrationBus()
+                      .post(externalMessage, noOpObserver());
     }
 
     private void initializeEnvironment(boolean multitenant) {
