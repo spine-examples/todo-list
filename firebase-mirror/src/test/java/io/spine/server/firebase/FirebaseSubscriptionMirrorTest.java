@@ -138,7 +138,6 @@ class FirebaseSubscriptionMirrorTest {
         documents.clear();
     }
 
-    @SuppressWarnings("AssignmentToStaticFieldFromInstanceMethod")
     @BeforeEach
     void beforeEach() {
         initializeEnvironment(false);
