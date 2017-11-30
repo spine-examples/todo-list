@@ -31,8 +31,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * An implementation of {@link StreamObserver} which
  * {@linkplain SubscriptionService#activate activates} all the received {@link Subscription}s.
  *
- * <p>After activation the given {@code dataObserver} starts receiving the Entity state
- * updates.
+ * <p>After activation, the given {@code dataObserver} starts receiving the Entity state updates.
  *
  * <p>The implementation throws a {@link RuntimeException} upon any
  * {@linkplain StreamObserver#onError error} and handles the

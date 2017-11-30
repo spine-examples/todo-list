@@ -218,7 +218,7 @@ public final class FirebaseSubscriptionMirror {
             subscriptionTopics.forEach(topic -> reflect(topic, tenantId));
             knownTenants.add(tenantId);
         };
-        final TenantEventSubscriber result = new TenantEventSubscriber(tenantCallback);
+        final EventSubscriber result = new TenantEventSubscriber(tenantCallback);
         return result;
     }
 

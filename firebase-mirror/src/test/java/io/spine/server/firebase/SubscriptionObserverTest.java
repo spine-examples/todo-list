@@ -27,7 +27,6 @@ import io.spine.client.Subscription;
 import io.spine.client.SubscriptionId;
 import io.spine.client.SubscriptionUpdate;
 import io.spine.server.SubscriptionService;
-import io.spine.server.firebase.SubscriptionObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -110,6 +109,6 @@ class SubscriptionObserverTest {
      * A custom {@code Throwable} for tests.
      */
     private static final class CustomThrowable extends Throwable {
-        private static final long serialVersionUID = 1947572714577020628L;
+        private static final long serialVersionUID = 0L;
     }
 }

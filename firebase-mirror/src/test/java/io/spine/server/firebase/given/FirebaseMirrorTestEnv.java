@@ -83,8 +83,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
- * Test environment for
- * the {@link FirebaseSubscriptionMirror FirebaseSubscriptionMirror} tests.
+ * Test environment for the {@link FirebaseSubscriptionMirror FirebaseSubscriptionMirror} tests.
  *
  * @author Dmytro Dashenkov
  */
@@ -180,7 +179,8 @@ public final class FirebaseMirrorTestEnv {
                            .register(stringifier, FRSessionId.class);
     }
 
-    public static FRCustomer createCustomer(FRCustomerId customerId, BoundedContext boundedContext) {
+    public static FRCustomer createCustomer(FRCustomerId customerId,
+                                            BoundedContext boundedContext) {
         return createCustomer(customerId, boundedContext, defaultRequestFactory);
     }
 
@@ -324,7 +324,7 @@ public final class FirebaseMirrorTestEnv {
         }
     }
 
-    public static class CustomerRepository
+    static class CustomerRepository
             extends AggregateRepository<FRCustomerId, CustomerAggregate> {}
 
     public static class SessionProjection
@@ -351,6 +351,6 @@ public final class FirebaseMirrorTestEnv {
         }
     }
 
-    public static class SessionRepository
+    static class SessionRepository
             extends ProjectionRepository<FRSessionId, SessionProjection, FRSession> {}
 }

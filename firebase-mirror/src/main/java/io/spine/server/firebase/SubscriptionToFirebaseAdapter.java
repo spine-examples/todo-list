@@ -33,9 +33,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.lang.String.format;
 
 /**
- * An implementation of {@link StreamObserver} publishing the received
- * {@link SubscriptionUpdate}s to the given
- * {@link CollectionReference Cloud Firestore location}.
+ * An implementation of {@link StreamObserver} publishing the received {@link SubscriptionUpdate}s
+ * to the given {@link CollectionReference Cloud Firestore location}.
  *
  * <p>The implementation logs a message upon either
  * {@linkplain StreamObserver#onCompleted() successful} or
@@ -47,11 +46,12 @@ import static java.lang.String.format;
 final class SubscriptionToFirebaseAdapter
         implements StreamObserver<SubscriptionUpdate> {
 
-    private final CollectionReference target;
+    private final String path;
     private final FirestoreEntityStateUpdatePublisher publisher;
 
     SubscriptionToFirebaseAdapter(CollectionReference target) {
-        this.target = checkNotNull(target);
+        checkNotNull(target);
+        this.path = target.getPath();
         this.publisher = new FirestoreEntityStateUpdatePublisher(target);
     }
 
@@ -63,14 +63,13 @@ final class SubscriptionToFirebaseAdapter
 
     @Override
     public void onError(Throwable error) {
-        log().error(format("Subscription with target `%s` has been completed with an error.",
-                           target.getPath()),
+        log().error(format("Subscription with target `%s` has been completed with an error.", path),
                     error);
     }
 
     @Override
     public void onCompleted() {
-        log().info("Subscription with target `{}` has been completed.", target.getPath());
+        log().info("Subscription with target `{}` has been completed.", path);
     }
 
     private static Logger log() {
