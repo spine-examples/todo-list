@@ -132,7 +132,7 @@ class FirebaseSubscriptionMirrorTest {
         for (DocumentReference document : documents) {
             batch.delete(document);
         }
-        // Submit the depletion operations and ensure execution.
+        // Submit the deletion operations and ensure execution.
         batch.commit()
              .get();
         documents.clear();
