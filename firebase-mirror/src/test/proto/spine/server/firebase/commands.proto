@@ -27,19 +27,19 @@ option (type_url_prefix) = "type.spine.io";
 option java_package = "io.spine.server.firebase";
 option java_generate_equals_and_hash = true;
 option java_multiple_files = true;
-option java_outer_classname = "FRCustomerCommandsProto";
+option java_outer_classname = "FMCustomerCommandsProto";
 
 import "spine/people/person_name.proto";
 import "spine/server/firebase/customer.proto";
 
-message FRCreateCustomer {
+message FMCreateCustomer {
 
-    spine.server.firebase.FRCustomerId id = 1;
+    spine.server.firebase.FMCustomerId id = 1;
 }
 
-message FRChangeCustomerName {
+message FMChangeCustomerName {
 
-    spine.server.firebase.FRCustomerId id = 1;
+    spine.server.firebase.FMCustomerId id = 1;
 
     spine.people.PersonName new_name = 2;
 }

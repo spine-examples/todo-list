@@ -31,14 +31,14 @@ option java_outer_classname = "FirebaseRepeaterCustomerProto";
 
 import "spine/people/person_name.proto";
 
-message FRCustomerId {
+message FMCustomerId {
 
     string uid = 1;
 }
 
-message FRCustomer {
+message FMCustomer {
 
-    FRCustomerId id = 1;
+    FMCustomerId id = 1;
 
     spine.people.PersonName name = 2;
 }

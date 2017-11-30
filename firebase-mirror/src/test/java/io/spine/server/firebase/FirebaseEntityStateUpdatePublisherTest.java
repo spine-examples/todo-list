@@ -60,7 +60,7 @@ class FirebaseEntityStateUpdatePublisherTest {
         final String rawId = "___&$id001%-_foobar";
         final String expectedId = "id001_foobar";
         final Any id = Identifier.pack(rawId);
-        final FRCustomer expectedState = FRCustomer.newBuilder()
+        final FMCustomer expectedState = FMCustomer.newBuilder()
                                                    .setId(FirebaseMirrorTestEnv.newId())
                                                    .build();
         final Any state = pack(expectedState);
@@ -77,7 +77,7 @@ class FirebaseEntityStateUpdatePublisherTest {
 
         final Blob stateBlob = document.getBlob(EntityStateField.bytes.toString());
         assertNotNull(state);
-        final FRCustomer actualState = FRCustomer.parseFrom(stateBlob.toBytes());
+        final FMCustomer actualState = FMCustomer.parseFrom(stateBlob.toBytes());
         assertEquals(expectedState, actualState);
 
         document.getReference().delete();

@@ -108,8 +108,8 @@ class FirebaseSubscriptionMirrorTest {
      */
     private static final Firestore firestore = FirebaseMirrorTestEnv.getFirestore();
 
-    private static final TypeUrl CUSTOMER_TYPE = TypeUrl.of(FRCustomer.class);
-    private static final TypeUrl SESSION_TYPE = TypeUrl.of(FRSession.class);
+    private static final TypeUrl CUSTOMER_TYPE = TypeUrl.of(FMCustomer.class);
+    private static final TypeUrl SESSION_TYPE = TypeUrl.of(FMSession.class);
 
     private final ActorRequestFactory requestFactory =
             newInstance(FirebaseSubscriptionMirrorTest.class);
@@ -213,10 +213,10 @@ class FirebaseSubscriptionMirrorTest {
     @DisplayName("deliver the entity state updates")
     void testDeliver() throws ExecutionException, InterruptedException {
         mirror.reflect(CUSTOMER_TYPE);
-        final FRCustomerId customerId = newId();
-        final FRCustomer expectedState = createCustomer(customerId, boundedContext);
+        final FMCustomerId customerId = newId();
+        final FMCustomer expectedState = createCustomer(customerId, boundedContext);
         waitForConsistency();
-        final FRCustomer actualState = findCustomer(customerId, firestore::collection);
+        final FMCustomer actualState = findCustomer(customerId, firestore::collection);
         assertEquals(expectedState, actualState);
     }
 
@@ -225,19 +225,19 @@ class FirebaseSubscriptionMirrorTest {
     void testStringifyId() throws ExecutionException, InterruptedException {
         FirebaseMirrorTestEnv.registerSessionIdStringifier();
         mirror.reflect(SESSION_TYPE);
-        final FRSessionId sessionId = FirebaseMirrorTestEnv.newSessionId();
+        final FMSessionId sessionId = FirebaseMirrorTestEnv.newSessionId();
         FirebaseMirrorTestEnv.createSession(sessionId, boundedContext);
         waitForConsistency();
-        final DocumentSnapshot document = findDocument(FRSession.class,
+        final DocumentSnapshot document = findDocument(FMSession.class,
                                                        sessionId,
                                                        firestore::collection);
         final String actualId = document.getString(id.toString());
-        final Stringifier<FRSessionId> stringifier =
+        final Stringifier<FMSessionId> stringifier =
                 StringifierRegistry.getInstance()
-                                   .<FRSessionId>get(FRSessionId.class)
+                                   .<FMSessionId>get(FMSessionId.class)
                                    .orNull();
         assertNotNull(stringifier);
-        final FRSessionId readId = stringifier.reverse().convert(actualId);
+        final FMSessionId readId = stringifier.reverse().convert(actualId);
         assertEquals(sessionId, readId);
     }
 
@@ -260,7 +260,7 @@ class FirebaseSubscriptionMirrorTest {
         boundedContext.getTenantIndex()
                       .keep(firstTenant);
         mirror.reflect(CUSTOMER_TYPE);
-        final FRCustomerId customerId = newId();
+        final FMCustomerId customerId = newId();
         createCustomer(customerId, boundedContext, secondTenant);
         waitForConsistency();
         final Optional<?> document = tryFindDocument(CUSTOMER_TYPE.getJavaClass(),
@@ -280,10 +280,10 @@ class FirebaseSubscriptionMirrorTest {
                                           .addBoundedContext(boundedContext)
                                           .build();
         mirror.reflect(CUSTOMER_TYPE);
-        final FRCustomerId customerId = newId();
-        final FRCustomer expectedState = createCustomer(customerId, boundedContext);
+        final FMCustomerId customerId = newId();
+        final FMCustomer expectedState = createCustomer(customerId, boundedContext);
         waitForConsistency();
-        final FRCustomer actualState = findCustomer(customerId, customLocation::collection);
+        final FMCustomer actualState = findCustomer(customerId, customLocation::collection);
         assertEquals(expectedState, actualState);
     }
 
@@ -300,12 +300,12 @@ class FirebaseSubscriptionMirrorTest {
                                           .addBoundedContext(boundedContext)
                                           .build();
         mirror.reflect(CUSTOMER_TYPE);
-        final FRCustomerId customerId = newId();
-        final FRCustomer expectedState = createCustomer(customerId, boundedContext);
+        final FMCustomerId customerId = newId();
+        final FMCustomer expectedState = createCustomer(customerId, boundedContext);
         waitForConsistency();
         final Topic topic = requestFactory.topic().allOf(CUSTOMER_TYPE.getJavaClass());
         final DocumentReference expectedDocument = locator.apply(topic);
-        final FRCustomer actualState = findCustomer(customerId, expectedDocument::collection);
+        final FMCustomer actualState = findCustomer(customerId, expectedDocument::collection);
         assertEquals(expectedState, actualState);
     }
 
@@ -322,10 +322,10 @@ class FirebaseSubscriptionMirrorTest {
                                            .build();
         addTenant(newTenant);
         waitForConsistency();
-        final FRCustomerId id = newId();
+        final FMCustomerId id = newId();
         createCustomer(id, boundedContext, newTenant);
         waitForConsistency();
-        final FRCustomer readState = findCustomer(id, firestore::collection);
+        final FMCustomer readState = findCustomer(id, firestore::collection);
         assertNotNull(readState);
     }
 
@@ -363,26 +363,26 @@ class FirebaseSubscriptionMirrorTest {
     }
 
     /**
-     * Finds a {@code FRCustomer} with the given ID.
+     * Finds a {@code FMCustomer} with the given ID.
      *
-     * <p>The collection of {@code FRCustomer} records is retrieved with the given
+     * <p>The collection of {@code FMCustomer} records is retrieved with the given
      * {@code collectionAccess} function.
      *
      * <p>Note that the {@code collectionAccess} accepts a short name of the collection (not
      * the whole path).
      *
-     * @param id               the {@code FRCustomer} ID to search by
+     * @param id               the {@code FMCustomer} ID to search by
      * @param collectionAccess a function retrieving
      *                         the {@linkplain CollectionReference collection} which holds the
-     *                         {@code FRCustomer}
-     * @return the found {@code FRCustomer}
+     *                         {@code FMCustomer}
+     * @return the found {@code FMCustomer}
      */
-    private static FRCustomer findCustomer(FRCustomerId id,
+    private static FMCustomer findCustomer(FMCustomerId id,
                                            Function<String, CollectionReference> collectionAccess)
             throws ExecutionException,
                    InterruptedException {
-        final DocumentSnapshot document = findDocument(FRCustomer.class, id, collectionAccess);
-        final FRCustomer customer = deserialize(document);
+        final DocumentSnapshot document = findDocument(FMCustomer.class, id, collectionAccess);
+        final FMCustomer customer = deserialize(document);
         return customer;
     }
 
@@ -442,12 +442,12 @@ class FirebaseSubscriptionMirrorTest {
         return expectedIdString.equals(actualId);
     }
 
-    private static FRCustomer deserialize(DocumentSnapshot document) {
+    private static FMCustomer deserialize(DocumentSnapshot document) {
         final Blob blob = document.getBlob(bytes.toString());
         assertNotNull(blob);
         final byte[] bytes = blob.toBytes();
         try {
-            final FRCustomer result = FRCustomer.parseFrom(bytes);
+            final FMCustomer result = FMCustomer.parseFrom(bytes);
             return result;
         } catch (InvalidProtocolBufferException e) {
             throw new IllegalArgumentException(e);

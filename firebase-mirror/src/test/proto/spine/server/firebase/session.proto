@@ -35,16 +35,16 @@ import "google/protobuf/duration.proto";
 import "spine/people/person_name.proto";
 import "spine/server/firebase/customer.proto";
 
-message FRSessionId {
+message FMSessionId {
 
-    spine.server.firebase.FRCustomerId customer_id = 1;
+    spine.server.firebase.FMCustomerId customer_id = 1;
 
     google.protobuf.Timestamp start_time = 2;
 }
 
-message FRSession {
+message FMSession {
 
-    FRSessionId id = 1;
+    FMSessionId id = 1;
 
     google.protobuf.Duration duration = 2;
 }
