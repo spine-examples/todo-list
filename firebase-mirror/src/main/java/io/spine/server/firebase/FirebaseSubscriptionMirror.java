@@ -73,10 +73,7 @@ import static java.util.stream.Collectors.toSet;
  *         select the desired project and enable Cloud Firestore.
  *     <li>Create an instance of {@link Firestore} and pass it to a
  *         {@code FirebaseSubscriptionMirror}.
- *     <li>{@linkplain io.spine.client.ActorRequestFactory Create} instances of {@code Topic} to
- *         reflect.
- *     <li>{@linkplain #reflect(TypeUrl) Reflect} each of those {@code Topic}s with
- *         the {@code FirebaseSubscriptionMirror} instance into the Cloud Firestore.
+ *     <li>{@linkplain #reflect(TypeUrl) Reflect} the selected entity types to Firestore.
  * </ol>
  *
  * <a name="protocol"></a>
@@ -89,7 +86,8 @@ import static java.util.stream.Collectors.toSet;
  * rules:
  * <ul>
  *     <li>A {@linkplain CollectionReference collection} is created per entity type. The name of
- *         the collection is equal to the Protobuf type name of the entity state.
+ *         the collection is equal to the Protobuf type url of the entity state. The underscore
+ *         symbol ({@code "_"}) is used instead of the forward slash ({@code "/"}).
  *     <li>The {@linkplain DocumentReference documents} in that collection represent the entity
  *         states. There is at most one document for each {@code Entity} instance in the collection.
  *     <li>When the entity is updated, the appropriate document is updated as well.
@@ -98,14 +96,10 @@ import static java.util.stream.Collectors.toSet;
  * <p><b>Example:</b>
  * <p>Assume there is the
  * {@code CustomerAggregate extends Aggregate<CustomerId, Customer, CustomerVBuilder>} entity.
- * The simplest {@code Topic} matching that entity looks like:
- * <pre>
- *     {@code final Topic customerTopic = requestFactory.topics().allOf(Customer.class);}
- * </pre>
  *
  * <p>After starting reflecting the {@code customerTopic}, the entity state updates will be written
- * under {@code /example.customer.Customer/document-key}. The {@code document-key} here is a unique
- * key assigned to this instance of {@code Customer} by the mirror. Note that
+ * under {@code /type.example.org_example.customer.Customer/document-key}. The {@code document-key}
+ * here is a unique key assigned to this instance of {@code Customer} by the mirror. Note that
  * the {@code document-key} is not a valid {@code CustomerAggregate} ID. Do NOT depend any business
  * logic on its value.
  *
@@ -129,48 +123,17 @@ import static java.util.stream.Collectors.toSet;
  *
  * <h2>Multitenancy</h2>
  *
- * <p>When working with multitenant {@code BoundedContext}s, reflecting is started:
- * <ul>
- *     <li>for the specified in {@code Topic.context.tenant_id} if it's present;
- *     <li>for all the tenants in the given bounded contexts is the tenant is not specified in
- *         the {@code Topic}.
- * </ul>
+ * <p>When working with multitenant {@code BoundedContext}s, reflecting is started for all
+ * the tenants in the specified bounded contexts.
  *
- * <p>It may be convenient to have a separate Firebase project for each tenant. If this is not
- * possible, use a custom firestore document instead:
+ * <p>The most convenient way to separate the records of certain tenants is to use a custom
+ * {@code locator} function:
  * <pre>
  *     {@code
- *     final Topic topic = // Retrieve desired topic.
- *     final TenantId tenant = // Get the tenant ID e.g. from ActorContext.
- *     final DocumentReference document = // Dedicate a document for this tenant.
- *     final FirebaseSubscriptionMirror mirror =
- *             FirebaseSubscriptionMirror.newBuilder()
- *                                       .setSubscriptionService(service)
- *                                       .setFirestoreDocument(document)
- *                                       .addBoundedContext(myBoundedContext)
- *                                       .build();
- *     mirror.reflect(topic);
- *     }
- * </pre>
- *
- * <p>When specifying a custom firestore document, all
- * the <a href="#protocol">generated collections</a> will be placed under the given document
- * (i.e. be <a target="_blank"
- * href="https://firebase.google.com/docs/firestore/data-model#subcollections">sub-collections^</a>
- * of the given document).
- *
- * <p>Also, it is possible to specify not a single document, but a function mapping
- * the {@code Topic}s to the documents. For example, it may be convenient to map each actor (user)
- * to a separate document and setup the security rules in a way that only that user may read
- * the records under that document. Example:
- * <pre>
- *     {@code
- *     final Topic topic = // Retrieve desired topic.
- *     final TenantId tenant = // Get the tenant ID e.g. from ActorContext.
  *     final CollectionReference root = // Dedicate a collection for all the topics.
  *     final Function<Topic, Document> locator = topic -> {
- *         // Each user has own document.
- *         final String userId = topic.getContext().getActor().getValue();
+ *         // Each tenant has own document.
+ *         final String userId = topic.getContext().getTenant().getValue();
  *         return collection.document(userId);
  *     };
  *     final FirebaseSubscriptionMirror mirror =
@@ -179,13 +142,39 @@ import static java.util.stream.Collectors.toSet;
  *                                       .setLocatorFunction(locator)
  *                                       .addBoundedContext(myBoundedContext)
  *                                       .build();
- *     mirror.reflect(topic);
+ *     mirror.reflect(TypeUrl.of(MyEntity.class));
  *     }
  * </pre>
  *
- * <p>In this example, each user has a dedicated document. Note the Firestore document
+ * <p>In this example, each tenant gets a dedicated document. Note the Firestore document
  * <a target="_blank" href="https://firebase.google.com/docs/firestore/quotas">name limitations^</a>
  * when generating custom documents.
+ *
+ * <p>Note that the {@code locator} function accepts a {@link Topic} formed by
+ * the {@code FirebaseSubscriptionMirror}. Some fields (e.g. Topic.context.actor) may be absent or
+ * carry no meaningful for locating a destination document information.
+ *
+ * <p>It may be convenient to have a separate Firebase project for each tenant. This can be done
+ * with the {@code locator} function as well.
+ *
+ * <p>If the destination document is predefined, it can be specified directly:
+ * <pre>
+ *     {@code
+ *     final DocumentReference document = // Dedicate a document for subscriptions.
+ *     final FirebaseSubscriptionMirror mirror =
+ *             FirebaseSubscriptionMirror.newBuilder()
+ *                                       .setSubscriptionService(service)
+ *                                       .setFirestoreDocument(document)
+ *                                       .addBoundedContext(myBoundedContext)
+ *                                       .build();
+ *     mirror.reflect(TypeUrl.of(MyEntity.class));
+ *     }
+ * </pre>
+ *
+ * <p>When using a custom firestore document, all the <a href="#protocol">generated collections</a>
+ * will be placed under the given document (i.e. be <a target="_blank"
+ * href="https://firebase.google.com/docs/firestore/data-model#subcollections">sub-collections^</a>
+ * of the given document).
  *
  * @author Dmytro Dashenkov
  * @see SubscriptionService
@@ -379,6 +368,9 @@ public final class FirebaseSubscriptionMirror {
          * <p>Note that the service is not a gRPC stub but the implementation itself. This allows
          * not to deploy a {@code SubscriptionService} at all, but just use it in memory.
          *
+         * <p>If no {@code SubscriptionService} is specified, an instance is built with the passed
+         * {@linkplain #addBoundedContext(BoundedContext) bounded contexts}.
+         *
          * @param subscriptionService the {@link SubscriptionService} to get the subscription
          *                            updates from
          * @return self for method chaining
@@ -456,10 +448,16 @@ public final class FirebaseSubscriptionMirror {
          * @return new instance of {@code FirebaseSubscriptionMirror} with the given parameters
          */
         public FirebaseSubscriptionMirror build() {
-            checkNotNull(subscriptionService);
-            checkLocationSettings();
             checkState(!boundedContexts.isEmpty(),
                        "At least one BoundedContext should be specified.");
+            checkLocationSettings();
+            if (subscriptionService == null) {
+                final SubscriptionService.Builder builder = SubscriptionService.newBuilder();
+                for (BoundedContext context : boundedContexts) {
+                    builder.add(context);
+                }
+                subscriptionService = builder.build();
+            }
             return new FirebaseSubscriptionMirror(this);
         }
 

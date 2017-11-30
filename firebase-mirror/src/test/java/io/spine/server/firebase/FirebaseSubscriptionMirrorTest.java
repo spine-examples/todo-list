@@ -78,6 +78,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 /**
  * The {@link FirebaseSubscriptionMirror} tests.
@@ -179,6 +182,31 @@ class FirebaseSubscriptionMirrorTest {
                                           .setSubscriptionService(subscriptionService)
                                           .setFirestore(firestore);
         assertThrows(IllegalStateException.class, builder::build);
+    }
+
+    @Test
+    @DisplayName("allow not to specify a SubscriptionService")
+    void testAllowNoSpecificSubscriptionService() {
+        final FirebaseSubscriptionMirror mirror =
+                FirebaseSubscriptionMirror.newBuilder()
+                                          .addBoundedContext(boundedContext)
+                                          .setFirestore(firestore)
+                                          .build();
+        mirror.reflect(CUSTOMER_TYPE);
+    }
+
+    @Test
+    @DisplayName("allow to specify a custom SubscriptionService")
+    void testAllowCustomSubscriptionService() {
+        final SubscriptionService spy = spy(subscriptionService);
+        final FirebaseSubscriptionMirror mirror =
+                FirebaseSubscriptionMirror.newBuilder()
+                                          .addBoundedContext(boundedContext)
+                                          .setSubscriptionService(spy)
+                                          .setFirestore(firestore)
+                                          .build();
+        mirror.reflect(CUSTOMER_TYPE);
+        verify(spy).subscribe(any(Topic.class), any(SubscriptionObserver.class));
     }
 
     @Test
