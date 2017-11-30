@@ -28,6 +28,7 @@ import io.spine.client.Subscription;
 import io.spine.client.SubscriptionUpdate;
 import io.spine.client.Target;
 import io.spine.client.Topic;
+import io.spine.core.ActorContext;
 import io.spine.core.TenantId;
 import io.spine.server.BoundedContext;
 import io.spine.server.SubscriptionService;
@@ -269,10 +270,11 @@ public final class FirebaseSubscriptionMirror {
      * @param tenantId the tenant whose entity updates will be reflected
      */
     private void reflect(Topic topic, TenantId tenantId) {
+        final Topic subscriptionTopic = forTenant(topic, tenantId);
         new TenantAwareOperation(tenantId) {
             @Override
             public void run() {
-                doReflect(topic);
+                doReflect(subscriptionTopic);
             }
         }.execute();
     }
@@ -310,6 +312,17 @@ public final class FirebaseSubscriptionMirror {
         final TypeUrl typeUrl = TypeUrl.parse(target.getType());
         final String type = typeUrl.getPrefix() + '_' + typeUrl.getTypeName();
         return type;
+    }
+
+    private static Topic forTenant(Topic topic, TenantId tenant) {
+        final ActorContext context = topic.getContext()
+                                          .toBuilder()
+                                          .setTenantId(tenant)
+                                          .build();
+        final Topic result = topic.toBuilder()
+                                  .setContext(context)
+                                  .build();
+        return result;
     }
 
     /**

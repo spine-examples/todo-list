@@ -45,6 +45,7 @@ final class TenantEventSubscriber extends EventSubscriber {
     @Subscribe(external = true)
     public void on(TenantAdded event) {
         final TenantId tenantId = event.getId();
+        log().info("Received TenantAdded event. New tenant ID is: {}", tenantId);
         if (!acknowledgedTenants.contains(tenantId)) {
             acknowledgedTenants.add(tenantId);
             tenantCallback.accept(tenantId);
