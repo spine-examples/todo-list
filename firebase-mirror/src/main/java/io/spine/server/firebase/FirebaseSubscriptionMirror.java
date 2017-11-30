@@ -134,11 +134,10 @@ import static java.util.stream.Collectors.toSet;
  *     final Function<Topic, Document> locator = topic -> {
  *         // Each tenant has own document.
  *         final String userId = topic.getContext().getTenant().getValue();
- *         return collection.document(userId);
+ *         return root.document(userId);
  *     };
  *     final FirebaseSubscriptionMirror mirror =
  *             FirebaseSubscriptionMirror.newBuilder()
- *                                       .setSubscriptionService(service)
  *                                       .setLocatorFunction(locator)
  *                                       .addBoundedContext(myBoundedContext)
  *                                       .build();
@@ -163,7 +162,6 @@ import static java.util.stream.Collectors.toSet;
  *     final DocumentReference document = // Dedicate a document for subscriptions.
  *     final FirebaseSubscriptionMirror mirror =
  *             FirebaseSubscriptionMirror.newBuilder()
- *                                       .setSubscriptionService(service)
  *                                       .setFirestoreDocument(document)
  *                                       .addBoundedContext(myBoundedContext)
  *                                       .build();
