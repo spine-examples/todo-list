@@ -59,7 +59,7 @@ import static java.util.stream.Collectors.toSet;
  *
  * <p>{@code FirebaseSubscriptionMirror} reflects the received messages into the specified
  * <a target="_blank" href="https://firebase.google.com/docs/firestore/">Cloud Firestore^</a>
- * firestore.
+ * database.
  *
  * <p>Use {@code FirebaseSubscriptionMirror} as a subscription update delivery system. When
  * dealing with a number of subscribers (e.g. browser clients), the mirror should be considered
@@ -86,10 +86,10 @@ import static java.util.stream.Collectors.toSet;
  * rules:
  * <ul>
  *     <li>A {@linkplain CollectionReference collection} is created per entity type. The name of
- *         the collection is equal to the Protobuf type url of the entity state. The underscore
- *         symbol ({@code "_"}) is used instead of the forward slash ({@code "/"}).
+ *         the collection is equal to the Protobuf type URL of the entity state. The underscore
+ *         symbol ({@code "_"}) is used instead of slash ({@code "/"}).
  *     <li>The {@linkplain DocumentReference documents} in that collection represent the entity
- *         states. There is at most one document for each {@code Entity} instance in the collection.
+ *         states. There is at most one document for each {@code Entity} instance.
  *     <li>When the entity is updated, the appropriate document is updated as well.
  * </ul>
  *
@@ -126,8 +126,8 @@ import static java.util.stream.Collectors.toSet;
  * <p>When working with multitenant {@code BoundedContext}s, reflecting is started for all
  * the tenants in the specified bounded contexts.
  *
- * <p>The most convenient way to separate the records of certain tenants is to use a custom
- * {@code locator} function:
+ * <p>The most convenient way to separate the records of different tenants is to use a custom
+ * {@link Builder#setLocatorFunction(Function) locator} function:
  * <pre>
  *     {@code
  *     final CollectionReference root = // Dedicate a collection for all the topics.
@@ -222,11 +222,11 @@ public final class FirebaseSubscriptionMirror {
         return result;
     }
 
-    private static Set<TenantId> getAllTenants(Collection<BoundedContext> contexts) {
-        final Set<TenantId> result = contexts.stream()
-                                             .map(BoundedContext::getTenantIndex)
-                                             .flatMap(index -> index.getAll().stream())
-                                             .collect(toSet());
+    private static Collection<TenantId> getAllTenants(Collection<BoundedContext> contexts) {
+        final Collection<TenantId> result = contexts.stream()
+                                                    .map(BoundedContext::getTenantIndex)
+                                                    .flatMap(index -> index.getAll().stream())
+                                                    .collect(toSet());
         return result;
     }
 
@@ -414,22 +414,8 @@ public final class FirebaseSubscriptionMirror {
         }
 
         /**
-         * Adds the {@code boundedContext} to this mirror.
-         *
-         * <p>At least one BoundedContext should be specified to build a mirror.
-         *
-         * @param boundedContext the {@link BoundedContext} to reflect entities from
-         * @return self for method chaining
-         */
-        public Builder addBoundedContext(BoundedContext boundedContext) {
-            checkNotNull(boundedContext);
-            this.boundedContexts.add(boundedContext);
-            return this;
-        }
-
-        /**
          * Sets a custom function mapping a {@code Topic} to the {@code DocumentReference} which
-         * should be the parent to this topic collection.
+         * should be the parent the collection of the state updates.
          *
          * @param locator the topic to location function
          * @return self for method chaining
@@ -437,6 +423,20 @@ public final class FirebaseSubscriptionMirror {
         public Builder setLocatorFunction(Function<Topic, DocumentReference> locator) {
             checkNotNull(locator);
             this.locator = locator;
+            return this;
+        }
+
+        /**
+         * Adds a bounded context to this mirror.
+         *
+         * <p>At least one {@code BoundedContext} should be specified to build a mirror.
+         *
+         * @param boundedContext the {@link BoundedContext} to reflect entities from
+         * @return self for method chaining
+         */
+        public Builder addBoundedContext(BoundedContext boundedContext) {
+            checkNotNull(boundedContext);
+            this.boundedContexts.add(boundedContext);
             return this;
         }
 
