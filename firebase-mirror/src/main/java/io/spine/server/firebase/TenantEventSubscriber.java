@@ -23,10 +23,9 @@ package io.spine.server.firebase;
 import io.spine.core.Subscribe;
 import io.spine.core.TenantId;
 import io.spine.server.event.EventSubscriber;
+import io.spine.server.tenant.TenantAdded;
 
 import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
 
 import static com.google.common.collect.Sets.newConcurrentHashSet;
@@ -35,8 +34,6 @@ import static com.google.common.collect.Sets.newConcurrentHashSet;
  * @author Dmytro Dashenkov
  */
 final class TenantEventSubscriber extends EventSubscriber {
-
-    private final Lock lock = new ReentrantLock(false);
 
     private final Set<TenantId> acknowledgedTenants = newConcurrentHashSet();
     private final Consumer<TenantId> tenantCallback;
@@ -47,16 +44,7 @@ final class TenantEventSubscriber extends EventSubscriber {
 
     @Subscribe(external = true)
     public void on(TenantAdded event) {
-        lock.lock();
-        try {
-            final TenantId id = event.getTenantId();
-            addNewTenant(id);
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    private void addNewTenant(TenantId tenantId) {
+        final TenantId tenantId = event.getId();
         if (!acknowledgedTenants.contains(tenantId)) {
             acknowledgedTenants.add(tenantId);
             tenantCallback.accept(tenantId);
