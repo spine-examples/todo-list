@@ -180,8 +180,8 @@ public final class FirebaseMirrorTestEnv {
                            .register(stringifier, FRSessionId.class);
     }
 
-    public static FRCustomer createTask(FRCustomerId customerId, BoundedContext boundedContext) {
-        return createTask(customerId, boundedContext, defaultRequestFactory);
+    public static FRCustomer createCustomer(FRCustomerId customerId, BoundedContext boundedContext) {
+        return createCustomer(customerId, boundedContext, defaultRequestFactory);
     }
 
     public static void createSession(FRSessionId sessionId, BoundedContext boundedContext) {
@@ -194,15 +194,15 @@ public final class FirebaseMirrorTestEnv {
         stand.post(defaultTenant(), projection);
     }
 
-    public static FRCustomer createTask(FRCustomerId customerId,
-                                        BoundedContext boundedContext,
-                                        TenantId tenantId) {
-        return createTask(customerId, boundedContext, requestFactory(tenantId));
+    public static FRCustomer createCustomer(FRCustomerId customerId,
+                                            BoundedContext boundedContext,
+                                            TenantId tenantId) {
+        return createCustomer(customerId, boundedContext, requestFactory(tenantId));
     }
 
-    private static FRCustomer createTask(FRCustomerId customerId,
-                                         BoundedContext boundedContext,
-                                         ActorRequestFactory requestFactory) {
+    private static FRCustomer createCustomer(FRCustomerId customerId,
+                                             BoundedContext boundedContext,
+                                             ActorRequestFactory requestFactory) {
         final CustomerAggregate aggregate =
                 createEntity(customerId, boundedContext, FRCustomer.class);
         final CommandFactory commandFactory = requestFactory.command();

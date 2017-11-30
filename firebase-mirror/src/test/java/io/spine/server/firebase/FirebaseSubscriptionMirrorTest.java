@@ -69,7 +69,7 @@ import static io.spine.protobuf.AnyPacker.pack;
 import static io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField.bytes;
 import static io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
 import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.createBoundedContext;
-import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.createTask;
+import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.createCustomer;
 import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.newId;
 import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.waitForConsistency;
 import static java.lang.String.format;
@@ -104,6 +104,9 @@ class FirebaseSubscriptionMirrorTest {
      * methods for the test data clean up.
      */
     private static final Firestore firestore = FirebaseMirrorTestEnv.getFirestore();
+
+    private static final TypeUrl CUSTOMER_TYPE = TypeUrl.of(FRCustomer.class);
+    private static final TypeUrl SESSION_TYPE = TypeUrl.of(FRSession.class);
 
     private final ActorRequestFactory requestFactory =
             newInstance(FirebaseSubscriptionMirrorTest.class);
@@ -181,11 +184,10 @@ class FirebaseSubscriptionMirrorTest {
     @Test
     @DisplayName("deliver the entity state updates")
     void testDeliver() throws ExecutionException, InterruptedException {
-        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
-        mirror.reflect(topic);
+        mirror.reflect(CUSTOMER_TYPE);
         final FRCustomerId customerId = newId();
-        final FRCustomer expectedState = createTask(customerId, boundedContext);
-        FirebaseMirrorTestEnv.waitForConsistency();
+        final FRCustomer expectedState = createCustomer(customerId, boundedContext);
+        waitForConsistency();
         final FRCustomer actualState = findCustomer(customerId, firestore::collection);
         assertEquals(expectedState, actualState);
     }
@@ -194,11 +196,10 @@ class FirebaseSubscriptionMirrorTest {
     @DisplayName("transform ID to string with the proper Stringifier")
     void testStringifyId() throws ExecutionException, InterruptedException {
         FirebaseMirrorTestEnv.registerSessionIdStringifier();
-        final Topic topic = requestFactory.topic().allOf(FRSession.class);
-        mirror.reflect(topic);
+        mirror.reflect(SESSION_TYPE);
         final FRSessionId sessionId = FirebaseMirrorTestEnv.newSessionId();
         FirebaseMirrorTestEnv.createSession(sessionId, boundedContext);
-        FirebaseMirrorTestEnv.waitForConsistency();
+        waitForConsistency();
         final DocumentSnapshot document = findDocument(FRSession.class,
                                                        sessionId,
                                                        firestore::collection);
@@ -230,12 +231,11 @@ class FirebaseSubscriptionMirrorTest {
                                               .build();
         boundedContext.getTenantIndex()
                       .keep(firstTenant);
-        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
-        mirror.reflect(topic);
+        mirror.reflect(CUSTOMER_TYPE);
         final FRCustomerId customerId = newId();
-        createTask(customerId, boundedContext, secondTenant);
-        FirebaseMirrorTestEnv.waitForConsistency();
-        final Optional<?> document = tryFindDocument(FRCustomer.class,
+        createCustomer(customerId, boundedContext, secondTenant);
+        waitForConsistency();
+        final Optional<?> document = tryFindDocument(CUSTOMER_TYPE.getJavaClass(),
                                                      customerId,
                                                      firestore::collection);
         assertFalse(document.isPresent());
@@ -251,11 +251,10 @@ class FirebaseSubscriptionMirrorTest {
                                           .setFirestoreDocument(customLocation)
                                           .addBoundedContext(boundedContext)
                                           .build();
-        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
-        mirror.reflect(topic);
+        mirror.reflect(CUSTOMER_TYPE);
         final FRCustomerId customerId = newId();
-        final FRCustomer expectedState = createTask(customerId, boundedContext);
-        FirebaseMirrorTestEnv.waitForConsistency();
+        final FRCustomer expectedState = createCustomer(customerId, boundedContext);
+        waitForConsistency();
         final FRCustomer actualState = findCustomer(customerId, customLocation::collection);
         assertEquals(expectedState, actualState);
     }
@@ -263,22 +262,20 @@ class FirebaseSubscriptionMirrorTest {
     @Test
     @DisplayName("allow to specify a custom document per topic")
     void testCustomLocator() throws ExecutionException, InterruptedException {
-        final Function<Topic, DocumentReference> locator = topic -> {
-            final ActorContext context = topic.getContext();
-            final String userId = context.getActor().getValue();
-            return firestore.collection("user_subscriptions").document(userId);
-        };
+        final Function<Topic, DocumentReference> locator = topic ->
+                firestore.collection("custom_subscription")
+                         .document("location");
         final FirebaseSubscriptionMirror mirror =
                 FirebaseSubscriptionMirror.newBuilder()
                                           .setSubscriptionService(subscriptionService)
                                           .setLocatorFunction(locator)
                                           .addBoundedContext(boundedContext)
                                           .build();
-        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
-        mirror.reflect(topic);
+        mirror.reflect(CUSTOMER_TYPE);
         final FRCustomerId customerId = newId();
-        final FRCustomer expectedState = createTask(customerId, boundedContext);
-        FirebaseMirrorTestEnv.waitForConsistency();
+        final FRCustomer expectedState = createCustomer(customerId, boundedContext);
+        waitForConsistency();
+        final Topic topic = requestFactory.topic().allOf(CUSTOMER_TYPE.getJavaClass());
         final DocumentReference expectedDocument = locator.apply(topic);
         final FRCustomer actualState = findCustomer(customerId, expectedDocument::collection);
         assertEquals(expectedState, actualState);
@@ -288,8 +285,7 @@ class FirebaseSubscriptionMirrorTest {
     @DisplayName("starts reflecting for newly created tenants")
     void testCatchNewTenants() throws ExecutionException, InterruptedException {
         initializeEnvironment(true);
-        final Topic topic = requestFactory.topic().allOf(FRCustomer.class);
-        mirror.reflect(topic);
+        mirror.reflect(CUSTOMER_TYPE);
         assertTrue(boundedContext.getTenantIndex()
                                  .getAll()
                                  .isEmpty());
@@ -299,7 +295,7 @@ class FirebaseSubscriptionMirrorTest {
         addTenant(newTenant);
         waitForConsistency();
         final FRCustomerId id = newId();
-        createTask(id, boundedContext, newTenant);
+        createCustomer(id, boundedContext, newTenant);
         waitForConsistency();
         final FRCustomer readState = findCustomer(id, firestore::collection);
         assertNotNull(readState);

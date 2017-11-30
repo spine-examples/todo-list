@@ -23,20 +23,22 @@ package io.spine.server.firebase;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
+import com.google.protobuf.Message;
 import io.grpc.stub.StreamObserver;
+import io.spine.client.ActorRequestFactory;
 import io.spine.client.Subscription;
 import io.spine.client.SubscriptionUpdate;
 import io.spine.client.Target;
 import io.spine.client.Topic;
+import io.spine.client.TopicFactory;
 import io.spine.core.ActorContext;
 import io.spine.core.TenantId;
+import io.spine.core.UserId;
 import io.spine.server.BoundedContext;
 import io.spine.server.SubscriptionService;
 import io.spine.server.event.EventSubscriber;
 import io.spine.server.tenant.TenantAwareOperation;
 import io.spine.type.TypeUrl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -73,7 +75,7 @@ import static java.util.stream.Collectors.toSet;
  *         {@code FirebaseSubscriptionMirror}.
  *     <li>{@linkplain io.spine.client.ActorRequestFactory Create} instances of {@code Topic} to
  *         reflect.
- *     <li>{@linkplain #reflect(Topic) Reflect} each of those {@code Topic}s with
+ *     <li>{@linkplain #reflect(TypeUrl) Reflect} each of those {@code Topic}s with
  *         the {@code FirebaseSubscriptionMirror} instance into the Cloud Firestore.
  * </ol>
  *
@@ -190,6 +192,15 @@ import static java.util.stream.Collectors.toSet;
  */
 public final class FirebaseSubscriptionMirror {
 
+    private static final String ACTOR_ID = FirebaseSubscriptionMirror.class.getSimpleName();
+    private static final UserId ACTOR = UserId.newBuilder()
+                                              .setValue(ACTOR_ID)
+                                              .build();
+    private static final ActorRequestFactory requestFactory = ActorRequestFactory.newBuilder()
+                                                                                 .setActor(ACTOR)
+                                                                                 .build();
+    private static final TopicFactory topics = requestFactory.topic();
+
     private final SubscriptionService subscriptionService;
 
     @Nullable
@@ -211,9 +222,7 @@ public final class FirebaseSubscriptionMirror {
         final Collection<BoundedContext> contexts = newHashSet(builder.boundedContexts);
         this.knownTenants = newConcurrentHashSet();
         final EventSubscriber tenantEventSubscriber = createTenantEventSubscriber();
-        contexts.stream()
-                .map(BoundedContext::getIntegrationBus)
-                .forEach(bus -> bus.register(tenantEventSubscriber));
+        registerEventSubscriber(contexts, tenantEventSubscriber);
         this.knownTenants.addAll(getAllTenants(contexts));
     }
 
@@ -234,18 +243,28 @@ public final class FirebaseSubscriptionMirror {
         return result;
     }
 
+    private static void registerEventSubscriber(Collection<BoundedContext> contexts,
+                                                EventSubscriber eventSubscriber) {
+        contexts.stream()
+                .map(BoundedContext::getIntegrationBus)
+                .forEach(bus -> bus.register(eventSubscriber));
+    }
+
     /**
-     * Starts reflecting the given {@link Topic} into the Cloud Firestore.
+     * Starts reflecting the updates of entity state of the given {@linkplain TypeUrl type} into
+     * the Cloud Firestore.
      *
-     * <p>After this method invocation, the underlying {@link Firestore} (eventually) starts
-     * receiving the entity state updates for the given {@code topic}.
+     * <p>After this method invocation, the entity state updates (eventually) start being written to
+     * the underlying {@link Firestore}.
      *
      * <p>See <a href="#protocol">class level doc</a> for the description of the storage protocol.
      *
-     * @param topic the topic to reflect
+     * @param type the type of the entities to reflect
      */
-    public void reflect(Topic topic) {
-        checkNotNull(topic);
+    public void reflect(TypeUrl type) {
+        checkNotNull(type);
+        final Class<? extends Message> entityClass = type.getJavaClass();
+        final Topic topic = topics.allOf(entityClass);
         subscriptionTopics.add(topic);
         final Consumer<TenantId> operation = reflectFunction(topic);
         knownTenants.forEach(operation);
@@ -450,15 +469,5 @@ public final class FirebaseSubscriptionMirror {
                     "Only one of Firestore or Firestore Document or locator function must be set."
             );
         }
-    }
-
-    private static Logger log() {
-        return LogSingleton.INSTANCE.value;
-    }
-
-    private enum LogSingleton {
-        INSTANCE;
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = LoggerFactory.getLogger(FirebaseSubscriptionMirror.class);
     }
 }
