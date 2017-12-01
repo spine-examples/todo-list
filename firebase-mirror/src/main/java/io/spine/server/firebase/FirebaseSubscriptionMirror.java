@@ -117,8 +117,9 @@ import static java.util.stream.Collectors.toSet;
  *
  * <p>The {@code bytes} field contains the serialized entity state.
  *
- * <p>Consider providing a custom {@link io.spine.string.Stringifier Stringifier} for the ID type
- * if the ID is compound.
+ * <p>If the entity ID is compound (i.e. has one that one field), a custom
+ * {@link io.spine.string.Stringifier Stringifier} for the ID type may be useful for simple querying
+ * purposes.
  *
  * <a name="multitenancy"></a>
  *
@@ -154,7 +155,7 @@ import static java.util.stream.Collectors.toSet;
  * the {@code FirebaseSubscriptionMirror}. Some fields (e.g. Topic.context.actor) may be absent or
  * carry no meaningful for locating a destination document information.
  *
- * <p>It may be convenient to have a separate Firebase project for each tenant. This can be done
+ * <p>It may be beneficial to have a separate Firebase project for each tenant. This can be done
  * with the {@code reflectionRule} function as well.
  *
  * <p>If the destination document is predefined, it can be specified directly:
