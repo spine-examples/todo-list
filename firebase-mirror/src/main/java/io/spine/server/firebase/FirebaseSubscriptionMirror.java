@@ -97,11 +97,11 @@ import static java.util.stream.Collectors.toSet;
  * <p>Assume there is the
  * {@code CustomerAggregate extends Aggregate<CustomerId, Customer, CustomerVBuilder>} entity.
  *
- * <p>After starting reflecting the {@code customerTopic}, the entity state updates will be written
- * under {@code /type.example.org_example.customer.Customer/document-key}. The {@code document-key}
- * here is a unique key assigned to this instance of {@code Customer} by the mirror. Note that
- * the {@code document-key} is not a valid {@code CustomerAggregate} ID. Do NOT depend any business
- * logic on its value.
+ * <p>After a call to {@code mirror.reflect(TypeUrl.of(Customer.class))}, the entity state updates
+ * will be written under {@code /type.example.org_example.customer.Customer/document-key}.
+ * The {@code document-key} here is a unique key assigned to this instance of {@code Customer} by
+ * the mirror. Note that the {@code document-key} is not a valid {@code CustomerAggregate} ID.
+ * Do NOT depend any business logic on its value.
  *
  * <h3>Document structure</h3>
  *
@@ -130,7 +130,7 @@ import static java.util.stream.Collectors.toSet;
  * {@link Builder#setLocatorFunction(Function) locator} function:
  * <pre>
  *     {@code
- *     final CollectionReference root = // Dedicate a collection for all the topics.
+ *     final CollectionReference root = // Dedicate a collection for all the subscriptions.
  *     final Function<Topic, Document> locator = topic -> {
  *         // Each tenant has own document.
  *         final String userId = topic.getContext().getTenant().getValue();
