@@ -40,12 +40,12 @@ import static com.google.common.collect.Sets.newConcurrentHashSet;
  *
  * @author Dmytro Dashenkov
  */
-final class TenantEventSubscriber extends EventSubscriber {
+final class NewTenantEventSubscriber extends EventSubscriber {
 
     private final Set<TenantId> acknowledgedTenants = newConcurrentHashSet();
     private final Consumer<TenantId> tenantCallback;
 
-    TenantEventSubscriber(Consumer<TenantId> tenantCallback) {
+    NewTenantEventSubscriber(Consumer<TenantId> tenantCallback) {
         super();
         this.tenantCallback = tenantCallback;
     }
