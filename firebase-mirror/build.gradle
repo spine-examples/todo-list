@@ -30,6 +30,15 @@ dependencies {
 
 junitPlatform {
     filters {
+        // Checks if the tests are run on a CI server, where the "CI" environmental variable has
+        // the value "true".
+        //
+        // If the tests are NOT run on a CI server, the test cases labeled with the "CI" tag are
+        // ignored. This mechanism allows to declare the tests which rely on some sensitive
+        // environment, for example cloud service account credentials.
+        //
+        // To label a test with the "CI" tag, use `@Tag("CI")` annotation (from JUnit 5 API).
+        //
         if (System.env.CI != "true") {
             tags {
                 exclude "CI"
