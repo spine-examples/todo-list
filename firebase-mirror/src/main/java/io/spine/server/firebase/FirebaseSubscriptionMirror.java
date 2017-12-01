@@ -23,6 +23,7 @@ package io.spine.server.firebase;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
+import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Message;
 import io.grpc.stub.StreamObserver;
 import io.spine.client.ActorRequestFactory;
@@ -190,10 +191,37 @@ public final class FirebaseSubscriptionMirror {
 
     private final SubscriptionService subscriptionService;
 
+    /**
+     * An instance of {@link Firestore} to store the data in.
+     *
+     * <p>If specified, the data is stored in the root.
+     *
+     * <p>Only one of {@code firestore}, {@link #document}, of {@link #documentSelector} should be
+     * set in an instance of {@code FirebaseSubscriptionMirror}.
+     */
     @Nullable
     private final Firestore firestore;
+
+    /**
+     * An instance of {@link DocumentReference} to store the data in.
+     *
+     * <p>If specified, the data is stored in the specified document.
+     *
+     * <p>Only one of {@link #firestore}, {@code document}, of {@link #documentSelector} should be
+     * set in an instance of {@code FirebaseSubscriptionMirror}.
+     */
     @Nullable
     private final DocumentReference document;
+
+    /**
+     * A function mapping a {@link Topic} to the {@link DocumentReference} in which the records of
+     * that topic should be stored.
+     *
+     * <p>If specified, the data is distributed amongst the produced documents.
+     *
+     * <p>Only one of {@link #firestore}, {@link #document}, of {@code documentSelector} should be
+     * set in an instance of {@code FirebaseSubscriptionMirror}.
+     */
     @Nullable
     private final Function<Topic, DocumentReference> documentSelector;
 
@@ -206,11 +234,21 @@ public final class FirebaseSubscriptionMirror {
         this.subscriptionService = builder.subscriptionService;
         this.document = builder.document;
         this.documentSelector = builder.documentSelector;
-        final Collection<BoundedContext> contexts = newHashSet(builder.boundedContexts);
-        this.knownTenants = newConcurrentHashSet();
+        this.knownTenants = newConcurrentHashSet(builder.knownTenants);
+    }
+
+    /**
+     * Creates and registers a {@linkplain NewTenantEventSubscriber tenant event subscriber} in
+     * the passed {@code contexts}.
+     *
+     * <p>This method is called in {@link Builder#build()} once after the constructor and should
+     * not be called ever more.
+     *
+     * @param contexts the bounded contexts to subscribe to the events from
+     */
+    private void initEventSubscriber(Collection<BoundedContext> contexts) {
         final EventSubscriber tenantEventSubscriber = createTenantEventSubscriber();
         registerEventSubscriber(contexts, tenantEventSubscriber);
-        this.knownTenants.addAll(getAllTenants(contexts));
     }
 
     private EventSubscriber createTenantEventSubscriber() {
@@ -219,14 +257,6 @@ public final class FirebaseSubscriptionMirror {
             knownTenants.add(tenantId);
         };
         final EventSubscriber result = new NewTenantEventSubscriber(tenantCallback);
-        return result;
-    }
-
-    private static Collection<TenantId> getAllTenants(Collection<BoundedContext> contexts) {
-        final Collection<TenantId> result = contexts.stream()
-                                                    .map(BoundedContext::getTenantIndex)
-                                                    .flatMap(index -> index.getAll().stream())
-                                                    .collect(toSet());
         return result;
     }
 
@@ -357,6 +387,8 @@ public final class FirebaseSubscriptionMirror {
 
         private Function<Topic, DocumentReference> documentSelector;
 
+        private Collection<TenantId> knownTenants;
+
         // Prevent direct instantiation.
         private Builder() {}
 
@@ -443,6 +475,9 @@ public final class FirebaseSubscriptionMirror {
         /**
          * Creates a new instance of {@code FirebaseSubscriptionMirror}.
          *
+         * <p>Note that this method also registers a {@linkplain NewTenantEventSubscriber tenant
+         * event subscriber} in the present bounded contexts.
+         *
          * @return new instance of {@code FirebaseSubscriptionMirror} with the given parameters
          */
         public FirebaseSubscriptionMirror build() {
@@ -456,7 +491,19 @@ public final class FirebaseSubscriptionMirror {
                 }
                 subscriptionService = builder.build();
             }
-            return new FirebaseSubscriptionMirror(this);
+            final Collection<BoundedContext> contexts = ImmutableSet.copyOf(boundedContexts);
+            this.knownTenants = getAllTenants(contexts);
+            final FirebaseSubscriptionMirror mirror = new FirebaseSubscriptionMirror(this);
+            mirror.initEventSubscriber(contexts);
+            return mirror;
+        }
+
+        private static Collection<TenantId> getAllTenants(Collection<BoundedContext> contexts) {
+            final Collection<TenantId> result = contexts.stream()
+                                                        .map(BoundedContext::getTenantIndex)
+                                                        .flatMap(index -> index.getAll().stream())
+                                                        .collect(toSet());
+            return result;
         }
 
         private void checkLocationSettings() {
