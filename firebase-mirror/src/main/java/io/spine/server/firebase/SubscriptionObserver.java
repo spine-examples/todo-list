@@ -26,6 +26,7 @@ import io.spine.client.SubscriptionUpdate;
 import io.spine.server.SubscriptionService;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
  * An implementation of {@link StreamObserver} which
@@ -58,7 +59,7 @@ final class SubscriptionObserver implements StreamObserver<Subscription> {
 
     @Override
     public void onError(Throwable t) {
-        throw new IllegalStateException(t);
+        throw illegalStateWithCauseOf(t);
     }
 
     /**
