@@ -194,10 +194,10 @@ public final class FirebaseSubscriptionMirror {
     /**
      * An instance of {@link Firestore} to store the data in.
      *
-     * <p>If specified, the data is stored in the root.
+     * <p>If specified, the data is stored in the database root.
      *
      * <p>Only one of {@code firestore}, {@link #document}, of {@link #reflectionRule} should be
-     * set in an instance of {@code FirebaseSubscriptionMirror}.
+     * set for an instance of {@code FirebaseSubscriptionMirror}.
      */
     @Nullable
     private final Firestore firestore;
@@ -208,19 +208,19 @@ public final class FirebaseSubscriptionMirror {
      * <p>If specified, the data is stored in the specified document.
      *
      * <p>Only one of {@link #firestore}, {@code document}, of {@link #reflectionRule} should be
-     * set in an instance of {@code FirebaseSubscriptionMirror}.
+     * set for an instance of {@code FirebaseSubscriptionMirror}.
      */
     @Nullable
     private final DocumentReference document;
 
     /**
-     * A function mapping a {@link Topic} to the {@link DocumentReference} in which the records of
-     * that topic should be stored.
+     * A function mapping a {@link Topic} to a {@link DocumentReference} in which the records
+     * matching that topic should be stored.
      *
      * <p>If specified, the data is distributed amongst the produced documents.
      *
      * <p>Only one of {@link #firestore}, {@link #document}, of {@code reflectionRule} should be
-     * set in an instance of {@code FirebaseSubscriptionMirror}.
+     * set for an instance of {@code FirebaseSubscriptionMirror}.
      */
     @Nullable
     private final Function<Topic, DocumentReference> reflectionRule;
