@@ -30,8 +30,8 @@ dependencies {
 
 junitPlatform {
     filters {
-        // Checks if the tests are run on a CI server, where the "CI" environmental variable has
-        // the value "true".
+        // Checks if the tests are run on a CI server, where the "CI" environmental variable is set
+        // to "true".
         //
         // If the tests are NOT run on a CI server, the test cases labeled with the "CI" tag are
         // ignored. This mechanism allows to declare the tests which rely on some sensitive
