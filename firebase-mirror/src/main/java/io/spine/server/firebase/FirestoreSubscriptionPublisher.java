@@ -42,8 +42,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.ImmutableMap.of;
 import static io.spine.protobuf.AnyPacker.unpack;
-import static io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField.bytes;
-import static io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField.id;
+import static io.spine.server.firebase.FirestoreSubscriptionPublisher.EntityStateField.bytes;
+import static io.spine.server.firebase.FirestoreSubscriptionPublisher.EntityStateField.id;
 import static java.util.regex.Pattern.compile;
 
 /**
@@ -52,7 +52,7 @@ import static java.util.regex.Pattern.compile;
  *
  * @author Dmytro Dashenkov
  */
-final class FirestoreEntityStateUpdatePublisher {
+final class FirestoreSubscriptionPublisher {
 
     private static final Pattern INVALID_KEY_CHARS = compile("[^\\w\\d]");
     private static final char INVALID_KEY_LEADING_CHAR = '_';
@@ -62,7 +62,7 @@ final class FirestoreEntityStateUpdatePublisher {
      */
     private final CollectionReference collection;
 
-    FirestoreEntityStateUpdatePublisher(CollectionReference databaseSlice) {
+    FirestoreSubscriptionPublisher(CollectionReference databaseSlice) {
         this.collection = checkNotNull(databaseSlice);
     }
 
@@ -150,6 +150,6 @@ final class FirestoreEntityStateUpdatePublisher {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
         private final Logger value =
-                LoggerFactory.getLogger(FirestoreEntityStateUpdatePublisher.class);
+                LoggerFactory.getLogger(FirestoreSubscriptionPublisher.class);
     }
 }

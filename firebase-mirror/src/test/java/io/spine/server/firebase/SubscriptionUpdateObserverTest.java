@@ -37,14 +37,14 @@ import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.getFirestore;
  * @author Dmytro Dashenkov
  */
 @DisplayName("SubscriptionUpdate observer should")
-public class SubscriptionToFirebaseAdapterTest {
+public class SubscriptionUpdateObserverTest {
 
     @Test
     @DisplayName("ignore error")
     @Tag("CI")
     void testOnError() {
-        final StreamObserver<?> observer = new SubscriptionToFirebaseAdapter(target());
-        final String testMessage = SubscriptionToFirebaseAdapterTest.class.getSimpleName();
+        final StreamObserver<?> observer = new SubscriptionUpdateObserver(target());
+        final String testMessage = SubscriptionUpdateObserverTest.class.getSimpleName();
         observer.onError(new IllegalArgumentException(testMessage)); // Unchecked exception.
         observer.onError(new IOException(testMessage)); // Checked exception.
         observer.onError(new OutOfMemoryError(testMessage)); // JVM error.
@@ -55,7 +55,7 @@ public class SubscriptionToFirebaseAdapterTest {
     @DisplayName("ignore completion")
     @Tag("CI")
     void testOnCompleted() {
-        final StreamObserver<?> observer = new SubscriptionToFirebaseAdapter(target());
+        final StreamObserver<?> observer = new SubscriptionUpdateObserver(target());
         observer.onCompleted();
         observer.onCompleted();
     }
@@ -63,17 +63,16 @@ public class SubscriptionToFirebaseAdapterTest {
     @Test
     @DisplayName("not accept nulls on construction")
     void testCtor() {
-        new NullPointerTester().testAllPublicConstructors(SubscriptionToFirebaseAdapter.class);
+        new NullPointerTester().testAllPublicConstructors(SubscriptionUpdateObserver.class);
     }
 
     @Test
     @DisplayName("not accept null arguments")
     @Tag("CI")
     void testParams() throws NoSuchMethodException {
-        final StreamObserver<?> observer = new SubscriptionToFirebaseAdapter(target());
+        final StreamObserver<?> observer = new SubscriptionUpdateObserver(target());
         new NullPointerTester()
-                .ignore(SubscriptionToFirebaseAdapter.class.getMethod("onError",
-                                                                      Throwable.class))
+                .ignore(SubscriptionUpdateObserver.class.getMethod("onError", Throwable.class))
                 .testAllPublicInstanceMethods(observer);
     }
 

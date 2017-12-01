@@ -27,7 +27,7 @@ import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
 import io.spine.Identifier;
 import io.spine.client.EntityStateUpdate;
-import io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.EntityStateField;
+import io.spine.server.firebase.FirestoreSubscriptionPublisher.EntityStateField;
 import io.spine.server.firebase.given.FirebaseMirrorTestEnv;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
@@ -55,8 +55,8 @@ class FirebaseEntityStateUpdatePublisherTest {
     void testEscapeKey() throws ExecutionException,
                                 InterruptedException,
                                 InvalidProtocolBufferException {
-        final FirestoreEntityStateUpdatePublisher publisher =
-                new FirestoreEntityStateUpdatePublisher(targetCollection);
+        final FirestoreSubscriptionPublisher publisher =
+                new FirestoreSubscriptionPublisher(targetCollection);
         final String rawId = "___&$id001%-_foobar";
         final String expectedId = "id001_foobar";
         final Any id = Identifier.pack(rawId);

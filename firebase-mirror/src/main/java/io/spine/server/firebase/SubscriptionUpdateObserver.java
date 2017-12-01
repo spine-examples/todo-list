@@ -41,18 +41,17 @@ import static java.lang.String.format;
  * {@linkplain StreamObserver#onError faulty} stream completion.
  *
  * @author Dmytro Dashenkov
- * @see FirestoreEntityStateUpdatePublisher
+ * @see FirestoreSubscriptionPublisher
  */
-final class SubscriptionToFirebaseAdapter
-        implements StreamObserver<SubscriptionUpdate> {
+final class SubscriptionUpdateObserver implements StreamObserver<SubscriptionUpdate> {
 
     private final String path;
-    private final FirestoreEntityStateUpdatePublisher publisher;
+    private final FirestoreSubscriptionPublisher publisher;
 
-    SubscriptionToFirebaseAdapter(CollectionReference target) {
+    SubscriptionUpdateObserver(CollectionReference target) {
         checkNotNull(target);
         this.path = target.getPath();
-        this.publisher = new FirestoreEntityStateUpdatePublisher(target);
+        this.publisher = new FirestoreSubscriptionPublisher(target);
     }
 
     @Override
@@ -79,6 +78,6 @@ final class SubscriptionToFirebaseAdapter
     private enum LogSingleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = LoggerFactory.getLogger(SubscriptionToFirebaseAdapter.class);
+        private final Logger value = LoggerFactory.getLogger(SubscriptionUpdateObserver.class);
     }
 }
