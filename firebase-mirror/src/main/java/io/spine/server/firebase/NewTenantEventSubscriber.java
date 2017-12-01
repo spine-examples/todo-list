@@ -36,13 +36,20 @@ import static com.google.common.collect.Sets.newConcurrentHashSet;
  * <p>Triggers a callback on new tenant.
  *
  * <p>Not all the events cause the callback invocation, but only those that introduce a new
- * (previously unknown) tenant ID.
+ * ({@linkplain #knownTenants previously unknown} to this instance of
+ * {@code NewTenantEventSubscriber}) tenant ID.
  *
  * @author Dmytro Dashenkov
  */
 final class NewTenantEventSubscriber extends EventSubscriber {
 
-    private final Set<TenantId> acknowledgedTenants = newConcurrentHashSet();
+    /**
+     * Stores the known to this instance of {@code NewTenantEventSubscriber} tenant IDs.
+     *
+     * <p>The tenant is considered known when a {@link TenantAdded} event for this tenant has been
+     * acknowledged by this instance of {@code NewTenantEventSubscriber}.
+     */
+    private final Set<TenantId> knownTenants = newConcurrentHashSet();
     private final Consumer<TenantId> tenantCallback;
 
     NewTenantEventSubscriber(Consumer<TenantId> tenantCallback) {
@@ -54,8 +61,8 @@ final class NewTenantEventSubscriber extends EventSubscriber {
     public void on(TenantAdded event) {
         final TenantId tenantId = event.getId();
         log().info("Received TenantAdded event. New tenant ID is: {}", tenantId);
-        if (!acknowledgedTenants.contains(tenantId)) {
-            acknowledgedTenants.add(tenantId);
+        if (!knownTenants.contains(tenantId)) {
+            knownTenants.add(tenantId);
             tenantCallback.accept(tenantId);
         }
     }
