@@ -51,7 +51,7 @@ class FirebaseEntityStateUpdatePublisherTest {
             FirebaseMirrorTestEnv.getFirestore().collection("test_records");
 
     @Test
-    @DisplayName("escape illegal chars in key")
+    @DisplayName("escape illegal chars in a document key")
     void testEscapeKey() throws ExecutionException,
                                 InterruptedException,
                                 InvalidProtocolBufferException {

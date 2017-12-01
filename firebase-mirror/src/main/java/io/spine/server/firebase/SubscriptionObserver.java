@@ -61,7 +61,13 @@ final class SubscriptionObserver implements StreamObserver<Subscription> {
         throw new IllegalStateException(t);
     }
 
-    // NoOp
+    /**
+     * {@inheritDoc}
+     *
+     * <p>The {@code SubscriptionObserver} implementation performs no operation since
+     * the {@code Subscription} streams are typically unary and the method is called at once after
+     * {@code onNext()} and no additional terminating steps are required.
+     */
     @Override
     public void onCompleted() {}
 }

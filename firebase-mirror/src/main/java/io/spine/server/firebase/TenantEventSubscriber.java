@@ -31,10 +31,9 @@ import java.util.function.Consumer;
 import static com.google.common.collect.Sets.newConcurrentHashSet;
 
 /**
- * An {@link EventSubscriber} for the tenant events.
+ * An {@link EventSubscriber} for the {@link TenantAdded} events.
  *
- * <p>This subscriber listens to the {@link TenantAdded} events and triggers a callback on new
- * tenant.
+ * <p>Triggers a callback on new tenant.
  *
  * <p>Not all the events cause the callback invocation, but only those that introduce a new
  * (previously unknown) tenant ID.

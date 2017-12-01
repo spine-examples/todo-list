@@ -47,7 +47,8 @@ import static io.spine.server.firebase.FirestoreEntityStateUpdatePublisher.Entit
 import static java.util.regex.Pattern.compile;
 
 /**
- * Publishes {@link EntityStateUpdate}s to Cloud Firestore.
+ * Publishes {@link EntityStateUpdate}s to <a target="_blank"
+ * href="https://firebase.google.com/docs/firestore/">Cloud Firestore^</a>.
  *
  * @author Dmytro Dashenkov
  */
@@ -56,10 +57,13 @@ final class FirestoreEntityStateUpdatePublisher {
     private static final Pattern INVALID_KEY_CHARS = compile("[^\\w\\d]");
     private static final char INVALID_KEY_LEADING_CHAR = '_';
 
-    private final CollectionReference databaseSlice;
+    /**
+     * The collection in the Cloud Firestore dedicated for the entity state update storage.
+     */
+    private final CollectionReference collection;
 
     FirestoreEntityStateUpdatePublisher(CollectionReference databaseSlice) {
-        this.databaseSlice = checkNotNull(databaseSlice);
+        this.collection = checkNotNull(databaseSlice);
     }
 
     /**
@@ -72,7 +76,7 @@ final class FirestoreEntityStateUpdatePublisher {
      */
     void publish(Iterable<EntityStateUpdate> updates) {
         checkNotNull(updates);
-        final WriteBatch batch = databaseSlice.getFirestore().batch();
+        final WriteBatch batch = collection.getFirestore().batch();
         for (EntityStateUpdate update : updates) {
             write(batch, update);
         }
@@ -89,14 +93,14 @@ final class FirestoreEntityStateUpdatePublisher {
         final Map<String, Object> data = of(bytes.toString(), fromBytes(stateBytes),
                                             id.toString(), stringId);
         final DocumentReference targetDocument = documentFor(stringId);
-        log().info("Writing state update of type {} (id: {}) into Firestore location {}.",
+        log().info("Writing a state update of the type {} (id: {}) into the Firestore location {}.",
                    updateState.getTypeUrl(), stringId, targetDocument.getPath());
         batch.set(targetDocument, data);
     }
 
     private DocumentReference documentFor(String entityId) {
         final String documentKey = escapeKey(entityId);
-        final DocumentReference result = databaseSlice.document(documentKey);
+        final DocumentReference result = collection.document(documentKey);
         return result;
     }
 
@@ -116,6 +120,8 @@ final class FirestoreEntityStateUpdatePublisher {
 
     /**
      * The list of fields of the entity state as it is stored to Firestore.
+     *
+     * <p>The enum value names represent the names of the fields of an entity state record.
      */
     @VisibleForTesting
     enum EntityStateField implements StorageField {

@@ -107,6 +107,9 @@ class SubscriptionObserverTest {
 
     /**
      * A custom {@code Throwable} for tests.
+     *
+     * <p>Instances of this throwable are used to test the {@link StreamObserver#onError(Throwable)}
+     * method. The tests makes sure that the exact type of throwable is thrown.
      */
     private static final class CustomThrowable extends Throwable {
         private static final long serialVersionUID = 0L;
