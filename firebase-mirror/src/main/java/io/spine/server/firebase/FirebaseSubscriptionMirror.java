@@ -128,18 +128,18 @@ import static java.util.stream.Collectors.toSet;
  * the tenants in the specified bounded contexts.
  *
  * <p>The most convenient way to separate the records of different tenants is to use a custom
- * {@link Builder#setDocumentSelector(Function) document selector} function:
+ * {@link Builder#setReflectionRule(Function) reflection rule}:
  * <pre>
  *     {@code
  *     final CollectionReference root = // Dedicate a collection to all the subscriptions.
- *     final Function<Topic, Document> documentSelector = topic -> {
+ *     final Function<Topic, Document> reflectionRule = topic -> {
  *         // Each tenant has own document.
  *         final String userId = topic.getContext().getTenant().getValue();
  *         return root.document(userId);
  *     };
  *     final FirebaseSubscriptionMirror mirror =
  *             FirebaseSubscriptionMirror.newBuilder()
- *                                       .setDocumentSelector(documentSelector)
+ *                                       .setReflectionRule(reflectionRule)
  *                                       .addBoundedContext(myBoundedContext)
  *                                       .build();
  *     mirror.reflect(TypeUrl.of(MyEntity.class));
@@ -150,12 +150,12 @@ import static java.util.stream.Collectors.toSet;
  * <a target="_blank" href="https://firebase.google.com/docs/firestore/quotas">name limitations^</a>
  * when generating custom documents.
  *
- * <p>Note that the {@code documentSelector} function accepts a {@link Topic} formed by
+ * <p>Note that the {@code reflectionRule} function accepts a {@link Topic} formed by
  * the {@code FirebaseSubscriptionMirror}. Some fields (e.g. Topic.context.actor) may be absent or
  * carry no meaningful for locating a destination document information.
  *
  * <p>It may be convenient to have a separate Firebase project for each tenant. This can be done
- * with the {@code documentSelector} function as well.
+ * with the {@code reflectionRule} function as well.
  *
  * <p>If the destination document is predefined, it can be specified directly:
  * <pre>
@@ -196,7 +196,7 @@ public final class FirebaseSubscriptionMirror {
      *
      * <p>If specified, the data is stored in the root.
      *
-     * <p>Only one of {@code firestore}, {@link #document}, of {@link #documentSelector} should be
+     * <p>Only one of {@code firestore}, {@link #document}, of {@link #reflectionRule} should be
      * set in an instance of {@code FirebaseSubscriptionMirror}.
      */
     @Nullable
@@ -207,7 +207,7 @@ public final class FirebaseSubscriptionMirror {
      *
      * <p>If specified, the data is stored in the specified document.
      *
-     * <p>Only one of {@link #firestore}, {@code document}, of {@link #documentSelector} should be
+     * <p>Only one of {@link #firestore}, {@code document}, of {@link #reflectionRule} should be
      * set in an instance of {@code FirebaseSubscriptionMirror}.
      */
     @Nullable
@@ -219,11 +219,11 @@ public final class FirebaseSubscriptionMirror {
      *
      * <p>If specified, the data is distributed amongst the produced documents.
      *
-     * <p>Only one of {@link #firestore}, {@link #document}, of {@code documentSelector} should be
+     * <p>Only one of {@link #firestore}, {@link #document}, of {@code reflectionRule} should be
      * set in an instance of {@code FirebaseSubscriptionMirror}.
      */
     @Nullable
-    private final Function<Topic, DocumentReference> documentSelector;
+    private final Function<Topic, DocumentReference> reflectionRule;
 
     private final Set<TenantId> knownTenants;
     private final Set<Topic> subscriptionTopics;
@@ -233,7 +233,7 @@ public final class FirebaseSubscriptionMirror {
         this.firestore = builder.firestore;
         this.subscriptionService = builder.subscriptionService;
         this.document = builder.document;
-        this.documentSelector = builder.documentSelector;
+        this.reflectionRule = builder.reflectionRule;
         this.knownTenants = newConcurrentHashSet(builder.knownTenants);
     }
 
@@ -332,8 +332,8 @@ public final class FirebaseSubscriptionMirror {
     private CollectionReference collection(Topic topic) {
         final String collectionKey = toKey(topic.getTarget());
         final CollectionReference result;
-        if (documentSelector != null) {
-            final DocumentReference document = documentSelector.apply(topic);
+        if (reflectionRule != null) {
+            final DocumentReference document = reflectionRule.apply(topic);
             result = document.collection(collectionKey);
         } else if (document != null) {
             result = document.collection(collectionKey);
@@ -385,7 +385,7 @@ public final class FirebaseSubscriptionMirror {
         @Nullable
         private DocumentReference document;
 
-        private Function<Topic, DocumentReference> documentSelector;
+        private Function<Topic, DocumentReference> reflectionRule;
 
         private Collection<TenantId> knownTenants;
 
@@ -413,8 +413,8 @@ public final class FirebaseSubscriptionMirror {
         /**
          * Sets the firestore to the built mirror.
          *
-         * <p>Either this method or {@link #setFirestoreDocument(DocumentReference)} must be called,
-         * but not both.
+         * <p>Either this method or {@link #setReflectionRule(Function)} or
+         * {@link #setFirestoreDocument(DocumentReference)} must be called, but only one of them.
          *
          * <p>In case if this method is called, the generated by the mirror collections will be
          * located in the firestore root.
@@ -431,7 +431,8 @@ public final class FirebaseSubscriptionMirror {
         /**
          * Sets the custom firestore document to the built mirror.
          *
-         * <p>Either this method or {@link #setFirestore(Firestore)} must be called, but not both.
+         * <p>Either this method or {@link #setFirestore(Firestore)} or
+         * {@link #setReflectionRule(Function)} must be called, but only one of them.
          *
          * <p>In case if this method is called, the generated by the mirror collections will be
          * located under the specified document.
@@ -447,14 +448,20 @@ public final class FirebaseSubscriptionMirror {
 
         /**
          * Sets a custom function mapping a {@code Topic} to the {@code DocumentReference} which
-         * should be the parent the collection of the state updates.
+         * should be the parent to the collections of state updates.
          *
-         * @param documentSelector the topic to location function
+         * <p>Either this method or {@link #setFirestore(Firestore)} or
+         * {@link #setFirestoreDocument(DocumentReference)} must be called, but only one of them.
+         *
+         * <p>In case if this method is called, the generated by the mirror collections will be
+         * distributed amongst the produced by the function documents.
+         *
+         * @param reflectionRule the topic to document function
          * @return self for method chaining
          */
-        public Builder setDocumentSelector(Function<Topic, DocumentReference> documentSelector) {
-            checkNotNull(documentSelector);
-            this.documentSelector = documentSelector;
+        public Builder setReflectionRule(Function<Topic, DocumentReference> reflectionRule) {
+            checkNotNull(reflectionRule);
+            this.reflectionRule = reflectionRule;
             return this;
         }
 
@@ -508,9 +515,8 @@ public final class FirebaseSubscriptionMirror {
 
         private void checkLocationSettings() {
             checkState(
-                    (firestore != null) ^ (document != null) ^ (documentSelector != null),
-                    "Only one of Firestore or Firestore Document or a document selector function " +
-                            "must be set."
+                    (firestore != null) ^ (document != null) ^ (reflectionRule != null),
+                    "Only one of Firestore or Firestore Document or reflection rule must be set."
             );
         }
     }
