@@ -19,6 +19,7 @@ hs_err_pid*
 
 # Do not ignore code style settings.
 !/.idea/codeStyles
+!/.idea/codeStyleSettings.xml
 
 # Gradle interim configs
 .gradle/
