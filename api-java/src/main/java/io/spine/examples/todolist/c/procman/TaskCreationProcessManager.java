@@ -22,6 +22,7 @@ package io.spine.examples.todolist.c.procman;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
+import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
 import io.spine.core.CommandContext;
 import io.spine.core.Subscribe;
@@ -34,17 +35,20 @@ import io.spine.examples.todolist.TaskCreation.Stage;
 import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskCreationVBuilder;
 import io.spine.examples.todolist.TaskDescription;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.CreateDraft;
+import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.c.commands.SetTaskDescription;
 import io.spine.examples.todolist.c.commands.SetTaskDueDate;
 import io.spine.examples.todolist.c.commands.SetTaskPriority;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
+import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.events.LabelsAdded;
@@ -89,26 +93,36 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     @Assign
-    TaskCreationStarted handle(StartTaskCreation command) {
+    List<? extends Message> handle(StartTaskCreation command, CommandContext context) {
         checkCurrentStateAfter(STARED);
+        final TaskId taskId = command.getTaskId();
         final TaskCreationStarted event = TaskCreationStarted.newBuilder()
                                                              .setId(command.getId())
-                                                             .setTaskId(command.getTaskId())
+                                                             .setTaskId(taskId)
                                                              .build();
-        return event;
+        final CreateDraft createDraft = CreateDraft.newBuilder()
+                                                   .setId(taskId)
+                                                   .build();
+        final CommandRouted commandRouted = newRouterFor(command, context)
+                .add(createDraft)
+                .routeAll();
+        return of(event, commandRouted);
     }
 
     @Assign
     List<? extends Message> handle(SetTaskDescription command, CommandContext context) {
         checkCurrentStateAfter(STARED);
         final TaskDescription description = command.getDescription();
-        final CreateBasicTask createTaskCommand =
-                CreateBasicTask.newBuilder()
-                               .setId(getState().getTaskId())
-                               .setDescription(description)
-                               .build();
+        final StringChange change = StringChange.newBuilder()
+                                                .setNewValue(description.getValue())
+                                                .build();
+        final UpdateTaskDescription updateCommand =
+                UpdateTaskDescription.newBuilder()
+                                     .setId(taskId())
+                                     .setDescriptionChange(change)
+                                     .build();
         final CommandRouted commandRouted = newRouterFor(command, context)
-                .add(createTaskCommand)
+                .add(updateCommand)
                 .routeAll();
         final TaskDescriptionSet event = TaskDescriptionSet.newBuilder()
                                                            .setId(getId())
@@ -179,12 +193,17 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     @Assign
-    TaskCreationCompleted handle(CompleteTaskCreation command) {
+    List<? extends Message> handle(CompleteTaskCreation command, CommandContext context) {
         checkCurrentStateAfter(LABELS_ADDED);
         final TaskCreationCompleted event = TaskCreationCompleted.newBuilder()
                                                                  .setId(getId())
                                                                  .build();
-        return event;
+        final FinalizeDraft finalizeDraft = FinalizeDraft.newBuilder()
+                                                         .setId(taskId())
+                                                         .build();
+        final CommandRouted commandRouted = newRouterFor(command, context).add(finalizeDraft)
+                                                                          .routeAll();
+        return of(commandRouted, event);
     }
 
     @Subscribe
@@ -266,6 +285,10 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
                                 .setId(getState().getTaskId())
                                 .setLabelId(labelId)
                                 .build();
+    }
+
+    private TaskId taskId() {
+        return getState().getTaskId();
     }
 
     private void moveToStage(Stage stage) {
