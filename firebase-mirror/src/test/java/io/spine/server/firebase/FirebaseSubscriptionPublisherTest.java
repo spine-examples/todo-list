@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
  */
 @DisplayName("Firestore publisher should")
 @Tag("CI")
-class FirebaseEntityStateUpdatePublisherTest {
+class FirebaseSubscriptionPublisherTest {
 
     private static final CollectionReference targetCollection =
             FirebaseMirrorTestEnv.getFirestore().collection("test_records");
