@@ -289,13 +289,13 @@ class FirebaseSubscriptionMirrorTest {
     @Test
     @DisplayName("allow to specify a custom document per topic")
     void testCustomLocator() throws ExecutionException, InterruptedException {
-        final Function<Topic, DocumentReference> locator = topic ->
+        final Function<Topic, DocumentReference> documentSelector = topic ->
                 firestore.collection("custom_subscription")
                          .document("location");
         final FirebaseSubscriptionMirror mirror =
                 FirebaseSubscriptionMirror.newBuilder()
                                           .setSubscriptionService(subscriptionService)
-                                          .setLocatorFunction(locator)
+                                          .setDocumentSelector(documentSelector)
                                           .addBoundedContext(boundedContext)
                                           .build();
         mirror.reflect(CUSTOMER_TYPE);
@@ -303,7 +303,7 @@ class FirebaseSubscriptionMirrorTest {
         final FMCustomer expectedState = createCustomer(customerId, boundedContext);
         waitForConsistency();
         final Topic topic = requestFactory.topic().allOf(CUSTOMER_TYPE.getJavaClass());
-        final DocumentReference expectedDocument = locator.apply(topic);
+        final DocumentReference expectedDocument = documentSelector.apply(topic);
         final FMCustomer actualState = findCustomer(customerId, expectedDocument::collection);
         assertEquals(expectedState, actualState);
     }

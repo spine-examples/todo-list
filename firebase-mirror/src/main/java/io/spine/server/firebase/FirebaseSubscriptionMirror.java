@@ -127,18 +127,18 @@ import static java.util.stream.Collectors.toSet;
  * the tenants in the specified bounded contexts.
  *
  * <p>The most convenient way to separate the records of different tenants is to use a custom
- * {@link Builder#setLocatorFunction(Function) locator} function:
+ * {@link Builder#setDocumentSelector(Function) document selector} function:
  * <pre>
  *     {@code
  *     final CollectionReference root = // Dedicate a collection for all the subscriptions.
- *     final Function<Topic, Document> locator = topic -> {
+ *     final Function<Topic, Document> documentSelector = topic -> {
  *         // Each tenant has own document.
  *         final String userId = topic.getContext().getTenant().getValue();
  *         return root.document(userId);
  *     };
  *     final FirebaseSubscriptionMirror mirror =
  *             FirebaseSubscriptionMirror.newBuilder()
- *                                       .setLocatorFunction(locator)
+ *                                       .setDocumentSelector(documentSelector)
  *                                       .addBoundedContext(myBoundedContext)
  *                                       .build();
  *     mirror.reflect(TypeUrl.of(MyEntity.class));
@@ -149,12 +149,12 @@ import static java.util.stream.Collectors.toSet;
  * <a target="_blank" href="https://firebase.google.com/docs/firestore/quotas">name limitations^</a>
  * when generating custom documents.
  *
- * <p>Note that the {@code locator} function accepts a {@link Topic} formed by
+ * <p>Note that the {@code documentSelector} function accepts a {@link Topic} formed by
  * the {@code FirebaseSubscriptionMirror}. Some fields (e.g. Topic.context.actor) may be absent or
  * carry no meaningful for locating a destination document information.
  *
  * <p>It may be convenient to have a separate Firebase project for each tenant. This can be done
- * with the {@code locator} function as well.
+ * with the {@code documentSelector} function as well.
  *
  * <p>If the destination document is predefined, it can be specified directly:
  * <pre>
@@ -195,7 +195,7 @@ public final class FirebaseSubscriptionMirror {
     @Nullable
     private final DocumentReference document;
     @Nullable
-    private final Function<Topic, DocumentReference> locator;
+    private final Function<Topic, DocumentReference> documentSelector;
 
     private final Set<TenantId> knownTenants;
     private final Set<Topic> subscriptionTopics;
@@ -205,7 +205,7 @@ public final class FirebaseSubscriptionMirror {
         this.firestore = builder.firestore;
         this.subscriptionService = builder.subscriptionService;
         this.document = builder.document;
-        this.locator = builder.locator;
+        this.documentSelector = builder.documentSelector;
         final Collection<BoundedContext> contexts = newHashSet(builder.boundedContexts);
         this.knownTenants = newConcurrentHashSet();
         final EventSubscriber tenantEventSubscriber = createTenantEventSubscriber();
@@ -302,8 +302,8 @@ public final class FirebaseSubscriptionMirror {
     private CollectionReference collection(Topic topic) {
         final String collectionKey = toKey(topic.getTarget());
         final CollectionReference result;
-        if (locator != null) {
-            final DocumentReference document = locator.apply(topic);
+        if (documentSelector != null) {
+            final DocumentReference document = documentSelector.apply(topic);
             result = document.collection(collectionKey);
         } else if (document != null) {
             result = document.collection(collectionKey);
@@ -355,7 +355,7 @@ public final class FirebaseSubscriptionMirror {
         @Nullable
         private DocumentReference document;
 
-        private Function<Topic, DocumentReference> locator;
+        private Function<Topic, DocumentReference> documentSelector;
 
         // Prevent direct instantiation.
         private Builder() {}
@@ -417,12 +417,12 @@ public final class FirebaseSubscriptionMirror {
          * Sets a custom function mapping a {@code Topic} to the {@code DocumentReference} which
          * should be the parent the collection of the state updates.
          *
-         * @param locator the topic to location function
+         * @param documentSelector the topic to location function
          * @return self for method chaining
          */
-        public Builder setLocatorFunction(Function<Topic, DocumentReference> locator) {
-            checkNotNull(locator);
-            this.locator = locator;
+        public Builder setDocumentSelector(Function<Topic, DocumentReference> documentSelector) {
+            checkNotNull(documentSelector);
+            this.documentSelector = documentSelector;
             return this;
         }
 
@@ -461,8 +461,9 @@ public final class FirebaseSubscriptionMirror {
 
         private void checkLocationSettings() {
             checkState(
-                    (firestore != null) ^ (document != null) ^ (locator != null),
-                    "Only one of Firestore or Firestore Document or locator function must be set."
+                    (firestore != null) ^ (document != null) ^ (documentSelector != null),
+                    "Only one of Firestore or Firestore Document or a document selector function " +
+                            "must be set."
             );
         }
     }
