@@ -29,8 +29,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
- * An implementation of {@link StreamObserver} which
- * {@linkplain SubscriptionService#activate activates} all the received {@link Subscription}s.
+ * An implementation of {@link StreamObserver} of a {@link Subscription} stream which
+ * {@linkplain SubscriptionService#activate activates} all the received {@link Subscription}s
+ * with the specified {@code SubscriptionService}.
  *
  * <p>After activation, the given {@code dataObserver} starts receiving the Entity state updates.
  *

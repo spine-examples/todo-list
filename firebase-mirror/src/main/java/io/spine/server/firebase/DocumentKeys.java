@@ -38,7 +38,9 @@ final class DocumentKeys {
     private static final Pattern INVALID_KEY_CHARS = compile("[^\\w\\d]");
     private static final char INVALID_KEY_LEADING_CHAR = '_';
 
-    // Prevent utility class instantiation.
+    /**
+     * The {@code private} constructor prevents the utility class instantiation.
+     */
     private DocumentKeys() {}
 
     /**
