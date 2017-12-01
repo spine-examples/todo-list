@@ -130,7 +130,7 @@ import static java.util.stream.Collectors.toSet;
  * {@link Builder#setDocumentSelector(Function) document selector} function:
  * <pre>
  *     {@code
- *     final CollectionReference root = // Dedicate a collection for all the subscriptions.
+ *     final CollectionReference root = // Dedicate a collection to all the subscriptions.
  *     final Function<Topic, Document> documentSelector = topic -> {
  *         // Each tenant has own document.
  *         final String userId = topic.getContext().getTenant().getValue();
@@ -159,7 +159,7 @@ import static java.util.stream.Collectors.toSet;
  * <p>If the destination document is predefined, it can be specified directly:
  * <pre>
  *     {@code
- *     final DocumentReference document = // Dedicate a document for subscriptions.
+ *     final DocumentReference document = // Dedicate a document to all the subscriptions.
  *     final FirebaseSubscriptionMirror mirror =
  *             FirebaseSubscriptionMirror.newBuilder()
  *                                       .setFirestoreDocument(document)
