@@ -57,6 +57,7 @@ import io.spine.examples.todolist.c.events.TaskCreationStarted;
 import io.spine.examples.todolist.c.events.TaskDescriptionSet;
 import io.spine.examples.todolist.c.events.TaskDueDateSet;
 import io.spine.examples.todolist.c.events.TaskPrioritySet;
+import io.spine.examples.todolist.c.rejection.CannotMoveToStage;
 import io.spine.server.command.Assign;
 import io.spine.server.procman.CommandRouted;
 import io.spine.server.procman.CommandRouter;
@@ -78,6 +79,8 @@ import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
 import static java.util.stream.Collectors.toSet;
 
 /**
+ * A process manager supervising the task creation process in a wizard manner.
+ *
  * @author Dmytro Dashenkov
  */
 @SuppressWarnings({
@@ -93,7 +96,8 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     @Assign
-    List<? extends Message> handle(StartTaskCreation command, CommandContext context) {
+    List<? extends Message> handle(StartTaskCreation command, CommandContext context)
+            throws CannotMoveToStage {
         checkCurrentStateAfter(STARED);
         final TaskId taskId = command.getTaskId();
         final TaskCreationStarted event = TaskCreationStarted.newBuilder()
@@ -110,7 +114,8 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     @Assign
-    List<? extends Message> handle(SetTaskDescription command, CommandContext context) {
+    List<? extends Message> handle(SetTaskDescription command, CommandContext context)
+            throws CannotMoveToStage {
         checkCurrentStateAfter(STARED);
         final TaskDescription description = command.getDescription();
         final StringChange change = StringChange.newBuilder()
@@ -132,7 +137,8 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     @Assign
-    List<? extends Message> handle(SetTaskPriority command, CommandContext context) {
+    List<? extends Message> handle(SetTaskPriority command, CommandContext context)
+            throws CannotMoveToStage {
         checkCurrentStateAfter(DESCRIPTION_SET);
         final TaskPriority priority = command.getPriority();
         final PriorityChange priorityChange = PriorityChange.newBuilder()
@@ -141,7 +147,7 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
                                                             .build();
         final UpdateTaskPriority updateTaskPriority =
                 UpdateTaskPriority.newBuilder()
-                                  .setId(getState().getTaskId())
+                                  .setId(taskId())
                                   .setPriorityChange(priorityChange)
                                   .build();
         final CommandRouted commandRouted = newRouterFor(command, context)
@@ -155,7 +161,8 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     @Assign
-    List<? extends Message> handle(SetTaskDueDate command, CommandContext context) {
+    List<? extends Message> handle(SetTaskDueDate command, CommandContext context)
+            throws CannotMoveToStage {
         checkCurrentStateAfter(PRIORITY_SET);
         final Timestamp dueDate = command.getDueDate();
         final TimestampChange change = TimestampChange.newBuilder()
@@ -163,7 +170,7 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
                                                       .build();
         final UpdateTaskDueDate updateDueDate =
                 UpdateTaskDueDate.newBuilder()
-                                 .setId(getState().getTaskId())
+                                 .setId(taskId())
                                  .setDueDateChange(change)
                                  .build();
         final CommandRouted commandRouted = newRouterFor(command, context)
@@ -177,10 +184,11 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     @Assign
-    List<? extends Message> handle(AddLabels command, CommandContext context) {
+    List<? extends Message> handle(AddLabels command, CommandContext context)
+            throws CannotMoveToStage {
         checkCurrentStateAfter(PRIORITY_SET);
-        final Collection<? extends Message> existingLabelsCommands = addExistingLabels(command);
-        final Collection<? extends Message> newLabelsCommands = addNewLabels(command);
+        final Collection<? extends Message> existingLabelsCommands = assignExistingLabels(command);
+        final Collection<? extends Message> newLabelsCommands = assignNewLabels(command);
         final CommandRouter router = newRouterFor(command, context);
         existingLabelsCommands.forEach(router::add);
         newLabelsCommands.forEach(router::add);
@@ -193,7 +201,8 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     @Assign
-    List<? extends Message> handle(CompleteTaskCreation command, CommandContext context) {
+    List<? extends Message> handle(CompleteTaskCreation command, CommandContext context)
+            throws CannotMoveToStage {
         checkCurrentStateAfter(LABELS_ADDED);
         final TaskCreationCompleted event = TaskCreationCompleted.newBuilder()
                                                                  .setId(getId())
@@ -239,7 +248,14 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
         setArchived(true);
     }
 
-    private Collection<? extends Message> addExistingLabels(AddLabels command) {
+    /**
+     * Creates commands that assign the specified with the {@link AddLabels} command labels to
+     * the supervised task.
+     *
+     * @param command the command that defines the labels to assign
+     * @return the commands assigning those tasks
+     */
+    private Collection<? extends Message> assignExistingLabels(AddLabels command) {
         final Collection<? extends Message> commands =
                 command.getExistingLabelsList()
                        .stream()
@@ -248,7 +264,14 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
         return commands;
     }
 
-    private Collection<? extends Message> addNewLabels(AddLabels command) {
+    /**
+     * Creates commands that create and assign to the supervised task the yet non-existing labels
+     * defined with the given {@link AddLabels} command.
+     *
+     * @param command the command that defines the new labels to assign to the task
+     * @return commands creating and assigning those labels
+     */
+    private Collection<? extends Message> assignNewLabels(AddLabels command) {
         final Collection<? extends Message> commands = command.getNewLabelsList()
                                                               .stream()
                                                               .flatMap(this::createAndAssignLabel)
@@ -256,6 +279,13 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
         return commands;
     }
 
+    /**
+     * Generates commands that create a label from the given {@link LabelDetails} and assign that
+     * label to the supervised task.
+     *
+     * @param label the label details describing the task to create
+     * @return the command messages creating an assigning a label
+     */
     private Stream<? extends Message> createAndAssignLabel(LabelDetails label) {
         final LabelId labelId = LabelId.newBuilder()
                                        .setValue(newUuid())
@@ -280,9 +310,16 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
         return of(createBasicLabel, updateLabelDetails, assignLabelToTask).stream();
     }
 
+    /**
+     * Creates an {@link AssignLabelToTask} command which assigns the label with the given ID to
+     * the supervised task.
+     *
+     * @param labelId the ID of the label to assign
+     * @return new instance of a command message
+     */
     private AssignLabelToTask assignLabel(LabelId labelId) {
         return AssignLabelToTask.newBuilder()
-                                .setId(getState().getTaskId())
+                                .setId(taskId())
                                 .setLabelId(labelId)
                                 .build();
     }
@@ -291,15 +328,25 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
         return getState().getTaskId();
     }
 
+    /**
+     * Sets the current stage to the given value.
+     *
+     * @param stage the requested stage
+     */
     private void moveToStage(Stage stage) {
         getBuilder().setStage(stage);
     }
 
-    private void checkCurrentStateAfter(Stage stage) {
+    /**
+     * Checks if the given {@code stage} is a later wizard step then the current one and throws
+     * {@link CannotMoveToStage} rejection if it's not.
+     *
+     * @param stage the stage to check
+     */
+    private void checkCurrentStateAfter(Stage stage) throws CannotMoveToStage {
         final Stage currentStage = getState().getStage();
         if (currentStage.getNumber() <= stage.getNumber()) {
-            // TODO:2017-12-01:dmytro.dashenkov: Throw a rejection.
-            throw new IllegalStateException();
+            throw new CannotMoveToStage(getId(), stage, currentStage);
         }
     }
 }

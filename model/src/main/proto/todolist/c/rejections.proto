@@ -32,6 +32,7 @@ option java_generate_equals_and_hash = true;
 
 import "todolist/identifiers.proto";
 import "todolist/values.proto";
+import "todolist/model.proto";
 
 // The rejection to update a task description.
 //
@@ -143,4 +144,13 @@ message CannotFinalizeDraft {
 
     // Details of the rejection.
     FinalizeDraftRejected rejection_details = 1;
+}
+
+message CannotMoveToStage {
+
+    TaskCreationId proc_man_id = 1 [(required) = true];
+
+    TaskCreation.Stage requested_stage = 2 [(required) = true];
+
+    TaskCreation.Stage current_stage = 3 [(required) = true];
 }
