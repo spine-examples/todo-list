@@ -65,9 +65,8 @@ final class SubscriptionObserver implements StreamObserver<Subscription> {
     /**
      * {@inheritDoc}
      *
-     * <p>The {@code SubscriptionObserver} implementation performs no operation since
-     * the {@code Subscription} streams are typically unary and the method is called at once after
-     * {@code onNext()} and no additional terminating steps are required.
+     * <p>The {@code SubscriptionObserver} implementation performs no operation since no additional
+     * terminating steps are required.
      */
     @Override
     public void onCompleted() {}
