@@ -122,7 +122,7 @@ message TaskCreation {
 
         DESCRIPTION_SET = 2;
 
-        PIORITY_SET = 3;
+        PRIORITY_SET = 3;
 
         DUE_DATE_SET = 4;
 

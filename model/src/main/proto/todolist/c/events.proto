@@ -37,6 +37,7 @@ import "spine/change/change.proto";
 import "todolist/identifiers.proto";
 import "todolist/values.proto";
 import "todolist/changes.proto";
+import "todolist/attributes.proto";
 
 // An event signalizing about the successful task creation.
 //
@@ -259,3 +260,48 @@ message LabelledTaskRestored {
     // A task idenifier.
     TaskId task_id = 2;
 }
+
+message TaskCreationStarted {
+
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
+
+    TaskId task_id = 2 [(required) = true, (valid) = true];
+
+}
+
+message TaskDescriptionSet {
+
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
+
+    TaskDescription description = 2 [(required) = true, (valid) = true];
+}
+
+message TaskPrioritySet {
+
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
+
+    TaskPriority priority = 2 [(required) = true, (valid) = true];
+}
+
+message TaskDueDateSet {
+
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
+
+    google.protobuf.Timestamp due_date = 5 [(required) = true, (when).in = FUTURE];
+}
+
+message LabelsAdded {
+    option (required_field) = "existing_labels|new_labels";
+
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
+
+    repeated LabelId existing_labels = 2 [(valid) = true];
+
+    repeated LabelDetails new_labels = 3 [(valid) = true];
+}
+
+message TaskCreationCompleted {
+
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
+}
+
