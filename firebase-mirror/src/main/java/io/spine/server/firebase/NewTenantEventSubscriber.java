@@ -44,14 +44,20 @@ import static com.google.common.collect.Sets.newConcurrentHashSet;
 final class NewTenantEventSubscriber extends EventSubscriber {
 
     /**
-     * Stores the known to this instance of {@code NewTenantEventSubscriber} tenant IDs.
+     * Stores the IDs of tenants, which are already known to this instance of
+     * {@code NewTenantEventSubscriber}.
      *
      * <p>The tenant is considered known when a {@link TenantAdded} event for this tenant has been
-     * acknowledged by this instance of {@code NewTenantEventSubscriber}.
+     * received by this instance of {@code NewTenantEventSubscriber}.
      */
     private final Set<TenantId> knownTenants = newConcurrentHashSet();
     private final Consumer<TenantId> tenantCallback;
 
+    /**
+     * Creates a new instance of {@code NewTenantEventSubscriber}.
+     *
+     * @param tenantCallback the callback to be invoked when a new tenant emerges
+     */
     NewTenantEventSubscriber(Consumer<TenantId> tenantCallback) {
         super();
         this.tenantCallback = tenantCallback;
