@@ -18,7 +18,7 @@ hs_err_pid*
 !/android-app/gradle/wrapper/gradle-wrapper.jar
 
 # Do not ignore code style settings.
-!/.idea/codeStyleSettings.xml
+!/.idea/codeStyles
 
 # Gradle interim configs
 .gradle/
