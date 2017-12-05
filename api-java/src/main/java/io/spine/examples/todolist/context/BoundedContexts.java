@@ -22,11 +22,11 @@ package io.spine.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
-import io.spine.core.BoundedContextName;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
 import io.spine.examples.todolist.repository.MyListViewRepository;
+import io.spine.examples.todolist.repository.TaskCreationProcManRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
@@ -76,12 +76,16 @@ public final class BoundedContexts {
      */
     public static BoundedContext create(StorageFactory storageFactory) {
         checkNotNull(storageFactory);
+
         final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
         final TaskRepository taskRepo = new TaskRepository();
         final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
+
         final MyListViewRepository myListViewRepo = new MyListViewRepository();
         final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
         final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
+
+        final TaskCreationProcManRepository taskCreationRepo = new TaskCreationProcManRepository();
 
         final EventBus.Builder eventBus = createEventBus(storageFactory,
                                                          labelAggregateRepo,
@@ -95,6 +99,7 @@ public final class BoundedContexts {
         boundedContext.register(myListViewRepo);
         boundedContext.register(tasksViewRepo);
         boundedContext.register(draftTasksViewRepo);
+        boundedContext.register(taskCreationRepo);
 
         return boundedContext;
     }
