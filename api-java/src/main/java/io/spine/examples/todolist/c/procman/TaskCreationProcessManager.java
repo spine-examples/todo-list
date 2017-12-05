@@ -75,11 +75,33 @@ import static io.spine.examples.todolist.TaskCreation.Stage.DUE_DATE_SET;
 import static io.spine.examples.todolist.TaskCreation.Stage.LABELS_ADDED;
 import static io.spine.examples.todolist.TaskCreation.Stage.PRIORITY_SET;
 import static io.spine.examples.todolist.TaskCreation.Stage.STARED;
+import static io.spine.examples.todolist.TaskCreation.Stage.TCS_UNKNOWN;
 import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
 import static java.util.stream.Collectors.toSet;
 
 /**
- * A process manager supervising the task creation process in a wizard manner.
+ * A process manager supervising the task creation process.
+ *
+ * <p>The task creation process has following stages:
+ * <ol>
+ *     <li><b>Started</b> - the process is started. This is the initializing stage, i.e. there were
+ *         no other stages before this one. A draft for the supervised task is created once
+ *         the process is started.
+ *     <li><b>Description set</b> for the supervised task. The process comes to this stage after it
+ *         has been started.
+ *     <li><b>Priority set</b> for the supervised task.
+ *     <li><b>Due date set</b> for the supervised task. This stage is optional and can be skipped.
+ *     <li><b>Labels added</b> for the supervised task. At this stage the labels are added to
+ *         the supervised task. If a label does not exist before facing this stage, it is created
+ *         with the given parameters (title and color).
+ *     <li><b>Completed</b> - the task creation process completed. This is a terminal stage, i.e. no
+ *         stages may follow this stage. At this stage the supervised task is finalized and
+ *         the current instance of {@code TaskCreationProcessManager} is
+ *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived}.
+ * </ol>
+ *
+ * <p>Once started, the process cannot be canceled. In case if the process is deserted
+ * (e.g. the user closes the creation wizard), the task draft persists.
  *
  * @author Dmytro Dashenkov
  */
@@ -98,7 +120,7 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     @Assign
     List<? extends Message> handle(StartTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
-        checkCurrentStateAfter(STARED);
+        checkCurrentStateAfter(TCS_UNKNOWN);
         final TaskId taskId = command.getTaskId();
         final TaskCreationStarted event = TaskCreationStarted.newBuilder()
                                                              .setId(command.getId())
@@ -338,8 +360,8 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * Checks if the given {@code stage} is a later wizard step then the current one and throws
-     * {@link CannotMoveToStage} rejection if it's not.
+     * Checks if the given {@code stage} may go after the current one and throws
+     * {@link CannotMoveToStage} rejection if it may not.
      *
      * @param stage the stage to check
      */
