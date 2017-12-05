@@ -69,7 +69,7 @@ class RestoreDeletedTaskTest extends TodoClientTest {
         assignAndDeleteTask(labelId, taskId);
 
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-        client.restore(restoreDeletedTask);
+        client.postCommand(restoreDeletedTask);
 
         final int expectedListSize = 1;
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
@@ -100,7 +100,7 @@ class RestoreDeletedTaskTest extends TodoClientTest {
 
         final RestoreDeletedTask restoreDeletedTask =
                 restoreDeletedTaskInstance(createWrongTaskId());
-        client.restore(restoreDeletedTask);
+        client.postCommand(restoreDeletedTask);
 
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
         assertEquals(1, tasksViewList.size());
@@ -114,9 +114,9 @@ class RestoreDeletedTaskTest extends TodoClientTest {
 
     private void assignAndDeleteTask(LabelId labelId, TaskId taskId) {
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        client.delete(deleteTask);
+        client.postCommand(deleteTask);
     }
 }

@@ -83,7 +83,7 @@ class UpdateTaskDueDateTest extends TodoClientTest {
 
         private TaskItem getViewAfterUpdateTaskDueDate(Timestamp newDueDate, boolean isCorrectId) {
             final CreateDraft createDraft = createDraft();
-            client.create(createDraft);
+            client.postCommand(createDraft);
 
             final TaskId createdTaskId = createDraft.getId();
 
@@ -123,7 +123,7 @@ class UpdateTaskDueDateTest extends TodoClientTest {
 
         private TaskItem getViewAfterUpdateTaskDueDate(Timestamp newDueDate, boolean isCorrectId) {
             final CreateBasicTask createTask = createBasicTask();
-            client.create(createTask);
+            client.postCommand(createTask);
 
             final TaskId idOfCreatedTask = createTask.getId();
 
@@ -163,16 +163,16 @@ class UpdateTaskDueDateTest extends TodoClientTest {
         private TaskItem getViewAfterUpdateTaskDueDate(Timestamp newDueDate, boolean isCorrectId) {
             final CreateBasicTask createTask = createBasicTask();
             final TaskId createdTaskId = createTask.getId();
-            client.create(createTask);
+            client.postCommand(createTask);
 
             final CreateBasicLabel createLabel = createBasicLabel();
-            client.create(createLabel);
+            client.postCommand(createLabel);
 
             final TaskId taskId = createTask.getId();
             final LabelId labelId = createLabel.getLabelId();
 
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.assignLabel(assignLabelToTask);
+            client.postCommand(assignLabelToTask);
 
             updateDueDate(newDueDate, isCorrectId, createdTaskId);
 
@@ -199,6 +199,6 @@ class UpdateTaskDueDateTest extends TodoClientTest {
         final Timestamp previousDueDate = Timestamp.getDefaultInstance();
         final UpdateTaskDueDate updateTaskDueDate =
                 updateTaskDueDateInstance(idOfUpdatedTask, previousDueDate, newDueDate);
-        client.update(updateTaskDueDate);
+        client.postCommand(updateTaskDueDate);
     }
 }

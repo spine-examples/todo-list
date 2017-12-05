@@ -41,20 +41,6 @@ import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceStub;
 import io.spine.core.Command;
 import io.spine.core.UserId;
 import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.c.commands.AssignLabelToTask;
-import io.spine.examples.todolist.c.commands.CompleteTask;
-import io.spine.examples.todolist.c.commands.CreateBasicLabel;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.c.commands.DeleteTask;
-import io.spine.examples.todolist.c.commands.FinalizeDraft;
-import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
-import io.spine.examples.todolist.c.commands.ReopenTask;
-import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
-import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
-import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
-import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
-import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
@@ -99,98 +85,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
-    public void create(CreateBasicTask cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
-        commandService.post(executableCmd);
-    }
-
-    @Override
-    public void create(CreateBasicLabel cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
-        commandService.post(executableCmd);
-    }
-
-    @Override
-    public void create(CreateDraft cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
-        commandService.post(executableCmd);
-    }
-
-    @Override
-    public void update(UpdateTaskDescription cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
-        commandService.post(executableCmd);
-    }
-
-    @Override
-    public void update(UpdateTaskDueDate cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
-        commandService.post(executableCmd);
-    }
-
-    @Override
-    public void update(UpdateTaskPriority cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
-        commandService.post(executableCmd);
-    }
-
-    @Override
-    public void update(UpdateLabelDetails cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
-        commandService.post(executableCmd);
-    }
-
-    @Override
-    public void delete(DeleteTask cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
-        commandService.post(executableCmd);
-    }
-
-    @Override
-    public void removeLabel(RemoveLabelFromTask cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
-        commandService.post(executableCmd);
-    }
-
-    @Override
-    public void assignLabel(AssignLabelToTask cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
-        commandService.post(executableCmd);
-    }
-
-    @Override
-    public void reopen(ReopenTask cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
-        commandService.post(executableCmd);
-    }
-
-    @Override
-    public void restore(RestoreDeletedTask cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
-        commandService.post(executableCmd);
-    }
-
-    @Override
-    public void complete(CompleteTask cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
-        commandService.post(executableCmd);
-    }
-
-    @Override
-    public void finalize(FinalizeDraft cmd) {
+    public void postCommand(Message cmd) {
         final Command executableCmd = requestFactory.command()
                                                     .create(cmd);
         commandService.post(executableCmd);

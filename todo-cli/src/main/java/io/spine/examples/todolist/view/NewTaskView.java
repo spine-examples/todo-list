@@ -132,7 +132,7 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
 
         @Override
         protected void post(CreateBasicTask commandMessage) {
-            getClient().create(commandMessage);
+            getClient().postCommand(commandMessage);
         }
     }
 

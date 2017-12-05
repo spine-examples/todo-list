@@ -52,7 +52,7 @@ class CreateDraftTest extends TodoClientTest {
     @DisplayName("DraftTasksView should contain the task view")
     void obtainDraftView() {
         final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+        client.postCommand(createDraft);
 
         final DraftTasksView draftTasksView = client.getDraftTasksView();
         final List<TaskItem> taskViewList = draftTasksView.getDraftTasks()
@@ -66,7 +66,7 @@ class CreateDraftTest extends TodoClientTest {
     @DisplayName("LabelledTasksView should not contain the task view")
     void obtainLabelledView() {
         final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+        client.postCommand(createDraft);
 
         final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
         assertTrue(labelledTasksView.isEmpty());
@@ -76,7 +76,7 @@ class CreateDraftTest extends TodoClientTest {
     @DisplayName("MyListView should not contain task view")
     void ObtainMyListView() {
         final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+        client.postCommand(createDraft);
 
         final List<TaskItem> taskViews = client.getMyListView()
                                                .getMyList()

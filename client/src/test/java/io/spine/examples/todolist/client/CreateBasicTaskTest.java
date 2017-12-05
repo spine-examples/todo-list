@@ -54,7 +54,7 @@ class CreateBasicTaskTest extends TodoClientTest {
     @DisplayName("LabelledTasksView should be empty")
     void obtainEmptyLabelledTasksView() {
         final CreateBasicTask createBasicTask = createBasicTask();
-        client.create(createBasicTask);
+        client.postCommand(createBasicTask);
 
         final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
         assertTrue(labelledTasksView.isEmpty());
@@ -64,7 +64,7 @@ class CreateBasicTaskTest extends TodoClientTest {
     @DisplayName("DraftTaskItem should be empty")
     void obtainEmptyDraftViewList() {
         final CreateBasicTask createBasicTask = createBasicTask();
-        client.create(createBasicTask);
+        client.postCommand(createBasicTask);
 
         final List<TaskItem> taskViews = client.getDraftTasksView()
                                                .getDraftTasks()
@@ -76,10 +76,10 @@ class CreateBasicTaskTest extends TodoClientTest {
     @DisplayName("MyListView should contain the created task")
     void obtainMyListView() {
         final CreateBasicTask createFirstTask = createBasicTask();
-        client.create(createFirstTask);
+        client.postCommand(createFirstTask);
 
         final CreateBasicTask createSecondTask = createBasicTask();
-        client.create(createSecondTask);
+        client.postCommand(createSecondTask);
 
         final List<TaskItem> taskViews = client.getMyListView()
                                                .getMyList()

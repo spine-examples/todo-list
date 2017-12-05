@@ -101,13 +101,13 @@ class ReopenTaskTest extends TodoClientTest {
         final TaskId createdTaskId = createTask.getId();
 
         final CreateBasicLabel createLabel = createBasicLabel();
-        client.create(createLabel);
+        client.postCommand(createLabel);
 
         final TaskId taskId = createTask.getId();
         final LabelId labelId = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         completeAndReopenTask(isCorrectId, createdTaskId);
 
@@ -142,10 +142,10 @@ class ReopenTaskTest extends TodoClientTest {
 
     private void completeAndReopenTask(boolean isCorrectId, TaskId createdTaskId) {
         final CompleteTask completeTask = completeTaskInstance(createdTaskId);
-        client.complete(completeTask);
+        client.postCommand(completeTask);
 
         final TaskId reopenedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
         final ReopenTask reopenTask = reopenTaskInstance(reopenedTaskId);
-        client.reopen(reopenTask);
+        client.postCommand(reopenTask);
     }
 }

@@ -135,13 +135,13 @@ abstract class TodoClientTest {
 
     CreateBasicTask createTask() {
         final CreateBasicTask createTask = createBasicTask();
-        getClient().create(createTask);
+        getClient().postCommand(createTask);
         return createTask;
     }
 
     CreateBasicLabel createLabel() {
         final CreateBasicLabel createLabel = createBasicLabel();
-        getClient().create(createLabel);
+        getClient().postCommand(createLabel);
         return createLabel;
     }
 

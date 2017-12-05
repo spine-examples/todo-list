@@ -81,7 +81,7 @@ class AssignLabelToTaskTest extends TodoClientTest {
             final LabelId labelId = createLabel.getLabelId();
 
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.assignLabel(assignLabelToTask);
+            client.postCommand(assignLabelToTask);
 
             final int expectedListSize = 1;
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
@@ -110,10 +110,10 @@ class AssignLabelToTaskTest extends TodoClientTest {
             final TaskId taskId = createTask.getId();
 
             AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, firstLabelId);
-            client.assignLabel(assignLabelToTask);
+            client.postCommand(assignLabelToTask);
 
             assignLabelToTask = assignLabelToTaskInstance(taskId, secondLabelId);
-            client.assignLabel(assignLabelToTask);
+            client.postCommand(assignLabelToTask);
 
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
             assertEquals(2, tasksViewList.size());
@@ -190,7 +190,7 @@ class AssignLabelToTaskTest extends TodoClientTest {
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfUpdatedTask,
                                                                               labelId);
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         final List<TaskItem> taskViews = client.getMyListView()
                                                .getMyList()
@@ -205,14 +205,14 @@ class AssignLabelToTaskTest extends TodoClientTest {
 
     private TaskItem obtainViewWhenHandledAssignLabelToTask(LabelId labelId, boolean isCorrectId) {
         final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+        client.postCommand(createDraft);
 
         final TaskId createTaskId = createDraft.getId();
         final TaskId taskIdToAssign = isCorrectId ? createTaskId : createWrongTaskId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskIdToAssign,
                                                                               labelId);
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         final List<TaskItem> taskViews = client.getDraftTasksView()
                                                .getDraftTasks()
