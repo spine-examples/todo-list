@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.client;
 
-import com.google.protobuf.Message;
 import io.spine.examples.todolist.Task;
+import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
@@ -44,7 +44,7 @@ public interface TodoClient {
      *
      * @param commandMessage the command to post
      */
-    void postCommand(Message commandMessage);
+    void postCommand(TodoCommand commandMessage);
 
     /**
      * Obtains the single {@link MyListView}.

@@ -41,6 +41,7 @@ import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceStub;
 import io.spine.core.Command;
 import io.spine.core.UserId;
 import io.spine.examples.todolist.Task;
+import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
@@ -85,7 +86,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
-    public void postCommand(Message cmd) {
+    public void postCommand(TodoCommand cmd) {
         final Command executableCmd = requestFactory.command()
                                                     .create(cmd);
         commandService.post(executableCmd);
