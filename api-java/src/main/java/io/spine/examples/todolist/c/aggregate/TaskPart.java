@@ -113,9 +113,7 @@ public class TaskPart extends AggregatePart<TaskId,
                                             TaskAggregateRoot> {
 
     private static final TaskDescription DEFAULT_DRAFT_DESCRIPTION =
-            TaskDescription.newBuilder()
-                           .setValue("Task description goes here.")
-                           .build();
+            TaskDescription.getDefaultInstance();
 
     /**
      * {@inheritDoc}
