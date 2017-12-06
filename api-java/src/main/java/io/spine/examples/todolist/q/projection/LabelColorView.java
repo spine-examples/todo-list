@@ -42,7 +42,7 @@ public enum LabelColorView {
         this.hexColor = hexColor;
     }
 
-    static String valueOf(LabelColor labelColor) {
+    public static String valueOf(LabelColor labelColor) {
         for (LabelColorView colorView : values()) {
             if (colorView.labelColor == labelColor) {
                 return colorView.hexColor;

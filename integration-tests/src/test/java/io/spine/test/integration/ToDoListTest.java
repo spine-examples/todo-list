@@ -21,16 +21,9 @@
 package io.spine.test.integration;
 
 import com.google.protobuf.Timestamp;
-import io.spine.examples.todolist.LabelDetails;
-import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.TaskCreationId;
-import io.spine.examples.todolist.TaskDescription;
-import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
-import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CompleteTask;
-import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
@@ -38,10 +31,6 @@ import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
 import io.spine.examples.todolist.c.commands.ReopenTask;
 import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
-import io.spine.examples.todolist.c.commands.SetTaskDescription;
-import io.spine.examples.todolist.c.commands.SetTaskDueDate;
-import io.spine.examples.todolist.c.commands.SetTaskPriority;
-import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.client.TodoClient;
@@ -52,15 +41,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Optional;
 
-import static com.google.protobuf.util.Durations.fromSeconds;
-import static com.google.protobuf.util.Timestamps.add;
-import static io.spine.Identifier.newUuid;
-import static io.spine.examples.todolist.LabelColor.RED;
 import static io.spine.examples.todolist.TaskPriority.HIGH;
-import static io.spine.examples.todolist.TaskStatus.FINALIZED;
-import static io.spine.examples.todolist.q.projection.LabelColorView.RED_COLOR;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
@@ -229,77 +211,5 @@ public class ToDoListTest extends AbstractIntegrationTest {
         assertEquals(1, labeledTasks.size());
         assertEquals(newPriority, labeledTasks.get(0)
                                               .getPriority());
-    }
-
-    @Test
-    @DisplayName("Full TaskCreation process")
-    void procManTest() {
-        final TaskCreationId pid = TaskCreationId.newBuilder()
-                                                 .setValue(newUuid())
-                                                 .build();
-        final TaskId taskId = TaskId.newBuilder()
-                                    .setValue(newUuid())
-                                    .build();
-        final StartTaskCreation startCreation = StartTaskCreation.newBuilder()
-                                                                 .setId(pid)
-                                                                 .setTaskId(taskId)
-                                                                 .build();
-        client.postCommand(startCreation);
-        final TaskDescription description = TaskDescription.newBuilder()
-                                                           .setValue("procManTest")
-                                                           .build();
-        final SetTaskDescription setDescription = SetTaskDescription.newBuilder()
-                                                                    .setId(pid)
-                                                                    .setDescription(description)
-                                                                    .build();
-        client.postCommand(setDescription);
-        final TaskPriority priority = HIGH;
-        final SetTaskPriority setPriority = SetTaskPriority.newBuilder()
-                                                           .setId(pid)
-                                                           .setPriority(priority)
-                                                           .build();
-        client.postCommand(setPriority);
-        final Timestamp dueDate = add(getCurrentTime(), fromSeconds(10_000));
-        final SetTaskDueDate setDueDate = SetTaskDueDate.newBuilder()
-                                                        .setId(pid)
-                                                        .setDueDate(dueDate)
-                                                        .build();
-        client.postCommand(setDueDate);
-        final String labelTitle = "red label";
-        final LabelDetails newLabel = LabelDetails.newBuilder()
-                                                  .setTitle(labelTitle)
-                                                  .setColor(RED)
-                                                  .build();
-        final AddLabels addLabels = AddLabels.newBuilder()
-                                             .setId(pid)
-                                             .addNewLabels(newLabel)
-                                             .build();
-        client.postCommand(addLabels);
-        final CompleteTaskCreation completeTaskCreation = CompleteTaskCreation.newBuilder()
-                                                                              .setId(pid)
-                                                                              .build();
-        client.postCommand(completeTaskCreation);
-
-        final Optional<Task> taskOptional = client.getTasks()
-                                                  .stream()
-                                                  .filter(task -> taskId.equals(task.getId()))
-                                                  .findAny();
-        assertTrue(taskOptional.isPresent());
-        final Task actualTask = taskOptional.get();
-        assertEquals(FINALIZED, actualTask.getTaskStatus());
-        assertEquals(description, actualTask.getDescription());
-        assertEquals(priority, actualTask.getPriority());
-        assertEquals(dueDate, actualTask.getDueDate());
-
-        client.getLabelledTasksView()
-              .stream()
-              .filter(label -> labelTitle.equals(label.getLabelTitle()))
-              .peek(label -> assertTrue(RED_COLOR.getHexColor()
-                                                 .equalsIgnoreCase(label.getLabelColor())))
-              .flatMap(label -> label.getLabelledTasks()
-                                     .getItemsList()
-                                     .stream())
-              .filter(task -> taskId.equals(task.getId()))
-              .findAny();
     }
 }
