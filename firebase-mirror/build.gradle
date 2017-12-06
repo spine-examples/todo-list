@@ -18,18 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+dependencies {
+    compile 'com.google.firebase:firebase-admin:5.5.0'
 
-/**
- * An exception thrown when enrichment cannot be found in {@link io.spine.core.EventContext}.
- *
- * @author Illia Shepilov
- */
-class EnrichmentNotFoundException extends RuntimeException {
+    testCompile project(path: ':api-java')
+    testCompile ("io.spine:spine-testutil-server:$spineVersion") {
+        exclude group: 'junit'
+    }
+    testCompile "com.google.guava:guava-testlib:$guavaVersion"
+}
 
-    private static final long serialVersionUID = 0L;
-
-    EnrichmentNotFoundException(String message) {
-        super(message);
+junitPlatform {
+    filters {
+        // Checks if the tests are run on a CI server, where the "CI" environmental variable is set
+        // to "true".
+        //
+        // If the tests are NOT run on a CI server, the test cases labeled with the "CI" tag are
+        // ignored. This mechanism allows to declare the tests which rely on some sensitive
+        // environment, for example cloud service account credentials.
+        //
+        // To label a test with the "CI" tag, use `@Tag("CI")` annotation (from JUnit 5 API).
+        //
+        if (System.env.CI != "true") {
+            tags {
+                exclude "CI"
+            }
+        }
     }
 }
