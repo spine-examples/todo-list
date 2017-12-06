@@ -102,7 +102,7 @@ import static java.util.stream.Collectors.toSet;
  * <pre>
  *     {@code
  *     --> Started --> Building --> Completed.
- *               |           |
+ *               \           \
  *                ---------------> Canceled.
  *     }
  * </pre>
