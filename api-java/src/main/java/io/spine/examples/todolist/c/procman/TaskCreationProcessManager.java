@@ -98,7 +98,7 @@ import static java.util.stream.Collectors.toSet;
  *         stage.
  * </ol>
  *
- * <p>The possible state transitions may be depicted as follows:
+ * <p>The possible stage transitions may be depicted as follows:
  * <pre>
  *     {@code
  *     --> Started --> Building --> Completed.
