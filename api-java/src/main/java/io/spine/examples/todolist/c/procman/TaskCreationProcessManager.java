@@ -38,6 +38,7 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
+import io.spine.examples.todolist.c.commands.CancelTaskCreation;
 import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateDraft;
@@ -57,20 +58,20 @@ import io.spine.server.procman.CommandRouter;
 import io.spine.server.procman.ProcessManager;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.of;
 import static io.spine.Identifier.newUuid;
 import static io.spine.examples.todolist.LabelColor.GRAY;
+import static io.spine.examples.todolist.TaskCreation.Stage.BUILDING;
+import static io.spine.examples.todolist.TaskCreation.Stage.CANCELED;
 import static io.spine.examples.todolist.TaskCreation.Stage.COMPLETED;
-import static io.spine.examples.todolist.TaskCreation.Stage.DESCRIPTION_SET;
-import static io.spine.examples.todolist.TaskCreation.Stage.DUE_DATE_SET;
-import static io.spine.examples.todolist.TaskCreation.Stage.LABELS_ADDED;
-import static io.spine.examples.todolist.TaskCreation.Stage.PRIORITY_SET;
 import static io.spine.examples.todolist.TaskCreation.Stage.STARED;
 import static io.spine.examples.todolist.TaskCreation.Stage.TCS_UNKNOWN;
 import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -82,21 +83,29 @@ import static java.util.stream.Collectors.toSet;
  *     <li><b>Started</b> - the process is started. This is the initializing stage, i.e. there were
  *         no other stages before this one. A draft for the supervised task is created once
  *         the process is started.
- *     <li><b>Description set</b> for the supervised task. The process comes to this stage after it
- *         has been started.
- *     <li><b>Priority set</b> for the supervised task.
- *     <li><b>Due date set</b> for the supervised task. This stage is optional and can be skipped.
- *     <li><b>Labels added</b> for the supervised task. At this stage the labels are added to
- *         the supervised task. If a label does not exist before facing this stage, it is created
- *         with the given parameters (title and color).
+ *     <li><b>Building</b> - the task building is started. The process moves to this stage once
+ *         the first field is set to the supervised task. The order of the fields being set to
+ *         the task does not matter.
  *     <li><b>Completed</b> - the task creation process completed. This is a terminal stage, i.e. no
  *         stages may follow this stage. At this stage the supervised task is finalized and
  *         the current instance of {@code TaskCreationProcessManager} is
- *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived}.
+ *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived}. It is
+ *         required that the process is in the <b>Building</b> stage to make is move to this stage.
+ *     <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.
+ *         The user may return to the supervised task (as a draft) and finalize it manually.
+ *         This is a terminal stage. This instance of {@code TaskCreationProcessManager} is
+ *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived} on this
+ *         stage.
  * </ol>
  *
- * <p>Once started, the process cannot be canceled. In case if the process is deserted
- * (e.g. the user closes the creation wizard), the task draft persists.
+ * <p>The possible state transitions may be depicted as follows:
+ * <pre>
+ *     {@code
+ *     --> Started --> Building --> Completed.
+ *               |           |
+ *                ---------------> Canceled.
+ *     }
+ * </pre>
  *
  * @author Dmytro Dashenkov
  */
@@ -115,7 +124,7 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     @Assign
     CommandRouted handle(StartTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
-        checkCurrentStageIs(TCS_UNKNOWN);
+        checkExactly(TCS_UNKNOWN);
         final TaskId taskId = command.getTaskId();
         final CreateDraft createDraft = CreateDraft.newBuilder()
                                                    .setId(taskId)
@@ -131,7 +140,7 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     @Assign
     CommandRouted handle(SetTaskDescription command, CommandContext context)
             throws CannotMoveToStage {
-        checkCurrentStageIs(STARED);
+        checkHit(STARED);
         final TaskDescription description = command.getDescription();
         final StringChange change = StringChange.newBuilder()
                                                 .setNewValue(description.getValue())
@@ -144,14 +153,14 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
         final CommandRouted commandRouted = newRouterFor(command, context)
                 .add(updateCommand)
                 .routeAll();
-        moveToStage(DESCRIPTION_SET);
+        moveToStage(BUILDING);
         return commandRouted;
     }
 
     @Assign
     CommandRouted handle(SetTaskPriority command, CommandContext context)
             throws CannotMoveToStage {
-        checkCurrentStageIs(DESCRIPTION_SET);
+        checkHit(STARED);
         final TaskPriority priority = command.getPriority();
         final PriorityChange priorityChange = PriorityChange.newBuilder()
                                                             .setNewValue(priority)
@@ -165,14 +174,14 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
         final CommandRouted commandRouted = newRouterFor(command, context)
                 .add(updateTaskPriority)
                 .routeAll();
-        moveToStage(PRIORITY_SET);
+        moveToStage(BUILDING);
         return commandRouted;
     }
 
     @Assign
     CommandRouted handle(SetTaskDueDate command, CommandContext context)
             throws CannotMoveToStage {
-        checkCurrentStageIs(PRIORITY_SET);
+        checkHit(STARED);
         final Timestamp dueDate = command.getDueDate();
         final TimestampChange change = TimestampChange.newBuilder()
                                                       .setNewValue(dueDate)
@@ -185,28 +194,28 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
         final CommandRouted commandRouted = newRouterFor(command, context)
                 .add(updateDueDate)
                 .routeAll();
-        moveToStage(DUE_DATE_SET);
+        moveToStage(BUILDING);
         return commandRouted;
     }
 
     @Assign
     CommandRouted handle(AddLabels command, CommandContext context)
             throws CannotMoveToStage {
-        checkCurrentStageIs(DUE_DATE_SET);
+        checkHit(STARED);
         final Collection<? extends Message> existingLabelsCommands = assignExistingLabels(command);
         final Collection<? extends Message> newLabelsCommands = assignNewLabels(command);
         final CommandRouter router = newRouterFor(command, context);
         existingLabelsCommands.forEach(router::add);
         newLabelsCommands.forEach(router::add);
         final CommandRouted commandRouted = router.routeAll();
-        moveToStage(LABELS_ADDED);
+        moveToStage(BUILDING);
         return commandRouted;
     }
 
     @Assign
     CommandRouted handle(CompleteTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
-        checkCurrentStageIs(LABELS_ADDED);
+        checkExactly(BUILDING);
         final FinalizeDraft finalizeDraft = FinalizeDraft.newBuilder()
                                                          .setId(taskId())
                                                          .build();
@@ -215,6 +224,14 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
         completeProcess();
         moveToStage(COMPLETED);
         return commandRouted;
+    }
+
+    @Assign
+    List<? extends Message> handle(CancelTaskCreation command) throws CannotMoveToStage {
+        checkHit(STARED);
+        completeProcess();
+        moveToStage(CANCELED);
+        return emptyList();
     }
 
     /**
@@ -307,14 +324,27 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * Checks if the given {@code stage} may go after the current one and throws
-     * {@link CannotMoveToStage} rejection if it may not.
+     * Checks if the process is either in the given {@code stage} or has already finished it.
      *
      * @param stage the stage to check
+     * @throws CannotMoveToStage upon the check failure
      */
-    private void checkCurrentStageIs(Stage stage) throws CannotMoveToStage {
+    private void checkHit(Stage stage) throws CannotMoveToStage {
         final Stage currentStage = getState().getStage();
-        if (currentStage.getNumber() != stage.getNumber()) {
+        if (currentStage.getNumber() < stage.getNumber()) {
+            throw new CannotMoveToStage(getId(), stage, currentStage);
+        }
+    }
+
+    /**
+     * Checks if the process is currently exactly in this stage.
+     *
+     * @param stage the stage to check
+     * @throws CannotMoveToStage upon the check failure
+     */
+    private void checkExactly(Stage stage) throws CannotMoveToStage {
+        final Stage currentStage = getState().getStage();
+        if (currentStage != stage) {
             throw new CannotMoveToStage(getId(), stage, currentStage);
         }
     }

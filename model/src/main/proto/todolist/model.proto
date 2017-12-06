@@ -120,14 +120,10 @@ message TaskCreation {
 
         STARED = 1;
 
-        DESCRIPTION_SET = 2;
+        BUILDING = 2;
 
-        PRIORITY_SET = 3;
+        COMPLETED = 3;
 
-        DUE_DATE_SET = 4;
-
-        LABELS_ADDED = 5;
-
-        COMPLETED = 6;
+        CANCELED = 4;
     }
 }
