@@ -273,15 +273,16 @@ message UpdateLabelDetails {
     reserved 3 to 10;
 }
 
-// Task creation process commands.
-// -------------------------------
+// Commands to the task creation procman
+// -------------------------------------
 
 // Start the task creation process.
 //
 // The process involves creating a draft and assigning all the task fields to it one by one.
 //
 // The process itself has an identifier, so the client should work with the ID of the process
-// rather than the ID of the task itself.
+// rather than the ID of the task itself. The process ID is specified in this command together with
+// the task ID.
 //
 // This command causes an empty draft with the given ID to be created.
 //
@@ -321,14 +322,15 @@ message SetTaskPriority {
 
 // Set due date to the task being created.
 //
-// The due date is checked to be a future timetamp.
-//
 message SetTaskDueDate {
 
     // The ID of the task creation process.
     TaskCreationId id = 1 [(required) = true, (valid) = true];
 
     // The due date to assign to the task.
+    //
+    // Should point to an instant in future.
+    //
     google.protobuf.Timestamp due_date = 5 [(required) = true, (when).in = FUTURE];
 }
 
@@ -341,8 +343,8 @@ message SetTaskDueDate {
 //
 // The new labels are specified by their data (label details).
 //
-// It is required that at least one of the new or existing labels are specified; the command doesn't
-// make much sence otherwise.
+// It is required that at least one label is specified, existing or new; the command doesn't make
+// much sence otherwise.
 //
 message AddLabels {
     option (required_field) = "existing_labels|new_labels";

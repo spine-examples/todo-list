@@ -106,26 +106,42 @@ message TaskLabel {
     LabelColor color = 3;
 }
 
+// The task creation process state.
+//
+// See `TaskCreationProcessmanager` for more details.
+//
 message TaskCreation {
     option (entity).kind = PROCESS_MANAGER;
     option (entity).visibility = NONE;
 
+    // The ID of the process.
     TaskCreationId id = 1 [(required) = true];
 
+    // The process current stage.
     Stage stage = 2 [(required) = true];
 
+    // The ID of the task being created.
     TaskId task_id = 3 [(required) = true];
 
+    // The enumeration of the task creation process stages.
     enum Stage {
 
+        // The default value.
         TCS_UNKNOWN = 0;
 
+        // The process is started but no task fields are assigned to the task yet.
         STARED = 1;
 
+        // The fields are being assigned to the task.
         BUILDING = 2;
 
+        // The task creation is completed successfully - the task has been created.
         COMPLETED = 3;
 
+        // The task creation is canceled.
+        //
+        // The task draft is available for the clients to view and mutate.
+        //
         CANCELED = 4;
     }
 }
