@@ -43,8 +43,13 @@ import static io.spine.Identifier.newUuid;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
+ * The task creation process manager test environment.
+ *
+ * <p>Provides values and routines for sending commands to the procman and verifying the results.
+ *
  * @author Dmytro Dashenkov
  */
+@SuppressWarnings("OverlyCoupledClass") // OK for this class.
 public class TaskCreationPmTestEnv {
 
     private final TodoClient client;
@@ -53,9 +58,18 @@ public class TaskCreationPmTestEnv {
         this.client = client;
     }
 
+    /**
+     * Creates a new instance of {@code TaskCreationPmTestEnv} with the given client.
+     *
+     * @param todoClient the {@code TodoClient} to connect to the TodoList server
+     * @return new instance of {@code TaskCreationPmTestEnv}
+     */
     public static TaskCreationPmTestEnv with(TodoClient todoClient) {
         return new TaskCreationPmTestEnv(todoClient);
     }
+
+    // Command sending methods
+    // -----------------------
 
     public void createDraft(TaskCreationId pid, TaskId taskId) {
         final StartTaskCreation startCreation = StartTaskCreation.newBuilder()
@@ -126,6 +140,9 @@ public class TaskCreationPmTestEnv {
         return id;
     }
 
+    // Query methods
+    // -------------
+
     public Task taskById(TaskId id) {
         final Optional<Task> taskOptional = client.getTasks()
                                                   .stream()
@@ -135,6 +152,9 @@ public class TaskCreationPmTestEnv {
         final Task actualTask = taskOptional.get();
         return actualTask;
     }
+
+    // Value generating static methods
+    // -------------------------------
 
     public static TaskCreationId newPid() {
         return TaskCreationId.newBuilder()

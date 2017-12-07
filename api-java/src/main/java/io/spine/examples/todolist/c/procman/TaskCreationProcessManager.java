@@ -92,9 +92,9 @@ import static java.util.stream.Collectors.toSet;
  *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived}. It is
  *         required that the process is in the <b>Building</b> stage before moving to this stage.
  *     <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.
- *         The user may return to the supervised task (as a draft) and finalize it manually.
- *         This is a terminal stage. This instance of {@code TaskCreationProcessManager} is
- *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived} on this
+ *         The user may return to the supervised task (which persists as a draft) and finalize it
+ *         manually. This is a terminal stage. This instance of {@code TaskCreationProcessManager}
+ *         is {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived} on this
  *         stage.
  * </ol>
  *
@@ -132,7 +132,7 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
         final CommandRouted commandRouted = newRouterFor(command, context)
                 .add(createDraft)
                 .routeAll();
-        startProcess(command);
+        initProcess(command);
         moveToStage(STARED);
         return commandRouted;
     }
@@ -235,7 +235,7 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * Creates commands that assign the specified in {@code AddLabels} command labels to
+     * Creates commands that assign the specified in {@code AddLabels} command existing labels to
      * the supervised task.
      *
      * @param command the command that defines the labels to assign
@@ -356,7 +356,7 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * Checks if the process is either in the given {@code stage} or has already finished it.
+     * Checks if the process is either in the given {@code stage} or has already passed it.
      *
      * @param stage the stage to check
      * @throws CannotMoveToStage upon the check failure
@@ -386,7 +386,7 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
      *
      * @param cmd the command starting the process
      */
-    private void startProcess(StartTaskCreation cmd) {
+    private void initProcess(StartTaskCreation cmd) {
         final TaskCreationId id = getId();
         checkArgument(id.equals(cmd.getId()));
         getBuilder().setId(id)
