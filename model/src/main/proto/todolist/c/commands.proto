@@ -273,51 +273,116 @@ message UpdateLabelDetails {
     reserved 3 to 10;
 }
 
+// Task creation process commands.
+// -------------------------------
+
+// Start the task creation process.
+//
+// The process involves creating a draft and assigning all the task fields to it one by one.
+//
+// The process itself has an identifier, so the client should work with the ID of the process
+// rather than the ID of the task itself.
+//
+// This command causes an empty draft with the given ID to be created.
+//
 message StartTaskCreation {
 
+    // The ID of the task creation process.
     TaskCreationId id = 1 [(required) = true, (valid) = true];
 
+    // The ID of the task to create.
     TaskId task_id = 2 [(required) = true, (valid) = true];
-
 }
 
+// Set description to the task being created.
+//
 message SetTaskDescription {
 
+    // The ID of the task creation process.
     TaskCreationId id = 1 [(required) = true, (valid) = true];
 
+    // The task desciption to set to the task.
+    //
+    // Must not be empty.
+    //
     TaskDescription description = 2 [(required) = true, (valid) = true];
 }
 
+// Set priority to the task being created.
+//
 message SetTaskPriority {
 
+    // The ID of the task creation process.
     TaskCreationId id = 1 [(required) = true, (valid) = true];
 
+    // The priopity to assign to the task.
     TaskPriority priority = 2 [(required) = true, (valid) = true];
 }
 
+// Set due date to the task being created.
+//
+// The due date is checked to be a future timetamp.
+//
 message SetTaskDueDate {
 
+    // The ID of the task creation process.
     TaskCreationId id = 1 [(required) = true, (valid) = true];
 
+    // The due date to assign to the task.
     google.protobuf.Timestamp due_date = 5 [(required) = true, (when).in = FUTURE];
 }
 
+// Add labels to the task being created.
+//
+// It is possible both to specify the existing labels and assign them to the task and to create new
+// labels and assign them to the task at once.
+//
+// The existing labels are specified by their IDs.
+//
+// The new labels are specified by their data (label details).
+//
+// It is required that at least one of the new or existing labels are specified; the command doesn't
+// make much sence otherwise.
+//
 message AddLabels {
     option (required_field) = "existing_labels|new_labels";
 
+    // The ID of the task creation process.
     TaskCreationId id = 1 [(required) = true, (valid) = true];
 
+    // The IDs of the existing labels to assign to the task.
+    //
+    // Either this field or `new_labels` must be present.
+    //
     repeated LabelId existing_labels = 2 [(valid) = true];
 
+    // The details of the new labels to create and assign to the task.
+    //
+    // Either this field or `existing_labels` must be present.
+    //
     repeated LabelDetails new_labels = 3 [(valid) = true];
 }
 
+// Complete the task creation process.
+//
+// The task being created is now finalized.
+//
+// No other commands should be issued to this process after this one.
+//
 message CompleteTaskCreation {
 
+    // The ID of the task creation process.
     TaskCreationId id = 1 [(required) = true, (valid) = true];
 }
 
+// Cancel the task creation process.
+//
+// The task persists as a draft. The client may finalize or delete it manually.
+//
+// No other commands should be issued to this process after this one.
+//
 message CancelTaskCreation {
 
+    // The ID of the task creation process.
     TaskCreationId id = 1 [(required) = true, (valid) = true];
 }
