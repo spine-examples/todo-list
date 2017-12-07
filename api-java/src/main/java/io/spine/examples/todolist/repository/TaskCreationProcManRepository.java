@@ -26,6 +26,8 @@ import io.spine.examples.todolist.c.procman.TaskCreationProcessManager;
 import io.spine.server.procman.ProcessManagerRepository;
 
 /**
+ * The process manager repository for the {@link TaskCreationProcessManager}.
+ *
  * @author Dmytro Dashenkov
  */
 public class TaskCreationProcManRepository
