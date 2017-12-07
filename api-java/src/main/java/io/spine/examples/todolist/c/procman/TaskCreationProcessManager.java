@@ -86,11 +86,11 @@ import static java.util.stream.Collectors.toSet;
  *     <li><b>Building</b> - the task building is started. The process moves to this stage once
  *         the first field is set to the supervised task. The order of the fields being set to
  *         the task does not matter.
- *     <li><b>Completed</b> - the task creation process completed. This is a terminal stage, i.e. no
- *         stages may follow this stage. At this stage the supervised task is finalized and
+ *     <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
+ *         i.e. no stages may follow this stage. At this stage the supervised task is finalized and
  *         the current instance of {@code TaskCreationProcessManager} is
  *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived}. It is
- *         required that the process is in the <b>Building</b> stage to make is move to this stage.
+ *         required that the process is in the <b>Building</b> stage before moving to this stage.
  *     <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.
  *         The user may return to the supervised task (as a draft) and finalize it manually.
  *         This is a terminal stage. This instance of {@code TaskCreationProcessManager} is
@@ -235,7 +235,7 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * Creates commands that assign the specified with the {@link AddLabels} command labels to
+     * Creates commands that assign the specified in {@code AddLabels} command labels to
      * the supervised task.
      *
      * @param command the command that defines the labels to assign
@@ -251,8 +251,12 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * Creates commands that create and assign to the supervised task the yet non-existing labels
-     * defined with the given {@link AddLabels} command.
+     * Creates the commands that:
+     * <ol>
+     *     <li>Create the specified in {@code AddLabels} command labels.
+     *     <li>Mutate the labels as specified in the command.
+     *     <li>Assign those labels to the supervised task.
+     * </ol>
      *
      * @param command the command that defines the new labels to assign to the task
      * @return commands creating and assigning those labels
@@ -276,10 +280,39 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
         final LabelId labelId = LabelId.newBuilder()
                                        .setValue(newUuid())
                                        .build();
+        final CreateBasicLabel createBasicLabel = createLabel(labelId, label);
+        final UpdateLabelDetails updateLabelDetails = setColorToLabel(labelId, label);
+        final AssignLabelToTask assignLabelToTask = assignLabel(labelId);
+        return of(createBasicLabel, updateLabelDetails, assignLabelToTask).stream();
+    }
+
+    /**
+     * Creates a label with the given ID from the given {@code LabelDetails}.
+     *
+     * @param labelId the ID to assign to the new label
+     * @param label   the label data
+     * @return a command creating a basic label with the given ID and title; note that the label
+     *         color is ignored for now
+     */
+    private static CreateBasicLabel createLabel(LabelId labelId, LabelDetails label) {
         final CreateBasicLabel createBasicLabel = CreateBasicLabel.newBuilder()
                                                                   .setLabelId(labelId)
                                                                   .setLabelTitle(label.getTitle())
                                                                   .build();
+        return createBasicLabel;
+    }
+
+    /**
+     * Updates the details of the label with the given ID.
+     *
+     * <p>It is expected that the label color is the default {@code GRAY} and the label title has
+     * not changed.
+     *
+     * @param labelId the ID of the label to update
+     * @param label   the new label details
+     * @return a command updating the label details
+     */
+    private static UpdateLabelDetails setColorToLabel(LabelId labelId, LabelDetails label) {
         final LabelDetails previousDetails = label.toBuilder()
                                                   .setColor(GRAY)
                                                   .build();
@@ -292,8 +325,7 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
                                   .setId(labelId)
                                   .setLabelDetailsChange(change)
                                   .build();
-        final AssignLabelToTask assignLabelToTask = assignLabel(labelId);
-        return of(createBasicLabel, updateLabelDetails, assignLabelToTask).stream();
+        return updateLabelDetails;
     }
 
     /**
@@ -349,6 +381,11 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
         }
     }
 
+    /**
+     * Initializes the process manager state with the data from the given command.
+     *
+     * @param cmd the command starting the process
+     */
     private void startProcess(StartTaskCreation cmd) {
         final TaskCreationId id = getId();
         checkArgument(id.equals(cmd.getId()));
@@ -356,6 +393,9 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
                     .setTaskId(cmd.getTaskId());
     }
 
+    /**
+     * Completes the process by archiving this instance of {@code ProcessManager}.
+     */
     private void completeProcess() {
         setArchived(true);
     }
