@@ -59,17 +59,18 @@ import static java.util.Collections.emptyList;
  *
  * <p>The task creation process has following stages:
  * <ol>
- *     <li><b>Started</b> - the process is started. This is the initializing stage, i.e. there were
- *         no other stages before this one. A draft for the supervised task is created once
- *         the process is started.
- *     <li><b>Building</b> - the task building is started. The process moves to this stage once
- *         the first field is set to the supervised task. The order of the fields being set to
- *         the task does not matter.
+ *     <li><b>Task Building</b> - the task building is started. The process moves to this stage once
+ *         the empty task draft is created.
+ *     <li><b>Label Assignment</b> - the labels are being created and assigned to the supervised
+ *         task. The process moves to this stage after the primary task data is set.
+ *     <li><b>Confirmation</b> - all the data is set to the label and the user may check if the data
+ *         is right.
  *     <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
  *         i.e. no stages may follow this stage. At this stage the supervised task is finalized and
  *         the current instance of {@code TaskCreationWizard} is
  *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived}. It is
- *         required that the process is in the <b>Building</b> stage before moving to this stage.
+ *         required that the process is in the <b>Confirmation</b> stage before moving to this
+ *         stage.
  *     <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.
  *         The user may return to the supervised task (which persists as a draft) and finalize it
  *         manually. This is a terminal stage. This instance of {@code TaskCreationWizard}
@@ -77,12 +78,16 @@ import static java.util.Collections.emptyList;
  *         stage.
  * </ol>
  *
+ * <p>On any stage (except for the terminal ones), the process can be moved to the <b>Canceled</b>
+ * stage, i.e. the task creation would be canceled. All the intermediate states of the supervised
+ * entities are valid, so no additional clean up is required on cancellation.
+ *
  * <p>The possible stage transitions may be depicted as follows:
  * <pre>
  *     {@code
- *     --> Started --> Building --> Completed.
- *               \           \
- *                ---------------> Canceled.
+ *     --> Task Building --> Label Assignment -->  Confirmation -->  Completed.
+ *                     \                    \                 \
+ *                      --------------------------------------------> Canceled.
  *     }
  * </pre>
  *
