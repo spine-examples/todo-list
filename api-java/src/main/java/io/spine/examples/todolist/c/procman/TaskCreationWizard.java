@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.collect.ImmutableList.of;
 import static io.spine.examples.todolist.TaskCreation.Stage.CANCELED;
 import static io.spine.examples.todolist.TaskCreation.Stage.COMPLETED;
 import static io.spine.examples.todolist.TaskCreation.Stage.CONFIRMATION;
@@ -99,7 +100,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     @Assign
     CommandRouted handle(StartTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
-        return handleCommand(TASK_BUILDING, () -> {
+        return handle(TASK_BUILDING, () -> {
             final TaskId taskId = command.getTaskId();
             final TodoCommand createDraft = CreateDraft.newBuilder()
                                                        .setId(taskId)
@@ -114,7 +115,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     @Assign
     CommandRouted handle(SetTaskDetails command, CommandContext context) throws CannotMoveToStage {
         final WizardCommands commands = commands();
-        return handleCommand(LABEL_ASSIGNMENT, () -> {
+        return handle(LABEL_ASSIGNMENT, () -> {
             final Collection<? extends TodoCommand> resultCommands =
                     commands.setTaskDetailt(command);
             final CommandRouter router = newRouterFor(command, context);
@@ -125,25 +126,32 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     }
 
     @Assign
-    CommandRouted handle(AddLabels command, CommandContext context) throws CannotMoveToStage {
+    List<? extends Message> handle(AddLabels command, CommandContext context)
+            throws CannotMoveToStage {
         final WizardCommands commands = commands();
-        return handleCommand(CONFIRMATION, () -> {
+        return handleMulticast(CONFIRMATION, () -> {
             final Collection<? extends TodoCommand> existingLabelsCommands =
                     commands.assignExistingLabels(command);
             final Collection<? extends TodoCommand> newLabelsCommands =
                     commands.assignNewLabels(command);
-            final CommandRouter router = newRouterFor(command, context);
-            existingLabelsCommands.forEach(router::add);
-            newLabelsCommands.forEach(router::add);
-            final CommandRouted commandRouted = router.routeAll();
-            return commandRouted;
+            final List<? extends Message> result;
+            if (existingLabelsCommands.isEmpty() && newLabelsCommands.isEmpty()) {
+                result = emptyList();
+            } else {
+                final CommandRouter router = newRouterFor(command, context);
+                existingLabelsCommands.forEach(router::add);
+                newLabelsCommands.forEach(router::add);
+                final CommandRouted commandRouted = router.routeAll();
+                result = of(commandRouted);
+            }
+            return result;
         });
     }
 
     @Assign
     CommandRouted handle(CompleteTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
-        return handleCommand(COMPLETED, () -> {
+        return handle(COMPLETED, () -> {
             final TodoCommand finalizeDraft = FinalizeDraft.newBuilder()
                                                            .setId(taskId())
                                                            .build();
@@ -156,22 +164,27 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
 
     @Assign
     List<? extends Message> handle(CancelTaskCreation command) throws CannotMoveToStage {
-        handleCommand(CANCELED, this::completeProcess);
-        return emptyList();
+        return handleMulticast(CANCELED, () -> {
+            completeProcess();
+            return emptyList();
+        });
     }
 
-    private <E extends Message> E handleCommand(Stage stage, Supplier<E> commandHandler)
+    private <E extends Message> E handle(Stage pendingStage, Supplier<E> commandHandler)
             throws CannotMoveToStage {
-        checkNotTerminated(stage);
+        checkCanMoveTo(pendingStage);
         final E event = commandHandler.get();
-        moveToStage(stage);
+        moveToStage(pendingStage);
         return event;
     }
 
-    private void handleCommand(Stage stage, Runnable commandHandler) throws CannotMoveToStage {
-        checkNotTerminated(stage);
-        commandHandler.run();
-        moveToStage(stage);
+    private List<? extends Message>
+    handleMulticast(Stage pendingStage, Supplier<List<? extends Message>> commandHandler)
+            throws CannotMoveToStage {
+        checkCanMoveTo(pendingStage);
+        final List<? extends Message> event = commandHandler.get();
+        moveToStage(pendingStage);
+        return event;
     }
 
     private TaskId taskId() {
@@ -187,9 +200,15 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         getBuilder().setStage(stage);
     }
 
-    private void checkNotTerminated(Stage pendingStage) throws CannotMoveToStage {
-        if (isTerminated()) {
-            throw new CannotMoveToStage(getId(), pendingStage, getState().getStage());
+    private void checkCanMoveTo(Stage pendingStage) throws CannotMoveToStage {
+        if (pendingStage == CANCELED && !isTerminated()) {
+            return;
+        }
+        final Stage currentStage = getState().getStage();
+        final int expectedStageNumber = currentStage.getNumber() + 1;
+        final int actualStageNumber = pendingStage.getNumber();
+        if (expectedStageNumber != actualStageNumber) {
+            throw new CannotMoveToStage(getId(), pendingStage, currentStage);
         }
     }
 
