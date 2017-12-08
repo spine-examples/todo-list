@@ -72,7 +72,7 @@ final class WizardCommands {
      *
      * <p>The task ID may or may not identify the intended command handler.
      *
-     * @param taskId the ID of the task which the command are associated with
+     * @param taskId the ID of the task which the commands are associated with
      * @return new instance of {@code WizardCommands}
      */
     static WizardCommands create(TaskId taskId) {
@@ -83,7 +83,7 @@ final class WizardCommands {
      * Creates commands setting the task details to the target task
      *
      * <p>This method is guaranteed to generate at least one command. Effectively, each non-default
-     * field of the {@code SetTaskDetails} command causes a new command to be generated.
+     * field of the {@code SetTaskDetails} command causes a command to be generated.
      *
      * @param src the source command
      * @return new commands generated from the given {@code src} command
@@ -109,7 +109,7 @@ final class WizardCommands {
     /**
      * Creates a command updating the description of the target task to the given value.
      *
-     * <p>It is implied that the task description is empty.
+     * <p>It is implied that the task description is currently empty.
      *
      * @param description the description to set to the target task
      * @return the command to the target task
@@ -130,7 +130,7 @@ final class WizardCommands {
     /**
      * Creates a command updating the priority of the target task to the given value.
      *
-     * <p>It is implied that the task priority is not set.
+     * <p>It is implied that the task priority is currently not set.
      *
      * @param priority the priority to set to the target task
      * @return the command to the target task
@@ -151,7 +151,7 @@ final class WizardCommands {
     /**
      * Creates a command updating the due date of the target task to the given value.
      *
-     * <p>It is implied that the task due date is not set.
+     * <p>It is implied that the task due date is currently not set.
      *
      * @param dueDate the priority to set to the target task
      * @return the command to the target task
@@ -170,7 +170,7 @@ final class WizardCommands {
 
     /**
      * Creates commands that assign the specified in {@code AddLabels} command existing labels to
-     * the supervised task.
+     * the target task.
      *
      * @param src the command that defines the labels to assign
      * @return the commands assigning those tasks
@@ -189,7 +189,7 @@ final class WizardCommands {
      * <ol>
      *     <li>Create the specified in {@code AddLabels} command labels.
      *     <li>Mutate the labels as specified in the command.
-     *     <li>Assign those labels to the supervised task.
+     *     <li>Assign those labels to the target task.
      * </ol>
      *
      * @param src the command that defines the new labels to assign to the task
@@ -206,10 +206,10 @@ final class WizardCommands {
 
     /**
      * Generates commands that create a label from the given {@link LabelDetails} and assign that
-     * label to the supervised task.
+     * label to the target task.
      *
      * @param label the label details describing the task to create
-     * @return the command messages creating an assigning a label
+     * @return the command messages creating and assigning a label
      */
     private Stream<? extends TodoCommand> createAndAssignLabel(LabelDetails label) {
         final LabelId labelId = LabelId.newBuilder()
@@ -265,7 +265,7 @@ final class WizardCommands {
 
     /**
      * Creates an {@link AssignLabelToTask} command which assigns the label with the given ID to
-     * the supervised task.
+     * the target task.
      *
      * @param labelId the ID of the label to assign
      * @return new instance of a command message

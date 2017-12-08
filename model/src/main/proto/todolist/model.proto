@@ -117,7 +117,7 @@ message TaskCreation {
     // The ID of the process.
     TaskCreationId id = 1 [(required) = true];
 
-    // The process current stage.
+    // The current stage of the process.
     Stage stage = 2 [(required) = true];
 
     // The ID of the task being created.

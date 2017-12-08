@@ -176,10 +176,10 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      * handler.
      *
      * @param requestedStage the stage to transit to
-     * @param commandHandler the routine of handling a command; returns the command handling result:
+     * @param commandHandler the routine of handling a command; returns the command handling result,
      *                       an event or a list of events
      * @param <R>            the type of the command handling result
-     * @return the command handling result: an event or a list of events
+     * @return the command handling result, an event or a list of events
      * @throws CannotMoveToStage if the requested transition cannot be performed
      */
     private <R> R transit(Stage requestedStage, Supplier<R> commandHandler)

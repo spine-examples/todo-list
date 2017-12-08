@@ -273,12 +273,12 @@ message UpdateLabelDetails {
     reserved 3 to 10;
 }
 
-// Commands to the task creation procman
-// -------------------------------------
+// Commands to the task creation wizard
+// ------------------------------------
 
 // Start the task creation process.
 //
-// The process involves creating a draft and assigning all the task fields to it one by one.
+// The process involves creating a draft and assigning all the task fields to it.
 //
 // The process itself has an identifier, so the client should work with the ID of the process
 // rather than the ID of the task itself. The process ID is specified in this command together with
@@ -338,11 +338,9 @@ message AddLabels {
     TaskCreationId id = 1 [(required) = true, (valid) = true];
 
     // The IDs of the existing labels to assign to the task.
-    //
     repeated LabelId existing_labels = 2 [(valid) = true];
 
     // The details of the new labels to create and assign to the task.
-    //
     repeated LabelDetails new_labels = 3 [(valid) = true];
 }
 

@@ -42,7 +42,7 @@ import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * The task creation process manager test environment.
+ * The task creation wizard test environment.
  *
  * <p>Provides values and routines for sending commands to the procman and verifying the results.
  *
