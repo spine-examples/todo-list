@@ -104,6 +104,13 @@ public class TaskCreationWizardTestEnv {
         client.postCommand(addLabels);
     }
 
+    public void skipLabels(TaskCreationId pid) {
+        final AddLabels addLabels = AddLabels.newBuilder()
+                                             .setId(pid)
+                                             .build();
+        client.postCommand(addLabels);
+    }
+
     public void complete(TaskCreationId pid) {
         final CompleteTaskCreation completeTaskCreation = CompleteTaskCreation.newBuilder()
                                                                               .setId(pid)

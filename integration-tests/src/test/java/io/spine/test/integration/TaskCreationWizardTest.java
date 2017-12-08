@@ -73,6 +73,7 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
         testEnv.createDraft(pid, taskId);
         final String description = "firstCase";
         testEnv.setDetails(pid, description);
+        testEnv.skipLabels(pid);
         testEnv.complete(pid);
 
         final Task actualTask = testEnv.taskById(taskId);
