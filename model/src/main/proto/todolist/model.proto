@@ -108,7 +108,7 @@ message TaskLabel {
 
 // The task creation process state.
 //
-// See `TaskCreationProcessmanager` for more details.
+// See `TaskCreationWizard` for more details.
 //
 message TaskCreation {
     option (entity).kind = PROCESS_MANAGER;
@@ -129,10 +129,13 @@ message TaskCreation {
         // The default value.
         TCS_UNKNOWN = 0;
 
+        // The task fields are being set.
         TASK_BUILDING = 1;
 
+        // The labels are being generated and assigned to the task.
         LABEL_ASSIGNMENT = 2;
 
+        // The user verifies the information.
         CONFIRMATION = 3;
 
         // The task creation is completed successfully - the task has been created.

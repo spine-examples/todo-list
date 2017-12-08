@@ -295,15 +295,29 @@ message StartTaskCreation {
     TaskId task_id = 2 [(required) = true, (valid) = true];
 }
 
+// Sets the basic task data to the task being created.
+//
 message SetTaskDetails {
 
     // The ID of the task creation process.
     TaskCreationId id = 1 [(required) = true, (valid) = true];
 
+    // The description to set to the task.
+    //
+    // This field is required.
+    //
     TaskDescription description = 2 [(required) = true, (valid) = true];
 
+    // The priority to set to the task.
+    //
+    // This field is optional. If not set, `NORMAL` is used by default.
+    //
     TaskPriority priority = 3;
 
+    // The due date to be set to the task.
+    //
+    // This fiend is optional. If not set, the created task will not have a due date.
+    //
     google.protobuf.Timestamp due_date = 4;
 }
 
@@ -316,24 +330,18 @@ message SetTaskDetails {
 //
 // The new labels are specified by their data (label details).
 //
-// It is required that at least one label is specified, existing or new; the command doesn't make
-// much sence otherwise.
+// If neither new nor existing labels are specified, no labels are assigned to the task.
 //
 message AddLabels {
-    option (required_field) = "existing_labels|new_labels";
 
     // The ID of the task creation process.
     TaskCreationId id = 1 [(required) = true, (valid) = true];
 
     // The IDs of the existing labels to assign to the task.
     //
-    // Either this field or `new_labels` must be present.
-    //
     repeated LabelId existing_labels = 2 [(valid) = true];
 
     // The details of the new labels to create and assign to the task.
-    //
-    // Either this field or `existing_labels` must be present.
     //
     repeated LabelDetails new_labels = 3 [(valid) = true];
 }
