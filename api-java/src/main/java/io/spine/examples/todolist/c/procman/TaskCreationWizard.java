@@ -64,7 +64,7 @@ import static java.util.Collections.emptyList;
  *     <li><b>Label Assignment</b> - the labels are being created and assigned to the supervised
  *         task. The process moves to this stage after the primary task data is set.
  *     <li><b>Confirmation</b> - all the data is set to the label and the user may check if the data
- *         is right.
+ *         is correct.
  *     <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
  *         i.e. no stages may follow this stage. At this stage the supervised task is finalized and
  *         the current instance of {@code TaskCreationWizard} is
