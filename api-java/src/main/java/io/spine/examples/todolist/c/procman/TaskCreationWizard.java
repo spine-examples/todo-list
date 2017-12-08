@@ -82,6 +82,8 @@ import static java.util.Collections.emptyList;
  * stage, i.e. the task creation would be canceled. All the intermediate states of the supervised
  * entities are valid, so no additional clean up is required on cancellation.
  *
+ * <p>All other stages are sequential and cannot be skipped.
+ *
  * <p>The possible stage transitions may be depicted as follows:
  * <pre>
  *     {@code
