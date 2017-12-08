@@ -129,19 +129,19 @@ message TaskCreation {
         // The default value.
         TCS_UNKNOWN = 0;
 
-        // The process is started but no task fields are assigned to the task yet.
-        STARED = 1;
+        TASK_BUILDING = 1;
 
-        // The fields are being assigned to the task.
-        BUILDING = 2;
+        LABEL_ASSIGNMENT = 2;
+
+        CONFIRMATION = 3;
 
         // The task creation is completed successfully - the task has been created.
-        COMPLETED = 3;
+        COMPLETED = 4;
 
         // The task creation is canceled.
         //
         // The task draft is available for the clients to view and mutate.
         //
-        CANCELED = 4;
+        CANCELED = 5;
     }
 }
