@@ -26,7 +26,7 @@ import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
 import io.spine.examples.todolist.repository.MyListViewRepository;
-import io.spine.examples.todolist.repository.TaskCreationProcManRepository;
+import io.spine.examples.todolist.repository.TaskCreationWizardRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
@@ -85,7 +85,7 @@ public final class BoundedContexts {
         final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
         final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
 
-        final TaskCreationProcManRepository taskCreationRepo = new TaskCreationProcManRepository();
+        final TaskCreationWizardRepository taskCreationRepo = new TaskCreationWizardRepository();
 
         final EventBus.Builder eventBus = createEventBus(storageFactory,
                                                          labelAggregateRepo,

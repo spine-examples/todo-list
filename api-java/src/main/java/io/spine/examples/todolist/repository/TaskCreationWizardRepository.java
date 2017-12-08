@@ -22,14 +22,14 @@ package io.spine.examples.todolist.repository;
 
 import io.spine.examples.todolist.TaskCreation;
 import io.spine.examples.todolist.TaskCreationId;
-import io.spine.examples.todolist.c.procman.TaskCreationProcessManager;
+import io.spine.examples.todolist.c.procman.TaskCreationWizard;
 import io.spine.server.procman.ProcessManagerRepository;
 
 /**
- * The process manager repository for the {@link TaskCreationProcessManager}.
+ * The process manager repository for the {@link TaskCreationWizard}.
  *
  * @author Dmytro Dashenkov
  */
-public class TaskCreationProcManRepository
-        extends ProcessManagerRepository<TaskCreationId, TaskCreationProcessManager, TaskCreation> {
+public class TaskCreationWizardRepository
+        extends ProcessManagerRepository<TaskCreationId, TaskCreationWizard, TaskCreation> {
 }

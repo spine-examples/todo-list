@@ -32,7 +32,7 @@ import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.q.projection.LabelColorView;
 import io.spine.test.AbstractIntegrationTest;
-import io.spine.test.integration.given.TaskCreationPmTestEnv;
+import io.spine.test.integration.given.TaskCreationWizardTestEnv;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,8 +44,8 @@ import static io.spine.examples.todolist.LabelColor.RED;
 import static io.spine.examples.todolist.TaskPriority.LOW;
 import static io.spine.examples.todolist.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.TaskStatus.FINALIZED;
-import static io.spine.test.integration.given.TaskCreationPmTestEnv.newPid;
-import static io.spine.test.integration.given.TaskCreationPmTestEnv.newTaskId;
+import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newPid;
+import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newTaskId;
 import static io.spine.time.Time.getCurrentTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -53,16 +53,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Dmytro Dashenkov
  */
-@DisplayName("TaskCreationProcessManager should")
-class TaskCreationPmTest extends AbstractIntegrationTest {
+@DisplayName("TaskCreationWizard should")
+class TaskCreationWizardTest extends AbstractIntegrationTest {
 
     private TodoClient client;
-    private TaskCreationPmTestEnv testEnv;
+    private TaskCreationWizardTestEnv testEnv;
 
     @BeforeEach
     void before() {
         client = getClient();
-        testEnv = TaskCreationPmTestEnv.with(client);
+        testEnv = TaskCreationWizardTestEnv.with(client);
     }
 
     @Test

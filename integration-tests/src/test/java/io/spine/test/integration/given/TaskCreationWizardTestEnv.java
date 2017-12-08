@@ -50,22 +50,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Dmytro Dashenkov
  */
 @SuppressWarnings("OverlyCoupledClass") // OK for this class.
-public class TaskCreationPmTestEnv {
+public class TaskCreationWizardTestEnv {
 
     private final TodoClient client;
 
-    private TaskCreationPmTestEnv(TodoClient client) {
+    private TaskCreationWizardTestEnv(TodoClient client) {
         this.client = client;
     }
 
     /**
-     * Creates a new instance of {@code TaskCreationPmTestEnv} with the given client.
+     * Creates a new instance of {@code TaskCreationWizardTestEnv} with the given client.
      *
      * @param todoClient the {@code TodoClient} to connect to the TodoList server
-     * @return new instance of {@code TaskCreationPmTestEnv}
+     * @return new instance of {@code TaskCreationWizardTestEnv}
      */
-    public static TaskCreationPmTestEnv with(TodoClient todoClient) {
-        return new TaskCreationPmTestEnv(todoClient);
+    public static TaskCreationWizardTestEnv with(TodoClient todoClient) {
+        return new TaskCreationWizardTestEnv(todoClient);
     }
 
     // Command sending methods

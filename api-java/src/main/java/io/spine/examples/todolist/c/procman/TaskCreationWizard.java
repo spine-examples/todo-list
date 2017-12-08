@@ -88,12 +88,12 @@ import static java.util.stream.Collectors.toSet;
  *         the task does not matter.
  *     <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
  *         i.e. no stages may follow this stage. At this stage the supervised task is finalized and
- *         the current instance of {@code TaskCreationProcessManager} is
+ *         the current instance of {@code TaskCreationWizard} is
  *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived}. It is
  *         required that the process is in the <b>Building</b> stage before moving to this stage.
  *     <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.
  *         The user may return to the supervised task (which persists as a draft) and finalize it
- *         manually. This is a terminal stage. This instance of {@code TaskCreationProcessManager}
+ *         manually. This is a terminal stage. This instance of {@code TaskCreationWizard}
  *         is {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived} on this
  *         stage.
  * </ol>
@@ -113,11 +113,11 @@ import static java.util.stream.Collectors.toSet;
         "unused", // Reflective access.
         "OverlyCoupledClass" // OK for a Process Manager.
 })
-public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
-                                                               TaskCreation,
-                                                               TaskCreationVBuilder> {
+public class TaskCreationWizard extends ProcessManager<TaskCreationId,
+                                                       TaskCreation,
+                                                       TaskCreationVBuilder> {
 
-    protected TaskCreationProcessManager(TaskCreationId id) {
+    protected TaskCreationWizard(TaskCreationId id) {
         super(id);
     }
 
@@ -382,7 +382,7 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * Initializes the process manager state with the data from the given command.
+     * Initializes the wizard state with the data from the given command.
      *
      * @param cmd the command starting the process
      */
@@ -394,7 +394,7 @@ public class TaskCreationProcessManager extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * Completes the process by archiving this instance of {@code ProcessManager}.
+     * Completes the process by archiving this wizard.
      */
     private void completeProcess() {
         setArchived(true);
