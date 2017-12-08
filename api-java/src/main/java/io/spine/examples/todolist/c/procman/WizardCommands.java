@@ -54,6 +54,8 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
 /**
+ * A factory of commands emitted by the {@link TaskCreationWizard}.
+ *
  * @author Dmytro Dashenkov
  */
 final class WizardCommands {
@@ -64,11 +66,29 @@ final class WizardCommands {
         this.taskId = taskId;
     }
 
+    /**
+     * Creates an instance of {@code WizardCommands} which creates commands with the given
+     * {@code TaskId}.
+     *
+     * <p>The task ID may or may not identify the intended command handler.
+     *
+     * @param taskId the ID of the task which the command are associated with
+     * @return new instance of {@code WizardCommands}
+     */
     static WizardCommands create(TaskId taskId) {
         return new WizardCommands(taskId);
     }
 
-    Collection<? extends TodoCommand> setTaskDetailt(SetTaskDetails src) {
+    /**
+     * Creates commands setting the task details to the target task
+     *
+     * <p>This method is guaranteed to generate at least one command. Effectively, each non-default
+     * field of the {@code SetTaskDetails} command causes a new command to be generated.
+     *
+     * @param src the source command
+     * @return new commands generated from the given {@code src} command
+     */
+    Collection<? extends TodoCommand> setTaskDetails(SetTaskDetails src) {
         final ImmutableSet.Builder<TodoCommand> commands = ImmutableSet.builder();
         final TaskDescription description = src.getDescription();
         final TodoCommand updateDescription = updateTaskDescription(description);
@@ -86,6 +106,14 @@ final class WizardCommands {
         return commands.build();
     }
 
+    /**
+     * Creates a command updating the description of the target task to the given value.
+     *
+     * <p>It is implied that the task description is empty.
+     *
+     * @param description the description to set to the target task
+     * @return the command to the target task
+     */
     private TodoCommand updateTaskDescription(TaskDescription description) {
         checkArgument(isNotDefault(description));
         final StringChange change = StringChange.newBuilder()
@@ -99,6 +127,14 @@ final class WizardCommands {
         return updateCommand;
     }
 
+    /**
+     * Creates a command updating the priority of the target task to the given value.
+     *
+     * <p>It is implied that the task priority is not set.
+     *
+     * @param priority the priority to set to the target task
+     * @return the command to the target task
+     */
     private TodoCommand updateTaskPriority(TaskPriority priority) {
         checkArgument(enumIsNotDefault(priority));
         final PriorityChange change = PriorityChange.newBuilder()
@@ -112,6 +148,14 @@ final class WizardCommands {
         return updateCommand;
     }
 
+    /**
+     * Creates a command updating the due date of the target task to the given value.
+     *
+     * <p>It is implied that the task due date is not set.
+     *
+     * @param dueDate the priority to set to the target task
+     * @return the command to the target task
+     */
     private TodoCommand updateTaskDueDate(Timestamp dueDate) {
         checkArgument(isNotDefault(dueDate));
         final TimestampChange change = TimestampChange.newBuilder()
@@ -128,12 +172,12 @@ final class WizardCommands {
      * Creates commands that assign the specified in {@code AddLabels} command existing labels to
      * the supervised task.
      *
-     * @param command the command that defines the labels to assign
+     * @param src the command that defines the labels to assign
      * @return the commands assigning those tasks
      */
-    Collection<? extends TodoCommand> assignExistingLabels(AddLabels command) {
+    Collection<? extends TodoCommand> assignExistingLabels(AddLabels src) {
         final Collection<? extends TodoCommand> commands =
-                command.getExistingLabelsList()
+                src.getExistingLabelsList()
                        .stream()
                        .map(this::assignLabel)
                        .collect(toSet());
@@ -143,17 +187,17 @@ final class WizardCommands {
     /**
      * Creates the commands that:
      * <ol>
-     * <li>Create the specified in {@code AddLabels} command labels.
-     * <li>Mutate the labels as specified in the command.
-     * <li>Assign those labels to the supervised task.
+     *     <li>Create the specified in {@code AddLabels} command labels.
+     *     <li>Mutate the labels as specified in the command.
+     *     <li>Assign those labels to the supervised task.
      * </ol>
      *
-     * @param command the command that defines the new labels to assign to the task
+     * @param src the command that defines the new labels to assign to the task
      * @return commands creating and assigning those labels
      */
-    Collection<? extends TodoCommand> assignNewLabels(AddLabels command) {
+    Collection<? extends TodoCommand> assignNewLabels(AddLabels src) {
         final Collection<? extends TodoCommand> commands =
-                command.getNewLabelsList()
+                src.getNewLabelsList()
                        .stream()
                        .flatMap(this::createAndAssignLabel)
                        .collect(toList());
@@ -233,6 +277,14 @@ final class WizardCommands {
                                 .build();
     }
 
+    /**
+     * Checks if the given value is not default.
+     *
+     * <p>A Protobuf enum value is considered non-default if its number is greater than zero.
+     *
+     * @param priority the value to check
+     * @return {@code true} if the value is not default, {@code false} otherwise
+     */
     private static boolean enumIsNotDefault(TaskPriority priority) {
         return priority.getNumber() > 0;
     }
