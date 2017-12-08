@@ -72,7 +72,7 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
         final TaskId taskId = newTaskId();
         testEnv.createDraft(pid, taskId);
         final String description = "firstCase";
-        testEnv.setDescription(pid, description);
+        testEnv.setDetails(pid, description);
         testEnv.complete(pid);
 
         final Task actualTask = testEnv.taskById(taskId);
@@ -107,14 +107,12 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
         testEnv.createDraft(pid, taskId);
 
         final String description = "thirdCase";
-        testEnv.setDescription(pid, description);
+        final TaskPriority priority = LOW;
+        final Timestamp dueDate = add(getCurrentTime(), fromSeconds(100));
+        testEnv.setDetails(pid, description, priority, dueDate);
         final String labelTitle = "thirdCase-label";
         final LabelId labelId = testEnv.createNewLabel(labelTitle);
         testEnv.addLabel(pid, labelId);
-        final TaskPriority priority = LOW;
-        testEnv.setPriority(pid, priority);
-        final Timestamp dueDate = add(getCurrentTime(), fromSeconds(100));
-        testEnv.setDueDate(pid, dueDate);
         testEnv.complete(pid);
 
         final Task task = testEnv.taskById(taskId);
@@ -130,7 +128,7 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
         final TaskId taskId = newTaskId();
         testEnv.createDraft(pid, taskId);
         final String description = "forthCase";
-        testEnv.setDescription(pid, description);
+        testEnv.setDetails(pid, description);
         testEnv.cancel(pid);
 
         final Task actualTask = testEnv.taskById(taskId);

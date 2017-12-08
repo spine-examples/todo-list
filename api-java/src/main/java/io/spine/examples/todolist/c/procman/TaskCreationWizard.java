@@ -115,14 +115,11 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     CommandRouted handle(SetTaskDetails command, CommandContext context) throws CannotMoveToStage {
         final WizardCommands commands = commands();
         return handleCommand(LABEL_ASSIGNMENT, () -> {
-            final TodoCommand updateDescription = commands.updateTaskDescription(command);
-            final TodoCommand updatePriority = commands.updateTaskPriority(command);
-            final TodoCommand updateDueDate = commands.updateTaskDueDate(command);
-            final CommandRouted commandRouted = newRouterFor(command, context)
-                    .add(updateDescription)
-                    .add(updatePriority)
-                    .add(updateDueDate)
-                    .routeAll();
+            final Collection<? extends TodoCommand> resultCommands =
+                    commands.setTaskDetailt(command);
+            final CommandRouter router = newRouterFor(command, context);
+            resultCommands.forEach(router::add);
+            final CommandRouted commandRouted = router.routeAll();
             return commandRouted;
         });
     }

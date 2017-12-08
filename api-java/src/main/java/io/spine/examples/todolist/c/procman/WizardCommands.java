@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.c.procman;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Timestamp;
 import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
@@ -43,10 +44,12 @@ import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import java.util.Collection;
 import java.util.stream.Stream;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.of;
 import static io.spine.Identifier.newUuid;
 import static io.spine.examples.todolist.LabelColor.GRAY;
 import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
+import static io.spine.validate.Validate.isNotDefault;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 
@@ -65,8 +68,26 @@ final class WizardCommands {
         return new WizardCommands(taskId);
     }
 
-    TodoCommand updateTaskDescription(SetTaskDetails src) {
+    Collection<? extends TodoCommand> setTaskDetailt(SetTaskDetails src) {
+        final ImmutableSet.Builder<TodoCommand> commands = ImmutableSet.builder();
         final TaskDescription description = src.getDescription();
+        final TodoCommand updateDescription = updateTaskDescription(description);
+        commands.add(updateDescription);
+        final TaskPriority priority = src.getPriority();
+        if (enumIsNotDefault(priority)) {
+            final TodoCommand updatePriority = updateTaskPriority(priority);
+            commands.add(updatePriority);
+        }
+        final Timestamp dueDate = src.getDueDate();
+        if (isNotDefault(dueDate)) {
+            final TodoCommand updateDueDate = updateTaskDueDate(dueDate);
+            commands.add(updateDueDate);
+        }
+        return commands.build();
+    }
+
+    private TodoCommand updateTaskDescription(TaskDescription description) {
+        checkArgument(isNotDefault(description));
         final StringChange change = StringChange.newBuilder()
                                                 .setNewValue(description.getValue())
                                                 .build();
@@ -78,8 +99,8 @@ final class WizardCommands {
         return updateCommand;
     }
 
-    TodoCommand updateTaskPriority(SetTaskDetails src) {
-        final TaskPriority priority = src.getPriority();
+    private TodoCommand updateTaskPriority(TaskPriority priority) {
+        checkArgument(enumIsNotDefault(priority));
         final PriorityChange change = PriorityChange.newBuilder()
                                                     .setNewValue(priority)
                                                     .setPreviousValue(TP_UNDEFINED)
@@ -91,8 +112,8 @@ final class WizardCommands {
         return updateCommand;
     }
 
-    TodoCommand updateTaskDueDate(SetTaskDetails src) {
-        final Timestamp dueDate = src.getDueDate();
+    private TodoCommand updateTaskDueDate(Timestamp dueDate) {
+        checkArgument(isNotDefault(dueDate));
         final TimestampChange change = TimestampChange.newBuilder()
                                                       .setNewValue(dueDate)
                                                       .build();
@@ -210,5 +231,9 @@ final class WizardCommands {
                                 .setId(taskId)
                                 .setLabelId(labelId)
                                 .build();
+    }
+
+    private static boolean enumIsNotDefault(TaskPriority priority) {
+        return priority.getNumber() > 0;
     }
 }

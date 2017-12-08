@@ -31,15 +31,14 @@ import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.CancelTaskCreation;
 import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
-import io.spine.examples.todolist.c.commands.SetTaskDescription;
-import io.spine.examples.todolist.c.commands.SetTaskDueDate;
-import io.spine.examples.todolist.c.commands.SetTaskPriority;
+import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.client.TodoClient;
 
 import java.util.Optional;
 
 import static io.spine.Identifier.newUuid;
+import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -79,30 +78,21 @@ public class TaskCreationWizardTestEnv {
         client.postCommand(startCreation);
     }
 
-    public void setDescription(TaskCreationId pid, String description) {
+    public void setDetails(TaskCreationId pid, String description) {
+        setDetails(pid, description, TP_UNDEFINED, Timestamp.getDefaultInstance());
+    }
+
+    public void setDetails(TaskCreationId pid, String description,
+                           TaskPriority priority, Timestamp dueDate) {
         final TaskDescription descValue = TaskDescription.newBuilder()
                                                          .setValue(description)
                                                          .build();
-        final SetTaskDescription setDescription = SetTaskDescription.newBuilder()
-                                                                    .setId(pid)
-                                                                    .setDescription(descValue)
-                                                                    .build();
-        client.postCommand(setDescription);
-    }
-
-    public void setDueDate(TaskCreationId pid, Timestamp dueDate) {
-        final SetTaskDueDate setDescription = SetTaskDueDate.newBuilder()
+        final SetTaskDetails setDescription = SetTaskDetails.newBuilder()
                                                             .setId(pid)
+                                                            .setDescription(descValue)
+                                                            .setPriority(priority)
                                                             .setDueDate(dueDate)
                                                             .build();
-        client.postCommand(setDescription);
-    }
-
-    public void setPriority(TaskCreationId pid, TaskPriority priority) {
-        final SetTaskPriority setDescription = SetTaskPriority.newBuilder()
-                                                              .setId(pid)
-                                                              .setPriority(priority)
-                                                              .build();
         client.postCommand(setDescription);
     }
 
