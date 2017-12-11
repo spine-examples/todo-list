@@ -47,7 +47,7 @@ final class NewTaskViewModel extends AbstractViewModel {
                                                        .setId(newId())
                                                        .setDescription(description)
                                                        .build();
-        execute(() -> client().create(command));
+        execute(() -> client().postCommand(command));
     }
 
     /**
