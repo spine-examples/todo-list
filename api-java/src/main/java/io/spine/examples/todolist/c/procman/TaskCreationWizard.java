@@ -51,7 +51,7 @@ import static io.spine.examples.todolist.TaskCreation.Stage.CANCELED;
 import static io.spine.examples.todolist.TaskCreation.Stage.COMPLETED;
 import static io.spine.examples.todolist.TaskCreation.Stage.CONFIRMATION;
 import static io.spine.examples.todolist.TaskCreation.Stage.LABEL_ASSIGNMENT;
-import static io.spine.examples.todolist.TaskCreation.Stage.TASK_BUILDING;
+import static io.spine.examples.todolist.TaskCreation.Stage.TASK_DEFINITION;
 import static java.util.Collections.emptyList;
 
 /**
@@ -59,8 +59,8 @@ import static java.util.Collections.emptyList;
  *
  * <p>The task creation process has following stages:
  * <ol>
- *     <li><b>Task Building</b> - the task building is started. The process moves to this stage once
- *         the empty task draft is created.
+ *     <li><b>Task Definition</b> - the task building is started6 the task is being defined by its
+ *         primary fields. The process moves to this stage once the empty task draft is created.
  *     <li><b>Label Assignment</b> - the labels are being created and assigned to the supervised
  *         task. The process moves to this stage after the primary task data is set.
  *     <li><b>Confirmation</b> - all the data is set to the label and the user may check if the data
@@ -87,9 +87,9 @@ import static java.util.Collections.emptyList;
  * <p>The possible stage transitions may be depicted as follows:
  * <pre>
  *     {@code
- *     --> Task Building --> Label Assignment -->  Confirmation -->  Completed.
- *                     \                    \                 \
- *                      --------------------------------------------> Canceled.
+ *     --> Task Definition --> Label Assignment -->  Confirmation -->  Completed.
+ *                       \                    \                 \
+ *                        --------------------------------------------> Canceled.
  *     }
  * </pre>
  *
@@ -107,7 +107,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     @Assign
     CommandRouted handle(StartTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
-        return transit(TASK_BUILDING, () -> {
+        return transit(TASK_DEFINITION, () -> {
             final TaskId taskId = command.getTaskId();
             final TodoCommand createDraft = CreateDraft.newBuilder()
                                                        .setId(taskId)
