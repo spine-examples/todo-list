@@ -107,9 +107,10 @@ final class WizardCommands {
     }
 
     /**
-     * Creates a command updating the description of the target task to the given value.
+     * Creates a command setting the description of the target task to the given value.
      *
-     * <p>It is implied that the task description is currently empty.
+     * <p>This method creates a command which initializes the task description, i.e. the task
+     * doesn't have a description yet.
      *
      * @param description the description to set to the target task
      * @return the command to the target task
@@ -128,9 +129,10 @@ final class WizardCommands {
     }
 
     /**
-     * Creates a command updating the priority of the target task to the given value.
+     * Creates a command setting the priority of the target task to the given value.
      *
-     * <p>It is implied that the task priority is currently not set.
+     * <p>This method creates a command which initializes the task priority, i.e. the task priority
+     * is not set yet.
      *
      * @param priority the priority to set to the target task
      * @return the command to the target task
@@ -149,9 +151,10 @@ final class WizardCommands {
     }
 
     /**
-     * Creates a command updating the due date of the target task to the given value.
+     * Creates a command setting the due date of the target task to the given value.
      *
-     * <p>It is implied that the task due date is currently not set.
+     * <p>This method creates a command which initializes the task due date, i.e. the task due date
+     * is not set yet.
      *
      * @param dueDate the priority to set to the target task
      * @return the command to the target task
