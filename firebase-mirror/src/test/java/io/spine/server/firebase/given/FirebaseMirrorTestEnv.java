@@ -65,6 +65,8 @@ import io.spine.server.storage.StorageFactory;
 import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
 import io.spine.time.Time;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -133,6 +135,7 @@ public final class FirebaseMirrorTestEnv {
         try {
             credentials = GoogleCredentials.fromStream(firebaseSecret);
         } catch (IOException e) {
+            log().error("Error while reading Firebase service account file.", e);
             throw new IllegalStateException(e);
         }
         final FirebaseOptions options = new FirebaseOptions.Builder()
@@ -355,4 +358,14 @@ public final class FirebaseMirrorTestEnv {
 
     static class SessionRepository
             extends ProjectionRepository<FMSessionId, SessionProjection, FMSession> {}
+
+    private static Logger log() {
+        return LogSingleton.INSTANCE.value;
+    }
+
+    private enum LogSingleton {
+        INSTANCE;
+        @SuppressWarnings("NonSerializableFieldInSerializableClass")
+        private final Logger value = LoggerFactory.getLogger(FirebaseMirrorTestEnv.class);
+    }
 }
