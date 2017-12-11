@@ -22,6 +22,7 @@ package io.spine.server.firebase.given;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.firestore.Firestore;
+import com.google.common.base.Throwables;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
@@ -68,7 +69,6 @@ import io.spine.time.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.stream.Stream;
@@ -126,25 +126,31 @@ public final class FirebaseMirrorTestEnv {
     }
 
     private static Firestore createFirestore() {
-        final InputStream firebaseSecret = FirebaseMirrorTestEnv.class
-                .getClassLoader()
-                .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
-        // Check if `serviceAccount.json` file exists.
-        assumeNotNull(firebaseSecret);
-        final GoogleCredentials credentials;
         try {
-            credentials = GoogleCredentials.fromStream(firebaseSecret);
-        } catch (IOException e) {
-            log().error("Error while reading Firebase service account file.", e);
-            throw new IllegalStateException(e);
+            final InputStream firebaseSecret = FirebaseMirrorTestEnv.class
+                    .getClassLoader()
+                    .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
+            // Check if `serviceAccount.json` file exists.
+            assumeNotNull(firebaseSecret);
+            final GoogleCredentials credentials;
+//            try {
+                credentials = GoogleCredentials.fromStream(firebaseSecret);
+//            } catch (IOException e) {
+//                log().error("Error while reading Firebase service account file.", e);
+//                throw new IllegalStateException(e);
+//            }
+            final FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setDatabaseUrl(DATABASE_URL)
+                    .setCredentials(credentials)
+                    .build();
+            FirebaseApp.initializeApp(options);
+            final Firestore firestore = FirestoreClient.getFirestore();
+            return firestore;
+        } catch (Throwable e) {
+            // TODO:2017-12-11:dmytro.dashenkov: undo catch and restore commented code.
+            log().error("Error in createFirestore(). {}", Throwables.getStackTraceAsString(e));
+            throw new RuntimeException(e);
         }
-        final FirebaseOptions options = new FirebaseOptions.Builder()
-                .setDatabaseUrl(DATABASE_URL)
-                .setCredentials(credentials)
-                .build();
-        FirebaseApp.initializeApp(options);
-        final Firestore firestore = FirestoreClient.getFirestore();
-        return firestore;
     }
 
     public static void registerSessionIdStringifier() {
