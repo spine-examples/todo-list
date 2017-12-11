@@ -99,7 +99,7 @@ public final class FirebaseMirrorTestEnv {
     private static final TestEventFactory eventFactory =
             TestEventFactory.newInstance(FirebaseMirrorTestEnv.class);
 
-    private static Firestore firestore = null;
+    private static final Firestore firestore = createFirestore();
 
     // Prevent utility class instantiation.
     private FirebaseMirrorTestEnv() {
@@ -120,25 +120,27 @@ public final class FirebaseMirrorTestEnv {
 
     @SuppressWarnings("NonThreadSafeLazyInitialization") // OK for a test.
     public static Firestore getFirestore() {
-        if (firestore == null) {
-            final InputStream firebaseSecret = FirebaseMirrorTestEnv.class
-                    .getClassLoader()
-                    .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
-            // Check if `serviceAccount.json` file exists.
-            assumeNotNull(firebaseSecret);
-            final GoogleCredentials credentials;
-            try {
-                credentials = GoogleCredentials.fromStream(firebaseSecret);
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
-            }
-            final FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setDatabaseUrl(DATABASE_URL)
-                    .setCredentials(credentials)
-                    .build();
-            FirebaseApp.initializeApp(options);
-            firestore = FirestoreClient.getFirestore();
+        return firestore;
+    }
+
+    private static Firestore createFirestore() {
+        final InputStream firebaseSecret = FirebaseMirrorTestEnv.class
+                .getClassLoader()
+                .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
+        // Check if `serviceAccount.json` file exists.
+        assumeNotNull(firebaseSecret);
+        final GoogleCredentials credentials;
+        try {
+            credentials = GoogleCredentials.fromStream(firebaseSecret);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
         }
+        final FirebaseOptions options = new FirebaseOptions.Builder()
+                .setDatabaseUrl(DATABASE_URL)
+                .setCredentials(credentials)
+                .build();
+        FirebaseApp.initializeApp(options);
+        final Firestore firestore = FirestoreClient.getFirestore();
         return firestore;
     }
 
