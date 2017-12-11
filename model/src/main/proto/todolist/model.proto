@@ -32,7 +32,6 @@ option java_generate_equals_and_hash = true;
 
 import "google/protobuf/timestamp.proto";
 
-
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
 import "todolist/values.proto";
@@ -105,4 +104,47 @@ message TaskLabel {
     //
     // Optional. Defaults to the `LabelColor.LC_UNDEFINED`.
     LabelColor color = 3;
+}
+
+// The task creation process state.
+//
+// See `TaskCreationWizard` for more details.
+//
+message TaskCreation {
+    option (entity).kind = PROCESS_MANAGER;
+    option (entity).visibility = NONE;
+
+    // The ID of the process.
+    TaskCreationId id = 1 [(required) = true];
+
+    // The current stage of the process.
+    Stage stage = 2 [(required) = true];
+
+    // The ID of the task being created.
+    TaskId task_id = 3 [(required) = true];
+
+    // The enumeration of the task creation process stages.
+    enum Stage {
+
+        // The default value.
+        TCS_UNKNOWN = 0;
+
+        // The task fields are being set.
+        TASK_DEFINITION = 1;
+
+        // The labels are being generated and assigned to the task.
+        LABEL_ASSIGNMENT = 2;
+
+        // The user verifies the information.
+        CONFIRMATION = 3;
+
+        // The task creation is completed successfully - the task has been created.
+        COMPLETED = 4;
+
+        // The task creation is canceled.
+        //
+        // The task draft is available for the clients to view and mutate.
+        //
+        CANCELED = 5;
+    }
 }

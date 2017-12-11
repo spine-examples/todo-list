@@ -134,7 +134,7 @@ class UpdateTaskDescriptionTest extends TodoClientTest {
     private TaskItem obtainTaskItemWhenHandledUpdateTaskDescriptionCommand(String newDescription,
                                                                            boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
+        client.postCommand(createTask);
 
         updateDescription(newDescription, isCorrectId, createTask);
 
@@ -152,15 +152,15 @@ class UpdateTaskDescriptionTest extends TodoClientTest {
     private TaskItem obtainViewWhenHandledCommandUpdateTaskDescription(String newDescription,
                                                                        boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
+        client.postCommand(createTask);
 
         final CreateBasicLabel createLabel = createBasicLabel();
-        client.create(createLabel);
+        client.postCommand(createLabel);
         final LabelId labelId = createLabel.getLabelId();
         final TaskId taskId = createTask.getId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         updateDescription(newDescription, isCorrectId, createTask);
 
@@ -180,7 +180,7 @@ class UpdateTaskDescriptionTest extends TodoClientTest {
     private TaskItem obtainViewWhenHandledUpdateTaskDescription(String newDescription,
                                                                 boolean isCorrectId) {
         final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+        client.postCommand(createDraft);
         final TaskId createdTaskId = createDraft.getId();
 
         final TaskId updatedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
@@ -192,7 +192,7 @@ class UpdateTaskDescriptionTest extends TodoClientTest {
                                                  .getValue();
         final UpdateTaskDescription updateTaskDescription =
                 updateTaskDescriptionInstance(updatedTaskId, previousDescription, newDescription);
-        client.update(updateTaskDescription);
+        client.postCommand(updateTaskDescription);
 
         final List<TaskItem> taskViews = client.getDraftTasksView()
                                                .getDraftTasks()
@@ -213,6 +213,6 @@ class UpdateTaskDescriptionTest extends TodoClientTest {
                 updateTaskDescriptionInstance(updatedTaskId, createTask.getDescription()
                                                                        .getValue(),
                                               newDescription);
-        client.update(updateTaskDescription);
+        client.postCommand(updateTaskDescription);
     }
 }

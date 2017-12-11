@@ -9,8 +9,7 @@ before_install:
   - openssl aes-256-cbc -K $encrypted_1c1c75fb6aea_key -iv $encrypted_1c1c75fb6aea_iv -in ./firebase-mirror/src/test/resources/serviceAccount.json.enc -out ./firebase-mirror/src/test/resources/serviceAccount.json -d
 
 script:
-  - ./gradlew build --stacktrace
-  - ./gradlew codeCoverageReport
+  - ./gradlew build codeCoverageReport --stacktrace
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

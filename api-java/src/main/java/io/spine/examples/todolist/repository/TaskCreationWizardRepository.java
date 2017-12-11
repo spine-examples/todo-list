@@ -18,32 +18,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.examples.todolist.repository;
 
-final def SPINE_VERSION = '0.10.12-SNAPSHOT'
+import io.spine.examples.todolist.TaskCreation;
+import io.spine.examples.todolist.TaskCreationId;
+import io.spine.examples.todolist.c.procman.TaskCreationWizard;
+import io.spine.server.procman.ProcessManagerRepository;
 
-project.ext {
-    // TODOList version
-    appVersion = SPINE_VERSION
-
-    // Spine dependencies' versions
-    spineVersion = SPINE_VERSION
-    spineJdbcStorageVersion = '0.9.64-SNAPSHOT'
-    spineBaseVersion = '0.10.0'
-
-    // Main scope third party dependencies' versions
-    protobufGradlePluginVersion = '0.8.3'
-    appEngineVersion = '1.9.42'
-    guavaVersion = '20.0'
-    protobufVersion = '3.5.0'
-    gRpcVersion = '1.8.0'
-    slf4jVersion = '1.7.21'
-    servletApiVersion = '3.1.0'
-    gcloudJavaVersion = '0.2.8'
-    cloudSqlSocketFactoryVersion = '1.0.4'
-    shadowJarVersion = '2.0.1'
-    mysqlDriverVersion = '6.0.6'
-
-    // Test scope third party dependencies' versions
-    jUnitPlatformVersion = '1.0.0'
-    jUnitVersion = '5.0.0'
+/**
+ * The process manager repository for the {@link TaskCreationWizard}.
+ *
+ * @author Dmytro Dashenkov
+ */
+public class TaskCreationWizardRepository
+        extends ProcessManagerRepository<TaskCreationId, TaskCreationWizard, TaskCreation> {
 }

@@ -73,7 +73,7 @@ class FinalizeDraftTest extends TodoClientTest {
 
             final TaskId taskId = createDraft.getId();
             final FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId);
-            client.finalize(finalizeDraft);
+            client.postCommand(finalizeDraft);
 
             expectedListSize = 1;
             views = client.getMyListView()
@@ -96,15 +96,15 @@ class FinalizeDraftTest extends TodoClientTest {
             final CreateDraft createDraft = createDraftTask();
 
             final CreateBasicLabel createBasicLabel = createBasicLabel();
-            client.create(createBasicLabel);
+            client.postCommand(createBasicLabel);
 
             final TaskId taskId = createDraft.getId();
             final LabelId labelId = createBasicLabel.getLabelId();
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.assignLabel(assignLabelToTask);
+            client.postCommand(assignLabelToTask);
 
             final FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId);
-            client.finalize(finalizeDraft);
+            client.postCommand(finalizeDraft);
 
             final List<LabelledTasksView> labelledViews = client.getLabelledTasksView();
             assertEquals(1, labelledViews.size());
@@ -137,7 +137,7 @@ class FinalizeDraftTest extends TodoClientTest {
             assertEquals(createDraft.getId(), taskViewList.get(0)
                                                           .getId());
             final FinalizeDraft finalizeDraft = finalizeDraftInstance(createDraft.getId());
-            client.finalize(finalizeDraft);
+            client.postCommand(finalizeDraft);
 
             draftTasksView = client.getDraftTasksView();
             taskViewList = draftTasksView.getDraftTasks()
@@ -152,7 +152,7 @@ class FinalizeDraftTest extends TodoClientTest {
             final TaskId taskId = createDraft.getId();
 
             final FinalizeDraft finalizeDraft = finalizeDraftInstance(createWrongTaskId());
-            client.finalize(finalizeDraft);
+            client.postCommand(finalizeDraft);
 
             final List<TaskItem> taskViews = client.getDraftTasksView()
                                                    .getDraftTasks()
@@ -166,7 +166,7 @@ class FinalizeDraftTest extends TodoClientTest {
 
     private CreateDraft createDraftTask() {
         final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+        client.postCommand(createDraft);
         return createDraft;
     }
 }

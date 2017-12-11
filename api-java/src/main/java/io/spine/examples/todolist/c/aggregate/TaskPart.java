@@ -112,11 +112,6 @@ public class TaskPart extends AggregatePart<TaskId,
                                             TaskVBuilder,
                                             TaskAggregateRoot> {
 
-    private static final TaskDescription DEFAULT_DRAFT_DESCRIPTION =
-            TaskDescription.newBuilder()
-                           .setValue("Task description goes here.")
-                           .build();
-
     /**
      * {@inheritDoc}
      *
@@ -296,8 +291,6 @@ public class TaskPart extends AggregatePart<TaskId,
                 TaskDraftCreated.newBuilder()
                                 .setId(taskId)
                                 .setDraftCreationTime(getCurrentTime())
-                                .setDetails(TaskDetails.newBuilder()
-                                                       .setDescription(DEFAULT_DRAFT_DESCRIPTION))
                                 .build();
         return singletonList(draftCreated);
     }

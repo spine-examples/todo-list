@@ -19,13 +19,24 @@
  */
 
 dependencies {
-    compile 'com.google.firebase:firebase-admin:5.5.0'
-
+    compile('com.google.firebase:firebase-admin:5.5.0'){
+        exclude group: 'com.google.guava'
+    }
     testCompile project(path: ':api-java')
     testCompile ("io.spine:spine-testutil-server:$spineVersion") {
         exclude group: 'junit'
     }
     testCompile "com.google.guava:guava-testlib:$guavaVersion"
+}
+
+// TODO:2017-12-11:dmytro.dashenkov: Delete when Firebase can work with gRPC v1.8.0.
+// See: https://github.com/SpineEventEngine/todo-list/issues/44
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.getRequested().group == 'io.grpc') {
+            details.useVersion('1.6.1')
+        }
+    }
 }
 
 junitPlatform {

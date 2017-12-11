@@ -42,6 +42,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.spine.examples.todolist.TaskPriority.HIGH;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
@@ -60,6 +61,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 @DisplayName("TodoList Integration Test")
 public class ToDoListTest extends AbstractIntegrationTest {
+
     private TodoClient client;
 
     @BeforeEach
@@ -73,17 +75,17 @@ public class ToDoListTest extends AbstractIntegrationTest {
     @DisplayName("Create task -> Create label -> Assign label -> Complete task")
     void firstFlow() {
         final CreateBasicTask basicTask = createBasicTask();
-        client.create(basicTask);
+        client.postCommand(basicTask);
 
         final CreateBasicLabel basicLabel = createBasicLabel();
-        client.create(basicLabel);
+        client.postCommand(basicLabel);
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(
                 basicTask.getId(), basicLabel.getLabelId());
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         final CompleteTask completeTask = completeTaskInstance(basicTask.getId());
-        client.complete(completeTask);
+        client.postCommand(completeTask);
 
         final List<TaskItem> taskItems = client.getMyListView()
                                                .getMyList()
@@ -100,25 +102,25 @@ public class ToDoListTest extends AbstractIntegrationTest {
             "-> Remove label")
     void secondFlow() {
         final CreateBasicTask basicTask = createBasicTask();
-        client.create(basicTask);
+        client.postCommand(basicTask);
 
         final CreateBasicLabel basicLabel = createBasicLabel();
-        client.create(basicLabel);
+        client.postCommand(basicLabel);
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(
                 basicTask.getId(), basicLabel.getLabelId());
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         final CompleteTask completeTask = completeTaskInstance(basicTask.getId());
-        client.complete(completeTask);
+        client.postCommand(completeTask);
 
         final ReopenTask reopenTask = reopenTaskInstance(basicTask.getId());
-        client.reopen(reopenTask);
+        client.postCommand(reopenTask);
 
         final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(
                 basicTask.getId(),
                 basicLabel.getLabelId());
-        client.removeLabel(removeLabelFromTask);
+        client.postCommand(removeLabelFromTask);
 
         final List<TaskItem> tasks = client.getMyListView()
                                            .getMyList()
@@ -143,26 +145,26 @@ public class ToDoListTest extends AbstractIntegrationTest {
             "-> Assign label")
     void thirdFlow() {
         final CreateDraft draftTask = createDraft();
-        client.create(draftTask);
+        client.postCommand(draftTask);
 
         final Timestamp newDueDate = getCurrentTime();
         final Timestamp previousDueDate = Timestamp.getDefaultInstance();
         final UpdateTaskDueDate updateTaskDueDate =
                 updateTaskDueDateInstance(draftTask.getId(), previousDueDate, newDueDate);
-        client.update(updateTaskDueDate);
+        client.postCommand(updateTaskDueDate);
 
-        final TaskPriority newPriority = TaskPriority.HIGH;
+        final TaskPriority newPriority = HIGH;
         final UpdateTaskPriority updateTaskPriority =
                 updateTaskPriorityInstance(draftTask.getId(), TaskPriority.TP_UNDEFINED,
                                            newPriority);
-        client.update(updateTaskPriority);
+        client.postCommand(updateTaskPriority);
 
         final CreateBasicLabel basicLabel = createBasicLabel();
-        client.create(basicLabel);
+        client.postCommand(basicLabel);
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(
                 draftTask.getId(), basicLabel.getLabelId());
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         final List<TaskItem> draftTasks = client.getDraftTasksView()
                                                 .getDraftTasks()
@@ -180,26 +182,26 @@ public class ToDoListTest extends AbstractIntegrationTest {
             "-> Restore deleted task")
     void fourthFlow() {
         final CreateBasicTask basicTask = createBasicTask();
-        client.create(basicTask);
+        client.postCommand(basicTask);
 
         final CreateBasicLabel basicLabel = createBasicLabel();
-        client.create(basicLabel);
+        client.postCommand(basicLabel);
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(
                 basicTask.getId(), basicLabel.getLabelId());
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
-        final TaskPriority newPriority = TaskPriority.HIGH;
+        final TaskPriority newPriority = HIGH;
         final UpdateTaskPriority updateTaskPriority =
                 updateTaskPriorityInstance(basicTask.getId(), TaskPriority.TP_UNDEFINED,
                                            newPriority);
-        client.update(updateTaskPriority);
+        client.postCommand(updateTaskPriority);
 
         final DeleteTask deleteTask = deleteTaskInstance(basicTask.getId());
-        client.delete(deleteTask);
+        client.postCommand(deleteTask);
 
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(basicTask.getId());
-        client.restore(restoreDeletedTask);
+        client.postCommand(restoreDeletedTask);
 
         final List<TaskItem> labeledTasks = client.getLabelledTasksView()
                                                   .get(0)

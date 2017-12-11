@@ -37,6 +37,7 @@ import "spine/change/change.proto";
 import "todolist/identifiers.proto";
 import "todolist/values.proto";
 import "todolist/changes.proto";
+import "todolist/attributes.proto";
 
 // An event signalizing about the successful task creation.
 //
@@ -71,7 +72,7 @@ message TaskDraftCreated {
     TaskId id = 1;
 
     // Details of the created task draft.
-    TaskDetails details = 2 [(required) = true];
+    TaskDetails details = 2;
 
     // The draft creation time.
     //

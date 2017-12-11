@@ -66,16 +66,16 @@ class DeleteTaskTest extends TodoClientTest {
             final CreateBasicTask createTask = createTask();
 
             final CreateBasicLabel createLabel = createBasicLabel();
-            client.create(createLabel);
+            client.postCommand(createLabel);
 
             final LabelId labelId = createLabel.getLabelId();
             final TaskId taskId = createTask.getId();
 
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.assignLabel(assignLabelToTask);
+            client.postCommand(assignLabelToTask);
 
             final DeleteTask deleteTask = deleteTaskInstance(taskId);
-            client.delete(deleteTask);
+            client.postCommand(deleteTask);
 
             final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
             assertEquals(1, labelledTasksView.size());
@@ -92,16 +92,16 @@ class DeleteTaskTest extends TodoClientTest {
             final CreateBasicTask createTask = createTask();
 
             final CreateBasicLabel createLabel = createBasicLabel();
-            client.create(createLabel);
+            client.postCommand(createLabel);
 
             final LabelId labelId = createLabel.getLabelId();
             final TaskId taskId = createTask.getId();
 
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.assignLabel(assignLabelToTask);
+            client.postCommand(assignLabelToTask);
 
             final DeleteTask deleteTask = deleteTaskInstance(createWrongTaskId());
-            client.delete(deleteTask);
+            client.postCommand(deleteTask);
 
             final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
             final int expectedListSize = 1;
@@ -125,10 +125,10 @@ class DeleteTaskTest extends TodoClientTest {
         @DisplayName("be empty")
         void obtainEmptyView() {
             final CreateDraft createDraft = createDraft();
-            client.create(createDraft);
+            client.postCommand(createDraft);
 
             final DeleteTask deleteTask = deleteTaskInstance(createDraft.getId());
-            client.delete(deleteTask);
+            client.postCommand(deleteTask);
 
             final List<TaskItem> taskViews = client.getDraftTasksView()
                                                    .getDraftTasks()
@@ -140,11 +140,11 @@ class DeleteTaskTest extends TodoClientTest {
         @DisplayName("contain task view when command has wrong ID")
         void obtainView() {
             final CreateDraft createDraft = createDraft();
-            client.create(createDraft);
+            client.postCommand(createDraft);
 
             final TaskId taskId = createDraft.getId();
             final DeleteTask deleteTask = deleteTaskInstance(createWrongTaskId());
-            client.delete(deleteTask);
+            client.postCommand(deleteTask);
 
             final List<TaskItem> taskViews = client.getDraftTasksView()
                                                    .getDraftTasks()
@@ -193,7 +193,7 @@ class DeleteTaskTest extends TodoClientTest {
         final TaskId idOfDeletedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
 
         final DeleteTask deleteTask = deleteTaskInstance(idOfDeletedTask);
-        client.delete(deleteTask);
+        client.postCommand(deleteTask);
 
         return client.getMyListView()
                      .getMyList()

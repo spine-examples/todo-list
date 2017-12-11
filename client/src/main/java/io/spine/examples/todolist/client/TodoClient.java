@@ -21,20 +21,7 @@
 package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.c.commands.AssignLabelToTask;
-import io.spine.examples.todolist.c.commands.CompleteTask;
-import io.spine.examples.todolist.c.commands.CreateBasicLabel;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.c.commands.DeleteTask;
-import io.spine.examples.todolist.c.commands.FinalizeDraft;
-import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
-import io.spine.examples.todolist.c.commands.ReopenTask;
-import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
-import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
-import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
-import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
-import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
+import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
@@ -53,102 +40,11 @@ public interface TodoClient {
     String HOST = "localhost";
 
     /**
-     * Creates task according to the command data.
+     * Posts the given command to the {@code CommandService}.
      *
-     * @param cmd the {@link CreateBasicTask} command
+     * @param commandMessage the command to post
      */
-    void create(CreateBasicTask cmd);
-
-    /**
-     * Creates label according to the command data.
-     *
-     * @param cmd the {@link CreateBasicLabel} command
-     */
-    void create(CreateBasicLabel cmd);
-
-    /**
-     * Creates draft according to the command data.
-     *
-     * @param cmd the {@link CreateDraft} command
-     */
-    void create(CreateDraft cmd);
-
-    /**
-     * Updates task description according to the command data.
-     *
-     * @param cmd the {@link UpdateTaskDescription} command
-     */
-    void update(UpdateTaskDescription cmd);
-
-    /**
-     * Updates task due date according to the command data.
-     *
-     * @param cmd the {@link UpdateTaskDueDate} command
-     */
-    void update(UpdateTaskDueDate cmd);
-
-    /**
-     * Updates task priority according to the command data.
-     *
-     * @param cmd the {@link UpdateTaskPriority} command
-     */
-    void update(UpdateTaskPriority cmd);
-
-    /**
-     * Updates label details according to the command data.
-     *
-     * @param cmd the {@link UpdateLabelDetails} command
-     */
-    void update(UpdateLabelDetails cmd);
-
-    /**
-     * Deletes task according to the command data.
-     *
-     * @param cmd the {@link DeleteTask} command
-     */
-    void delete(DeleteTask cmd);
-
-    /**
-     * Removes label from task according to the command data.
-     *
-     * @param cmd the {@link RemoveLabelFromTask} command
-     */
-    void removeLabel(RemoveLabelFromTask cmd);
-
-    /**
-     * Assigns label to task according to the command data.
-     *
-     * @param cmd the {@link AssignLabelToTask} command
-     */
-    void assignLabel(AssignLabelToTask cmd);
-
-    /**
-     * Reopens task according to the command data.
-     *
-     * @param cmd the {@link ReopenTask} command
-     */
-    void reopen(ReopenTask cmd);
-
-    /**
-     * Restores deleted task according to the command data.
-     *
-     * @param cmd the {@link RestoreDeletedTask} command
-     */
-    void restore(RestoreDeletedTask cmd);
-
-    /**
-     * Completes task according to the command data.
-     *
-     * @param cmd the {@link CompleteTask} command
-     */
-    void complete(CompleteTask cmd);
-
-    /**
-     * Finalizes draft according to the command data.
-     *
-     * @param cmd the {@link FinalizeDraft} command
-     */
-    void finalize(FinalizeDraft cmd);
+    void postCommand(TodoCommand commandMessage);
 
     /**
      * Obtains the single {@link MyListView}.

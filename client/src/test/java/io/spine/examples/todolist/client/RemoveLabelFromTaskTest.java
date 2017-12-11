@@ -72,11 +72,11 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
             final LabelId labelId = createLabel.getLabelId();
 
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.assignLabel(assignLabelToTask);
+            client.postCommand(assignLabelToTask);
 
             final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId,
                                                                                         labelId);
-            client.removeLabel(removeLabelFromTask);
+            client.postCommand(removeLabelFromTask);
 
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
             assertEquals(1, tasksViewList.size());
@@ -97,7 +97,7 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
             final LabelId labelId = createLabel.getLabelId();
 
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.assignLabel(assignLabelToTask);
+            client.postCommand(assignLabelToTask);
 
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
             assertEquals(1, tasksViewList.size());
@@ -182,7 +182,7 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
     private TaskItem obtainTaskItemWhenHandledRemoveLabeledFromTask(LabelId labelId,
             boolean isCorrectId) {
         final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+        client.postCommand(createDraft);
         final TaskId taskId = createDraft.getId();
 
         assignAndRemoveLabel(labelId, isCorrectId, taskId);
@@ -195,12 +195,12 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
 
     private void assignAndRemoveLabel(LabelId labelId, boolean isCorrectId, TaskId taskId) {
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         final TaskId idOfUpdatedTask = isCorrectId ? taskId : createWrongTaskId();
         final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(idOfUpdatedTask,
                                                                                     labelId);
-        client.removeLabel(removeLabelFromTask);
+        client.postCommand(removeLabelFromTask);
     }
 
     private static TaskItem checkAndObtainView(TaskId taskId, List<TaskItem> taskViews) {

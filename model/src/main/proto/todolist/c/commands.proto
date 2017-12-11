@@ -30,11 +30,16 @@ option java_outer_classname = "CommandsProto";
 option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
+option (every_is) = "TodoCommand";
+
+import "google/protobuf/timestamp.proto";
+
 import "spine/change/change.proto";
 
 import "todolist/identifiers.proto";
 import "todolist/changes.proto";
 import "todolist/values.proto";
+import "todolist/attributes.proto";
 
 // An attempt to create a task in a "Quick" mode.
 //
@@ -266,4 +271,99 @@ message UpdateLabelDetails {
 
     // Reserved for future extension.
     reserved 3 to 10;
+}
+
+// Commands to the task creation wizard
+// ------------------------------------
+
+// Start the task creation process.
+//
+// The process involves creating a draft and assigning all the task fields to it.
+//
+// The process itself has an identifier, so the client should work with the ID of the process
+// rather than the ID of the task itself. The process ID is specified in this command together with
+// the task ID.
+//
+// This command causes an empty draft with the given ID to be created.
+//
+message StartTaskCreation {
+
+    // The ID of the task creation process.
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
+
+    // The ID of the task to create.
+    TaskId task_id = 2 [(required) = true, (valid) = true];
+}
+
+// Sets the basic task data to the task being created.
+//
+message SetTaskDetails {
+
+    // The ID of the task creation process.
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
+
+    // The description to set to the task.
+    //
+    // This field is required.
+    //
+    TaskDescription description = 2 [(required) = true, (valid) = true];
+
+    // The priority to set to the task.
+    //
+    // This field is optional. If not set, `NORMAL` is used by default.
+    //
+    TaskPriority priority = 3;
+
+    // The due date to be set to the task.
+    //
+    // This fiend is optional. If not set, the created task will not have a due date.
+    //
+    google.protobuf.Timestamp due_date = 4;
+}
+
+// Add labels to the task being created.
+//
+// It is possible both to specify the existing labels and assign them to the task and to create new
+// labels and assign them to the task at once.
+//
+// The existing labels are specified by their IDs.
+//
+// The new labels are specified by their data (label details).
+//
+// If neither new nor existing labels are specified, no labels are assigned to the task.
+//
+message AddLabels {
+
+    // The ID of the task creation process.
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
+
+    // The IDs of the existing labels to assign to the task.
+    repeated LabelId existing_labels = 2 [(valid) = true];
+
+    // The details of the new labels to create and assign to the task.
+    repeated LabelDetails new_labels = 3 [(valid) = true];
+}
+
+// Complete the task creation process.
+//
+// The task being created is now finalized.
+//
+// No other commands should be issued to this process after this one.
+//
+message CompleteTaskCreation {
+
+    // The ID of the task creation process.
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
+}
+
+// Cancel the task creation process.
+//
+// The task persists as a draft. The client may finalize or delete it manually.
+//
+// No other commands should be issued to this process after this one.
+//
+message CancelTaskCreation {
+
+    // The ID of the task creation process.
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
 }

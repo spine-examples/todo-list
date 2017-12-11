@@ -65,6 +65,8 @@ import io.spine.server.storage.StorageFactory;
 import io.spine.string.Stringifier;
 import io.spine.string.StringifierRegistry;
 import io.spine.time.Time;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -99,7 +101,7 @@ public final class FirebaseMirrorTestEnv {
     private static final TestEventFactory eventFactory =
             TestEventFactory.newInstance(FirebaseMirrorTestEnv.class);
 
-    private static Firestore firestore = null;
+    private static final Firestore firestore = createFirestore();
 
     // Prevent utility class instantiation.
     private FirebaseMirrorTestEnv() {
@@ -120,25 +122,28 @@ public final class FirebaseMirrorTestEnv {
 
     @SuppressWarnings("NonThreadSafeLazyInitialization") // OK for a test.
     public static Firestore getFirestore() {
-        if (firestore == null) {
-            final InputStream firebaseSecret = FirebaseMirrorTestEnv.class
-                    .getClassLoader()
-                    .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
-            // Check if `serviceAccount.json` file exists.
-            assumeNotNull(firebaseSecret);
-            final GoogleCredentials credentials;
-            try {
-                credentials = GoogleCredentials.fromStream(firebaseSecret);
-            } catch (IOException e) {
-                throw new IllegalStateException(e);
-            }
-            final FirebaseOptions options = new FirebaseOptions.Builder()
-                    .setDatabaseUrl(DATABASE_URL)
-                    .setCredentials(credentials)
-                    .build();
-            FirebaseApp.initializeApp(options);
-            firestore = FirestoreClient.getFirestore();
+        return firestore;
+    }
+
+    private static Firestore createFirestore() {
+        final InputStream firebaseSecret = FirebaseMirrorTestEnv.class
+                .getClassLoader()
+                .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
+        // Check if `serviceAccount.json` file exists.
+        assumeNotNull(firebaseSecret);
+        final GoogleCredentials credentials;
+        try {
+            credentials = GoogleCredentials.fromStream(firebaseSecret);
+        } catch (IOException e) {
+            log().error("Error while reading Firebase service account file.", e);
+            throw new IllegalStateException(e);
         }
+        final FirebaseOptions options = new FirebaseOptions.Builder()
+                .setDatabaseUrl(DATABASE_URL)
+                .setCredentials(credentials)
+                .build();
+        FirebaseApp.initializeApp(options);
+        final Firestore firestore = FirestoreClient.getFirestore();
         return firestore;
     }
 
@@ -353,4 +358,14 @@ public final class FirebaseMirrorTestEnv {
 
     static class SessionRepository
             extends ProjectionRepository<FMSessionId, SessionProjection, FMSession> {}
+
+    private static Logger log() {
+        return LogSingleton.INSTANCE.value;
+    }
+
+    private enum LogSingleton {
+        INSTANCE;
+        @SuppressWarnings("NonSerializableFieldInSerializableClass")
+        private final Logger value = LoggerFactory.getLogger(FirebaseMirrorTestEnv.class);
+    }
 }

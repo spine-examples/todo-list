@@ -100,13 +100,13 @@ class CompleteTaskTest extends TodoClientTest {
         final TaskId createdTaskId = createTask.getId();
 
         final CreateBasicLabel createLabel = createBasicLabel();
-        client.create(createLabel);
+        client.postCommand(createLabel);
 
         final TaskId taskId = createTask.getId();
         final LabelId labelId = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         completeTask(isCorrectId, createdTaskId);
 
@@ -145,6 +145,6 @@ class CompleteTaskTest extends TodoClientTest {
     private void completeTask(boolean isCorrectId, TaskId idOfCreatedTask) {
         final TaskId idOfCompletedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
         final CompleteTask completeTask = completeTaskInstance(idOfCompletedTask);
-        client.complete(completeTask);
+        client.postCommand(completeTask);
     }
 }

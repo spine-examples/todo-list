@@ -133,7 +133,7 @@ class UpdateTaskPriorityTest extends TodoClientTest {
     private TaskItem obtainTaskItemWhenHandledUpdateTaskPriority(TaskPriority newPriority,
             boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
+        client.postCommand(createTask);
 
         final TaskId idOfCreatedTask = createTask.getId();
         updatePriority(newPriority, isCorrectId, idOfCreatedTask);
@@ -152,15 +152,15 @@ class UpdateTaskPriorityTest extends TodoClientTest {
             boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
         final TaskId createdTaskId = createTask.getId();
-        client.create(createTask);
+        client.postCommand(createTask);
 
         final CreateBasicLabel createLabel = createBasicLabel();
-        client.create(createLabel);
+        client.postCommand(createLabel);
 
         final int expectedListSize = 1;
         final AssignLabelToTask assignLabelToTask =
                 assignLabelToTaskInstance(createdTaskId, createLabel.getLabelId());
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         updatePriority(priority, isCorrectId, createdTaskId);
 
@@ -182,7 +182,7 @@ class UpdateTaskPriorityTest extends TodoClientTest {
     private TaskItem obtainViewWhenHandledUpdateTaskPriorityCommand(TaskPriority newPriority,
             boolean isCorrectId) {
         final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+        client.postCommand(createDraft);
         final TaskId createdTaskId = createDraft.getId();
 
         updatePriority(newPriority, isCorrectId, createdTaskId);
@@ -203,6 +203,6 @@ class UpdateTaskPriorityTest extends TodoClientTest {
         final TaskId updatedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
         final UpdateTaskPriority updateTaskPriority =
                 updateTaskPriorityInstance(updatedTaskId, TaskPriority.TP_UNDEFINED, newPriority);
-        client.update(updateTaskPriority);
+        client.postCommand(updateTaskPriority);
     }
 }
