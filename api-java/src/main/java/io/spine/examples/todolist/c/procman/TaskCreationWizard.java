@@ -95,7 +95,7 @@ import static java.util.Collections.emptyList;
  *
  * @author Dmytro Dashenkov
  */
-@SuppressWarnings("unused") // Reflective access.
+@SuppressWarnings("unused") // Command handler methods invoked via reflection.
 public class TaskCreationWizard extends ProcessManager<TaskCreationId,
                                                        TaskCreation,
                                                        TaskCreationVBuilder> {
