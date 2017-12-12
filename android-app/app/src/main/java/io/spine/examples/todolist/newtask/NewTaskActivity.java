@@ -20,13 +20,13 @@
 
 package io.spine.examples.todolist.newtask;
 
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.widget.Button;
-import android.widget.EditText;
 import io.spine.examples.todolist.R;
-import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.lifecycle.AbstractActivity;
 
 /**
@@ -37,6 +37,12 @@ import io.spine.examples.todolist.lifecycle.AbstractActivity;
 public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
 
     private ViewPager wizardView;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        model().startCreatingTask();
+    }
 
     @Override
     protected Class<NewTaskViewModel> getViewModelClass() {

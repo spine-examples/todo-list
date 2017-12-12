@@ -37,6 +37,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.lifecycle.ViewModelFactory;
 
 import java.util.List;
 
@@ -62,7 +63,7 @@ public final class NewTaskDescriptionFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         dueDate.postValue(Timestamp.getDefaultInstance());
-        model = ViewModelProviders.of(this).get(NewTaskViewModel.class);
+        model = ViewModelProviders.of(this, ViewModelFactory.CACHING).get(NewTaskViewModel.class);
         final View root = inflater.inflate(R.layout.fragment_new_task_details, container, false);
         taskDescription = root.findViewById(R.id.new_task_description);
         spinner = root.findViewById(R.id.task_priority_spinner);

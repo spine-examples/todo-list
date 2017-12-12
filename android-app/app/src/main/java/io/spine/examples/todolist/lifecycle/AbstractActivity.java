@@ -92,7 +92,7 @@ public abstract class AbstractActivity<VM extends AbstractViewModel> extends App
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        model = ViewModelProviders.of(this).get(getViewModelClass());
+        model = ViewModelProviders.of(this, ViewModelFactory.ALWAYS_NEW).get(getViewModelClass());
         setContentView(getContentViewResource());
         initToolbar();
         initializeView();

@@ -21,11 +21,13 @@
 package io.spine.examples.todolist.newtask;
 
 import com.google.protobuf.Timestamp;
+import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
+import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.lifecycle.AbstractViewModel;
 
 import static io.spine.Identifier.newUuid;
@@ -34,6 +36,9 @@ import static io.spine.Identifier.newUuid;
  * The {@link android.arch.lifecycle.ViewModel ViewModel} of the {@link NewTaskActivity}.
  */
 final class NewTaskViewModel extends AbstractViewModel {
+
+    private final TaskId taskId = newId();
+    private final TaskCreationId wizardId = newWizardId();
 
     // Required by the `ViewModelProviders` utility.
     public NewTaskViewModel() {}
@@ -50,10 +55,19 @@ final class NewTaskViewModel extends AbstractViewModel {
                                                                .setValue(description)
                                                                .build();
         final SetTaskDetails command = SetTaskDetails.newBuilder()
+                                                     .setId(wizardId)
                                                      .setDescription(taskDescription)
                                                      .setPriority(priority)
                                                      .setDueDate(taskDueDate)
                                                      .build();
+        execute(() -> client().postCommand(command));
+    }
+
+    void startCreatingTask() {
+        final StartTaskCreation command = StartTaskCreation.newBuilder()
+                                                           .setId(wizardId)
+                                                           .setTaskId(taskId)
+                                                           .build();
         execute(() -> client().postCommand(command));
     }
 
@@ -67,5 +81,17 @@ final class NewTaskViewModel extends AbstractViewModel {
         return TaskId.newBuilder()
                      .setValue(newUuid())
                      .build();
+    }
+
+    /**
+     * Generates a new random {@link TaskCreationId}.
+     *
+     * @return new instance of {@link TaskCreationId} with
+     * a {@linkplain io.spine.Identifier#newUuid() UUID} value.
+     */
+    private static TaskCreationId newWizardId() {
+        return TaskCreationId.newBuilder()
+                             .setValue(newUuid())
+                             .build();
     }
 }
