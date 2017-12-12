@@ -20,15 +20,27 @@
 
 package io.spine.examples.todolist.newtask;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import com.google.common.collect.ImmutableList;
 import com.google.protobuf.Timestamp;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.c.commands.AddLabels;
+import io.spine.examples.todolist.c.commands.CompleteTask;
+import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.lifecycle.AbstractViewModel;
+
+import java.util.Collection;
+import java.util.List;
 
 import static io.spine.Identifier.newUuid;
 
@@ -60,7 +72,7 @@ final class NewTaskViewModel extends AbstractViewModel {
                                                      .setPriority(priority)
                                                      .setDueDate(taskDueDate)
                                                      .build();
-        execute(() -> client().postCommand(command));
+        post(command);
     }
 
     void startCreatingTask() {
@@ -68,7 +80,29 @@ final class NewTaskViewModel extends AbstractViewModel {
                                                            .setId(wizardId)
                                                            .setTaskId(taskId)
                                                            .build();
-        execute(() -> client().postCommand(command));
+        post(command);
+    }
+
+    void assignLabels(Collection<LabelId> labels) {
+        final AddLabels command = AddLabels.newBuilder()
+                                           .setId(wizardId)
+                                           .addAllExistingLabels(labels)
+                                           .build();
+        post(command);
+    }
+
+    void confirmTaskCreation() {
+        final CompleteTaskCreation command = CompleteTaskCreation.newBuilder()
+                                                                 .setId(wizardId)
+                                                                 .build();
+        post(command);
+    }
+
+    LiveData<List<TaskLabel>> getLabels() {
+        // TODO:2017-12-12:dmytro.dashenkov: Fetch TaskLabels.
+        final MutableLiveData<List<TaskLabel>> result = new MutableLiveData<>();
+        result.setValue(ImmutableList.of());
+        return result;
     }
 
     /**

@@ -23,6 +23,7 @@ package io.spine.examples.todolist.lifecycle;
 import android.arch.lifecycle.ViewModel;
 import android.util.Log;
 import io.grpc.StatusRuntimeException;
+import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.client.SubscribingTodoClient;
 import io.spine.examples.todolist.connection.Clients;
 
@@ -100,6 +101,10 @@ public abstract class AbstractViewModel extends ViewModel {
                 }
             }
         });
+    }
+
+    protected void post(TodoCommand command) {
+        execute(() -> client.postCommand(command));
     }
 
     /**

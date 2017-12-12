@@ -20,10 +20,8 @@
 
 package io.spine.examples.todolist.newtask;
 
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.util.Log;
 
 import java.util.Map;
 

@@ -20,15 +20,34 @@
 
 package io.spine.examples.todolist.newtask;
 
-import android.support.v4.app.Fragment;
-
+import android.arch.lifecycle.ViewModelProviders;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import com.google.common.collect.ImmutableList;
+import io.spine.examples.todolist.R;
+import io.spine.examples.todolist.lifecycle.ViewModelFactory;
 
 public final class NewTaskLabelsFragment extends PagerFragment {
 
     static final int POSITION_IN_WIZARD = 1;
 
+    private NewTaskViewModel model;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        model = ViewModelProviders.of(this, ViewModelFactory.CACHING).get(NewTaskViewModel.class);
+        final View root = inflater.inflate(R.layout.fragment_new_task_labels, container, false);
+        return root;
+    }
+
     @Override
     void complete() {
-
+        // TODO:2017-12-12:dmytro.dashenkov: Assign TaskLabels.
+        model.assignLabels(ImmutableList.of());
     }
 }

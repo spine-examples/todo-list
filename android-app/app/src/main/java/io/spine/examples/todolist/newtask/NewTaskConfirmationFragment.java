@@ -20,12 +20,34 @@
 
 package io.spine.examples.todolist.newtask;
 
+import android.arch.lifecycle.ViewModelProviders;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import io.spine.examples.todolist.R;
+import io.spine.examples.todolist.lifecycle.ViewModelFactory;
+
 public final class NewTaskConfirmationFragment extends PagerFragment {
+
+    private NewTaskViewModel model;
 
     static final int POSITION_IN_WIZARD = 2;
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        model = ViewModelProviders.of(this, ViewModelFactory.CACHING).get(NewTaskViewModel.class);
+        final View root = inflater.inflate(R.layout.fragment_new_task_confirmation,
+                                            container,
+                                            false);
+        return root;
+    }
+
     @Override
     void complete() {
-
+        model.confirmTaskCreation();
     }
 }

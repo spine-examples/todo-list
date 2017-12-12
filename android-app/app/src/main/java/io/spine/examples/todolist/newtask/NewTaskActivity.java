@@ -23,7 +23,6 @@ package io.spine.examples.todolist.newtask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.widget.Button;
 import io.spine.examples.todolist.R;
@@ -38,6 +37,9 @@ public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
 
     private ViewPager wizardView;
     private WizardAdapter wizard;
+    private Button nextButton;
+
+    private boolean lastPage = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -67,15 +69,21 @@ public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
         wizard = new WizardAdapter(fragmentManager);
         wizardView.setAdapter(wizard);
 
-        final Button nextPage = findViewById(R.id.next_btn);
-
-        nextPage.setOnClickListener(button -> nextPage());
+        nextButton = findViewById(R.id.next_btn);
+        nextButton.setOnClickListener(button -> nextPage());
     }
 
     private void nextPage() {
         final int currentPageIndex = wizardView.getCurrentItem();
         final PagerFragment fragment = wizard.getItem(currentPageIndex);
         fragment.complete();
-        wizardView.setCurrentItem(currentPageIndex + 1);
+        final int newIndex = currentPageIndex + 1;
+        if (lastPage) {
+            finish();
+        } else if (newIndex + 1 == wizard.getCount()) {
+            lastPage = true;
+            nextButton.setText(R.string.complete);
+        }
+        wizardView.setCurrentItem(newIndex);
     }
 }
