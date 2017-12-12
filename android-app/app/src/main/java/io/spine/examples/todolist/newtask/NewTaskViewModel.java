@@ -20,9 +20,12 @@
 
 package io.spine.examples.todolist.newtask;
 
+import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.lifecycle.AbstractViewModel;
 
 import static io.spine.Identifier.newUuid;
@@ -36,17 +39,21 @@ final class NewTaskViewModel extends AbstractViewModel {
     public NewTaskViewModel() {}
 
     /**
-     * Creates a new task with the given {@linkplain TaskDescription description}.
+     * Creates a new task with the given details fields.
      *
      * <p>Sends the {@link CreateBasicTask} command through the {@linkplain #client() gRPC client}.
      *
      * @param description the new task description
      */
-    void createTask(TaskDescription description) {
-        final CreateBasicTask command = CreateBasicTask.newBuilder()
-                                                       .setId(newId())
-                                                       .setDescription(description)
-                                                       .build();
+    void createTask(String description, TaskPriority priority, Timestamp taskDueDate) {
+        final TaskDescription taskDescription = TaskDescription.newBuilder()
+                                                               .setValue(description)
+                                                               .build();
+        final SetTaskDetails command = SetTaskDetails.newBuilder()
+                                                     .setDescription(taskDescription)
+                                                     .setPriority(priority)
+                                                     .setDueDate(taskDueDate)
+                                                     .build();
         execute(() -> client().postCommand(command));
     }
 

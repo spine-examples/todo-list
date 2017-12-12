@@ -10,4 +10,5 @@
     <string name="network_err_msg">Network error happened</string>
     <string name="next">Next</string>
     <string name="set_due_date">Set due date</string>
+    <string name="priority">Priority</string>
 </resources>

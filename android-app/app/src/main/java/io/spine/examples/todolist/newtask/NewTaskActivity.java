@@ -55,8 +55,6 @@ public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
 
     @Override
     protected void initializeView() {
-//        final EditText taskDescription = findViewById(R.id.new_task_description);
-
         wizardView = findViewById(R.id.new_task_pager);
         final FragmentManager fragmentManager = getSupportFragmentManager();
         final PagerAdapter wizard = new WizardAdapter(fragmentManager);
@@ -65,22 +63,10 @@ public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
         final Button nextPage = findViewById(R.id.next_btn);
 
         nextPage.setOnClickListener(button -> nextPage());
-//            final String descriptionValue = taskDescription.getText().toString();
-//            final TaskDescription description = createDescription(descriptionValue);
-//            model().createTask(description);
-//            navigator().navigateBack();
-//        navigator().navigateBack()
     }
 
     private void nextPage() {
         final int currentPageIndex = wizardView.getCurrentItem();
         wizardView.setCurrentItem(currentPageIndex + 1);
-    }
-
-    private static TaskDescription createDescription(String value) {
-        final TaskDescription description = TaskDescription.newBuilder()
-                                                           .setValue(value)
-                                                           .build();
-        return description;
     }
 }
