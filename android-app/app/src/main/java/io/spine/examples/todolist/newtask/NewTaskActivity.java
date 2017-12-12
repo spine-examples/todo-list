@@ -20,6 +20,9 @@
 
 package io.spine.examples.todolist.newtask;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.widget.Button;
 import android.widget.EditText;
 import io.spine.examples.todolist.R;
@@ -32,6 +35,8 @@ import io.spine.examples.todolist.lifecycle.AbstractActivity;
  * @see NewTaskViewModel
  */
 public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
+
+    private ViewPager wizardView;
 
     @Override
     protected Class<NewTaskViewModel> getViewModelClass() {
@@ -50,17 +55,26 @@ public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
 
     @Override
     protected void initializeView() {
-        final EditText taskDescription = findViewById(R.id.new_task_description);
-        final Button createTask = findViewById(R.id.create_task_btn);
-        final Button back = findViewById(R.id.back_btn);
+//        final EditText taskDescription = findViewById(R.id.new_task_description);
 
-        createTask.setOnClickListener(button -> {
-            final String descriptionValue = taskDescription.getText().toString();
-            final TaskDescription description = createDescription(descriptionValue);
-            model().createTask(description);
-            navigator().navigateBack();
-        });
-        back.setOnClickListener(button -> navigator().navigateBack());
+        wizardView = findViewById(R.id.new_task_pager);
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        final PagerAdapter wizard = new WizardAdapter(fragmentManager);
+        wizardView.setAdapter(wizard);
+
+        final Button nextPage = findViewById(R.id.next_btn);
+
+        nextPage.setOnClickListener(button -> nextPage());
+//            final String descriptionValue = taskDescription.getText().toString();
+//            final TaskDescription description = createDescription(descriptionValue);
+//            model().createTask(description);
+//            navigator().navigateBack();
+//        navigator().navigateBack()
+    }
+
+    private void nextPage() {
+        final int currentPageIndex = wizardView.getCurrentItem();
+        wizardView.setCurrentItem(currentPageIndex + 1);
     }
 
     private static TaskDescription createDescription(String value) {

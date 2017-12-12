@@ -25,12 +25,6 @@
         android:layout_height="match_parent"
         android:layout_margin="@dimen/std_padding">
 
-    <Button
-            android:text="@string/create"
-            android:id="@+id/create_task_btn"
-            style="@style/PrimaryMaterialButton"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
     <TextView
             android:text="@string/create_new_task"
             android:layout_width="wrap_content"
@@ -42,6 +36,7 @@
             android:layout_marginStart="@dimen/std_padding"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
+
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -50,11 +45,25 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/new_task_label"
             app:layout_constraintEnd_toEndOf="parent"/>
+
+    <Spinner android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:id="@+id/task_priority_spinner"
+             app:layout_constraintTop_toBottomOf="@id/new_task_description"
+             app:layout_constraintStart_toStartOf="parent"
+             android:layout_margin="@dimen/std_padding"
+             app:layout_constraintEnd_toEndOf="parent"
+             app:layout_constraintBottom_toTopOf="@+id/select_due_date_btn"/>
+
     <Button
-            android:text="@string/back"
-            android:id="@+id/back_btn"
-            style="@style/MaterialButton"
+            android:id="@+id/select_due_date_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/PrimaryMaterialButton"
+            android:text="@string/set_due_date"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:layout_margin="@dimen/std_padding"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>
