@@ -20,9 +20,12 @@
 
 package io.spine.examples.todolist.newtask;
 
-import android.support.v4.app.Fragment;
-
-public final class NewTaskConfirmationFragment extends Fragment {
+public final class NewTaskConfirmationFragment extends PagerFragment {
 
     static final int POSITION_IN_WIZARD = 2;
+
+    @Override
+    void complete() {
+
+    }
 }

@@ -20,16 +20,15 @@
 
 package io.spine.examples.todolist.newtask;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -41,12 +40,12 @@ import io.spine.examples.todolist.lifecycle.ViewModelFactory;
 
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.protobuf.util.Timestamps.fromMillis;
 import static io.spine.examples.todolist.TaskPriority.HIGH;
 import static io.spine.examples.todolist.TaskPriority.LOW;
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
 
-public final class NewTaskDescriptionFragment extends Fragment {
+public final class NewTaskDescriptionFragment extends PagerFragment {
 
     static final int POSITION_IN_WIZARD = 0;
 
@@ -56,19 +55,31 @@ public final class NewTaskDescriptionFragment extends Fragment {
     private Spinner spinner;
     private Button setDueDate;
 
-    private final MutableLiveData<Timestamp> dueDate = new MutableLiveData<>();
+    private Timestamp dueDate = Timestamp.getDefaultInstance();
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        dueDate.postValue(Timestamp.getDefaultInstance());
         model = ViewModelProviders.of(this, ViewModelFactory.CACHING).get(NewTaskViewModel.class);
         final View root = inflater.inflate(R.layout.fragment_new_task_details, container, false);
         taskDescription = root.findViewById(R.id.new_task_description);
         spinner = root.findViewById(R.id.task_priority_spinner);
         initPrioritySpinner();
         setDueDate = root.findViewById(R.id.select_due_date_btn);
+        final CalendarView calendar = root.findViewById(R.id.select_due_date_calendar);
+        setDueDate.setOnClickListener((btn) -> {
+            if (calendar.getVisibility() == View.GONE) {
+                btn.getParent().requestLayout();
+                calendar.setVisibility(View.VISIBLE);
+                setDueDate.setText(R.string.cancel);
+            } else {
+                calendar.setVisibility(View.GONE);
+                final long millis = calendar.getDate();
+                dueDate = fromMillis(millis);
+                setDueDate.setText(R.string.set_due_date);
+            }
+        });
         return root;
     }
 
@@ -85,8 +96,11 @@ public final class NewTaskDescriptionFragment extends Fragment {
     private void describeTask() {
         final String description = taskDescription.getText().toString();
         final TaskPriority priority = (TaskPriority) spinner.getSelectedItem();
-        final Timestamp taskDueDate = dueDate.getValue();
-        checkNotNull(taskDueDate);
-        model.createTask(description, priority, taskDueDate);
+        model.createTask(description, priority, dueDate);
+    }
+
+    @Override
+    void complete() {
+        describeTask();
     }
 }

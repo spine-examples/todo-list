@@ -39,8 +39,8 @@ final class WizardAdapter extends FragmentPagerAdapter {
     }
 
     @Override
-    public Fragment getItem(int position) {
-        final Fragment result = factory.get(position);
+    public PagerFragment getItem(int position) {
+        final PagerFragment result = factory.get(position);
         return result;
     }
 
@@ -53,22 +53,21 @@ final class WizardAdapter extends FragmentPagerAdapter {
 
         private static final int FRAGMENTS_MAX_COUNT = 3;
 
-        private final Map<Integer, Fragment> fragments =
+        private final Map<Integer, PagerFragment> fragments =
                 newHashMapWithExpectedSize(FRAGMENTS_MAX_COUNT);
 
-        private Fragment get(int position) {
-            Log.d("wizard", valueOf(position));
-            final Fragment cached = fragments.get(position);
+        private PagerFragment get(int position) {
+            final PagerFragment cached = fragments.get(position);
             if (cached != null) {
                 return cached;
             }
-            final Fragment result = create(position);
+            final PagerFragment result = create(position);
             fragments.put(position, result);
             return result;
         }
 
-        private static Fragment create(int position) {
-            final Fragment result;
+        private static PagerFragment create(int position) {
+            final PagerFragment result;
             switch (position) {
                 case NewTaskDescriptionFragment.POSITION_IN_WIZARD:
                     result = new NewTaskDescriptionFragment();

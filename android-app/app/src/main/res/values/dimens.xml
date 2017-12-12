@@ -26,4 +26,5 @@
     <dimen name="small_text">10sp</dimen>
     <dimen name="min_item_height">72dp</dimen>
     <dimen name="heading_text_size">16sp</dimen>
+    <dimen name="std_elevation">2dp</dimen>
 </resources>

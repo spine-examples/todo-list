@@ -22,13 +22,7 @@ package io.spine.examples.todolist.newtask;
 
 import android.support.v4.app.Fragment;
 
+abstract class PagerFragment extends Fragment {
 
-public final class NewTaskLabelsFragment extends PagerFragment {
-
-    static final int POSITION_IN_WIZARD = 1;
-
-    @Override
-    void complete() {
-
-    }
+    abstract void complete();
 }

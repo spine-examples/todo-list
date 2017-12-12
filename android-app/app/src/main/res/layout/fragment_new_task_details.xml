@@ -21,8 +21,7 @@
 <android.support.constraint.ConstraintLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent" android:layout_height="match_parent"
         android:layout_margin="@dimen/std_padding">
 
     <TextView
@@ -67,5 +66,17 @@
             android:layout_margin="@dimen/std_padding"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+
+    <CalendarView
+            android:id="@+id/select_due_date_calendar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/select_due_date_btn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
+            android:elevation="@dimen/std_elevation"/>
 
 </android.support.constraint.ConstraintLayout>

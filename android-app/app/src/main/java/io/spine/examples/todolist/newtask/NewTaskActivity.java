@@ -37,6 +37,7 @@ import io.spine.examples.todolist.lifecycle.AbstractActivity;
 public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
 
     private ViewPager wizardView;
+    private WizardAdapter wizard;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,7 +64,7 @@ public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
     protected void initializeView() {
         wizardView = findViewById(R.id.new_task_pager);
         final FragmentManager fragmentManager = getSupportFragmentManager();
-        final PagerAdapter wizard = new WizardAdapter(fragmentManager);
+        wizard = new WizardAdapter(fragmentManager);
         wizardView.setAdapter(wizard);
 
         final Button nextPage = findViewById(R.id.next_btn);
@@ -73,6 +74,8 @@ public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
 
     private void nextPage() {
         final int currentPageIndex = wizardView.getCurrentItem();
+        final PagerFragment fragment = wizard.getItem(currentPageIndex);
+        fragment.complete();
         wizardView.setCurrentItem(currentPageIndex + 1);
     }
 }
