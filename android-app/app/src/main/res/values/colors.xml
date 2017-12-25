@@ -8,4 +8,6 @@
 
     <color name="completedTaskColor">#CCCCCC</color>
     <color name="list_bg_color">#EEEEEE</color>
+
+    <color name="dividerColor">#DDDDDD</color>
 </resources>

@@ -45,6 +45,8 @@ public final class NewTaskLabelsFragment extends PagerFragment {
         return root;
     }
 
+
+
     @Override
     void complete() {
         // TODO:2017-12-12:dmytro.dashenkov: Assign TaskLabels.

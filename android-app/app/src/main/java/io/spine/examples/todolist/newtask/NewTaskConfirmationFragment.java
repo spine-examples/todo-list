@@ -41,8 +41,8 @@ public final class NewTaskConfirmationFragment extends PagerFragment {
                              @Nullable Bundle savedInstanceState) {
         model = ViewModelProviders.of(this, ViewModelFactory.CACHING).get(NewTaskViewModel.class);
         final View root = inflater.inflate(R.layout.fragment_new_task_confirmation,
-                                            container,
-                                            false);
+                                           container,
+                                           false);
         return root;
     }
 
