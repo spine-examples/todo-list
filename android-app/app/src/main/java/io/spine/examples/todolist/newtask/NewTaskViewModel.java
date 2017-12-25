@@ -22,7 +22,10 @@ package io.spine.examples.todolist.newtask;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.SettableFuture;
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
@@ -38,10 +41,16 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.lifecycle.AbstractViewModel;
+import io.spine.examples.todolist.q.projection.LabelledTasksView;
+import io.spine.examples.todolist.q.projection.TaskListView;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.Identifier.newUuid;
 
 /**
@@ -83,10 +92,11 @@ final class NewTaskViewModel extends AbstractViewModel {
         post(command);
     }
 
-    void assignLabels(Collection<LabelId> labels) {
+    void assignLabels(Collection<LabelId> existingLabels, Collection<LabelDetails> newLabels) {
         final AddLabels command = AddLabels.newBuilder()
                                            .setId(wizardId)
-                                           .addAllExistingLabels(labels)
+                                           .addAllExistingLabels(existingLabels)
+                                           .addAllNewLabels(newLabels)
                                            .build();
         post(command);
     }
@@ -98,10 +108,12 @@ final class NewTaskViewModel extends AbstractViewModel {
         post(command);
     }
 
-    LiveData<List<TaskLabel>> getLabels() {
-        // TODO:2017-12-12:dmytro.dashenkov: Fetch TaskLabels.
-        final MutableLiveData<List<TaskLabel>> result = new MutableLiveData<>();
-        result.setValue(ImmutableList.of());
+    Future<List<LabelledTasksView>> getLabels() {
+        final SettableFuture<List<LabelledTasksView>> result = SettableFuture.create();
+        execute(() -> {
+            final List<LabelledTasksView> taskViews = client().getLabelledTasksView();
+            result.set(taskViews);
+        });
         return result;
     }
 

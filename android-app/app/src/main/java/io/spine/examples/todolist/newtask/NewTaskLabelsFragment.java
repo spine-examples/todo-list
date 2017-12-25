@@ -21,14 +21,28 @@
 package io.spine.examples.todolist.newtask;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.OrientationHelper;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.widget.Button;
 import com.google.common.collect.ImmutableList;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.lifecycle.ViewModelFactory;
+
+import java.util.Collection;
+import java.util.Collections;
+
+import static android.support.v7.widget.LinearLayoutManager.HORIZONTAL;
 
 public final class NewTaskLabelsFragment extends PagerFragment {
 
@@ -36,20 +50,41 @@ public final class NewTaskLabelsFragment extends PagerFragment {
 
     private NewTaskViewModel model;
 
-    @Nullable
+    private NewLabelsAdapter newLabelsAdapter;
+    private ExistingLabelsAdapter existingLabelsAdapter;
+
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+    public View onCreateView(LayoutInflater inflater,
+                             @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        model = ViewModelProviders.of(this, ViewModelFactory.CACHING).get(NewTaskViewModel.class);
+        model = ViewModelProviders.of(this, ViewModelFactory.CACHING)
+                                  .get(NewTaskViewModel.class);
         final View root = inflater.inflate(R.layout.fragment_new_task_labels, container, false);
+        initViews(root);
         return root;
     }
 
+    private void initViews(View root) {
+        final Context context = getContext();
 
+        final RecyclerView existingLabels = root.findViewById(R.id.labels_list);
+        existingLabels.setLayoutManager(new LinearLayoutManager(context, HORIZONTAL, false));
+        existingLabelsAdapter = new ExistingLabelsAdapter(model.getLabels());
+        existingLabels.setAdapter(existingLabelsAdapter);
+
+        final RecyclerView newLabels = root.findViewById(R.id.new_labels_list);
+        newLabels.setLayoutManager(new LinearLayoutManager(context));
+        newLabelsAdapter = new NewLabelsAdapter();
+        newLabels.setAdapter(newLabelsAdapter);
+
+        final Button addNewLabelButton = root.findViewById(R.id.add_new_label);
+        addNewLabelButton.setOnClickListener(btn -> newLabelsAdapter.appendItem());
+    }
 
     @Override
     void complete() {
-        // TODO:2017-12-12:dmytro.dashenkov: Assign TaskLabels.
-        model.assignLabels(ImmutableList.of());
+        final Collection<LabelId> existingLabels = existingLabelsAdapter.getSelected();
+        final Collection<LabelDetails> newLabels = newLabelsAdapter.collectData();
+        model.assignLabels(existingLabels, newLabels);
     }
 }

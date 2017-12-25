@@ -34,6 +34,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.R;
+import io.spine.examples.todolist.model.Colors;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 
@@ -51,6 +52,7 @@ import static io.spine.examples.todolist.LabelColor.BLUE;
 import static io.spine.examples.todolist.LabelColor.GRAY;
 import static io.spine.examples.todolist.LabelColor.GREEN;
 import static io.spine.examples.todolist.LabelColor.RED;
+import static io.spine.examples.todolist.model.Colors.toRgb;
 import static io.spine.validate.Validate.isDefault;
 
 /**
@@ -59,30 +61,6 @@ import static io.spine.validate.Validate.isDefault;
  */
 final class MyTaskListViewAdapter
         extends Adapter<MyTaskListViewAdapter.TaskViewHolder> implements Observer<MyListView> {
-
-    /**
-     * The map of the {@link LabelColor} enum to the RGB values of the color.
-     */
-    private static final Map<LabelColor, Integer> COLORS;
-
-    static {
-        final int defaultColor = Color.GRAY;
-        final Class<Color> colorConstants = Color.class;
-        final ImmutableMap.Builder<LabelColor, Integer> colors = ImmutableMap.builder();
-        for (LabelColor color : LabelColor.values()) {
-            final String colorName = color.name();
-            try {
-                final Field field = colorConstants.getField(colorName);
-                final int colorCode = (Integer) field.get(null);
-                colors.put(color, colorCode);
-            } catch (NoSuchFieldException ignored) {
-                colors.put(color, defaultColor);
-            } catch (IllegalAccessException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-        COLORS = colors.build();
-    }
 
     /**
      * The cached data currently displayed on the associated view.
@@ -129,11 +107,7 @@ final class MyTaskListViewAdapter
      */
     private static int colorOf(TaskItem item) {
         final LabelColor color = item.getLabelColor();
-        Integer hex = COLORS.get(color);
-        if (hex == null) {
-            hex = COLORS.get(GRAY);
-        }
-        return hex;
+        return toRgb(color);
     }
 
     /**
