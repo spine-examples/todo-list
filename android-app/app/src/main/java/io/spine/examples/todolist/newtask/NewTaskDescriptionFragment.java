@@ -62,7 +62,8 @@ public final class NewTaskDescriptionFragment extends PagerFragment {
     public View onCreateView(LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        model = ViewModelProviders.of(this, ViewModelFactory.CACHING).get(NewTaskViewModel.class);
+        model = ViewModelProviders.of(this, ViewModelFactory.CACHING)
+                                  .get(NewTaskViewModel.class);
         final View root = inflater.inflate(R.layout.fragment_new_task_details, container, false);
         taskDescription = root.findViewById(R.id.new_task_description);
         spinner = root.findViewById(R.id.task_priority_spinner);
