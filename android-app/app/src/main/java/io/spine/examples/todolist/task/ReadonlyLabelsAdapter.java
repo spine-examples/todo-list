@@ -42,6 +42,7 @@ final class ReadonlyLabelsAdapter extends RecyclerView.Adapter<ReadonlyLabelsAda
     private final List<LabelDetails> data;
 
     ReadonlyLabelsAdapter(List<LabelDetails> data) {
+        super();
         this.data = data;
     }
 

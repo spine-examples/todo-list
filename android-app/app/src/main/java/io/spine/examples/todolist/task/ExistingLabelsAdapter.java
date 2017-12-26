@@ -50,6 +50,7 @@ final class ExistingLabelsAdapter extends RecyclerView.Adapter<ExistingLabelsAda
     private final Set<TaskLabel> selectedLabels = newHashSet();
 
     ExistingLabelsAdapter() {
+        super();
         this.data = newArrayList();
     }
 

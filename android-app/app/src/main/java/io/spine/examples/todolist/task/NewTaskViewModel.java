@@ -62,9 +62,6 @@ final class NewTaskViewModel extends AbstractViewModel {
     private Timestamp taskDueDate = Timestamp.getDefaultInstance();
     private Collection<LabelDetails> taskLabels = emptySet();
 
-    // Required by the `ViewModelProviders` utility.
-    public NewTaskViewModel() {}
-
     void startCreatingTask() {
         final StartTaskCreation command = StartTaskCreation.newBuilder()
                                                            .setId(wizardId)
