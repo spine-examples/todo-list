@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.newtask;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -28,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -44,6 +44,8 @@ import static com.google.protobuf.util.Timestamps.fromMillis;
 import static io.spine.examples.todolist.TaskPriority.HIGH;
 import static io.spine.examples.todolist.TaskPriority.LOW;
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
+import static io.spine.examples.todolist.newtask.DatePickerDialog.DUE_DATE_MILLIS_KEY;
+import static io.spine.examples.todolist.newtask.DatePickerDialog.DUE_DATE_REQUEST;
 
 public final class NewTaskDescriptionFragment extends PagerFragment {
 
@@ -53,7 +55,6 @@ public final class NewTaskDescriptionFragment extends PagerFragment {
 
     private EditText taskDescription;
     private Spinner spinner;
-    private Button setDueDate;
 
     private Timestamp dueDate = Timestamp.getDefaultInstance();
 
@@ -66,21 +67,22 @@ public final class NewTaskDescriptionFragment extends PagerFragment {
         taskDescription = root.findViewById(R.id.new_task_description);
         spinner = root.findViewById(R.id.task_priority_spinner);
         initPrioritySpinner();
-        setDueDate = root.findViewById(R.id.select_due_date_btn);
-        final CalendarView calendar = root.findViewById(R.id.select_due_date_calendar);
+        final Button setDueDate = root.findViewById(R.id.select_due_date_btn);
         setDueDate.setOnClickListener((btn) -> {
-            if (calendar.getVisibility() == View.GONE) {
-                btn.getParent().requestLayout();
-                calendar.setVisibility(View.VISIBLE);
-                setDueDate.setText(R.string.cancel);
-            } else {
-                calendar.setVisibility(View.GONE);
-                final long millis = calendar.getDate();
-                dueDate = fromMillis(millis);
-                setDueDate.setText(R.string.set_due_date);
-            }
+            final DatePickerDialog dialog = new DatePickerDialog();
+            dialog.setTargetFragment(this, DUE_DATE_REQUEST);
+            dialog.show(getFragmentManager(), "dua_date_dialog");
         });
         return root;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == DUE_DATE_REQUEST) {
+            final long millis = data.getLongExtra(DUE_DATE_MILLIS_KEY, 0L);
+            dueDate = fromMillis(millis);
+        }
     }
 
     private void initPrioritySpinner() {
