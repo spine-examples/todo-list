@@ -21,28 +21,16 @@
 package io.spine.examples.todolist.newtask;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import io.spine.examples.todolist.LabelDetails;
-import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.R;
-import io.spine.examples.todolist.model.Colors;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
 
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
-import static com.google.common.collect.Sets.newHashSet;
 import static io.spine.examples.todolist.model.Colors.toRgb;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableCollection;
 
 final class ReadonlyLabelsAdapter extends RecyclerView.Adapter<ReadonlyLabelsAdapter.ViewBinder> {
 
@@ -86,7 +74,6 @@ final class ReadonlyLabelsAdapter extends RecyclerView.Adapter<ReadonlyLabelsAda
             final int colorRgb = toRgb(label.getColor());
             titleLabel.setText(text);
             colorView.setBackgroundColor(colorRgb);
-
         }
     }
 }
