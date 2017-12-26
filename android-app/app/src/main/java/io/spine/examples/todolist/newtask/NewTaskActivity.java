@@ -33,7 +33,7 @@ import io.spine.examples.todolist.lifecycle.AbstractActivity;
  *
  * @see NewTaskViewModel
  */
-public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
+public final class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
 
     private ViewPager wizardView;
     private WizardAdapter wizard;

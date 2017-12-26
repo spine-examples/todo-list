@@ -35,7 +35,7 @@ import java.util.List;
 
 import static io.spine.examples.todolist.model.Colors.toRgb;
 
-public class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.ViewBinder> {
+final class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.ViewBinder> {
 
     private static final List<LabelColor> COLORS;
 
@@ -79,7 +79,7 @@ public class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.
         selected.observeForever(callback::accept);
     }
 
-    static class ViewBinder extends RecyclerView.ViewHolder {
+    static final class ViewBinder extends RecyclerView.ViewHolder {
 
         private final MutableLiveData<LabelColor> selector;
         private final ImageView colorView;

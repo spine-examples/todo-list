@@ -130,19 +130,19 @@ final class NewTaskViewModel extends AbstractViewModel {
         });
     }
 
-    public TaskDescription getTaskDescription() {
+    TaskDescription getTaskDescription() {
         return taskDescription;
     }
 
-    public TaskPriority getTaskPriority() {
+    TaskPriority getTaskPriority() {
         return taskPriority;
     }
 
-    public Timestamp getTaskDueDate() {
+    Timestamp getTaskDueDate() {
         return taskDueDate;
     }
 
-    public Collection<LabelDetails> getTaskLabels() {
+    Collection<LabelDetails> getTaskLabels() {
         return unmodifiableCollection(taskLabels);
     }
 

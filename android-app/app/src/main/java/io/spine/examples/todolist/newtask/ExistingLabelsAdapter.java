@@ -21,28 +21,21 @@
 package io.spine.examples.todolist.newtask;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.TaskLabel;
-import io.spine.examples.todolist.model.Colors;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.google.common.collect.Sets.newHashSet;
 import static io.spine.examples.todolist.model.Colors.toRgb;
-import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableCollection;
 
 final class ExistingLabelsAdapter extends RecyclerView.Adapter<ExistingLabelsAdapter.ViewBinder> {
@@ -82,7 +75,7 @@ final class ExistingLabelsAdapter extends RecyclerView.Adapter<ExistingLabelsAda
         return unmodifiableCollection(selectedLabels);
     }
 
-    static class ViewBinder extends RecyclerView.ViewHolder {
+    static final class ViewBinder extends RecyclerView.ViewHolder {
 
         private final Set<TaskLabel> selectedLabels;
 

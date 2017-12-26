@@ -34,7 +34,7 @@ import io.spine.examples.todolist.R;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-public class DatePickerDialog extends DialogFragment {
+public final class DatePickerDialog extends DialogFragment {
 
     static final int DUE_DATE_REQUEST = 1;
     static final String DUE_DATE_MILLIS_KEY = "due_date";

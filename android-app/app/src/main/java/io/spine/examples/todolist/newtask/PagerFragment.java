@@ -25,8 +25,7 @@ import android.support.v4.app.Fragment;
 abstract class PagerFragment extends Fragment {
 
     @SuppressWarnings("NoopMethodInAbstractClass") // NoOp by default.
-    void prepare() {
-    }
+    void prepare() {}
 
     abstract void complete();
 }
