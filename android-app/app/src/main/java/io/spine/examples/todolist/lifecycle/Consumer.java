@@ -28,6 +28,7 @@ package io.spine.examples.todolist.lifecycle;
  * accepting the result of the operation.
  *
  * @param <T> the type of the excepted argument
+ * @author Dmytro Dashenkov
  */
 public interface Consumer<T> {
 

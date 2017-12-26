@@ -31,6 +31,7 @@ import io.spine.examples.todolist.lifecycle.AbstractActivity;
 /**
  * The {@code Activity} allowing the user to create a new task.
  *
+ * @author Dmytro Dashenkov
  * @see NewTaskViewModel
  */
 public final class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {

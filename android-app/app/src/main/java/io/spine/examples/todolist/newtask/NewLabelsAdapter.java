@@ -43,6 +43,8 @@ import static java.util.Collections.unmodifiableCollection;
 
 /**
  * An implementation of {@link RecyclerView.Adapter} for the list of new task labels.
+ *
+ * @author Dmytro Dashenkov
  */
 final class NewLabelsAdapter extends RecyclerView.Adapter<NewLabelsAdapter.ViewBinder> {
 

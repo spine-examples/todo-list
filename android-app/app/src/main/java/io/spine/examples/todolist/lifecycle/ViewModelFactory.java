@@ -51,6 +51,8 @@ import static com.google.common.collect.Maps.newConcurrentMap;
  * {@code ViewModel} type.
  *
  * <p>The {@link NewInstanceFactory} is used for the actual {@code ViewModel} instantiation.
+ *
+ * @author Dmytro Dashenkov
  */
 public enum ViewModelFactory implements Factory {
 

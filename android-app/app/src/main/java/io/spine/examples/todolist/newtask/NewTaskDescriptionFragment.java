@@ -49,6 +49,8 @@ import static io.spine.examples.todolist.newtask.DatePickerDialog.DUE_DATE_REQUE
 
 /**
  * The the fragment with allows the user to specify the task primary information.
+ *
+ * @author Dmytro Dashenkov
  */
 public final class NewTaskDescriptionFragment extends PagerFragment {
 

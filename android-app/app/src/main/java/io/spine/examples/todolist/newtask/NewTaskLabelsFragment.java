@@ -41,6 +41,8 @@ import static android.support.v7.widget.LinearLayoutManager.HORIZONTAL;
 
 /**
  * The the fragment with allows the user to specify the labels to assign to the task.
+ *
+ * @author Dmytro Dashenkov
  */
 public final class NewTaskLabelsFragment extends PagerFragment {
 

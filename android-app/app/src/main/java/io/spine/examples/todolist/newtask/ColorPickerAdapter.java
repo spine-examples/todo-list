@@ -40,6 +40,8 @@ import static io.spine.examples.todolist.model.Colors.toRgb;
  *
  * The data for this adapter is the list of all values of {@link LabelColor} (except for the default
  * values).
+ *
+ * @author Dmytro Dashenkov
  */
 final class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.ViewBinder> {
 

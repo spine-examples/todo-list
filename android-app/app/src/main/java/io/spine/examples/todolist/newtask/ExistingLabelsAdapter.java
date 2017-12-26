@@ -41,6 +41,8 @@ import static java.util.Collections.unmodifiableCollection;
 /**
  * An implementation of {@link RecyclerView.Adapter} for the selectable list of predefined task
  * labels.
+ *
+ * @author Dmytro Dashenkov
  */
 final class ExistingLabelsAdapter extends RecyclerView.Adapter<ExistingLabelsAdapter.ViewBinder> {
 

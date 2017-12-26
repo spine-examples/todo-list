@@ -46,6 +46,8 @@ import java.util.GregorianCalendar;
  * The result {@code Intent} contains a {@code long} extra under
  * the {@link DatePickerDialog#DUE_DATE_MILLIS_KEY} key. The value of the extra is the value of
  * the selected date expressed as millis elapsed since the 1 Jan 1970.
+ *
+ * @author Dmytro Dashenkov
  */
 public final class DatePickerDialog extends DialogFragment {
 

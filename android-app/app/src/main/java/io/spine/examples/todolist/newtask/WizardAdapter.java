@@ -31,6 +31,8 @@ import static java.lang.String.valueOf;
 /**
  * An implementation of {@link android.support.v4.view.PagerAdapter PagerAdapter} managing the task
  * creation wizard {@code ViewPager}.
+ *
+ * @author Dmytro Dashenkov
  */
 final class WizardAdapter extends FragmentPagerAdapter {
 

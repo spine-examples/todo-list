@@ -32,6 +32,11 @@ import java.util.List;
 
 import static io.spine.examples.todolist.model.Colors.toRgb;
 
+/**
+ * An implementation of {@link RecyclerView.Adapter} for the list of {@link LabelDetails}.
+ *
+ * @author Dmytro Dashenkov
+ */
 final class ReadonlyLabelsAdapter extends RecyclerView.Adapter<ReadonlyLabelsAdapter.ViewBinder> {
 
     private final List<LabelDetails> data;
@@ -58,6 +63,10 @@ final class ReadonlyLabelsAdapter extends RecyclerView.Adapter<ReadonlyLabelsAda
         return data.size();
     }
 
+    /**
+     * An implementation of {@link RecyclerView.ViewHolder} holding a single {@link LabelDetails}
+     * view.
+     */
     static class ViewBinder extends RecyclerView.ViewHolder {
 
         private final TextView titleLabel;

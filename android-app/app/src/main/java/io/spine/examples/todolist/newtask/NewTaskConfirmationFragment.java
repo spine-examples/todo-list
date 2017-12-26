@@ -46,6 +46,8 @@ import static java.lang.String.format;
 
 /**
  * The fragment which displays all the new task data for the user confirmation.
+ *
+ * @author Dmytro Dashenkov
  */
 public final class NewTaskConfirmationFragment extends PagerFragment {
 

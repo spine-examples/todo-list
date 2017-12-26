@@ -24,6 +24,8 @@ import android.support.v4.app.Fragment;
 
 /**
  * The abstract base for the {@link Fragment}s used as {@code ViewPager} pages.
+ *
+ * @author Dmytro Dashenkov
  */
 abstract class PagerFragment extends Fragment {
 

@@ -48,7 +48,9 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableCollection;
 
 /**
- * The {@link android.arch.lifecycle.ViewModel ViewModel} of the {@link NewTaskActivity}.
+ * The {@link android.arch.lifecycle.ViewModel ViewModel} of the {@link NewTaskActivity}.\
+ *
+ * @author Dmytro Dashenkov
  */
 final class NewTaskViewModel extends AbstractViewModel {
 
