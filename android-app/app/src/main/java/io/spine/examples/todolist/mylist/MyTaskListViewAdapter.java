@@ -22,7 +22,6 @@ package io.spine.examples.todolist.mylist;
 
 import android.arch.lifecycle.Observer;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
@@ -30,28 +29,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import com.google.common.collect.ImmutableMap;
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.R;
-import io.spine.examples.todolist.model.Colors;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static android.view.View.GONE;
 import static com.google.protobuf.util.Timestamps.toMillis;
-import static io.spine.examples.todolist.LabelColor.BLUE;
-import static io.spine.examples.todolist.LabelColor.GRAY;
-import static io.spine.examples.todolist.LabelColor.GREEN;
-import static io.spine.examples.todolist.LabelColor.RED;
 import static io.spine.examples.todolist.model.Colors.toRgb;
 import static io.spine.validate.Validate.isDefault;
 

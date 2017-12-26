@@ -31,10 +31,15 @@ import android.widget.Button;
 import android.widget.CalendarView;
 import io.spine.examples.todolist.R;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 public class DatePickerDialog extends DialogFragment {
 
     static final int DUE_DATE_REQUEST = 1;
     static final String DUE_DATE_MILLIS_KEY = "due_date";
+
+    private long dateMillis = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater,
@@ -50,8 +55,11 @@ public class DatePickerDialog extends DialogFragment {
         final Button accept = root.findViewById(R.id.accept_btn);
         final Button decline = root.findViewById(R.id.decline_btn);
 
+        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
+            final Calendar calendar = new GregorianCalendar(year, month, dayOfMonth);
+            dateMillis = calendar.getTimeInMillis();
+        });
         accept.setOnClickListener(btn -> {
-            final long dateMillis = calendarView.getDate();
             onResult(dateMillis);
             dismiss();
         });
