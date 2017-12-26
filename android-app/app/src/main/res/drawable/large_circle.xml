@@ -19,11 +19,9 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_selected="true">
-        <color android:color="@color/colorAccentLight"/>
-    </item>
-    <item>
-        <color android:color="@android:color/white"/>
-    </item>
-</selector>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="oval">
+    <size android:width="@dimen/large_circle_size"
+          android:height="@dimen/large_circle_size"/>
+    <solid android:color="@color/bg_color"/>
+</shape>

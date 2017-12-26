@@ -52,6 +52,11 @@ public class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.
 
     private final MutableLiveData<LabelColor> selected = new MutableLiveData<>();
 
+    ColorPickerAdapter() {
+        super();
+        selected.observeForever(color -> notifyDataSetChanged());
+    }
+
     @Override
     public ViewBinder onCreateViewHolder(ViewGroup parent, int viewType) {
         final View element = LayoutInflater.from(parent.getContext())
@@ -78,17 +83,28 @@ public class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.
 
         private final MutableLiveData<LabelColor> selector;
         private final ImageView colorView;
+        private final ImageView selectorView;
 
         private ViewBinder(View itemView, MutableLiveData<LabelColor> selector) {
             super(itemView);
             this.selector = selector;
             this.colorView = itemView.findViewById(R.id.color);
+            this.selectorView = itemView.findViewById(R.id.border);
         }
 
         private void bind(LabelColor color) {
             final int rgb = toRgb(color);
             colorView.setColorFilter(rgb);
+            if (selector.getValue() == color) {
+                final int colorFilter = selectorView.getContext()
+                                                    .getResources()
+                                                    .getColor(R.color.colorAccentLight);
+                selectorView.setColorFilter(colorFilter);
+            } else {
+                selectorView.clearColorFilter();
+            }
             colorView.setOnClickListener(view -> selector.setValue(color));
+
         }
     }
 }

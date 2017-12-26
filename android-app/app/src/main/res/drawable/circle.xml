@@ -23,5 +23,5 @@
        android:shape="oval">
     <size android:width="@dimen/min_clickable_size"
           android:height="@dimen/min_clickable_size"/>
-    <solid android:color="@android:color/white"/>
+    <solid android:color="@color/bg_color"/>
 </shape>

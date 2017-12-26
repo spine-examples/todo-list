@@ -19,14 +19,22 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="wrap_content"
              android:layout_height="wrap_content">
+
+    <ImageView
+            android:id="@+id/border"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/large_circle"/>
 
     <ImageView
             android:id="@+id/color"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/circle"
-            android:layout_margin="@dimen/std_padding"/>
-</FrameLayout>
+            android:layout_margin="@dimen/std_padding"
+            android:layout_centerInParent="true"/>
+</RelativeLayout>
