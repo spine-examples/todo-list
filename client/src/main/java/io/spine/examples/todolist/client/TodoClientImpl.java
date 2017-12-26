@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.client;
 
 import com.google.protobuf.Any;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -102,7 +101,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                                .getMessagesList();
         return messages.isEmpty()
                ? MyListView.getDefaultInstance()
-               : convertAnyToMessage(messages.get(0), MyListView.class);
+               : AnyPacker.unpack(messages.get(0));
     }
 
     @Override
@@ -113,7 +112,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                                .getMessagesList();
         final List<LabelledTasksView> result = messages
                 .stream()
-                .map(any -> convertAnyToMessage(any, LabelledTasksView.class))
+                .map(AnyPacker::<LabelledTasksView>unpack)
                 .collect(toList());
 
         return result;
@@ -127,7 +126,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                                .getMessagesList();
         return messages.isEmpty()
                ? DraftTasksView.getDefaultInstance()
-               : convertAnyToMessage(messages.get(0), DraftTasksView.class);
+               : AnyPacker.unpack(messages.get(0));
     }
 
     @Override
@@ -177,15 +176,21 @@ final class TodoClientImpl implements SubscribingTodoClient {
         return subscription;
     }
 
+    /**
+     * Retrieves all the messages of the given type.
+     *
+     * @param cls the class of the desired messages
+     * @param <M> the compile-time type of the desired messages
+     * @return all the messages of the given type present in the system
+     */
     private <M extends Message> List<M> getByType(Class<M> cls) {
         final Query query = requestFactory.query()
                                           .all(cls);
         final List<Any> messages = queryService.read(query)
                                                .getMessagesList();
-        final List<M> result = messages
-                .stream()
-                .map(any -> convertAnyToMessage(any, cls))
-                .collect(toList());
+        final List<M> result = messages.stream()
+                                       .map(AnyPacker::<M>unpack)
+                                       .collect(toList());
         return result;
     }
 
@@ -205,14 +210,6 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                                               .setZoneOffset(ZoneOffsets.UTC)
                                                               .build();
         return result;
-    }
-
-    private static <M extends Message> M convertAnyToMessage(Any any, Class<M> messageClass) {
-        try {
-            return any.unpack(messageClass);
-        } catch (InvalidProtocolBufferException e) {
-            throw illegalStateWithCauseOf(e);
-        }
     }
 
     /**
