@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".newtask.NewTaskActivity"
+                android:name=".task.NewTaskActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>

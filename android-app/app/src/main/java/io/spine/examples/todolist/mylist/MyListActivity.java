@@ -27,7 +27,7 @@ import android.support.v7.widget.RecyclerView;
 import android.widget.ImageButton;
 import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.lifecycle.AbstractActivity;
-import io.spine.examples.todolist.newtask.NewTaskActivity;
+import io.spine.examples.todolist.task.NewTaskActivity;
 
 /**
  * The {@code Activity} displaying

@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.newtask;
+package io.spine.examples.todolist.task;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

@@ -18,10 +18,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package contains the classes that define the New {@code Task} screen UI and behavior.
- */
-@ParametersAreNonnullByDefault
-package io.spine.examples.todolist.newtask;
+package io.spine.examples.todolist.task;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+import android.support.v4.app.Fragment;
+
+/**
+ * The abstract base for the {@link Fragment}s used as {@code ViewPager} pages.
+ *
+ * @author Dmytro Dashenkov
+ */
+abstract class PagerFragment extends Fragment {
+
+    /**
+     * Performs the preparation for the fragment to be opened.
+     *
+     * <p>This method is called when the current fragment is to be opened. Prefer this method to
+     * the {@link Fragment} lifecycle methods in order to prepare the page just before it's opened.
+     *
+     * <p>By default, the method performs no action. Since not all the fragments need to have
+     * a preparation stage, the method is left non-abstract.
+     */
+    @SuppressWarnings("NoopMethodInAbstractClass") // NoOp by default.
+    void prepare() {}
+
+    /**
+     * Performs the completion operations when the page is closed.
+     *
+     * <p>This method is called when the user navigates to the next page of the {@code ViewPager}.
+     */
+    abstract void complete();
+}
