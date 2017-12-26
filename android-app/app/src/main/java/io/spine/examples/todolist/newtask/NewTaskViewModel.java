@@ -20,12 +20,6 @@
 
 package io.spine.examples.todolist.newtask;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.SettableFuture;
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
@@ -35,23 +29,23 @@ import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.commands.AddLabels;
-import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.lifecycle.AbstractViewModel;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
-import io.spine.examples.todolist.q.projection.TaskListView;
+import io.spine.examples.todolist.lifecycle.Consumer;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.collect.Collections2.transform;
+import static com.google.common.collect.Lists.newArrayListWithCapacity;
 import static io.spine.Identifier.newUuid;
+import static io.spine.examples.todolist.TaskPriority.NORMAL;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableCollection;
 
 /**
  * The {@link android.arch.lifecycle.ViewModel ViewModel} of the {@link NewTaskActivity}.
@@ -61,8 +55,21 @@ final class NewTaskViewModel extends AbstractViewModel {
     private final TaskId taskId = newId();
     private final TaskCreationId wizardId = newWizardId();
 
+    private TaskDescription taskDescription = TaskDescription.getDefaultInstance();
+    private TaskPriority taskPriority = NORMAL;
+    private Timestamp taskDueDate = Timestamp.getDefaultInstance();
+    private Collection<LabelDetails> taskLabels = emptySet();
+
     // Required by the `ViewModelProviders` utility.
     public NewTaskViewModel() {}
+
+    void startCreatingTask() {
+        final StartTaskCreation command = StartTaskCreation.newBuilder()
+                                                           .setId(wizardId)
+                                                           .setTaskId(taskId)
+                                                           .build();
+        post(command);
+    }
 
     /**
      * Creates a new task with the given details fields.
@@ -82,23 +89,31 @@ final class NewTaskViewModel extends AbstractViewModel {
                                                      .setDueDate(taskDueDate)
                                                      .build();
         post(command);
+        this.taskDescription = taskDescription;
+        this.taskPriority = priority;
+        this.taskDueDate = taskDueDate;
     }
 
-    void startCreatingTask() {
-        final StartTaskCreation command = StartTaskCreation.newBuilder()
-                                                           .setId(wizardId)
-                                                           .setTaskId(taskId)
-                                                           .build();
-        post(command);
-    }
-
-    void assignLabels(Collection<LabelId> existingLabels, Collection<LabelDetails> newLabels) {
+    void assignLabels(Collection<TaskLabel> existingLabels, Collection<LabelDetails> newLabels) {
+        final Collection<LabelId> existingLabelIds = transform(existingLabels, TaskLabel::getId);
         final AddLabels command = AddLabels.newBuilder()
                                            .setId(wizardId)
-                                           .addAllExistingLabels(existingLabels)
+                                           .addAllExistingLabels(existingLabelIds)
                                            .addAllNewLabels(newLabels)
                                            .build();
         post(command);
+        final Collection<LabelDetails> existingLabelDetails = transform(existingLabels, label -> {
+            checkNotNull(label);
+            return LabelDetails.newBuilder()
+                               .setTitle(label.getTitle())
+                               .setColor(label.getColor())
+                               .build();
+        });
+        final int labelsCount = existingLabelDetails.size() + newLabels.size();
+        final Collection<LabelDetails> allLabels = newArrayListWithCapacity(labelsCount);
+        allLabels.addAll(existingLabelDetails);
+        allLabels.addAll(newLabels);
+        this.taskLabels = allLabels;
     }
 
     void confirmTaskCreation() {
@@ -108,13 +123,27 @@ final class NewTaskViewModel extends AbstractViewModel {
         post(command);
     }
 
-    Future<List<LabelledTasksView>> getLabels() {
-        final SettableFuture<List<LabelledTasksView>> result = SettableFuture.create();
+    void fetchLabels(Consumer<List<TaskLabel>> callback) {
         execute(() -> {
-            final List<LabelledTasksView> taskViews = client().getLabelledTasksView();
-            result.set(taskViews);
+            final List<TaskLabel> labels = client().getLabels();
+            callback.accept(labels);
         });
-        return result;
+    }
+
+    public TaskDescription getTaskDescription() {
+        return taskDescription;
+    }
+
+    public TaskPriority getTaskPriority() {
+        return taskPriority;
+    }
+
+    public Timestamp getTaskDueDate() {
+        return taskDueDate;
+    }
+
+    public Collection<LabelDetails> getTaskLabels() {
+        return unmodifiableCollection(taskLabels);
     }
 
     /**

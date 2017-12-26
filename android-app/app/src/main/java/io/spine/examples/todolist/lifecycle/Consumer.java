@@ -18,15 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.newtask;
+package io.spine.examples.todolist.lifecycle;
 
-import android.support.v4.app.Fragment;
+public interface Consumer<T> {
 
-abstract class PagerFragment extends Fragment {
-
-    @SuppressWarnings("NoopMethodInAbstractClass") // NoOp by default.
-    void prepare() {
-    }
-
-    abstract void complete();
+    void accept(T t);
 }

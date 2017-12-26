@@ -68,6 +68,8 @@ public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
         final FragmentManager fragmentManager = getSupportFragmentManager();
         wizard = new WizardAdapter(fragmentManager);
         wizardView.setAdapter(wizard);
+        // Disable scrolling by swipe
+        wizardView.beginFakeDrag();
 
         nextButton = findViewById(R.id.next_btn);
         nextButton.setOnClickListener(button -> nextPage());
@@ -80,10 +82,14 @@ public class NewTaskActivity extends AbstractActivity<NewTaskViewModel> {
         final int newIndex = currentPageIndex + 1;
         if (lastPage) {
             finish();
-        } else if (newIndex + 1 == wizard.getCount()) {
+            return;
+        }
+        if (newIndex + 1 == wizard.getCount()) {
             lastPage = true;
             nextButton.setText(R.string.complete);
         }
         wizardView.setCurrentItem(newIndex);
+        final PagerFragment newPage = wizard.getItem(newIndex);
+        newPage.prepare();
     }
 }

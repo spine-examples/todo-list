@@ -35,7 +35,7 @@
             app:layout_constraintStart_toStartOf="parent"/>
 
     <android.support.v7.widget.RecyclerView
-            android:id="@+id/labels_list"
+            android:id="@+id/task_labels"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="@dimen/min_item_height"
@@ -50,7 +50,7 @@
             android:layout_height="@dimen/divider_size"
             android:layout_margin="@dimen/std_padding"
             android:background="@color/dividerColor"
-            app:layout_constraintTop_toBottomOf="@id/labels_list"
+            app:layout_constraintTop_toBottomOf="@id/task_labels"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 

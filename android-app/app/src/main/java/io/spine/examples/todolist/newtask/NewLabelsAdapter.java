@@ -22,7 +22,9 @@ package io.spine.examples.todolist.newtask;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.LayoutManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -35,6 +37,7 @@ import io.spine.examples.todolist.R;
 import java.util.Collection;
 import java.util.List;
 
+import static android.support.v7.widget.RecyclerView.HORIZONTAL;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.unmodifiableCollection;
 
@@ -75,16 +78,31 @@ final class NewLabelsAdapter extends RecyclerView.Adapter<NewLabelsAdapter.ViewB
     static final class ViewBinder extends RecyclerView.ViewHolder {
 
         private final EditText labelNameInput;
+        private final RecyclerView colorPickerView;
 
-        private LabelDetails currentDetails;
+        private LabelDetails currentDetails = LabelDetails.getDefaultInstance();
 
         private ViewBinder(View itemView) {
             super(itemView);
-            labelNameInput = itemView.findViewById(R.id.new_label_name);
+            this.labelNameInput = itemView.findViewById(R.id.new_label_name);
+            this.colorPickerView = itemView.findViewById(R.id.color_picker);
+
+            final LayoutManager layoutManager = new LinearLayoutManager(itemView.getContext(),
+                                                                        HORIZONTAL,
+                                                                        false);
+            colorPickerView.setLayoutManager(layoutManager);
         }
 
         private void bind(MutableLiveData<LabelDetails> labelDetails) {
             labelNameInput.addTextChangedListener(new TextObserver(labelDetails));
+            final ColorPickerAdapter adapter = new ColorPickerAdapter();
+            colorPickerView.setAdapter(adapter);
+            adapter.observeColor(color -> {
+                currentDetails = currentDetails.toBuilder()
+                                               .setColor(color)
+                                               .build();
+                labelDetails.setValue(currentDetails);
+            });
         }
 
         private class TextObserver implements TextWatcher {

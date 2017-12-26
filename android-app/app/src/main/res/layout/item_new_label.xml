@@ -69,7 +69,7 @@
             android:layout_margin="@dimen/std_padding"
             android:background="?attr/selectableItemBackground"
             app:srcCompat="@drawable/ic_clear"
-            app:layout_constraintTop_toTopOf="@+id/new_label_name"
+            app:layout_constraintTop_toTopOf="@id/new_label_name"
             app:layout_constraintBottom_toBottomOf="@id/new_label_name"
             app:layout_constraintEnd_toEndOf="parent"/>
 

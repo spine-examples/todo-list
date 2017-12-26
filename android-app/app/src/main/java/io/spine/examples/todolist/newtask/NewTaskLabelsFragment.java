@@ -22,25 +22,20 @@ package io.spine.examples.todolist.newtask;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.OrientationHelper;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.Button;
-import com.google.common.collect.ImmutableList;
 import io.spine.examples.todolist.LabelDetails;
-import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.R;
+import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.lifecycle.ViewModelFactory;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import static android.support.v7.widget.LinearLayoutManager.HORIZONTAL;
 
@@ -67,9 +62,11 @@ public final class NewTaskLabelsFragment extends PagerFragment {
     private void initViews(View root) {
         final Context context = getContext();
 
-        final RecyclerView existingLabels = root.findViewById(R.id.labels_list);
+        final RecyclerView existingLabels = root.findViewById(R.id.task_labels);
         existingLabels.setLayoutManager(new LinearLayoutManager(context, HORIZONTAL, false));
-        existingLabelsAdapter = new ExistingLabelsAdapter(model.getLabels());
+        this.existingLabelsAdapter = new ExistingLabelsAdapter();
+        existingLabels.setAdapter(existingLabelsAdapter);
+        model.fetchLabels(existingLabelsAdapter::update);
         existingLabels.setAdapter(existingLabelsAdapter);
 
         final RecyclerView newLabels = root.findViewById(R.id.new_labels_list);
@@ -83,7 +80,7 @@ public final class NewTaskLabelsFragment extends PagerFragment {
 
     @Override
     void complete() {
-        final Collection<LabelId> existingLabels = existingLabelsAdapter.getSelected();
+        final Collection<TaskLabel> existingLabels = existingLabelsAdapter.getSelected();
         final Collection<LabelDetails> newLabels = newLabelsAdapter.collectData();
         model.assignLabels(existingLabels, newLabels);
     }

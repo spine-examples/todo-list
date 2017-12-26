@@ -17,4 +17,5 @@
     <string name="or_create_a_label">or create a new one</string>
     <string name="label_name">Label name</string>
     <string name="add">Add</string>
+    <string name="due_date">Due date: %s</string>
 </resources>

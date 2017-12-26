@@ -42,6 +42,7 @@ import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceStub;
 import io.spine.core.Command;
 import io.spine.core.UserId;
 import io.spine.examples.todolist.Task;
+import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
@@ -131,16 +132,12 @@ final class TodoClientImpl implements SubscribingTodoClient {
 
     @Override
     public List<Task> getTasks() {
-        final Query query = requestFactory.query()
-                                          .all(Task.class);
-        final List<Any> messages = queryService.read(query)
-                                               .getMessagesList();
-        final List<Task> result = messages
-                .stream()
-                .map(any -> convertAnyToMessage(any, Task.class))
-                .collect(toList());
+        return getByType(Task.class);
+    }
 
-        return result;
+    @Override
+    public List<TaskLabel> getLabels() {
+        return getByType(TaskLabel.class);
     }
 
     @Override
@@ -178,6 +175,18 @@ final class TodoClientImpl implements SubscribingTodoClient {
         final Subscription subscription = blockingSubscriptionService.subscribe(topic);
         subscriptionService.activate(subscription, new SubscriptionUpdateObserver<>(observer));
         return subscription;
+    }
+
+    private <M extends Message> List<M> getByType(Class<M> cls) {
+        final Query query = requestFactory.query()
+                                          .all(cls);
+        final List<Any> messages = queryService.read(query)
+                                               .getMessagesList();
+        final List<M> result = messages
+                .stream()
+                .map(any -> convertAnyToMessage(any, cls))
+                .collect(toList());
+        return result;
     }
 
     private static ManagedChannel initChannel(String host, int port) {

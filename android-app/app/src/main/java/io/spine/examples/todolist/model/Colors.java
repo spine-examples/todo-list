@@ -23,19 +23,13 @@ package io.spine.examples.todolist.model;
 import android.graphics.Color;
 import com.google.common.collect.ImmutableMap;
 import io.spine.examples.todolist.LabelColor;
-import io.spine.examples.todolist.q.projection.LabelledTasksView;
 
 import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static io.spine.examples.todolist.LabelColor.GRAY;
-import static java.lang.Integer.parseInt;
 
 public final class Colors {
-
-    private static final Pattern HEX_NUMBERS = Pattern.compile("[\\dA-F]+");
 
     /**
      * The map of the {@link LabelColor} enum to the RGB values of the color.
@@ -61,9 +55,9 @@ public final class Colors {
         COLORS = colors.build();
     }
 
-
     /** Prevent utility class instatiation */
-    private Colors() {}
+    private Colors() {
+    }
 
     public static int toRgb(LabelColor color) {
         Integer hex = COLORS.get(color);
@@ -71,18 +65,5 @@ public final class Colors {
             hex = COLORS.get(GRAY);
         }
         return hex;
-    }
-
-    public static int toRgb(LabelledTasksView label) {
-        final String color = label.getLabelColor()
-                                  .toUpperCase();
-        final Matcher colorMatcher = HEX_NUMBERS.matcher(color);
-        if (colorMatcher.find()) {
-            final String number = colorMatcher.group();
-            final int hex = parseInt(number, 16);
-            return hex;
-        } else {
-            return toRgb(GRAY);
-        }
     }
 }
