@@ -29,8 +29,34 @@ import java.util.Map;
 
 import static com.google.common.collect.Maps.newConcurrentMap;
 
+/**
+ * An implementation of
+ * {@link android.arch.lifecycle.ViewModelProvider.Factory ViewModelProvider.Factory}.
+ *
+ * <p>This implementation provides two basic options for the {@link ViewModel} instantiation:
+ * <ul>
+ *     <li>The {@link #ALWAYS_NEW} factory, which always creates new instances of {@link ViewModel}.
+ *     <li>The {@link #CACHING} factory, which serves cached instances of {@code ViewModel} and
+ *         creates new instances only if a cached instance for of the required type is unavailable.
+ * </ul>
+ *
+ * <p>If several components should share the same instance of {@code ViewModel}, it is useful to use
+ * the caching factory. And when the {@code ViewModel} should be reset, the non-caching factory
+ * should be used.
+ *
+ * <p>Both {@link #ALWAYS_NEW} and {@link #CACHING} implementations always cache the resulting
+ * {@code ViewModel}s, but only {@link #CACHING} uses the cache.
+ *
+ * <p>Each use of {@link #ALWAYS_NEW} factory resets the instance cache for the given
+ * {@code ViewModel} type.
+ *
+ * <p>The {@link NewInstanceFactory} is used for the actual {@code ViewModel} instantiation.
+ */
 public enum ViewModelFactory implements Factory {
 
+    /**
+     * A factory always creating new instances of {@link ViewModel}.
+     */
     ALWAYS_NEW {
         @NonNull
         @Override
@@ -40,6 +66,10 @@ public enum ViewModelFactory implements Factory {
             return vm;
         }
     },
+
+    /**
+     * A factory serving cached instances of {@link ViewModel}.
+     */
     CACHING {
         @NonNull
         @Override

@@ -39,6 +39,9 @@ import java.util.Collection;
 
 import static android.support.v7.widget.LinearLayoutManager.HORIZONTAL;
 
+/**
+ * The the fragment with allows the user to specify the labels to assign to the task.
+ */
 public final class NewTaskLabelsFragment extends PagerFragment {
 
     static final int POSITION_IN_WIZARD = 1;

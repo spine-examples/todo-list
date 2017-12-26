@@ -35,6 +35,12 @@ import java.util.List;
 
 import static io.spine.examples.todolist.model.Colors.toRgb;
 
+/**
+ * An implementation of the {@link RecyclerView.Adapter} for the color picker view.
+ *
+ * The data for this adapter is the list of all values of {@link LabelColor} (except for the default
+ * values).
+ */
 final class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.ViewBinder> {
 
     private static final List<LabelColor> COLORS;
@@ -75,10 +81,19 @@ final class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.V
         return COLORS.size();
     }
 
+    /**
+     * Subscribes the given callback to the updates of the selected color.
+     *
+     * @param callback the callback triggered when a color is selected
+     */
     void observeColor(Consumer<LabelColor> callback) {
         selected.observeForever(callback::accept);
     }
 
+    /**
+     * The implementation of the {@link RecyclerView.ViewHolder} holding a single
+     * {@link LabelColor} view.
+     */
     static final class ViewBinder extends RecyclerView.ViewHolder {
 
         private final MutableLiveData<LabelColor> selector;

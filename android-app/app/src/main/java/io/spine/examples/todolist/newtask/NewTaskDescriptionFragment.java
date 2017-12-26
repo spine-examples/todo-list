@@ -47,6 +47,9 @@ import static io.spine.examples.todolist.TaskPriority.NORMAL;
 import static io.spine.examples.todolist.newtask.DatePickerDialog.DUE_DATE_MILLIS_KEY;
 import static io.spine.examples.todolist.newtask.DatePickerDialog.DUE_DATE_REQUEST;
 
+/**
+ * The the fragment with allows the user to specify the task primary information.
+ */
 public final class NewTaskDescriptionFragment extends PagerFragment {
 
     static final int POSITION_IN_WIZARD = 0;

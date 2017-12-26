@@ -28,6 +28,10 @@ import java.util.Map;
 import static com.google.common.collect.Maps.newHashMapWithExpectedSize;
 import static java.lang.String.valueOf;
 
+/**
+ * An implementation of {@link android.support.v4.view.PagerAdapter PagerAdapter} managing the task
+ * creation wizard {@code ViewPager}.
+ */
 final class WizardAdapter extends FragmentPagerAdapter {
 
     private final FragmentFactory factory = new FragmentFactory();
@@ -47,6 +51,9 @@ final class WizardAdapter extends FragmentPagerAdapter {
         return FragmentFactory.FRAGMENTS_MAX_COUNT;
     }
 
+    /**
+     * A factory for the {@code Fragment}s displayed as the pages of this wizard.
+     */
     private static final class FragmentFactory {
 
         private static final int FRAGMENTS_MAX_COUNT = 3;
@@ -54,6 +61,14 @@ final class WizardAdapter extends FragmentPagerAdapter {
         private final Map<Integer, PagerFragment> fragments =
                 newHashMapWithExpectedSize(FRAGMENTS_MAX_COUNT);
 
+        /**
+         * Retrieves the page with under the given {@code position}.
+         *
+         * <p>This method caches the produced pages for later use.
+         *
+         * @param position the position of the page to retrieve
+         * @return an instance of {@link PagerFragment} to use as a page under the given position
+         */
         private PagerFragment get(int position) {
             final PagerFragment cached = fragments.get(position);
             if (cached != null) {
@@ -64,6 +79,11 @@ final class WizardAdapter extends FragmentPagerAdapter {
             return result;
         }
 
+        /**
+         * Creates a new instance of {@link PagerFragment}.
+         *
+         * <p>Avoid using this method directly. Instead, use {@link #get(int)}.
+         */
         private static PagerFragment create(int position) {
             final PagerFragment result;
             switch (position) {

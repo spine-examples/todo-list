@@ -34,9 +34,7 @@ import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.lifecycle.ViewModelFactory;
-import io.spine.time.Time;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -46,6 +44,9 @@ import static com.google.common.collect.Lists.newArrayList;
 import static com.google.protobuf.util.Timestamps.toMillis;
 import static java.lang.String.format;
 
+/**
+ * The fragment which displays all the new task data for the user confirmation.
+ */
 public final class NewTaskConfirmationFragment extends PagerFragment {
 
     private static final SimpleDateFormat DATE_FORMAT =

@@ -38,6 +38,10 @@ import static com.google.common.collect.Sets.newHashSet;
 import static io.spine.examples.todolist.model.Colors.toRgb;
 import static java.util.Collections.unmodifiableCollection;
 
+/**
+ * An implementation of {@link RecyclerView.Adapter} for the selectable list of predefined task
+ * labels.
+ */
 final class ExistingLabelsAdapter extends RecyclerView.Adapter<ExistingLabelsAdapter.ViewBinder> {
 
     private final List<TaskLabel> data;
@@ -65,16 +69,28 @@ final class ExistingLabelsAdapter extends RecyclerView.Adapter<ExistingLabelsAda
         return data.size();
     }
 
+    /**
+     * Binds the given data to the list.
+     *
+     * @param data new data to bind
+     */
     void update(List<TaskLabel> data) {
         this.data.clear();
         this.data.addAll(data);
         notifyDataSetChanged();
     }
 
+    /**
+     * Retrieves the selected task labels.
+     */
     Collection<TaskLabel> getSelected() {
         return unmodifiableCollection(selectedLabels);
     }
 
+    /**
+     * The implementation of the {@link RecyclerView.ViewHolder} holding a single
+     * {@link TaskLabel} view.
+     */
     static final class ViewBinder extends RecyclerView.ViewHolder {
 
         private final Set<TaskLabel> selectedLabels;

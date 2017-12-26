@@ -20,7 +20,21 @@
 
 package io.spine.examples.todolist.lifecycle;
 
+/**
+ * A functional interface representing an operation that accepts a single input argument and
+ * returns no result.
+ *
+ * <p>This interface is meant to serve for example as a callback of an asynchronous operation
+ * accepting the result of the operation.
+ *
+ * @param <T> the type of the excepted argument
+ */
 public interface Consumer<T> {
 
+    /**
+     * Performs this operation on the given argument.
+     *
+     * @param t the input argument
+     */
     void accept(T t);
 }

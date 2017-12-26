@@ -24,6 +24,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,18 @@ import io.spine.examples.todolist.R;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+/**
+ * A simple dialog for selecting a date.
+ *
+ * <p>The dialog expects a {@linkplain #setTargetFragment(Fragment, int) target fragment} to be set
+ * with the {@link DatePickerDialog#DUE_DATE_REQUEST} request code.
+ *
+ * <p>When the dialog result is ready, the target fragment
+ * {@link Fragment#onActivityResult(int, int, Intent)} will be triggered with the same request code.
+ * The result {@code Intent} contains a {@code long} extra under
+ * the {@link DatePickerDialog#DUE_DATE_MILLIS_KEY} key. The value of the extra is the value of
+ * the selected date expressed as millis elapsed since the 1 Jan 1970.
+ */
 public final class DatePickerDialog extends DialogFragment {
 
     static final int DUE_DATE_REQUEST = 1;

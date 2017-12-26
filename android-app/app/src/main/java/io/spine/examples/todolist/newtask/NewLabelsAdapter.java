@@ -41,6 +41,9 @@ import static android.support.v7.widget.RecyclerView.HORIZONTAL;
 import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.unmodifiableCollection;
 
+/**
+ * An implementation of {@link RecyclerView.Adapter} for the list of new task labels.
+ */
 final class NewLabelsAdapter extends RecyclerView.Adapter<NewLabelsAdapter.ViewBinder> {
 
     private final List<LabelDetails> data = newArrayList();
@@ -75,6 +78,10 @@ final class NewLabelsAdapter extends RecyclerView.Adapter<NewLabelsAdapter.ViewB
         return result;
     }
 
+    /**
+     * The implementation of the {@link RecyclerView.ViewHolder} holding a single
+     * view prompting a new {@link LabelDetails}.
+     */
     static final class ViewBinder extends RecyclerView.ViewHolder {
 
         private final EditText labelNameInput;
@@ -105,6 +112,10 @@ final class NewLabelsAdapter extends RecyclerView.Adapter<NewLabelsAdapter.ViewB
             });
         }
 
+        /**
+         * An implementation of {@link TextWatcher} updating the given {@link LabelDetails} with
+         * the new title on the text change.
+         */
         private class TextObserver implements TextWatcher {
 
             private final MutableLiveData<LabelDetails> labelDetails;
