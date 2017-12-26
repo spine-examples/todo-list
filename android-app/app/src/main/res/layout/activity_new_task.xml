@@ -25,6 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@color/bg_color"
         tools:context="io.spine.examples.todolist.newtask.NewTaskActivity">
     <include layout="@layout/toolbar"/>
     <include layout="@layout/container_new_task"/>

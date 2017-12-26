@@ -21,9 +21,10 @@
 
 <RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="@dimen/min_item_height">
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/min_clickable_size"
+        android:minWidth="@dimen/min_item_width"
+        android:background="@android:color/white">
 
     <View
             android:id="@+id/label_color_stripe"

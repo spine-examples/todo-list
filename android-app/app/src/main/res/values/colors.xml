@@ -8,7 +8,7 @@
     <color name="textSecondaryColor">#333333</color>
 
     <color name="completedTaskColor">#CCCCCC</color>
-    <color name="list_bg_color">#EEEEEE</color>
+    <color name="bg_color">#EEEEEE</color>
 
     <color name="dividerColor">#DDDDDD</color>
 </resources>
