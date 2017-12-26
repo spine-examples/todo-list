@@ -126,7 +126,7 @@ final class NewTaskViewModel extends AbstractViewModel {
     void fetchLabels(Consumer<List<TaskLabel>> callback) {
         execute(() -> {
             final List<TaskLabel> labels = client().getLabels();
-            callback.accept(labels);
+            inMainThread(() -> callback.accept(labels));
         });
     }
 

@@ -21,7 +21,8 @@
 package io.spine.examples.todolist.lifecycle;
 
 import android.arch.lifecycle.ViewModel;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
 import io.grpc.StatusRuntimeException;
 import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.client.SubscribingTodoClient;
@@ -101,6 +102,12 @@ public abstract class AbstractViewModel extends ViewModel {
                 }
             }
         });
+    }
+
+    protected void inMainThread(Runnable task) {
+        checkNotNull(task);
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(task);
     }
 
     protected void post(TodoCommand command) {
