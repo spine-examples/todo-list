@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.ui.newtask;
 
 import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,6 @@ import android.widget.ImageView;
 import com.google.common.collect.ImmutableList;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.R;
-import io.spine.examples.todolist.Callback;
 
 import java.util.List;
 
@@ -84,12 +84,12 @@ final class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.V
     }
 
     /**
-     * Subscribes the given callback to the updates of the selected color.
+     * Subscribes the given observer to the updates of the selected color.
      *
-     * @param callback the callback triggered when a color is selected
+     * @param observer the observer of the color changes
      */
-    void observeColor(Callback<LabelColor> callback) {
-        selected.observeForever(callback::accept);
+    void observeColor(Observer<LabelColor> observer) {
+        selected.observeForever(observer);
     }
 
     /**

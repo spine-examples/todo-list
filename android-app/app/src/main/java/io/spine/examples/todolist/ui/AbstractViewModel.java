@@ -104,6 +104,13 @@ public abstract class AbstractViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Performs the given operation in the main thread (a.k.a. UI thread).
+     *
+     * <p>The method does not await the operation, but only schedules the execution.
+     *
+     * @param task the operation to perform in the main thread
+     */
     protected void inMainThread(Runnable task) {
         checkNotNull(task);
         final Handler handler = new Handler(Looper.getMainLooper());

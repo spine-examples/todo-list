@@ -34,7 +34,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.ui.AbstractViewModel;
-import io.spine.examples.todolist.Callback;
+import io.spine.examples.todolist.client.Callback;
 
 import java.util.Collection;
 import java.util.List;
@@ -122,10 +122,16 @@ final class NewTaskViewModel extends AbstractViewModel {
         post(command);
     }
 
+    /**
+     * Fetches all the {@code TaskLabel}s present in the system.
+     *
+     * @param callback the operation callback triggered upon the operation successful completion;
+     *                 the callback is called from the main thread
+     */
     void fetchLabels(Callback<List<TaskLabel>> callback) {
         execute(() -> {
             final List<TaskLabel> labels = client().getLabels();
-            inMainThread(() -> callback.accept(labels));
+            inMainThread(() -> callback.onData(labels));
         });
     }
 

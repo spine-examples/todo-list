@@ -18,24 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.client;
 
 /**
- * A functional interface representing an operation that accepts a single input argument and
- * returns no result.
+ * An async callback of a network operation.
  *
- * <p>This interface is meant to serve for example as a callback of an asynchronous operation
- * accepting the result of the operation.
+ * <p>This interface should be used as a non-blocking way to obtain fetched data.
  *
- * @param <T> the type of the excepted argument
+ * <p>Android prohibits performing the network operations in the main thread. If other not
+ * specified, the callback is triggered from a background thread.
+ *
+ * @param <T> the type of the excepted data
  * @author Dmytro Dashenkov
  */
 public interface Callback<T> {
 
     /**
-     * Performs this operation on the given argument.
+     * Performs a specified operation on the given data.
      *
-     * @param t the input argument
+     * @param t the data
      */
-    void accept(T t);
+    void onData(T t);
 }
