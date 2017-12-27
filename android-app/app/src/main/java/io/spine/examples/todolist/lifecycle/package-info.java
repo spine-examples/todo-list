@@ -19,8 +19,12 @@
  */
 
 /**
- * This package contains several abstract classes defining the central lifecycle entities of
- * the application as well as the utilities that work with that entities.
+ * This package contains abstract classes for implementing the basic Android components which have
+ * a lifecycle such as {@link io.spine.examples.todolist.lifecycle.AbstractActivity
+ * AbstractActivity}.
+ *
+ * <p>Also, this package provides tools for working with that components, such as
+ * {@link io.spine.examples.todolist.lifecycle.Navigator Navigator}.
  */
 @ParametersAreNonnullByDefault
 package io.spine.examples.todolist.lifecycle;

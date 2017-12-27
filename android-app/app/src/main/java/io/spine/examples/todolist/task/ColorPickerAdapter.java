@@ -29,7 +29,7 @@ import android.widget.ImageView;
 import com.google.common.collect.ImmutableList;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.R;
-import io.spine.examples.todolist.lifecycle.Consumer;
+import io.spine.examples.todolist.Consumer;
 
 import java.util.List;
 

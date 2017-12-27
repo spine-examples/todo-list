@@ -34,7 +34,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
 import io.spine.examples.todolist.lifecycle.AbstractViewModel;
-import io.spine.examples.todolist.lifecycle.Consumer;
+import io.spine.examples.todolist.Consumer;
 
 import java.util.Collection;
 import java.util.List;

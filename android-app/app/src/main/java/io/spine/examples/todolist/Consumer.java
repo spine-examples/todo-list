@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.lifecycle;
+package io.spine.examples.todolist;
 
 /**
  * A functional interface representing an operation that accepts a single input argument and
