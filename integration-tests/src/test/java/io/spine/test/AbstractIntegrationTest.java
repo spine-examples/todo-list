@@ -47,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.client.TodoClient.HOST;
+import static io.spine.examples.todolist.server.Server.subscriptableServer;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
@@ -149,7 +150,7 @@ public abstract class AbstractIntegrationTest {
     @BeforeEach
     protected void setUp() throws InterruptedException {
         final BoundedContext boundedContextInMemory = createBoundedContext();
-        server = new Server(PORT, boundedContextInMemory);
+        server = subscriptableServer(PORT, boundedContextInMemory);
         startServer();
         client = TodoClient.instance(HOST, PORT);
         for (int i = 0; i < NUMBER_OF_CLIENTS; i++) {

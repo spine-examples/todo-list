@@ -20,29 +20,17 @@
 
 package io.spine.examples.todolist.server;
 
-import java.io.IOException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.context.BoundedContexts.create;
-import static io.spine.examples.todolist.server.Server.subscriptableServer;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 
-/**
- * A local {@link Server} using
- * {@link io.spine.server.storage.memory.InMemoryStorageFactory InMemoryStorageFactory}.
- *
- * <p>The server exposes its {@code gRPC API} at
- * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
- *
- * @author Dmytro Grankin
- */
-public class LocalInMemoryServer {
+@DisplayName("LocalFirebaseServer should")
+class LocalFirebaseServerTest {
 
-    private LocalInMemoryServer() {
-        // Prevent instantiation of this class.
-    }
-
-    public static void main(String[] args) throws IOException {
-        final Server server = subscriptableServer(DEFAULT_CLIENT_SERVICE_PORT, create());
-        server.start();
+    @Test
+    @DisplayName("have the private parameterless constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(LocalFirebaseServer.class);
     }
 }

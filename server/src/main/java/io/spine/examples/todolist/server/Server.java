@@ -26,6 +26,7 @@ import io.spine.server.QueryService;
 import io.spine.server.SubscriptionService;
 import io.spine.server.transport.GrpcContainer;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 import static io.spine.server.event.EventStore.log;
@@ -41,13 +42,23 @@ public class Server {
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
 
-    public Server(int port, BoundedContext boundedContext) {
+    public static Server readWriteServer(int port, BoundedContext boundedContext) {
+        return new Server(port, boundedContext, false);
+    }
+
+    public static Server subscriptableServer(int port, BoundedContext boundedContext) {
+        return new Server(port, boundedContext, true);
+    }
+
+    private Server(int port, BoundedContext boundedContext, boolean deploySubscriptionService) {
         this.port = port;
         this.boundedContext = boundedContext;
 
         final CommandService commandService = initCommandService();
         final QueryService queryService = initQueryService();
-        final SubscriptionService subscriptionService = initSubscriptionService();
+        final SubscriptionService subscriptionService = deploySubscriptionService
+                                                        ? initSubscriptionService()
+                                                        : null;
         this.grpcContainer = initGrpcContainer(commandService, queryService, subscriptionService);
     }
 
@@ -74,14 +85,15 @@ public class Server {
 
     private GrpcContainer initGrpcContainer(CommandService commandService,
                                             QueryService queryService,
-                                            SubscriptionService subscriptionService) {
-        final GrpcContainer result = GrpcContainer.newBuilder()
-                                                  .addService(commandService)
-                                                  .addService(queryService)
-                                                  .addService(subscriptionService)
-                                                  .setPort(port)
-                                                  .build();
-        return result;
+                                            @Nullable SubscriptionService subscriptionService) {
+        final GrpcContainer.Builder result = GrpcContainer.newBuilder()
+                                                          .setPort(port)
+                                                          .addService(commandService)
+                                                          .addService(queryService);
+        if (subscriptionService != null) {
+            result.addService(subscriptionService);
+        }
+        return result.build();
     }
 
     /**
