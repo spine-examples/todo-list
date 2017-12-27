@@ -21,4 +21,6 @@
 dependencies {
     compile project(path: ':server')
     compile project(path: ':firebase-mirror')
+
+    compile "io.netty:netty-tcnative-boringssl-static:$nettyBoringsslVersion"
 }

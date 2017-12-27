@@ -27,16 +27,7 @@ dependencies {
         exclude group: 'junit'
     }
     testCompile "com.google.guava:guava-testlib:$guavaVersion"
-}
-
-// TODO:2017-12-11:dmytro.dashenkov: Delete when Firebase can work with gRPC v1.8.0.
-// See: https://github.com/SpineEventEngine/todo-list/issues/44
-configurations.all {
-    resolutionStrategy.eachDependency { details ->
-        if (details.getRequested().group == 'io.grpc') {
-            details.useVersion('1.6.1')
-        }
-    }
+    testCompile "io.netty:netty-tcnative-boringssl-static:$nettyBoringsslVersion"
 }
 
 junitPlatform {
