@@ -11,7 +11,7 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:theme="@style/AppTheme">
         <activity
-                android:name=".ui.mylist.MyListActivity"
+                android:name=".view.mylist.MyListActivity"
                 android:label="@string/app_name"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppTheme.NoActionBar">
@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-                android:name=".ui.newtask.NewTaskActivity"
+                android:name=".view.newtask.NewTaskActivity"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>

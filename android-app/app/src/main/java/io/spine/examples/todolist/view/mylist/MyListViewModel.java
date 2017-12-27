@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.ui.mylist;
+package io.spine.examples.todolist.view.mylist;
 
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.MutableLiveData;
@@ -26,7 +26,7 @@ import android.arch.lifecycle.Observer;
 import android.util.Log;
 import io.grpc.stub.StreamObserver;
 import io.spine.client.Subscription;
-import io.spine.examples.todolist.ui.AbstractViewModel;
+import io.spine.examples.todolist.view.AbstractViewModel;
 import io.spine.examples.todolist.q.projection.MyListView;
 
 /**

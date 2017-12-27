@@ -25,7 +25,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.mylist.MyListActivity">
+        tools:context=".view.mylist.MyListActivity">
     <include layout="@layout/toolbar"/>
     <include layout="@layout/content_my_list"/>
     <android.support.design.widget.FloatingActionButton

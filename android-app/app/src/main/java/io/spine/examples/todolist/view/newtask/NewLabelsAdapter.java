@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.ui.newtask;
+package io.spine.examples.todolist.view.newtask;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;

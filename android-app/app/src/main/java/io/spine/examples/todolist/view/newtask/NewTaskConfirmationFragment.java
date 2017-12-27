@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.ui.newtask;
+package io.spine.examples.todolist.view.newtask;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -33,7 +33,7 @@ import android.widget.TextView;
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.R;
-import io.spine.examples.todolist.ui.ViewModelFactory;
+import io.spine.examples.todolist.view.ViewModelFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

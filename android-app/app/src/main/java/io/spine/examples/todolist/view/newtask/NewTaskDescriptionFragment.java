@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.ui.newtask;
+package io.spine.examples.todolist.view.newtask;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.TaskPriority;
-import io.spine.examples.todolist.ui.ViewModelFactory;
+import io.spine.examples.todolist.view.ViewModelFactory;
 
 import java.util.List;
 
@@ -44,8 +44,8 @@ import static com.google.protobuf.util.Timestamps.fromMillis;
 import static io.spine.examples.todolist.TaskPriority.HIGH;
 import static io.spine.examples.todolist.TaskPriority.LOW;
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
-import static io.spine.examples.todolist.ui.newtask.DatePickerDialog.DUE_DATE_MILLIS_KEY;
-import static io.spine.examples.todolist.ui.newtask.DatePickerDialog.DUE_DATE_REQUEST;
+import static io.spine.examples.todolist.view.newtask.DatePickerDialog.DUE_DATE_MILLIS_KEY;
+import static io.spine.examples.todolist.view.newtask.DatePickerDialog.DUE_DATE_REQUEST;
 
 /**
  * The the fragment with allows the user to specify the task primary information.

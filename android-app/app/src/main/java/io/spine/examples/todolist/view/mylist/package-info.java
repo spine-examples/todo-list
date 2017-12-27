@@ -18,33 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.ui.newtask;
-
-import android.support.v4.app.Fragment;
-
 /**
- * The abstract base for the {@link Fragment}s used as {@code ViewPager} pages.
- *
- * @author Dmytro Dashenkov
+ * This package contains the classes that define the {@code MyListView} screen UI and behavior.
  */
-abstract class PagerFragment extends Fragment {
+@ParametersAreNonnullByDefault
+package io.spine.examples.todolist.view.mylist;
 
-    /**
-     * Performs the preparation for the fragment to be opened.
-     *
-     * <p>This method is called when the current fragment is to be opened. Prefer this method to
-     * the {@link Fragment} lifecycle methods in order to prepare the page just before it's opened.
-     *
-     * <p>By default, the method performs no action. Since not all the fragments need to have
-     * a preparation stage, the method is left non-abstract.
-     */
-    @SuppressWarnings("NoopMethodInAbstractClass") // NoOp by default.
-    void prepare() {}
-
-    /**
-     * Performs the completion operations when the page is closed.
-     *
-     * <p>This method is called when the user navigates to the next page of the {@code ViewPager}.
-     */
-    abstract void complete();
-}
+import javax.annotation.ParametersAreNonnullByDefault;

@@ -22,6 +22,6 @@
  * This package contains the classes that define the New {@code Task} screen UI and behavior.
  */
 @ParametersAreNonnullByDefault
-package io.spine.examples.todolist.ui.newtask;
+package io.spine.examples.todolist.view.newtask;
 
 import javax.annotation.ParametersAreNonnullByDefault;

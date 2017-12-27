@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.ui.newtask;
+package io.spine.examples.todolist.view.newtask;
 
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.LabelDetails;
@@ -33,7 +33,7 @@ import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
-import io.spine.examples.todolist.ui.AbstractViewModel;
+import io.spine.examples.todolist.view.AbstractViewModel;
 import io.spine.examples.todolist.client.Callback;
 
 import java.util.Collection;

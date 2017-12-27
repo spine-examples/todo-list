@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.ui.mylist;
+package io.spine.examples.todolist.view.mylist;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,8 +26,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageButton;
 import io.spine.examples.todolist.R;
-import io.spine.examples.todolist.ui.AbstractActivity;
-import io.spine.examples.todolist.ui.newtask.NewTaskActivity;
+import io.spine.examples.todolist.view.AbstractActivity;
+import io.spine.examples.todolist.view.newtask.NewTaskActivity;
 
 /**
  * The {@code Activity} displaying
