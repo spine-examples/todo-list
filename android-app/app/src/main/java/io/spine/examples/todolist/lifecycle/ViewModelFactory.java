@@ -33,7 +33,7 @@ import static com.google.common.collect.Maps.newConcurrentMap;
  * An implementation of
  * {@link android.arch.lifecycle.ViewModelProvider.Factory ViewModelProvider.Factory}.
  *
- * <p>This implementation provides two basic options for the {@link ViewModel} instantiation:
+ * <p>This implementation provides two options for the {@link ViewModel} instantiation:
  * <ul>
  *     <li>The {@link #ALWAYS_NEW} factory, which always creates new instances of {@link ViewModel}.
  *     <li>The {@link #CACHING} factory, which serves cached instances of {@code ViewModel} and
@@ -86,7 +86,14 @@ public enum ViewModelFactory implements Factory {
         }
     };
 
+    /**
+     * The instance cache for the {@code ViewModel}s created by either of the factories.
+     */
     private static final Map<Class, ViewModel> cache = newConcurrentMap();
-    private static final Factory delegate = new NewInstanceFactory();
 
+    /**
+     * The {@link android.arch.lifecycle.ViewModelProvider.Factory ViewModelProvider.Factory}
+     * instance which instantiates {@code ViewModel}s on behalf of {@code ViewModelFactory}.
+     */
+    private static final Factory delegate = new NewInstanceFactory();
 }
