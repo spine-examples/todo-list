@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Todo List</string>
+    <string name="title_activity_my_list">MyListActivity</string>
+    <string name="due">Due:</string>
+    <string name="create">Create</string>
+    <string name="create_new_task">Create new task</string>
+    <string name="new_task">New task</string>
+    <string name="back">Back</string>
+    <string name="my_list">My List</string>
+    <string name="network_err_msg">Network error happened</string>
+    <string name="next">Next</string>
+    <string name="set_due_date">Set due date</string>
+    <string name="priority">Priority</string>
+    <string name="cancel">Cancel</string>
+    <string name="complete">Complete</string>
+    <string name="choose_a_label">Choose a label…</string>
+    <string name="or_create_a_label">or create a new one</string>
+    <string name="label_name">Label name</string>
+    <string name="add">Add</string>
+    <string name="due_date">Due date: %s</string>
+    <string name="accept">Accept</string>
+    <string name="decline">Decline</string>
+</resources>

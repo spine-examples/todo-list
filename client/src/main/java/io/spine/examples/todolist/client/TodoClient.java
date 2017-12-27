@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.Task;
+import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
@@ -73,6 +74,13 @@ public interface TodoClient {
      * @return the list of the {@code Task}
      */
     List<Task> getTasks();
+
+    /**
+     * Obtains all {@linkplain TaskLabel labels} in the system.
+     *
+     * @return the list of the {@code TaskLabel}
+     */
+    List<TaskLabel> getLabels();
 
     /**
      * Shutdown the connection channel.

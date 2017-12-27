@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.client;
 
 import com.google.protobuf.Any;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Message;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -42,6 +41,7 @@ import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceStub;
 import io.spine.core.Command;
 import io.spine.core.UserId;
 import io.spine.examples.todolist.Task;
+import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
@@ -101,7 +101,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                                .getMessagesList();
         return messages.isEmpty()
                ? MyListView.getDefaultInstance()
-               : convertAnyToMessage(messages.get(0), MyListView.class);
+               : AnyPacker.unpack(messages.get(0));
     }
 
     @Override
@@ -112,7 +112,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                                .getMessagesList();
         final List<LabelledTasksView> result = messages
                 .stream()
-                .map(any -> convertAnyToMessage(any, LabelledTasksView.class))
+                .map(AnyPacker::<LabelledTasksView>unpack)
                 .collect(toList());
 
         return result;
@@ -126,21 +126,17 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                                .getMessagesList();
         return messages.isEmpty()
                ? DraftTasksView.getDefaultInstance()
-               : convertAnyToMessage(messages.get(0), DraftTasksView.class);
+               : AnyPacker.unpack(messages.get(0));
     }
 
     @Override
     public List<Task> getTasks() {
-        final Query query = requestFactory.query()
-                                          .all(Task.class);
-        final List<Any> messages = queryService.read(query)
-                                               .getMessagesList();
-        final List<Task> result = messages
-                .stream()
-                .map(any -> convertAnyToMessage(any, Task.class))
-                .collect(toList());
+        return getByType(Task.class);
+    }
 
-        return result;
+    @Override
+    public List<TaskLabel> getLabels() {
+        return getByType(TaskLabel.class);
     }
 
     @Override
@@ -180,6 +176,24 @@ final class TodoClientImpl implements SubscribingTodoClient {
         return subscription;
     }
 
+    /**
+     * Retrieves all the messages of the given type.
+     *
+     * @param cls the class of the desired messages
+     * @param <M> the compile-time type of the desired messages
+     * @return all the messages of the given type present in the system
+     */
+    private <M extends Message> List<M> getByType(Class<M> cls) {
+        final Query query = requestFactory.query()
+                                          .all(cls);
+        final List<Any> messages = queryService.read(query)
+                                               .getMessagesList();
+        final List<M> result = messages.stream()
+                                       .map(AnyPacker::<M>unpack)
+                                       .collect(toList());
+        return result;
+    }
+
     private static ManagedChannel initChannel(String host, int port) {
         final ManagedChannel result = ManagedChannelBuilder.forAddress(host, port)
                                                            .usePlaintext(true)
@@ -196,14 +210,6 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                                               .setZoneOffset(ZoneOffsets.UTC)
                                                               .build();
         return result;
-    }
-
-    private static <M extends Message> M convertAnyToMessage(Any any, Class<M> messageClass) {
-        try {
-            return any.unpack(messageClass);
-        } catch (InvalidProtocolBufferException e) {
-            throw illegalStateWithCauseOf(e);
-        }
     }
 
     /**
