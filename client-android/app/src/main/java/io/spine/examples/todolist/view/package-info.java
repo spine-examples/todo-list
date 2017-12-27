@@ -19,10 +19,12 @@
  */
 
 /**
- * This package contains classes that form the TodoList client.
+ * This package contains classes and utilities for working with the UI.
+ *
+ * <p>Each of the sub-packages represents a separate screen.
  */
 
 @ParametersAreNonnullByDefault
-package io.spine.examples.todolist.client;
+package io.spine.examples.todolist.view;
 
 import javax.annotation.ParametersAreNonnullByDefault;
