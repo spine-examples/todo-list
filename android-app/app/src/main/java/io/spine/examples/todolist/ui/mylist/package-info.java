@@ -19,14 +19,9 @@
  */
 
 /**
- * This package contains abstract classes for implementing the basic Android components which have
- * a lifecycle such as {@link io.spine.examples.todolist.lifecycle.AbstractActivity
- * AbstractActivity}.
- *
- * <p>Also, this package provides tools for working with that components, such as
- * {@link io.spine.examples.todolist.lifecycle.Navigator Navigator}.
+ * This package contains the classes that define the {@code MyListView} screen UI and behavior.
  */
 @ParametersAreNonnullByDefault
-package io.spine.examples.todolist.lifecycle;
+package io.spine.examples.todolist.ui.mylist;
 
 import javax.annotation.ParametersAreNonnullByDefault;

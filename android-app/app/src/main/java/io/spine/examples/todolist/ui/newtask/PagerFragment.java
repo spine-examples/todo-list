@@ -18,24 +18,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.ui.newtask;
+
+import android.support.v4.app.Fragment;
 
 /**
- * A functional interface representing an operation that accepts a single input argument and
- * returns no result.
+ * The abstract base for the {@link Fragment}s used as {@code ViewPager} pages.
  *
- * <p>This interface is meant to serve for example as a callback of an asynchronous operation
- * accepting the result of the operation.
- *
- * @param <T> the type of the excepted argument
  * @author Dmytro Dashenkov
  */
-public interface Consumer<T> {
+abstract class PagerFragment extends Fragment {
 
     /**
-     * Performs this operation on the given argument.
+     * Performs the preparation for the fragment to be opened.
      *
-     * @param t the input argument
+     * <p>This method is called when the current fragment is to be opened. Prefer this method to
+     * the {@link Fragment} lifecycle methods in order to prepare the page just before it's opened.
+     *
+     * <p>By default, the method performs no action. Since not all the fragments need to have
+     * a preparation stage, the method is left non-abstract.
      */
-    void accept(T t);
+    @SuppressWarnings("NoopMethodInAbstractClass") // NoOp by default.
+    void prepare() {}
+
+    /**
+     * Performs the completion operations when the page is closed.
+     *
+     * <p>This method is called when the user navigates to the next page of the {@code ViewPager}.
+     */
+    abstract void complete();
 }

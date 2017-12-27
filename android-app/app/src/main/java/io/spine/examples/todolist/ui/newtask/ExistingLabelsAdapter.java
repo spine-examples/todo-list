@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.task;
+package io.spine.examples.todolist.ui.newtask;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

@@ -19,9 +19,11 @@
  */
 
 /**
- * This package contains the classes that define the {@code MyListView} screen UI and behavior.
+ * This package contains utilities for working with the TodoList domain model in scope of
+ * the application.
  */
+
 @ParametersAreNonnullByDefault
-package io.spine.examples.todolist.mylist;
+package io.spine.examples.todolist.model;
 
 import javax.annotation.ParametersAreNonnullByDefault;

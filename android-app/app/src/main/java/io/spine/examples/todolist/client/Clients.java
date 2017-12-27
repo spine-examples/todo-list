@@ -18,10 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.connection;
+package io.spine.examples.todolist.client;
 
 import io.spine.client.ConnectionConstants;
-import io.spine.examples.todolist.client.SubscribingTodoClient;
 
 /**
  * A factory of the TodoList clients.

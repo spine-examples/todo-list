@@ -18,15 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.lifecycle;
+package io.spine.examples.todolist.ui;
 
 import android.arch.lifecycle.ViewModel;
 import android.os.Handler;
 import android.os.Looper;
 import io.grpc.StatusRuntimeException;
 import io.spine.examples.todolist.c.commands.TodoCommand;
+import io.spine.examples.todolist.client.Clients;
 import io.spine.examples.todolist.client.SubscribingTodoClient;
-import io.spine.examples.todolist.connection.Clients;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

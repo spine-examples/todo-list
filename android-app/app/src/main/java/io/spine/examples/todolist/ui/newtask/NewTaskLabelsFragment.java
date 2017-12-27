@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.task;
+package io.spine.examples.todolist.ui.newtask;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -33,7 +33,7 @@ import android.widget.Button;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.TaskLabel;
-import io.spine.examples.todolist.lifecycle.ViewModelFactory;
+import io.spine.examples.todolist.ui.ViewModelFactory;
 
 import java.util.Collection;
 

@@ -32,4 +32,4 @@
         android:paddingBottom="@dimen/std_padding"
         android:paddingTop="@dimen/std_padding"
         tools:showIn="@layout/activity_my_list"
-        tools:context="io.spine.examples.todolist.mylist.MyListActivity"/>
+        tools:context=".ui.mylist.MyListActivity"/>

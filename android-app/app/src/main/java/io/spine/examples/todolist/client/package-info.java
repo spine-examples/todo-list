@@ -19,9 +19,9 @@
  */
 
 /**
- * This package contains classes that work with the TodoList server connection.
+ * This package contains classes that work with the TodoList server side.
  */
 @ParametersAreNonnullByDefault
-package io.spine.examples.todolist.connection;
+package io.spine.examples.todolist.client;
 
 import javax.annotation.ParametersAreNonnullByDefault;

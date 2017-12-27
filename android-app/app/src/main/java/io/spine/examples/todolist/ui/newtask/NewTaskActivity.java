@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.task;
+package io.spine.examples.todolist.ui.newtask;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -26,7 +26,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.widget.Button;
 import io.spine.examples.todolist.R;
-import io.spine.examples.todolist.lifecycle.AbstractActivity;
+import io.spine.examples.todolist.ui.AbstractActivity;
 
 /**
  * The {@code Activity} allowing the user to create a new task.

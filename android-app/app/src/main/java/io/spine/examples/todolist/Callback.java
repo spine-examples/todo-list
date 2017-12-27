@@ -18,10 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package contains the classes that define the New {@code Task} screen UI and behavior.
- */
-@ParametersAreNonnullByDefault
-package io.spine.examples.todolist.task;
+package io.spine.examples.todolist;
 
-import javax.annotation.ParametersAreNonnullByDefault;
+/**
+ * A functional interface representing an operation that accepts a single input argument and
+ * returns no result.
+ *
+ * <p>This interface is meant to serve for example as a callback of an asynchronous operation
+ * accepting the result of the operation.
+ *
+ * @param <T> the type of the excepted argument
+ * @author Dmytro Dashenkov
+ */
+public interface Callback<T> {
+
+    /**
+     * Performs this operation on the given argument.
+     *
+     * @param t the input argument
+     */
+    void accept(T t);
+}

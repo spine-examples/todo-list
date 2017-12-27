@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.mylist;
+package io.spine.examples.todolist.ui.mylist;
 
 import android.arch.lifecycle.Observer;
 import android.content.res.Resources;

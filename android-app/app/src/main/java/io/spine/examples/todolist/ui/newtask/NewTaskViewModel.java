@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.task;
+package io.spine.examples.todolist.ui.newtask;
 
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.LabelDetails;
@@ -33,8 +33,8 @@ import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
-import io.spine.examples.todolist.lifecycle.AbstractViewModel;
-import io.spine.examples.todolist.Consumer;
+import io.spine.examples.todolist.ui.AbstractViewModel;
+import io.spine.examples.todolist.Callback;
 
 import java.util.Collection;
 import java.util.List;
@@ -122,7 +122,7 @@ final class NewTaskViewModel extends AbstractViewModel {
         post(command);
     }
 
-    void fetchLabels(Consumer<List<TaskLabel>> callback) {
+    void fetchLabels(Callback<List<TaskLabel>> callback) {
         execute(() -> {
             final List<TaskLabel> labels = client().getLabels();
             inMainThread(() -> callback.accept(labels));

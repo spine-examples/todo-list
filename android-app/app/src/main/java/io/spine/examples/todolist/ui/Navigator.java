@@ -18,20 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.lifecycle;
+package io.spine.examples.todolist.ui;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.view.View;
-import android.widget.Button;
-import io.spine.examples.todolist.R;
 
 import static android.support.v4.app.ActivityOptionsCompat.makeBasic;
 import static android.support.v4.app.ActivityOptionsCompat.makeClipRevealAnimation;
-import static android.support.v4.app.ActivityOptionsCompat.makeCustomAnimation;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
