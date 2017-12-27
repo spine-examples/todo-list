@@ -55,7 +55,7 @@ public final class Colors {
         COLORS = colors.build();
     }
 
-    /** Prevent utility class instatiation */
+    /** Prevent utility class instantiation */
     private Colors() {
     }
 
