@@ -49,7 +49,6 @@ public final class NewTaskLabelsFragment extends PagerFragment {
     static final int POSITION_IN_WIZARD = 1;
 
     private NewTaskViewModel model;
-
     private NewLabelsAdapter newLabelsAdapter;
     private ExistingLabelsAdapter existingLabelsAdapter;
 

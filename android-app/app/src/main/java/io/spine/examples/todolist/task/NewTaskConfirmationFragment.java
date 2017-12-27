@@ -51,17 +51,16 @@ import static java.lang.String.format;
  */
 public final class NewTaskConfirmationFragment extends PagerFragment {
 
+    static final int POSITION_IN_WIZARD = 2;
+
     private static final SimpleDateFormat DATE_FORMAT =
             new SimpleDateFormat("dd MMM YYYY", Locale.getDefault());
 
     private NewTaskViewModel model;
-
     private TextView taskDescription;
     private TextView taskPriority;
     private TextView taskDueDate;
     private RecyclerView taskLabels;
-
-    static final int POSITION_IN_WIZARD = 2;
 
     @Override
     public View onCreateView(LayoutInflater inflater,

@@ -57,10 +57,8 @@ public final class NewTaskDescriptionFragment extends PagerFragment {
     static final int POSITION_IN_WIZARD = 0;
 
     private NewTaskViewModel model;
-
     private EditText taskDescription;
     private Spinner spinner;
-
     private Timestamp dueDate = Timestamp.getDefaultInstance();
 
     @Override

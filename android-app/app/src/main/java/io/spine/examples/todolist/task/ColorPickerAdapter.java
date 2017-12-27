@@ -121,7 +121,6 @@ final class ColorPickerAdapter extends RecyclerView.Adapter<ColorPickerAdapter.V
                 selectorView.clearColorFilter();
             }
             colorView.setOnClickListener(view -> selector.setValue(color));
-
         }
     }
 }
