@@ -99,6 +99,11 @@ final class FirestoreSubscriptionPublisher {
         return result;
     }
 
+    /**
+     * Blocks current waiting for the given {@link ApiFuture} and logs all the caught exceptions.
+     *
+     * @param future the future to wait for
+     */
     private static void block(ApiFuture<?> future) {
         try {
             future.get();
