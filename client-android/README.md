@@ -9,10 +9,13 @@ Provided the required Android specific development
 the application:
 
  1. Publish the required modules of Todo List core to the Maven local. To do that, execute the 
- `publishToMavenLocal` Gradle task on the [core Gradle project](../). 
- 2. Build the `android-app` module with `./gradlew clean build`.
+ `publishToMavenLocal` Gradle task on the [core Gradle project](../).
+ 2. Go to [Firebase console](https://console.firebase.google.com) > Select `spine-firestore-dev`
+ project > `Settings` > `Project settings` > `General` > `Your apps`. Download
+ the `google-services.json` for the Todo List Android app and place the file under `client-android/app`.
+ 3. Build the `client-android` module with `./gradlew clean build`.
  
-To run the application, open the `android-app` module in the Android Studio and launch the app with
+To run the application, open the `client-android` module in the Android Studio and launch the app with
 the default application run configuration.
 
 Alternatively, build the app as described above, go to 
