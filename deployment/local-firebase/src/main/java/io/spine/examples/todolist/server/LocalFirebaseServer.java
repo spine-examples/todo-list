@@ -22,8 +22,8 @@ package io.spine.examples.todolist.server;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.common.collect.ImmutableSet;
-import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.server.BoundedContext;
 import io.spine.server.firebase.FirebaseSubscriptionMirror;
 import io.spine.type.TypeUrl;
@@ -48,7 +48,7 @@ import static io.spine.type.TypeUrl.of;
 public class LocalFirebaseServer {
 
     private static final Collection<TypeUrl> MIRRORED_TYPES = ImmutableSet.of(
-            of(Task.class)
+            of(MyListView.class)
     );
 
     private LocalFirebaseServer() {

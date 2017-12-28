@@ -19,7 +19,7 @@
  */
 
 dependencies {
-    compile('com.google.firebase:firebase-admin:5.5.0'){
+    compile('com.google.firebase:firebase-admin:5.7.0'){
         exclude group: 'com.google.guava'
     }
     testCompile project(path: ':api-java')
