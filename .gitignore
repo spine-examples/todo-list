@@ -61,6 +61,7 @@ gradle.properties
 # Firebase debug log
 firebase-debug.log
 
-# Firebase service account
+# Google/Firebase settings
 # Must be kept secure (out of public Git repository at least)
 serviceAccount.json
+google-services.json
