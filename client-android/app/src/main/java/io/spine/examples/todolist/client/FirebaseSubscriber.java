@@ -59,6 +59,9 @@ public class FirebaseSubscriber {
 
     private static final FirebaseSubscriber instance = new FirebaseSubscriber();
 
+    /**
+     * Retrieves an instance of {@code FirebaseSubscriber}.
+     */
     public static FirebaseSubscriber instance() {
         return instance;
     }
@@ -147,6 +150,15 @@ public class FirebaseSubscriber {
         return result;
     }
 
+    /**
+     * Delivers the entity state update represented by the given {@link DocumentChange} to
+     * the observers of the given {@link LiveData}.
+     *
+     * @param change      the Firestore document change
+     * @param destination the update publishing target
+     * @param parser      the {@link Parser} for the target entity state type
+     * @param <T>         the entity state type
+     */
     private static <T extends Message>
     void deliverUpdate(DocumentChange change,
                        MutableLiveData<Map<String, T>> destination,
@@ -180,14 +192,14 @@ public class FirebaseSubscriber {
         }
     }
 
+    private static String parseMessageId(DocumentSnapshot doc) {
+        final String id = doc.getString(ID_KEY);
+        return id;
+    }
+
     private static <T extends Message> Parser<T> getParserFor(Class<T> type) {
         final T mockInstance = Messages.newInstance(type);
         @SuppressWarnings("unchecked") final Parser<T> result = (Parser<T>) mockInstance.getParserForType();
         return result;
-    }
-
-    private static String parseMessageId(DocumentSnapshot doc) {
-        final String id = doc.getString(ID_KEY);
-        return id;
     }
 }
