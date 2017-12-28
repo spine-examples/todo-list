@@ -49,7 +49,7 @@ public class Server {
      * <p>The resulting server does not provide a push API for the entity states.
      *
      * @param port           the port to bind the server to
-     * @param boundedContext the {@link BoundedContext} for which the server is created
+     * @param boundedContext the {@link BoundedContext} to serve
      * @return a new instance of {@code Server}
      * @see #subscriptableServer(int, BoundedContext)
      */

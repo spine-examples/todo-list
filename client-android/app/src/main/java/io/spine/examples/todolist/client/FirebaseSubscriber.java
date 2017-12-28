@@ -77,7 +77,7 @@ public class FirebaseSubscriber {
      * the corresponding entity ID.
      *
      * <p>Currently, the element removal is not supported. If a {@link DocumentChange} of type other
-     * than {@link DocumentChange.Type#ADDED ADDED} of {@link DocumentChange.Type#MODIFIED MODIFIED}
+     * than {@link DocumentChange.Type#ADDED ADDED} or {@link DocumentChange.Type#MODIFIED MODIFIED}
      * is encountered, an {@link UnsupportedOperationException} is thrown.
      *
      * @param targetType the class of the entity to subscribe to
@@ -115,7 +115,7 @@ public class FirebaseSubscriber {
      * the resulting {@link LiveData} is not triggered).
      *
      * <p>Currently, the element removal is not supported. If a {@link DocumentChange} of type other
-     * than {@link DocumentChange.Type#ADDED ADDED} of {@link DocumentChange.Type#MODIFIED MODIFIED}
+     * than {@link DocumentChange.Type#ADDED ADDED} or {@link DocumentChange.Type#MODIFIED MODIFIED}
      * is encountered, an {@link UnsupportedOperationException} is thrown.
      *
      * @param targetType the class of the entity state to subscribe to
@@ -155,7 +155,7 @@ public class FirebaseSubscriber {
      * the observers of the given {@link LiveData}.
      *
      * @param change      the Firestore document change
-     * @param destination the update publishing target
+     * @param destination the {@link LiveData} publishing the update
      * @param parser      the {@link Parser} for the target entity state type
      * @param <T>         the entity state type
      */
@@ -177,7 +177,6 @@ public class FirebaseSubscriber {
         } else {
             throw new UnsupportedOperationException(type.toString());
         }
-
         destination.postValue(newData);
     }
 

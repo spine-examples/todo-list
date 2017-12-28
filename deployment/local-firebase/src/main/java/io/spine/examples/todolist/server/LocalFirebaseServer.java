@@ -54,9 +54,10 @@ public class LocalFirebaseServer {
             of(MyListView.class)
     );
 
-    private LocalFirebaseServer() {
-        // Prevent instantiation of this class.
-    }
+    /**
+     * The {@code private} constructor prevents direct instantiation.
+     */
+    private LocalFirebaseServer() {}
 
     public static void main(String[] args) throws IOException {
         final BoundedContext boundedContext = BoundedContexts.create();

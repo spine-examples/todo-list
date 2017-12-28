@@ -100,7 +100,8 @@ final class FirestoreSubscriptionPublisher {
     }
 
     /**
-     * Blocks current waiting for the given {@link ApiFuture} and logs all the caught exceptions.
+     * Blocks the current thread waiting for the given {@link ApiFuture} and logs all the caught
+     * exceptions.
      *
      * @param future the future to wait for
      */
