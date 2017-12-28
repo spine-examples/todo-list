@@ -42,14 +42,44 @@ public class Server {
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
 
+    /**
+     * Creates a server with the {@link CommandService Command} and {@link QueryService Query}
+     * gRPC services.
+     *
+     * <p>The resulting server does not provide a push API for the entity states.
+     *
+     * @param port           the port to bind the server to
+     * @param boundedContext the {@link BoundedContext} for which the server is created
+     * @return a new instance of {@code Server}
+     * @see #subscriptableServer(int, BoundedContext)
+     */
     public static Server readWriteServer(int port, BoundedContext boundedContext) {
         return new Server(port, boundedContext, false);
     }
 
+    /**
+     * Creates a server with the {@link CommandService Command}, {@link QueryService Query} and
+     * {@link SubscriptionService Subscription} gRPC services.
+     *
+     * <p>The resulting server provides both push and pull APIs for the entity states.
+     *
+     * @param port           the port to bind the server to
+     * @param boundedContext the {@link BoundedContext} to serve
+     * @return a new instance of {@code Server}
+     * @see #readWriteServer(int, BoundedContext)
+     */
     public static Server subscriptableServer(int port, BoundedContext boundedContext) {
         return new Server(port, boundedContext, true);
     }
 
+    /**
+     * Creates a new instance of {@code Server}.
+     *
+     * @param port                      the port to bind the server to
+     * @param boundedContext            the {@link BoundedContext} to serve
+     * @param deploySubscriptionService {@code true} if this server should deploy
+     *                                  a {@link SubscriptionService}, {@code false} otherwise
+     */
     private Server(int port, BoundedContext boundedContext, boolean deploySubscriptionService) {
         this.port = port;
         this.boundedContext = boundedContext;
@@ -83,6 +113,15 @@ public class Server {
         return result;
     }
 
+    /**
+     * Creates a {@link GrpcContainer} for this server.
+     *
+     * @param commandService      the {@link CommandService} to deploy
+     * @param queryService        the {@link QueryService} to deploy
+     * @param subscriptionService the {@link SubscriptionService} to deploy or {@code null} if no
+     *                            {@code SubscriptionService} is intended for this server
+     * @return a new instance of {@link GrpcContainer}
+     */
     private GrpcContainer initGrpcContainer(CommandService commandService,
                                             QueryService queryService,
                                             @Nullable SubscriptionService subscriptionService) {

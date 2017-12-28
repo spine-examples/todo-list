@@ -40,9 +40,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.firebase.firestore.DocumentChange.Type.ADDED;
 import static com.google.firebase.firestore.DocumentChange.Type.MODIFIED;
-import static io.spine.util.Exceptions.newIllegalArgumentException;
+import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.String.format;
 
+/**
+ * The Firebase client for subscribing to the data in Cloud Firestore.
+ *
+ * @author Dmytro Dashenkov
+ */
 public class FirebaseSubscriber {
 
     private static final String ID_KEY = "id";
@@ -58,9 +63,24 @@ public class FirebaseSubscriber {
         return instance;
     }
 
-    private FirebaseSubscriber() {
-    }
+    /** Prevent direct instantiation. */
+    private FirebaseSubscriber() {}
 
+    /**
+     * Subscribes to the entity states of the given type.
+     *
+     * <p>The method returns a {@link LiveData} of map (string ID -> entity state). The ID is
+     * the {@linkplain io.spine.Identifier#toString(Object) string representation} of
+     * the corresponding entity ID.
+     *
+     * <p>Currently, the element removal is not supported. If a {@link DocumentChange} of type other
+     * than {@link DocumentChange.Type#ADDED ADDED} of {@link DocumentChange.Type#MODIFIED MODIFIED}
+     * is encountered, an {@link UnsupportedOperationException} is thrown.
+     *
+     * @param targetType the class of the entity to subscribe to
+     * @param <T>        the type of the entity to subscribe to
+     * @return an instance of {@link LiveData} for the observers to subscribe to
+     */
     public <T extends Message> LiveData<Map<String, T>> subscribeTo(Class<T> targetType) {
         checkNotNull(targetType);
         final CollectionReference targetCollection = collectionFor(targetType);
@@ -82,6 +102,24 @@ public class FirebaseSubscriber {
         return result;
     }
 
+    /**
+     * Subscribes to the single entity state of the given type.
+     *
+     * <p>If multiple records of the given type are found in Firestore,
+     * an {@link IllegalStateException} is thrown.
+     *
+     * <p>If no records of the given type are found in Firestore, the update is ignored (i.e.
+     * the resulting {@link LiveData} is not triggered).
+     *
+     * <p>Currently, the element removal is not supported. If a {@link DocumentChange} of type other
+     * than {@link DocumentChange.Type#ADDED ADDED} of {@link DocumentChange.Type#MODIFIED MODIFIED}
+     * is encountered, an {@link UnsupportedOperationException} is thrown.
+     *
+     * @param targetType the class of the entity state to subscribe to
+     * @param <T>        the type of the entity state to subscribe to
+     * @return a instance of {@link LiveData} for the observers to subscribe to
+     */
+    @SuppressWarnings("UnnecessaryReturnStatement") // OK for a fast exit on invalid data.
     public <T extends Message> LiveData<T> subscribeToSingle(Class<T> targetType) {
         final MutableLiveData<T> liveData = new MutableLiveData<>();
         final LiveData<Map<String, T>> allRecordsData = subscribeTo(targetType);
@@ -89,7 +127,7 @@ public class FirebaseSubscriber {
             if (map == null || map.isEmpty()) {
                 return;
             } else if (map.size() > 1) {
-                throw newIllegalArgumentException("Type %s has multiple instances.", targetType);
+                throw newIllegalStateException("Type %s has multiple instances.", targetType);
             } else {
                 final Map.Entry<?, T> singleEntry = map.entrySet()
                                                        .iterator()
@@ -116,8 +154,8 @@ public class FirebaseSubscriber {
         final DocumentChange.Type type = change.getType();
         final Map<String, T> currentData = destination.getValue();
         final Map<String, T> newData = currentData == null
-                                      ? newHashMap()
-                                      : newHashMap(currentData);
+                                       ? newHashMap()
+                                       : newHashMap(currentData);
         final DocumentSnapshot doc = change.getDocument();
         final String id = parseMessageId(doc);
         final T newMessage = parseMessage(doc, parser);
@@ -144,8 +182,7 @@ public class FirebaseSubscriber {
 
     private static <T extends Message> Parser<T> getParserFor(Class<T> type) {
         final T mockInstance = Messages.newInstance(type);
-        @SuppressWarnings("unchecked")
-        final Parser<T> result = (Parser<T>) mockInstance.getParserForType();
+        @SuppressWarnings("unchecked") final Parser<T> result = (Parser<T>) mockInstance.getParserForType();
         return result;
     }
 

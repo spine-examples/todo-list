@@ -47,6 +47,9 @@ import static io.spine.type.TypeUrl.of;
  */
 public class LocalFirebaseServer {
 
+    /**
+     * The types to reflect with the Firebase subscription mirror.
+     */
     private static final Collection<TypeUrl> MIRRORED_TYPES = ImmutableSet.of(
             of(MyListView.class)
     );
@@ -62,6 +65,11 @@ public class LocalFirebaseServer {
         server.start();
     }
 
+    /**
+     * Starts the Firebase subscription mirror in the root of the bound Cloud Firestore instance.
+     *
+     * @param boundedContext the {@link BoundedContext} to take the entity updates from
+     */
     private static void startSubscriptionMirror(BoundedContext boundedContext) {
         final Firestore firestore = FirebaseClients.initializeFirestore();
         final FirebaseSubscriptionMirror subscriptionMirror =

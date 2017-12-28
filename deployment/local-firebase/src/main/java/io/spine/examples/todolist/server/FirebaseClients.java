@@ -34,7 +34,7 @@ import java.io.InputStream;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- *
+ * A utility for working with the Firebase client API.
  *
  * @author Dmytro Dashenkov
  */
@@ -48,6 +48,14 @@ final class FirebaseClients {
      */
     private FirebaseClients() {}
 
+    /**
+     * Initializes the Cloud Firestore API with the service account credentials.
+     *
+     * <p>To performs the initialization successfully, the configuration file
+     * {@code serviceAccount.json} should be present in the classpath.
+     *
+     * @return the initialized instance of {@link Firestore}
+     */
     public static Firestore initializeFirestore() {
         final InputStream firebaseSecret = FirebaseClients.class
                 .getClassLoader()

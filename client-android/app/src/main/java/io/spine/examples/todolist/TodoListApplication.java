@@ -23,6 +23,11 @@ package io.spine.examples.todolist;
 import android.app.Application;
 import com.google.firebase.FirebaseApp;
 
+/**
+ * The implementation of {@link Application} for the TodoList Android application.
+ *
+ * @author Dmytro Dashenkov
+ */
 public class TodoListApplication extends Application {
 
     @Override
