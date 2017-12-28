@@ -26,7 +26,7 @@ import android.os.Looper;
 import io.grpc.StatusRuntimeException;
 import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.client.Clients;
-import io.spine.examples.todolist.client.SubscribingTodoClient;
+import io.spine.examples.todolist.client.TodoClient;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -46,7 +46,7 @@ public abstract class AbstractViewModel extends ViewModel {
     /**
      * The TodoList gRPC client.
      */
-    private final SubscribingTodoClient client = Clients.subscribingInstance();
+    private final TodoClient client = Clients.instance();
 
     /**
      * The {@link ExecutorService} performing the asynchronous operations, such as networking.
@@ -124,7 +124,7 @@ public abstract class AbstractViewModel extends ViewModel {
     /**
      * @return the TodoList client
      */
-    protected SubscribingTodoClient client() {
+    protected TodoClient client() {
         return client;
     }
 

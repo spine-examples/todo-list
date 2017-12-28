@@ -25,6 +25,7 @@ import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.RecyclerView.Adapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ import static android.view.View.GONE;
 import static com.google.protobuf.util.Timestamps.toMillis;
 import static io.spine.examples.todolist.model.Colors.toRgb;
 import static io.spine.validate.Validate.isDefault;
+import static java.lang.String.valueOf;
 
 /**
  * The {@link RecyclerView.Adapter} implementation listening to the {@link MyListView} data updates
@@ -88,6 +90,7 @@ final class MyTaskListViewAdapter
             data.addAll(myListView.getMyList().getItemsList());
         }
         notifyDataSetChanged();
+        Log.d("MyTaskListViewAdapter", "Data arrived: " + valueOf(myListView));
     }
 
     /**
