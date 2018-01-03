@@ -75,7 +75,7 @@ final class FirestoreSubscriptionPublisher {
             write(batch, update);
         }
         final ApiFuture<?> writeResult = batch.commit();
-        block(writeResult);
+        waitFor(writeResult);
     }
 
     private void write(WriteBatch batch, EntityStateUpdate update) {
@@ -105,7 +105,7 @@ final class FirestoreSubscriptionPublisher {
      *
      * @param future the future to wait for
      */
-    private static void block(ApiFuture<?> future) {
+    private static void waitFor(ApiFuture<?> future) {
         try {
             future.get();
         } catch (InterruptedException | ExecutionException e) {
