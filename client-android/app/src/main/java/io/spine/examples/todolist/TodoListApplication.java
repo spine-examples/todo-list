@@ -28,7 +28,7 @@ import com.google.firebase.FirebaseApp;
  *
  * @author Dmytro Dashenkov
  */
-public class TodoListApplication extends Application {
+public final class TodoListApplication extends Application {
 
     @Override
     public void onCreate() {
