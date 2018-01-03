@@ -40,11 +40,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMap;
 import static com.google.firebase.firestore.DocumentChange.Type.ADDED;
 import static com.google.firebase.firestore.DocumentChange.Type.MODIFIED;
+import static io.spine.util.Exceptions.illegalStateWithCauseOf;
+import static io.spine.util.Exceptions.newIllegalArgumentException;
 import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.String.format;
 
 /**
- * The Firebase subscription mirror Android client.
+ * The client of the Firebase subscription mirror for the Android app.
  *
  * <p>This class is the client of the Firebase subscription mirror. The mirror is one for all
  * the bounded contexts in TodoList, thus this class is a singleton.
@@ -174,7 +176,7 @@ public final class FirebaseSubscriber {
         if (type == ADDED || type == MODIFIED) {
             newData.put(id, newMessage);
         } else {
-            throw new IllegalArgumentException("Unexpected document change: " + type.toString());
+            throw newIllegalArgumentException("Unexpected document change: %s", type.toString());
         }
         destination.postValue(newData);
     }
@@ -186,7 +188,7 @@ public final class FirebaseSubscriber {
             final T message = parser.parseFrom(bytes);
             return message;
         } catch (InvalidProtocolBufferException e) {
-            throw new IllegalStateException(e);
+            throw illegalStateWithCauseOf(e);
         }
     }
 
