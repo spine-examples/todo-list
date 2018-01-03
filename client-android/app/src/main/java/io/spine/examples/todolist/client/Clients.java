@@ -50,7 +50,7 @@ public final class Clients {
     private Clients() {}
 
     /**
-     * Retrieves an instance of {@link SubscribingTodoClient} connecting to the gRPC server at
+     * Retrieves an instance of {@link TodoClient} connecting to the gRPC server at
      * {@link #HOST}{@code :}{@link #PORT}.
      *
      * <p>Do not call
@@ -59,18 +59,18 @@ public final class Clients {
      *
      * @return an instance of subscribing TodoList client
      */
-    public static SubscribingTodoClient subscribingInstance() {
+    public static TodoClient instance() {
         return ClientSingleton.INSTANCE.value;
     }
 
     /**
-     * The application-wide singleton of the {@link SubscribingTodoClient}.
+     * The application-wide singleton of the {@link TodoClient}.
      *
      * <p>The client connects to the server at {@link #HOST}{@code :}{@link #PORT}.
      */
     private enum ClientSingleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final SubscribingTodoClient value = SubscribingTodoClient.instance(HOST, PORT);
+        private final TodoClient value = TodoClient.instance(HOST, PORT);
     }
 }

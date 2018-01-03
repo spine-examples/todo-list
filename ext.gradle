@@ -42,6 +42,7 @@ project.ext {
     cloudSqlSocketFactoryVersion = '1.0.4'
     shadowJarVersion = '2.0.1'
     mysqlDriverVersion = '6.0.6'
+    nettyBoringsslVersion = '2.0.6.Final'
 
     // Test scope third party dependencies' versions
     jUnitPlatformVersion = '1.0.0'

@@ -69,7 +69,6 @@ class FirebaseSubscriptionPublisherTest {
                                                           .setState(state)
                                                           .build();
         publisher.publish(singleton(update));
-        FirebaseMirrorTestEnv.waitForConsistency();
         final DocumentSnapshot document = targetCollection.document(expectedId)
                                                           .get().get();
         final String entityStateId = document.getString(EntityStateField.id.toString());

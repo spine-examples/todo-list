@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev Ltd. All rights reserved.
+ * Copyright 2017, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -18,8 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-dependencies {
-    testCompile project(path: ':testutil-cli')
-}
+package io.spine.examples.todolist.server;
 
-apply from: generateDescriptorSetPlugin
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+
+@DisplayName("LocalFirebaseServer should")
+class LocalFirebaseServerTest {
+
+    @Test
+    @DisplayName("have the private parameterless constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(LocalFirebaseServer.class);
+    }
+}

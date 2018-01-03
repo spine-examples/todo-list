@@ -71,7 +71,6 @@ import static io.spine.server.firebase.FirestoreSubscriptionPublisher.EntityStat
 import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.createBoundedContext;
 import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.createCustomer;
 import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.newId;
-import static io.spine.server.firebase.given.FirebaseMirrorTestEnv.waitForConsistency;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -214,7 +213,6 @@ class FirebaseSubscriptionMirrorTest {
         mirror.reflect(CUSTOMER_TYPE);
         final FMCustomerId customerId = newId();
         final FMCustomer expectedState = createCustomer(customerId, boundedContext);
-        waitForConsistency();
         final FMCustomer actualState = findCustomer(customerId, firestore::collection);
         assertEquals(expectedState, actualState);
     }
@@ -226,7 +224,6 @@ class FirebaseSubscriptionMirrorTest {
         mirror.reflect(SESSION_TYPE);
         final FMSessionId sessionId = FirebaseMirrorTestEnv.newSessionId();
         FirebaseMirrorTestEnv.createSession(sessionId, boundedContext);
-        waitForConsistency();
         final DocumentSnapshot document = findDocument(FMSession.class,
                                                        sessionId,
                                                        firestore::collection);
@@ -261,7 +258,6 @@ class FirebaseSubscriptionMirrorTest {
         mirror.reflect(CUSTOMER_TYPE);
         final FMCustomerId customerId = newId();
         createCustomer(customerId, boundedContext, secondTenant);
-        waitForConsistency();
         final Optional<?> document = tryFindDocument(CUSTOMER_TYPE.getJavaClass(),
                                                      customerId,
                                                      firestore::collection);
@@ -281,7 +277,6 @@ class FirebaseSubscriptionMirrorTest {
         mirror.reflect(CUSTOMER_TYPE);
         final FMCustomerId customerId = newId();
         final FMCustomer expectedState = createCustomer(customerId, boundedContext);
-        waitForConsistency();
         final FMCustomer actualState = findCustomer(customerId, customLocation::collection);
         assertEquals(expectedState, actualState);
     }
@@ -301,7 +296,6 @@ class FirebaseSubscriptionMirrorTest {
         mirror.reflect(CUSTOMER_TYPE);
         final FMCustomerId customerId = newId();
         final FMCustomer expectedState = createCustomer(customerId, boundedContext);
-        waitForConsistency();
         final Topic topic = requestFactory.topic().allOf(CUSTOMER_TYPE.getJavaClass());
         final DocumentReference expectedDocument = rule.apply(topic);
         final FMCustomer actualState = findCustomer(customerId, expectedDocument::collection);
@@ -320,10 +314,8 @@ class FirebaseSubscriptionMirrorTest {
                                            .setValue(newUuid())
                                            .build();
         addTenant(newTenant);
-        waitForConsistency();
         final FMCustomerId id = newId();
         createCustomer(id, boundedContext, newTenant);
-        waitForConsistency();
         final FMCustomer readState = findCustomer(id, firestore::collection);
         assertNotNull(readState);
     }

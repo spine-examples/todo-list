@@ -41,7 +41,25 @@ public class Server {
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
 
-    public Server(int port, BoundedContext boundedContext) {
+    /**
+     * Creates a server with the {@link CommandService Command}, {@link QueryService Query} and
+     * {@link SubscriptionService Subscription} gRPC services.
+     *
+     * @param port           the port to bind the server to
+     * @param boundedContext the {@link BoundedContext} to serve
+     * @return a new instance of {@code Server}
+     */
+    public static Server newServer(int port, BoundedContext boundedContext) {
+        return new Server(port, boundedContext);
+    }
+
+    /**
+     * Creates a new instance of {@code Server}.
+     *
+     * @param port                      the port to bind the server to
+     * @param boundedContext            the {@link BoundedContext} to serve
+     */
+    private Server(int port, BoundedContext boundedContext) {
         this.port = port;
         this.boundedContext = boundedContext;
 
@@ -72,16 +90,24 @@ public class Server {
         return result;
     }
 
+    /**
+     * Creates a {@link GrpcContainer} for this server.
+     *
+     * @param commandService      the {@link CommandService} to deploy
+     * @param queryService        the {@link QueryService} to deploy
+     * @param subscriptionService the {@link SubscriptionService} to deploy or {@code null} if no
+     *                            {@code SubscriptionService} is intended for this server
+     * @return a new instance of {@link GrpcContainer}
+     */
     private GrpcContainer initGrpcContainer(CommandService commandService,
                                             QueryService queryService,
                                             SubscriptionService subscriptionService) {
-        final GrpcContainer result = GrpcContainer.newBuilder()
-                                                  .addService(commandService)
-                                                  .addService(queryService)
-                                                  .addService(subscriptionService)
-                                                  .setPort(port)
-                                                  .build();
-        return result;
+        final GrpcContainer.Builder result = GrpcContainer.newBuilder()
+                                                          .setPort(port)
+                                                          .addService(commandService)
+                                                          .addService(queryService)
+                                                          .addService(subscriptionService);
+        return result.build();
     }
 
     /**

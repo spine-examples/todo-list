@@ -20,6 +20,7 @@
 
 package io.spine.server.firebase;
 
+import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.WriteBatch;
@@ -33,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import static com.google.cloud.firestore.Blob.fromBytes;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -72,7 +74,8 @@ final class FirestoreSubscriptionPublisher {
         for (EntityStateUpdate update : updates) {
             write(batch, update);
         }
-        batch.commit();
+        final ApiFuture<?> writeResult = batch.commit();
+        waitFor(writeResult);
     }
 
     private void write(WriteBatch batch, EntityStateUpdate update) {
@@ -94,6 +97,20 @@ final class FirestoreSubscriptionPublisher {
         final String documentKey = DocumentKeys.escape(entityId);
         final DocumentReference result = collection.document(documentKey);
         return result;
+    }
+
+    /**
+     * Blocks the current thread waiting for the given {@link ApiFuture} and logs all the caught
+     * exceptions.
+     *
+     * @param future the future to wait for
+     */
+    private static void waitFor(ApiFuture<?> future) {
+        try {
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            log().error("Unable to publish update:", e);
+        }
     }
 
     /**

@@ -82,7 +82,6 @@ import static io.spine.server.projection.ProjectionEventDispatcher.dispatch;
 import static io.spine.server.storage.memory.InMemoryStorageFactory.newInstance;
 import static org.junit.Assume.assumeNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test environment for the {@link FirebaseSubscriptionMirror FirebaseSubscriptionMirror} tests.
@@ -266,20 +265,6 @@ public final class FirebaseMirrorTestEnv {
         return TenantId.newBuilder()
                        .setValue("Default tenant")
                        .build();
-    }
-
-    /**
-     * Makes current thread {@linkplain Thread#sleep(long) sleep} for three seconds.
-     *
-     * <p>This is required to make sure that the data has been sent to Firebase and is available
-     * for reading.
-     */
-    public static void waitForConsistency() {
-        try {
-            Thread.sleep(3000L);
-        } catch (InterruptedException e) {
-            fail(e.getMessage());
-        }
     }
 
     public static BoundedContext createBoundedContext(String name, boolean multitenant) {

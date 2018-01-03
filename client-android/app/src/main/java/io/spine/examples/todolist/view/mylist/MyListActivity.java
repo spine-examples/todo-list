@@ -50,7 +50,6 @@ public class MyListActivity extends AbstractActivity<MyListViewModel> {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        model().subscribeToMyList();
     }
 
     @Override
@@ -65,11 +64,5 @@ public class MyListActivity extends AbstractActivity<MyListViewModel> {
         button.setOnClickListener(view -> navigator().start()
                                                      .revealing(view)
                                                      .into(NewTaskActivity.class));
-    }
-
-    @Override
-    protected void onDestroy() {
-        model().unSubscribeFromMyList();
-        super.onDestroy();
     }
 }

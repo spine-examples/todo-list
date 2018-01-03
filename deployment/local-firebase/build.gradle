@@ -19,7 +19,8 @@
  */
 
 dependencies {
-    testCompile project(path: ':testutil-cli')
-}
+    compile project(path: ':server')
+    compile project(path: ':firebase-mirror')
 
-apply from: generateDescriptorSetPlugin
+    compile "io.netty:netty-tcnative-boringssl-static:$nettyBoringsslVersion"
+}

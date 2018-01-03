@@ -20,11 +20,11 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.examples.todolist.context.BoundedContexts;
-
 import java.io.IOException;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.examples.todolist.context.BoundedContexts.create;
+import static io.spine.examples.todolist.server.Server.newServer;
 
 /**
  * A local {@link Server} using
@@ -42,7 +42,7 @@ public class LocalInMemoryServer {
     }
 
     public static void main(String[] args) throws IOException {
-        final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, BoundedContexts.create());
+        final Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, create());
         server.start();
     }
 }
