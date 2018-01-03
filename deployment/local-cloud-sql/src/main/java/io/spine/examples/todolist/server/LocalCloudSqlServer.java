@@ -36,7 +36,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.server.Server.subscriptableServer;
+import static io.spine.examples.todolist.server.Server.newServer;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.lang.String.format;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -84,7 +84,7 @@ public class LocalCloudSqlServer {
     public static void main(String[] args) throws IOException {
         final String[] actualArguments = getActualArguments(args);
         final BoundedContext boundedContext = createBoundedContext(actualArguments);
-        final Server server = subscriptableServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
+        final Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
     }
 

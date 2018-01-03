@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.client.TodoClient.HOST;
-import static io.spine.examples.todolist.server.Server.subscriptableServer;
+import static io.spine.examples.todolist.server.Server.newServer;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
@@ -49,7 +49,7 @@ abstract class ViewTest {
     @BeforeEach
     void setUp() throws InterruptedException {
         final BoundedContext boundedContext = BoundedContexts.create();
-        server = subscriptableServer(PORT, boundedContext);
+        server = newServer(PORT, boundedContext);
         startServer();
 
         final TodoClient client = TodoClient.instance(HOST, PORT);

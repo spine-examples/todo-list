@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.server.Server.readWriteServer;
+import static io.spine.examples.todolist.server.Server.newServer;
 import static io.spine.type.TypeUrl.of;
 
 /**
@@ -62,7 +62,7 @@ public class LocalFirebaseServer {
     public static void main(String[] args) throws IOException {
         final BoundedContext boundedContext = BoundedContexts.create();
         startSubscriptionMirror(boundedContext);
-        final Server server = readWriteServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
+        final Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
     }
 

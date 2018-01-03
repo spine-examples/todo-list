@@ -26,7 +26,6 @@ import io.spine.server.QueryService;
 import io.spine.server.SubscriptionService;
 import io.spine.server.transport.GrpcContainer;
 
-import javax.annotation.Nullable;
 import java.io.IOException;
 
 import static io.spine.server.event.EventStore.log;
@@ -43,33 +42,15 @@ public class Server {
     private final BoundedContext boundedContext;
 
     /**
-     * Creates a server with the {@link CommandService Command} and {@link QueryService Query}
-     * gRPC services.
-     *
-     * <p>The resulting server does not provide a push API for the entity states.
-     *
-     * @param port           the port to bind the server to
-     * @param boundedContext the {@link BoundedContext} to serve
-     * @return a new instance of {@code Server}
-     * @see #subscriptableServer(int, BoundedContext)
-     */
-    public static Server readWriteServer(int port, BoundedContext boundedContext) {
-        return new Server(port, boundedContext, false);
-    }
-
-    /**
      * Creates a server with the {@link CommandService Command}, {@link QueryService Query} and
      * {@link SubscriptionService Subscription} gRPC services.
      *
-     * <p>The resulting server provides both push and pull APIs for the entity states.
-     *
      * @param port           the port to bind the server to
      * @param boundedContext the {@link BoundedContext} to serve
      * @return a new instance of {@code Server}
-     * @see #readWriteServer(int, BoundedContext)
      */
-    public static Server subscriptableServer(int port, BoundedContext boundedContext) {
-        return new Server(port, boundedContext, true);
+    public static Server newServer(int port, BoundedContext boundedContext) {
+        return new Server(port, boundedContext);
     }
 
     /**
@@ -77,18 +58,14 @@ public class Server {
      *
      * @param port                      the port to bind the server to
      * @param boundedContext            the {@link BoundedContext} to serve
-     * @param deploySubscriptionService {@code true} if this server should deploy
-     *                                  a {@link SubscriptionService}, {@code false} otherwise
      */
-    private Server(int port, BoundedContext boundedContext, boolean deploySubscriptionService) {
+    private Server(int port, BoundedContext boundedContext) {
         this.port = port;
         this.boundedContext = boundedContext;
 
         final CommandService commandService = initCommandService();
         final QueryService queryService = initQueryService();
-        final SubscriptionService subscriptionService = deploySubscriptionService
-                                                        ? initSubscriptionService()
-                                                        : null;
+        final SubscriptionService subscriptionService = initSubscriptionService();
         this.grpcContainer = initGrpcContainer(commandService, queryService, subscriptionService);
     }
 
@@ -124,14 +101,12 @@ public class Server {
      */
     private GrpcContainer initGrpcContainer(CommandService commandService,
                                             QueryService queryService,
-                                            @Nullable SubscriptionService subscriptionService) {
+                                            SubscriptionService subscriptionService) {
         final GrpcContainer.Builder result = GrpcContainer.newBuilder()
                                                           .setPort(port)
                                                           .addService(commandService)
-                                                          .addService(queryService);
-        if (subscriptionService != null) {
-            result.addService(subscriptionService);
-        }
+                                                          .addService(queryService)
+                                                          .addService(subscriptionService);
         return result.build();
     }
 

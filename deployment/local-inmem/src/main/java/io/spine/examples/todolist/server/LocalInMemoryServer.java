@@ -24,7 +24,7 @@ import java.io.IOException;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.context.BoundedContexts.create;
-import static io.spine.examples.todolist.server.Server.subscriptableServer;
+import static io.spine.examples.todolist.server.Server.newServer;
 
 /**
  * A local {@link Server} using
@@ -42,7 +42,7 @@ public class LocalInMemoryServer {
     }
 
     public static void main(String[] args) throws IOException {
-        final Server server = subscriptableServer(DEFAULT_CLIENT_SERVICE_PORT, create());
+        final Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, create());
         server.start();
     }
 }
