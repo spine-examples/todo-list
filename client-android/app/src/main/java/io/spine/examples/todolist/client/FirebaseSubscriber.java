@@ -177,7 +177,7 @@ public final class FirebaseSubscriber {
         if (type == ADDED || type == MODIFIED) {
             newData.put(id, newMessage);
         } else {
-            throw new UnsupportedOperationException(type.toString());
+            throw new IllegalArgumentException("Unexpected document change: " + type.toString());
         }
         destination.postValue(newData);
     }
