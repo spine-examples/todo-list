@@ -46,13 +46,17 @@ import static java.lang.String.format;
 /**
  * The Firebase client for subscribing to the data in Cloud Firestore.
  *
- * <p>This client subscribes to the updates of the given entity type which are posted through
- * a Cloud Firestore database.
+ * <p>This class represents the client of the Firebase subscription mirror, which subscribes to
+ * the data updates in certain Firestore collections. The updates are then propagated to the further
+ * consumers via {@link LiveData}. The target Firestore collections are determined by project-wide
+ * conventions.
  *
  * <p>The client requires the Firebase App to be
  * {@linkplain com.google.firebase.FirebaseApp#initializeApp initialized}.
  *
- * <p>This class has a single instance. Use {@link #instance()} to retrieve the class instance.
+ * <p>This class has a single instance, since there is currently only one Firebase project and one
+ * Firebase subscription mirror in the TodoList system. Use {@link #instance()} to retrieve
+ * the class instance.
  *
  * @author Dmytro Dashenkov
  */
