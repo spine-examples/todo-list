@@ -56,7 +56,7 @@ import static java.lang.String.format;
  *
  * @author Dmytro Dashenkov
  */
-public class FirebaseSubscriber {
+public final class FirebaseSubscriber {
 
     private static final String ID_KEY = "id";
     private static final String BYTES_KEY = "bytes";
