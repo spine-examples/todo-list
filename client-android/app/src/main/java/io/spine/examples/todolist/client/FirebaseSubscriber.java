@@ -46,25 +46,23 @@ import static java.lang.String.format;
 /**
  * The Firebase client for subscribing to the data in Cloud Firestore.
  *
+ * <p>This client subscribes to the updates of the given entity type which are posted through
+ * a Cloud Firestore database.
+ *
+ * <p>The client requires the Firebase App to be
+ * {@linkplain com.google.firebase.FirebaseApp#initializeApp initialized}.
+ *
+ * <p>This class has a single instance. Use {@link #instance()} to retrieve the class instance.
+ *
  * @author Dmytro Dashenkov
  */
 public class FirebaseSubscriber {
 
     private static final String ID_KEY = "id";
     private static final String BYTES_KEY = "bytes";
-
     private static final String TAG = FirebaseSubscriber.class.getSimpleName();
 
     private final FirebaseFirestore database = FirebaseFirestore.getInstance();
-
-    private static final FirebaseSubscriber instance = new FirebaseSubscriber();
-
-    /**
-     * Retrieves an instance of {@code FirebaseSubscriber}.
-     */
-    public static FirebaseSubscriber instance() {
-        return instance;
-    }
 
     /** Prevent direct instantiation. */
     private FirebaseSubscriber() {}
@@ -200,5 +198,18 @@ public class FirebaseSubscriber {
         final T mockInstance = Messages.newInstance(type);
         @SuppressWarnings("unchecked") final Parser<T> result = (Parser<T>) mockInstance.getParserForType();
         return result;
+    }
+
+    /**
+     * Retrieves the singleton instance of {@code FirebaseSubscriber}.
+     */
+    public static FirebaseSubscriber instance() {
+        return Singleton.INSTANCE.value;
+    }
+
+    private enum Singleton {
+        INSTANCE;
+        @SuppressWarnings("NonSerializableFieldInSerializableClass")
+        private final FirebaseSubscriber value = new FirebaseSubscriber();
     }
 }
