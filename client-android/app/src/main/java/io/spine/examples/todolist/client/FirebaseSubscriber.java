@@ -44,19 +44,16 @@ import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.String.format;
 
 /**
- * The Firebase client for subscribing to the data in Cloud Firestore.
+ * The Firebase subscription mirror Android client.
  *
- * <p>This class represents the client of the Firebase subscription mirror, which subscribes to
- * the data updates in certain Firestore collections. The updates are then propagated to the further
- * consumers via {@link LiveData}. The target Firestore collections are determined by project-wide
- * conventions.
+ * <p>This class is the client of the Firebase subscription mirror. The mirror is one for all
+ * the bounded contexts in TodoList, thus this class is a singleton.
+ *
+ * <p>{@code FirebaseSubscriber} propagates the entity state updates posted by the mirror to
+ * the consumers within the Android application.
  *
  * <p>The client requires the Firebase App to be
  * {@linkplain com.google.firebase.FirebaseApp#initializeApp initialized}.
- *
- * <p>This class has a single instance, since there is currently only one Firebase project and one
- * Firebase subscription mirror in the TodoList system. Use {@link #instance()} to retrieve
- * the class instance.
  *
  * @author Dmytro Dashenkov
  */
