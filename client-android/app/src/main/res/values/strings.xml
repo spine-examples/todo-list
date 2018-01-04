@@ -40,4 +40,5 @@
     <string name="due_date">Due date: %s</string>
     <string name="accept">Accept</string>
     <string name="decline">Decline</string>
+    <string name="title_activity_task_details">TaskDetailsActivity</string>
 </resources>
