@@ -36,16 +36,13 @@ import io.spine.examples.todolist.R;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.view.TimeFormatter;
 import io.spine.examples.todolist.view.task.TaskDetailsActivity;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import static android.view.View.GONE;
-import static com.google.protobuf.util.Timestamps.toMillis;
 import static io.spine.examples.todolist.model.Colors.toRgb;
 import static io.spine.validate.Validate.isDefault;
 
@@ -110,9 +107,6 @@ final class MyTaskListViewAdapter
      */
     static class TaskViewHolder extends RecyclerView.ViewHolder {
 
-        private static final SimpleDateFormat DATE_FORMAT =
-                new SimpleDateFormat("dd MMM YYYY", Locale.getDefault());
-
         private final TextView description;
         private final TextView dueDate;
         private final View dueDateLabel;
@@ -153,21 +147,14 @@ final class MyTaskListViewAdapter
         }
 
         private void bindDueDate(Timestamp taskDueDate) {
-            final boolean isPresent = taskDueDate.getSeconds() > 0;
+            final String formattedDueDate = TimeFormatter.INSTANCE.format(taskDueDate);
+            final boolean isPresent = !formattedDueDate.isEmpty();
             if (isPresent) {
-                setTime(dueDate, taskDueDate);
+                dueDate.setText(formattedDueDate);
             } else {
                 dueDate.setVisibility(GONE);
                 dueDateLabel.setVisibility(GONE);
             }
-        }
-
-        @SuppressWarnings("AccessToNonThreadSafeStaticField")
-            // DATE_FORMAT - OK since setTime() is always called from the main thread.
-        private static void setTime(TextView view, Timestamp time) {
-            final long millis = toMillis(time);
-            final Date date = new Date(millis);
-            view.setText(DATE_FORMAT.format(date));
         }
     }
 }

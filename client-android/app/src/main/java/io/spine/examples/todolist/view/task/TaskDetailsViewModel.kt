@@ -26,8 +26,18 @@ import io.spine.examples.todolist.TaskId
 import io.spine.examples.todolist.TaskLabel
 import io.spine.examples.todolist.view.AbstractViewModel
 
+/**
+ * The [view model][android.arch.lifecycle.ViewModel] of the [TaskDetailsActivity].
+ */
 class TaskDetailsViewModel : AbstractViewModel() {
 
+    /**
+     * Fetches the task with the given ID from the server.
+     *
+     * @param id       ID of the task to fetch
+     * @param callback the callback to which the resulting [Task] is passed; the callback argument
+     *                 is `null` iff the task with the given ID is not found
+     */
     fun fetchTask(id: TaskId, callback: (Task?) -> Unit) {
         execute {
             val task = client().getTaskOr(id, null)
@@ -37,11 +47,19 @@ class TaskDetailsViewModel : AbstractViewModel() {
         }
     }
 
+    /**
+     * Fetches the labels of the task with the given ID.
+     *
+     * If the task does not exist of has no labels, this method results in an empty collection.
+     *
+     * @param id       ID of the task to find the labels for
+     * @param callback the callback to which the resulting labels are passed
+     */
     fun fetchLabels(id: TaskId, callback: (Collection<TaskLabel>) -> Unit) {
         execute {
             val taskLabels = client().getLabels(id)
-                    .labelIdsList
-                    .idsList
+                                     .labelIdsList
+                                     .idsList
             val result = ArrayList<TaskLabel>(taskLabels.size)
             taskLabels.forEach {
                 val label = client().getLabelOr(it, null)
@@ -49,7 +67,7 @@ class TaskDetailsViewModel : AbstractViewModel() {
                     result.add(label)
                 } else {
                     Log.e(TaskDetailsViewModel::class.java.name,
-                            "Unable to fetch label with ID $id")
+                          "Unable to fetch label with ID $id")
                 }
                 inMainThread {
                     callback(result)

@@ -25,25 +25,41 @@ import android.content.Intent
 import android.support.v7.widget.GridLayoutManager
 import android.widget.TextView
 import com.google.protobuf.Timestamp
-import com.google.protobuf.util.Timestamps.toMillis
 import io.spine.examples.todolist.R
 import io.spine.examples.todolist.Task
 import io.spine.examples.todolist.TaskId
 import io.spine.examples.todolist.TaskLabel
 import io.spine.examples.todolist.model.toDetails
 import io.spine.examples.todolist.view.AbstractActivity
+import io.spine.examples.todolist.view.TimeFormatter
 import io.spine.examples.todolist.view.newtask.ReadonlyLabelsAdapter
 import kotlinx.android.synthetic.main.task_details.*
-import java.text.SimpleDateFormat
-import java.util.*
 
+/**
+ * The `Activity` displaying a single [task][Task] to the user.
+ *
+ * @see TaskDetailsViewModel
+ */
 class TaskDetailsActivity : AbstractActivity<TaskDetailsViewModel>() {
 
+    /**
+     * The companion object of the `TaskDetailsActivity`.
+     *
+     * The object helps to start the activity with the required parameters.
+     */
     companion object {
 
+        /**
+         * The name of the Task ID param passed to the activity on creation.
+         */
         private const val TASK_ID_KEY = "task_id"
-        private val FORMAT = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
+        /**
+         * Opens the `TaskDetailsActivity` for showing the [Task] with the given ID.
+         *
+         * @param context to open the activity from
+         * @param taskId  the ID of the [Task]
+         */
         fun open(context: Context, taskId: TaskId) {
             val intent = Intent(context, TaskDetailsActivity::class.java)
             val idValue = taskId.value
@@ -51,14 +67,24 @@ class TaskDetailsActivity : AbstractActivity<TaskDetailsViewModel>() {
             context.startActivity(intent)
         }
 
-        private fun getTargetId(activity: TaskDetailsActivity): TaskId {
-            val openIntent = activity.intent
-            val taskIdValue = openIntent.getStringExtra(TASK_ID_KEY)
-            val result = TaskId.newBuilder()
-                               .setValue(taskIdValue)
-                               .build()
-            return result
-        }
+        /**
+         * The ID of the [Task] displayed on this activity.
+         *
+         * This value is passed to the `activity` on creation.
+         *
+         * This property is defined in the companion object to make sure the [TaskDetailsActivity]
+         * never works with the passed arguments on the low level (i.e. on the level of
+         * the `Intent`).
+         */
+        private val TaskDetailsActivity.targetId: TaskId
+            get() {
+                val openIntent = this.intent
+                val taskIdValue = openIntent.getStringExtra(TASK_ID_KEY)
+                val result = TaskId.newBuilder()
+                        .setValue(taskIdValue)
+                        .build()
+                return result
+            }
     }
 
     override fun getContentViewResource() = R.layout.activity_task_details
@@ -69,33 +95,41 @@ class TaskDetailsActivity : AbstractActivity<TaskDetailsViewModel>() {
         val columnCount = resources.getInteger(R.integer.label_list_column_count)
         taskLabels.layoutManager = GridLayoutManager(applicationContext, columnCount)
 
-        val taskId = getTargetId(this)
+        val taskId = targetId
         model().fetchTask(taskId, this::updateTask)
         model().fetchLabels(taskId, this::updateLabels)
     }
 
+    /**
+     * Updates the activity UI with the data from the given [Task].
+     */
     private fun updateTask(task: Task?) {
         if (task !== null) {
             taskDescription.text = task.description.value
             taskPriority.text = task.priority.toString()
-            bindTimestamp(taskDueDate, task.dueDate)
+            bindDueDate(taskDueDate, task.dueDate)
         }
     }
 
-    private fun bindTimestamp(target: TextView, timestamp: Timestamp) {
-        if (timestamp.seconds > 0) {
-            val date = Date(toMillis(timestamp))
-            val formattedDate = FORMAT.format(date)
-            val dueDate = String.format(resources.getString(R.string.due_date), formattedDate)
-            target.text = dueDate
+    /**
+     * Binds the given due date [Timestamp] to the given view.
+     */
+    private fun bindDueDate(target: TextView, dueDate: Timestamp) {
+        if (dueDate.seconds > 0) {
+            val formattedDate = TimeFormatter.format(dueDate)
+            target.text = String.format(resources.getString(R.string.due_date), formattedDate)
         }
     }
 
+    /**
+     * Updates the list of the task labels with the given [labels][TaskLabel].
+     */
     private fun updateLabels(labels: Collection<TaskLabel>) {
         val labelDetails = labels.map(TaskLabel::toDetails)
         val adapter = ReadonlyLabelsAdapter(labelDetails)
         taskLabels.adapter = adapter
     }
+
 }
 
 

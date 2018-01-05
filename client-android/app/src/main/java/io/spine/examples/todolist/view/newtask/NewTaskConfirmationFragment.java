@@ -33,15 +33,12 @@ import android.widget.TextView;
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.R;
+import io.spine.examples.todolist.view.TimeFormatter;
 import io.spine.examples.todolist.view.ViewModelFactory;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.google.protobuf.util.Timestamps.toMillis;
 import static java.lang.String.format;
 
 /**
@@ -52,9 +49,6 @@ import static java.lang.String.format;
 public final class NewTaskConfirmationFragment extends PagerFragment {
 
     static final int POSITION_IN_WIZARD = 2;
-
-    private static final SimpleDateFormat DATE_FORMAT =
-            new SimpleDateFormat("dd MMM YYYY", Locale.getDefault());
 
     private NewTaskViewModel model;
     private TextView taskDescription;
@@ -98,15 +92,11 @@ public final class NewTaskConfirmationFragment extends PagerFragment {
         final String taskPriorityValue = model.getTaskPriority().toString();
         taskPriority.setText(taskPriorityValue);
         final Timestamp dueDateTimestamp = model.getTaskDueDate();
-        if (dueDateTimestamp.getSeconds() > 0) {
-            final Date dueDate = new Date(toMillis(dueDateTimestamp));
-            @SuppressWarnings("AccessToNonThreadSafeStaticField")
-                // Accessed from the main thread only.
-            final String taskDueDateValue = DATE_FORMAT.format(dueDate);
+        final String formattedDueDate = TimeFormatter.INSTANCE.format(dueDateTimestamp);
+        if (!formattedDueDate.isEmpty()) {
             final String template = getString(R.string.due_date);
-            taskDueDate.setText(format(template, taskDueDateValue));
+            taskDueDate.setText(format(template, formattedDueDate));
         }
-
         final List<LabelDetails> labels = newArrayList(model.getTaskLabels());
         final ReadonlyLabelsAdapter adapter = new ReadonlyLabelsAdapter(labels);
         taskLabels.setAdapter(adapter);
