@@ -143,13 +143,9 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
-    public Optional<Task> getTask(TaskId id) {
-        return findById(Task.class, id);
-    }
-
-    @Override
     public Task getTaskOr(TaskId id, @Nullable Task other) {
-        return getTask(id).orElse(other);
+        final Optional<Task> found = findById(Task.class, id);
+        return found.orElse(other);
     }
 
     @Override
@@ -166,15 +162,11 @@ final class TodoClientImpl implements SubscribingTodoClient {
         return result;
     }
 
-    @Override
-    public Optional<TaskLabel> getLabel(LabelId id) {
-        return findById(TaskLabel.class, id);
-    }
-
     @Nullable
     @Override
-    public TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel label) {
-        return getLabel(id).orElse(label);
+    public TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel other) {
+        final Optional<TaskLabel> found = findById(TaskLabel.class, id);
+        return found.orElse(other);
     }
 
     @Override

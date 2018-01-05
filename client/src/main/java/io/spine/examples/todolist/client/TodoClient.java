@@ -32,7 +32,6 @@ import io.spine.examples.todolist.q.projection.MyListView;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * A client interface.
@@ -90,21 +89,40 @@ public interface TodoClient {
     /**
      * Obtains a single {@link Task} by its ID.
      *
-     * @param id the ID to search by
-     * @return the {@link Task} with the given ID or {@code Optional.empty()} if there is no such
-     *         task
+     * <p>If the system contains no task with such ID, the {@code other} value is returned.
+     *
+     * <p>Returns {@code null} iff the task is not found by ID and the {@code other} value is
+     * {@code null}.
+     *
+     * @param id    the ID of the task to search by
+     * @param other the default value of the task
+     * @return the task with the requested ID or {@code other} if the task is not found
      */
-    Optional<Task> getTask(TaskId id);
-
     @Nullable
     Task getTaskOr(TaskId id, @Nullable Task other);
 
+    /**
+     * Obtains the labels assigned to the task with the given ID.
+     *
+     * @param taskId the task ID to search by
+     * @return the labels of the specified task
+     */
     TaskLabels getLabels(TaskId taskId);
 
-    Optional<TaskLabel> getLabel(LabelId id);
-
+    /**
+     * Obtains a single {@link TaskLabel} by its ID.
+     *
+     * <p>If the system contains no label with such ID, the {@code other} value is returned.
+     *
+     * <p>Returns {@code null} iff the label is not found by ID and the {@code other} value is
+     * {@code null}.
+     *
+     * @param id    the label ID to search by
+     * @param other the default value of the label
+     * @return the label with the requested ID or {@code other} if the label is not found
+     */
     @Nullable
-    TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel label);
+    TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel other);
 
     /**
      * Shutdown the connection channel.
