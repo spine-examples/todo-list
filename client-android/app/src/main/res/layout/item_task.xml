@@ -47,14 +47,14 @@
                 android:id="@+id/task_due_date_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toStartOf="@+id/task_due_date"
+                android:layout_toStartOf="@+id/taskDueDate"
                 android:layout_alignParentBottom="true"
                 android:text="@string/due"
                 android:layout_marginEnd="@dimen/divider_size"
                 android:layout_marginBottom="@dimen/std_padding"
                 android:textSize="@dimen/small_text"/>
         <TextView
-                android:id="@+id/task_due_date"
+                android:id="@+id/taskDueDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/small_text"

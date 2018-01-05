@@ -20,22 +20,41 @@
 
 package io.spine.examples.todolist.view.task
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
+import android.util.Log
 import io.spine.examples.todolist.Task
 import io.spine.examples.todolist.TaskId
+import io.spine.examples.todolist.TaskLabel
 import io.spine.examples.todolist.view.AbstractViewModel
 
 class TaskDetailsViewModel : AbstractViewModel() {
 
-    private val task = MutableLiveData<Task?>()
-
-    fun fetchTask(id: TaskId, owner: LifecycleOwner, callback: Observer<Task?>) {
-        task.observe(owner, callback)
+    fun fetchTask(id: TaskId, callback: (Task?) -> Unit) {
         execute {
-//            val task = client().getTask(id)
-            this.task.postValue(null /*task*/)
+            val task = client().getTaskOr(id, null)
+            inMainThread {
+                callback(task)
+            }
+        }
+    }
+
+    fun fetchLabels(id: TaskId, callback: (Collection<TaskLabel>) -> Unit) {
+        execute {
+            val taskLabels = client().getLabels(id)
+                    .labelIdsList
+                    .idsList
+            val result = ArrayList<TaskLabel>(taskLabels.size)
+            taskLabels.forEach {
+                val label = client().getLabelOr(it, null)
+                if (label !== null) {
+                    result.add(label)
+                } else {
+                    Log.e(TaskDetailsViewModel::class.java.name,
+                            "Unable to fetch label with ID $id")
+                }
+                inMainThread {
+                    callback(result)
+                }
+            }
         }
     }
 }

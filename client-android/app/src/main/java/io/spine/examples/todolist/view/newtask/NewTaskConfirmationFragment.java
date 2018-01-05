@@ -81,10 +81,10 @@ public final class NewTaskConfirmationFragment extends PagerFragment {
     }
 
     private void initViews(View root) {
-        this.taskDescription = root.findViewById(R.id.task_description);
-        this.taskPriority = root.findViewById(R.id.task_priority);
-        this.taskDueDate = root.findViewById(R.id.task_due_date);
-        this.taskLabels = root.findViewById(R.id.task_labels);
+        this.taskDescription = root.findViewById(R.id.taskDescription);
+        this.taskPriority = root.findViewById(R.id.taskPriority);
+        this.taskDueDate = root.findViewById(R.id.taskDueDate);
+        this.taskLabels = root.findViewById(R.id.taskLabels);
 
         final Context context = getContext();
         final int spinCount = context.getResources()

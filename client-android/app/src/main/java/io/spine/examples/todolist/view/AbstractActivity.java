@@ -52,8 +52,6 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public abstract class AbstractActivity<VM extends AbstractViewModel> extends AppCompatActivity {
 
-    private static final String TAG = AbstractActivity.class.getSimpleName();
-
     private final Navigator navigator;
     private VM model;
 
@@ -190,7 +188,13 @@ public abstract class AbstractActivity<VM extends AbstractViewModel> extends App
         if (actionBar != null) {
             actionBar.setTitle(getTitleResource());
         } else {
-            Log.w(TAG, "initToolbar: No support ActionBar present");
+            Log.w(logTag(), "initToolbar: No support ActionBar present");
         }
+    }
+
+    private String logTag() {
+        final Class<?> cls = getClass();
+        final String tag = cls.getSimpleName();
+        return tag;
     }
 }

@@ -26,23 +26,28 @@
         android:layout_height="match_parent">
 
     <TextView
-            android:text="@string/choose_a_label"
+            android:id="@+id/taskDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/choose_label_label"
             android:layout_margin="@dimen/std_padding"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
 
-    <android.support.v7.widget.RecyclerView
-            android:id="@+id/taskLabels"
-            android:layout_width="match_parent"
+    <TextView
+            android:id="@+id/taskPriority"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:minHeight="@dimen/min_item_height"
-            app:layout_constraintTop_toBottomOf="@id/choose_label_label"
             android:layout_margin="@dimen/std_padding"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@id/taskDescription"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+            android:id="@+id/taskDueDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/std_padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/taskDescription"/>
 
     <View
             android:id="@+id/divider"
@@ -50,42 +55,17 @@
             android:layout_height="@dimen/divider_size"
             android:layout_margin="@dimen/std_padding"
             android:background="@color/dividerColor"
-            app:layout_constraintTop_toBottomOf="@id/taskLabels"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-
-    <TextView
-            android:id="@+id/or_crete_label_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/std_padding"
-            android:text="@string/or_create_a_label"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider"/>
-
-    <Button
-            android:id="@+id/add_new_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/add"
-            android:textColor="@color/colorAccent"
-            android:background="?attr/selectableItemBackground"
-            android:layout_margin="@dimen/std_padding"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/or_crete_label_label"/>
+            app:layout_constraintTop_toBottomOf="@id/taskPriority"
+            app:layout_constraintStart_toStartOf="parent"/>
 
     <android.support.v7.widget.RecyclerView
-            android:id="@+id/new_labels_list"
+            android:id="@+id/taskLabels"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="@dimen/std_padding"
-            android:layout_marginEnd="@dimen/std_padding"
-            android:layout_marginTop="@dimen/std_padding"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/add_new_label"
+            android:layout_margin="@dimen/std_padding"
+            android:requiresFadingEdge="vertical"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider"/>
 
 </android.support.constraint.ConstraintLayout>

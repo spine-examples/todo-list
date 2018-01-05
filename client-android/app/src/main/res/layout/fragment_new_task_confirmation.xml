@@ -19,53 +19,9 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<android.support.constraint.ConstraintLayout
+<FrameLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    <TextView
-            android:id="@+id/task_description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/std_padding"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-    <TextView
-            android:id="@+id/task_priority"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/std_padding"
-            app:layout_constraintTop_toBottomOf="@id/task_description"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-    <TextView
-            android:id="@+id/task_due_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/std_padding"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/task_description"/>
-
-    <View
-            android:id="@+id/divider"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/divider_size"
-            android:layout_margin="@dimen/std_padding"
-            android:background="@color/dividerColor"
-            app:layout_constraintTop_toBottomOf="@id/task_priority"
-            app:layout_constraintStart_toStartOf="parent"/>
-
-    <android.support.v7.widget.RecyclerView
-            android:id="@+id/task_labels"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/std_padding"
-            android:requiresFadingEdge="vertical"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/divider"/>
-
-</android.support.constraint.ConstraintLayout>
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+    <include layout="@layout/task_details"/>
+</FrameLayout>

@@ -26,3 +26,4 @@
 @ParametersAreNonnullByDefault
 package io.spine.examples.todolist.model;
 
+import javax.annotation.ParametersAreNonnullByDefault;

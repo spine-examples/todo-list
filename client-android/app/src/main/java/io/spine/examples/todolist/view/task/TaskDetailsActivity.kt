@@ -20,18 +20,82 @@
 
 package io.spine.examples.todolist.view.task
 
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import android.content.Context
+import android.content.Intent
+import android.support.v7.widget.GridLayoutManager
+import android.widget.TextView
+import com.google.protobuf.Timestamp
+import com.google.protobuf.util.Timestamps.toMillis
 import io.spine.examples.todolist.R
-import kotlinx.android.synthetic.main.activity_task_details.*
+import io.spine.examples.todolist.Task
+import io.spine.examples.todolist.TaskId
+import io.spine.examples.todolist.TaskLabel
+import io.spine.examples.todolist.model.Labels
+import io.spine.examples.todolist.view.AbstractActivity
+import io.spine.examples.todolist.view.newtask.ReadonlyLabelsAdapter
+import kotlinx.android.synthetic.main.task_details.*
+import java.text.SimpleDateFormat
+import java.util.*
 
-class TaskDetailsActivity : AppCompatActivity() {
+class TaskDetailsActivity : AbstractActivity<TaskDetailsViewModel>() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_task_details)
-        setSupportActionBar(toolbar)
+    companion object {
 
+        private const val TASK_ID_KEY = "task_id"
+        private val FORMAT = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
+        fun open(context: Context, taskId: TaskId) {
+            val intent = Intent(context, TaskDetailsActivity::class.java)
+            val idValue = taskId.value
+            intent.putExtra(TASK_ID_KEY, idValue)
+            context.startActivity(intent)
+        }
+
+        private fun getTargetId(activity: TaskDetailsActivity): TaskId {
+            val openIntent = activity.intent
+            val taskIdValue = openIntent.getStringExtra(TASK_ID_KEY)
+            val result = TaskId.newBuilder()
+                               .setValue(taskIdValue)
+                               .build()
+            return result
+        }
+    }
+
+    override fun getContentViewResource() = R.layout.activity_task_details
+
+    override fun getViewModelClass() = TaskDetailsViewModel::class.java
+
+    override fun initializeView() {
+        val columnCount = resources.getInteger(R.integer.label_list_column_count)
+        taskLabels.layoutManager = GridLayoutManager(applicationContext, columnCount)
+
+        val taskId = getTargetId(this)
+        model().fetchTask(taskId, this::updateTask)
+        model().fetchLabels(taskId, this::updateLabels)
+    }
+
+    private fun updateTask(task: Task?) {
+        if (task !== null) {
+            taskDescription.text = task.description.value
+            taskPriority.text = task.priority.toString()
+            bindTimestamp(taskDueDate, task.dueDate)
+        }
+    }
+
+    private fun bindTimestamp(target: TextView, timestamp: Timestamp) {
+        if (timestamp.seconds > 0) {
+            val date = Date(toMillis(timestamp))
+            val formattedDate = FORMAT.format(date)
+            val dueDate = String.format(resources.getString(R.string.due_date), formattedDate)
+            target.text = dueDate
+        }
+    }
+
+    private fun updateLabels(labels: Collection<TaskLabel>) {
+        val labelDetails = labels.map(Labels::packDetails)
+        val adapter = ReadonlyLabelsAdapter(labelDetails)
+        taskLabels.adapter = adapter
     }
 }
+
+

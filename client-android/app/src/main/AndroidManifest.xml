@@ -48,7 +48,7 @@
         </activity>
         <activity
                 android:name=".view.task.TaskDetailsActivity"
-                android:label="@string/title_activity_task_details"
+                android:screenOrientation="portrait"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
     </application>

@@ -18,11 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * This package contains classes that form the TodoList client.
- */
+package io.spine.examples.todolist.model
 
-@ParametersAreNonnullByDefault
-package io.spine.examples.todolist.client;
+import io.spine.examples.todolist.LabelDetails
+import io.spine.examples.todolist.TaskLabel
 
-import javax.annotation.ParametersAreNonnullByDefault;
+object Labels {
+
+    fun packDetails(label: TaskLabel): LabelDetails = LabelDetails.newBuilder()
+            .setTitle(label.title)
+            .setColor(label.color)
+            .build()
+}
