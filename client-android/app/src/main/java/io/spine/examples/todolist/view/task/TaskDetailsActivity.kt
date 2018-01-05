@@ -33,7 +33,10 @@ import io.spine.examples.todolist.model.toDetails
 import io.spine.examples.todolist.view.AbstractActivity
 import io.spine.examples.todolist.view.TimeFormatter
 import io.spine.examples.todolist.view.newtask.ReadonlyLabelsAdapter
-import kotlinx.android.synthetic.main.task_details.*
+import kotlinx.android.synthetic.main.task_details.taskDescription
+import kotlinx.android.synthetic.main.task_details.taskDueDate
+import kotlinx.android.synthetic.main.task_details.taskLabels
+import kotlinx.android.synthetic.main.task_details.taskPriority
 
 /**
  * The `Activity` displaying a single [task][Task] to the user.
