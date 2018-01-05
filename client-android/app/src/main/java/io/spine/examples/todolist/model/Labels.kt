@@ -23,10 +23,12 @@ package io.spine.examples.todolist.model
 import io.spine.examples.todolist.LabelDetails
 import io.spine.examples.todolist.TaskLabel
 
-object Labels {
-
-    fun packDetails(label: TaskLabel): LabelDetails = LabelDetails.newBuilder()
-                                                                  .setTitle(label.title)
-                                                                  .setColor(label.color)
-                                                                  .build()
-}
+/**
+ * Converts this instance of [TaskLabel] to [LabelDetails].
+ *
+ * @return [LabelDetails] with the `title` and `color` of this label
+ */
+fun TaskLabel.toDetails(): LabelDetails = LabelDetails.newBuilder()
+                                                      .setTitle(title)
+                                                      .setColor(color)
+                                                      .build()

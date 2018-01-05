@@ -30,7 +30,7 @@ import io.spine.examples.todolist.R
 import io.spine.examples.todolist.Task
 import io.spine.examples.todolist.TaskId
 import io.spine.examples.todolist.TaskLabel
-import io.spine.examples.todolist.model.Labels
+import io.spine.examples.todolist.model.toDetails
 import io.spine.examples.todolist.view.AbstractActivity
 import io.spine.examples.todolist.view.newtask.ReadonlyLabelsAdapter
 import kotlinx.android.synthetic.main.task_details.*
@@ -92,7 +92,7 @@ class TaskDetailsActivity : AbstractActivity<TaskDetailsViewModel>() {
     }
 
     private fun updateLabels(labels: Collection<TaskLabel>) {
-        val labelDetails = labels.map(Labels::packDetails)
+        val labelDetails = labels.map(TaskLabel::toDetails)
         val adapter = ReadonlyLabelsAdapter(labelDetails)
         taskLabels.adapter = adapter
     }
