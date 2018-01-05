@@ -58,7 +58,7 @@ class TaskDetailsActivity : AbstractActivity<TaskDetailsViewModel>() {
          * Opens the `TaskDetailsActivity` for showing the [Task] with the given ID.
          *
          * @param context to open the activity from
-         * @param taskId  the ID of the [Task]
+         * @param taskId  the ID of the [Task] to display
          */
         fun open(context: Context, taskId: TaskId) {
             val intent = Intent(context, TaskDetailsActivity::class.java)
@@ -73,8 +73,7 @@ class TaskDetailsActivity : AbstractActivity<TaskDetailsViewModel>() {
          * This value is passed to the `activity` on creation.
          *
          * This property is defined in the companion object to make sure the [TaskDetailsActivity]
-         * never works with the passed arguments on the low level (i.e. on the level of
-         * the `Intent`).
+         * never works with the passed arguments on the low level (i.e. on the level of `Intent`s).
          */
         private val TaskDetailsActivity.targetId: TaskId
             get() {
@@ -117,7 +116,8 @@ class TaskDetailsActivity : AbstractActivity<TaskDetailsViewModel>() {
     private fun bindDueDate(target: TextView, dueDate: Timestamp) {
         if (dueDate.seconds > 0) {
             val formattedDate = TimeFormatter.format(dueDate)
-            target.text = String.format(resources.getString(R.string.due_date), formattedDate)
+            val template = resources.getString(R.string.due_date)
+            target.text = String.format(template, formattedDate)
         }
     }
 
@@ -129,7 +129,4 @@ class TaskDetailsActivity : AbstractActivity<TaskDetailsViewModel>() {
         val adapter = ReadonlyLabelsAdapter(labelDetails)
         taskLabels.adapter = adapter
     }
-
 }
-
-

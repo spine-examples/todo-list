@@ -26,12 +26,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * The formatter for the date/time/date-time data types.
+ * The formatter for the date, time and date-time data types.
  */
 object TimeFormatter {
 
     /**
-     * The date format in which the due date is displayed on the UI.
+     * The format in which dates are displayed on the UI.
      */
     private val FORMAT = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
@@ -53,5 +53,4 @@ object TimeFormatter {
             return result
         }
     }
-
 }

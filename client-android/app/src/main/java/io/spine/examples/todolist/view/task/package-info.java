@@ -21,7 +21,7 @@
 /**
  * This package contains the classes that define the {@code Task} overview UI and behavior.
  *
- * <p>Note that some of the components in this package may be written in Kotlin, thus the generated
+ * <p>Note that some of the components in this package are written in Kotlin, thus the generated
  * JavaDoc is absent for those components.
  */
 @ParametersAreNonnullByDefault

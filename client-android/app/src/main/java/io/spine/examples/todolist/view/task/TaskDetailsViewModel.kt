@@ -32,7 +32,7 @@ import io.spine.examples.todolist.view.AbstractViewModel
 class TaskDetailsViewModel : AbstractViewModel() {
 
     /**
-     * Fetches the task with the given ID from the server.
+     * Fetches the task with the given ID.
      *
      * @param id       ID of the task to fetch
      * @param callback the callback to which the resulting [Task] is passed; the callback argument
@@ -50,7 +50,7 @@ class TaskDetailsViewModel : AbstractViewModel() {
     /**
      * Fetches the labels of the task with the given ID.
      *
-     * If the task does not exist of has no labels, this method results in an empty collection.
+     * If the task does not exist or has no labels, this method results in an empty collection.
      *
      * @param id       ID of the task to find the labels for
      * @param callback the callback to which the resulting labels are passed
