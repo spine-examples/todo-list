@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.client;
 
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.spine.examples.todolist.TaskStatus.FINALIZED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -98,5 +100,24 @@ class CreateBasicTaskTest extends TodoClientTest {
                                            .getValue());
         assertEquals(DESCRIPTION, secondView.getDescription()
                                             .getValue());
+    }
+
+    @Test
+    @DisplayName("the task should be found")
+    void obtainAllTasks() {
+        final CreateBasicTask createTask = createBasicTask();
+        client.postCommand(createTask);
+
+        final List<Task> allTasks = client.getTasks();
+
+        assertEquals(1, allTasks.size());
+        final Task singleTask = allTasks.get(0);
+
+        // Set fields
+        assertEquals(createTask.getId(), singleTask.getId());
+        assertEquals(createTask.getDescription(), singleTask.getDescription());
+
+        // Default fields
+        assertEquals(FINALIZED, singleTask.getTaskStatus());
     }
 }
