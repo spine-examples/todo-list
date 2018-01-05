@@ -26,7 +26,7 @@ import io.spine.examples.todolist.TaskLabel
 object Labels {
 
     fun packDetails(label: TaskLabel): LabelDetails = LabelDetails.newBuilder()
-            .setTitle(label.title)
-            .setColor(label.color)
-            .build()
+                                                                  .setTitle(label.title)
+                                                                  .setColor(label.color)
+                                                                  .build()
 }
