@@ -87,7 +87,7 @@ public interface TodoClient {
      * <p>Returns {@code null} iff the task is not found by ID and the {@code other} value is
      * {@code null}.
      *
-     * @param id    the ID of the task to search by
+     * @param id    the task ID to search by
      * @param other the default value of the task
      * @return the task with the requested ID or {@code other} if the task is not found
      */
