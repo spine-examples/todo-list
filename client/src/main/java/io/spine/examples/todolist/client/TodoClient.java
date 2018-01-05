@@ -80,13 +80,6 @@ public interface TodoClient {
     List<Task> getTasks();
 
     /**
-     * Obtains all {@linkplain TaskLabel labels} in the system.
-     *
-     * @return the list of the {@code TaskLabel}
-     */
-    List<TaskLabel> getLabels();
-
-    /**
      * Obtains a single {@link Task} by its ID.
      *
      * <p>If the system contains no task with such ID, the {@code other} value is returned.
@@ -100,6 +93,13 @@ public interface TodoClient {
      */
     @Nullable
     Task getTaskOr(TaskId id, @Nullable Task other);
+
+    /**
+     * Obtains all {@linkplain TaskLabel labels} in the system.
+     *
+     * @return the list of the {@code TaskLabel}
+     */
+    List<TaskLabel> getLabels();
 
     /**
      * Obtains the labels assigned to the task with the given ID.
