@@ -25,6 +25,7 @@ import com.google.protobuf.Message;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
+import io.spine.Identifier;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.EntityStateUpdate;
 import io.spine.client.Query;
@@ -40,8 +41,11 @@ import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceBlockingS
 import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceStub;
 import io.spine.core.Command;
 import io.spine.core.UserId;
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.Task;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
+import io.spine.examples.todolist.TaskLabels;
 import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
@@ -49,8 +53,12 @@ import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.protobuf.AnyPacker;
 import io.spine.time.ZoneOffsets;
 
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.collect.ImmutableSet.of;
 import static io.spine.Identifier.newUuid;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -135,8 +143,38 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
+    public Optional<Task> getTask(TaskId id) {
+        return findById(Task.class, id);
+    }
+
+    @Override
+    public Task getTaskOr(TaskId id, @Nullable Task other) {
+        return getTask(id).orElse(other);
+    }
+
+    @Override
     public List<TaskLabel> getLabels() {
         return getByType(TaskLabel.class);
+    }
+
+    @Override
+    public TaskLabels getLabels(TaskId taskId) {
+        final Optional<TaskLabels> labels = findById(TaskLabels.class, taskId);
+        final TaskLabels result = labels.orElse(TaskLabels.newBuilder()
+                                                          .setTaskId(taskId)
+                                                          .build());
+        return result;
+    }
+
+    @Override
+    public Optional<TaskLabel> getLabel(LabelId id) {
+        return findById(TaskLabel.class, id);
+    }
+
+    @Nullable
+    @Override
+    public TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel label) {
+        return getLabel(id).orElse(label);
     }
 
     @Override
@@ -191,6 +229,21 @@ final class TodoClientImpl implements SubscribingTodoClient {
         final List<M> result = messages.stream()
                                        .map(AnyPacker::<M>unpack)
                                        .collect(toList());
+        return result;
+    }
+
+    private <M extends Message> Optional<M> findById(Class<M> messageClass, Message id) {
+        final Query query = requestFactory.query()
+                                          .byIds(messageClass, of(id));
+        final List<Any> messages = queryService.read(query)
+                                               .getMessagesList();
+        checkState(messages.size() <= 1,
+                   "Too many %s-s with ID %s:%s %s",
+                   messageClass.getSimpleName(), Identifier.toString(id),
+                   System.lineSeparator(), messages);
+        final Optional<M> result = messages.stream()
+                                           .map(AnyPacker::<M>unpack)
+                                           .findFirst();
         return result;
     }
 

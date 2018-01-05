@@ -20,14 +20,19 @@
 
 package io.spine.examples.todolist.client;
 
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.Task;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
+import io.spine.examples.todolist.TaskLabels;
 import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
 
+import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * A client interface.
@@ -81,6 +86,25 @@ public interface TodoClient {
      * @return the list of the {@code TaskLabel}
      */
     List<TaskLabel> getLabels();
+
+    /**
+     * Obtains a single {@link Task} by its ID.
+     *
+     * @param id the ID to search by
+     * @return the {@link Task} with the given ID or {@code Optional.empty()} if there is no such
+     *         task
+     */
+    Optional<Task> getTask(TaskId id);
+
+    @Nullable
+    Task getTaskOr(TaskId id, @Nullable Task other);
+
+    TaskLabels getLabels(TaskId taskId);
+
+    Optional<TaskLabel> getLabel(LabelId id);
+
+    @Nullable
+    TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel label);
 
     /**
      * Shutdown the connection channel.
