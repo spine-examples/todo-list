@@ -169,7 +169,29 @@ handler method, the command rejection is extracted from it and the command is ma
 
 ## Repositories and routing set up
 
-bli blo bla
+Each entity type has its own repository type.
+The repositories store the data in the provided storage. 
+
+To declare a repository, create a class derived from `AggregateRepository`, `ProjectionRepository` 
+or `ProcessManagerRepository`.
+
+In most cases, this is it - nothing else is required from the developer. But in some cases, 
+the repositories must perform some custom action. For example, if the message routing should be 
+overridden. In this case, the repository may change the outing strategy on creation:
+
+```java
+public class MyListViewRepository
+        extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {
+
+    public MyListViewRepository() {
+        super();
+        getEventRouting().replaceDefault(((message, context) -> singleton(MyListViewProjection.ID)));
+    }
+}
+```
+
+In the example above the `MyListViewRepository` routes all the messages to a single instance of 
+`MyListViewProjection` (making the projection a singleton).
 
 ## Configuring deployment
 
