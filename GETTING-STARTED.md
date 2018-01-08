@@ -10,11 +10,36 @@ This is the guide of how to get started developing a system
  - Configuring deployment
  - Creating a client. Security with gRPC
 
-## Setting up. Gradle configurations and modules
+## Setting up
+
+### Gradle configurations
 
 TodoList uses [Gradle](https://gradle.org/) as the build system.
 
-// bla bla 
+To set up a Spine application with Gradle, apply the `io.spine.tools.spine-model-compiler` plugin 
+and use the required Spine framework dependencies.
+
+It is also required to apply the [Protobuf Gradle plugin](https://github.com/google/protobuf-gradle-plugin)
+to the modules which contain Protobuf definitions.
+
+The Spine plugin performs essential configuration of the Protobuf plugin.
+The Protobuf files should be placed under `<projectDir>/src/<scope>/proto`, alongside with 
+the `java` and `resources` directories.
+
+See the [doc](https://github.com/SpineEventEngine/core-java#gradle-project-dependencies) for 
+the entire min Gradle build script.
+
+### Modules
+
+It is recommended to have a separate modules for the model definitions (per bounded context), 
+business logic (i.e. entities and repositories) and deployment strategies.
+
+In TodoList there is only one bounded contexts, so all the model is placed under the `model` 
+module. The entities and the environment around them is placed in the `api-java` module and 
+the deployment configs are placed in the separate modules under the `deployment` dir (with 
+the common) parts in `server` module.
+The TodoList clients common parts are placed under `client` module, and the clients themselves (CLI 
+and Android client) are placed in separate `client-<name>` modules.
 
 ## Getting started. Defining the model
 
@@ -125,7 +150,8 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
     
     @Assign
     List<? extends Message> handle(CreateBasicLabel cmd) {
-        // Handle command and produce event(-s).
+        // Handle the command and produce event(-s).
+        //
         // Here the command is validated upon the entity state.
         // It is illegal for aggregates to change their state in the command handler methods (but 
         // it's OK for procmans). 
