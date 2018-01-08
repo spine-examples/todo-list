@@ -167,6 +167,26 @@ handling. In case of `LabelAggregate`, the `CreateBasicLabel` command handler pr
 Command handlers may also throw any `Throwable`s. If a `ThrowableMessage` is thrown from a command
 handler method, the command rejection is extracted from it and the command is marked as _rejected_.
 
+Now we declare the event and (optionally) rejection handler methods.
+
+```java
+public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuilder> {
+    
+    // ...
+    
+    @Apply // @Subscribe for non-aggregate event subscribers
+    private void labelCreated(LabelCreated event) {
+        // Handle the domain events.
+        //
+        // The entity state can be updated here via `getBuilder()` method.
+        // Also, there are helper methods for the lifecycle attributes - `setArchived(boolean)` and 
+        // `setDeleted(boolean)`.
+    }
+}
+```
+
+Note that an aggregate type _must_ handle all the produced events.
+
 ## Repositories and routing set up
 
 Each entity type has its own repository type.
