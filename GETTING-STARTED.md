@@ -215,8 +215,58 @@ In the example above the `MyListViewRepository` routes all the messages to a sin
 
 ## Configuring deployment
 
-bla blu bla
+Deploying a Spine application implies deploying a number of gRPC services defined by Spine. 
+But first, we must create the bounded context(-s), which is (are) responsible for bringing together 
+the service and the entity layers.
 
-## Creating a client. Security with gRPC
+To do that, we create and instance of `BoundedContext` and register all the repositories in it.
+```java
+final BoundedContext todoListBc = BoundedContext.newBuilder()
+                                                .setStorageFactorySupplier(() -> storageFactory) // *
+                                                .setName("TodoList")
+                                                .build();
+todoListBc.register(new LabelAggregateRepository());
+todoListBc.register(new MyListViewRepository());
+// ...
+```
 
-bla
+Note that the `BuindedContext` required a `StorageFacotry` supplier (`*`). This argument is 
+responsible for the type of storage used by the repositories of this bounded context.
+
+Spine provides in-memory (recommended for use in tests), JDBC and Google Cloud Datastore storages
+and a well-structured SPI for custom implementations (see `io.spine.server.storage.StorageFactory`).
+
+After all the repositories are registered, the gRPC services can be initialized:
+```java
+final CommandService commandService = QueryService.newBuilder()
+                                                  .add(boundedContext)
+                                                  .build();
+final QueryService queryService = CommandService.newBuilder()
+                                                .add(boundedContext)
+                                                .build();
+final SubscriptionService commandService = SubscriptionService.newBuilder()
+                                                              .add(boundedContext)
+                                                              .build();
+```
+
+These services should be started with the required server port.
+It is not required to start all the services in a single JVM/machine/at all. For example, if 
+the application does not use subscriptions, the `SubscriptionService` should not be deployed.
+
+Use `io.spine.server.transport.GrpcContainer` for easier deployment of `io.grpc.Server` for advanced
+configuration.
+
+## Creating a client
+
+To connect to the server as a client (frontend instance, mobile client, web client, etc.), use 
+the [gRPC stubs](https://grpc.io/docs/tutorials/basic/java.html#creating-the-client) API.
+
+It is recommended to create a wrapper for the stubs to avoid misuse. For example, the `TodoClient`,
+which is essentially a wrapper for those service stubs, provides API for posting a command to 
+the system and fetching the data.
+
+### Security
+
+Note that gRPC expects a security mechanism by default.
+See the [doc](https://github.com/grpc/grpc-java/blob/master/SECURITY.md) for more details on 
+the security settings for gRPC in Java.
