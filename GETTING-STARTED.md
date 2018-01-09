@@ -70,6 +70,20 @@ package.
 Note that the entity identifier types are defined in a separate file `todolist/identifiers.proto`. 
 This helps us not to import more than we use when referencing entity types.
 
+### Type URLs and `Any`
+
+Note the `(type_url)` file-level Protobuf option. It is required to specify a type URL for all 
+the types defined in Protobuf.
+
+Type URL is an identifier of the type authorship. For example, all the Spine core types have 
+`type.spine.io` type URL.
+
+The type URL is required for proper packing the Protobuf messages into 
+[`Any`](https://developers.google.com/protocol-buffers/docs/proto3#any) type.
+
+In Java use `AnyPacker` utility for packing messages. This helps the framework work with 
+the serialized data easily. 
+
 ### Validation
 
 When looking through the model definitions, one may find a lot of usages of custom field and message
