@@ -3,12 +3,12 @@
 This is the guide of how to get started developing a Spine-based system. 
 
 **Syllabus**:
- - Setting up
- - Getting started. Defining the model
- - Writing entity types
- - Repositories and routing set up
- - Configuring deployment
- - Creating a client
+ - [Setting up](#setting-up)
+ - [Getting started. Defining the model](#getting-started-defining-the-model)
+ - [Writing entity types](#writing-entity-types)
+ - [Repositories and routing set up](#repositories-and-routing-set-up)
+ - [Configuring deployment](#configuring-deployment)
+ - [Creating a client](#creating-a-client)
 
 ## Setting up
 
