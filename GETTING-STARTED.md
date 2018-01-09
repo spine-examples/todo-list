@@ -1,6 +1,6 @@
 # TodoList Example walkthrough
 
-This guide describes the implementation details lying in the base of TodoList application.
+This guide describes the implementation details of TodoList application.
 
 The purpose of this guide is to describe the process of building a Spine-based system with 
 the example of TodoList. 
@@ -30,10 +30,10 @@ It is also required to apply the [Protobuf Gradle plugin](https://github.com/goo
 to the modules which contain Protobuf definitions.
 
 The Spine plugin performs essential configuration of the Protobuf plugin.
-The Protobuf files should be placed under `<projectDir>/src/<scope>/proto`, alongside with 
-the `java` and `resources` directories.
+The Protobuf files should be placed under `<projectDir>/src/<scope>/proto` directory which goes 
+alongside with the `java` and `resources` directories.
 
-See the [doc](https://github.com/SpineEventEngine/core-java#gradle-project-dependencies) for 
+See [this doc](https://github.com/SpineEventEngine/core-java#gradle-project-dependencies) for 
 the entire min Gradle build script.
 
 ### Modules
@@ -41,10 +41,10 @@ the entire min Gradle build script.
 It is recommended to have separate modules for the model definitions (per bounded context), 
 business logic (i.e. entities and repositories) and deployment strategies.
 
-In TodoList there is only one bounded context, so all the model are placed under the `model` 
-module. The entities and the environment around them is placed in the `api-java` module and 
-the deployment configs are placed in the separate modules under the `deployment` dir (with 
-the common) parts in `server` module.
+There is only one bounded context in TodoList, so all the model is placed under the `model` 
+module. The entities and the environment around them are placed in the `api-java` module and 
+the deployment configs are placed in separate modules under the `deployment` dir (with the common
+parts in `server` module).
 The TodoList clients' common parts are placed under `client` module, and the clients themselves (CLI 
 and Android client) are placed in separate `client-<name>` modules.
 
@@ -168,7 +168,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
 }
 ```
 
-Aggregates validate the command upon their state and produce events as the result of the command 
+An aggregates validates the command upon own state and produces events as the result of the command 
 handling. In case of `LabelAggregate`, the `CreateBasicLabel` command handler produces 
 `LabelCreated` event.
 
@@ -218,7 +218,7 @@ public class MyListViewRepository
 }
 ```
 
-In the example above the `MyListViewRepository` routes all the messages to a single instance of 
+In the example above the `MyListViewRepository` routes all the events to a single instance of 
 `MyListViewProjection` (making the projection a singleton).
 
 ## Configuring deployment
