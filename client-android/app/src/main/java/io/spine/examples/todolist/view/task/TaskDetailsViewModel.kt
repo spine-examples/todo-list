@@ -28,6 +28,8 @@ import io.spine.examples.todolist.view.AbstractViewModel
 
 /**
  * The [view model][android.arch.lifecycle.ViewModel] of the [TaskDetailsActivity].
+ *
+ * @author Dmytro Dashenkov
  */
 class TaskDetailsViewModel : AbstractViewModel() {
 

@@ -27,6 +27,8 @@ import java.util.*
 
 /**
  * The formatter for the date, time and date-time data types.
+ *
+ * @author Dmytro Dashenkov
  */
 object TimeFormatter {
 

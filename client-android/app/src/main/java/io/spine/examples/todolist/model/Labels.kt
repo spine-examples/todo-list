@@ -26,7 +26,9 @@ import io.spine.examples.todolist.TaskLabel
 /**
  * Converts this instance of [TaskLabel] to [LabelDetails].
  *
+ * @receiver an instance of [TaskLabel]
  * @return [LabelDetails] with the `title` and `color` of this label
+ * @author Dmytro Dashenkov
  */
 fun TaskLabel.toDetails(): LabelDetails = LabelDetails.newBuilder()
                                                       .setTitle(title)
