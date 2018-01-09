@@ -8,7 +8,7 @@ This is the guide of how to get started developing a Spine-based system.
  - Writing entity types
  - Repositories and routing set up
  - Configuring deployment
- - Creating a client. Security with gRPC
+ - Creating a client
 
 ## Setting up
 
