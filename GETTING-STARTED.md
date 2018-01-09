@@ -3,9 +3,9 @@
 This guide describes the implementation details lying in the base of TodoList application.
 
 The purpose of this guide is to describe the process of building a Spine-based system with 
-the example of TodoList. It is implied that the reader had already conducted 
-the [event storming](https://spine.io/docs/guides/model-definition.html#event-storming),
-so the domain model is well structured and ready for implementation.
+the example of TodoList. 
+This guide _does not_ cover the process of understanding and structuring 
+the [domain model](https://spine.io/docs/guides/model-definition.html). 
 
 For a more general guide, please visit our [docs page](https://spine.io/docs/guides/).
 
