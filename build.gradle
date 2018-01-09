@@ -321,7 +321,7 @@ task codeCoverageReport(type: JacocoReport) {
 
 codeCoverageReport.dependsOn {
     subprojects*.test
-    project(":integration-tests").task(":integrationTest")
+    project(":integration-tests").getTasksByName("integrationTest", false)
 }
 
 // This Travis configuration is copied from Protobuf Gradle Plugin build.
