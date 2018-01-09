@@ -228,22 +228,24 @@ In the example above the `MyListViewRepository` routes all the events to a singl
 
 ## Configuring deployment
 
-Deploying a Spine application implies deploying a number of gRPC services defined by Spine. 
+Deploying a Spine application implies deploying a number of [gRPC](https://grpc.io/) services 
+defined by Spine. 
 But first, we must create the bounded context(-s), which is (are) responsible for bringing together 
 the service and the entity layers.
 
-To do that, we create an instance of `BoundedContext` and register all the repositories in it.
+To do that, we create an instance of `BoundedContext` and register all the repositories in it (see
+`io.spine.examples.todolist.context.BoundedContexts`).
 ```java
 final BoundedContext todoListBc = BoundedContext.newBuilder()
                                                 .setStorageFactorySupplier(() -> storageFactory) // *
-                                                .setName("TodoList")
+                                                .setName("TodoListBoundedContext")
                                                 .build();
 todoListBc.register(new LabelAggregateRepository());
 todoListBc.register(new MyListViewRepository());
 // ...
 ```
 
-Note that the `BuindedContext` requires a `StorageFacotry` supplier (`*`). This argument is 
+Note that the `BoundedContext` requires a `StorageFacotry` supplier (`*`). This argument is 
 responsible for the type of storage used by the repositories of this bounded context.
 
 Spine provides in-memory (recommended for use in tests), JDBC and Google Cloud Datastore storages
@@ -267,7 +269,7 @@ It is not required to start all the services in a single JVM/machine/at all. For
 the application does not use subscriptions, the `SubscriptionService` should not be deployed.
 
 Use `io.spine.server.transport.GrpcContainer` for easier deployment or `io.grpc.Server` for advanced
-configuration.
+configuration (see `io.spine.examples.todolist.server.Server` for the example).
 
 ## Creating a client
 
