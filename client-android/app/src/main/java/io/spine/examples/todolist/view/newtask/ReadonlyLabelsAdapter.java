@@ -37,11 +37,11 @@ import static io.spine.examples.todolist.model.Colors.toRgb;
  *
  * @author Dmytro Dashenkov
  */
-final class ReadonlyLabelsAdapter extends RecyclerView.Adapter<ReadonlyLabelsAdapter.ViewBinder> {
+public final class ReadonlyLabelsAdapter extends RecyclerView.Adapter<ReadonlyLabelsAdapter.ViewBinder> {
 
     private final List<LabelDetails> data;
 
-    ReadonlyLabelsAdapter(List<LabelDetails> data) {
+    public ReadonlyLabelsAdapter(List<LabelDetails> data) {
         super();
         this.data = data;
     }

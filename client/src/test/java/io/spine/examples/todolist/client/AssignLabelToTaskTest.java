@@ -22,6 +22,7 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
@@ -181,6 +182,24 @@ class AssignLabelToTaskTest extends TodoClientTest {
         }
     }
 
+    @Nested
+    @DisplayName("TaskLabels part should")
+    class AssignLabelToTaskToTasklabels {
+
+        @Test
+        @DisplayName("contain label ID")
+        void testContains() {
+            final CreateBasicLabel createLabel = createLabel();
+            final LabelId labelId = createLabel.getLabelId();
+
+            final TaskLabels labels = obtainTaskLabelsWhenHandledAssignLabelToTask(labelId);
+            final List<LabelId> labelIds = labels.getLabelIdsList()
+                                                 .getIdsList();
+            assertEquals(1, labelIds.size());
+            assertEquals(labelId, labelIds.get(0));
+        }
+    }
+
     private TaskItem obtainTaskItemWhenHandledAssignLabelToTask(LabelId labelId,
                                                                 boolean isCorrectId) {
         final CreateBasicTask createTask = createTask();
@@ -223,5 +242,15 @@ class AssignLabelToTaskTest extends TodoClientTest {
         assertEquals(createTaskId, view.getId());
 
         return view;
+    }
+
+    private TaskLabels obtainTaskLabelsWhenHandledAssignLabelToTask(LabelId labelId) {
+        final CreateDraft createDraft = createDraft();
+        client.postCommand(createDraft);
+        final TaskId taskId = createDraft.getId();
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        client.postCommand(assignLabelToTask);
+        final TaskLabels labels = client.getLabels(taskId);
+        return labels;
     }
 }

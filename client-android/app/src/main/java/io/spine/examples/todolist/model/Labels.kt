@@ -18,11 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.examples.todolist.model
+
+import io.spine.examples.todolist.LabelDetails
+import io.spine.examples.todolist.TaskLabel
+
 /**
- * This package contains classes that form the TodoList client.
+ * Converts this instance of [TaskLabel] to [LabelDetails].
+ *
+ * @receiver an instance of [TaskLabel]
+ * @return [LabelDetails] with the `title` and `color` of this label
+ * @author Dmytro Dashenkov
  */
-
-@ParametersAreNonnullByDefault
-package io.spine.examples.todolist.client;
-
-import javax.annotation.ParametersAreNonnullByDefault;
+fun TaskLabel.toDetails(): LabelDetails = LabelDetails.newBuilder()
+                                                      .setTitle(title)
+                                                      .setColor(color)
+                                                      .build()

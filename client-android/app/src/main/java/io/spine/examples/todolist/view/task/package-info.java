@@ -19,10 +19,12 @@
  */
 
 /**
- * This package contains classes that form the TodoList client.
+ * This package contains the classes that define the {@code Task} overview UI and behavior.
+ *
+ * <p>Note that some of the components in this package are written in Kotlin, thus the generated
+ * JavaDoc is absent for those components.
  */
-
 @ParametersAreNonnullByDefault
-package io.spine.examples.todolist.client;
+package io.spine.examples.todolist.view.task;
 
 import javax.annotation.ParametersAreNonnullByDefault;

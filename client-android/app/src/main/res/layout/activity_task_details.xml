@@ -19,9 +19,19 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<FrameLayout
+<RelativeLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent">
-    <include layout="@layout/task_details"/>
-</FrameLayout>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <include layout="@layout/toolbar"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:id="@+id/action_bar"/>
+
+    <include layout="@layout/task_details"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             android:layout_below="@id/action_bar"/>
+
+</RelativeLayout>

@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.view.mylist;
 
 import android.arch.lifecycle.Observer;
+import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
@@ -32,17 +33,16 @@ import android.widget.TextView;
 import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.R;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.examples.todolist.view.TimeFormatter;
+import io.spine.examples.todolist.view.task.TaskDetailsActivity;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import static android.view.View.GONE;
-import static com.google.protobuf.util.Timestamps.toMillis;
 import static io.spine.examples.todolist.model.Colors.toRgb;
 import static io.spine.validate.Validate.isDefault;
 
@@ -107,9 +107,6 @@ final class MyTaskListViewAdapter
      */
     static class TaskViewHolder extends RecyclerView.ViewHolder {
 
-        private static final SimpleDateFormat DATE_FORMAT =
-                new SimpleDateFormat("dd MMM YYYY", Locale.getDefault());
-
         private final TextView description;
         private final TextView dueDate;
         private final View dueDateLabel;
@@ -118,11 +115,13 @@ final class MyTaskListViewAdapter
 
         private final Resources resources;
 
+        private TaskId taskId;
+
         private TaskViewHolder(View itemView) {
             super(itemView);
             this.root = itemView;
             this.description = itemView.findViewById(R.id.task_content);
-            this.dueDate = itemView.findViewById(R.id.task_due_date);
+            this.dueDate = itemView.findViewById(R.id.taskDueDate);
             this.dueDateLabel = itemView.findViewById(R.id.task_due_date_label);
             this.colorView = itemView.findViewById(R.id.task_label_color_stripe);
             this.resources = itemView.getResources();
@@ -134,30 +133,28 @@ final class MyTaskListViewAdapter
          * @param data the data to display on the view
          */
         private void bind(TaskItem data) {
+            taskId = data.getId();
             description.setText(data.getDescription().getValue());
             bindDueDate(data.getDueDate());
             colorView.setBackgroundColor(colorOf(data));
             if (data.getCompleted()) {
                 root.setBackgroundColor(resources.getColor(R.color.completedTaskColor));
             }
+            root.setOnClickListener(view -> {
+                final Context context = view.getContext();
+                TaskDetailsActivity.Companion.open(context, taskId);
+            });
         }
 
         private void bindDueDate(Timestamp taskDueDate) {
-            final boolean isPresent = taskDueDate.getSeconds() > 0;
+            final String formattedDueDate = TimeFormatter.INSTANCE.format(taskDueDate);
+            final boolean isPresent = !formattedDueDate.isEmpty();
             if (isPresent) {
-                setTime(dueDate, taskDueDate);
+                dueDate.setText(formattedDueDate);
             } else {
                 dueDate.setVisibility(GONE);
                 dueDateLabel.setVisibility(GONE);
             }
-        }
-
-        @SuppressWarnings("AccessToNonThreadSafeStaticField")
-            // DATE_FORMAT - OK since setTime() is always called from the main thread.
-        private static void setTime(TextView view, Timestamp time) {
-            final long millis = toMillis(time);
-            final Date date = new Date(millis);
-            view.setText(DATE_FORMAT.format(date));
         }
     }
 }

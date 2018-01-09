@@ -66,7 +66,7 @@ public final class NewTaskLabelsFragment extends PagerFragment {
     private void initViews(View root) {
         final Context context = getContext();
 
-        final RecyclerView existingLabels = root.findViewById(R.id.task_labels);
+        final RecyclerView existingLabels = root.findViewById(R.id.taskLabels);
         existingLabels.setLayoutManager(new LinearLayoutManager(context, HORIZONTAL, false));
         this.existingLabelsAdapter = new ExistingLabelsAdapter();
         existingLabels.setAdapter(existingLabelsAdapter);

@@ -17,20 +17,19 @@
   ~ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
   ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  -->
-
+-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="io.spine.examples.todolist">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
+            android:name=".TodoListApplication"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_round"
-            android:theme="@style/AppTheme"
-            android:name=".TodoListApplication">
+            android:theme="@style/AppTheme">
         <activity
                 android:name=".view.mylist.MyListActivity"
                 android:label="@string/app_name"
@@ -38,6 +37,7 @@
                 android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -46,5 +46,11 @@
                 android:screenOrientation="portrait"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+                android:name=".view.task.TaskDetailsActivity"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
+
 </manifest>

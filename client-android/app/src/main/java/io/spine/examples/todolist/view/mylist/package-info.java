@@ -24,3 +24,4 @@
 @ParametersAreNonnullByDefault
 package io.spine.examples.todolist.view.mylist;
 
+import javax.annotation.ParametersAreNonnullByDefault;

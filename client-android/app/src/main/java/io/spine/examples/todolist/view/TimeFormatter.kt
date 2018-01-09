@@ -18,11 +18,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.examples.todolist.view
+
+import com.google.protobuf.Timestamp
+import com.google.protobuf.util.Timestamps
+import java.text.SimpleDateFormat
+import java.util.*
+
 /**
- * This package contains classes that form the TodoList client.
+ * The formatter for the date, time and date-time data types.
+ *
+ * @author Dmytro Dashenkov
  */
+object TimeFormatter {
 
-@ParametersAreNonnullByDefault
-package io.spine.examples.todolist.client;
+    /**
+     * The format in which dates are displayed on the UI.
+     */
+    private val FORMAT = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
 
-import javax.annotation.ParametersAreNonnullByDefault;
+    /**
+     * Formats the given [Timestamp].
+     *
+     * If the input timestamp is [default][io.spine.validate.Validate.isDefault] returns an empty
+     * string.
+     *
+     * @param timestamp [Timestamp] to format
+     * @return the formatted timestamp as a string
+     */
+    fun format(timestamp: Timestamp): String {
+        if (timestamp.seconds == 0L) {
+            return ""
+        } else {
+            val date = Date(Timestamps.toMillis(timestamp))
+            val result = FORMAT.format(date)
+            return result
+        }
+    }
+}
