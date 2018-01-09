@@ -91,6 +91,7 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
         final TaskCreationId pid = newPid();
         final TaskId taskId = newTaskId();
         testEnv.createDraft(pid, taskId);
+        testEnv.setDetails(pid, "secondCase");
         final LabelDetails redLabel = LabelDetails.newBuilder()
                                                   .setTitle("red label")
                                                   .setColor(RED)
@@ -101,7 +102,7 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
                                                     .build();
         final LabelDetails blueLabel = LabelDetails.newBuilder()
                                                    .setTitle("blue label")
-                                                   .setColor(GREEN)
+                                                   .setColor(BLUE)
                                                    .build();
         final AddLabels addLabels = AddLabels.newBuilder()
                                              .setId(pid)
