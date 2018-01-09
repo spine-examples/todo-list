@@ -31,14 +31,14 @@ the entire min Gradle build script.
 
 ### Modules
 
-It is recommended to have a separate modules for the model definitions (per bounded context), 
+It is recommended to have separate modules for the model definitions (per bounded context), 
 business logic (i.e. entities and repositories) and deployment strategies.
 
-In TodoList there is only one bounded context, so all the model is placed under the `model` 
+In TodoList there is only one bounded context, so all the model are placed under the `model` 
 module. The entities and the environment around them is placed in the `api-java` module and 
 the deployment configs are placed in the separate modules under the `deployment` dir (with 
 the common) parts in `server` module.
-The TodoList clients common parts are placed under `client` module, and the clients themselves (CLI 
+The TodoList clients' common parts are placed under `client` module, and the clients themselves (CLI 
 and Android client) are placed in separate `client-<name>` modules.
 
 ## Getting started. Defining the model
@@ -52,7 +52,7 @@ command rejections, identifiers, etc.
 The aggregate and procman types are defined in the `todolist/model.proto` file and the projection 
 types are defined in the `todolist/q/projections.proto`, since they only belong to the query side.
 
-Commands, events and rejections belong to the command side. Thus they are defined in `todolist/c/`
+Commands, events, and rejections belong to the command side. Thus they are defined in `todolist/c/`
 package.
 
 Note that the entity identifier types are defined in a separate file `todolist/identifiers.proto`. 
@@ -220,7 +220,7 @@ Deploying a Spine application implies deploying a number of gRPC services define
 But first, we must create the bounded context(-s), which is (are) responsible for bringing together 
 the service and the entity layers.
 
-To do that, we create and instance of `BoundedContext` and register all the repositories in it.
+To do that, we create an instance of `BoundedContext` and register all the repositories in it.
 ```java
 final BoundedContext todoListBc = BoundedContext.newBuilder()
                                                 .setStorageFactorySupplier(() -> storageFactory) // *
