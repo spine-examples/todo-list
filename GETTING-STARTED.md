@@ -1,9 +1,9 @@
 # TodoList Example walkthrough
 
-This is the guide of how to get started developing a system 
+This is the guide of how to get started developing a Spine-based system. 
 
 **Syllabus**:
- - Setting up. Gradle configurations and modules
+ - Setting up
  - Getting started. Defining the model
  - Writing entity types
  - Repositories and routing set up
@@ -34,7 +34,7 @@ the entire min Gradle build script.
 It is recommended to have a separate modules for the model definitions (per bounded context), 
 business logic (i.e. entities and repositories) and deployment strategies.
 
-In TodoList there is only one bounded contexts, so all the model is placed under the `model` 
+In TodoList there is only one bounded context, so all the model is placed under the `model` 
 module. The entities and the environment around them is placed in the `api-java` module and 
 the deployment configs are placed in the separate modules under the `deployment` dir (with 
 the common) parts in `server` module.
@@ -45,8 +45,8 @@ and Android client) are placed in separate `client-<name>` modules.
 
 As a rule of thumb, any domain-driven development starts with the model.
 
-With Spine, one needs to create Protobuf definitions of the model. For this purpose, TodoList uses
-`model` module. The module contains all the required types for entity states, commands, events, 
+Spine uses Protobuf as the model definition language. TodoList stores all the model definitions in 
+the `model` module. The module contains all the required types for entity states, commands, events, 
 command rejections, identifiers, etc.
 
 The aggregate and procman types are defined in the `todolist/model.proto` file and the projection 
@@ -61,7 +61,7 @@ This helps us not to import more than we use when referencing entity types.
 ### Validation
 
 When looking through the model definitions, one may find a lot of usages of custom field and message
-options from `srine/optios.proto`. Most of those options define the validation rules for 
+options from `spine/options.proto`. Most of those options define the validation rules for 
 the generated types.
 
 For example, the proto definition of `TaskLabel` looks like:
@@ -105,13 +105,13 @@ message LabelDetails {
 
 Again, `title` is a required field, so the following Java code throws a `ValidationException`:
 ```java
-LabelDetails.newBuilder()
-            .setTitle(""); // Error - `title` cannot be an empty string
+LabelDetailsVBuilder.newBuilder()
+                    .setTitle(""); // Error - `title` cannot be an empty string
 ```
 
 ## Writing entity types
 
-Now, when the model is defined with the Protobuf, we are ready to move to the busyness logic coding.
+Now, when the model is defined with the Protobuf, we are ready to move to the business logic coding.
 
 For that, we create Java classes for all the entity types.
 
@@ -121,7 +121,6 @@ Aggregate classes extend `Aggregate` type.
 public class LabelAggregate extends Aggregate</* aggregate ID type */    LabelId,           
                                               /* aggregate state type */ TaskLabel, 
                                               /* state VBuilder type */  TaskLabelVBuilder> {
-    
 }
 ```
 
@@ -185,7 +184,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
 }
 ```
 
-Note that an aggregate type _must_ handle all the produced events.
+Note that an aggregate type _must_ handle all the events it produces.
 
 ## Repositories and routing set up
 
@@ -197,7 +196,7 @@ or `ProcessManagerRepository`.
 
 In most cases, this is it - nothing else is required from the developer. But in some cases, 
 the repositories must perform some custom action. For example, if the message routing should be 
-overridden. In this case, the repository may change the outing strategy on creation:
+overridden. In this case, the repository may change the routing strategy on creation:
 
 ```java
 public class MyListViewRepository
@@ -230,7 +229,7 @@ todoListBc.register(new MyListViewRepository());
 // ...
 ```
 
-Note that the `BuindedContext` required a `StorageFacotry` supplier (`*`). This argument is 
+Note that the `BuindedContext` requires a `StorageFacotry` supplier (`*`). This argument is 
 responsible for the type of storage used by the repositories of this bounded context.
 
 Spine provides in-memory (recommended for use in tests), JDBC and Google Cloud Datastore storages
@@ -249,11 +248,11 @@ final SubscriptionService commandService = SubscriptionService.newBuilder()
                                                               .build();
 ```
 
-These services should be started with the required server port.
+These services should be started on the required server port.
 It is not required to start all the services in a single JVM/machine/at all. For example, if 
 the application does not use subscriptions, the `SubscriptionService` should not be deployed.
 
-Use `io.spine.server.transport.GrpcContainer` for easier deployment of `io.grpc.Server` for advanced
+Use `io.spine.server.transport.GrpcContainer` for easier deployment or `io.grpc.Server` for advanced
 configuration.
 
 ## Creating a client
