@@ -9,6 +9,11 @@ the [domain model](https://spine.io/docs/guides/model-definition.html).
 
 For a more general guide, please visit our [docs page](https://spine.io/docs/guides/).
 
+The **target audience** of this guide are developers who are about to start creating an application 
+based on Spine. Those developers are generally familiar with both
+[DDD](https://martinfowler.com/tags/domain%20driven%20design.html) and Spine 
+[core concepts](https://spine.io/docs/guides/introduction.html).
+
 **Syllabus**:
  - [Setting up](#setting-up)
  - [Getting started. Defining the model](#getting-started-defining-the-model)
@@ -52,9 +57,9 @@ and Android client) are placed in separate `client-<name>` modules.
 
 As a rule of thumb, any domain-driven development starts with the model.
 
-Spine uses Protobuf as the model definition language. TodoList stores all the model definitions in 
-the `model` module. The module contains all the required types for entity states, commands, events, 
-command rejections, identifiers, etc.
+Spine uses [Protobuf](https://developers.google.com/protocol-buffers/) as the model definition 
+language. TodoList stores all the model definitions in the `model` module. The module contains all 
+the required types for entity states, commands, events, command rejections, identifiers, etc.
 
 The aggregate and procman types are defined in the `todolist/model.proto` file and the projection 
 types are defined in the `todolist/q/projections.proto`, since they only belong to the query side.
