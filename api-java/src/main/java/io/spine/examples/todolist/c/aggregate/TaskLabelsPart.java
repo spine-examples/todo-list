@@ -108,8 +108,8 @@ public class TaskLabelsPart
 
     @Apply
     private void labelAssignedToTask(LabelAssignedToTask event) {
-        final Collection<LabelId> list = new ArrayList<>(getState().getLabelIdsList()
-                                                                   .getIdsList());
+        final Collection<LabelId> list = new ArrayList<>(getBuilder().getLabelIdsList()
+                                                                     .getIdsList());
         list.add(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
                                                       .addAllIds(list)
@@ -120,8 +120,8 @@ public class TaskLabelsPart
 
     @Apply
     private void labelRemovedFromTask(LabelRemovedFromTask event) {
-        final Collection<LabelId> list = new ArrayList<>(getState().getLabelIdsList()
-                                                                   .getIdsList());
+        final Collection<LabelId> list = new ArrayList<>(getBuilder().getLabelIdsList()
+                                                                     .getIdsList());
         list.remove(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
                                                       .addAllIds(list)

@@ -39,7 +39,9 @@ import org.junit.jupiter.api.Test;
 
 import static com.google.protobuf.util.Durations.fromSeconds;
 import static com.google.protobuf.util.Timestamps.add;
+import static io.spine.examples.todolist.LabelColor.BLUE;
 import static io.spine.examples.todolist.LabelColor.GRAY;
+import static io.spine.examples.todolist.LabelColor.GREEN;
 import static io.spine.examples.todolist.LabelColor.RED;
 import static io.spine.examples.todolist.TaskPriority.LOW;
 import static io.spine.examples.todolist.TaskStatus.DRAFT;
@@ -47,8 +49,10 @@ import static io.spine.examples.todolist.TaskStatus.FINALIZED;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newPid;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newTaskId;
 import static io.spine.time.Time.getCurrentTime;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Dmytro Dashenkov
@@ -87,17 +91,29 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
         final TaskCreationId pid = newPid();
         final TaskId taskId = newTaskId();
         testEnv.createDraft(pid, taskId);
-        final String labelTitle = "red label";
-        final LabelDetails newLabel = LabelDetails.newBuilder()
-                                                  .setTitle(labelTitle)
+        testEnv.setDetails(pid, "secondCase");
+        final LabelDetails redLabel = LabelDetails.newBuilder()
+                                                  .setTitle("red label")
                                                   .setColor(RED)
                                                   .build();
+        final LabelDetails greenLabel = LabelDetails.newBuilder()
+                                                    .setTitle("green label")
+                                                    .setColor(GREEN)
+                                                    .build();
+        final LabelDetails blueLabel = LabelDetails.newBuilder()
+                                                   .setTitle("blue label")
+                                                   .setColor(BLUE)
+                                                   .build();
         final AddLabels addLabels = AddLabels.newBuilder()
                                              .setId(pid)
-                                             .addNewLabels(newLabel)
+                                             .addNewLabels(redLabel)
+                                             .addNewLabels(greenLabel)
+                                             .addNewLabels(blueLabel)
                                              .build();
         client.postCommand(addLabels);
-        assertAssignedLabel(taskId, labelTitle, RED);
+        assertAssignedLabel(taskId, redLabel.getTitle(), RED);
+        assertAssignedLabel(taskId, greenLabel.getTitle(), GREEN);
+        assertAssignedLabel(taskId, blueLabel.getTitle(), BLUE);
     }
 
     @Test
@@ -138,14 +154,20 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
 
     private void assertAssignedLabel(TaskId taskId, String labelTitle, LabelColor labelColor) {
         final String color = LabelColorView.valueOf(labelColor);
-        client.getLabelledTasksView()
-              .stream()
-              .filter(label -> labelTitle.equals(label.getLabelTitle()))
-              .peek(label -> assertTrue(color.equalsIgnoreCase(label.getLabelColor())))
-              .flatMap(label -> label.getLabelledTasks()
-                                     .getItemsList()
-                                     .stream())
-              .filter(task -> taskId.equals(task.getId()))
-              .findAny();
+        final boolean match = client.getLabelledTasksView()
+                                    .stream()
+                                    .filter(label -> labelTitle.equals(label.getLabelTitle()))
+                                    .peek(label -> {
+                                        final String actualColor = label.getLabelColor();
+                                        assertTrue(color.equalsIgnoreCase(actualColor));
+                                    })
+                                    .flatMap(label -> label.getLabelledTasks()
+                                                           .getItemsList()
+                                                           .stream())
+                                    .anyMatch(task -> taskId.equals(task.getId()));
+        if (!match) {
+            fail(format("Task %s has no label with title \"%s\" and color %s.",
+                        taskId.getValue(), labelTitle, labelColor));
+        }
     }
 }
