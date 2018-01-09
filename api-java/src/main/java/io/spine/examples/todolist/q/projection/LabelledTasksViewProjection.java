@@ -90,11 +90,11 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     @Subscribe
     public void on(LabelRemovedFromTask event) {
         final LabelId labelId = event.getLabelId();
-        final boolean isEquals = getState().getLabelId()
-                                           .equals(labelId);
+        final boolean isEquals = getBuilder().getLabelId()
+                                             .equals(labelId);
         if (isEquals) {
-            final List<TaskItem> views = new ArrayList<>(getState().getLabelledTasks()
-                                                                   .getItemsList());
+            final List<TaskItem> views = new ArrayList<>(getBuilder().getLabelledTasks()
+                                                                     .getItemsList());
             final TaskListView updatedView = removeViewsByLabelId(views, labelId);
             getBuilder().setLabelledTasks(updatedView);
         }
@@ -102,16 +102,16 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
 
     @Subscribe
     public void on(TaskDeleted event) {
-        final List<TaskItem> views = new ArrayList<>(getState().getLabelledTasks()
-                                                               .getItemsList());
+        final List<TaskItem> views = new ArrayList<>(getBuilder().getLabelledTasks()
+                                                                 .getItemsList());
         final TaskListView updatedView = removeViewsByTaskId(views, event.getTaskId());
         getBuilder().setLabelledTasks(updatedView);
     }
 
     @Subscribe
     public void on(TaskDescriptionUpdated event) {
-        final List<TaskItem> views = getState().getLabelledTasks()
-                                               .getItemsList();
+        final List<TaskItem> views = getBuilder().getLabelledTasks()
+                                                 .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
         getBuilder().setLabelledTasks(taskListView);
@@ -119,8 +119,8 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
 
     @Subscribe
     public void on(TaskPriorityUpdated event) {
-        final List<TaskItem> views = getState().getLabelledTasks()
-                                               .getItemsList();
+        final List<TaskItem> views = getBuilder().getLabelledTasks()
+                                                 .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
         getBuilder().setLabelledTasks(taskListView);
@@ -128,8 +128,8 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
 
     @Subscribe
     public void on(TaskDueDateUpdated event) {
-        final List<TaskItem> views = getState().getLabelledTasks()
-                                               .getItemsList();
+        final List<TaskItem> views = getBuilder().getLabelledTasks()
+                                                 .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
         getBuilder().setLabelledTasks(taskListView);
@@ -137,8 +137,8 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
 
     @Subscribe
     public void on(TaskCompleted event) {
-        final List<TaskItem> views = getState().getLabelledTasks()
-                                               .getItemsList();
+        final List<TaskItem> views = getBuilder().getLabelledTasks()
+                                                 .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
         getBuilder().setLabelledTasks(taskListView);
@@ -146,8 +146,8 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
 
     @Subscribe
     public void on(TaskReopened event) {
-        final List<TaskItem> views = getState().getLabelledTasks()
-                                               .getItemsList();
+        final List<TaskItem> views = getBuilder().getLabelledTasks()
+                                                 .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
         getBuilder().setLabelledTasks(taskListView);
@@ -155,8 +155,8 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
 
     @Subscribe
     public void on(LabelDetailsUpdated event) {
-        final List<TaskItem> views = getState().getLabelledTasks()
-                                               .getItemsList();
+        final List<TaskItem> views = getBuilder().getLabelledTasks()
+                                                 .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
         final LabelDetails newDetails = event.getLabelDetailsChange()
@@ -190,8 +190,8 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     private void addTaskItem(TaskItem taskView) {
-        final List<TaskItem> views = new ArrayList<>(getState().getLabelledTasks()
-                                                               .getItemsList());
+        final List<TaskItem> views = new ArrayList<>(getBuilder().getLabelledTasks()
+                                                                 .getItemsList());
         views.add(taskView);
         final TaskListView taskListView = newTaskListView(views);
         getBuilder().setLabelledTasks(taskListView);

@@ -201,7 +201,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      * @return the ID of the supervised task
      */
     private TaskId taskId() {
-        return getState().getTaskId();
+        return getBuilder().getTaskId();
     }
 
     /**
@@ -223,7 +223,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         if (pendingStage == CANCELED && !isTerminated()) {
             return;
         }
-        final Stage currentStage = getState().getStage();
+        final Stage currentStage = getBuilder().getStage();
         final int expectedStageNumber = currentStage.getNumber() + 1;
         final int actualStageNumber = pendingStage.getNumber();
         if (expectedStageNumber != actualStageNumber) {
@@ -237,7 +237,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      * @return {@code true} if current process state is terminal, {@code false} otherwise
      */
     private boolean isTerminated() {
-        final Stage currentStage = getState().getStage();
+        final Stage currentStage = getBuilder().getStage();
         return currentStage == COMPLETED || currentStage == CANCELED;
     }
 
