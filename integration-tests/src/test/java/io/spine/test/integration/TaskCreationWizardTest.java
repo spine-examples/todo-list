@@ -49,8 +49,10 @@ import static io.spine.examples.todolist.TaskStatus.FINALIZED;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newPid;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newTaskId;
 import static io.spine.time.Time.getCurrentTime;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * @author Dmytro Dashenkov
@@ -151,14 +153,20 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
 
     private void assertAssignedLabel(TaskId taskId, String labelTitle, LabelColor labelColor) {
         final String color = LabelColorView.valueOf(labelColor);
-        client.getLabelledTasksView()
-              .stream()
-              .filter(label -> labelTitle.equals(label.getLabelTitle()))
-              .peek(label -> assertTrue(color.equalsIgnoreCase(label.getLabelColor())))
-              .flatMap(label -> label.getLabelledTasks()
-                                     .getItemsList()
-                                     .stream())
-              .filter(task -> taskId.equals(task.getId()))
-              .findAny();
+        final boolean match = client.getLabelledTasksView()
+                                    .stream()
+                                    .filter(label -> labelTitle.equals(label.getLabelTitle()))
+                                    .peek(label -> {
+                                        final String actualColor = label.getLabelColor();
+                                        assertTrue(color.equalsIgnoreCase(actualColor));
+                                    })
+                                    .flatMap(label -> label.getLabelledTasks()
+                                                           .getItemsList()
+                                                           .stream())
+                                    .anyMatch(task -> taskId.equals(task.getId()));
+        if (!match) {
+            fail(format("Task %s has no label with title \"%s\" and color %s.",
+                        taskId.getValue(), labelTitle, labelColor));
+        }
     }
 }
