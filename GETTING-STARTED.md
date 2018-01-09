@@ -187,7 +187,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
 }
 ```
 
-An aggregates validates the command upon own state and produces events as the result of the command 
+An aggregate validates the command upon own state and produces events as the result of the command 
 handling. In case of `LabelAggregate`, the `CreateBasicLabel` command handler produces 
 `LabelCreated` event.
 
@@ -262,8 +262,11 @@ todoListBc.register(new MyListViewRepository());
 Note that the `BoundedContext` requires a `StorageFacotry` supplier (`*`). This argument is 
 responsible for the type of storage used by the repositories of this bounded context.
 
-Spine provides in-memory (recommended for use in tests), JDBC and Google Cloud Datastore storages
-and a well-structured SPI for custom implementations (see `io.spine.server.storage.StorageFactory`).
+Spine provides [in-memory](https://spine.io/core-java/javadoc/server/io/spine/server/storage/memory/InMemoryStorageFactory.html)
+(recommended for use in tests), [JDBC](https://github.com/SpineEventEngine/jdbc-storage/) and 
+[Google Cloud Datastore](https://github.com/SpineEventEngine/gae-java) storages and a well-structured 
+[SPI](https://spine.io/core-java/javadoc/server/io/spine/server/storage/Storage.html) for custom 
+implementations.
 
 After all the repositories are registered, the gRPC services can be initialized:
 ```java
@@ -288,7 +291,8 @@ configuration (see `io.spine.examples.todolist.server.Server` for the example).
 ## Creating a client
 
 To connect to the server as a client (frontend instance, mobile client, web client, etc.), use 
-the [gRPC stubs](https://grpc.io/docs/tutorials/basic/java.html#creating-the-client) API.
+the [gRPC stubs](https://grpc.io/docs/tutorials/basic/java.html#creating-the-client) API for 
+`Command`-, `Query`- and optionally `Subscription`- gRPC services. 
 
 It is recommended to create a wrapper for the stubs to avoid misuse. For example, the `TodoClient`,
 which is essentially a wrapper for those service stubs, provides API for posting a command to 
