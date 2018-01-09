@@ -1,6 +1,13 @@
 # TodoList Example walkthrough
 
-This is the guide of how to get started developing a Spine-based system. 
+This guide describes the implementation details lying in the base of TodoList application.
+
+The purpose of this guide is to describe the process of building a Spine-based system with 
+the example of TodoList. It is implied that the reader had already conducted 
+the [event storming](https://spine.io/docs/guides/model-definition.html#event-storming),
+so the domain model is well structured and ready for implementation.
+
+For a more general guide, please visit our [docs page](https://spine.io/docs/guides/).
 
 **Syllabus**:
  - [Setting up](#setting-up)
