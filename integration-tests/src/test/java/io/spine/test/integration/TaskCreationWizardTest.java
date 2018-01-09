@@ -39,7 +39,9 @@ import org.junit.jupiter.api.Test;
 
 import static com.google.protobuf.util.Durations.fromSeconds;
 import static com.google.protobuf.util.Timestamps.add;
+import static io.spine.examples.todolist.LabelColor.BLUE;
 import static io.spine.examples.todolist.LabelColor.GRAY;
+import static io.spine.examples.todolist.LabelColor.GREEN;
 import static io.spine.examples.todolist.LabelColor.RED;
 import static io.spine.examples.todolist.TaskPriority.LOW;
 import static io.spine.examples.todolist.TaskStatus.DRAFT;
@@ -87,17 +89,28 @@ class TaskCreationWizardTest extends AbstractIntegrationTest {
         final TaskCreationId pid = newPid();
         final TaskId taskId = newTaskId();
         testEnv.createDraft(pid, taskId);
-        final String labelTitle = "red label";
-        final LabelDetails newLabel = LabelDetails.newBuilder()
-                                                  .setTitle(labelTitle)
+        final LabelDetails redLabel = LabelDetails.newBuilder()
+                                                  .setTitle("red label")
                                                   .setColor(RED)
                                                   .build();
+        final LabelDetails greenLabel = LabelDetails.newBuilder()
+                                                    .setTitle("green label")
+                                                    .setColor(GREEN)
+                                                    .build();
+        final LabelDetails blueLabel = LabelDetails.newBuilder()
+                                                   .setTitle("blue label")
+                                                   .setColor(GREEN)
+                                                   .build();
         final AddLabels addLabels = AddLabels.newBuilder()
                                              .setId(pid)
-                                             .addNewLabels(newLabel)
+                                             .addNewLabels(redLabel)
+                                             .addNewLabels(greenLabel)
+                                             .addNewLabels(blueLabel)
                                              .build();
         client.postCommand(addLabels);
-        assertAssignedLabel(taskId, labelTitle, RED);
+        assertAssignedLabel(taskId, redLabel.getTitle(), RED);
+        assertAssignedLabel(taskId, greenLabel.getTitle(), GREEN);
+        assertAssignedLabel(taskId, blueLabel.getTitle(), BLUE);
     }
 
     @Test
