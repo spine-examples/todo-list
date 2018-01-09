@@ -20,7 +20,6 @@
 
 dependencies {
     compile project(path: ':server')
-    compile project(path: ':firebase-mirror')
-
+    compile "io.spine:firebase-mirror:$spineVersion"
     compile "io.netty:netty-tcnative-boringssl-static:$nettyBoringsslVersion"
 }
