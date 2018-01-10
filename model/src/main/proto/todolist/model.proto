@@ -1,22 +1,22 @@
-/*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
- *
- * Redistribution and use in source and/or binary forms, with or without
- * modification, must retain the above copyright notice and the following
- * disclaimer.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+//
+// Copyright 2018, TeamDev Ltd. All rights reserved.
+//
+// Redistribution and use in source and/or binary forms, with or without
+// modification, must retain the above copyright notice and the following
+// disclaimer.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+// "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+// LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+// A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+// OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+// SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+// LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+// OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+//
 
 syntax = "proto3";
 
@@ -31,7 +31,6 @@ option java_multiple_files = true;
 option java_generate_equals_and_hash = true;
 
 import "google/protobuf/timestamp.proto";
-
 
 import "todolist/identifiers.proto";
 import "todolist/attributes.proto";
@@ -105,4 +104,47 @@ message TaskLabel {
     //
     // Optional. Defaults to the `LabelColor.LC_UNDEFINED`.
     LabelColor color = 3;
+}
+
+// The task creation process state.
+//
+// See `TaskCreationWizard` for more details.
+//
+message TaskCreation {
+    option (entity).kind = PROCESS_MANAGER;
+    option (entity).visibility = NONE;
+
+    // The ID of the process.
+    TaskCreationId id = 1 [(required) = true];
+
+    // The current stage of the process.
+    Stage stage = 2 [(required) = true];
+
+    // The ID of the task being created.
+    TaskId task_id = 3 [(required) = true];
+
+    // The enumeration of the task creation process stages.
+    enum Stage {
+
+        // The default value.
+        TCS_UNKNOWN = 0;
+
+        // The task fields are being set.
+        TASK_DEFINITION = 1;
+
+        // The labels are being generated and assigned to the task.
+        LABEL_ASSIGNMENT = 2;
+
+        // The user verifies the information.
+        CONFIRMATION = 3;
+
+        // The task creation is completed successfully - the task has been created.
+        COMPLETED = 4;
+
+        // The task creation is canceled.
+        //
+        // The task draft is available for the clients to view and mutate.
+        //
+        CANCELED = 5;
+    }
 }

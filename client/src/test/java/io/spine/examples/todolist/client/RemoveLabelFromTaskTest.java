@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
+ * Copyright 2018, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of RemoveLabelFromTask command")
-class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
+class RemoveLabelFromTaskTest extends TodoClientTest {
 
     private TodoClient client;
 
@@ -72,11 +72,11 @@ class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
             final LabelId labelId = createLabel.getLabelId();
 
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.assignLabel(assignLabelToTask);
+            client.postCommand(assignLabelToTask);
 
             final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(taskId,
                                                                                         labelId);
-            client.removeLabel(removeLabelFromTask);
+            client.postCommand(removeLabelFromTask);
 
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
             assertEquals(1, tasksViewList.size());
@@ -97,7 +97,7 @@ class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
             final LabelId labelId = createLabel.getLabelId();
 
             final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-            client.assignLabel(assignLabelToTask);
+            client.postCommand(assignLabelToTask);
 
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
             assertEquals(1, tasksViewList.size());
@@ -182,7 +182,7 @@ class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
     private TaskItem obtainTaskItemWhenHandledRemoveLabeledFromTask(LabelId labelId,
             boolean isCorrectId) {
         final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+        client.postCommand(createDraft);
         final TaskId taskId = createDraft.getId();
 
         assignAndRemoveLabel(labelId, isCorrectId, taskId);
@@ -195,12 +195,12 @@ class RemoveLabelFromTaskTest extends CommandLineTodoClientTest {
 
     private void assignAndRemoveLabel(LabelId labelId, boolean isCorrectId, TaskId taskId) {
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         final TaskId idOfUpdatedTask = isCorrectId ? taskId : createWrongTaskId();
         final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(idOfUpdatedTask,
                                                                                     labelId);
-        client.removeLabel(removeLabelFromTask);
+        client.postCommand(removeLabelFromTask);
     }
 
     private static TaskItem checkAndObtainView(TaskId taskId, List<TaskItem> taskViews) {

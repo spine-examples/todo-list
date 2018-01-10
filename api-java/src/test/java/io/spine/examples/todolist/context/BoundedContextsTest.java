@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
+ * Copyright 2018, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -21,13 +21,12 @@
 package io.spine.examples.todolist.context;
 
 import io.spine.server.event.EventBus;
-import io.spine.test.Tests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.context.BoundedContexts.createBoundedContext;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("BoundedContexts should")
 class BoundedContextsTest {

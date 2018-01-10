@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
+ * Copyright 2018, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -25,7 +25,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.client.CommandLineTodoClient;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.client.builder.CommandBuilder;
 import io.spine.examples.todolist.context.BoundedContexts;
@@ -47,7 +46,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
-import static io.spine.examples.todolist.client.CommandLineTodoClient.HOST;
+import static io.spine.examples.todolist.client.TodoClient.HOST;
+import static io.spine.examples.todolist.server.Server.newServer;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
@@ -150,11 +150,11 @@ public abstract class AbstractIntegrationTest {
     @BeforeEach
     protected void setUp() throws InterruptedException {
         final BoundedContext boundedContextInMemory = createBoundedContext();
-        server = new Server(PORT, boundedContextInMemory);
+        server = newServer(PORT, boundedContextInMemory);
         startServer();
-        client = new CommandLineTodoClient(HOST, PORT);
+        client = TodoClient.instance(HOST, PORT);
         for (int i = 0; i < NUMBER_OF_CLIENTS; i++) {
-            clients[i] = new CommandLineTodoClient(HOST, PORT);
+            clients[i] = TodoClient.instance(HOST, PORT);
         }
     }
 

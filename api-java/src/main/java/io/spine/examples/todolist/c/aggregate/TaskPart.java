@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
+ * Copyright 2018, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -111,11 +111,6 @@ public class TaskPart extends AggregatePart<TaskId,
                                             Task,
                                             TaskVBuilder,
                                             TaskAggregateRoot> {
-
-    private static final TaskDescription DEFAULT_DRAFT_DESCRIPTION =
-            TaskDescription.newBuilder()
-                           .setValue("Task description goes here.")
-                           .build();
 
     /**
      * {@inheritDoc}
@@ -296,8 +291,6 @@ public class TaskPart extends AggregatePart<TaskId,
                 TaskDraftCreated.newBuilder()
                                 .setId(taskId)
                                 .setDraftCreationTime(getCurrentTime())
-                                .setDetails(TaskDetails.newBuilder()
-                                                       .setDescription(DEFAULT_DRAFT_DESCRIPTION))
                                 .build();
         return singletonList(draftCreated);
     }

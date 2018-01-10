@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
+ * Copyright 2018, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -23,6 +23,7 @@ package io.spine.examples.todolist.server;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
+import io.spine.server.SubscriptionService;
 import io.spine.server.transport.GrpcContainer;
 
 import java.io.IOException;
@@ -40,13 +41,39 @@ public class Server {
     private final GrpcContainer grpcContainer;
     private final BoundedContext boundedContext;
 
-    public Server(int port, BoundedContext boundedContext) {
+    /**
+     * Creates a server with the {@link CommandService Command}, {@link QueryService Query} and
+     * {@link SubscriptionService Subscription} gRPC services.
+     *
+     * @param port           the port to bind the server to
+     * @param boundedContext the {@link BoundedContext} to serve
+     * @return a new instance of {@code Server}
+     */
+    public static Server newServer(int port, BoundedContext boundedContext) {
+        return new Server(port, boundedContext);
+    }
+
+    /**
+     * Creates a new instance of {@code Server}.
+     *
+     * @param port                      the port to bind the server to
+     * @param boundedContext            the {@link BoundedContext} to serve
+     */
+    private Server(int port, BoundedContext boundedContext) {
         this.port = port;
         this.boundedContext = boundedContext;
 
         final CommandService commandService = initCommandService();
         final QueryService queryService = initQueryService();
-        this.grpcContainer = initGrpcContainer(commandService, queryService);
+        final SubscriptionService subscriptionService = initSubscriptionService();
+        this.grpcContainer = initGrpcContainer(commandService, queryService, subscriptionService);
+    }
+
+    private SubscriptionService initSubscriptionService() {
+        final SubscriptionService result = SubscriptionService.newBuilder()
+                                                              .add(boundedContext)
+                                                              .build();
+        return result;
     }
 
     private QueryService initQueryService() {
@@ -63,14 +90,24 @@ public class Server {
         return result;
     }
 
+    /**
+     * Creates a {@link GrpcContainer} for this server.
+     *
+     * @param commandService      the {@link CommandService} to deploy
+     * @param queryService        the {@link QueryService} to deploy
+     * @param subscriptionService the {@link SubscriptionService} to deploy or {@code null} if no
+     *                            {@code SubscriptionService} is intended for this server
+     * @return a new instance of {@link GrpcContainer}
+     */
     private GrpcContainer initGrpcContainer(CommandService commandService,
-                                            QueryService queryService) {
-        final GrpcContainer result = GrpcContainer.newBuilder()
-                                                  .addService(commandService)
-                                                  .addService(queryService)
-                                                  .setPort(port)
-                                                  .build();
-        return result;
+                                            QueryService queryService,
+                                            SubscriptionService subscriptionService) {
+        final GrpcContainer.Builder result = GrpcContainer.newBuilder()
+                                                          .setPort(port)
+                                                          .addService(commandService)
+                                                          .addService(queryService)
+                                                          .addService(subscriptionService);
+        return result.build();
     }
 
     /**

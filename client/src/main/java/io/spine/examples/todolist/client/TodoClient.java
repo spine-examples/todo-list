@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
+ * Copyright 2018, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,25 +20,17 @@
 
 package io.spine.examples.todolist.client;
 
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.c.commands.AssignLabelToTask;
-import io.spine.examples.todolist.c.commands.CompleteTask;
-import io.spine.examples.todolist.c.commands.CreateBasicLabel;
-import io.spine.examples.todolist.c.commands.CreateBasicTask;
-import io.spine.examples.todolist.c.commands.CreateDraft;
-import io.spine.examples.todolist.c.commands.DeleteTask;
-import io.spine.examples.todolist.c.commands.FinalizeDraft;
-import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
-import io.spine.examples.todolist.c.commands.ReopenTask;
-import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
-import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
-import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
-import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
-import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskLabel;
+import io.spine.examples.todolist.TaskLabels;
+import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -50,103 +42,14 @@ import java.util.List;
  */
 public interface TodoClient {
 
-    /**
-     * Creates task according to the command data.
-     *
-     * @param cmd the {@link CreateBasicTask} command
-     */
-    void create(CreateBasicTask cmd);
+    String HOST = "localhost";
 
     /**
-     * Creates label according to the command data.
+     * Posts the given command to the {@code CommandService}.
      *
-     * @param cmd the {@link CreateBasicLabel} command
+     * @param commandMessage the command to post
      */
-    void create(CreateBasicLabel cmd);
-
-    /**
-     * Creates draft according to the command data.
-     *
-     * @param cmd the {@link CreateDraft} command
-     */
-    void create(CreateDraft cmd);
-
-    /**
-     * Updates task description according to the command data.
-     *
-     * @param cmd the {@link UpdateTaskDescription} command
-     */
-    void update(UpdateTaskDescription cmd);
-
-    /**
-     * Updates task due date according to the command data.
-     *
-     * @param cmd the {@link UpdateTaskDueDate} command
-     */
-    void update(UpdateTaskDueDate cmd);
-
-    /**
-     * Updates task priority according to the command data.
-     *
-     * @param cmd the {@link UpdateTaskPriority} command
-     */
-    void update(UpdateTaskPriority cmd);
-
-    /**
-     * Updates label details according to the command data.
-     *
-     * @param cmd the {@link UpdateLabelDetails} command
-     */
-    void update(UpdateLabelDetails cmd);
-
-    /**
-     * Deletes task according to the command data.
-     *
-     * @param cmd the {@link DeleteTask} command
-     */
-    void delete(DeleteTask cmd);
-
-    /**
-     * Removes label from task according to the command data.
-     *
-     * @param cmd the {@link RemoveLabelFromTask} command
-     */
-    void removeLabel(RemoveLabelFromTask cmd);
-
-    /**
-     * Assigns label to task according to the command data.
-     *
-     * @param cmd the {@link AssignLabelToTask} command
-     */
-    void assignLabel(AssignLabelToTask cmd);
-
-    /**
-     * Reopens task according to the command data.
-     *
-     * @param cmd the {@link ReopenTask} command
-     */
-    void reopen(ReopenTask cmd);
-
-    /**
-     * Restores deleted task according to the command data.
-     *
-     * @param cmd the {@link RestoreDeletedTask} command
-     */
-    void restore(RestoreDeletedTask cmd);
-
-    /**
-     * Completes task according to the command data.
-     *
-     * @param cmd the {@link CompleteTask} command
-     */
-    void complete(CompleteTask cmd);
-
-    /**
-     * Finalizes draft acording to the command data.
-     *
-     * @param cmd the {@link FinalizeDraft} command
-     */
-    void finalize(FinalizeDraft cmd);
+    void postCommand(TodoCommand commandMessage);
 
     /**
      * Obtains the single {@link MyListView}.
@@ -177,7 +80,65 @@ public interface TodoClient {
     List<Task> getTasks();
 
     /**
+     * Obtains a single {@link Task} by its ID.
+     *
+     * <p>If the system contains no task with such ID, the {@code other} value is returned.
+     *
+     * <p>Returns {@code null} iff the task is not found by ID and the {@code other} value is
+     * {@code null}.
+     *
+     * @param id    the task ID to search by
+     * @param other the default value of the task
+     * @return the task with the requested ID or {@code other} if the task is not found
+     */
+    @Nullable
+    Task getTaskOr(TaskId id, @Nullable Task other);
+
+    /**
+     * Obtains all {@linkplain TaskLabel labels} in the system.
+     *
+     * @return the list of the {@code TaskLabel}
+     */
+    List<TaskLabel> getLabels();
+
+    /**
+     * Obtains the labels assigned to the task with the given ID.
+     *
+     * @param taskId the task ID to search by
+     * @return the labels of the specified task
+     */
+    TaskLabels getLabels(TaskId taskId);
+
+    /**
+     * Obtains a single {@link TaskLabel} by its ID.
+     *
+     * <p>If the system contains no label with such ID, the {@code other} value is returned.
+     *
+     * <p>Returns {@code null} iff the label is not found by ID and the {@code other} value is
+     * {@code null}.
+     *
+     * @param id    the label ID to search by
+     * @param other the default value of the label
+     * @return the label with the requested ID or {@code other} if the label is not found
+     */
+    @Nullable
+    TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel other);
+
+    /**
      * Shutdown the connection channel.
      */
     void shutdown();
+
+    /**
+     * Creates a new instance of {@code TodoClient}.
+     *
+     * <p>The resulting {@code TodoClient} connects to the server at {@code host:port}.
+     *
+     * @param host the host of the server to connect to
+     * @param port the port of the server to connect to
+     * @return new TodoList client
+     */
+    static TodoClient instance(String host, int port) {
+        return new TodoClientImpl(host, port);
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
+ * Copyright 2018, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.client;
 
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
@@ -31,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import static io.spine.examples.todolist.TaskStatus.FINALIZED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,7 +41,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of CreateBasicTask command")
-class CreateBasicTaskTest extends CommandLineTodoClientTest {
+class CreateBasicTaskTest extends TodoClientTest {
 
     private TodoClient client;
 
@@ -54,7 +56,7 @@ class CreateBasicTaskTest extends CommandLineTodoClientTest {
     @DisplayName("LabelledTasksView should be empty")
     void obtainEmptyLabelledTasksView() {
         final CreateBasicTask createBasicTask = createBasicTask();
-        client.create(createBasicTask);
+        client.postCommand(createBasicTask);
 
         final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
         assertTrue(labelledTasksView.isEmpty());
@@ -64,7 +66,7 @@ class CreateBasicTaskTest extends CommandLineTodoClientTest {
     @DisplayName("DraftTaskItem should be empty")
     void obtainEmptyDraftViewList() {
         final CreateBasicTask createBasicTask = createBasicTask();
-        client.create(createBasicTask);
+        client.postCommand(createBasicTask);
 
         final List<TaskItem> taskViews = client.getDraftTasksView()
                                                .getDraftTasks()
@@ -76,10 +78,10 @@ class CreateBasicTaskTest extends CommandLineTodoClientTest {
     @DisplayName("MyListView should contain the created task")
     void obtainMyListView() {
         final CreateBasicTask createFirstTask = createBasicTask();
-        client.create(createFirstTask);
+        client.postCommand(createFirstTask);
 
         final CreateBasicTask createSecondTask = createBasicTask();
-        client.create(createSecondTask);
+        client.postCommand(createSecondTask);
 
         final List<TaskItem> taskViews = client.getMyListView()
                                                .getMyList()
@@ -98,5 +100,24 @@ class CreateBasicTaskTest extends CommandLineTodoClientTest {
                                            .getValue());
         assertEquals(DESCRIPTION, secondView.getDescription()
                                             .getValue());
+    }
+
+    @Test
+    @DisplayName("the task should be found")
+    void obtainAllTasks() {
+        final CreateBasicTask createTask = createBasicTask();
+        client.postCommand(createTask);
+
+        final List<Task> allTasks = client.getTasks();
+
+        assertEquals(1, allTasks.size());
+        final Task singleTask = allTasks.get(0);
+
+        // Set fields
+        assertEquals(createTask.getId(), singleTask.getId());
+        assertEquals(createTask.getDescription(), singleTask.getDescription());
+
+        // Default fields
+        assertEquals(FINALIZED, singleTask.getTaskStatus());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
+ * Copyright 2018, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -37,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of CreateDraft command")
-class CreateDraftTest extends CommandLineTodoClientTest {
+class CreateDraftTest extends TodoClientTest {
 
     private TodoClient client;
 
@@ -52,7 +52,7 @@ class CreateDraftTest extends CommandLineTodoClientTest {
     @DisplayName("DraftTasksView should contain the task view")
     void obtainDraftView() {
         final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+        client.postCommand(createDraft);
 
         final DraftTasksView draftTasksView = client.getDraftTasksView();
         final List<TaskItem> taskViewList = draftTasksView.getDraftTasks()
@@ -66,7 +66,7 @@ class CreateDraftTest extends CommandLineTodoClientTest {
     @DisplayName("LabelledTasksView should not contain the task view")
     void obtainLabelledView() {
         final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+        client.postCommand(createDraft);
 
         final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
         assertTrue(labelledTasksView.isEmpty());
@@ -76,7 +76,7 @@ class CreateDraftTest extends CommandLineTodoClientTest {
     @DisplayName("MyListView should not contain task view")
     void ObtainMyListView() {
         final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+        client.postCommand(createDraft);
 
         final List<TaskItem> taskViews = client.getMyListView()
                                                .getMyList()

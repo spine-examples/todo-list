@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
+ * Copyright 2018, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of ReopenTask command")
-class ReopenTaskTest extends CommandLineTodoClientTest {
+class ReopenTaskTest extends TodoClientTest {
 
     private TodoClient client;
 
@@ -101,13 +101,13 @@ class ReopenTaskTest extends CommandLineTodoClientTest {
         final TaskId createdTaskId = createTask.getId();
 
         final CreateBasicLabel createLabel = createBasicLabel();
-        client.create(createLabel);
+        client.postCommand(createLabel);
 
         final TaskId taskId = createTask.getId();
         final LabelId labelId = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         completeAndReopenTask(isCorrectId, createdTaskId);
 
@@ -142,10 +142,10 @@ class ReopenTaskTest extends CommandLineTodoClientTest {
 
     private void completeAndReopenTask(boolean isCorrectId, TaskId createdTaskId) {
         final CompleteTask completeTask = completeTaskInstance(createdTaskId);
-        client.complete(completeTask);
+        client.postCommand(completeTask);
 
         final TaskId reopenedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
         final ReopenTask reopenTask = reopenTaskInstance(reopenedTaskId);
-        client.reopen(reopenTask);
+        client.postCommand(reopenTask);
     }
 }

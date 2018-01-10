@@ -15,8 +15,10 @@ hs_err_pid*
 
 # Do not ingore Gradle Wrapper runtime
 !/gradle/wrapper/gradle-wrapper.jar
+!/client-android/gradle/wrapper/gradle-wrapper.jar
 
 # Do not ignore code style settings.
+!/.idea/codeStyles
 !/.idea/codeStyleSettings.xml
 
 # Gradle interim configs
@@ -58,3 +60,8 @@ gradle.properties
 
 # Firebase debug log
 firebase-debug.log
+
+# Google/Firebase settings
+# Must be kept secure (out of public Git repository at least)
+serviceAccount.json
+google-services.json

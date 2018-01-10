@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
+ * Copyright 2018, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.examples.todolist.server.Server.newServer;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.lang.String.format;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -75,7 +76,7 @@ public class LocalMySqlServer {
     public static void main(String[] args) throws IOException {
         final String[] actualArguments = getActualArguments(args);
         final BoundedContext boundedContext = createBoundedContext(actualArguments);
-        final Server server = new Server(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
+        final Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
     }
 

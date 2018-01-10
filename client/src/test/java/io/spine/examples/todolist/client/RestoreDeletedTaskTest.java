@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
+ * Copyright 2018, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -46,7 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of RestoreDeletedTask command")
-class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
+class RestoreDeletedTaskTest extends TodoClientTest {
 
     private TodoClient client;
 
@@ -69,7 +69,7 @@ class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
         assignAndDeleteTask(labelId, taskId);
 
         final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-        client.restore(restoreDeletedTask);
+        client.postCommand(restoreDeletedTask);
 
         final int expectedListSize = 1;
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
@@ -100,7 +100,7 @@ class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
 
         final RestoreDeletedTask restoreDeletedTask =
                 restoreDeletedTaskInstance(createWrongTaskId());
-        client.restore(restoreDeletedTask);
+        client.postCommand(restoreDeletedTask);
 
         final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
         assertEquals(1, tasksViewList.size());
@@ -114,9 +114,9 @@ class RestoreDeletedTaskTest extends CommandLineTodoClientTest {
 
     private void assignAndDeleteTask(LabelId labelId, TaskId taskId) {
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        client.delete(deleteTask);
+        client.postCommand(deleteTask);
     }
 }

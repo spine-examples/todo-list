@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
+ * Copyright 2018, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -51,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
  * @author Illia Shepilov
  */
 @DisplayName("After execution of UpdateLabelDetails command")
-class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
+class UpdateLabelDetailsTest extends TodoClientTest {
 
     private static final String EXPECTED_COLOR = LabelColorView.BLUE_COLOR.getHexColor();
 
@@ -126,7 +126,7 @@ class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         @DisplayName("contain the task view with updated label details")
         void containUpdatedView() throws Exception {
             final CreateBasicLabel createBasicLabel = createBasicLabel();
-            client.create(createBasicLabel);
+            client.postCommand(createBasicLabel);
 
             final LabelColor newLabelColor = LabelColor.RED;
             final TaskItem view =
@@ -139,7 +139,7 @@ class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
                 "when command has wrong task ID")
         void containNonUpdatedView() {
             final CreateBasicLabel createBasicLabel = createBasicLabel();
-            client.create(createBasicLabel);
+            client.postCommand(createBasicLabel);
 
             final LabelColor newLabelColor = LabelColor.RED;
             final TaskItem view =
@@ -151,17 +151,17 @@ class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
     private TaskItem obtainTaskItemWhenHandledUpdateLabelDetailsCommand(LabelColor newColor,
             boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
+        client.postCommand(createTask);
 
         final CreateBasicLabel createLabel = createBasicLabel();
-        client.create(createLabel);
+        client.postCommand(createLabel);
 
         final TaskId idOfCreatedTask = createTask.getId();
         final LabelId idOfCreatedLabel = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfCreatedTask,
                                                                               idOfCreatedLabel);
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         final LabelId idOfUpdatedLabel = isCorrectId ? idOfCreatedLabel : createWrongTaskLabelId();
 
@@ -176,7 +176,7 @@ class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
                             .build();
         final UpdateLabelDetails updateLabelDetails =
                 updateLabelDetailsInstance(idOfUpdatedLabel, previousLabelDetails, newLabelDetails);
-        client.update(updateLabelDetails);
+        client.postCommand(updateLabelDetails);
 
         final List<TaskItem> taskViews = client.getMyListView()
                                                .getMyList()
@@ -194,16 +194,16 @@ class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
             String updatedTitle,
             boolean isCorrectId) {
         final CreateBasicTask createTask = createBasicTask();
-        client.create(createTask);
+        client.postCommand(createTask);
 
         final CreateBasicLabel createLabel = createBasicLabel();
-        client.create(createLabel);
+        client.postCommand(createLabel);
 
         final TaskId taskId = createTask.getId();
         final LabelId labelId = createLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         final LabelDetails detailsWithCorrectId = LabelDetails.newBuilder()
                                                               .setColor(LabelColor.GRAY)
@@ -218,7 +218,7 @@ class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
         final LabelId updatedLabelId = isCorrectId ? labelId : createWrongTaskLabelId();
         final UpdateLabelDetails updateLabelDetails =
                 updateLabelDetailsInstance(updatedLabelId, previousLabelDetails, newLabelDetails);
-        client.update(updateLabelDetails);
+        client.postCommand(updateLabelDetails);
 
         final List<LabelledTasksView> labelledTasksViewList = client.getLabelledTasksView();
         final int expectedListSize = isCorrectId ? 1 : 2;
@@ -233,16 +233,16 @@ class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
     private TaskItem obtainTaskItemWhenHandledUpdateLabelDetails(LabelColor newLabelColor,
             boolean isCorrectId) {
         final CreateDraft createDraft = createDraft();
-        client.create(createDraft);
+        client.postCommand(createDraft);
 
         final CreateBasicLabel createBasicLabel = createBasicLabel();
-        client.create(createBasicLabel);
+        client.postCommand(createBasicLabel);
 
         final TaskId taskId = createDraft.getId();
         final LabelId labelId = createBasicLabel.getLabelId();
 
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.assignLabel(assignLabelToTask);
+        client.postCommand(assignLabelToTask);
 
         final LabelId updatedLabelId = isCorrectId ? labelId : createWrongTaskLabelId();
 
@@ -257,7 +257,7 @@ class UpdateLabelDetailsTest extends CommandLineTodoClientTest {
                                                          .build();
         final UpdateLabelDetails updateLabelDetails =
                 updateLabelDetailsInstance(updatedLabelId, previousLabelDetails, newLabelDetails);
-        client.update(updateLabelDetails);
+        client.postCommand(updateLabelDetails);
 
         final List<TaskItem> taskViews = client.getDraftTasksView()
                                                .getDraftTasks()

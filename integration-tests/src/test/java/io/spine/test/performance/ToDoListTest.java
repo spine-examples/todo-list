@@ -1,5 +1,5 @@
 /*
- * Copyright 2017, TeamDev Ltd. All rights reserved.
+ * Copyright 2018, TeamDev Ltd. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -47,7 +47,7 @@ public class ToDoListTest extends AbstractIntegrationTest {
         final int numberOfRequests = 100;
         asyncPerformanceTest(iterationNumber -> {
             final CreateBasicTask basicTask = createBasicTask();
-            clients[iterationNumber % clients.length].create(basicTask);
+            clients[iterationNumber % clients.length].postCommand(basicTask);
         }, numberOfRequests);
 
         final List<TaskItem> taskItems = getClient().getMyListView()
@@ -65,7 +65,7 @@ public class ToDoListTest extends AbstractIntegrationTest {
         final int numberOfRequests = 100;
         asyncPerformanceTest(iterationNumber -> {
             final CreateBasicTask basicTask = createBasicTask();
-            clients[iterationNumber % clients.length].create(basicTask);
+            clients[iterationNumber % clients.length].postCommand(basicTask);
         }, numberOfRequests);
 
         final List<Task> tasks = getClient().getTasks();
