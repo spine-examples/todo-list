@@ -68,6 +68,7 @@ import io.spine.server.tenant.TenantIndex;
 import io.spine.time.Time;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -98,12 +99,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Dmytro Dashenkov
  */
-public class TaskCreationWizardTest {
+@DisplayName("Task creation wizard on ")
+class TaskCreationWizardTest {
 
     private static final ActorRequestFactory requestFactory =
             TestActorRequestFactory.newInstance(TaskCreationWizardTest.class);
 
     @Nested
+    @DisplayName("StartTaskCreation command should")
     class StartTaskCreationTest extends CommandTest {
 
         @BeforeEach
@@ -113,6 +116,7 @@ public class TaskCreationWizardTest {
         }
 
         @Test
+        @DisplayName("start task creation process")
         void testStartWizard() {
             final TaskId taskId = newTaskId();
             final StartTaskCreation cmd = StartTaskCreation.newBuilder()
@@ -132,6 +136,7 @@ public class TaskCreationWizardTest {
     }
 
     @Nested
+    @DisplayName("SetTaskDetails command should")
     class SetTaskDetailsTest extends CommandTest {
 
         @BeforeEach
@@ -142,6 +147,7 @@ public class TaskCreationWizardTest {
         }
 
         @Test
+        @DisplayName("issue task mutation commands")
         void testSetDetails() {
             final String descriptionValue = "Task for test";
             final TaskDescription description = TaskDescription.newBuilder()
@@ -185,6 +191,7 @@ public class TaskCreationWizardTest {
     }
 
     @Nested
+    @DisplayName("AddLabels command should")
     class AddLabelsTest extends CommandTest {
 
         @BeforeEach
@@ -196,6 +203,7 @@ public class TaskCreationWizardTest {
         }
 
         @Test
+        @DisplayName("create and assign requested labels")
         void testAddLabels() {
             final List<LabelId> existingLabelIds = ImmutableList.of(newLabelId(), newLabelId());
             final LabelDetails newLabel = LabelDetails.newBuilder()
@@ -220,6 +228,7 @@ public class TaskCreationWizardTest {
         }
 
         @Test
+        @DisplayName("do nothing if no labels specified")
         void testNoLabels() {
             final AddLabels cmd = AddLabels.newBuilder()
                                            .setId(getId())
@@ -231,6 +240,7 @@ public class TaskCreationWizardTest {
     }
 
     @Nested
+    @DisplayName("CompleteTaskCreation command should")
     class CompleteTaskCreationTest extends CommandTest {
 
         @BeforeEach
@@ -243,6 +253,7 @@ public class TaskCreationWizardTest {
         }
 
         @Test
+        @DisplayName("complete task creation process")
         void testCompleteWizard() {
             final CompleteTaskCreation cmd = CompleteTaskCreation.newBuilder()
                                                                  .setId(getId())
@@ -259,6 +270,7 @@ public class TaskCreationWizardTest {
     }
 
     @Nested
+    @DisplayName("CancelTaskCreation command should")
     class CancelTaskCreationTest extends CommandTest {
 
         @BeforeEach
@@ -271,6 +283,7 @@ public class TaskCreationWizardTest {
         }
 
         @Test
+        @DisplayName("cancel task creation process")
         void testCancelProc() {
             final CancelTaskCreation cmd = CancelTaskCreation.newBuilder()
                                                                .setId(getId())
@@ -286,31 +299,31 @@ public class TaskCreationWizardTest {
 
         private TaskCreationWizard wizard;
 
-        protected void setUp() {
+        void setUp() {
             wizard = new TaskCreationWizard(newId());
             prepareCommandBus();
         }
 
-        protected TaskCreationId getId() {
+        TaskCreationId getId() {
             return wizard.getId();
         }
 
-        protected TaskId getTaskId() {
+        TaskId getTaskId() {
             return wizard.getState().getTaskId();
         }
 
-        protected TaskCreation.Stage getStage() {
+        TaskCreation.Stage getStage() {
             return wizard.getState().getStage();
         }
 
-        protected void assertArchived() {
+        void assertArchived() {
             final boolean archived = wizard.isArchived();
             final boolean deleted = wizard.isDeleted();
             assertTrue(archived, "Should be archived");
             assertFalse(deleted, "Should not be deleted");
         }
 
-        protected List<? extends Message> dispatch(TodoCommand command) {
+        List<? extends Message> dispatch(TodoCommand command) {
             final Command cmd = requestFactory.command()
                                               .create(command);
             final CommandEnvelope envelope = CommandEnvelope.of(cmd);
@@ -322,7 +335,7 @@ public class TaskCreationWizardTest {
             return result;
         }
 
-        protected List<? extends TodoCommand> producesCommands(TodoCommand source) {
+        List<? extends TodoCommand> producesCommands(TodoCommand source) {
             final List<? extends Message> events = dispatch(source);
             assertFalse(events.isEmpty());
             assertEquals(1, events.size());
@@ -337,7 +350,7 @@ public class TaskCreationWizardTest {
             return result;
         }
 
-        protected void startWizard() {
+        void startWizard() {
             final StartTaskCreation cmd = StartTaskCreation.newBuilder()
                                                            .setId(getId())
                                                            .setTaskId(newTaskId())
@@ -345,7 +358,7 @@ public class TaskCreationWizardTest {
             dispatch(cmd);
         }
 
-        protected void addDescription() {
+        void addDescription() {
             final TaskDescription description = TaskDescription.newBuilder()
                                                                .setValue("task for test")
                                                                .build();
@@ -356,7 +369,7 @@ public class TaskCreationWizardTest {
             dispatch(cmd);
         }
 
-        protected void skipLabels() {
+        void skipLabels() {
             final AddLabels cmd = AddLabels.newBuilder()
                                            .setId(getId())
                                            .build();
