@@ -22,6 +22,7 @@ package io.spine.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
+import io.spine.examples.todolist.repository.MyListViewRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
 import io.spine.server.event.EventBus;
@@ -71,9 +72,11 @@ public final class BoundedContexts {
     public static BoundedContext create(StorageFactory storageFactory) {
         checkNotNull(storageFactory);
         final TaskRepository taskRepo = new TaskRepository();
+        final MyListViewRepository myListViewRepo = new MyListViewRepository();
         final EventBus.Builder eventBus = createEventBus(storageFactory, taskRepo);
         final BoundedContext boundedContext = createBoundedContext(eventBus);
         boundedContext.register(taskRepo);
+        boundedContext.register(myListViewRepo);
         return boundedContext;
     }
 
