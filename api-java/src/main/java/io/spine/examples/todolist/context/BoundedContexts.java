@@ -21,22 +21,12 @@
 package io.spine.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
-import io.spine.examples.todolist.repository.DraftTasksViewRepository;
-import io.spine.examples.todolist.repository.LabelAggregateRepository;
-import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
-import io.spine.examples.todolist.repository.MyListViewRepository;
-import io.spine.examples.todolist.repository.TaskCreationWizardRepository;
-import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
-import io.spine.server.event.EventBus;
-import io.spine.server.event.EventEnricher;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
  * Utilities for creation the {@link BoundedContext} instances.
@@ -76,63 +66,18 @@ public final class BoundedContexts {
      */
     public static BoundedContext create(StorageFactory storageFactory) {
         checkNotNull(storageFactory);
-
-        final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
         final TaskRepository taskRepo = new TaskRepository();
-        final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
-
-        final MyListViewRepository myListViewRepo = new MyListViewRepository();
-        final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
-        final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
-
-        final TaskCreationWizardRepository taskCreationRepo = new TaskCreationWizardRepository();
-
-        final EventBus.Builder eventBus = createEventBus(storageFactory,
-                                                         labelAggregateRepo,
-                                                         taskRepo,
-                                                         taskLabelsRepo);
-        final BoundedContext boundedContext = createBoundedContext(eventBus);
-
+        final BoundedContext boundedContext = createBoundedContext(storageFactory);
         boundedContext.register(taskRepo);
-        boundedContext.register(taskLabelsRepo);
-        boundedContext.register(labelAggregateRepo);
-        boundedContext.register(myListViewRepo);
-        boundedContext.register(tasksViewRepo);
-        boundedContext.register(draftTasksViewRepo);
-        boundedContext.register(taskCreationRepo);
-
         return boundedContext;
     }
 
-    private static EventBus.Builder createEventBus(StorageFactory storageFactory,
-                                                   LabelAggregateRepository labelRepo,
-                                                   TaskRepository taskRepo,
-                                                   TaskLabelsRepository labelsRepo) {
-        final EventEnricher enricher = TodoListEnrichments.newBuilder()
-                                                          .setLabelRepository(labelRepo)
-                                                          .setTaskRepository(taskRepo)
-                                                          .setTaskLabelsRepository(labelsRepo)
-                                                          .build()
-                                                          .createEnricher();
-        final EventBus.Builder eventBus = EventBus.newBuilder()
-                                                  .setEnricher(enricher)
-                                                  .setStorageFactory(storageFactory);
-        return eventBus;
-    }
-
-    @SuppressWarnings("Guava" /* Spine API is Java 7-based
-                                 and uses `Optional` from Google Guava. */)
     @VisibleForTesting
-    static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
-        final Optional<StorageFactory> storageFactory = eventBus.getStorageFactory();
-        if (!storageFactory.isPresent()) {
-            throw newIllegalStateException("EventBus does not specify a StorageFactory.");
-        }
-
+    static BoundedContext createBoundedContext(StorageFactory storageFactory) {
+        checkNotNull(storageFactory);
         return BoundedContext.newBuilder()
-                             .setStorageFactorySupplier(storageFactory::get)
+                             .setStorageFactorySupplier(() -> storageFactory)
                              .setName(NAME)
-                             .setEventBus(eventBus)
                              .build();
     }
 }

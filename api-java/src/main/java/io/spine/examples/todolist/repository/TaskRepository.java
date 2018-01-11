@@ -21,14 +21,13 @@
 package io.spine.examples.todolist.repository;
 
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
-import io.spine.examples.todolist.c.aggregate.TaskPart;
-import io.spine.server.aggregate.AggregatePartRepository;
+import io.spine.examples.todolist.c.aggregate.TaskAggregate;
+import io.spine.server.aggregate.AggregateRepository;
 
 /**
- * Repository for the {@link TaskPart}.
+ * Repository for the {@link TaskAggregate}.
  *
  * @author Illia Shepilov
  */
-public class TaskRepository extends AggregatePartRepository<TaskId, TaskPart, TaskAggregateRoot> {
+public class TaskRepository extends AggregateRepository<TaskId, TaskAggregate> {
 }

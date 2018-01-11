@@ -32,7 +32,7 @@ import io.spine.examples.todolist.ReopenTaskRejected;
 import io.spine.examples.todolist.RestoreDeletedTaskRejected;
 import io.spine.examples.todolist.TaskDueDateUpdateRejected;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.TaskPart;
+import io.spine.examples.todolist.c.aggregate.TaskAggregate;
 import io.spine.examples.todolist.c.commands.CompleteTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
@@ -53,13 +53,13 @@ import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDueDate;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskPriority;
 
 /**
- * Utility class for working with {@link TaskPart} rejection.
+ * Utility class for working with {@link TaskAggregate} rejection.
  *
  * @author Illia Shepilov
  */
-public class TaskPartRejections {
+public class TaskAggregateRejections {
 
-    private TaskPartRejections() {
+    private TaskAggregateRejections() {
         // Prevent instantiation of this utility class.
     }
 
