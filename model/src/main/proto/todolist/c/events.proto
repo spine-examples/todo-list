@@ -189,34 +189,6 @@ message TaskDeleted {
     reserved 2 to 10;
 }
 
-// An event fired upon the label assignment to a task.
-//
-message LabelAssignedToTask {
-
-    // An identifier of the target task.
-    TaskId task_id = 1;
-
-    // An identifier of the label to assign to the target task.
-    LabelId label_id = 2 [(required) = true];
-
-    // Reserved for future extension.
-    reserved 3 to 10;
-}
-
-// An event fired upon the label removal from a task.
-//
-message LabelRemovedFromTask {
-
-    // An identifier of the target task.
-    TaskId task_id = 1;
-
-    // An identifier of the label to remove from the target task.
-    LabelId label_id = 2 [(required) = true];
-
-    // Reserved for future extension.
-    reserved 3 to 10;
-}
-
 // An event fired upon a deleted task restoration.
 //
 // The task referenced by the event is always non-deleted.
@@ -228,35 +200,4 @@ message DeletedTaskRestored {
 
     // Reserved for future extension.
     reserved 2 to 10;
-}
-
-// An event reflecting the label creation.
-//
-message LabelCreated {
-
-    // An identifier of the created label.
-    LabelId id = 1;
-
-    // The details of the label created.
-    LabelDetails details = 2 [(required) = true];
-}
-
-// An event reflecting the label update.
-//
-message LabelDetailsUpdated {
-
-    // An identifier of the updated label.
-    LabelId label_id = 1;
-
-    // The label details change.
-    LabelDetailsChange label_details_change = 2 [(required) = true];
-}
-
-message LabelledTaskRestored {
-
-    // A label idenifier.
-    LabelId label_id = 1;
-
-    // A task idenifier.
-    TaskId task_id = 2;
 }

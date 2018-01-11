@@ -29,7 +29,6 @@ option java_package = "io.spine.examples.todolist.c.rejection";
 option java_multiple_files = false;
 option java_generate_equals_and_hash = true;
 
-
 import "todolist/identifiers.proto";
 import "todolist/values.proto";
 import "todolist/model.proto";
@@ -59,36 +58,6 @@ message CannotUpdateTaskDueDate {
 
     // Details of the rejection.
     TaskDueDateUpdateRejected rejection_details = 1;
-}
-
-// The rejection to update a label details.
-//
-// It is thrown if an attempt is made to update the label when
-// the expected label details do not match the actual.
-message CannotUpdateLabelDetails {
-
-    // Details of the rejection.
-    LabelDetailsUpdateRejected rejection_details = 1;
-}
-
-// The rejection to assign label to task.
-//
-// It is thrown if an attempt is made to assign the label
-// to the task in either DELETED or COMPLETED state.
-message CannotAssignLabelToTask {
-
-    // Details of the rejection.
-    AssignLabelToTaskRejected rejection_details = 1;
-}
-
-// The rejection to remove label from task.
-//
-// It is thrown if an attempt is made to remove the label
-// from the task in either DELETED or COMPLETED state.
-message CannotRemoveLabelFromTask {
-
-    // Details of the rejection.
-    RemoveLabelFromTaskRejected rejection_details = 1;
 }
 
 // The rejection to reopen a task.
@@ -144,20 +113,4 @@ message CannotFinalizeDraft {
 
     // Details of the rejection.
     FinalizeDraftRejected rejection_details = 1;
-}
-
-// The rejection to move the `TaskCreation` process to a certain stage.
-//
-// The accepted stage transitions of a task creation process are limited.
-// See `TaskCreationProcessManager` for more details.
-message CannotMoveToStage {
-
-    // The ID of the process which throwed the rejection.
-    TaskCreationId process_id = 1 [(required) = true];
-
-    // The stage which the process was requested to move in.
-    TaskCreation.Stage requested_stage = 2 [(required) = true];
-
-    // The current stage of the process.
-    TaskCreation.Stage current_stage = 3 [(required) = true];
 }
