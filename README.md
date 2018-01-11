@@ -14,8 +14,7 @@ In this step we create the first projection in the system.
 
 ### Model
 
-The projection `MyListView` represents a list of active (finalized, non-deleted, non-completed) 
-tasks.
+The projection `MyListView` represents a list of active (finalized, non-deleted) tasks.
 
 The projection state is defined in [`projections.proto`](./model/src/main/proto/todolist/q/projections.proto)
 file.
@@ -37,7 +36,7 @@ The event enrichments is a mechanism of binding extra data to an event. To creat
 define the enrichment type in Protobuf and create an instance of [`EventEnricher`](https://spine.io/core-java/javadoc/server/io/spine/server/event/EventEnricher.html)
 and pass it to `EventBus` on creation.
 
-In TodoList, we enrich `TaskDraftFinalized` event with the state of the `Task` repository.
+In TodoList, we enrich `TaskDraftFinalized` event with the state of the `Task` aggregate.
 The enrichment is defined in [`enrichments.proto`](./model/src/main/proto/todolist/c/enrichments.proto).
 [`TodoListEnrichments`](./api-java/src/main/java/io/spine/examples/todolist/context/TodoListEnrichments.java)
 creates instances of the `EventEnricher`, which maps the ID of the `Task` which produced the given 
