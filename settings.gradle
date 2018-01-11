@@ -21,6 +21,7 @@
 include 'api-java'
 include 'model'
 include 'server'
+include 'testutil-api'
 
 include ':local-inmem'
 project(':local-inmem').projectDir = new File('./deployment/local-inmem')

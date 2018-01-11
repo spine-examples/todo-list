@@ -18,33 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.testdata;
 
-import io.spine.core.EventContext;
-import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import io.spine.examples.todolist.TaskDescription;
+import io.spine.examples.todolist.TaskDescriptionVBuilder;
 
 /**
- * @author Illia Shepilov
+ * Utilities for creating Protobuf messages with a single field.
+ *
+ * @author Dmytro Grankin
  */
-@DisplayName("EnrichmentHelper should")
-class EnrichmentHelperTest {
+public class Given {
 
-    @Test
-    @DisplayName("have the private constructor")
-    void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(EnrichmentHelper.class);
+    private Given() {
+        // Prevent instantiation of this utility class.
     }
 
-    @Test
-    @DisplayName("throw EnrichmentNotFoundException when enrichment is not present")
-    void throwException() {
-        assertThrows(EnrichmentNotFoundException.class, () ->
-                EnrichmentHelper.getEnrichment(TaskEnrichment.class,
-                                               EventContext.getDefaultInstance()));
+    /**
+     * Obtains task description with the specified value.
+     *
+     * @param value the description value
+     * @return the task description
+     */
+    public static TaskDescription newDescription(String value) {
+        return TaskDescriptionVBuilder.newBuilder()
+                                      .setValue(value)
+                                      .build();
     }
 }

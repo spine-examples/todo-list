@@ -18,19 +18,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.repository;
+package io.spine.examples.todolist.testdata;
 
-import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
-import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
-import io.spine.server.BoundedContext;
-import io.spine.server.aggregate.AggregatePartRepository;
+import io.grpc.stub.StreamObserver;
+import io.spine.core.Response;
+
+import java.util.List;
+
+import static com.google.common.collect.Lists.newLinkedList;
 
 /**
- * Repository for the {@link TaskLabelsPart}
+ * Provides the {@link StreamObserver} implementation for the test needs.
  *
  * @author Illia Shepilov
  */
-public class TaskLabelsRepository
-        extends AggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> {
+public class TestResponseObserver implements StreamObserver<Response> {
+
+    private final List<Response> responses = newLinkedList();
+    private Throwable throwable;
+    private boolean completed = false;
+
+    @Override
+    public void onNext(Response response) {
+        responses.add(response);
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        this.throwable = throwable;
+    }
+
+    @Override
+    public void onCompleted() {
+        this.completed = true;
+    }
+
+    Throwable getThrowable() {
+        return throwable;
+    }
+
+    boolean isCompleted() {
+        return this.completed;
+    }
 }

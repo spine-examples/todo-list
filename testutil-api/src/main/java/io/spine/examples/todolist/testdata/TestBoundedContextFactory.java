@@ -18,27 +18,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.c.aggregate;
+package io.spine.examples.todolist.testdata;
 
-import io.spine.examples.todolist.TaskId;
 import io.spine.server.BoundedContext;
-import io.spine.server.aggregate.AggregateRoot;
+import io.spine.server.event.EventBus;
+import io.spine.server.storage.StorageFactorySwitch;
 
 /**
- * Aggregate root for the tasks.
+ * Provides bounded context for the test needs.
  *
  * @author Illia Shepilov
- * @see AggregateRoot
  */
-public class TaskAggregateRoot extends AggregateRoot<TaskId> {
+public class TestBoundedContextFactory {
+
+    private TestBoundedContextFactory() {
+    }
 
     /**
-     * Creates a new instance.
+     * Provides a new {@link BoundedContext} instance
+     * built with the specified {@link EventBus.Builder} and {@link StorageFactorySwitch}.
      *
-     * @param boundedContext the bounded context to which the aggregate belongs
-     * @param id             the ID of the aggregate
+     * @param eventBus {@code EventBus.Builder} instance
+     * @return the {@code BoundedContext} instance
      */
-    public TaskAggregateRoot(BoundedContext boundedContext, TaskId id) {
-        super(boundedContext, id);
+    public static BoundedContext boundedContextInstance(EventBus.Builder eventBus,
+                                                        StorageFactorySwitch storageFactory) {
+        return BoundedContext.newBuilder()
+                             .setEventBus(eventBus)
+                             .setStorageFactorySupplier(storageFactory)
+                             .build();
     }
 }

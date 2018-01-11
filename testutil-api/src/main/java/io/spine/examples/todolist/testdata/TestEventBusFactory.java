@@ -18,18 +18,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.testdata;
+
+import io.spine.server.event.EventBus;
+import io.spine.server.event.EventEnricher;
+import io.spine.server.storage.StorageFactory;
 
 /**
- * An exception thrown when enrichment cannot be found in {@link io.spine.core.EventContext}.
+ * Provides the {@link EventBus.Builder} instances for the test needs.
  *
  * @author Illia Shepilov
  */
-class EnrichmentNotFoundException extends RuntimeException {
+public class TestEventBusFactory {
 
-    private static final long serialVersionUID = 0L;
+    private TestEventBusFactory() {
+    }
 
-    EnrichmentNotFoundException(String message) {
-        super(message);
+    /**
+     * Returns a pre-configured {@link EventBus.Builder} instance.
+     *
+     * @param storageFactory the {@link StorageFactory} to set
+     * @param eventEnricher  the {@link EventEnricher} to set
+     * @return the {@code EventBus.Builder} instance
+     */
+    public static EventBus.Builder newEventBusBuilder(StorageFactory storageFactory,
+                                                      EventEnricher eventEnricher) {
+        return EventBus.newBuilder()
+                       .setStorageFactory(storageFactory)
+                       .setEnricher(eventEnricher);
     }
 }
