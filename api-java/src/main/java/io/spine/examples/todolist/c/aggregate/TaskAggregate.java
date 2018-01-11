@@ -98,7 +98,7 @@ import static java.util.Collections.singletonList;
 @SuppressWarnings({"ClassWithTooManyMethods", /* Task definition cannot be separated and should
                                                  process all commands and events related to it
                                                  according to the domain model.
-                                                 The {@code AggregatePart} does it with methods
+                                                 The {@code Aggregate} does it with methods
                                                  annotated as {@code Assign} and {@code Apply}.
                                                  In that case class has too many methods.*/
         "OverlyCoupledClass"}) /* As each method needs dependencies  necessary to perform execution
