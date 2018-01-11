@@ -21,12 +21,16 @@
 package io.spine.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Optional;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
+import io.spine.server.event.EventBus;
+import io.spine.server.event.EventEnricher;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
  * Utilities for creation the {@link BoundedContext} instances.
@@ -67,17 +71,37 @@ public final class BoundedContexts {
     public static BoundedContext create(StorageFactory storageFactory) {
         checkNotNull(storageFactory);
         final TaskRepository taskRepo = new TaskRepository();
-        final BoundedContext boundedContext = createBoundedContext(storageFactory);
+        final EventBus.Builder eventBus = createEventBus(storageFactory, taskRepo);
+        final BoundedContext boundedContext = createBoundedContext(eventBus);
         boundedContext.register(taskRepo);
         return boundedContext;
     }
 
+    private static EventBus.Builder createEventBus(StorageFactory storageFactory,
+                                                   TaskRepository taskRepo) {
+        final EventEnricher enricher = TodoListEnrichments.newBuilder()
+                                                          .setTaskRepository(taskRepo)
+                                                          .build()
+                                                          .createEnricher();
+        final EventBus.Builder eventBus = EventBus.newBuilder()
+                                                  .setEnricher(enricher)
+                                                  .setStorageFactory(storageFactory);
+        return eventBus;
+    }
+
+    @SuppressWarnings("Guava" /* Spine API is Java 7-based
+                                 and uses `Optional` from Google Guava. */)
     @VisibleForTesting
-    static BoundedContext createBoundedContext(StorageFactory storageFactory) {
-        checkNotNull(storageFactory);
+    static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
+        final Optional<StorageFactory> storageFactory = eventBus.getStorageFactory();
+        if (!storageFactory.isPresent()) {
+            throw newIllegalStateException("EventBus does not specify a StorageFactory.");
+        }
+
         return BoundedContext.newBuilder()
-                             .setStorageFactorySupplier(() -> storageFactory)
+                             .setStorageFactorySupplier(storageFactory::get)
                              .setName(NAME)
+                             .setEventBus(eventBus)
                              .build();
     }
 }
