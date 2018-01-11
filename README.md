@@ -68,4 +68,6 @@ To write [tests for `TaskAggregate`](./api-java/src/test/java/io/spine/examples/
 we extend the `AggregateCommandTest` and test the effect of
 each separate command on the aggregate.
 
+---
 
+[Step 2](https://github.com/SpineEventEngine/todo-list/tree/step-2)
