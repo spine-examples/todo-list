@@ -23,7 +23,6 @@ package io.spine.examples.todolist.context;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskAggregate;
 import io.spine.examples.todolist.repository.TaskRepository;
@@ -50,7 +49,6 @@ public class TodoListEnrichments {
     EventEnricher createEnricher() {
         final EventEnricher enricher =
                 EventEnricher.newBuilder()
-                             .add(TaskId.class, TaskDetails.class, taskIdToTaskDetails())
                              .add(TaskId.class, Task.class, taskIdToTask())
                              .build();
         return enricher;
@@ -65,33 +63,12 @@ public class TodoListEnrichments {
             if (!aggregate.isPresent()) {
                 return Task.getDefaultInstance();
             }
-            final Task task = aggregate.get().getState();
+            final Task task = aggregate.get()
+                                       .getState();
             return task;
         };
         return result;
     }
-
-    private Function<TaskId, TaskDetails> taskIdToTaskDetails() {
-        final Function<TaskId, TaskDetails> result = taskId -> {
-            if (taskId == null) {
-                return TaskDetails.getDefaultInstance();
-            }
-            final Optional<TaskAggregate> aggregate = taskRepo.find(taskId);
-            if (!aggregate.isPresent()) {
-                return TaskDetails.getDefaultInstance();
-            }
-            final Task state = aggregate.get().getState();
-            final TaskDetails details = TaskDetails.newBuilder()
-                                                   .setDescription(state.getDescription())
-                                                   .setPriority(state.getPriority())
-                                                   .build();
-            return details;
-        };
-
-        return result;
-    }
-
-
 
     /**
      * Creates a new builder for (@code TodoListEnrichments).
