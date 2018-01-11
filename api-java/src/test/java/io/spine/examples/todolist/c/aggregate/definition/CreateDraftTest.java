@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CreateDraft command should be interpreted by TaskPart and")
+@DisplayName("CreateDraft command should be interpreted by TaskAggregate and")
 public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
 
     @Override

@@ -56,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("UpdateTaskDescription command should be interpreted by TaskPart and")
+@DisplayName("UpdateTaskDescription command should be interpreted by TaskAggregate and")
 public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescription> {
 
     @Override

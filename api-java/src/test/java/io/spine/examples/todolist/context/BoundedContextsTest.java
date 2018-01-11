@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.context;
 
-import io.spine.server.event.EventBus;
+import io.spine.test.Tests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -38,9 +38,8 @@ class BoundedContextsTest {
     }
 
     @Test
-    @DisplayName("not create BoundedContext from EventBus.Builder without a StorageFactory")
+    @DisplayName("not create BoundedContext without a StorageFactory")
     void notCreateBoundedContextWithoutStorageFactory() {
-        final EventBus.Builder builder = EventBus.newBuilder();
-        assertThrows(IllegalStateException.class, () -> createBoundedContext(builder));
+        assertThrows(NullPointerException.class, () -> createBoundedContext(Tests.nullRef()));
     }
 }

@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("FinalizeDraft command should be interpreted by TaskPart and")
+@DisplayName("FinalizeDraft command should be interpreted by TaskAggregate and")
 public class FinalizeDraftTest extends TaskCommandTest<FinalizeDraft> {
 
     @Override
