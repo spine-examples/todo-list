@@ -19,7 +19,7 @@ The projection `MyListView` represents a list of active (finalized, non-deleted)
 The projection state is defined in [`projections.proto`](./model/src/main/proto/todolist/q/projections.proto)
 file.
 
-The projection has no own commands/events, but uses the events produces by `Task` aggregate instead.
+The projection has no own commands/events, but uses the events produced by `Task` aggregate instead.
 
 ### Entities
  
