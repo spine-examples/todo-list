@@ -65,7 +65,7 @@ module, which contains a number of utilities for testing the `api-java` classes 
 the `TaskAggregate` class, etc.).
 
 To write [tests for `TaskAggregate`](./api-java/src/test/java/io/spine/examples/todolist/c/aggregate/definition),
-we extend the `AggregateCommandTest` and test each effect of
-each command on the aggregate separately.
+we extend the `AggregateCommandTest` and test the effect of
+each separate command on the aggregate.
 
 
