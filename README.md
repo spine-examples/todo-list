@@ -13,8 +13,9 @@ In this step, we start developing the system.
 ### Model
 
 First, we define the domain model in the `model` module. This includes defining:
- - `Task` aggregate state type;
- - commands, events, and rejections relevant to this aggregate;
+ - [`Task`](./model/src/main/proto/todolist/model.proto) aggregate state type;
+ - [commands](./model/src/main/proto/todolist/c/commands.proto), [events](./model/src/main/proto/todolist/c/events.proto), 
+  and [rejections](./model/src/main/proto/todolist/c/rejections.proto) relevant to this aggregate;
  - DTO types relevant to `Task` type ([`attributes.proto`](./model/src/main/proto/todolist/attributes.proto),
   [`values.proto`](./model/src/main/proto/todolist/values.proto),
   [`changes.proto`](./model/src/main/proto/todolist/changes.proto));
