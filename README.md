@@ -4,6 +4,8 @@
 
 ToDo List example application
 
+---
+
 # Guide
 
 ## Step 1
