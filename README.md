@@ -53,7 +53,7 @@ For a quick start, we create a local server with an in-memory storage. But first
 for Spine gRPC services: `CommandService`, `QueryService`, and `SubscriptionService`.
 
 Then, we add the [`LocalInMemoryServer`](./deployment/local-inmem/src/main/java/io/spine/examples/todolist/server/LocalInMemoryServer.java),
-create a `BoundedContext` with an in-mem storage and start the server.
+which creates a `BoundedContext` with an in-mem storage and starts the server.
 
 To launch the application at this point, we need to run the `LocalInMemoryServer.main()` method (for
 example from IDE).
