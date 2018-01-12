@@ -48,8 +48,8 @@ import static io.spine.examples.todolist.q.projection.Projections.updateTaskItem
 /**
  * A projection state of the finalized tasks.
  *
- * <p> Contains the task list view items.
- * <p> This view includes all tasks that are not in a draft state and not deleted.
+ * <p>Contains the task list view items.
+ * <p>This view includes all tasks that are not in a draft state and not deleted.
  *
  * @author Illia Shepilov
  */
