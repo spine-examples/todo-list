@@ -33,7 +33,8 @@ import static io.spine.Identifier.newUuid;
 
 /**
  * The parent class for the projection test classes.
- * Provides the common methods for testing.
+ *
+ * <p>Provides the common methods for testing.
  *
  * @author Illia Shepilov
  */

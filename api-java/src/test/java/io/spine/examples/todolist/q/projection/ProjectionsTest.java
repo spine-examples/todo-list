@@ -37,8 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("ProjectionHelper should")
-public class ProjectionHelperTest {
+@DisplayName("Projections should")
+public class ProjectionsTest {
 
     private static final TaskId TASK_ID = TaskId.newBuilder()
                                                 .setValue(newUuid())
@@ -55,14 +55,14 @@ public class ProjectionHelperTest {
     @Test
     @DisplayName("have the private constructor")
     public void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(ProjectionHelper.class);
+        assertHasPrivateParameterlessCtor(Projections.class);
     }
 
     @Test
     @DisplayName("remove TaskItem from state by task ID")
     public void removeViewByTaskId() {
         final int expectedListSize = 2;
-        final TaskListView view = ProjectionHelper.removeViewsByTaskId(viewList, TASK_ID);
+        final TaskListView view = Projections.removeViewsByTaskId(viewList, TASK_ID);
 
         assertEquals(expectedListSize, view.getItemsCount());
         assertFalse(viewList.contains(viewWithNonDefaultId));
@@ -75,7 +75,7 @@ public class ProjectionHelperTest {
         final TaskId wrongTaskId = TaskId.newBuilder()
                                          .setValue(newUuid())
                                          .build();
-        final TaskListView view = ProjectionHelper.removeViewsByTaskId(viewList, wrongTaskId);
+        final TaskListView view = Projections.removeViewsByTaskId(viewList, wrongTaskId);
 
         assertEquals(expectedListSize, view.getItemsCount());
         assertTrue(viewList.contains(viewWithDefaultTaskId));

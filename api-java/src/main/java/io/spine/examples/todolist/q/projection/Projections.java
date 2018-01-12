@@ -38,15 +38,16 @@ import java.util.stream.Collectors;
 import static io.spine.examples.todolist.q.projection.TaskItem.newBuilder;
 
 /**
- * Class provides methods to manipulate and handle views.
+ * A utility for working with views.
  *
  * @author Illia Shepilov
  */
-class ProjectionHelper {
+final class Projections {
 
-    private ProjectionHelper() {
-        // Prevent instantiation of this utility class.
-    }
+    /**
+     * The {@code private} constructor prevents the utility class instantiation.
+     */
+    private Projections() {}
 
     /**
      * Removes the matching {@linkplain TaskItem task items}

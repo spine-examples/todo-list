@@ -33,11 +33,11 @@ option java_generate_equals_and_hash = true;
 import "todolist/values.proto";
 import "todolist/model.proto";
 
-// Task enrichment for the TaskDratfFinalized event.
+// Task enrichment for the `TaskDratfFinalized` event.
 //
 message TaskEnrichment {
     option (enrichment_for) = "spine.examples.todolist.TaskDraftFinalized";
 
-    // The state of the task which produced the TaskDraftFinalized event.
+    // The state of the task which produced the `TaskDraftFinalized` event.
     Task task = 1 [(by) = "task_id"];
 }

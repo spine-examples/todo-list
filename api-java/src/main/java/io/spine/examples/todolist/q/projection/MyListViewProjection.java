@@ -41,9 +41,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.spine.examples.todolist.EnrichmentHelper.getEnrichment;
-import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskListView;
-import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
-import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskItemList;
+import static io.spine.examples.todolist.q.projection.Projections.newTaskListView;
+import static io.spine.examples.todolist.q.projection.Projections.removeViewsByTaskId;
+import static io.spine.examples.todolist.q.projection.Projections.updateTaskItemList;
 
 /**
  * A projection state of the finalized tasks.
@@ -68,7 +68,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
                                                   .build();
 
     /**
-     * Creates a new instance.
+     * Creates a new instance of {@code MyListViewProjection}.
      *
      * @param id the ID for the new instance
      * @throws IllegalArgumentException if the ID is not of one of the supported types
