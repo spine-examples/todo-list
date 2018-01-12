@@ -37,7 +37,6 @@ final class EventEnrichments {
      */
     private EventEnrichments() {}
 
-
     /**
      * Obtains enrichment from the {@link EventContext} according to the enrichment class.
      *
@@ -45,8 +44,7 @@ final class EventEnrichments {
      * @param context         the {@code EventContext}
      * @return the enrichment if it is present, throws {@code EnrichmentNotFoundException} otherwise
      */
-    @SuppressWarnings("Guava")
-        // Spine API is Java 7-based and uses {@code Optional} from Google Guava.
+    @SuppressWarnings("Guava") // Spine Java 7 API
     static <T extends Message, E extends Class<T>>
     T getEnrichment(E enrichmentClass, EventContext context) {
         final Optional<T> enrichmentOptional = Enrichments.getEnrichment(enrichmentClass, context);

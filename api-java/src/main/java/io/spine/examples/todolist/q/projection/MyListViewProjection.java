@@ -49,6 +49,7 @@ import static io.spine.examples.todolist.q.projection.Projections.updateTaskItem
  * A projection state of the finalized tasks.
  *
  * <p>Contains the task list view items.
+ *
  * <p>This view includes all tasks that are not in a draft state and not deleted.
  *
  * @author Illia Shepilov
@@ -68,10 +69,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
                                                   .build();
 
     /**
-     * Creates a new instance of {@code MyListViewProjection}.
-     *
-     * @param id the ID for the new instance
-     * @throws IllegalArgumentException if the ID is not of one of the supported types
+     * @see Projection#Projection(Object)
      */
     public MyListViewProjection(TaskListId id) {
         super(id);

@@ -21,7 +21,8 @@
 package io.spine.examples.todolist.q.projection;
 
 /**
- * An exception thrown when enrichment cannot be found in {@link io.spine.core.EventContext}.
+ * An exception thrown when enrichment cannot be found in
+ * {@link io.spine.core.EventContext EventContext}.
  *
  * @author Illia Shepilov
  */
@@ -29,6 +30,9 @@ final class EnrichmentNotFoundException extends RuntimeException {
 
     private static final long serialVersionUID = 0L;
 
+    /**
+     * @see RuntimeException#RuntimeException(String)
+     */
     EnrichmentNotFoundException(String message) {
         super(message);
     }

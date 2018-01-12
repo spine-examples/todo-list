@@ -50,8 +50,7 @@ final class Projections {
     private Projections() {}
 
     /**
-     * Removes the matching {@linkplain TaskItem task items}
-     * from the specified list by the task ID.
+     * Removes the matching {@linkplain TaskItem task items} from the specified list by the task ID.
      *
      * @param tasks the list of the {@link TaskItem}
      * @param id    the task ID of the task view
@@ -156,8 +155,6 @@ final class Projections {
         return transformWithUpdate(tasks, targetTaskId, updateFn);
     }
 
-    @SuppressWarnings("MethodWithMultipleLoops") // It's fine, as there aren't a
-                                                 // lot of transformations per task.
     private static List<TaskItem> transformWithUpdate(List<TaskItem> tasks,
                                                       TaskId targetTaskId,
                                                       TaskTransformation transformation) {
