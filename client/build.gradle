@@ -18,15 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+apply from: "$rootDir/scripts/publish.gradle"
 
-include 'testutil-api'
-include 'testutil-cli'
-
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+dependencies {
+    compile project(path: ':model')
+    testCompile project(path: ':testutil-api')
+    testCompile project(path: ':server')
+}

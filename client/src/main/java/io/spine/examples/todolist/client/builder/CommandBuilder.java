@@ -18,15 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.examples.todolist.client.builder;
 
-include 'testutil-api'
-include 'testutil-cli'
+/**
+ * Utility class for working with command builders.
+ *
+ * <p> Provides methods for building commands.
+ *
+ * @author Illia Shepilov
+ */
+public final class CommandBuilder {
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+    private CommandBuilder() {
+    }
+
+    /**
+     * Provides the {@link TaskBuilder}.
+     *
+     * @return the {@code TaskBuilder} instance
+     */
+    public static TaskBuilder task() {
+        return TaskBuilder.getInstance();
+    }
+}

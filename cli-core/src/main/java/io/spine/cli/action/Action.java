@@ -18,15 +18,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.cli.action;
 
-include 'testutil-api'
-include 'testutil-cli'
+import io.spine.cli.view.View;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+/**
+ * <p>An {@code Action} takes the end-user from a {@linkplain #getSource()}  source view}
+ * to a {@linkplain #getDestination()}  destination view}.
+ *
+ * <p>Actions with same {@link Shortcut} are considered equal.
+ *
+ * @param <S> the type of the source view
+ * @param <D> the type of the destination view
+ * @author Dmytro Grankin
+ */
+public interface Action<S extends View, D extends View> {
+
+    /**
+     * Executes the action.
+     */
+    void execute();
+
+    /**
+     * Obtains name of the action.
+     *
+     * @return action name
+     */
+    String getName();
+
+    /**
+     * Obtains {@link Shortcut} of the action.
+     *
+     * @return action shortcut
+     */
+    Shortcut getShortcut();
+
+    /**
+     * A source {@code View} of the action.
+     *
+     * @return a source view
+     */
+    S getSource();
+
+    /**
+     * A destination {@code View} of the action.
+     *
+     * @return a destination view
+     */
+    D getDestination();
+}

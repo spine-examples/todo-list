@@ -18,15 +18,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.cli;
 
-include 'testutil-api'
-include 'testutil-cli'
+import io.spine.cli.view.View;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+/**
+ * A view that does nothing.
+ *
+ * <p>Allows to determine the whether the view was rendered.
+ *
+ * @author Dmytro Grankin
+ */
+public class NoOpView implements View {
+
+    private boolean rendered;
+
+    /**
+     * Marks the view as {@link #rendered}.
+     *
+     * @param screen {@inheritDoc}
+     */
+    @Override
+    public void render(Screen screen) {
+        rendered = true;
+    }
+
+    /**
+     * Determines whether the view was rendered at least once.
+     *
+     * @return {@code true} if the view was rendered, {@code false} otherwise
+     */
+    public boolean wasRendered() {
+        return rendered;
+    }
+}

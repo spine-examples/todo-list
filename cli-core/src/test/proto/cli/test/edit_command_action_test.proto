@@ -18,15 +18,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+syntax = "proto3";
 
-include 'testutil-api'
-include 'testutil-cli'
+package io.spine.cli;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.cli";
+option java_package = "io.spine.cli.action";
+option java_outer_classname = "EditCommandActionTestProto";
+option java_multiple_files = true;
+
+// A comment.
+//
+// Cannot be empty.
+//
+message Comment {
+
+    string value = 1 [(required) = true];
+}

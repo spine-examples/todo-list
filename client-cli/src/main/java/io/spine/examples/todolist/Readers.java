@@ -18,15 +18,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.examples.todolist;
 
-include 'testutil-api'
-include 'testutil-cli'
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.terminal.Terminal;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+/**
+ * Utilities for creating {@linkplain LineReader line readers}.
+ *
+ * @author Dmytro Grankin
+ */
+class Readers {
+
+    private Readers() {
+        // Prevent instantiation of this utility class.
+    }
+
+    /**
+     * Creates a {@link LineReader} with the specified {@link Terminal}.
+     *
+     * @param terminal the terminal to use in the line reader
+     * @return new line reader
+     */
+    static LineReader newLineReader(Terminal terminal) {
+        final LineReader reader = LineReaderBuilder.builder()
+                                                   .terminal(terminal)
+                                                   .build();
+        return reader;
+    }
+}

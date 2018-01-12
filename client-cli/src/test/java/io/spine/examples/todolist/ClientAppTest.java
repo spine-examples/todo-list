@@ -18,15 +18,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.examples.todolist;
 
-include 'testutil-api'
-include 'testutil-cli'
+import io.spine.cli.Application;
+import io.spine.cli.Screen;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+import static io.spine.examples.todolist.ClientApp.initCli;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.test.Tests.nullRef;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@DisplayName("ClientApp should")
+class ClientAppTest {
+
+    @Test
+    @DisplayName("have the private constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(ClientApp.class);
+    }
+
+    @Test
+    @DisplayName("initialize the Application screen")
+    void initApplicationScreen() {
+        final Application application = Application.getInstance();
+        application.setScreen(nullRef());
+
+        final Screen expectedScreen = new TerminalScreen();
+        initCli(expectedScreen);
+
+        assertEquals(expectedScreen, application.screen());
+    }
+}

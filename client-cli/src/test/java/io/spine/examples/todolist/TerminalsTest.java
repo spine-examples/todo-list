@@ -18,15 +18,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.examples.todolist;
 
-include 'testutil-api'
-include 'testutil-cli'
+import org.jline.terminal.Terminal;
+import org.jline.terminal.impl.DumbTerminal;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+import static io.spine.examples.todolist.Terminals.newTerminal;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
+
+/**
+ * @author Dmytro Grankin
+ */
+@DisplayName("Terminals should")
+class TerminalsTest {
+
+    @Test
+    @DisplayName("have the private constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(Terminals.class);
+    }
+
+    @Test
+    @DisplayName("create a new dumb terminal")
+    void createNewDumbTerminal() {
+        final Terminal terminal = newTerminal();
+        assertThat(terminal, instanceOf(DumbTerminal.class));
+    }
+}

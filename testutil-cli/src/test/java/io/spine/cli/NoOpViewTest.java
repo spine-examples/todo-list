@@ -18,15 +18,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.cli;
 
-include 'testutil-api'
-include 'testutil-cli'
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * @author Dmytro Grankin
+ */
+@DisplayName("NoOpView should")
+class NoOpViewTest {
+
+    private final NoOpView view = new NoOpView();
+
+    @Test
+    @DisplayName("initially be marked unrendered")
+    void initiallyBeMarkedUnrendered() {
+        assertFalse(view.wasRendered());
+    }
+
+    @Test
+    @DisplayName("be marked rendered after render")
+    void beMarkedRenderedAfterRender() {
+        new TestScreen().renderView(view);
+        assertTrue(view.wasRendered());
+    }
+}

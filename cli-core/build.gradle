@@ -18,15 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+dependencies {
+    testCompile project(path: ':testutil-cli')
+}
 
-include 'testutil-api'
-include 'testutil-cli'
-
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+apply from: generateDescriptorSetPlugin

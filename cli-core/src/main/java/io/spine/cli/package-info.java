@@ -18,15 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+/**
+ * This package contains core elements for a CLI application.
+ */
 
-include 'testutil-api'
-include 'testutil-cli'
+@ParametersAreNonnullByDefault
+package io.spine.cli;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+import javax.annotation.ParametersAreNonnullByDefault;

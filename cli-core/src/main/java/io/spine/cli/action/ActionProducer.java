@@ -18,15 +18,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.cli.action;
 
-include 'testutil-api'
-include 'testutil-cli'
+import io.spine.cli.view.View;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+/**
+ * Producer of an {@link Action}.
+ *
+ * <p>Allows to specify construction of the {@link Action} for an unknown source.
+ *
+ * @param <S> the type of the source view
+ * @param <D> the type of the destination view
+ * @param <T> the type of the action to be created
+ * @author Dmytro Grankin
+ */
+public interface ActionProducer<S extends View,
+                                D extends View,
+                                T extends Action<S, D>> {
+
+    /**
+     * Creates the {@link Action} with the specified source.
+     *
+     * @param source the source {@link View}
+     * @return the action with the source
+     */
+    T create(S source);
+}

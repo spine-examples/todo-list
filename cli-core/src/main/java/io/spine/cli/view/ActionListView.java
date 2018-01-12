@@ -18,15 +18,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.cli.view;
 
-include 'testutil-api'
-include 'testutil-cli'
+import io.spine.cli.Screen;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+/**
+ * A {@code View} that represents list of {@linkplain io.spine.cli.action.Action actions}.
+ *
+ * <p>Typical instance of the class is a menu, in which the end-user selects an {@code Action}
+ * to be executed from the actions list.
+ *
+ * @author Dmytro Grankin
+ */
+public class ActionListView extends AbstractView {
+
+    public ActionListView(String title) {
+        super(title);
+    }
+
+    /**
+     * Does nothing. All the required behavior for this class is implemented in the
+     * {@linkplain AbstractView#render(Screen) super} class.
+     *
+     * @param screen {@inheritDoc}
+     */
+    @Override
+    protected void renderBody(Screen screen) {
+        // Do nothing.
+    }
+}

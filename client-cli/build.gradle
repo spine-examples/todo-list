@@ -18,15 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+dependencies {
+    compile group: 'org.jline', name: 'jline', version: '3.3.0'
 
-include 'testutil-api'
-include 'testutil-cli'
+    compile project(path: ':client')
+    compile project(path: ':cli-core')
+    testCompile project(path: ':testutil-cli')
+    testCompile project(path: ':testutil-api')
+    testCompile project(path: ':server')
+}
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+// A task to run the client. See `ClientApp` for the details.
+task runTodoClient(dependsOn: jar, type: JavaExec) {
+    if(project.hasProperty('conf')){
+        args(conf.split(','))
+    }
+
+    standardInput = System.in
+    main = 'io.spine.examples.todolist.ClientApp'
+    classpath = sourceSets.main.runtimeClasspath
+}

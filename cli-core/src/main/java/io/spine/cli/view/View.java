@@ -18,15 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.cli.view;
 
-include 'testutil-api'
-include 'testutil-cli'
+import io.spine.cli.Screen;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+/**
+ * An interface for all views.
+ *
+ * @author Dmytro Grankin
+ */
+public interface View {
+
+    /**
+     * Renders the view using the specified screen.
+     *
+     * @param screen the screen to use
+     */
+    void render(Screen screen);
+}

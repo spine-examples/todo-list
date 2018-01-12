@@ -18,15 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.cli;
 
-include 'testutil-api'
-include 'testutil-cli'
+import com.google.protobuf.Message;
+import io.spine.validate.ValidatingBuilder;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+/**
+ * An operation, that edits {@link ValidatingBuilder} state.
+ *
+ * @param <M> the type of the message
+ * @param <B> the type of the validating builder for the message
+ * @author Dmytro Grankin
+ */
+public interface EditOperation<M extends Message,
+                               B extends ValidatingBuilder<M, ? extends Message.Builder>> {
+
+    /**
+     * Starts editing of the specified validating builder.
+     *
+     * <p>Result of this operation is state modification of the specified builder.
+     *
+     * @param screen  the {@link Screen} to use
+     * @param builder the validating builder
+     */
+    void start(Screen screen, B builder);
+}
