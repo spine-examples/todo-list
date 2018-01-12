@@ -49,7 +49,7 @@ class AbstractViewTest {
     private static final Shortcut SHORTCUT = new Shortcut("s");
 
     private Bot bot;
-    private final AbstractView view = new AView("abstract view");
+    private final AbstractView view = new EmptyView("abstract view");
 
     @BeforeEach
     void setUp() {
@@ -60,8 +60,8 @@ class AbstractViewTest {
     @Test
     @DisplayName("not allow null or empty title")
     void notAllowNullOrEmptyTitle() {
-        assertThrows(IllegalArgumentException.class, () -> new AView(null));
-        assertThrows(IllegalArgumentException.class, () -> new AView(""));
+        assertThrows(IllegalArgumentException.class, () -> new EmptyView(null));
+        assertThrows(IllegalArgumentException.class, () -> new EmptyView(""));
     }
 
     @Test
@@ -125,9 +125,9 @@ class AbstractViewTest {
         bot.assertAllAnswersWereGiven();
     }
 
-    private static class AView extends AbstractView {
+    private static class EmptyView extends AbstractView {
 
-        private AView(String title) {
+        private EmptyView(String title) {
             super(title);
         }
 

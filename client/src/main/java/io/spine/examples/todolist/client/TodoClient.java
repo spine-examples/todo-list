@@ -31,7 +31,7 @@ import java.util.List;
 /**
  * A client interface.
  *
- * <p> Provides methods to communicate with server.
+ * <p>Provides methods to communicate with server.
  *
  * @author Illia Shepilov
  */

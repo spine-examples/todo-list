@@ -35,9 +35,10 @@ public class ActionFormatter {
     @VisibleForTesting
     static final String SHORTCUT_FORMAT = "(%s)";
 
-    private ActionFormatter() {
-        // Prevent instantiation of this utility class.
-    }
+    /**
+     * The {@code private} constructor prevents the utility class instantiation.
+     */
+    private ActionFormatter() {}
 
     /**
      * Obtains formatted representation of the specified {@link Action}.

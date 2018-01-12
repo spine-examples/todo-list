@@ -53,7 +53,7 @@ class CommandViewTest {
     private static final Shortcut QUIT_SHORTCUT = new Shortcut("q");
 
     private Bot bot;
-    private final ACommandView view = new ACommandView();
+    private final TestCommandView view = new TestCommandView();
 
     @BeforeEach
     void setUp() {
@@ -64,7 +64,8 @@ class CommandViewTest {
     @DisplayName("render state representation")
     void renderStateRepresentation() {
         view.renderBody(bot.screen());
-        final String expectedBody = view.renderState(StringValueVBuilder.newBuilder()) + lineSeparator();
+        final String expectedBody = view.renderState(StringValueVBuilder.newBuilder()) +
+                lineSeparator();
         bot.assertOutput(expectedBody);
     }
 
@@ -89,8 +90,10 @@ class CommandViewTest {
         @Test
         @DisplayName("obtain classes for the generic parameters")
         void obtainClassesForGenericParams() {
-            assertEquals(StringValue.class, COMMAND_MESSAGE.getArgumentIn(ACommandView.class));
-            assertEquals(StringValueVBuilder.class, STATE_BUILDER.getArgumentIn(ACommandView.class));
+            assertEquals(StringValue.class,
+                         COMMAND_MESSAGE.getArgumentIn(TestCommandView.class));
+            assertEquals(StringValueVBuilder.class,
+                         STATE_BUILDER.getArgumentIn(TestCommandView.class));
         }
     }
 
@@ -105,11 +108,11 @@ class CommandViewTest {
         }
     }
 
-    private static class ACommandView extends CommandView<StringValue, StringValueVBuilder> {
+    private static class TestCommandView extends CommandView<StringValue, StringValueVBuilder> {
 
         private boolean wasRendered = false;
 
-        private ACommandView() {
+        private TestCommandView() {
             super("View title");
         }
 
@@ -127,7 +130,8 @@ class CommandViewTest {
 
     private static class ThrowValidationExceptionAction implements Action {
 
-        private static final String UNSUPPORTED_MSG = "This class should not be used for this goal.";
+        private static final String UNSUPPORTED_MSG =
+                "This class should not be used for this goal.";
 
         @Override
         public void execute() {

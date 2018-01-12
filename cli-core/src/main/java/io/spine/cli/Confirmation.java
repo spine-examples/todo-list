@@ -27,9 +27,9 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 /**
- * This class serves for asking for a confirmation.
+ * A yes-or-no user prompt utility.
  *
- * <p>Valid confirmation values are `y` and `n`.
+ * <p>Valid answer values are `y` and `n`.
  *
  * @author Illia Shepilov
  * @author Dmytro Grankin
@@ -49,9 +49,10 @@ public class Confirmation {
     private static final String MINOR_HINT = format(MINOR_HINT_FORMAT,
                                                     POSITIVE_ANSWER, NEGATIVE_ANSWER);
 
-    private Confirmation() {
-        // Prevent instantiation of this utility class.
-    }
+    /**
+     * The {@code private} constructor prevents the utility class instantiation.
+     */
+    private Confirmation() {}
 
     /**
      * Obtains a confirmation value for the specified question.

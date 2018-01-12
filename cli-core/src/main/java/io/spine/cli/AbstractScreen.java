@@ -59,7 +59,6 @@ public abstract class AbstractScreen implements Screen {
         } else if (!isCurrentView(view)) {
             history.add(view);
         }
-
         view.render(this);
     }
 
@@ -74,7 +73,6 @@ public abstract class AbstractScreen implements Screen {
         if (currentIndex == -1 || previousIndex == -1) {
             return Optional.empty();
         }
-
         final View current = history.get(currentIndex);
         final View previous = history.get(previousIndex);
         final TransitionAction<View, View> back = new TransitionAction<>(name, shortcut,

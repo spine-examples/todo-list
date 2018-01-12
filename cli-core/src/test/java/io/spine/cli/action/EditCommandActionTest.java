@@ -51,7 +51,7 @@ class EditCommandActionTest {
     private static final String INVALID_COMMENT = "";
 
     private Bot bot;
-    private final ACommandView view = new ACommandView();
+    private final TestCommandView view = new TestCommandView();
     private final Set<EditOperation<Comment, CommentVBuilder>> edits =
             singleton(new CommentEditOperation());
     private final EditCommandAction<Comment, CommentVBuilder> action =
@@ -116,11 +116,11 @@ class EditCommandActionTest {
         bot.assertAllAnswersWereGiven();
     }
 
-    private static class ACommandView extends CommandView<Comment, CommentVBuilder> {
+    private static class TestCommandView extends CommandView<Comment, CommentVBuilder> {
 
         private boolean wasRendered;
 
-        private ACommandView() {
+        private TestCommandView() {
             super("View title");
         }
 
