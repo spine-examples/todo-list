@@ -47,9 +47,10 @@ public final class BoundedContexts {
     private static final StorageFactory IN_MEMORY_FACTORY =
             InMemoryStorageFactory.newInstance(BoundedContext.newName(NAME), false);
 
-    private BoundedContexts() {
-        // Disable instantiation from outside.
-    }
+    /**
+     * The {@code private} constructor prevents the utility class instantiation.
+     */
+    private BoundedContexts() {}
 
     /**
      * Creates the {@link BoundedContext} instance
@@ -92,8 +93,7 @@ public final class BoundedContexts {
         return eventBus;
     }
 
-    @SuppressWarnings("Guava" /* Spine API is Java 7-based
-                                 and uses `Optional` from Google Guava. */)
+    @SuppressWarnings("Guava") // Spine Java 7 API.
     @VisibleForTesting
     static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
         final Optional<StorageFactory> storageFactory = eventBus.getStorageFactory();
