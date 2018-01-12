@@ -32,7 +32,7 @@ import io.spine.examples.todolist.c.events.TaskReopened;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 import static io.spine.examples.todolist.q.projection.TaskItem.newBuilder;
@@ -189,6 +189,6 @@ final class Projections {
     /**
      * A common interface for the {@link TaskItem} transformations.
      */
-    private interface TaskTransformation extends Function<TaskItem.Builder, TaskItem.Builder> {
-    }
+    @FunctionalInterface
+    private interface TaskTransformation extends UnaryOperator<TaskItem.Builder> {}
 }
