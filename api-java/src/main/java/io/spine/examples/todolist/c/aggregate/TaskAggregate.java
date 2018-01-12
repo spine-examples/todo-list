@@ -108,7 +108,7 @@ public class TaskAggregate extends Aggregate<TaskId,
                                             TaskVBuilder> {
 
     /**
-     * {@inheritDoc}
+     * @see Aggregate#Aggregate(Object)
      */
     public TaskAggregate(TaskId id) {
         super(id);
