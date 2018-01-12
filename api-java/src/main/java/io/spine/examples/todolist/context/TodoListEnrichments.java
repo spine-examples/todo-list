@@ -26,18 +26,17 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskAggregate;
 import io.spine.examples.todolist.repository.TaskRepository;
-import io.spine.server.event.EventBus;
 import io.spine.server.event.EventEnricher;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Serves as class which adds enrichment fields to the {@link EventBus}.
+ * {@link EventEnricher} factory for the TodoList bounded context.
  *
  * @author Illia Shepilov
  */
 @SuppressWarnings("Guava") // Spine Java 7 API.
-public class TodoListEnrichments {
+final class TodoListEnrichments {
 
     private final TaskRepository taskRepo;
 
@@ -45,6 +44,13 @@ public class TodoListEnrichments {
         this.taskRepo = builder.taskRepo;
     }
 
+    /**
+     * Creates an instance of {@link EventEnricher} for the TodoList bounded context.
+     *
+     * <p>The enricher enriches the events in the system by predefined rules.
+     *
+     * @return TodoList {@code EventEnricher}
+     */
     EventEnricher createEnricher() {
         final EventEnricher enricher =
                 EventEnricher.newBuilder()
@@ -74,14 +80,14 @@ public class TodoListEnrichments {
      *
      * @return new builder instance
      */
-    public static Builder newBuilder() {
+    static Builder newBuilder() {
         return new Builder();
     }
 
     /**
      * A builder for {@code EventEnricherSupplier} instances.
      */
-    public static class Builder {
+    static class Builder {
 
         private TaskRepository taskRepo;
 
@@ -90,13 +96,13 @@ public class TodoListEnrichments {
          */
         private Builder() {}
 
-        public Builder setTaskRepository(TaskRepository definitionRepository) {
+        Builder setTaskRepository(TaskRepository definitionRepository) {
             checkNotNull(definitionRepository);
             this.taskRepo = definitionRepository;
             return this;
         }
 
-        public TodoListEnrichments build() {
+        TodoListEnrichments build() {
             return new TodoListEnrichments(this);
         }
     }
