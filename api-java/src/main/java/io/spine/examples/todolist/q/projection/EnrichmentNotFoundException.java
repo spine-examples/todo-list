@@ -18,14 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.q.projection;
 
 /**
  * An exception thrown when enrichment cannot be found in {@link io.spine.core.EventContext}.
  *
  * @author Illia Shepilov
  */
-class EnrichmentNotFoundException extends RuntimeException {
+final class EnrichmentNotFoundException extends RuntimeException {
 
     private static final long serialVersionUID = 0L;
 

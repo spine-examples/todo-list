@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist;
+package io.spine.examples.todolist.q.projection;
 
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
@@ -30,12 +30,12 @@ import io.spine.core.EventContext;
  *
  * @author Illia Shepilov
  */
-public class EnrichmentHelper {
+final class EventEnrichments {
 
     /**
      * The {@code private} constructor prevents the utility class instantiation.
      */
-    private EnrichmentHelper() {}
+    private EventEnrichments() {}
 
 
     /**
@@ -47,7 +47,7 @@ public class EnrichmentHelper {
      */
     @SuppressWarnings("Guava")
         // Spine API is Java 7-based and uses {@code Optional} from Google Guava.
-    public static <T extends Message, E extends Class<T>>
+    static <T extends Message, E extends Class<T>>
     T getEnrichment(E enrichmentClass, EventContext context) {
         final Optional<T> enrichmentOptional = Enrichments.getEnrichment(enrichmentClass, context);
         if (enrichmentOptional.isPresent()) {
