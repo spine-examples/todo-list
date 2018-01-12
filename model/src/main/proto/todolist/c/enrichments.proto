@@ -38,6 +38,6 @@ import "todolist/model.proto";
 message TaskEnrichment {
     option (enrichment_for) = "spine.examples.todolist.TaskDraftFinalized";
 
-    // A task.
+    // The state of the task which produced the TaskDraftFinalized event.
     Task task = 1 [(by) = "task_id"];
 }
