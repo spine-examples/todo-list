@@ -24,7 +24,7 @@ import com.google.protobuf.Message;
 import io.spine.validate.ValidatingBuilder;
 
 /**
- * An operation, that edits {@link ValidatingBuilder} state.
+ * An operation, that edits a {@link ValidatingBuilder} state.
  *
  * @param <M> the type of the message
  * @param <B> the type of the validating builder for the message
