@@ -41,7 +41,8 @@ public class ConstraintViolationFormatter {
     /**
      * The {@code private} constructor prevents direct instantiation.
      */
-    private ConstraintViolationFormatter() {}
+    private ConstraintViolationFormatter() {
+    }
 
     /**
      * Formats the specified constraint violations into a user-friendly representation.

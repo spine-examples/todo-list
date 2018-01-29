@@ -38,7 +38,8 @@ public class ActionFormatter {
     /**
      * The {@code private} constructor prevents the utility class instantiation.
      */
-    private ActionFormatter() {}
+    private ActionFormatter() {
+    }
 
     /**
      * Obtains formatted representation of the specified {@link Action}.

@@ -52,7 +52,8 @@ public class Confirmation {
     /**
      * The {@code private} constructor prevents the utility class instantiation.
      */
-    private Confirmation() {}
+    private Confirmation() {
+    }
 
     /**
      * Obtains a confirmation value for the specified question.

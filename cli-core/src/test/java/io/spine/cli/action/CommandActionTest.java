@@ -82,7 +82,7 @@ class CommandActionTest {
     }
 
     private static class UpdateStringValueAction extends CommandAction<StringValue,
-                                                                           StringValueVBuilder> {
+                                                                       StringValueVBuilder> {
 
         private StringValue commandMessageBeforeExecution;
 
@@ -100,7 +100,8 @@ class CommandActionTest {
         }
     }
 
-    private static class UpdateStringValueView extends CommandView<StringValue, StringValueVBuilder> {
+    private static class UpdateStringValueView extends CommandView<StringValue,
+                                                                   StringValueVBuilder> {
 
         private boolean rendered;
 

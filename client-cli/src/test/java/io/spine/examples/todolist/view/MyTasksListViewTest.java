@@ -28,7 +28,6 @@ import io.spine.cli.action.TransitionAction.TransitionActionProducer;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import io.spine.examples.todolist.q.projection.TaskListView;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -61,12 +60,10 @@ class MyTasksListViewTest extends ViewTest {
     void refreshTaskList() {
         bot.screen()
            .renderView(new NoOpView()); // Needed to cause addition of back action in the view.
-
         final MyTasksListView view = new MyTasksListView();
         view.addAction(newOpenTaskViewProducer(taskView, 0));
         view.addAction(newOpenTaskViewProducer(taskView, 1));
         final Set<Action> actionsToBeRemoved = view.getActions();
-
         bot.addAnswer("b");
         bot.screen()
            .renderView(view);
@@ -94,10 +91,8 @@ class MyTasksListViewTest extends ViewTest {
     void createOpenTaskItemProducer() {
         final String shortcutValue = String.valueOf(VIEW_INDEX + 1);
         final Shortcut expectedShortcut = new Shortcut(shortcutValue);
-
         final TransitionActionProducer<MyTasksListView, TaskView> producer =
                 newOpenTaskViewProducer(taskView, VIEW_INDEX);
-
         final String expectedDescription = taskView.getDescription()
                                                    .getValue();
         assertEquals(expectedDescription, producer.getName());

@@ -38,7 +38,8 @@ public final class Application {
     /**
      * The {@code private} constructor prevents direct instantiation.
      */
-    private Application() {}
+    private Application() {
+    }
 
     /**
      * Obtains {@link Screen} of the application.
