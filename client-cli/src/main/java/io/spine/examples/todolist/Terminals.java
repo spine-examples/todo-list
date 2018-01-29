@@ -32,10 +32,12 @@ import static io.spine.util.Exceptions.illegalStateWithCauseOf;
  *
  * @author Dmytro Grankin
  */
-class Terminals {
+final class Terminals {
 
+    /**
+     * The {@code private} constructor prevents the utility class instantiation.
+     */
     private Terminals() {
-        // Prevent instantiation of this utility class.
     }
 
     /**

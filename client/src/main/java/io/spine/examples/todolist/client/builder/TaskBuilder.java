@@ -34,6 +34,9 @@ import static io.spine.Identifier.newUuid;
  */
 public final class TaskBuilder {
 
+    /**
+     * The {@code private} constructor prevents direct instantiation.
+     */
     private TaskBuilder() {
     }
 

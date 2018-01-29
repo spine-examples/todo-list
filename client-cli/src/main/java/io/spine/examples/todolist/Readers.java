@@ -29,10 +29,12 @@ import org.jline.terminal.Terminal;
  *
  * @author Dmytro Grankin
  */
-class Readers {
+final class Readers {
 
+    /**
+     * The {@code private} constructor prevents the utility class instantiation.
+     */
     private Readers() {
-        // Prevent instantiation of this utility class.
     }
 
     /**

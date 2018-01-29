@@ -34,15 +34,17 @@ import static com.google.protobuf.util.Timestamps.toMillis;
  *
  * @author Illia Shepilov
  */
-class DateFormatter {
+final class DateFormatter {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
 
     @VisibleForTesting
     static final String DEFAULT_TIMESTAMP_VALUE = "default";
 
+    /**
+     * The {@code private} constructor prevents the utility class instantiation.
+     */
     private DateFormatter() {
-        // Prevent instantiation of this utility class.
     }
 
     static String format(Timestamp timestamp) {

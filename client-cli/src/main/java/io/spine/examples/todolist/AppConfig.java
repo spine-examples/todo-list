@@ -31,12 +31,14 @@ import static com.google.common.base.Preconditions.checkState;
  *
  * @author Dmytro Grankin
  */
-public class AppConfig {
+public final class AppConfig {
 
     private static TodoClient todoClient = null;
 
+    /**
+     * The {@code private} constructor prevents the utility class instantiation.
+     */
     private AppConfig() {
-        // Prevent instantiation of this class.
     }
 
     public static void init(TodoClient client) {

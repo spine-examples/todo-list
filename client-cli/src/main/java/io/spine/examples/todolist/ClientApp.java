@@ -51,8 +51,10 @@ public class ClientApp {
     private static final String DEFAULT_HOST = HOST;
     private static final int DEFAULT_PORT = DEFAULT_CLIENT_SERVICE_PORT;
 
+    /**
+     * The {@code private} constructor prevents instantiation.
+     */
     private ClientApp() {
-        // Prevent instantiation of this class.
     }
 
     public static void main(String[] args) {
