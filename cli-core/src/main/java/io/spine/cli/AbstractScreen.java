@@ -32,7 +32,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static java.util.Collections.unmodifiableList;
 
 /**
- * Abstract base class for {@link Screen}.
+ * An implementation base for {@linkplain Screen screens}.
  *
  * <p>Implements all methods except the I/O methods,
  * that are specific for a concrete implementation.

@@ -65,11 +65,9 @@ public class Confirmation {
     public static boolean ask(Screen screen, String question) {
         final String questionWithHint = question + ' ' + MINOR_HINT;
         Optional<String> answer = getValidAnswer(screen, questionWithHint);
-
         while (!answer.isPresent()) {
             answer = getValidAnswer(screen, DETAILED_HINT);
         }
-
         return answer.get()
                      .equals(POSITIVE_ANSWER);
     }
@@ -84,7 +82,8 @@ public class Confirmation {
      */
     private static Optional<String> getValidAnswer(Screen screen, String question) {
         final String answer = screen.promptUser(question);
-        boolean isValidAnswer = NEGATIVE_ANSWER.equals(answer) || POSITIVE_ANSWER.equals(answer);
+        final boolean isValidAnswer = NEGATIVE_ANSWER.equals(answer)
+                                   || POSITIVE_ANSWER.equals(answer);
         return isValidAnswer
                ? Optional.of(answer)
                : Optional.empty();
