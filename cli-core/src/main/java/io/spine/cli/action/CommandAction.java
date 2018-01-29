@@ -44,10 +44,13 @@ public abstract class CommandAction<M extends Message,
     }
 
     /**
-     * Executes the obtained command from the source {@link CommandView}.
+     * Executes the command obtained from the source {@link CommandView}.
      *
-     * <p>If {@link #post(Message)} is successful,
-     * clears state of the source view and renders {@linkplain #getDestination() destination view}.
+     * <p>This method {@linkplain #post(Message) posts} the command to the TodoList server and
+     * awaits the acknowledgement.
+     *
+     * <p>If the command is posted successfully, clears state of the source view and renders
+     * {@linkplain #getDestination() destination view}.
      */
     @Override
     public void execute() {
