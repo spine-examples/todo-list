@@ -28,7 +28,7 @@ import java.io.IOException;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
- * Utilities for creating {@linkplain Terminal terminals}.
+ * The {@link Terminal} factory.
  *
  * @author Dmytro Grankin
  */

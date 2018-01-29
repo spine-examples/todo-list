@@ -34,7 +34,7 @@ import static io.spine.examples.todolist.client.TodoClient.HOST;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * A command-line client application, which connects to a server using the host and port.
+ * A command-line client application, which connects to the gRPC server.
  *
  * <p>To run the application from a command-line, use the following command:
  * <pre>{@code gradle runTodoClient -Pconf=hostname,port}</pre>

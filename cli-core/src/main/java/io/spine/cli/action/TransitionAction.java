@@ -36,6 +36,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class TransitionAction<S extends View, D extends View> extends AbstractAction<S, D> {
 
+    /**
+     * @see AbstractAction#AbstractAction(String, Shortcut, View, View)
+     */
     public TransitionAction(String name, Shortcut shortcut, S source, D destination) {
         super(name, shortcut, source, destination);
     }

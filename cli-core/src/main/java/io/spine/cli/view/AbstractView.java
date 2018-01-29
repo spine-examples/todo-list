@@ -40,9 +40,9 @@ import static io.spine.util.Exceptions.newIllegalArgumentException;
 import static java.util.Collections.unmodifiableSet;
 
 /**
- * Abstract base class for views.
+ * The implantation base for {@linkplain View views}.
  *
- * <p>Has the following render sequence:
+ * <p>The rendering is performed in the following order:
  * <ol>
  *     <li>{@linkplain #renderTitle(Screen) title}</li>
  *     <li>{@linkplain #renderBody(Screen) body}</li>
@@ -52,6 +52,9 @@ import static java.util.Collections.unmodifiableSet;
  * <p>Automatically adds {@code back} action to the {@link #actions} before each render of actions.
  *
  * <p>In the end of rendering prompts a user to select an action to be executed.
+ *
+ * <p>This class is designed mutable (the actions list may be altered) to make it possible to build
+ * dynamic interfaces.
  *
  * @author Dmytro Grankin
  */
@@ -68,7 +71,7 @@ public abstract class AbstractView implements View {
     private final Set<Action> actions;
 
     /**
-     * Creates a new instance without some {@link #actions}.
+     * Creates a new instance without any {@link #actions}.
      *
      * @param title the view title
      */

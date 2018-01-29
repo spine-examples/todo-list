@@ -26,7 +26,7 @@ import io.spine.cli.view.ActionListView;
 import static io.spine.cli.action.TransitionAction.transitionProducer;
 
 /**
- * Root view of the application.
+ * Root view of the CLI application.
  *
  * @author Dmytro Grankin
  */
