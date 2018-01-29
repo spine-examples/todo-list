@@ -27,9 +27,9 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 /**
- * A yes-or-no user prompt utility.
+ * Utility methods for working with command-line confirmations received from the end-user.
  *
- * <p>Valid answer values are `y` and `n`.
+ * <p>Valid answers are `y` and `n`.
  *
  * @author Illia Shepilov
  * @author Dmytro Grankin

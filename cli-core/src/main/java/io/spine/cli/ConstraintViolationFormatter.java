@@ -38,9 +38,10 @@ public class ConstraintViolationFormatter {
     @VisibleForTesting
     static final String ERROR_MSG_FORMAT = "Invalid `%s`.";
 
-    private ConstraintViolationFormatter() {
-        // Prevent instantiation of this utility class.
-    }
+    /**
+     * The {@code private} constructor prevents direct instantiation.
+     */
+    private ConstraintViolationFormatter() {}
 
     /**
      * Formats the specified constraint violations into a user-friendly representation.

@@ -163,9 +163,10 @@ public abstract class CommandView<M extends Message,
      */
     static class TypeInfo {
 
-        private TypeInfo() {
-            // Prevent instantiation of this utility class.
-        }
+        /**
+         * The {@code private} constructor prevents the utility class instantiation.
+         */
+        private TypeInfo() {}
 
         /**
          * Obtains the class of the {@linkplain ValidatingBuilder} for the given

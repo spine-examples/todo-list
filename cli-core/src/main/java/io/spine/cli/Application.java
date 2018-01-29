@@ -27,7 +27,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A command-line application.
  *
- * <p>Contains the elements that are common for the entire application, e.g. {@link Screen}.
+ * <p>Provides access to the elements, common for the entire application, e.g. a {@link Screen}.
  *
  * @author Dmytro Grankin
  */
@@ -35,9 +35,10 @@ public final class Application {
 
     private Screen screen;
 
-    private Application() {
-        // Prevent instantiation of this class from outside.
-    }
+    /**
+     * The {@code private} constructor prevents direct instantiation.
+     */
+    private Application() {}
 
     /**
      * Obtains {@link Screen} of the application.
