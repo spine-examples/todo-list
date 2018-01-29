@@ -25,6 +25,7 @@ import io.spine.cli.EditOperation;
 import io.spine.cli.Screen;
 import io.spine.cli.action.CommandAction;
 import io.spine.cli.action.CommandAction.CommandActionProducer;
+import io.spine.cli.action.EditCommandAction;
 import io.spine.cli.action.Shortcut;
 import io.spine.cli.view.CommandView;
 import io.spine.examples.todolist.TaskDescriptionVBuilder;
@@ -33,7 +34,6 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 
 import static io.spine.Identifier.newUuid;
-import static io.spine.cli.action.EditCommandAction.editCommandActionProducer;
 import static io.spine.examples.todolist.AppConfig.getClient;
 import static java.util.Collections.singletonList;
 
@@ -60,8 +60,8 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
      */
     public static NewTaskView create() {
         final NewTaskView view = new NewTaskView();
-        view.addAction(editCommandActionProducer("Start input", new Shortcut("i"),
-                                                 singletonList(new DescriptionEditOperation())));
+        view.addAction(EditCommandAction.producer("Start input", new Shortcut("i"),
+                                                  singletonList(new DescriptionEditOperation())));
         view.addAction(new NewTaskProducer());
         return view;
     }

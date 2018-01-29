@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Set;
 
 import static io.spine.cli.NoOpAction.noOpActionProducer;
-import static io.spine.cli.action.EditCommandAction.editCommandActionProducer;
+import static io.spine.cli.action.EditCommandAction.producer;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singleton;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -55,7 +55,7 @@ class EditCommandActionTest {
     private final Set<EditOperation<Comment, CommentVBuilder>> edits =
             singleton(new CommentEditOperation());
     private final EditCommandAction<Comment, CommentVBuilder> action =
-            editCommandActionProducer(ACTION_NAME, SHORTCUT, edits).create(view);
+            producer(ACTION_NAME, SHORTCUT, edits).create(view);
 
     @BeforeEach
     void setUp() {
@@ -66,14 +66,14 @@ class EditCommandActionTest {
     @DisplayName("not allow empty edits")
     void notAllowEmptyEdits() {
         assertThrows(IllegalArgumentException.class,
-                     () -> editCommandActionProducer(ACTION_NAME, SHORTCUT, emptyList()));
+                     () -> producer(ACTION_NAME, SHORTCUT, emptyList()));
     }
 
     @Test
     @DisplayName("create the action with one more edit")
     void createActionWithEdits() {
-        final Action action = editCommandActionProducer(ACTION_NAME, SHORTCUT,
-                                                        edits).create(view);
+        final Action action = producer(ACTION_NAME, SHORTCUT,
+                                       edits).create(view);
         assertEquals(ACTION_NAME, action.getName());
         assertEquals(SHORTCUT, action.getShortcut());
     }

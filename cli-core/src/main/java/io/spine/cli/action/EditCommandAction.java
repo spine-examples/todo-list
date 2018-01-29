@@ -93,8 +93,8 @@ public class EditCommandAction<M extends Message,
      * @return the new producer
      */
     public static <M extends Message, B extends ValidatingBuilder<M, ? extends Message.Builder>>
-    EditCommandActionProducer<M, B> editCommandActionProducer(String name, Shortcut shortcut,
-                                                              Collection<EditOperation<M, B>> edits) {
+    EditCommandActionProducer<M, B> producer(String name, Shortcut shortcut,
+                                             Collection<EditOperation<M, B>> edits) {
         return new EditCommandActionProducer<>(name, shortcut, edits);
     }
 
