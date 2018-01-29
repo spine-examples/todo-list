@@ -8,7 +8,7 @@ ToDo List example application
 
 # Guide
 
-## Step 2
+## Step 3
 
 In this step we create the system client library and the CLI client.
 
