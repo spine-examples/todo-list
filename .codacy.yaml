@@ -2,4 +2,6 @@
 exclude_paths:
   - "api-java/src/test/**/*.*"
   - "client/src/test/**/*.*"
+  - "cli-core/src/test/**/*.*"
+  - "testutil-cli/src/test/**/*.*"
   - "firebase-mirror/src/test/**/*.*"
