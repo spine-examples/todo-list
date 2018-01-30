@@ -48,7 +48,7 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRej
 import static java.util.Collections.singletonList;
 
 /**
- * The aggregate managing the state of a {@link TaskLabels}.
+ * The aggregate managing labels assigned to the Task.
  *
  * @author Illia Shepilov
  */
