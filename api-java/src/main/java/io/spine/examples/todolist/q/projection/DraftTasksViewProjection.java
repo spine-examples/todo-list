@@ -37,9 +37,9 @@ import io.spine.server.projection.Projection;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskListView;
-import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
-import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskItemList;
+import static io.spine.examples.todolist.q.projection.Projections.newTaskListView;
+import static io.spine.examples.todolist.q.projection.Projections.removeViewsByTaskId;
+import static io.spine.examples.todolist.q.projection.Projections.updateTaskItemList;
 
 /**
  * A projection state of tasks in a "draft" state.

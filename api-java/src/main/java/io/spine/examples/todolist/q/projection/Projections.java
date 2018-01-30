@@ -21,9 +21,14 @@
 package io.spine.examples.todolist.q.projection;
 
 import com.google.protobuf.Timestamp;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.c.events.LabelAssignedToTask;
+import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
+import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
 import io.spine.examples.todolist.c.events.TaskCompleted;
 import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
 import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
@@ -32,7 +37,7 @@ import io.spine.examples.todolist.c.events.TaskReopened;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.UnaryOperator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static io.spine.examples.todolist.q.projection.TaskItem.newBuilder;
@@ -64,10 +69,84 @@ final class Projections {
         return removeTasks(tasks, tasksToRemove);
     }
 
+    /**
+     * Removes the matching {@linkplain TaskItem task items}
+     * from the specified list by the label ID.
+     *
+     * @param tasks the list of the {@link TaskItem}
+     * @param id    the label ID of the task view
+     * @return {@link TaskListView} without deleted tasks
+     */
+    static TaskListView removeViewsByLabelId(List<TaskItem> tasks, LabelId id) {
+        final List<TaskItem> tasksToRemove = tasks.stream()
+                                                  .filter(t -> t.getLabelId()
+                                                                .equals(id))
+                                                  .collect(Collectors.toList());
+        return removeTasks(tasks, tasksToRemove);
+    }
 
     private static TaskListView removeTasks(List<TaskItem> source, List<TaskItem> tasksToRemove) {
         source.removeAll(tasksToRemove);
         return newTaskListView(source);
+    }
+
+    /**
+     * Updates the label details of the matching {@link TaskItem} according to the event data.
+     *
+     * @param tasks the list of the {@link TaskItem}
+     * @param event {@link LabelDetailsUpdated} instance
+     * @return the list of the {@link TaskItem} with updated {@link LabelDetails}
+     */
+    static List<TaskItem> updateTaskItemList(List<TaskItem> tasks, LabelDetailsUpdated event) {
+        final int listSize = tasks.size();
+        final List<TaskItem> updatedList = new ArrayList<>(listSize);
+        for (TaskItem task : tasks) {
+            TaskItem addedTask = task;
+            final boolean willUpdate = task.getLabelId()
+                                           .equals(event.getLabelId());
+            if (willUpdate) {
+                final LabelDetails labelDetails = event.getLabelDetailsChange()
+                                                       .getNewDetails();
+                addedTask = newBuilder().setLabelColor(labelDetails.getColor())
+                                        .setDueDate(task.getDueDate())
+                                        .setPriority(task.getPriority())
+                                        .setDescription(task.getDescription())
+                                        .setLabelId(task.getLabelId())
+                                        .setId(task.getId())
+                                        .build();
+            }
+            updatedList.add(addedTask);
+        }
+        return updatedList;
+    }
+
+    /**
+     * Removes the label from the matching {@link TaskItem} according to the event data.
+     *
+     * @param tasks the list of the {@link TaskItem}
+     * @param event {@link LabelRemovedFromTask} instance
+     * @return the list of the {@link TaskItem} which does not contains specified label
+     */
+    static List<TaskItem> updateTaskItemList(List<TaskItem> tasks, LabelRemovedFromTask event) {
+        final TaskId targetTaskId = event.getTaskId();
+
+        final TaskTransformation updateFn =
+                builder -> builder.setLabelId(LabelId.getDefaultInstance());
+        return transformWithUpdate(tasks, targetTaskId, updateFn);
+    }
+
+    /**
+     * Adds the label to the matching {@link TaskItem} according to the event data.
+     *
+     * @param tasks the list of the {@link TaskItem}
+     * @param event {@link LabelAssignedToTask} instance
+     * @return the list of the {@link TaskItem} which contains specified label
+     */
+    static List<TaskItem> updateTaskItemList(List<TaskItem> tasks, LabelAssignedToTask event) {
+        final TaskId targetTaskId = event.getTaskId();
+
+        final TaskTransformation updateFn = builder -> builder.setLabelId(event.getLabelId());
+        return transformWithUpdate(tasks, targetTaskId, updateFn);
     }
 
     /**
@@ -186,6 +265,6 @@ final class Projections {
     /**
      * A common interface for the {@link TaskItem} transformations.
      */
-    @FunctionalInterface
-    private interface TaskTransformation extends UnaryOperator<TaskItem.Builder> {}
+    private interface TaskTransformation extends Function<TaskItem.Builder, TaskItem.Builder> {
+    }
 }

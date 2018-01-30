@@ -45,10 +45,10 @@ import java.util.List;
 
 import static io.spine.examples.todolist.EventEnrichments.getEnrichment;
 import static io.spine.examples.todolist.q.projection.LabelColorView.valueOf;
-import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskListView;
-import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByLabelId;
-import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
-import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskItemList;
+import static io.spine.examples.todolist.q.projection.Projections.newTaskListView;
+import static io.spine.examples.todolist.q.projection.Projections.removeViewsByLabelId;
+import static io.spine.examples.todolist.q.projection.Projections.removeViewsByTaskId;
+import static io.spine.examples.todolist.q.projection.Projections.updateTaskItemList;
 
 /**
  * A projection state of the created tasks marked with a certain label.
