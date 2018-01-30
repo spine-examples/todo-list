@@ -55,10 +55,9 @@ public final class Application {
      *
      * @param screen the screen to use
      */
-    public void init(Screen screen) {
+    public void initialize(Screen screen) {
         if (this.screen != null) {
-            throw new IllegalStateException("Application is already initialized, " +
-                                                    "this function should be called only once.");
+            throw new IllegalStateException("Application is already initialized.");
         } else {
             this.screen = checkNotNull(screen);
         }

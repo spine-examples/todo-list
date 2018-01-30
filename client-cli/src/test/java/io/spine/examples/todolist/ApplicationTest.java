@@ -45,9 +45,9 @@ class ApplicationTest {
     void allowInitOnlyOnce() {
         try {
             // Exception may be thrown during first call also (if was initialized in other tests).
-            getInstance().init(new TerminalScreen());
+            getInstance().initialize(new TerminalScreen());
 
-            getInstance().init(new TerminalScreen());
+            getInstance().initialize(new TerminalScreen());
             fail("Exception should be thrown.");
         } catch (IllegalStateException ignored) {
         }

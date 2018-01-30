@@ -89,7 +89,7 @@ public class ClientApp {
     @VisibleForTesting
     static void initCli(Screen screen) {
         Application.getInstance()
-                   .init(screen);
+                   .initialize(screen);
     }
 
     private static Logger log() {
