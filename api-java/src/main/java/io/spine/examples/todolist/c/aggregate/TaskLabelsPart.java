@@ -52,8 +52,7 @@ import static java.util.Collections.singletonList;
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings("unused" /* The methods annotated with {@link Apply}
-                              are declared {@code private} by design. */)
+@SuppressWarnings("unused") // Message handlers are accessed via reflection.
 public class TaskLabelsPart
         extends AggregatePart<TaskId, TaskLabels, TaskLabelsVBuilder, TaskAggregateRoot> {
 

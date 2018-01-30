@@ -47,6 +47,7 @@ import static io.spine.examples.todolist.q.projection.TaskItem.newBuilder;
  *
  * @author Illia Shepilov
  */
+@SuppressWarnings("OverlyCoupledClass") // The class requires all the event types used in the system.
 final class Projections {
 
     /**

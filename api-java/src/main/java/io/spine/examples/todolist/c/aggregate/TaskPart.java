@@ -99,14 +99,10 @@ import static java.util.Collections.singletonList;
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings({"ClassWithTooManyMethods", /* Task definition cannot be separated and should
-                                                 process all commands and events related to it
-                                                 according to the domain model.
-                                                 The {@code AggregatePart} does it with methods
-                                                 annotated as {@code Assign} and {@code Apply}.
-                                                 In that case class has too many methods.*/
-        "OverlyCoupledClass"}) /* As each method needs dependencies  necessary to perform execution
-                                                 that class also overly coupled.*/
+@SuppressWarnings({
+        "ClassWithTooManyMethods", // All message handlers must be placed in this class.
+        "unused"                   // Message handlers are accessed via reflection.
+})
 public class TaskPart extends AggregatePart<TaskId, Task, TaskVBuilder, TaskAggregateRoot> {
 
     /**
