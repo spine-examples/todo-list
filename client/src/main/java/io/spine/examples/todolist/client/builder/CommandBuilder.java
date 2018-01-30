@@ -29,6 +29,9 @@ package io.spine.examples.todolist.client.builder;
  */
 public final class CommandBuilder {
 
+    /**
+     * The {@code private} constructor prevents the utility class instantiation.
+     */
     private CommandBuilder() {
     }
 

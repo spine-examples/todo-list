@@ -71,8 +71,8 @@ final class Projections {
     }
 
     /**
-     * Removes the matching {@linkplain TaskItem task items}
-     * from the specified list by the label ID.
+     * Removes the matching {@linkplain TaskItem task items} from the specified list by the
+     * label ID.
      *
      * @param tasks the list of the {@link TaskItem}
      * @param id    the label ID of the task view

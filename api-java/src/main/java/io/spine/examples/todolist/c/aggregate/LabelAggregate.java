@@ -48,8 +48,7 @@ import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRej
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings("unused" /* The methods annotated with {@link Apply}
-                              are declared {@code private} by design. */)
+@SuppressWarnings("unused") // Message handlers accessed via reflection.
 public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuilder> {
 
     /**

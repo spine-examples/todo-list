@@ -99,7 +99,6 @@ public final class TodoListEnrichments {
                                                    .build();
             return details;
         };
-
         return result;
     }
 
