@@ -90,9 +90,9 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     @Subscribe
     public void on(LabelRemovedFromTask event) {
         final LabelId labelId = event.getLabelId();
-        final boolean isEquals = getBuilder().getLabelId()
+        final boolean equal = getBuilder().getLabelId()
                                              .equals(labelId);
-        if (isEquals) {
+        if (equal) {
             final List<TaskItem> views = new ArrayList<>(getBuilder().getLabelledTasks()
                                                                      .getItemsList());
             final TaskListView updatedView = removeViewsByLabelId(views, labelId);

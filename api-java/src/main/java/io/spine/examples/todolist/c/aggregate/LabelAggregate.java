@@ -86,9 +86,9 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
         final LabelDetailsChange labelDetailsChange = cmd.getLabelDetailsChange();
         final LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
 
-        final boolean isEquals = actualLabelDetails.equals(expectedLabelDetails);
+        final boolean equal = actualLabelDetails.equals(expectedLabelDetails);
 
-        if (!isEquals) {
+        if (!equal) {
             final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
             final ValueMismatch mismatch = unexpectedValue(expectedLabelDetails,
                                                            actualLabelDetails, newLabelDetails);

@@ -141,9 +141,9 @@ public class TaskPart extends AggregatePart<TaskId, Task, TaskVBuilder, TaskAggr
         final String actualDescription = getState().getDescription()
                                                    .getValue();
         final String expectedDescription = descriptionChange.getPreviousValue();
-        final boolean isEquals = actualDescription.equals(expectedDescription);
+        final boolean equal = actualDescription.equals(expectedDescription);
 
-        if (!isEquals) {
+        if (!equal) {
             final ValueMismatch mismatch = unexpectedValue(expectedDescription, actualDescription,
                                                            descriptionChange.getNewValue());
             throwCannotUpdateDescription(cmd, mismatch);
@@ -172,9 +172,9 @@ public class TaskPart extends AggregatePart<TaskId, Task, TaskVBuilder, TaskAggr
         final Timestamp actualDueDate = state.getDueDate();
         final Timestamp expectedDueDate = change.getPreviousValue();
 
-        final boolean isEquals = compare(actualDueDate, expectedDueDate) == 0;
+        final boolean equal = compare(actualDueDate, expectedDueDate) == 0;
 
-        if (!isEquals) {
+        if (!equal) {
             final Timestamp newDueDate = change.getNewValue();
             final ValueMismatch mismatch = unexpectedValue(expectedDueDate, actualDueDate,
                                                            newDueDate);
@@ -204,9 +204,9 @@ public class TaskPart extends AggregatePart<TaskId, Task, TaskVBuilder, TaskAggr
         final TaskPriority actualPriority = state.getPriority();
         final TaskPriority expectedPriority = priorityChange.getPreviousValue();
 
-        boolean isEquals = actualPriority == expectedPriority;
+        boolean equal = actualPriority == expectedPriority;
 
-        if (!isEquals) {
+        if (!equal) {
             final TaskPriority newPriority = priorityChange.getNewValue();
             final ValueMismatch mismatch = of(expectedPriority, actualPriority, newPriority,
                                               getVersion());
