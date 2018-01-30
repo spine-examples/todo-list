@@ -43,9 +43,9 @@ public class MyListViewRepository
 
     /**
      * Adds the {@link io.spine.server.route.EventRoute EventRoute}s to the repository.
-     * Should to be overridden in an successor classes,
-     * otherwise all successors will use {@code MyListViewProjection.ID}
-     * and only with specified events below.
+     *
+     * <p>Override this method in successor classes, otherwise all successors will use
+     * {@code MyListViewProjection.ID}.
      */
     protected void setUpEventRoute() {
         getEventRouting().replaceDefault(((message, context) -> singleton(ID)));

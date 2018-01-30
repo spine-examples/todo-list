@@ -71,10 +71,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
                                                   .build();
 
     /**
-     * Creates a new instance.
-     *
-     * @param id the ID for the new instance
-     * @throws IllegalArgumentException if the ID is not of one of the supported types
+     * @see Projection#Projection(Object)
      */
     public MyListViewProjection(TaskListId id) {
         super(id);

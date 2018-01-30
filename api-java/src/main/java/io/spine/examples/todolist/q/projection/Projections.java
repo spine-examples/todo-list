@@ -266,6 +266,7 @@ final class Projections {
     /**
      * A common interface for the {@link TaskItem} transformations.
      */
+    @FunctionalInterface
     private interface TaskTransformation extends UnaryOperator<TaskItem.Builder> {
     }
 }

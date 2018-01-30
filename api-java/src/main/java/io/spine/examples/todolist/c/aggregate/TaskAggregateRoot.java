@@ -35,10 +35,7 @@ import io.spine.server.aggregate.AggregateRoot;
 public class TaskAggregateRoot extends AggregateRoot<TaskId> {
 
     /**
-     * Creates a new instance.
-     *
-     * @param boundedContext the bounded context to which the aggregate belongs
-     * @param id             the ID of the aggregate
+     * @see AggregateRoot#AggregateRoot(BoundedContext, Object)
      */
     public TaskAggregateRoot(BoundedContext boundedContext, TaskId id) {
         super(boundedContext, id);

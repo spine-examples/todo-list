@@ -26,7 +26,7 @@ import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
 import io.spine.server.aggregate.AggregatePartRepository;
 
 /**
- * Repository for the {@link TaskLabelsPart}
+ * Repository for the {@link TaskLabelsPart}.
  *
  * @author Illia Shepilov
  */

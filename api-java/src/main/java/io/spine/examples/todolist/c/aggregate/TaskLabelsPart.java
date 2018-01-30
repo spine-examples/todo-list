@@ -49,7 +49,7 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRej
 import static java.util.Collections.singletonList;
 
 /**
- * The aggregate managing labels assigned to the Task.
+ * The aggregate part managing labels assigned to the Task.
  *
  * @author Illia Shepilov
  */

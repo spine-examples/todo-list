@@ -35,18 +35,17 @@ import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
-import io.spine.server.event.EventBus;
 import io.spine.server.event.EventEnricher;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Serves as class which adds enrichment fields to the {@link EventBus}.
+ * {@link EventEnricher} factory for the TodoList bounded context.
  *
  * @author Illia Shepilov
  */
 @SuppressWarnings("Guava") // Spine Java 7 API.
-public class TodoListEnrichments {
+public final class TodoListEnrichments {
 
     private final TaskRepository taskRepo;
     private final TaskLabelsRepository taskLabelsRepo;

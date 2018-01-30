@@ -23,7 +23,7 @@ package io.spine.examples.todolist.q.projection;
 import io.spine.examples.todolist.LabelColor;
 
 /**
- * Supplies {@link LabelColor} with hexadecimal representation of color.
+ * Maps {@link LabelColor} to a hexadecimal color code.
  */
 public enum LabelColorView {
     RED_COLOR(LabelColor.RED, "#ff0000"),

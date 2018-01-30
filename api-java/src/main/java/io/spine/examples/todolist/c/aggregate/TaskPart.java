@@ -96,7 +96,7 @@ import static io.spine.time.Timestamps2.compare;
 import static java.util.Collections.singletonList;
 
 /**
- * The aggregate managing the state of a {@link Task}.
+ * The aggregate part managing the state of a {@link Task}.
  *
  * @author Illia Shepilov
  */
