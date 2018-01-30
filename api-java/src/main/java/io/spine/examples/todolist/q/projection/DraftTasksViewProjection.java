@@ -49,8 +49,8 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
  * @author Illia Shepilov
  */
 public class DraftTasksViewProjection extends Projection<TaskListId,
-        DraftTasksView,
-        DraftTasksViewVBuilder> {
+                                                         DraftTasksView,
+                                                         DraftTasksViewVBuilder> {
 
     /**
      * As long as there is just a single end-user in the app,
