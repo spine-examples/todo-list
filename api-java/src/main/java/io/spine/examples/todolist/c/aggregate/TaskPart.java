@@ -100,8 +100,12 @@ import static java.util.Collections.singletonList;
  * @author Illia Shepilov
  */
 @SuppressWarnings({
-        "ClassWithTooManyMethods", // All message handlers must be placed in this class.
-        "unused"                   // Message handlers are accessed via reflection.
+        "ClassWithTooManyMethods",
+            // All message handlers must be placed in this class.
+        "unused",
+            // Message handlers are accessed via reflection.
+        "OverlyCoupledClass"
+            // All the handled message types and their fields' types are// required.
 })
 public class TaskPart extends AggregatePart<TaskId, Task, TaskVBuilder, TaskAggregateRoot> {
 
