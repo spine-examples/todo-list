@@ -29,9 +29,6 @@ package io.spine.examples.todolist.client.builder;
  */
 public final class CommandBuilder {
 
-    /**
-     * The {@code private} constructor prevents direct instantiation.
-     */
     private CommandBuilder() {
     }
 
@@ -42,5 +39,14 @@ public final class CommandBuilder {
      */
     public static TaskBuilder task() {
         return TaskBuilder.getInstance();
+    }
+
+    /**
+     * Provides the {@link LabelBuilder}.
+     *
+     * @return the {@code LabelBuilder} instance
+     */
+    public static LabelBuilder label() {
+        return LabelBuilder.getInstance();
     }
 }

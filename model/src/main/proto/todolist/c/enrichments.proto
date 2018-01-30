@@ -33,11 +33,43 @@ option java_generate_equals_and_hash = true;
 import "todolist/values.proto";
 import "todolist/model.proto";
 
-// Task enrichment for the `TaskDratfFinalized` event.
+// Enrichment for the events which required the task and label details.
+//
+message DetailsEnrichment {
+
+    option (enrichment_for) = "spine.examples.todolist.LabelledTaskRestored,"
+                                "spine.examples.todolist.LabelAssignedToTask";
+
+    // A task details.
+    TaskDetails task_details = 1 [(by) = "task_id"];
+
+    // A label details.
+    LabelDetails label_details = 2 [(by) = "label_id"];
+}
+
+// Enrichment for the events which required the list of the label IDs.
+//
+message LabelsListEnrichment {
+
+    option (enrichment_for) = "spine.examples.todolist.TaskDescriptionUpdated,"
+                              "spine.examples.todolist.TaskPriorityUpdated,"
+                              "spine.examples.todolist.TaskDueDateUpdated,"
+                              "spine.examples.todolist.TaskCompleted,"
+                              "spine.examples.todolist.TaskReopened,"
+                              "spine.examples.todolist.TaskDeleted,"
+                              "spine.examples.todolist.TaskDraftFinalized,"
+                              "spine.examples.todolist.LabelledTaskRestored,"
+                              "spine.examples.todolist.LabelAssignedToTask";
+
+    // A list of the label IDs.
+    LabelIdsList label_ids_list = 1 [(by) = "task_id"];
+}
+
+// Task enrichment for the TaskDratfFinalized event.
 //
 message TaskEnrichment {
     option (enrichment_for) = "spine.examples.todolist.TaskDraftFinalized";
 
-    // The state of the task which produced the `TaskDraftFinalized` event.
+    // A task.
     Task task = 1 [(by) = "task_id"];
 }

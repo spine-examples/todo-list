@@ -23,4 +23,5 @@ dependencies {
     compile group: 'io.spine', name: 'spine-server', version: spineVersion
 
     testCompile project(':testutil-api')
+    testCompile project(':client')
 }

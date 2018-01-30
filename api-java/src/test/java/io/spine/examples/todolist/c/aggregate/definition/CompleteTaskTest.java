@@ -50,7 +50,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CompleteTask command should be interpreted by TaskAggregate and")
+@DisplayName("CompleteTask command should be interpreted by TaskPart and")
 public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
 
     @Override

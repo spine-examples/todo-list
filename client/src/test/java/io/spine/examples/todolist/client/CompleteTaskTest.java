@@ -20,9 +20,13 @@
 
 package io.spine.examples.todolist.client;
 
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CompleteTask;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
+import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -52,6 +57,26 @@ class CompleteTaskTest extends TodoClientTest {
     }
 
     @Nested
+    @DisplayName("LabelledTasksView should")
+    class CompleteTaskFromLabelledTasksView {
+
+        @Test
+        @DisplayName("contain task view marked as completed")
+        void obtainLabelledViewWithCompletedTask() {
+            final TaskItem view = obtainViewWhenHandledCommandCompleteTask(true);
+            assertTrue(view.getCompleted());
+        }
+
+        @Test
+        @DisplayName("contain task view which does not marked as completed " +
+                "when command has wrong task ID")
+        void obtainLabelledViewWithUncompletedTask() {
+            final TaskItem view = obtainViewWhenHandledCommandCompleteTask(false);
+            assertFalse(view.getCompleted());
+        }
+    }
+
+    @Nested
     @DisplayName("MyListView should")
     class CompleteTaskFromMyListView {
 
@@ -68,6 +93,36 @@ class CompleteTaskTest extends TodoClientTest {
             final TaskItem view = obtainTaskItemWhenHandledCompleteTask(false);
             assertFalse(view.getCompleted());
         }
+    }
+
+    private TaskItem obtainViewWhenHandledCommandCompleteTask(boolean isCorrectId) {
+        final CreateBasicTask createTask = createTask();
+        final TaskId createdTaskId = createTask.getId();
+
+        final CreateBasicLabel createLabel = createBasicLabel();
+        client.postCommand(createLabel);
+
+        final TaskId taskId = createTask.getId();
+        final LabelId labelId = createLabel.getLabelId();
+
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        client.postCommand(assignLabelToTask);
+
+        completeTask(isCorrectId, createdTaskId);
+
+        final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
+        final int expectedListSize = 1;
+        assertEquals(expectedListSize, labelledTasksView.size());
+
+        final List<TaskItem> taskViews = labelledTasksView.get(0)
+                                                          .getLabelledTasks()
+                                                          .getItemsList();
+        assertEquals(expectedListSize, taskViews.size());
+
+        final TaskItem view = taskViews.get(0);
+        assertEquals(taskId, view.getId());
+
+        return view;
     }
 
     private TaskItem obtainTaskItemWhenHandledCompleteTask(boolean isCorrectId) {

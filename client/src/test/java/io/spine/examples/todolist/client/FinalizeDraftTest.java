@@ -20,9 +20,14 @@
 
 package io.spine.examples.todolist.client;
 
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.AssignLabelToTask;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
+import io.spine.examples.todolist.q.projection.DraftTasksView;
+import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +37,9 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.finalizeDraftInstance;
+import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Illia Shepilov
@@ -75,6 +82,84 @@ class FinalizeDraftTest extends TodoClientTest {
             assertEquals(expectedListSize, views.size());
 
             final TaskItem view = views.get(0);
+            assertEquals(taskId, view.getId());
+        }
+    }
+
+    @Nested
+    @DisplayName("LabelledTasksView should")
+    class FinalizeDraftFromLabelledTasksView {
+
+        @Test
+        @DisplayName("contain the task view")
+        void obtainView() {
+            final CreateDraft createDraft = createDraftTask();
+
+            final CreateBasicLabel createBasicLabel = createBasicLabel();
+            client.postCommand(createBasicLabel);
+
+            final TaskId taskId = createDraft.getId();
+            final LabelId labelId = createBasicLabel.getLabelId();
+            final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            client.postCommand(assignLabelToTask);
+
+            final FinalizeDraft finalizeDraft = finalizeDraftInstance(taskId);
+            client.postCommand(finalizeDraft);
+
+            final List<LabelledTasksView> labelledViews = client.getLabelledTasksView();
+            assertEquals(1, labelledViews.size());
+
+            final LabelledTasksView labelledView = labelledViews.get(0);
+            final List<TaskItem> taskViews = labelledView.getLabelledTasks()
+                                                         .getItemsList();
+            assertEquals(1, taskViews.size());
+
+            final TaskItem taskView = taskViews.get(0);
+            assertEquals(taskId, taskView.getId());
+            assertEquals(labelId, taskView.getLabelId());
+        }
+    }
+
+    @Nested
+    @DisplayName("DraftTasksView should")
+    class FinalizeDraftFromDraftTasksView {
+
+        @Test
+        @DisplayName("be empty")
+        void obtainEmptyViewsWhenDraftIsFinalized() {
+            final CreateDraft createDraft = createDraftTask();
+
+            DraftTasksView draftTasksView = client.getDraftTasksView();
+
+            List<TaskItem> taskViewList = draftTasksView.getDraftTasks()
+                                                        .getItemsList();
+            assertEquals(1, taskViewList.size());
+            assertEquals(createDraft.getId(), taskViewList.get(0)
+                                                          .getId());
+            final FinalizeDraft finalizeDraft = finalizeDraftInstance(createDraft.getId());
+            client.postCommand(finalizeDraft);
+
+            draftTasksView = client.getDraftTasksView();
+            taskViewList = draftTasksView.getDraftTasks()
+                                         .getItemsList();
+            assertTrue(taskViewList.isEmpty());
+        }
+
+        @Test
+        @DisplayName("not be empty when command has wrong task ID")
+        void obtainViewWhenFinalizedWrongDraft() {
+            final CreateDraft createDraft = createDraftTask();
+            final TaskId taskId = createDraft.getId();
+
+            final FinalizeDraft finalizeDraft = finalizeDraftInstance(createWrongTaskId());
+            client.postCommand(finalizeDraft);
+
+            final List<TaskItem> taskViews = client.getDraftTasksView()
+                                                   .getDraftTasks()
+                                                   .getItemsList();
+            assertEquals(1, taskViews.size());
+
+            final TaskItem view = taskViews.get(0);
             assertEquals(taskId, view.getId());
         }
     }

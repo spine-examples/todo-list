@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("DeleteTask command should be interpreted by TaskAggregate and")
+@DisplayName("DeleteTask command should be interpreted by TaskPart and")
 public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
 
     @Override

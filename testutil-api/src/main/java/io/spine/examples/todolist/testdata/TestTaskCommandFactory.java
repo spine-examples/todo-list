@@ -23,6 +23,7 @@ package io.spine.examples.todolist.testdata;
 import com.google.protobuf.Timestamp;
 import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
@@ -51,6 +52,9 @@ public class TestTaskCommandFactory {
     public static final TaskId TASK_ID = TaskId.newBuilder()
                                                .setValue(newUuid())
                                                .build();
+    public static final LabelId LABEL_ID = LabelId.newBuilder()
+                                                  .setValue(newUuid())
+                                                  .build();
     public static final String DESCRIPTION = "Task description.";
     public static final Timestamp DUE_DATE = getCurrentTime();
     public static final String UPDATED_LABEL_TITLE = "labelTitle";

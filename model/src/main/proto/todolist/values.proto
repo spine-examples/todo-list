@@ -69,6 +69,19 @@ message TaskDetails {
     bool completed = 3 [(required) = true];
 }
 
+// DTO for the label details.
+//
+// Wrapped by several events to transfer the label data.
+//
+message LabelDetails {
+
+    // Label title.
+    string title = 1 [(required) = true];
+
+    // Label color.
+    LabelColor color = 2;
+}
+
 // DTO for the description mismatch.
 message DescriptionUpdateRejected {
 
@@ -99,11 +112,41 @@ message TaskDueDateUpdateRejected {
     change.ValueMismatch due_date_mismatch = 2;
 }
 
+// DTO for the label details mismatch.
+message LabelDetailsUpdateRejected {
+
+    // An unsuccessful label command details.
+    RejectedLabelCommandDetails command_details = 1;
+
+    // A mismatching label details value.
+    change.ValueMismatch label_details_mismatch = 2;
+}
+
 // DTO for the rejected craete basic task command details.
 message CreateBasicTaskRejected {
 
     // An unsuccessful task command details.
     RejectedTaskCommandDetails command_details = 1;
+}
+
+// DTO for the rejected assign label to task command details.
+message AssignLabelToTaskRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+
+    // An identifier of the label.
+    LabelId label_id = 2;
+}
+
+// DTO for the rejected remove label from task command details.
+message RemoveLabelFromTaskRejected {
+
+    // An unsuccessful task command details.
+    RejectedTaskCommandDetails command_details = 1;
+
+    // An identifier of the label.
+    LabelId label_id = 2;
 }
 
 // DTO for the rejected reopen task command details.
@@ -153,4 +196,18 @@ message RejectedTaskCommandDetails {
 
     // A task identifier.
     TaskId task_id = 1;
+}
+
+// DTO for the unsuccessful label command details.
+message RejectedLabelCommandDetails {
+
+    // A task label identifier.
+    LabelId label_id = 1;
+}
+
+// DTO for the list of the label IDs.
+message LabelIdsList {
+
+    // Label IDs.
+    repeated LabelId ids = 1;
 }

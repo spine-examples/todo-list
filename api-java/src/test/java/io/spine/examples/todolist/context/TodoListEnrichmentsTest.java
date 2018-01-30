@@ -27,9 +27,15 @@ import io.spine.core.Enrichment;
 import io.spine.core.Event;
 import io.spine.core.EventEnvelope;
 import io.spine.core.Versions;
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.enrichments.DetailsEnrichment;
+import io.spine.examples.todolist.c.enrichments.LabelsListEnrichment;
 import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
+import io.spine.examples.todolist.c.events.LabelledTaskRestored;
 import io.spine.examples.todolist.c.events.TaskDraftFinalized;
+import io.spine.examples.todolist.repository.LabelAggregateRepository;
+import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.event.EventEnricher;
 import io.spine.server.event.EventFactory;
@@ -58,15 +64,21 @@ class TodoListEnrichmentsTest {
     @BeforeEach
     void setUp() {
         final TaskRepository taskRepo = mock(TaskRepository.class);
+        final LabelAggregateRepository labelRepo = mock(LabelAggregateRepository.class);
+        final TaskLabelsRepository taskLabelsRepo = mock(TaskLabelsRepository.class);
         when(taskRepo.find(any(TaskId.class))).thenReturn(Optional.absent());
+        when(labelRepo.find(any(LabelId.class))).thenReturn(Optional.absent());
+        when(taskLabelsRepo.find(any(TaskId.class))).thenReturn(Optional.absent());
         enricher = TodoListEnrichments.newBuilder()
                                       .setTaskRepository(taskRepo)
+                                      .setLabelRepository(labelRepo)
+                                      .setTaskLabelsRepository(taskLabelsRepo)
                                       .build()
                                       .createEnricher();
     }
 
     @Test
-    @DisplayName("create EventEnricher that defaults absent Task to default message")
+    @DisplayName("create EventEnricher that defaults absent Task or TaskLabels to default message")
     void enricherDefaultsTest() {
         final TaskDraftFinalized eventMsg = TaskDraftFinalized.newBuilder()
                                                               .setTaskId(randomTaskId())
@@ -75,12 +87,38 @@ class TodoListEnrichmentsTest {
         final EventEnvelope enriched = enricher.enrich(envelope);
         final Enrichment enrichment = enriched.getEnrichment();
 
+        final TypeName labelsEnrName = TypeName.from(LabelsListEnrichment.getDescriptor());
+        final Any labelIds = enrichment.getContainer()
+                                       .getItemsMap()
+                                       .get(labelsEnrName.value());
+        final LabelsListEnrichment labelIdsEnr = unpack(labelIds);
+        assertTrue(labelIdsEnr.getLabelIdsList().getIdsList().isEmpty());
+
         final TypeName taskTypeName = TypeName.from(TaskEnrichment.getDescriptor());
         final Any task = enrichment.getContainer()
                                    .getItemsMap()
                                    .get(taskTypeName.value());
         final TaskEnrichment taskEnr = unpack(task);
         assertTrue(isDefault(taskEnr.getTask()));
+    }
+
+    @Test
+    @DisplayName("create EventEnricher that defaults absent Label to default message")
+    void moreEnricherDefaultsTest() {
+        final LabelledTaskRestored eventMsg = LabelledTaskRestored.newBuilder()
+                                                                  .setLabelId(randomLabelId())
+                                                                  .build();
+        final EventEnvelope envelope = enricher.enrich(of(event(eventMsg)));
+        final EventEnvelope enriched = enricher.enrich(envelope);
+        final Enrichment enrichment = enriched.getEnrichment();
+
+        final TypeName enrTypeName = TypeName.from(DetailsEnrichment.getDescriptor());
+        final Any packerEnr = enrichment.getContainer()
+                                        .getItemsMap()
+                                        .get(enrTypeName.value());
+        final DetailsEnrichment enr = unpack(packerEnr);
+        assertTrue(isDefault(enr.getLabelDetails()));
+        assertTrue(isDefault(enr.getTaskDetails()));
     }
 
     private static Event event(Message msg) {
@@ -91,5 +129,11 @@ class TodoListEnrichmentsTest {
         return TaskId.newBuilder()
                      .setValue(newUuid())
                      .build();
+    }
+
+    private static LabelId randomLabelId() {
+        return LabelId.newBuilder()
+                      .setValue(newUuid())
+                      .build();
     }
 }

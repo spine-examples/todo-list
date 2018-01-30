@@ -67,3 +67,41 @@ message Task {
     // Reserved fields for future extension.
     reserved 7 to 20;
 }
+
+message TaskLabels {
+
+    // Task identifier.
+    TaskId task_id = 1;
+
+    // Task labels.
+    //
+    // Task can have any number of labels assigned, i.e. [0; +inf).
+    // Optional. Empty by default.
+    LabelIdsList label_ids_list = 2;
+
+    // Reserved fields for future extension.
+    reserved 3 to 20;
+}
+
+
+// Text label set to one or more tasks.
+//
+// Serves for grouping and filtering.
+// A label can be assigned to any number of tasks, i.e. [0; +inf).
+// Similar to Google Mail labels, can be used for color-coding the task list.
+//
+message TaskLabel {
+
+    // Label identifier.
+    LabelId id = 1;
+
+    // Label title.
+    //
+    // Cannot be empty.
+    string title = 2 [(required) = true];
+
+    // Label color.
+    //
+    // Optional. Defaults to the `LabelColor.LC_UNDEFINED`.
+    LabelColor color = 3;
+}

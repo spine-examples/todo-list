@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.q.projection;
+package io.spine.examples.todolist;
 
 import com.google.common.base.Optional;
 import com.google.protobuf.Message;
@@ -30,12 +30,13 @@ import io.spine.core.EventContext;
  *
  * @author Illia Shepilov
  */
-final class EventEnrichments {
+public final class EventEnrichments {
 
     /**
      * The {@code private} constructor prevents the utility class instantiation.
      */
-    private EventEnrichments() {}
+    private EventEnrichments() {
+    }
 
     /**
      * Obtains enrichment from the {@link EventContext} according to the enrichment class.
@@ -45,7 +46,7 @@ final class EventEnrichments {
      * @return the enrichment if it is present, throws {@code EnrichmentNotFoundException} otherwise
      */
     @SuppressWarnings("Guava") // Spine Java 7 API
-    static <T extends Message, E extends Class<T>>
+    public static <T extends Message, E extends Class<T>>
     T getEnrichment(E enrichmentClass, EventContext context) {
         final Optional<T> enrichmentOptional = Enrichments.getEnrichment(enrichmentClass, context);
         if (enrichmentOptional.isPresent()) {

@@ -43,3 +43,13 @@ message PriorityChange {
     // The new value of the priority.
     TaskPriority new_value = 2;
 }
+
+// Definition of a change in a label details field.
+message LabelDetailsChange {
+
+    // The value of the label details that's changing.
+    LabelDetails previous_details = 1;
+
+    // The new value of the label details.
+    LabelDetails new_details = 2;
+}

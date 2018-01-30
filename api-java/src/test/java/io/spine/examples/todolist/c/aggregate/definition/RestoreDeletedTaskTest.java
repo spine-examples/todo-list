@@ -23,20 +23,27 @@ package io.spine.examples.todolist.c.aggregate.definition;
 import com.google.common.base.Throwables;
 import io.grpc.stub.StreamObserver;
 import io.spine.core.Ack;
+import io.spine.core.Command;
 import io.spine.core.Event;
 import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.c.aggregate.TaskAggregate;
+import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
+import io.spine.examples.todolist.c.aggregate.TaskPart;
+import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CompleteTask;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
+import io.spine.examples.todolist.c.events.LabelledTaskRestored;
 import io.spine.examples.todolist.c.rejection.CannotRestoreDeletedTask;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.grpc.MemoizingObserver;
 import io.spine.grpc.StreamObservers;
+import io.spine.protobuf.AnyPacker;
 import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
+import io.spine.server.event.EventStreamQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,12 +55,15 @@ import java.util.List;
 import static com.google.common.collect.Lists.newArrayList;
 import static io.spine.examples.todolist.TaskStatus.DELETED;
 import static io.spine.examples.todolist.TaskStatus.OPEN;
+import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.LABEL_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.restoreDeletedTaskInstance;
+import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
@@ -63,7 +73,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("RestoreDeletedTask command should be interpreted by TaskAggregate and")
+@DisplayName("RestoreDeletedTask command should be interpreted by TaskPart and")
 public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> {
 
     private MemoizingObserver<Ack> responseObserver;
@@ -77,7 +87,52 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         responseObserver = StreamObservers.memoizingObserver();
         boundedContext = BoundedContexts.create();
         commandBus = boundedContext.getCommandBus();
-        aggregate = new TaskAggregate(taskId);
+        final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, taskId);
+        aggregate = new TaskPart(root);
+    }
+
+    @Test
+    @DisplayName("produce LabelledTaskRestored event")
+    void produceEvent() {
+        final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
+        final Command createTaskCmd = createDifferentCommand(createTask);
+        commandBus.post(createTaskCmd, responseObserver);
+
+        final CreateBasicLabel createLabel = createLabelInstance(LABEL_ID);
+        final Command createLabelCmd = createDifferentCommand(createLabel);
+        commandBus.post(createLabelCmd, responseObserver);
+
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, LABEL_ID);
+        final Command assignLabelToTaskCmd = createDifferentCommand(assignLabelToTask);
+        commandBus.post(assignLabelToTaskCmd, responseObserver);
+
+        final DeleteTask deleteTask = deleteTaskInstance(taskId);
+        final Command deleteTaskCmd = createDifferentCommand(deleteTask);
+        commandBus.post(deleteTaskCmd, responseObserver);
+
+        final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
+        final Command restoreDeletedTaskCmd = createDifferentCommand(restoreDeletedTask);
+        commandBus.post(restoreDeletedTaskCmd, responseObserver);
+
+        final EventStreamQuery query = EventStreamQuery.newBuilder()
+                                                       .build();
+        final EventStreamObserver eventStreamObserver = new EventStreamObserver();
+
+        boundedContext.getEventBus()
+                      .getEventStore()
+                      .read(query, eventStreamObserver);
+        final List<Event> events = eventStreamObserver.events;
+        final LabelledTaskRestored labelledTaskRestored =
+                events.stream()
+                      .filter(event -> AnyPacker.unpack(event.getMessage())
+                                                .getClass()
+                                                .isAssignableFrom(LabelledTaskRestored.class))
+                      .findFirst()
+                      .map(event -> AnyPacker.unpack(event.getMessage()))
+                      .map(LabelledTaskRestored.class::cast)
+                      .orElseThrow(() -> new IllegalStateException("Event was not produced."));
+        assertEquals(taskId, labelledTaskRestored.getTaskId());
+        assertEquals(LABEL_ID, labelledTaskRestored.getLabelId());
     }
 
     @Test

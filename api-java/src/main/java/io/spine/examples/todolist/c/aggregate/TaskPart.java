@@ -25,11 +25,13 @@ import com.google.protobuf.Timestamp;
 import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
 import io.spine.change.ValueMismatch;
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskLabels;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.TaskVBuilder;
@@ -44,6 +46,7 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.events.DeletedTaskRestored;
+import io.spine.examples.todolist.c.events.LabelledTaskRestored;
 import io.spine.examples.todolist.c.events.TaskCompleted;
 import io.spine.examples.todolist.c.events.TaskCreated;
 import io.spine.examples.todolist.c.events.TaskDeleted;
@@ -62,12 +65,13 @@ import io.spine.examples.todolist.c.rejection.CannotRestoreDeletedTask;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDescription;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDueDate;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskPriority;
-import io.spine.server.aggregate.Aggregate;
+import io.spine.server.aggregate.AggregatePart;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
 import java.util.List;
 
+import static com.google.common.collect.Lists.newLinkedList;
 import static io.spine.examples.todolist.c.aggregate.MismatchHelper.of;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.ensureCompleted;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.ensureDeleted;
@@ -76,16 +80,16 @@ import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidCr
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidTransition;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskDueDateCommand;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.isValidUpdateTaskPriorityCommand;
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.ChangeStatusRejections.throwCannotCompleteTask;
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.ChangeStatusRejections.throwCannotDeleteTask;
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.ChangeStatusRejections.throwCannotFinalizeDraft;
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.ChangeStatusRejections.throwCannotReopenTask;
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.ChangeStatusRejections.throwCannotRestoreDeletedTask;
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.TaskCreationRejections.throwCannotCreateDraft;
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.UpdateRejections.throwCannotUpdateDescription;
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.UpdateRejections.throwCannotUpdateTaskDescription;
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.UpdateRejections.throwCannotUpdateTaskDueDate;
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.UpdateRejections.throwCannotUpdateTaskPriority;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotCompleteTask;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotDeleteTask;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotFinalizeDraft;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotReopenTask;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotRestoreDeletedTask;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.TaskCreationRejections.throwCannotCreateDraft;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateDescription;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDescription;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDueDate;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskPriority;
 import static io.spine.time.Time.getCurrentTime;
 import static io.spine.time.Timestamps2.compare;
 import static java.util.Collections.singletonList;
@@ -98,20 +102,20 @@ import static java.util.Collections.singletonList;
 @SuppressWarnings({"ClassWithTooManyMethods", /* Task definition cannot be separated and should
                                                  process all commands and events related to it
                                                  according to the domain model.
-                                                 The {@code Aggregate} does it with methods
+                                                 The {@code AggregatePart} does it with methods
                                                  annotated as {@code Assign} and {@code Apply}.
                                                  In that case class has too many methods.*/
         "OverlyCoupledClass"}) /* As each method needs dependencies  necessary to perform execution
                                                  that class also overly coupled.*/
-public class TaskAggregate extends Aggregate<TaskId,
-                                            Task,
-                                            TaskVBuilder> {
+public class TaskPart extends AggregatePart<TaskId, Task, TaskVBuilder, TaskAggregateRoot> {
 
     /**
-     * @see Aggregate#Aggregate(Object)
+     * {@inheritDoc}
+     *
+     * @param root
      */
-    public TaskAggregate(TaskId id) {
-        super(id);
+    public TaskPart(TaskAggregateRoot root) {
+        super(root);
     }
 
     @Assign
@@ -306,17 +310,32 @@ public class TaskAggregate extends Aggregate<TaskId,
     }
 
     @Assign
-    DeletedTaskRestored handle(RestoreDeletedTask cmd) throws CannotRestoreDeletedTask {
+    List<? extends Message> handle(RestoreDeletedTask cmd) throws CannotRestoreDeletedTask {
         final TaskStatus currentStatus = getState().getTaskStatus();
         final boolean isValid = ensureDeleted(currentStatus);
         if (!isValid) {
             throwCannotRestoreDeletedTask(cmd);
         }
+
         final TaskId taskId = cmd.getId();
         final DeletedTaskRestored deletedTaskRestored = DeletedTaskRestored.newBuilder()
                                                                            .setTaskId(taskId)
                                                                            .build();
-        return deletedTaskRestored;
+        final List<Message> result = newLinkedList();
+        result.add(deletedTaskRestored);
+
+        final TaskLabels taskLabels = getPartState(TaskLabels.class);
+        final List<LabelId> labelIdsList = taskLabels.getLabelIdsList()
+                                                     .getIdsList();
+        for (LabelId labelId : labelIdsList) {
+            final LabelledTaskRestored labelledTaskRestored =
+                    LabelledTaskRestored.newBuilder()
+                                        .setTaskId(taskId)
+                                        .setLabelId(labelId)
+                                        .build();
+            result.add(labelledTaskRestored);
+        }
+        return result;
     }
 
     /*
@@ -369,6 +388,11 @@ public class TaskAggregate extends Aggregate<TaskId,
 
     @Apply
     private void deletedTaskRestored(DeletedTaskRestored event) {
+        getBuilder().setTaskStatus(TaskStatus.OPEN);
+    }
+
+    @Apply
+    private void labelledTaskRestored(LabelledTaskRestored event) {
         getBuilder().setTaskStatus(TaskStatus.OPEN);
     }
 

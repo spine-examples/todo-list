@@ -43,15 +43,54 @@ import "todolist/values.proto";
 //
 // Sorting:
 //
-//     - incompleted on top; completed at bottom;
-//     - by priority (HIGH, then NORMAL, then LOW);
-//     - most recent on top.
+//     // incompleted on top; completed at bottom;
+//     // by priority (HIGH, then NORMAL, then LOW);
+//     // most recent on top.
 //
 message MyListView {
 
     TaskListId list_id = 1;
 
     TaskListView my_list = 2;
+}
+
+// A projection state of tasks in a "draft" state.
+//
+// This view includes all non-deleted tasks, which creation is in progress.
+//
+// Sorting:
+//
+//     // most recent on top.
+//
+message DraftTasksView {
+
+    TaskListId list_id = 1;
+
+    TaskListView draft_tasks = 2;
+}
+
+// A projection state of the created tasks marked with a certain label.
+//
+// This view includes all tasks per label that are neither in a draft state nor deleted.
+//
+// Sorting:
+//
+//     // incompleted on top; completed at bottom;
+//     // by priority (HIGH, then NORMAL, then LOW);
+//     // most recent on top.
+//
+message LabelledTasksView {
+
+    LabelId label_id = 1;
+
+    string label_title = 2 [(required) = true];
+
+    // A color of the label in hexadecimal format.
+    //
+    // E.g. RED ~ "#ff0000".
+    string label_color = 3;
+
+    TaskListView labelled_tasks = 4;
 }
 
 // Generic definition of a task list container.
@@ -74,6 +113,12 @@ message TaskItem {
 
     // Task priority.
     TaskPriority priority = 3;
+
+    // Task label identifier.
+    LabelId label_id = 4;
+
+    // A color of the label.
+    LabelColor label_color = 5;
 
     // The due date for the task.
     google.protobuf.Timestamp due_date = 6;

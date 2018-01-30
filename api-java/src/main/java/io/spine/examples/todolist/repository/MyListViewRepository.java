@@ -25,8 +25,8 @@ import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.MyListViewProjection;
 import io.spine.server.projection.ProjectionRepository;
 
-import static java.util.Collections.singleton;
 import static io.spine.examples.todolist.q.projection.MyListViewProjection.ID;
+import static java.util.Collections.singleton;
 
 /**
  * Repository for the {@link MyListViewProjection}.
@@ -36,17 +36,16 @@ import static io.spine.examples.todolist.q.projection.MyListViewProjection.ID;
 public class MyListViewRepository
         extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {
 
-    @Override
-    public void onRegistered() {
-        super.onRegistered();
+    public MyListViewRepository() {
+        super();
         setUpEventRoute();
     }
 
     /**
      * Adds the {@link io.spine.server.route.EventRoute EventRoute}s to the repository.
-     *
-     * <p>Override this method in successor classes, otherwise all successors will use
-     * {@code MyListViewProjection.ID}.
+     * Should to be overridden in an successor classes,
+     * otherwise all successors will use {@code MyListViewProjection.ID}
+     * and only with specified events below.
      */
     protected void setUpEventRoute() {
         getEventRouting().replaceDefault(((message, context) -> singleton(ID)));

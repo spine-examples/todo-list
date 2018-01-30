@@ -40,7 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("CreateBasicTask command should be interpreted by TaskAggregate and")
+@DisplayName("CreateBasicTask command should be interpreted by TaskPart and")
 public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
 
     @Override

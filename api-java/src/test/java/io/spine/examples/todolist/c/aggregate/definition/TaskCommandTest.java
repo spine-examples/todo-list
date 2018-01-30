@@ -24,34 +24,39 @@ import com.google.protobuf.Message;
 import io.spine.client.TestActorRequestFactory;
 import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.TaskAggregate;
-import io.spine.server.aggregate.AggregateCommandTest;
+import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
+import io.spine.examples.todolist.c.aggregate.TaskPart;
+import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.server.BoundedContext;
+import io.spine.server.aggregate.AggregatePartCommandTest;
 
 import static io.spine.Identifier.newUuid;
 
 /**
- * The parent class for the {@link TaskAggregate} test classes.
+ * The parent class for the {@link TaskPart} test classes.
  * Provides the common methods for testing.
  *
  * @author Illia Shepilov
  */
-abstract class TaskCommandTest<C extends Message> extends AggregateCommandTest<C, TaskAggregate> {
+abstract class TaskCommandTest<C extends Message> extends AggregatePartCommandTest<C, TaskPart> {
 
     private final TestActorRequestFactory requestFactory =
             TestActorRequestFactory.newInstance(getClass());
-    TaskAggregate aggregate;
+    TaskPart aggregate;
     TaskId taskId;
 
     @Override
     protected void setUp() {
         super.setUp();
-        aggregate = aggregate().get();
+        aggregate = aggregatePart().get();
     }
 
     @Override
-    protected TaskAggregate createAggregate() {
+    protected TaskPart createAggregatePart() {
+        final BoundedContext boundedContext = BoundedContexts.create();
         taskId = createTaskId();
-        return new TaskAggregate(taskId);
+        final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, taskId);
+        return new TaskPart(root);
     }
 
     CommandEnvelope envelopeOf(Message commandMessage) {

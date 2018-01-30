@@ -20,10 +20,14 @@
 
 package io.spine.examples.todolist.client;
 
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CompleteTask;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.ReopenTask;
+import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +38,7 @@ import java.util.List;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
+import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -54,6 +59,25 @@ class ReopenTaskTest extends TodoClientTest {
     }
 
     @Nested
+    @DisplayName("LabelledTasksView should")
+    class ReopenTaskFromLabelledTasksView {
+
+        @Test
+        @DisplayName("contain the task view with uncompleted task")
+        void containViewWithUncompletedTask() {
+            final TaskItem view = obtainViewWhenHandledCommandReopenTask(true);
+            assertFalse(view.getCompleted());
+        }
+
+        @Test
+        @DisplayName("contain the task view with completed task when command has wrong ID")
+        void containViewWithCompletedTask() {
+            final TaskItem view = obtainViewWhenHandledCommandReopenTask(false);
+            assertTrue(view.getCompleted());
+        }
+    }
+
+    @Nested
     @DisplayName("MyListView should")
     class ReopenTaskFromMyListView {
 
@@ -70,6 +94,30 @@ class ReopenTaskTest extends TodoClientTest {
             final TaskItem view = obtainTaskItemWhenHandledReopenTask(false);
             assertTrue(view.getCompleted());
         }
+    }
+
+    private TaskItem obtainViewWhenHandledCommandReopenTask(boolean isCorrectId) {
+        final CreateBasicTask createTask = createTask();
+        final TaskId createdTaskId = createTask.getId();
+
+        final CreateBasicLabel createLabel = createBasicLabel();
+        client.postCommand(createLabel);
+
+        final TaskId taskId = createTask.getId();
+        final LabelId labelId = createLabel.getLabelId();
+
+        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        client.postCommand(assignLabelToTask);
+
+        completeAndReopenTask(isCorrectId, createdTaskId);
+
+        final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
+        assertEquals(1, labelledTasksView.size());
+
+        final List<TaskItem> taskViews = labelledTasksView.get(0)
+                                                          .getLabelledTasks()
+                                                          .getItemsList();
+        return checkAndObtainView(taskId, taskViews);
     }
 
     private TaskItem obtainTaskItemWhenHandledReopenTask(boolean isCorrectId) {

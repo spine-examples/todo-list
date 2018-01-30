@@ -49,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("ReopenTask command should be interpreted by TaskAggregate and")
+@DisplayName("ReopenTask command should be interpreted by TaskPart and")
 public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
 
     @Override

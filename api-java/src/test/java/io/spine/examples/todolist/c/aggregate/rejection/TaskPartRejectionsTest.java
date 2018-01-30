@@ -22,8 +22,8 @@ package io.spine.examples.todolist.c.aggregate.rejection;
 
 import io.spine.examples.todolist.RejectedTaskCommandDetails;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.ChangeStatusRejections;
-import io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.UpdateRejections;
+import io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections;
+import io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
@@ -34,9 +34,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.TaskCreationRejections.throwCannotCreateDraft;
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.UpdateRejections.throwCannotUpdateTaskDescription;
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskAggregateRejections.UpdateRejections.throwCannotUpdateTaskDueDate;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.TaskCreationRejections.throwCannotCreateDraft;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDescription;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDueDate;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,15 +44,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("TaskAggregateRejections should")
-class TaskAggregateRejectionsTest {
+@DisplayName("TaskPartRejections should")
+class TaskPartRejectionsTest {
 
     private final TaskId taskId = TaskId.getDefaultInstance();
 
     @Test
     @DisplayName("have the private constructor")
     void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(TaskAggregateRejections.class);
+        assertHasPrivateParameterlessCtor(TaskPartRejections.class);
     }
 
     @Nested
@@ -73,7 +73,7 @@ class TaskAggregateRejectionsTest {
         @Test
         @DisplayName("have the private constructor")
         void havePrivateConstructor() {
-            assertHasPrivateParameterlessCtor(TaskAggregateRejections.TaskCreationRejections.class);
+            assertHasPrivateParameterlessCtor(TaskPartRejections.TaskCreationRejections.class);
         }
 
         @Test

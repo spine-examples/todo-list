@@ -41,9 +41,14 @@ import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceBlockingS
 import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceStub;
 import io.spine.core.Command;
 import io.spine.core.UserId;
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskLabel;
+import io.spine.examples.todolist.TaskLabels;
 import io.spine.examples.todolist.c.commands.TodoCommand;
+import io.spine.examples.todolist.q.projection.DraftTasksView;
+import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.protobuf.AnyPacker;
 import io.spine.time.ZoneOffsets;
@@ -108,6 +113,31 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
+    public List<LabelledTasksView> getLabelledTasksView() {
+        final Query query = requestFactory.query()
+                                          .all(LabelledTasksView.class);
+        final List<Any> messages = queryService.read(query)
+                                               .getMessagesList();
+        final List<LabelledTasksView> result = messages
+                .stream()
+                .map(AnyPacker::<LabelledTasksView>unpack)
+                .collect(toList());
+
+        return result;
+    }
+
+    @Override
+    public DraftTasksView getDraftTasksView() {
+        final Query query = requestFactory.query()
+                                          .all(DraftTasksView.class);
+        final List<Any> messages = queryService.read(query)
+                                               .getMessagesList();
+        return messages.isEmpty()
+               ? DraftTasksView.getDefaultInstance()
+               : AnyPacker.unpack(messages.get(0));
+    }
+
+    @Override
     public List<Task> getTasks() {
         return getByType(Task.class);
     }
@@ -115,6 +145,27 @@ final class TodoClientImpl implements SubscribingTodoClient {
     @Override
     public Task getTaskOr(TaskId id, @Nullable Task other) {
         final Optional<Task> found = findById(Task.class, id);
+        return found.orElse(other);
+    }
+
+    @Override
+    public List<TaskLabel> getLabels() {
+        return getByType(TaskLabel.class);
+    }
+
+    @Override
+    public TaskLabels getLabels(TaskId taskId) {
+        final Optional<TaskLabels> labels = findById(TaskLabels.class, taskId);
+        final TaskLabels result = labels.orElse(TaskLabels.newBuilder()
+                                                          .setTaskId(taskId)
+                                                          .build());
+        return result;
+    }
+
+    @Nullable
+    @Override
+    public TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel other) {
+        final Optional<TaskLabel> found = findById(TaskLabel.class, id);
         return found.orElse(other);
     }
 

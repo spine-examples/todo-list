@@ -20,9 +20,14 @@
 
 package io.spine.examples.todolist.client;
 
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskLabel;
+import io.spine.examples.todolist.TaskLabels;
 import io.spine.examples.todolist.c.commands.TodoCommand;
+import io.spine.examples.todolist.q.projection.DraftTasksView;
+import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
 
 import javax.annotation.Nullable;
@@ -31,7 +36,7 @@ import java.util.List;
 /**
  * A client interface.
  *
- * <p>Provides methods to communicate with server.
+ * <p> Provides methods to communicate with server.
  *
  * @author Illia Shepilov
  */
@@ -54,6 +59,20 @@ public interface TodoClient {
     MyListView getMyListView();
 
     /**
+     * Obtains the list of the {@link LabelledTasksView}.
+     *
+     * @return the list of the {@code LabelledTasksView}
+     */
+    List<LabelledTasksView> getLabelledTasksView();
+
+    /**
+     * Obtains the single {@link DraftTasksView}.
+     *
+     * @return the {@code DraftTasksView}
+     */
+    DraftTasksView getDraftTasksView();
+
+    /**
      * Obtains all {@linkplain Task tasks} in the system.
      *
      * @return the list of the {@code Task}
@@ -74,6 +93,36 @@ public interface TodoClient {
      */
     @Nullable
     Task getTaskOr(TaskId id, @Nullable Task other);
+
+    /**
+     * Obtains all {@linkplain TaskLabel labels} in the system.
+     *
+     * @return the list of the {@code TaskLabel}
+     */
+    List<TaskLabel> getLabels();
+
+    /**
+     * Obtains the labels assigned to the task with the given ID.
+     *
+     * @param taskId the task ID to search by
+     * @return the labels of the specified task
+     */
+    TaskLabels getLabels(TaskId taskId);
+
+    /**
+     * Obtains a single {@link TaskLabel} by its ID.
+     *
+     * <p>If the system contains no label with such ID, the {@code other} value is returned.
+     *
+     * <p>Returns {@code null} iff the label is not found by ID and the {@code other} value is
+     * {@code null}.
+     *
+     * @param id    the label ID to search by
+     * @param other the default value of the label
+     * @return the label with the requested ID or {@code other} if the label is not found
+     */
+    @Nullable
+    TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel other);
 
     /**
      * Shutdown the connection channel.

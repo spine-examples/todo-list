@@ -57,7 +57,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-@DisplayName("UpdateTaskDueDate command should be interpreted by TaskAggregate and")
+@DisplayName("UpdateTaskDueDate command should be interpreted by TaskPart and")
 public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
 
     @Override

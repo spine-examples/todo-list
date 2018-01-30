@@ -27,6 +27,9 @@ import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskListId;
 import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
+import io.spine.examples.todolist.c.events.LabelAssignedToTask;
+import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
+import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
 import io.spine.examples.todolist.c.events.TaskCompleted;
 import io.spine.examples.todolist.c.events.TaskCreated;
 import io.spine.examples.todolist.c.events.TaskDeleted;
@@ -40,17 +43,16 @@ import io.spine.server.projection.Projection;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.spine.examples.todolist.q.projection.EventEnrichments.getEnrichment;
-import static io.spine.examples.todolist.q.projection.Projections.newTaskListView;
-import static io.spine.examples.todolist.q.projection.Projections.removeViewsByTaskId;
-import static io.spine.examples.todolist.q.projection.Projections.updateTaskItemList;
+import static io.spine.examples.todolist.EventEnrichments.getEnrichment;
+import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskListView;
+import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
+import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskItemList;
 
 /**
  * A projection state of the finalized tasks.
  *
- * <p>Contains the task list view items.
- *
- * <p>This view includes all tasks that are not in a draft state and not deleted.
+ * <p> Contains the task list view items.
+ * <p> This view includes all tasks that are not in a draft state and not deleted.
  *
  * @author Illia Shepilov
  */
@@ -69,7 +71,10 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
                                                   .build();
 
     /**
-     * @see Projection#Projection(Object)
+     * Creates a new instance.
+     *
+     * @param id the ID for the new instance
+     * @throws IllegalArgumentException if the ID is not of one of the supported types
      */
     public MyListViewProjection(TaskListId id) {
         super(id);
@@ -129,6 +134,30 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
 
     @Subscribe
     public void on(TaskReopened event) {
+        final List<TaskItem> views = getBuilder().getMyList()
+                                                 .getItemsList();
+        final List<TaskItem> updatedList = updateTaskItemList(views, event);
+        updateMyListView(updatedList);
+    }
+
+    @Subscribe
+    public void on(LabelAssignedToTask event) {
+        final List<TaskItem> views = getBuilder().getMyList()
+                                                 .getItemsList();
+        final List<TaskItem> updatedList = updateTaskItemList(views, event);
+        updateMyListView(updatedList);
+    }
+
+    @Subscribe
+    public void on(LabelRemovedFromTask event) {
+        final List<TaskItem> views = getBuilder().getMyList()
+                                                 .getItemsList();
+        final List<TaskItem> updatedList = updateTaskItemList(views, event);
+        updateMyListView(updatedList);
+    }
+
+    @Subscribe
+    public void on(LabelDetailsUpdated event) {
         final List<TaskItem> views = getBuilder().getMyList()
                                                  .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);

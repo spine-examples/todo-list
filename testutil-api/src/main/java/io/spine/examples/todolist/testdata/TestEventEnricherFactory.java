@@ -21,6 +21,10 @@
 package io.spine.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
+import io.spine.examples.todolist.LabelColor;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.LabelIdsList;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDetails;
@@ -37,6 +41,7 @@ import java.util.function.Function;
  */
 public class TestEventEnricherFactory {
 
+    public static final String LABEL_TITLE = "a label title";
     private static final TaskDescription DESCRIPTION =
             TaskDescription.newBuilder()
                            .setValue(TestTaskEventFactory.DESCRIPTION)
@@ -52,6 +57,20 @@ public class TestEventEnricherFactory {
                                          .setDueDate(TASK_DUE_DATE)
                                          .setPriority(TASK_PRIORITY)
                                          .build();
+    private static final LabelDetails LABEL_DETAILS = LabelDetails.newBuilder()
+                                                                  .setColor(LabelColor.BLUE)
+                                                                  .setTitle(LABEL_TITLE)
+                                                                  .build();
+    private static final Function<LabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS =
+            labelId -> LABEL_DETAILS;
+
+    private static final Function<TaskId, LabelIdsList> TASK_ID_TO_LABEL_IDS_LIST =
+            taskId -> {
+                final LabelIdsList result = LabelIdsList.newBuilder()
+                                                        .addIds(TestTaskEventFactory.LABEL_ID)
+                                                        .build();
+                return result;
+            };
     private static final Function<TaskId, TaskDetails> TASK_ID_TO_TASK_DETAILS =
             taskId -> TASK_DETAILS;
 
@@ -67,9 +86,15 @@ public class TestEventEnricherFactory {
      */
     public static EventEnricher eventEnricherInstance() {
         final EventEnricher result = EventEnricher.newBuilder()
+                                                  .add(LabelId.class,
+                                                       LabelDetails.class,
+                                                       LABEL_ID_TO_LABEL_DETAILS::apply)
                                                   .add(TaskId.class,
                                                        TaskDetails.class,
                                                        TASK_ID_TO_TASK_DETAILS::apply)
+                                                  .add(TaskId.class,
+                                                       LabelIdsList.class,
+                                                       TASK_ID_TO_LABEL_IDS_LIST::apply)
                                                   .add(TaskId.class,
                                                        Task.class,
                                                        TASK_ID_TO_TASK::apply)

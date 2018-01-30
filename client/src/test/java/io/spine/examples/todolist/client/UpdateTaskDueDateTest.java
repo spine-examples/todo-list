@@ -21,9 +21,14 @@
 package io.spine.examples.todolist.client;
 
 import com.google.protobuf.Timestamp;
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.AssignLabelToTask;
+import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
+import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +38,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
+import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static io.spine.time.Time.getCurrentTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -50,6 +56,49 @@ class UpdateTaskDueDateTest extends TodoClientTest {
     void setUp() throws InterruptedException {
         super.setUp();
         client = getClient();
+    }
+
+    @Nested
+    @DisplayName("DraftTasksView should")
+    class UpdateTaskDueDateInDraftTasksView {
+
+        @Test
+        @DisplayName("contain the task view with updated due date")
+        void containUpdatedView() {
+            final Timestamp newDueDate = getCurrentTime();
+            final TaskItem view = getViewAfterUpdateTaskDueDate(newDueDate, true);
+
+            assertEquals(newDueDate, view.getDueDate());
+        }
+
+        @Test
+        @DisplayName("contain the task view with non-updated due date " +
+                "when command has wrong task ID")
+        void containNonUpdatedView() {
+            final Timestamp newDueDate = getCurrentTime();
+            final TaskItem view = getViewAfterUpdateTaskDueDate(newDueDate, false);
+
+            assertNotEquals(newDueDate, view.getDueDate());
+        }
+
+        private TaskItem getViewAfterUpdateTaskDueDate(Timestamp newDueDate, boolean isCorrectId) {
+            final CreateDraft createDraft = createDraft();
+            client.postCommand(createDraft);
+
+            final TaskId createdTaskId = createDraft.getId();
+
+            updateDueDate(newDueDate, isCorrectId, createdTaskId);
+
+            final List<TaskItem> taskViews = client.getDraftTasksView()
+                                                   .getDraftTasks()
+                                                   .getItemsList();
+            assertEquals(1, taskViews.size());
+
+            final TaskItem view = taskViews.get(0);
+            assertEquals(createdTaskId, view.getId());
+
+            return view;
+        }
     }
 
     @Nested
@@ -86,6 +135,61 @@ class UpdateTaskDueDateTest extends TodoClientTest {
             final TaskItem view = taskViews.get(0);
 
             assertEquals(idOfCreatedTask, view.getId());
+            return view;
+        }
+    }
+
+    @Nested
+    @DisplayName("LabelledTasksView should")
+    class UpdateTaskDueDateInLabelledTasksView {
+
+        @Test
+        @DisplayName("contain the task view with updated due date")
+        void containUpdatedView() {
+            final Timestamp newDueDate = getCurrentTime();
+            final TaskItem view = getViewAfterUpdateTaskDueDate(newDueDate, true);
+            assertEquals(newDueDate, view.getDueDate());
+        }
+
+        @Test
+        @DisplayName("contain the task view with non-updated due date " +
+                "when command has wrong task ID")
+        void containNonUpdatedView() {
+            final Timestamp newDueDate = getCurrentTime();
+            final TaskItem view = getViewAfterUpdateTaskDueDate(newDueDate, false);
+            assertNotEquals(newDueDate, view.getDueDate());
+        }
+
+        private TaskItem getViewAfterUpdateTaskDueDate(Timestamp newDueDate, boolean isCorrectId) {
+            final CreateBasicTask createTask = createBasicTask();
+            final TaskId createdTaskId = createTask.getId();
+            client.postCommand(createTask);
+
+            final CreateBasicLabel createLabel = createBasicLabel();
+            client.postCommand(createLabel);
+
+            final TaskId taskId = createTask.getId();
+            final LabelId labelId = createLabel.getLabelId();
+
+            final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            client.postCommand(assignLabelToTask);
+
+            updateDueDate(newDueDate, isCorrectId, createdTaskId);
+
+            final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+            final int expectedListSize = 1;
+            assertEquals(expectedListSize, tasksViewList.size());
+
+            final List<TaskItem> taskViews = tasksViewList.get(0)
+                                                          .getLabelledTasks()
+                                                          .getItemsList();
+            assertEquals(expectedListSize, taskViews.size());
+
+            final TaskItem view = taskViews.get(0);
+
+            assertEquals(labelId, view.getLabelId());
+            assertEquals(taskId, view.getId());
+
             return view;
         }
     }

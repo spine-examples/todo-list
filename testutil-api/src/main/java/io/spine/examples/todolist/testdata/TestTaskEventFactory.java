@@ -25,11 +25,13 @@ import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.Timestamps;
 import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
+import io.spine.examples.todolist.c.events.LabelledTaskRestored;
 import io.spine.examples.todolist.c.events.TaskCompleted;
 import io.spine.examples.todolist.c.events.TaskCreated;
 import io.spine.examples.todolist.c.events.TaskDeleted;
@@ -59,6 +61,9 @@ public class TestTaskEventFactory {
                                                                          Duration.newBuilder()
                                                                                  .setSeconds(1000)
                                                                                  .build());
+    public static final LabelId LABEL_ID = LabelId.newBuilder()
+                                                  .setValue(newUuid())
+                                                  .build();
     public static final TaskId TASK_ID = TaskId.newBuilder()
                                                .setValue(newUuid())
                                                .build();
@@ -293,6 +298,19 @@ public class TestTaskEventFactory {
             final TaskDeleted result = TaskDeleted.newBuilder()
                                                   .setTaskId(TASK_ID)
                                                   .build();
+            return result;
+        }
+
+        /**
+         * Provides a pre-configured {@link LabelledTaskRestored} event instance.
+         *
+         * @return the {@code LabelledTaskRestored} instance
+         */
+        public static LabelledTaskRestored labelledTaskRestoredInstance() {
+            final LabelledTaskRestored result = LabelledTaskRestored.newBuilder()
+                                                                    .setTaskId(TASK_ID)
+                                                                    .setLabelId(LABEL_ID)
+                                                                    .build();
             return result;
         }
 

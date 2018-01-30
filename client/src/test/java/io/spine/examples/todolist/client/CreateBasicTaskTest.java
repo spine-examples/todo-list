@@ -23,6 +23,7 @@ package io.spine.examples.todolist.client;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -49,6 +50,28 @@ class CreateBasicTaskTest extends TodoClientTest {
     void setUp() throws InterruptedException {
         super.setUp();
         client = getClient();
+    }
+
+    @Test
+    @DisplayName("LabelledTasksView should be empty")
+    void obtainEmptyLabelledTasksView() {
+        final CreateBasicTask createBasicTask = createBasicTask();
+        client.postCommand(createBasicTask);
+
+        final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
+        assertTrue(labelledTasksView.isEmpty());
+    }
+
+    @Test
+    @DisplayName("DraftTaskItem should be empty")
+    void obtainEmptyDraftViewList() {
+        final CreateBasicTask createBasicTask = createBasicTask();
+        client.postCommand(createBasicTask);
+
+        final List<TaskItem> taskViews = client.getDraftTasksView()
+                                               .getDraftTasks()
+                                               .getItemsList();
+        assertTrue(taskViews.isEmpty());
     }
 
     @Test
