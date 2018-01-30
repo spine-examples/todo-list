@@ -43,9 +43,9 @@ import "todolist/values.proto";
 //
 // Sorting:
 //
-//     // incompleted on top; completed at bottom;
-//     // by priority (HIGH, then NORMAL, then LOW);
-//     // most recent on top.
+//     - incompleted on top; completed at bottom;
+//     - by priority (HIGH, then NORMAL, then LOW);
+//     - most recent on top.
 //
 message MyListView {
 

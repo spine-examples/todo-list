@@ -41,6 +41,7 @@ import java.util.concurrent.TimeUnit;
 
 import static io.spine.Identifier.newUuid;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
+import static io.spine.examples.todolist.client.TodoClient.HOST;
 import static io.spine.examples.todolist.server.Server.newServer;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
@@ -62,7 +63,7 @@ abstract class TodoClientTest {
         final BoundedContext boundedContext = BoundedContexts.create();
         server = newServer(PORT, boundedContext);
         startServer();
-        client = TodoClient.instance(TodoClient.HOST, PORT);
+        client = TodoClient.instance(HOST, PORT);
     }
 
     @AfterEach

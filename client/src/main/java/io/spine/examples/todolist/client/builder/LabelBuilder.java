@@ -33,6 +33,9 @@ import static io.spine.Identifier.newUuid;
  */
 public final class LabelBuilder {
 
+    /**
+     * The {@code private} constructor prevents direct instantiation.
+     */
     private LabelBuilder() {
     }
 
@@ -53,7 +56,14 @@ public final class LabelBuilder {
      * Builder for the {@link CreateBasicLabel} command.
      */
     public static final class CreateBasicLabelBuilder {
+
         private final CreateBasicLabel.Builder builder = CreateBasicLabel.newBuilder();
+
+        /**
+         * The {@code private} constructor prevents direct instantiation.
+         */
+        private CreateBasicLabelBuilder() {
+        }
 
         /**
          * Sets the title to the {@link CreateBasicLabel.Builder}.

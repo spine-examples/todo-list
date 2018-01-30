@@ -25,10 +25,12 @@ import io.spine.server.BoundedContext;
 import io.spine.server.aggregate.AggregateRoot;
 
 /**
- * Aggregate root for the tasks.
+ * The aggregate root for the {@code Task} aggregate.
  *
  * @author Illia Shepilov
  * @see AggregateRoot
+ * @see TaskPart
+ * @see TaskLabelsPart
  */
 public class TaskAggregateRoot extends AggregateRoot<TaskId> {
 

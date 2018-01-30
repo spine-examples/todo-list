@@ -54,6 +54,7 @@ import static io.spine.examples.todolist.q.projection.Projections.updateTaskItem
  * A projection state of the created tasks marked with a certain label.
  *
  * <p>Contains the data about the task view.
+ *
  * <p>This view includes all tasks per label that are neither in a draft state nor deleted.
  *
  * @author Illia Shepilov
@@ -161,7 +162,6 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         final TaskListView taskListView = newTaskListView(updatedList);
         final LabelDetails newDetails = event.getLabelDetailsChange()
                                              .getNewDetails();
-
         getBuilder().setLabelColor(valueOf(newDetails.getColor()))
                     .setLabelTitle(newDetails.getTitle())
                     .setLabelledTasks(taskListView);

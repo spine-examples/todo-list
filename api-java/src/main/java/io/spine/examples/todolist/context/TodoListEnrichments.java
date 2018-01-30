@@ -45,8 +45,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings("Guava") // Because com.google.common.base.Function is used
-// until the migration of Spine to Java 8 is performed.
+@SuppressWarnings("Guava") // Spine Java 7 API.
 public class TodoListEnrichments {
 
     private final TaskRepository taskRepo;
@@ -159,6 +158,9 @@ public class TodoListEnrichments {
         private TaskLabelsRepository taskLabelsRepo;
         private LabelAggregateRepository labelRepository;
 
+        /**
+         * The {@code private} constructor prevents direct instantiation.
+         */
         private Builder() {
         }
 

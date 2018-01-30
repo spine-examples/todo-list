@@ -32,8 +32,11 @@ import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
  *
  * @author Illia Shepilov
  */
-public class LabelAggregateRejections {
+public final class LabelAggregateRejections {
 
+    /**
+     * The {@code private} constructor prevents the utility class instantiation.
+     */
     private LabelAggregateRejections() {
     }
 

@@ -34,8 +34,11 @@ import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
  *
  * @author Illia Shepilov
  */
-public class TaskLabelsPartRejections {
+public final class TaskLabelsPartRejections {
 
+    /**
+     * The {@code private} constructor prevents the utility class instantiation.
+     */
     private TaskLabelsPartRejections() {
     }
 

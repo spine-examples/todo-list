@@ -44,7 +44,7 @@ import java.util.List;
 import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRejections.throwCannotUpdateLabelDetails;
 
 /**
- * The aggregate managing the state of a {@link TaskLabel}.
+ * The aggregate managing the state of a {@linkplain TaskLabel task label}.
  *
  * @author Illia Shepilov
  */
@@ -52,13 +52,17 @@ import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRej
                               are declared {@code private} by design. */)
 public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuilder> {
 
+    /**
+     * The default value of the {@code TaskLabel.color}.
+     *
+     * <p>This value is assigned to each newly created instance when processing {@code LabelCreated}
+     * event.
+     */
     @VisibleForTesting
     static final LabelColor DEFAULT_LABEL_COLOR = LabelColor.GRAY;
 
     /**
-     * {@inheritDoc}
-     *
-     * @param id
+     * @see Aggregate#Aggregate(Object)
      */
     protected LabelAggregate(LabelId id) {
         super(id);

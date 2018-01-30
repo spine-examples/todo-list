@@ -34,6 +34,7 @@ import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
 import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
 import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
 import io.spine.server.aggregate.AggregatePart;
+import io.spine.server.aggregate.AggregateRoot;
 import io.spine.server.aggregate.Apply;
 import io.spine.server.command.Assign;
 
@@ -57,9 +58,7 @@ public class TaskLabelsPart
         extends AggregatePart<TaskId, TaskLabels, TaskLabelsVBuilder, TaskAggregateRoot> {
 
     /**
-     * {@inheritDoc}
-     *
-     * @param root
+     * @see AggregatePart#AggregatePart(AggregateRoot)
      */
     public TaskLabelsPart(TaskAggregateRoot root) {
         super(root);
@@ -78,7 +77,6 @@ public class TaskLabelsPart
         if (!isLabelAssigned || !isValidTaskStatus) {
             throwCannotRemoveLabelFromTask(cmd);
         }
-
         final LabelRemovedFromTask labelRemoved = LabelRemovedFromTask.newBuilder()
                                                                       .setTaskId(taskId)
                                                                       .setLabelId(labelId)
@@ -93,11 +91,9 @@ public class TaskLabelsPart
 
         final Task state = getPartState(Task.class);
         final boolean isValid = isValidAssignLabelToTaskCommand(state.getTaskStatus());
-
         if (!isValid) {
             throwCannotAssignLabelToTask(cmd);
         }
-
         final LabelAssignedToTask labelAssigned = LabelAssignedToTask.newBuilder()
                                                                      .setTaskId(taskId)
                                                                      .setLabelId(labelId)

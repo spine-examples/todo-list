@@ -57,14 +57,19 @@ import io.spine.examples.todolist.c.rejection.CannotUpdateTaskPriority;
  *
  * @author Illia Shepilov
  */
-public class TaskPartRejections {
+public final class TaskPartRejections {
 
+    /**
+     * The {@code private} constructor prevents instantiation.
+     */
     private TaskPartRejections() {
-        // Prevent instantiation of this utility class.
     }
 
-    public static class UpdateRejections {
+    public static final class UpdateRejections {
 
+        /**
+         * The {@code private} constructor prevents the utility class instantiation.
+         */
         private UpdateRejections() {
         }
 
@@ -184,8 +189,11 @@ public class TaskPartRejections {
         }
     }
 
-    public static class TaskCreationRejections {
+    public static final class TaskCreationRejections {
 
+        /**
+         * The {@code private} constructor prevents the utility class instantiation.
+         */
         private TaskCreationRejections() {
         }
 
@@ -207,8 +215,11 @@ public class TaskPartRejections {
         }
     }
 
-    public static class ChangeStatusRejections {
+    public static final class ChangeStatusRejections {
 
+        /**
+         * The {@code private} constructor prevents the utility class instantiation.
+         */
         private ChangeStatusRejections() {
         }
 
