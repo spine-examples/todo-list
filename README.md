@@ -35,12 +35,12 @@ particular, the `TaskLabel.color` field).
 are introduced into the system.
 
 The `DraftTasksViewProjection` represents a list of all non-finalized tasks in the system.
-As well as the `MyListView` projection, the draft tasks view is singleton.
+As well as the `MyListView` projection, the draft tasks view is a singleton.
 
 The `LabelledTasksViewProjection` represents a list of tasks marked with a given label. 
 This projection type may have several instances.
 
-Both added projections handle events produced by both `Task` and `Label` aggregates.
+Both added projections handle events produced by `Task` and `Label` aggregates.
 
 ### `Task` aggregate reformat
 
@@ -52,8 +52,7 @@ From now, the the `Task` aggregate is split into two parts:
 
 The parts are joined with the [`TaskAggregateRoot`](./api-java/src/main/java/io/spine/examples/todolist/c/aggregate/TaskAggregateRoot.java).
 
-Each of the parts and the root has a corresponding repository registered in the TodoList bounded
-context.
+Both parts and the root have corresponding repositories registered in the TodoList bounded context.
 
 This separation is performed with the purpose of isolating loosely coupled elements of
 the aggregate. This may be useful e.g. when a client wants to fetch only a subset of all the data.
