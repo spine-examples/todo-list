@@ -193,7 +193,7 @@ public class TaskPart extends AggregatePart<TaskId, Task, TaskVBuilder, TaskAggr
         final TaskPriority actualPriority = state.getPriority();
         final TaskPriority expectedPriority = priorityChange.getPreviousValue();
 
-        boolean equal = actualPriority == expectedPriority;
+        final boolean equal = actualPriority == expectedPriority;
         if (!equal) {
             final TaskPriority newPriority = priorityChange.getNewValue();
             final ValueMismatch mismatch = of(expectedPriority, actualPriority, newPriority,
