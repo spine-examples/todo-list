@@ -32,8 +32,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -85,18 +83,6 @@ public abstract class AbstractIntegrationTest {
         return CommandBuilder.task()
                              .createDraft()
                              .build();
-    }
-
-    private static Properties getProperties(String propertiesFile) {
-        final Properties properties = new Properties();
-        final InputStream stream = AbstractIntegrationTest.class.getClassLoader()
-                                                                .getResourceAsStream(propertiesFile);
-        try {
-            properties.load(stream);
-        } catch (IOException e) {
-            throw illegalStateWithCauseOf(e);
-        }
-        return properties;
     }
 
     @BeforeEach
