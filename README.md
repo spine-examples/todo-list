@@ -49,6 +49,7 @@ From now, the the `Task` aggregate is split into two parts:
  represents the information about the task itself (e.g. description, due date, etc.);
  - [`TaskLabelsPart`](./api-java/src/main/java/io/spine/examples/todolist/c/aggregate/TaskLabelsPart.java) 
   represents the information about labels assigned to the task.
+
 The parts are joined with the [`TaskAggregateRoot`](./api-java/src/main/java/io/spine/examples/todolist/c/aggregate/TaskAggregateRoot.java).
 
 Each of the parts and the root has a corresponding repository registered in the TodoList bounded
