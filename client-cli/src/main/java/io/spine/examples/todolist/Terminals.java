@@ -18,15 +18,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.examples.todolist;
 
-include 'testutil-api'
-include 'testutil-cli'
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+import java.io.IOException;
+
+import static io.spine.util.Exceptions.illegalStateWithCauseOf;
+
+/**
+ * The {@link Terminal} factory.
+ *
+ * @author Dmytro Grankin
+ */
+final class Terminals {
+
+    /**
+     * The {@code private} constructor prevents the utility class instantiation.
+     */
+    private Terminals() {
+    }
+
+    /**
+     * Creates a new terminal.
+     *
+     * @return new terminal
+     */
+    static Terminal newTerminal() {
+        try {
+            return TerminalBuilder.builder()
+                                  .dumb(true)
+                                  .build();
+        } catch (IOException e) {
+            throw illegalStateWithCauseOf(e);
+        }
+    }
+}

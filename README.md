@@ -8,51 +8,30 @@ ToDo List example application
 
 # Guide
 
-## Step 2
+## Step 3
 
-In this step we create the first projection in the system.
+In this step we create the system client library and the CLI client.
 
-### Model
+### TodoList Client
 
-The projection `MyListView` represents a list of active (finalized, non-deleted) tasks.
+The client is represented with a wrapper upon `Command`, `Query`, and `Subscription` gRPC service
+stubs. The interface of the client is defined in [`TodoClient`](./client/src/main/java/io/spine/examples/todolist/client/TodoClient.java)
+implemented in [`TodoClientImpl`](./client/src/main/java/io/spine/examples/todolist/client/TodoClientImpl.java).
 
-The projection state is defined in [`projections.proto`](./model/src/main/proto/todolist/q/projections.proto)
-file.
+The client also has an extension in form of the [`SubscriptableClient`](./client/src/main/java/io/spine/examples/todolist/client/SubscribingTodoClient.java),
+which is capable of subscribing to the entity state updates (using `SubscriptionService`).
 
-The projection has no own commands/events, but uses the events produced by `Task` aggregate instead.
+### CLI client
 
-### Entities
- 
-The [`MyListViewProjection`](./api-java/src/main/java/io/spine/examples/todolist/q/projection/MyListViewProjection.java)
-class defines the event handlers, which build the projection state.
+The first TodoList client, that works in command line.
 
-Note that projections use [`@Subscribe`](https://spine.io/core-java/javadoc/core/io/spine/core/Subscribe.html)
-annotation for the event handler methods instead of [`@Apply`](https://spine.io/core-java/javadoc/server/io/spine/server/aggregate/Apply.html),
-which is specific to aggregates only.
+The client is capable of creating and viewing `Task`s.
 
-### Enrichments
+See [`ClientApp`](./client-cli/src/main/java/io/spine/examples/todolist/ClientApp.java) class
+for the instructions of how to start the client.
 
-The event enrichments is a mechanism of binding extra data to an event. To create an enrichment,
-define the enrichment type in Protobuf and create an instance of [`EventEnricher`](https://spine.io/core-java/javadoc/server/io/spine/server/event/EventEnricher.html)
-and pass it to `EventBus` on creation.
-
-In TodoList, we enrich `TaskDraftFinalized` event with the state of the `Task` aggregate.
-The enrichment is defined in [`enrichments.proto`](./model/src/main/proto/todolist/c/enrichments.proto).
-[`TodoListEnrichments`](./api-java/src/main/java/io/spine/examples/todolist/context/TodoListEnrichments.java)
-creates instances of the `EventEnricher`, which maps the ID of the `Task` which produced the given 
-event to the `Task` state.
-
-Later, the enrichment is used by the `MyListViewProjection` when handling `TaskDraftFinalized` 
-event.
-
-### Tests
-
-When testing projections, we adhere the same pattern as when testing aggregates — create separate 
-tests for each event type and check the effect of a single event on the projection state.
-
-The event enrichments are mostly tested when performing the projection tests, like in the case of
-TodoList, but sometimes, it's better to test the functions which create the enrichments.
+By default, the client connects to the local gRPC server, e.g. `local-in-mem` server.
 
 ---
 
-[Step 1](https://github.com/SpineEventEngine/todo-list/tree/step-1) | [Step 3](https://github.com/SpineEventEngine/todo-list/tree/step-3)
+[Step 2](https://github.com/SpineEventEngine/todo-list/tree/step-2) | [Step 4](https://github.com/SpineEventEngine/todo-list/tree/step-4)

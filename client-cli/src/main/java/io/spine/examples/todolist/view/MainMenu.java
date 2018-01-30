@@ -18,15 +18,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.examples.todolist.view;
 
-include 'testutil-api'
-include 'testutil-cli'
+import io.spine.cli.action.Shortcut;
+import io.spine.cli.view.ActionListView;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+import static io.spine.cli.action.TransitionAction.transitionProducer;
+
+/**
+ * Root view of the CLI application.
+ *
+ * @author Dmytro Grankin
+ */
+public class MainMenu extends ActionListView {
+
+    private MainMenu() {
+        super("Main menu");
+    }
+
+    /**
+     * Creates a new {@code MainMenu} instance.
+     *
+     * @return the new instance
+     */
+    public static MainMenu create() {
+        final MainMenu mainMenu = new MainMenu();
+        mainMenu.addAction(transitionProducer("My tasks", new Shortcut("m"),
+                                              MyTasksMenu.create()));
+        return mainMenu;
+    }
+}

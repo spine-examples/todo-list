@@ -18,15 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.examples.todolist.view;
 
-include 'testutil-api'
-include 'testutil-cli'
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+/**
+ * @author Dmytro Grankin
+ */
+@DisplayName("MainMenu should")
+class MainMenuTest extends ViewTest {
+
+    @Test
+    @DisplayName("not be empty")
+    void notBeEmpty() {
+        final MainMenu mainMenu = MainMenu.create();
+        assertFalse(mainMenu.getActions()
+                            .isEmpty());
+    }
+}

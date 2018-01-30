@@ -18,15 +18,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.examples.todolist;
 
-include 'testutil-api'
-include 'testutil-cli'
+import org.jline.reader.LineReader;
+import org.jline.terminal.Terminal;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+import static io.spine.examples.todolist.Readers.newLineReader;
+import static io.spine.examples.todolist.Terminals.newTerminal;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
+/**
+ * @author Dmytro Grankin
+ */
+@DisplayName("Readers should")
+class ReadersTest {
+
+    @Test
+    @DisplayName("have the private constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(Readers.class);
+    }
+
+    @Test
+    @DisplayName("Create `LineReader` with the specified `Terminal`")
+    void createLineReader() {
+        final Terminal terminal = newTerminal();
+        final LineReader reader = newLineReader(terminal);
+        assertSame(terminal, reader.getTerminal());
+    }
+}

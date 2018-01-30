@@ -18,15 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+dependencies {
+    // Depend on JUnit in the production part of the code, as this module exposes testing utilities
+    // that are based on JUnit.
+    compile "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
 
-include 'testutil-api'
-include 'testutil-cli'
-
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+    compile project(path: ':cli-core')
+}

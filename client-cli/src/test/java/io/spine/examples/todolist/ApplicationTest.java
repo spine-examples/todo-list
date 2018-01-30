@@ -18,15 +18,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.examples.todolist;
 
-include 'testutil-api'
-include 'testutil-cli'
+import io.spine.cli.Application;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+import static io.spine.cli.Application.getInstance;
+import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static org.junit.jupiter.api.Assertions.fail;
+
+/**
+ * @author Dmytro Grankin
+ */
+@DisplayName("Application should")
+class ApplicationTest {
+
+    @Test
+    @DisplayName("have the private constructor")
+    void havePrivateCtor() {
+        assertHasPrivateParameterlessCtor(Application.class);
+    }
+
+    @Test
+    @DisplayName("allow initialization only once")
+    void allowInitOnlyOnce() {
+        try {
+            // Exception may be thrown during first call also (if was initialized in other tests).
+            getInstance().initialize(new TerminalScreen());
+
+            getInstance().initialize(new TerminalScreen());
+            fail("Exception should be thrown.");
+        } catch (IllegalStateException ignored) {
+        }
+    }
+}

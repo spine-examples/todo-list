@@ -18,15 +18,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.examples.todolist;
 
-include 'testutil-api'
-include 'testutil-cli'
+import io.spine.cli.Screen;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+/**
+ * @author Dmytro Grankin
+ */
+@DisplayName("TerminalScreen should")
+class TerminalScreenTest {
+
+    private static final String EMPTY_STRING = "";
+
+    private final Screen screen = new TerminalScreen();
+
+    @Test
+    @DisplayName("not allow empty prompt")
+    void notAllowEmptyPrompt() {
+        assertThrows(IllegalArgumentException.class, () -> screen.promptUser(EMPTY_STRING));
+    }
+
+    @Test
+    @DisplayName("not allow empty string for printing")
+    void notAllowEmptyMessage() {
+        assertThrows(IllegalArgumentException.class, () -> screen.println(EMPTY_STRING));
+    }
+}

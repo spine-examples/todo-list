@@ -18,15 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+/**
+ * This package provides classes for user actions in CLI.
+ */
 
-include 'testutil-api'
-include 'testutil-cli'
+@ParametersAreNonnullByDefault
+package io.spine.cli.action;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+import javax.annotation.ParametersAreNonnullByDefault;

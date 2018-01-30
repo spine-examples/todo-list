@@ -18,15 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+package io.spine.cli.view;
 
-include 'testutil-api'
-include 'testutil-cli'
+import io.spine.cli.Bot;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+/**
+ * @author Dmytro Grankin
+ */
+@DisplayName("ActionListView should")
+class ActionListViewTest {
+
+    private Bot bot;
+    private final ActionListView view = new ActionListView("View title");
+
+    @BeforeEach
+    void setUp() {
+        bot = new Bot();
+    }
+
+    @Test
+    @DisplayName("have empty body")
+    void haveEmptyBody() {
+        view.renderBody(bot.screen());
+        bot.assertOutput("");
+    }
+}

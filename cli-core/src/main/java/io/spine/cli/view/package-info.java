@@ -18,15 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'server'
-include 'client'
-include 'cli-core'
-include 'client-cli'
+/**
+ * This package contains implementation of the the command-line view elements.
+ *
+ * <p>A {@link io.spine.cli.view.View View} may represent a piece of information and/or prompt user
+ * for a certain input. In such case, a view defines a number of
+ * {@linkplain io.spine.cli.action.Action actions} which perform the inter-view navigation.
+ */
 
-include 'testutil-api'
-include 'testutil-cli'
+@ParametersAreNonnullByDefault
+package io.spine.cli.view;
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+import javax.annotation.ParametersAreNonnullByDefault;
