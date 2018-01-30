@@ -57,7 +57,7 @@ public final class AppConfig {
     /**
      * Obtains {@link TodoClient} for communication with the {@code Server}.
      *
-     * @return the todoClient interface
+     * @return an instance of {@link TodoClient}
      */
     public static TodoClient getClient() {
         checkState(todoClient != null);

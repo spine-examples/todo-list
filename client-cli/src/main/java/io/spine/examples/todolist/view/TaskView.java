@@ -75,14 +75,14 @@ class TaskView extends EntityView<TaskId, TaskItem> {
     @Override
     protected String renderState(TaskItem state) {
         final String date = format(state.getDueDate());
-        return new StringBuilder().append(DESCRIPTION_VALUE)
-                                  .append(state.getDescription())
-                                  .append(lineSeparator())
-                                  .append(PRIORITY_VALUE)
-                                  .append(state.getPriority())
-                                  .append(lineSeparator())
-                                  .append(DUE_DATE_VALUE)
-                                  .append(date)
-                                  .toString();
+        final StringBuilder result = new StringBuilder().append(DESCRIPTION_VALUE)
+                                                        .append(state.getDescription())
+                                                        .append(lineSeparator())
+                                                        .append(PRIORITY_VALUE)
+                                                        .append(state.getPriority())
+                                                        .append(lineSeparator())
+                                                        .append(DUE_DATE_VALUE)
+                                                        .append(date);
+        return result.toString();
     }
 }

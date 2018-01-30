@@ -42,7 +42,7 @@ public class Confirmation {
     @VisibleForTesting
     static final String NEGATIVE_ANSWER = "n";
 
-    private static final String DETAILED_HINT_FORMAT = "Valid values: '%s' or '%s'.";
+    private static final String DETAILED_HINT_FORMAT = "Expected values: '%s' or '%s'.";
     private static final String DETAILED_HINT = format(DETAILED_HINT_FORMAT,
                                                        POSITIVE_ANSWER, NEGATIVE_ANSWER);
     private static final String MINOR_HINT_FORMAT = "(%s/%s)";
@@ -64,23 +64,22 @@ public class Confirmation {
      */
     public static boolean ask(Screen screen, String question) {
         final String questionWithHint = question + ' ' + MINOR_HINT;
-        Optional<String> answer = getValidAnswer(screen, questionWithHint);
+        Optional<String> answer = getAnswer(screen, questionWithHint);
         while (!answer.isPresent()) {
-            answer = getValidAnswer(screen, DETAILED_HINT);
+            answer = getAnswer(screen, DETAILED_HINT);
         }
         return answer.get()
                      .equals(POSITIVE_ANSWER);
     }
 
     /**
-     * Obtains valid value of the answer for the specified question.
+     * Obtains the answer for the specified question.
      *
      * @param screen   the screen to use
      * @param question the question to ask
-     * @return a valid answer value
-     *         or {@code Optional.empty()} if the answer is not valid
+     * @return the value of the answer or {@code Optional.empty()} if the answer could not be parsed
      */
-    private static Optional<String> getValidAnswer(Screen screen, String question) {
+    private static Optional<String> getAnswer(Screen screen, String question) {
         final String answer = screen.promptUser(question);
         final boolean isValidAnswer = NEGATIVE_ANSWER.equals(answer)
                                    || POSITIVE_ANSWER.equals(answer);

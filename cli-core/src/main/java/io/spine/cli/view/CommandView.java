@@ -47,9 +47,9 @@ import static io.spine.cli.view.CommandView.GenericParameter.STATE_BUILDER;
  *
  * <p>List of actions in a {@code CommandView} may looks like this:
  * <ol>
- *     <li>prepare a command (EditCommandAction)</li>
- *     <li>send a command to a server (CommandAction)</li>
- *     <li>move back (TransitionAction)</li>
+ *     <li>prepare a command (EditCommandAction);
+ *     <li>send a command to a server (CommandAction);
+ *     <li>move back (TransitionAction).
  * </ol>
  *
  * @param <M> the type of the command message

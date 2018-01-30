@@ -44,9 +44,9 @@ import static java.util.Collections.unmodifiableSet;
  *
  * <p>The rendering is performed in the following order:
  * <ol>
- *     <li>{@linkplain #renderTitle(Screen) title}</li>
- *     <li>{@linkplain #renderBody(Screen) body}</li>
- *     <li>{@linkplain #addBackAndRenderActions(Screen) actions}</li>
+ *     <li>{@linkplain #renderTitle(Screen) title};
+ *     <li>{@linkplain #renderBody(Screen) body};
+ *     <li>{@linkplain #addBackAndRenderActions(Screen) actions}.
  * </ol>
  *
  * <p>Automatically adds {@code back} action to the {@link #actions} before each render of actions.
