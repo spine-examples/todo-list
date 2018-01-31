@@ -62,7 +62,7 @@ message LabelsListEnrichment {
                               "spine.examples.todolist.LabelAssignedToTask";
 
     // The list of the label IDs.
-    LabelIdsList label_ids_list = 1 [(by) = "task_id"];
+    LabelIdList label_id_list = 1 [(by) = "task_id"];
 }
 
 // Task enrichment for the `TaskDratfFinalized` event.

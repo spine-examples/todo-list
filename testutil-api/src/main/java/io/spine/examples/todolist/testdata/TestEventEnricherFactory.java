@@ -24,7 +24,7 @@ import com.google.protobuf.Timestamp;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.LabelIdsList;
+import io.spine.examples.todolist.LabelIdList;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDetails;
@@ -64,11 +64,11 @@ public class TestEventEnricherFactory {
     private static final Function<LabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS =
             labelId -> LABEL_DETAILS;
 
-    private static final Function<TaskId, LabelIdsList> TASK_ID_TO_LABEL_IDS_LIST =
+    private static final Function<TaskId, LabelIdList> TASK_ID_TO_LABEL_IDS_LIST =
             taskId -> {
-                final LabelIdsList result = LabelIdsList.newBuilder()
-                                                        .addIds(TestTaskEventFactory.LABEL_ID)
-                                                        .build();
+                final LabelIdList result = LabelIdList.newBuilder()
+                                                      .addIds(TestTaskEventFactory.LABEL_ID)
+                                                      .build();
                 return result;
             };
     private static final Function<TaskId, TaskDetails> TASK_ID_TO_TASK_DETAILS =
@@ -93,7 +93,7 @@ public class TestEventEnricherFactory {
                                                        TaskDetails.class,
                                                        TASK_ID_TO_TASK_DETAILS::apply)
                                                   .add(TaskId.class,
-                                                       LabelIdsList.class,
+                                                       LabelIdList.class,
                                                        TASK_ID_TO_LABEL_IDS_LIST::apply)
                                                   .add(TaskId.class,
                                                        Task.class,

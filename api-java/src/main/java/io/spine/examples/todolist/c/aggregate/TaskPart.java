@@ -301,9 +301,9 @@ public class TaskPart extends AggregatePart<TaskId, Task, TaskVBuilder, TaskAggr
         result.add(deletedTaskRestored);
 
         final TaskLabels taskLabels = getPartState(TaskLabels.class);
-        final List<LabelId> labelIdsList = taskLabels.getLabelIdsList()
-                                                     .getIdsList();
-        for (LabelId labelId : labelIdsList) {
+        final List<LabelId> LabelIdList = taskLabels.getLabelIdList()
+                                                    .getIdsList();
+        for (LabelId labelId : LabelIdList) {
             final LabelledTaskRestored labelledTaskRestored =
                     LabelledTaskRestored.newBuilder()
                                         .setTaskId(taskId)

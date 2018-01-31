@@ -193,7 +193,7 @@ class AssignLabelToTaskTest extends TodoClientTest {
             final LabelId labelId = createLabel.getLabelId();
 
             final TaskLabels labels = obtainTaskLabelsWhenHandledAssignLabelToTask(labelId);
-            final List<LabelId> labelIds = labels.getLabelIdsList()
+            final List<LabelId> labelIds = labels.getLabelIdList()
                                                  .getIdsList();
             assertEquals(1, labelIds.size());
             assertEquals(labelId, labelIds.get(0));

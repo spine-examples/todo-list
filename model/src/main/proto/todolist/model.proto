@@ -77,7 +77,7 @@ message TaskLabels {
     //
     // Task can have any number of labels assigned, i.e. [0; +inf).
     // Optional. Empty by default.
-    LabelIdsList label_ids_list = 2;
+    LabelIdList label_id_list = 2;
 
     // Reserved fields for future extension.
     reserved 3 to 20;

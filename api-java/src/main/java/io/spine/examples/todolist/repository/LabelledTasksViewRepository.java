@@ -23,7 +23,7 @@ package io.spine.examples.todolist.repository;
 import com.google.protobuf.Message;
 import io.spine.core.EventContext;
 import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.LabelIdsList;
+import io.spine.examples.todolist.LabelIdList;
 import io.spine.examples.todolist.c.enrichments.LabelsListEnrichment;
 import io.spine.examples.todolist.c.events.LabelAssignedToTask;
 import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
@@ -90,7 +90,7 @@ public class LabelledTasksViewRepository
 
     private static Set<LabelId> getLabelIdsSet(EventContext context) {
         final LabelsListEnrichment enrichment = getEnrichment(LabelsListEnrichment.class, context);
-        final LabelIdsList labelsList = enrichment.getLabelIdsList();
+        final LabelIdList labelsList = enrichment.getLabelIdList();
         final Set<LabelId> result = newHashSet(labelsList.getIdsList());
         return result;
     }

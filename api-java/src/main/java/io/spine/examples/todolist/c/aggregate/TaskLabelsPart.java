@@ -22,7 +22,7 @@ package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
 import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.LabelIdsList;
+import io.spine.examples.todolist.LabelIdList;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
@@ -70,7 +70,7 @@ public class TaskLabelsPart
         final TaskId taskId = cmd.getId();
 
         final Task taskState = getPartState(Task.class);
-        final boolean isLabelAssigned = getState().getLabelIdsList()
+        final boolean isLabelAssigned = getState().getLabelIdList()
                                                   .getIdsList()
                                                   .contains(labelId);
         final boolean isValidTaskStatus = isValidTaskStatusToRemoveLabel(taskState.getTaskStatus());
@@ -103,24 +103,24 @@ public class TaskLabelsPart
 
     @Apply
     private void labelAssignedToTask(LabelAssignedToTask event) {
-        final Collection<LabelId> list = new ArrayList<>(getBuilder().getLabelIdsList()
+        final Collection<LabelId> list = new ArrayList<>(getBuilder().getLabelIdList()
                                                                      .getIdsList());
         list.add(event.getLabelId());
-        final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
-                                                      .addAllIds(list)
-                                                      .build();
+        final LabelIdList labelIdList = LabelIdList.newBuilder()
+                                                   .addAllIds(list)
+                                                   .build();
         getBuilder().setTaskId(event.getTaskId());
-        getBuilder().setLabelIdsList(labelIdsList);
+        getBuilder().setLabelIdList(labelIdList);
     }
 
     @Apply
     private void labelRemovedFromTask(LabelRemovedFromTask event) {
-        final Collection<LabelId> list = new ArrayList<>(getBuilder().getLabelIdsList()
+        final Collection<LabelId> list = new ArrayList<>(getBuilder().getLabelIdList()
                                                                      .getIdsList());
         list.remove(event.getLabelId());
-        final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
-                                                      .addAllIds(list)
-                                                      .build();
-        getBuilder().setLabelIdsList(labelIdsList);
+        final LabelIdList labelIdList = LabelIdList.newBuilder()
+                                                   .addAllIds(list)
+                                                   .build();
+        getBuilder().setLabelIdList(labelIdList);
     }
 }

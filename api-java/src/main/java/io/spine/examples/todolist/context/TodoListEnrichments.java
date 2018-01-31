@@ -24,7 +24,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
-import io.spine.examples.todolist.LabelIdsList;
+import io.spine.examples.todolist.LabelIdList;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
@@ -62,7 +62,7 @@ public final class TodoListEnrichments {
                 EventEnricher.newBuilder()
                              .add(LabelId.class, LabelDetails.class, labelIdToLabelDetails())
                              .add(TaskId.class, TaskDetails.class, taskIdToTaskDetails())
-                             .add(TaskId.class, LabelIdsList.class, taskIdToLabelList())
+                             .add(TaskId.class, LabelIdList.class, taskIdToLabelList())
                              .add(TaskId.class, Task.class, taskIdToTask())
                              .build();
         return enricher;
@@ -102,18 +102,18 @@ public final class TodoListEnrichments {
         return result;
     }
 
-    private Function<TaskId, LabelIdsList> taskIdToLabelList() {
-        final Function<TaskId, LabelIdsList> result = taskId -> {
+    private Function<TaskId, LabelIdList> taskIdToLabelList() {
+        final Function<TaskId, LabelIdList> result = taskId -> {
             if (taskId == null) {
-                return LabelIdsList.getDefaultInstance();
+                return LabelIdList.getDefaultInstance();
             }
             final Optional<TaskLabelsPart> aggregate = taskLabelsRepo.find(taskId);
             if (!aggregate.isPresent()) {
-                return LabelIdsList.getDefaultInstance();
+                return LabelIdList.getDefaultInstance();
             }
-            final LabelIdsList state = aggregate.get()
-                                                .getState()
-                                                .getLabelIdsList();
+            final LabelIdList state = aggregate.get()
+                                               .getState()
+                                               .getLabelIdList();
             return state;
         };
         return result;

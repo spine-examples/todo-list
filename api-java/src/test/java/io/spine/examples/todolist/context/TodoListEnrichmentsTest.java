@@ -92,8 +92,9 @@ class TodoListEnrichmentsTest {
                                        .getItemsMap()
                                        .get(labelsEnrName.value());
         final LabelsListEnrichment labelIdsEnr = unpack(labelIds);
-        assertTrue(labelIdsEnr.getLabelIdsList().getIdsList().isEmpty());
-
+        assertTrue(labelIdsEnr.getLabelIdList()
+                              .getIdsList()
+                              .isEmpty());
         final TypeName taskTypeName = TypeName.from(TaskEnrichment.getDescriptor());
         final Any task = enrichment.getContainer()
                                    .getItemsMap()

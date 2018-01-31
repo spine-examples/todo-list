@@ -206,7 +206,7 @@ message RejectedLabelCommandDetails {
 }
 
 // DTO for the list of the label IDs.
-message LabelIdsList {
+message LabelIdList {
 
     // Label IDs.
     repeated LabelId ids = 1;
