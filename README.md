@@ -12,7 +12,7 @@ ToDo List example application
 of TodoList application).
 
 To explore the guide, checkout the given tags:
- - [step-1](https://github.com/SpineEventEngine/todo-list/tree/step-1)
- - [step-2](https://github.com/SpineEventEngine/todo-list/tree/step-2)
- - [step-3](https://github.com/SpineEventEngine/todo-list/tree/step-3)
- - [step-4](https://github.com/SpineEventEngine/todo-list/tree/step-4)
+ - [`step-1`](https://github.com/SpineEventEngine/todo-list/tree/step-1)
+ - [`step-2`](https://github.com/SpineEventEngine/todo-list/tree/step-2)
+ - [`step-3`](https://github.com/SpineEventEngine/todo-list/tree/step-3)
+ - [`step-4`](https://github.com/SpineEventEngine/todo-list/tree/step-4)
