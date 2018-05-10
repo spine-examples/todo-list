@@ -18,25 +18,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'client'
-include 'server'
-include 'client-cli'
-include 'cli-core'
-include 'testutil-api'
-include 'testutil-cli'
-include 'integration-tests'
+package io.spine.examples.todolist.server;
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+import io.spine.web.CommandServlet;
+
+import javax.servlet.annotation.WebServlet;
+
+/**
+ * @author Dmytro Dashenkov
+ */
+@WebServlet(name = "Command Service", value = "/command")
+@SuppressWarnings("serial")
+public final class TodoCommandServlet extends CommandServlet {
+
+    public TodoCommandServlet() {
+        super(Application.instance().commandService());
+    }
 }
-
-deployment('local-inmem')
-deployment('local-my-sql')
-deployment('local-cloud-sql')
-deployment('compute-cloud-sql')
-deployment('local-firebase')
-deployment('local-web')

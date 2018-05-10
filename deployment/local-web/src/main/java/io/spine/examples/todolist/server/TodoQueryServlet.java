@@ -18,25 +18,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'client'
-include 'server'
-include 'client-cli'
-include 'cli-core'
-include 'testutil-api'
-include 'testutil-cli'
-include 'integration-tests'
+package io.spine.examples.todolist.server;
 
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
+import io.spine.web.firebase.FirebaseQueryBridge;
+import io.spine.web.firebase.FirebaseQueryServlet;
+
+import javax.servlet.annotation.WebServlet;
+
+/**
+ * @author Dmytro Dashenkov
+ */
+@WebServlet(name = "Query Service", value = "/query")
+@SuppressWarnings("serial")
+public final class TodoQueryServlet extends FirebaseQueryServlet {
+
+    public TodoQueryServlet() {
+        super(FirebaseQueryBridge.newBuilder()
+                                 .serQueryService(Application.instance()
+                                                             .queryService())
+                                 .setDatabase(Firebase.database())
+                                 .build());
+    }
 }
 
-deployment('local-inmem')
-deployment('local-my-sql')
-deployment('local-cloud-sql')
-deployment('compute-cloud-sql')
-deployment('local-firebase')
-deployment('local-web')
+
