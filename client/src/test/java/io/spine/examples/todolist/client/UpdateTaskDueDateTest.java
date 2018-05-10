@@ -39,7 +39,7 @@ import java.util.List;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
-import static io.spine.time.Time.getCurrentTime;
+import static io.spine.base.Time.getCurrentTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 

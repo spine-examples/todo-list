@@ -31,7 +31,7 @@ import static io.spine.examples.todolist.view.DateFormatter.format;
 import static io.spine.examples.todolist.view.TaskView.DESCRIPTION_VALUE;
 import static io.spine.examples.todolist.view.TaskView.DUE_DATE_VALUE;
 import static io.spine.examples.todolist.view.TaskView.PRIORITY_VALUE;
-import static io.spine.time.Time.getCurrentTime;
+import static io.spine.base.Time.getCurrentTime;
 import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;

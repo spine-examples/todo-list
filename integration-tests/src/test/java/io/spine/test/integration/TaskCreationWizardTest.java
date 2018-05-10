@@ -48,7 +48,7 @@ import static io.spine.examples.todolist.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.TaskStatus.FINALIZED;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newPid;
 import static io.spine.test.integration.given.TaskCreationWizardTestEnv.newTaskId;
-import static io.spine.time.Time.getCurrentTime;
+import static io.spine.base.Time.getCurrentTime;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

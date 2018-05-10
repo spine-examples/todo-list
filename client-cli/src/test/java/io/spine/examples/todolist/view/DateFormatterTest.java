@@ -31,7 +31,7 @@ import static io.spine.examples.todolist.view.DateFormatter.DEFAULT_TIMESTAMP_VA
 import static io.spine.examples.todolist.view.DateFormatter.format;
 import static io.spine.examples.todolist.view.DateFormatter.getDateFormat;
 import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
-import static io.spine.time.Time.getCurrentTime;
+import static io.spine.base.Time.getCurrentTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

@@ -93,10 +93,7 @@ allprojects {
 
     repositories {
         jcenter()
-        maven {
-            url 'https://maven-central.storage.googleapis.com'             // Google's mirror of Maven Central
-            //   url 'https://oss.sonatype.org/content/repositories/snapshots' // SNAPSHOT Repository (if needed)
-        }
+        google()
 
         // If it's not found in JCenter, it must be our code.
         maven { url = spineRepository }

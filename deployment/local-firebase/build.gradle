@@ -18,8 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+ext {
+    firebaseMirrorVersion = '0.10.15-SNAPSHOT'
+}
+
 dependencies {
     compile project(path: ':server')
-    compile "io.spine:firebase-mirror:$spineVersion"
+    compile "io.spine:firebase-mirror:$firebaseMirrorVersion"
     compile "io.netty:netty-tcnative-boringssl-static:$nettyBoringsslVersion"
 }

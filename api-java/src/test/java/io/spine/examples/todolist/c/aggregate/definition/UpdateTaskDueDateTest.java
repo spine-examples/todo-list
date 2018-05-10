@@ -48,7 +48,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDueDateInstance;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
-import static io.spine.time.Time.getCurrentTime;
+import static io.spine.base.Time.getCurrentTime;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -19,7 +19,7 @@
  */
 
 
-final def SPINE_VERSION = '0.10.15-SNAPSHOT'
+final def SPINE_VERSION = '0.10.36-SNAPSHOT'
 
 project.ext {
     // TODOList version
@@ -27,16 +27,16 @@ project.ext {
 
     // Spine dependencies' versions
     spineVersion = SPINE_VERSION
-    spineJdbcStorageVersion = '0.9.64-SNAPSHOT'
-    spineBaseVersion = '0.10.0'
+    spineJdbcStorageVersion = '0.10.33-SNAPSHOT'
+    spineBaseVersion = '0.10.32-SNAPSHOT'
 
     // Main scope third party dependencies' versions
-    protobufGradlePluginVersion = '0.8.3'
+    protobufGradlePluginVersion = '0.8.4'
     appEngineVersion = '1.9.42'
     guavaVersion = '20.0'
-    protobufVersion = '3.5.0'
-    gRpcVersion = '1.8.0'
-    slf4jVersion = '1.7.21'
+    protobufVersion = '3.5.1'
+    gRpcVersion = '1.9.0'
+    slf4jVersion = '1.7.25'
     servletApiVersion = '3.1.0'
     gcloudJavaVersion = '0.2.8'
     cloudSqlSocketFactoryVersion = '1.0.4'

@@ -30,11 +30,14 @@ import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
-import io.spine.util.Exceptions;
+import io.spine.server.ServerEnvironment;
+import io.spine.server.delivery.InProcessSharding;
+import io.spine.server.transport.memory.InMemoryTransportFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +49,7 @@ import static io.spine.examples.todolist.server.Server.newServer;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
+import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
  * @author Illia Shepilov
@@ -70,6 +74,18 @@ abstract class TodoClientTest {
     public void tearDown() {
         server.shutdown();
         getClient().shutdown();
+
+        // TODO:2018-05-10:dmytro.dashenkov: Remove when https://github.com/SpineEventEngine/core-java/issues/690 is resolved.
+
+        // TODO                              This code is deliberately ugly to make it obvious that
+        // TODO                              it should be removed ASAP.
+        try {
+            final Field field = ServerEnvironment.class.getDeclaredField("sharding");
+            field.setAccessible(true);
+            field.set(ServerEnvironment.getInstance(), new InProcessSharding(InMemoryTransportFactory.newInstance()));
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw illegalStateWithCauseOf(e);
+        }
     }
 
     private void startServer() throws InterruptedException {
@@ -79,7 +95,7 @@ abstract class TodoClientTest {
                 server.start();
                 serverStartLatch.countDown();
             } catch (IOException e) {
-                throw Exceptions.illegalStateWithCauseOf(e);
+                throw illegalStateWithCauseOf(e);
             }
         });
 

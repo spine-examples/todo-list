@@ -65,7 +65,7 @@ import io.spine.server.procman.ProcessManagerDispatcher;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.StorageFactorySwitch;
 import io.spine.server.tenant.TenantIndex;
-import io.spine.time.Time;
+import io.spine.base.Time;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
