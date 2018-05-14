@@ -19,10 +19,11 @@
  */
 
 const config = {
-    entry: './lib/client.js',
+    entry: "./lib/client.js",
     output: {
         path: __dirname,
-        filename: 'bundle.js'
+        filename: "bundle.js",
+        libraryTarget: "this"
     },
     target: "web"
 };

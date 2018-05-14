@@ -21,7 +21,12 @@
 apply from: "$projectDir/scripts/js-cli.gradle"
 
 final def TASK_GROUP = 'JavaScript'
-ext.npmPublicationRoot = "$buildDir/npm-publication/"
+
+ext {
+    npmPublicationRoot = "$buildDir/npm-publication/"
+    bundleFile = "$projectDir/bundle.js"
+}
+
 
 /**
  * Installs the module dependencies using the `npm install` command.
@@ -49,8 +54,8 @@ task compileJs {
     group = TASK_GROUP
     description = 'Compiles the JavaScript sources into a single .js file.'
 
-    inputs.files "$projectDir/webpack.config.js"
-    outputs.files "$buildDir/.js"
+    inputs.files "$projectDir/webpack.config.js", fileTree("$projectDir/lib/")
+    outputs.files bundleFile
 
     doLast {
         npm 'run', 'compile'
@@ -59,21 +64,12 @@ task compileJs {
     dependsOn installDependencies
 }
 
-/**
- * Copies the library artifact built by `compileJs` into the NPM publication directory.
- *
- * The artifact is renamed to `index.js` in the new directory.
- */
-task copyArtifact(type: Copy) {
+task deleteCompiled(type: Delete) {
     group = TASK_GROUP
 
-    from compileJs.outputs.files
-    into npmPublicationRoot
-
-    rename '.*\\.js', 'index.js'
-
-    dependsOn compileJs
+    delete compileJs.outputs.files
 }
 
+clean.dependsOn deleteCompiled
 
 build.dependsOn compileJs

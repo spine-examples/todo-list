@@ -20,12 +20,22 @@
 
 <html>
 <body>
-<script src="../bundle.js"></script>
+<script type="text/javascript" src="../bundle.js"></script>
+<script>
+    let client = new Client();
+
+    function submitNewTask() {
+        let description = document.getElementById("task_description").value;
+        client.submitNewTask(description);
+    }
+</script>
 <form>
     <label title="Description">
         <input id="task_description" type="text">
-        <button onclick="new Client().submitNewTask(this)"></button>
     </label>
 </form>
+<button onclick="submitNewTask()">Create</button>
+
+<table id="notes_list"></table>
 </body>
 </html>
