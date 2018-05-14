@@ -18,13 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-const config = {
-    entry: './lib/client.js',
-    output: {
-        path: __dirname,
-        filename: 'bundle.js'
-    },
-    target: "web"
-};
+export class Client {
 
-module.exports = config;
+    submitNewTask(form) {
+
+    }
+}

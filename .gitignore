@@ -70,3 +70,4 @@ google-services.json
 package-lock.json
 client-web/proto
 client-web/node_modules
+client-web/bundle.js
