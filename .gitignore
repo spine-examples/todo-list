@@ -65,3 +65,5 @@ firebase-debug.log
 # Must be kept secure (out of public Git repository at least)
 serviceAccount.json
 google-services.json
+
+package-lock.json

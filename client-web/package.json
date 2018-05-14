@@ -1,0 +1,12 @@
+{
+  "name": "client-web",
+  "version": "1.0.0",
+  "description": "The Web client of the TodoList application.",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Spine Event Engine",
+  "license": "Apache 2.0",
+  "dependencies": {
+    "spine-js-client": "0.0.1"
+  }
+}
