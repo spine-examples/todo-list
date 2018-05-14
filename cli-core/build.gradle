@@ -21,5 +21,3 @@
 dependencies {
     testCompile project(path: ':testutil-cli')
 }
-
-apply from: generateDescriptorSetPlugin

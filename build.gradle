@@ -129,8 +129,7 @@ subprojects {
         generatedTestSpineDir = "${generatedRootDir}/test/spine"
 
         testArtifactsPlugin = "${rootDir}/scripts/test-artifacts.gradle"
-        generateDescriptorSetPlugin = "${rootDir}/scripts/generate-descriptor-set.gradle"
-        gRpcPlugin = "${rootDir}/scripts/grpc.gradle"
+        protobufPlugin = "${rootDir}/scripts/protobuf.gradle"
     }
 
     apply plugin: 'java' /* The `java` plugin is required at this level for Gradle Protobuf plugin.
@@ -196,41 +195,12 @@ subprojects {
     
     sourceSets {
         main {
-            proto.srcDirs = ["${sourcesRootDir}/main/proto"]
             java.srcDirs = [generatedJavaDir, generatedSpineDir, "${sourcesRootDir}/main/java"]
             resources.srcDirs = ["${generatedRootDir}/main/resources", "${sourcesRootDir}/main/resources"]
         }
         test {
-            proto.srcDirs = ["${sourcesRootDir}/test/proto"]
             java.srcDirs = [generatedTestJavaDir, generatedTestSpineDir, "${sourcesRootDir}/test/java"]
             resources.srcDirs = ["${generatedRootDir}/test/resources", "${sourcesRootDir}/test/resources"]
-        }
-    }
-
-    protobuf {
-        protoc {
-            // The version of protoc must match protobuf-java. If you don't depend on
-            // protobuf-java directly, you will be transitively depending on the
-            // protobuf-java version that grpc depends on.
-            artifact = protobufDependency
-        }
-
-        // The below suppression `GroovyAssignabilityCheck` is a workaround for the IDEA bug.
-        // See: https://youtrack.jetbrains.com/issue/IDEA-141744
-        //noinspection GroovyAssignabilityCheck
-        plugins {
-            grpc {
-                //noinspection GroovyAssignabilityCheck
-                artifact = "io.grpc:protoc-gen-grpc-java:${gRpcVersion}"
-            }
-        }
-
-        generatedFilesBaseDir = generatedRootDir
-
-        generateProtoTasks {
-            all()*.plugins {
-                grpc {}
-            }
         }
     }
 

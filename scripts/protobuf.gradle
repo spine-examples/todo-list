@@ -18,17 +18,51 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+apply plugin: 'com.google.protobuf'
+
 // Apply this script if it is needed to generate Protobuf descriptor set (special files with `.desc` extension).
 // These files may be needed by Gradle plugins to obtain descriptors of `.proto` files of this project.
+
+//noinspection GroovyAssignabilityCheck
 protobuf {
+    protoc {
+        // The version of protoc must match protobuf-java. If you don't depend on
+        // protobuf-java directly, you will be transitively depending on the
+        // protobuf-java version that grpc depends on.
+        artifact = protobufDependency
+    }
+
+    // The below suppression `GroovyAssignabilityCheck` is a workaround for the IDEA bug.
+    // See: https://youtrack.jetbrains.com/issue/IDEA-141744
+    //noinspection GroovyAssignabilityCheck
+    plugins {
+        grpc {
+            //noinspection GroovyAssignabilityCheck
+            artifact = "io.grpc:protoc-gen-grpc-java:${gRpcVersion}"
+        }
+    }
+
+    generatedFilesBaseDir = generatedRootDir
+
     generateProtoTasks {
         all().each { final task ->
+            task.generateDescriptorSet = true
+            task.descriptorSetOptions.path = "$projectDir/build/descriptors/${task.sourceSet.name}.desc"
+            task.descriptorSetOptions.includeImports = true
+            task.descriptorSetOptions.includeSourceInfo = true
             task.plugins {
-                task.generateDescriptorSet = true
-                task.descriptorSetOptions.path = "$projectDir/build/descriptors/${task.sourceSet.name}.desc"
-                task.descriptorSetOptions.includeImports = true
-                task.descriptorSetOptions.includeSourceInfo = true
+                grpc {}
             }
         }
+    }
+}
+
+sourceSets {
+    main {
+        proto.srcDirs = ["${sourcesRootDir}/main/proto"]
+        java.srcDirs += [generatedGrpcDir]
+    }
+    test {
+        proto.srcDirs = ["${sourcesRootDir}/test/proto"]
     }
 }

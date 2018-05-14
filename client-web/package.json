@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "description": "The Web client of the TodoList application.",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "compile": "webpack --config webpack.config.js --mode=production"
+  },
   "author": "Spine Event Engine",
   "license": "Apache 2.0",
   "dependencies": {
     "spine-js-client": "0.0.1"
+  },
+  "devDependencies": {
+    "webpack": "^4.8.3"
   }
 }
