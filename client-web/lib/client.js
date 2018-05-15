@@ -40,7 +40,7 @@ export class Client {
         this._backendClient = new client.BackendClient(
             new client.HttpClient("http://localhost:8080"),
             new client.FirebaseClient(firebase.application),
-            new client.ActorRequestFactory("web-test-actor")
+            new client.ActorRequestFactory("TodoList-actor")
         );
     }
 
