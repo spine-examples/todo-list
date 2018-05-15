@@ -18,18 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import uuid from "../node_modules/uuid";
+let uuid = require("uuid");
 
-import {
-    ActorRequestFactory,
-    BackendClient,
-    FirebaseClient,
-    HttpClient
-} from "../node_modules/spine-js-client/index"
+let client = require("spine-js-client/client/index.js").client;
 
-import {TaskId} from "../proto/main/js/todolist/identifiers_pb";
-import {TaskDescription} from "../proto/main/js/todolist/values_pb";
-import {CreateBasicTask} from "../proto/main/js/todolist/c/commands_pb";
+let TaskId = require("../proto/main/js/todolist/identifiers_pb").TaskId;
+let TaskDescription = require("../proto/main/js/todolist/values_pb").TaskDescription;
+let CreateBasicTask = require("../proto/main/js/todolist/c/commands_pb").CreateBasicTask;
+
+let firebase = require("./firebase_client.js");
 
 const noOp = () => {};
 
@@ -40,19 +37,22 @@ const errorCallback = error => {
 export class Client {
 
     constructor() {
-        this._backendClient = new BackendClient(
-            new HttpClient("localhost:8080"),
-            new FirebaseClient(firebase),
-            new ActorRequestFactory("web-test-actor")
+        this._backendClient = new client.BackendClient(
+            new client.HttpClient("http://localhost:8080"),
+            new client.FirebaseClient(firebase.application),
+            new client.ActorRequestFactory("web-test-actor")
         );
     }
 
     submitNewTask(description) {
         let command = Client._createTaskCommand(description);
 
-        let typedCommand = new TypedMessage(
+        let type = new client.TypeUrl(
+            "type.spine.examples.todolist/spine.examples.todolist.CreateBasicTask"
+        );
+        let typedCommand = new client.TypedMessage(
             command,
-            new TypeUrl("type.spine.examples.todolist/spine.examples.todolist.CreateBasicTask")
+            type
         );
         this._backendClient.sendCommand(typedCommand, noOp, errorCallback, errorCallback);
     }
@@ -64,6 +64,8 @@ export class Client {
         let command = new CreateBasicTask();
         command.setId(id);
         command.setDescription(descriptionValue);
+
+        return command;
     }
 
     static _description(value) {

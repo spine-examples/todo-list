@@ -105,7 +105,7 @@ allprojects {
 }
 
 // Suppress building the root project.
-rootProject.jar { onlyIf { false } }
+rootProject.jar.enabled = false
 
 final boolean isTravis = System.env.TRAVIS == 'true'
 
