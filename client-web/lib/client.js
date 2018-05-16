@@ -73,9 +73,10 @@ export class Client {
 
     static _fillTable(table, myListView) {
         let items = myListView.myList.items;
+        table.innerHTML = "";
         for (let item of items) {
             let description = item.description.value;
-            table.innerHTML += `<tr>${description}</tr>`;
+            table.innerHTML += `<div class="task_item">${description}</div>`;
         }
     }
 

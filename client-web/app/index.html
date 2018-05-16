@@ -19,33 +19,57 @@
   -->
 
 <html>
+<link rel="stylesheet" type="text/css" href="index.css">
 <body>
 <script type="text/javascript" src="../bundle.js"></script>
 <script>
     let client = new Client();
 
     function refreshList() {
-        let list = document.getElementById("notes_list");
+        let list = document.getElementById("task_list");
         client.fetchTasks(list);
     }
 
     function submitNewTask() {
-        let description = document.getElementById("task_description").value;
-        client.submitNewTask(description);
-        setTimeout(() => {
-            refreshList()
-        }, 2000);
+        let input = document.getElementById("task_description");
+        let description = input.value;
+        if (description == null || description.length === 0) {
+            warn("Task description must not be empty!");
+        } else {
+            clearWarning();
+            input.value = "";
+            client.submitNewTask(description);
+            setTimeout(() => {
+                refreshList()
+            }, 2000);
+        }
     }
 
-    window.onload = refreshList;
-</script>
-<form>
-    <label title="Description">
-        <input id="task_description" type="text">
-    </label>
-</form>
-<button onclick="submitNewTask()">Create</button>
+    function clearWarning() {
+        warn(" ");
+    }
 
-<table id="notes_list"></table>
+    function warn(message) {
+        let view = document.getElementById("warning");
+        view.innerText = message;
+    }
+
+    window.onload = () => {
+        clearWarning();
+        refreshList();
+    };
+</script>
+
+<div class="central_component">
+    <label for="task_description">Enter the task description</label>
+    <textarea id="task_description" placeholder="Buy some milk and eggs..."></textarea>
+
+    <p id="warning"></p>
+
+    <button onclick="submitNewTask()" id="crete_task_button">Create</button>
+
+    <div id="task_list"></div>
+</div>
+
 </body>
 </html>
