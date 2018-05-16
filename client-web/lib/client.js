@@ -80,7 +80,7 @@ export class Client {
         );
         this._backendClient.fetchAll(
             type,
-            view => { Client._fillTable(table, view) },
+            (view => Client._fillTable(table, view)),
             errorCallback);
     }
 
