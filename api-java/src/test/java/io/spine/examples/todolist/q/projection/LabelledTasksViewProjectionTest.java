@@ -80,8 +80,9 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
 
     private static final String BOUNDED_CONTEXT_NAME = "TodoListBoundedContext";
 
-    private ProjectionRepository<LabelId, LabelledTasksViewProjection,
-            LabelledTasksView> repository;
+    private
+    ProjectionRepository<LabelId, LabelledTasksViewProjection, LabelledTasksView> repository;
+
     private EventBus eventBus;
 
     @BeforeEach
