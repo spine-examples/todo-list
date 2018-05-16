@@ -28,6 +28,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * The {@code /query} endpoint of the TodoList system.
+ *
+ * <p>Handles query {@code POST} requests. See {@link FirebaseQueryServlet} for more details.
+ *
+ * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
+ *
  * @author Dmytro Dashenkov
  */
 @WebServlet(name = TodoQueryServlet.NAME, value = "/query")
@@ -40,7 +46,7 @@ public final class TodoQueryServlet extends FirebaseQueryServlet {
         super(FirebaseQueryBridge.newBuilder()
                                  .serQueryService(Application.instance()
                                                              .queryService())
-                                 .setDatabase(Firebase.database())
+                                 .setDatabase(FirebaseClient.database())
                                  .build());
     }
 

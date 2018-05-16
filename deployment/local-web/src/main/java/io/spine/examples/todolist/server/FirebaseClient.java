@@ -31,14 +31,16 @@ import java.io.InputStream;
 import static io.spine.util.Exceptions.illegalArgumentWithCauseOf;
 
 /**
+ * A Firebase Realtime Database client.
+ *
  * @author Dmytro Dashenkov
  */
-final class Firebase {
+final class FirebaseClient {
 
     static {
         try {
-            final InputStream in = Firebase.class.getClassLoader()
-                                                 .getResourceAsStream("spine-dev.json");
+            final InputStream in = FirebaseClient.class.getClassLoader()
+                                                       .getResourceAsStream("spine-dev.json");
             final GoogleCredentials credentials;
 
             credentials = GoogleCredentials.fromStream(in);
@@ -55,9 +57,12 @@ final class Firebase {
     /**
      * Prevents the utility class instantiation.
      */
-    private Firebase() {
+    private FirebaseClient() {
     }
 
+    /**
+     * Retrieves an instance of {@link FirebaseDatabase}.
+     */
     static FirebaseDatabase database() {
         return FirebaseDatabase.getInstance();
     }

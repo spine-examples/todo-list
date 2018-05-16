@@ -29,19 +29,25 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * An {@link HttpFilter} which appends the CORS headers to the {@code /command} and {@code /query}
+ * HTTP responses.
+ *
+ * <p>Requests from any origin are allowed. The requests are allowed to contain credentials and
+ * the {@code Content-Type} header.
+ *
  * @author Dmytro Dashenkov
  */
 @WebFilter(
-        filterName = CrossOriginResourceSharing.NAME,
+        filterName = CrossOriginResourceSharingFilter.NAME,
         servletNames = {TodoCommandServlet.NAME, TodoQueryServlet.NAME}
 )
-public final class CrossOriginResourceSharing extends HttpFilter {
+public final class CrossOriginResourceSharingFilter extends HttpFilter {
 
     private static final long serialVersionUID = 0L;
 
     static final String NAME = "CORS filter";
 
-    public CrossOriginResourceSharing() {
+    public CrossOriginResourceSharingFilter() {
         super();
     }
 
@@ -59,6 +65,9 @@ public final class CrossOriginResourceSharing extends HttpFilter {
         }
     }
 
+    /**
+     * The HTTP headers which configure the cross-origin request handling.
+     */
     private enum ResponseHeader {
 
         ACCESS_CONTROL_ALLOW_ORIGIN("access-control-allow-origin", "*"),
@@ -73,7 +82,10 @@ public final class CrossOriginResourceSharing extends HttpFilter {
             this.value = value;
         }
 
-        void appendTo(HttpServletResponse response) {
+        /**
+         * Appends this header to the ginen {@link HttpServletResponse}.
+         */
+        private void appendTo(HttpServletResponse response) {
             response.addHeader(name, value);
         }
     }

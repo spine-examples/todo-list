@@ -26,6 +26,8 @@ import io.spine.server.CommandService;
 import io.spine.server.QueryService;
 
 /**
+ * The TodoList application.
+ *
  * @author Dmytro Dashenkov
  */
 final class Application {
@@ -45,10 +47,16 @@ final class Application {
                                             .build();
     }
 
+    /**
+     * The query service used in this application.
+     */
     QueryService queryService() {
         return queryService;
     }
 
+    /**
+     * The command service used in this application.
+     */
     CommandService commandService() {
         return commandService;
     }

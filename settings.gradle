@@ -35,9 +35,9 @@ def deployment(final String name) {
     project(path).projectDir = new File("./deployment/$name")
 }
 
-deployment('local-inmem')
-deployment('local-my-sql')
-deployment('local-cloud-sql')
-deployment('compute-cloud-sql')
-deployment('local-firebase')
-deployment('local-web')
+deployment 'local-inmem'
+deployment 'local-my-sql'
+deployment 'local-cloud-sql'
+deployment 'compute-cloud-sql'
+deployment 'local-firebase'
+deployment 'local-web'
