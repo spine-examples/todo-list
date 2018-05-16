@@ -24,13 +24,17 @@ import io.spine.web.firebase.FirebaseQueryBridge;
 import io.spine.web.firebase.FirebaseQueryServlet;
 
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Dmytro Dashenkov
  */
-@WebServlet(name = "Query Service", value = "/query")
+@WebServlet(name = TodoQueryServlet.NAME, value = "/query")
 @SuppressWarnings("serial")
 public final class TodoQueryServlet extends FirebaseQueryServlet {
+
+    static final String NAME = "Query Service";
 
     public TodoQueryServlet() {
         super(FirebaseQueryBridge.newBuilder()
@@ -38,6 +42,10 @@ public final class TodoQueryServlet extends FirebaseQueryServlet {
                                                              .queryService())
                                  .setDatabase(Firebase.database())
                                  .build());
+    }
+
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) {
     }
 }
 

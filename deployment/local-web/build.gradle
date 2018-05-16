@@ -18,6 +18,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+buildscript {
+    ext {
+        grettyVersion = '2.0.0'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.akhikhl.gretty:gretty:$grettyVersion"
+    }
+}
+
+apply plugin: 'org.akhikhl.gretty'
+
 repositories {
     mavenCentral()
     mavenLocal()
@@ -28,4 +42,17 @@ repositories {
 dependencies {
     compile project(path: ':server')
     compile "io.spine:firebase-web:$spineGcloudVersion"
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (it.requested.group == 'javax.servlet') {
+            it.useVersion(servletApiVersion)
+        }
+    }
+}
+
+gretty {
+    httpPort = 8080
+    contextPath = "/"
 }

@@ -23,15 +23,23 @@ package io.spine.examples.todolist.server;
 import io.spine.web.CommandServlet;
 
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Dmytro Dashenkov
  */
-@WebServlet(name = "Command Service", value = "/command")
+@WebServlet(name = TodoCommandServlet.NAME, value = "/command")
 @SuppressWarnings("serial")
 public final class TodoCommandServlet extends CommandServlet {
 
+    static final String NAME = "Command Service";
+
     public TodoCommandServlet() {
         super(Application.instance().commandService());
+    }
+
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) {
     }
 }

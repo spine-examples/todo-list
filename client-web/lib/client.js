@@ -28,17 +28,21 @@ let CreateBasicTask = require("../proto/main/js/todolist/c/commands_pb").CreateB
 
 let firebase = require("./firebase_client.js");
 
-const noOp = () => {};
+const logSuccess = () => {
+    console.log("Command sent")
+};
 
-const errorCallback = error => {
+const errorCallback = (error) => {
     console.error(error);
 };
+
+const HOST = "http://localhost:8080";
 
 export class Client {
 
     constructor() {
         this._backendClient = new client.BackendClient(
-            new client.HttpClient("http://localhost:8080"),
+            new client.HttpClient(HOST),
             new client.FirebaseClient(firebase.application),
             new client.ActorRequestFactory("TodoList-actor")
         );
@@ -54,7 +58,7 @@ export class Client {
             command,
             type
         );
-        this._backendClient.sendCommand(typedCommand, noOp, errorCallback, errorCallback);
+        this._backendClient.sendCommand(typedCommand, logSuccess, errorCallback, errorCallback);
     }
 
     static _createTaskCommand(description) {

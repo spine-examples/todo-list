@@ -38,7 +38,7 @@ project.ext {
     protobufVersion = '3.5.1'
     gRpcVersion = '1.9.0'
     slf4jVersion = '1.7.25'
-    servletApiVersion = '3.1.0'
+    servletApiVersion = '4.0.0'
     gcloudJavaVersion = '0.2.8'
     cloudSqlSocketFactoryVersion = '1.0.4'
     shadowJarVersion = '2.0.1'
