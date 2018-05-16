@@ -61,6 +61,24 @@ export class Client {
         this._backendClient.sendCommand(typedCommand, logSuccess, errorCallback, errorCallback);
     }
 
+    fetchTasks(table) {
+        let type = new client.TypeUrl(
+            "type.spine.examples.todolist/spine.examples.todolist.MyListView"
+        );
+        this._backendClient.fetchAll(
+            type,
+            view => Client._fillTable(table, view),
+            errorCallback)
+    }
+
+    static _fillTable(table, myListView) {
+        let items = myListView.myList.items;
+        for (let item of items) {
+            let description = item.description.value;
+            table.innerHTML += `<tr>${description}</tr>`;
+        }
+    }
+
     static _createTaskCommand(description) {
         let id = Client._newId();
         let descriptionValue = Client._description(description);

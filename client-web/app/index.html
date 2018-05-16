@@ -24,10 +24,20 @@
 <script>
     let client = new Client();
 
+    function refreshList() {
+        let list = document.getElementById("notes_list");
+        client.fetchTasks(list);
+    }
+
     function submitNewTask() {
         let description = document.getElementById("task_description").value;
         client.submitNewTask(description);
+        setTimeout(() => {
+            refreshList()
+        }, 2000);
     }
+
+    window.onload = refreshList;
 </script>
 <form>
     <label title="Description">
