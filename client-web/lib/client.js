@@ -29,7 +29,7 @@ let CreateBasicTask = require("../proto/main/js/todolist/c/commands_pb").CreateB
 let firebase = require("./firebase_client.js");
 
 const logSuccess = () => {
-    console.log("Command sent")
+    console.log("Command sent");
 };
 
 const errorCallback = (error) => {
@@ -38,6 +38,9 @@ const errorCallback = (error) => {
 
 const HOST = "http://localhost:8080";
 
+/**
+ * The client of the TodoList application.
+ */
 export class Client {
 
     constructor() {
@@ -48,6 +51,11 @@ export class Client {
         );
     }
 
+    /**
+     * Creates a new basic task with the given description.
+     *
+     * @param description the description of the new task
+     */
     submitNewTask(description) {
         let command = Client._createTaskCommand(description);
 
@@ -61,14 +69,19 @@ export class Client {
         this._backendClient.sendCommand(typedCommand, logSuccess, errorCallback, errorCallback);
     }
 
+    /**
+     * Fetches all the tasks from the server and displays them on the UI.
+     *
+     * @param table the view to display the tasks in
+     */
     fetchTasks(table) {
         let type = new client.TypeUrl(
             "type.spine.examples.todolist/spine.examples.todolist.MyListView"
         );
         this._backendClient.fetchAll(
             type,
-            view => Client._fillTable(table, view),
-            errorCallback)
+            view => { Client._fillTable(table, view) },
+            errorCallback);
     }
 
     static _fillTable(table, myListView) {

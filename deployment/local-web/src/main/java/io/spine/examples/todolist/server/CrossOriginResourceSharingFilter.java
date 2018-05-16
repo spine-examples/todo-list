@@ -47,10 +47,6 @@ public final class CrossOriginResourceSharingFilter extends HttpFilter {
 
     static final String NAME = "CORS filter";
 
-    public CrossOriginResourceSharingFilter() {
-        super();
-    }
-
     @Override
     protected void doFilter(HttpServletRequest request,
                             HttpServletResponse response,
