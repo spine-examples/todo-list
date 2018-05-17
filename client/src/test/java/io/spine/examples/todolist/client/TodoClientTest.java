@@ -32,12 +32,12 @@ import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
 import io.spine.server.ServerEnvironment;
 import io.spine.server.delivery.InProcessSharding;
+import io.spine.server.delivery.Sharding;
 import io.spine.server.transport.memory.InMemoryTransportFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -75,17 +75,9 @@ abstract class TodoClientTest {
         server.shutdown();
         getClient().shutdown();
 
-        // TODO:2018-05-10:dmytro.dashenkov: Remove when https://github.com/SpineEventEngine/core-java/issues/690 is resolved.
-
-        // TODO                              This code is deliberately ugly to make it obvious that
-        // TODO                              it should be removed ASAP.
-        try {
-            final Field field = ServerEnvironment.class.getDeclaredField("sharding");
-            field.setAccessible(true);
-            field.set(ServerEnvironment.getInstance(), new InProcessSharding(InMemoryTransportFactory.newInstance()));
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw illegalStateWithCauseOf(e);
-        }
+        final Sharding sharding = new InProcessSharding(InMemoryTransportFactory.newInstance());
+        ServerEnvironment.getInstance()
+                         .replaceSharding(sharding);
     }
 
     private void startServer() throws InterruptedException {
