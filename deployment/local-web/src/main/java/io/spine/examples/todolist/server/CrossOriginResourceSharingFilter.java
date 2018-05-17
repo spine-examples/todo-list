@@ -20,6 +20,8 @@
 
 package io.spine.examples.todolist.server;
 
+import com.google.common.net.HttpHeaders;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebFilter;
@@ -27,6 +29,8 @@ import javax.servlet.http.HttpFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
+import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 
 /**
  * An {@link HttpFilter} which appends the CORS headers to the {@code /command} and {@code /query}
@@ -66,9 +70,9 @@ public final class CrossOriginResourceSharingFilter extends HttpFilter {
      */
     private enum ResponseHeader {
 
-        ACCESS_CONTROL_ALLOW_ORIGIN("access-control-allow-origin", "*"),
-        ACCESS_CONTROL_ALLOW_CREDENTIALS("access-control-allow-credentials", "true"),
-        ACCESS_CONTROL_ALLOW_HEADERS("access-control-allow-headers", "Content-Type");
+        ACCESS_CONTROL_ALLOW_ORIGIN(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*"),
+        ACCESS_CONTROL_ALLOW_CREDENTIALS(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true"),
+        ACCESS_CONTROL_ALLOW_HEADERS(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, CONTENT_TYPE);
 
         private final String name;
         private final String value;

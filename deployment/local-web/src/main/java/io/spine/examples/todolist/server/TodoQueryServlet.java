@@ -54,5 +54,3 @@ public final class TodoQueryServlet extends FirebaseQueryServlet {
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp) {
     }
 }
-
-
