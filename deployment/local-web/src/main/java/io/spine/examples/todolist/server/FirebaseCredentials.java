@@ -21,36 +21,43 @@
 package io.spine.examples.todolist.server;
 
 import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import static io.spine.util.Exceptions.illegalArgumentWithCauseOf;
 
 /**
- * A Firebase Realtime Database client.
+ * The factory of credentials for the Firebase integration.
  *
  * @author Dmytro Dashenkov
  */
-final class FirebaseClient {
+final class FirebaseCredentials {
 
-    static {
-        final GoogleCredentials credentials = FirebaseCredentials.read();
-        final FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(credentials)
-                .setDatabaseUrl("https://spine-dev.firebaseio.com/")
-                .build();
-        FirebaseApp.initializeApp(options);
-    }
+    /**
+     * The name of the credentials file stored in the classpath.
+     */
+    private static final String CREDENTIALS_FILE = "spine-dev.json";
 
     /**
      * Prevents the utility class instantiation.
      */
-    private FirebaseClient() {
+    private FirebaseCredentials() {
     }
 
     /**
-     * Retrieves an instance of {@link FirebaseDatabase}.
+     * Reads the credentials from the service account key file in classpath.
+     *
+     * @return the credentials for the Firebase access
      */
-    static FirebaseDatabase database() {
-        return FirebaseDatabase.getInstance();
+    static GoogleCredentials read() {
+        final InputStream in = FirebaseClient.class.getClassLoader()
+                                                   .getResourceAsStream(CREDENTIALS_FILE);
+        try {
+            final GoogleCredentials credentials = GoogleCredentials.fromStream(in);
+            return credentials;
+        } catch (IOException e) {
+            throw illegalArgumentWithCauseOf(e);
+        }
     }
 }

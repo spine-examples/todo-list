@@ -10,4 +10,4 @@ The `local-web` module uses the Gretty plugin to run locally. Run `./gradlew :lo
 
 The deployment uses the Firebase Realtime Database. It is required that the Firebase credentials are available under the `local-web/src/main/resources/spine-dev.json`.
 
-To use a custom Firebase project (not `spine-dev`) put the credentials into the module classpath end edit the `io.spine.examples.todolist.server.FirebaseClient` class accordingly.
+To use a custom Firebase project (not `spine-dev`) put the credentials into the module classpath end edit the `io.spine.examples.todolist.server.FirebaseCredentials` class accordingly.
