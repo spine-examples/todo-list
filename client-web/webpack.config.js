@@ -18,5 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: protobufPlugin
-apply from: "$rootDir/scripts/publish.gradle"
+const config = {
+    entry: "./lib/client.js",
+    output: {
+        path: __dirname,
+        filename: "bundle.js",
+        libraryTarget: "this"
+    },
+    target: "web"
+};
+
+module.exports = config;

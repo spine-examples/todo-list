@@ -128,7 +128,6 @@ public final class BoundedContexts {
         if (!storageFactory.isPresent()) {
             throw newIllegalStateException("EventBus does not specify a StorageFactory.");
         }
-
         return BoundedContext.newBuilder()
                              .setStorageFactorySupplier(storageFactory::get)
                              .setName(NAME)

@@ -1,0 +1,74 @@
+<!--
+  ~ Copyright 2018, TeamDev. All rights reserved.
+  ~
+  ~ Redistribution and use in source and/or binary forms, with or without
+  ~ modification, must retain the above copyright notice and the following
+  ~ disclaimer.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  ~ "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  ~ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  ~ A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  ~ OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  ~ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  ~ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  ~ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  ~ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<html>
+<link rel="stylesheet" type="text/css" href="index.css">
+<body>
+<script type="text/javascript" src="../bundle.js"></script>
+<script>
+    let client = new Client();
+
+    function refreshList() {
+        let list = document.getElementById("task_list");
+        client.fetchTasks(list);
+    }
+
+    function submitNewTask() {
+        let input = document.getElementById("task_description");
+        let description = input.value;
+        if (description == null || description.length === 0) {
+            warn("Task description must not be empty!");
+        } else {
+            clearWarning();
+            input.value = "";
+            client.submitNewTask(description);
+            setTimeout(() => {
+                refreshList()
+            }, 2000);
+        }
+    }
+
+    function clearWarning() {
+        warn("");
+    }
+
+    function warn(message) {
+        let view = document.getElementById("warning");
+        view.innerText = message;
+    }
+
+    window.onload = () => {
+        refreshList();
+    };
+</script>
+
+<div class="central_component">
+    <label for="task_description">Enter the task description</label>
+    <textarea id="task_description" placeholder="Buy some milk and eggs..."></textarea>
+
+    <p id="warning"></p>
+
+    <button onclick="submitNewTask()" id="crete_task_button">Create</button>
+
+    <div id="task_list"></div>
+</div>
+
+</body>
+</html>

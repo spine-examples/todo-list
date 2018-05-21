@@ -18,5 +18,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: protobufPlugin
-apply from: "$rootDir/scripts/publish.gradle"
+package io.spine.examples.todolist.server;
+
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.database.FirebaseDatabase;
+
+/**
+ * A Firebase Realtime Database client.
+ *
+ * @author Dmytro Dashenkov
+ */
+final class FirebaseClient {
+
+    static {
+        final GoogleCredentials credentials = FirebaseCredentials.read();
+        final FirebaseOptions options = new FirebaseOptions.Builder()
+                .setCredentials(credentials)
+                .setDatabaseUrl("https://spine-dev.firebaseio.com/")
+                .build();
+        FirebaseApp.initializeApp(options);
+    }
+
+    /**
+     * Prevents the utility class instantiation.
+     */
+    private FirebaseClient() {
+    }
+
+    /**
+     * Retrieves an instance of {@link FirebaseDatabase}.
+     */
+    static FirebaseDatabase database() {
+        return FirebaseDatabase.getInstance();
+    }
+}

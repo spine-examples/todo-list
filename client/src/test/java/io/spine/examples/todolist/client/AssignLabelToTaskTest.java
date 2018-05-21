@@ -160,7 +160,7 @@ class AssignLabelToTaskTest extends TodoClientTest {
     class AssignLabelToTaskToMyListView {
 
         @Test
-        @DisplayName("task view with label")
+        @DisplayName("contain task view with label")
         void obtainMyListViewWithLabels() {
             final CreateBasicLabel createLabel = createLabel();
             final LabelId labelId = createLabel.getLabelId();

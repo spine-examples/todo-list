@@ -43,7 +43,7 @@ import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.events.TaskReopened;
 
 import static io.spine.Identifier.newUuid;
-import static io.spine.time.Time.getCurrentTime;
+import static io.spine.base.Time.getCurrentTime;
 
 /**
  * A factory of the task events for the test needs.

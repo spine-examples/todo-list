@@ -1,0 +1,68 @@
+/*
+ * Copyright 2018, TeamDev. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+apply plugin: 'com.google.protobuf'
+
+// Apply this script if it is needed to generate Protobuf descriptor set (special files with `.desc` extension).
+// These files may be needed by Gradle plugins to obtain descriptors of `.proto` files of this project.
+
+//noinspection GroovyAssignabilityCheck
+protobuf {
+    protoc {
+        // The version of protoc must match protobuf-java. If you don't depend on
+        // protobuf-java directly, you will be transitively depending on the
+        // protobuf-java version that grpc depends on.
+        artifact = protobufDependency
+    }
+
+    // The below suppression `GroovyAssignabilityCheck` is a workaround for the IDEA bug.
+    // See: https://youtrack.jetbrains.com/issue/IDEA-141744
+    //noinspection GroovyAssignabilityCheck
+    plugins {
+        grpc {
+            //noinspection GroovyAssignabilityCheck
+            artifact = "io.grpc:protoc-gen-grpc-java:${gRpcVersion}"
+        }
+    }
+
+    generatedFilesBaseDir = generatedRootDir
+
+    generateProtoTasks {
+        all().each { final task ->
+            task.generateDescriptorSet = true
+            task.descriptorSetOptions.path = "$projectDir/build/descriptors/${task.sourceSet.name}.desc"
+            task.descriptorSetOptions.includeImports = true
+            task.descriptorSetOptions.includeSourceInfo = true
+            task.plugins {
+                grpc {}
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        proto.srcDirs = ["${sourcesRootDir}/main/proto"]
+        java.srcDirs += [generatedGrpcDir]
+    }
+    test {
+        proto.srcDirs = ["${sourcesRootDir}/test/proto"]
+    }
+}

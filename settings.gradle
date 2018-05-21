@@ -23,22 +23,21 @@ include 'model'
 include 'client'
 include 'server'
 include 'client-cli'
+include 'client-web'
 include 'cli-core'
 include 'testutil-api'
 include 'testutil-cli'
 include 'integration-tests'
 
-include ':local-inmem'
-project(':local-inmem').projectDir = new File('./deployment/local-inmem')
+def deployment(final String name) {
+    final String path = ":$name"
+    include path
+    project(path).projectDir = new File("./deployment/$name")
+}
 
-include ':local-my-sql'
-project(':local-my-sql').projectDir = new File('./deployment/local-my-sql')
-
-include ':local-cloud-sql'
-project(':local-cloud-sql').projectDir = new File('./deployment/local-cloud-sql')
-
-include ':compute-cloud-sql'
-project(':compute-cloud-sql').projectDir = new File('./deployment/compute-cloud-sql')
-
-include ':local-firebase'
-project(':local-firebase').projectDir = new File('./deployment/local-firebase')
+deployment 'local-inmem'
+deployment 'local-my-sql'
+deployment 'local-cloud-sql'
+deployment 'compute-cloud-sql'
+deployment 'local-firebase'
+deployment 'local-web'

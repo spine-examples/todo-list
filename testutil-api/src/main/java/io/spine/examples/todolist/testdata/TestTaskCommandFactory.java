@@ -40,7 +40,7 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 
 import static io.spine.Identifier.newUuid;
-import static io.spine.time.Time.getCurrentTime;
+import static io.spine.base.Time.getCurrentTime;
 
 /**
  * A factory of the task commands for the test needs.
