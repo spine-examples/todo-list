@@ -154,7 +154,7 @@ subprojects {
         // todo try make it protobuf
         implementation "io.spine:spine-client:$spineVersion"
 
-        compileOnly group: 'io.spine.tools', name: 'spine-model-assembler', version: spineVersion
+        compileOnly "io.spine.tools:spine-model-assembler:$spineVersion"
 
         testImplementation deps.test.hamcrest
 
@@ -171,7 +171,7 @@ subprojects {
     configurations.all {
         resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
     }
-    
+
     sourceSets {
         main {
             java.srcDirs = [generatedJavaDir, generatedSpineDir, "${sourcesRootDir}/main/java"]
