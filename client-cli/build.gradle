@@ -19,13 +19,13 @@
  */
 
 dependencies {
-    compile group: 'org.jline', name: 'jline', version: '3.3.0'
+    implementation 'org.jline:jline:3.3.0'
 
-    compile project(path: ':client')
-    compile project(path: ':cli-core')
-    testCompile project(path: ':testutil-cli')
-    testCompile project(path: ':testutil-api')
-    testCompile project(path: ':server')
+    implementation project(path: ':client')
+    implementation project(path: ':cli-core')
+    testImplementation project(path: ':testutil-cli')
+    testImplementation project(path: ':testutil-api')
+    testImplementation project(path: ':server')
 }
 
 // A task to run the client. See `ClientApp` for the details.

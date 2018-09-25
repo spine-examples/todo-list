@@ -19,15 +19,15 @@
  */
 
 dependencies {
-    compile project(path: ':client')
+    implementation project(path: ':client')
 
-    testCompile group: 'mysql', name: 'mysql-connector-java', version: mysqlDriverVersion
-    testCompile group: 'io.spine', name: 'jdbc-rdbms', version: spineJdbcStorageVersion
-    testCompile group: 'org.junit.platform', name: 'junit-platform-console-standalone',
+    testImplementation "mysql:mysql-connector-java:$mysqlDriverVersion"
+    testImplementation "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
+    testImplementation group: 'org.junit.platform', name: 'junit-platform-console-standalone',
             version: jUnitPlatformVersion
 
-    testCompile project(path: ':testutil-api')
-    testCompile project(path: ':server')
+    testImplementation project(path: ':testutil-api')
+    testImplementation project(path: ':server')
 }
 
 task integrationTest(type: JavaExec) {

@@ -32,17 +32,11 @@ project.ext {
     spineGcloudVersion = '0.10.35-SNAPSHOT'
 
     // Main scope third party dependencies' versions
-    protobufGradlePluginVersion = '0.8.4'
-    appEngineVersion = '1.9.42'
-    guavaVersion = '20.0'
-    protobufVersion = '3.5.1'
-    gRpcVersion = '1.9.0'
-    slf4jVersion = '1.7.25'
     servletApiVersion = '4.0.0'
-    gcloudJavaVersion = '0.2.8'
     cloudSqlSocketFactoryVersion = '1.0.4'
     shadowJarVersion = '2.0.1'
     mysqlDriverVersion = '6.0.6'
+    gsonVersion = '2.7'
     nettyBoringsslVersion = '2.0.6.Final'
 
     // Test scope third party dependencies' versions

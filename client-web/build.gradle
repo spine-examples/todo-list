@@ -32,7 +32,7 @@ dependencies {
 protobuf {
     generatedFilesBaseDir = compiledProto
     protoc {
-        artifact = "com.google.protobuf:protoc:${protobufVersion}"
+        artifact = deps.build.protoc
     }
     generateProtoTasks {
         all().each { final task ->

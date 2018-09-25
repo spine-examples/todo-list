@@ -19,31 +19,26 @@
  */
 
 buildscript {
+    apply from: "$rootDir/config/gradle/dependencies.gradle"
     apply from: 'ext.gradle'
-
-    ext {
-        spineRepository = 'http://maven.teamdev.com/repository/spine'
-        spineSnapshotsRepository = 'http://maven.teamdev.com/repository/spine-snapshots'
-        appEngineGradlePlugin = 'com.google.cloud.tools:appengine-gradle-plugin:+'
-    }
 
     repositories {
         jcenter()
-
-        maven { url = spineRepository }
-        maven { url = spineSnapshotsRepository }
-
+        google()
         mavenCentral()
         mavenLocal()
+        maven { url = repos.gradlePlugins }
+        maven { url = repos.spine }
+        maven { url = repos.spineSnapshots }
     }
 
     dependencies {
-        classpath group: 'com.google.guava', name: 'guava', version: guavaVersion
-        classpath(group: 'com.google.protobuf', name: 'protobuf-gradle-plugin', version: protobufGradlePluginVersion) {
+        classpath deps.build.guava
+        classpath(deps.build.gradlePlugins.protobuf) {
             // exclude an old Guava version
             exclude group: 'com.google.guava'
         }
-        classpath appEngineGradlePlugin
+        classpath deps.build.gradlePlugins.protobuf
         classpath 'org.akhikhl.gretty:gretty:+'
         classpath "org.junit.platform:junit-platform-gradle-plugin:${jUnitPlatformVersion}"
         classpath "io.spine.tools:spine-model-compiler:${spineBaseVersion}"
@@ -94,13 +89,11 @@ allprojects {
     repositories {
         jcenter()
         google()
-
-        // If it's not found in JCenter, it must be our code.
-        maven { url = spineRepository }
-        maven { url = spineSnapshotsRepository }
-
-        mavenLocal()
         mavenCentral()
+        mavenLocal()
+        maven { url = repos.gradlePlugins }
+        maven { url = repos.spine }
+        maven { url = repos.spineSnapshots }
     }
 }
 
@@ -108,11 +101,6 @@ allprojects {
 rootProject.jar.enabled = false
 
 final boolean isTravis = System.env.TRAVIS == 'true'
-
-ext {
-    protobufDependency = "com.google.protobuf:protoc:${protobufVersion}"
-}
-
 
 subprojects {
     project.ext {
@@ -128,7 +116,6 @@ subprojects {
         generatedSpineDir = "${generatedRootDir}/main/spine"
         generatedTestSpineDir = "${generatedRootDir}/test/spine"
 
-        testArtifactsPlugin = "${rootDir}/scripts/test-artifacts.gradle"
         protobufPlugin = "${rootDir}/scripts/protobuf.gradle"
     }
 
@@ -149,44 +136,36 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     dependencies {
-        compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
-        compile group: 'org.slf4j', name: 'slf4j-jdk14', version: slf4jVersion
-        compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.0'
+        implementation deps.build.slf4j
 
-        compile group: 'com.google.guava', name: 'guava', version: guavaVersion
-        compile group: 'com.google.code.gson', name: 'gson', version: '2.7'
+        // todo try make it testImplementation
+        implementation deps.test.slf4j
 
-        compile("com.google.protobuf:protobuf-java:${protobufVersion}") {
-            // Do not use Guava v18, we use newer version.
-            exclude group: 'com.google.guava'
-            // Use Gson v2.7 instead of v2.3. See: https://github.com/google/gson/blob/master/CHANGELOG.md
-            exclude group: 'com.google.code.gson'
-        }
-        compile group: 'com.google.protobuf', name: 'protobuf-java-util', version: protobufVersion
+        implementation deps.build.jsr305Annotations
 
-        compile group: 'io.spine', name: 'spine-base', version: spineBaseVersion
-        compile group: 'io.spine', name: 'spine-client', version: spineVersion
+        implementation deps.build.guava
+
+        implementation "com.google.code.gson:gson:$gsonVersion"
+
+        implementation deps.build.protobuf
+
+        implementation "io.spine:spine-base:$spineBaseVersion"
+
+        // todo try make it protobuf
+        implementation "io.spine:spine-client:$spineVersion"
+
         compileOnly group: 'io.spine.tools', name: 'spine-model-assembler', version: spineVersion
 
-        testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
-        testCompile("io.spine:spine-testutil-base:${spineBaseVersion}") {
-            // We are using JUnit 5.x instead of 4.x dependency of Spine testing framework.
-            exclude group: 'junit'
-        }
-        testCompile("io.spine:spine-testutil-core:${spineVersion}") {
-            // We are using JUnit 5.x instead of 4.x dependency of Spine testing framework.
-            exclude group: 'junit'
-        }
-        testCompile("io.spine:spine-testutil-client:${spineVersion}") {
-            // We are using JUnit 5.x instead of 4.x dependency of Spine testing framework.
-            exclude group: 'junit'
-        }
-        testCompile("io.spine:spine-testutil-server:${spineVersion}") {
-            // We are using JUnit 5.x instead of 4.x dependency of Spine testing framework.
-            exclude group: 'junit'
-        }
-        testCompile "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
-        testRuntime "org.junit.jupiter:junit-jupiter-engine:${jUnitVersion}"
+        testImplementation deps.test.hamcrest
+
+        testImplementation "io.spine:spine-testutil-base:${spineBaseVersion}"
+        testImplementation "io.spine:spine-testutil-core:${spineVersion}"
+        testImplementation "io.spine:spine-testutil-client:${spineVersion}"
+
+        testImplementation "io.spine:spine-testutil-server:${spineVersion}"
+
+        testImplementation deps.test.junit5Api
+        testImplementation deps.test.junit5Runner
     }
 
     configurations.all {
