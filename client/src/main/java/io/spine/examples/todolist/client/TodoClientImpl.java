@@ -26,6 +26,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
 import io.spine.Identifier;
+import io.spine.base.CommandMessage;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.EntityStateUpdate;
 import io.spine.client.Query;
@@ -95,7 +96,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
-    public void postCommand(TodoCommand cmd) {
+    public void postCommand(CommandMessage cmd) {
         final Command executableCmd = requestFactory.command()
                                                     .create(cmd);
         commandService.post(executableCmd);

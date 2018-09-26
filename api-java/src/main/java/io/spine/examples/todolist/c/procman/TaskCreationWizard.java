@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.c.procman;
 
 import com.google.protobuf.Message;
+import io.spine.base.CommandMessage;
 import io.spine.core.CommandContext;
 import io.spine.examples.todolist.TaskCreation;
 import io.spine.examples.todolist.TaskCreation.Stage;
@@ -34,11 +35,9 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
-import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.c.rejection.CannotMoveToStage;
 import io.spine.server.command.Assign;
-import io.spine.server.procman.CommandRouted;
-import io.spine.server.procman.CommandRouter;
+import io.spine.server.command.Command;
 import io.spine.server.procman.ProcessManager;
 
 import java.util.Collection;
@@ -46,7 +45,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.of;
+import static com.google.common.collect.Lists.newArrayList;
 import static io.spine.examples.todolist.TaskCreation.Stage.CANCELED;
 import static io.spine.examples.todolist.TaskCreation.Stage.COMPLETED;
 import static io.spine.examples.todolist.TaskCreation.Stage.CONFIRMATION;
@@ -104,69 +103,57 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         super(id);
     }
 
-    @Assign
-    CommandRouted handle(StartTaskCreation command, CommandContext context)
+    @Command
+    CreateDraft handle(StartTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
         return transit(TASK_DEFINITION, () -> {
             final TaskId taskId = command.getTaskId();
-            final TodoCommand createDraft = CreateDraft.newBuilder()
-                                                       .setId(taskId)
-                                                       .build();
-            final CommandRouted commandRouted = newRouterFor(command, context).add(createDraft)
-                                                                              .routeAll();
+            final CreateDraft createDraft = CreateDraft
+                    .newBuilder()
+                    .setId(taskId)
+                    .build();
             initProcess(command);
-            return commandRouted;
+            return createDraft;
         });
     }
 
-    @Assign
-    CommandRouted handle(SetTaskDetails command, CommandContext context)
+    @Command
+    Collection<? extends CommandMessage> handle(SetTaskDetails command, CommandContext context)
             throws CannotMoveToStage {
         final WizardCommands commands = commands();
         return transit(LABEL_ASSIGNMENT, () -> {
-            final Collection<? extends TodoCommand> resultCommands =
+            final Collection<? extends CommandMessage> resultCommands =
                     commands.setTaskDetails(command);
-            final CommandRouter router = newRouterFor(command, context);
-            resultCommands.forEach(router::add);
-            final CommandRouted commandRouted = router.routeAll();
-            return commandRouted;
+            return resultCommands;
         });
     }
 
-    @Assign
-    List<? extends Message> handle(AddLabels command, CommandContext context)
+    @Command
+    Collection<? extends CommandMessage> handle(AddLabels command, CommandContext context)
             throws CannotMoveToStage {
         final WizardCommands commands = commands();
         return transit(CONFIRMATION, () -> {
-            final Collection<? extends TodoCommand> existingLabelsCommands =
+            final Collection<? extends CommandMessage> existingLabelsCommands =
                     commands.assignExistingLabels(command);
-            final Collection<? extends TodoCommand> newLabelsCommands =
+            final Collection<? extends CommandMessage> newLabelsCommands =
                     commands.assignNewLabels(command);
-            final List<? extends Message> result;
-            if (existingLabelsCommands.isEmpty() && newLabelsCommands.isEmpty()) {
-                result = emptyList();
-            } else {
-                final CommandRouter router = newRouterFor(command, context);
-                existingLabelsCommands.forEach(router::add);
-                newLabelsCommands.forEach(router::add);
-                final CommandRouted commandRouted = router.routeAll();
-                result = of(commandRouted);
-            }
+            Collection<CommandMessage> result = newArrayList();
+            result.addAll(existingLabelsCommands);
+            result.addAll(newLabelsCommands);
             return result;
         });
     }
 
-    @Assign
-    CommandRouted handle(CompleteTaskCreation command, CommandContext context)
+    @Command
+    FinalizeDraft handle(CompleteTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
         return transit(COMPLETED, () -> {
-            final TodoCommand finalizeDraft = FinalizeDraft.newBuilder()
-                                                           .setId(taskId())
-                                                           .build();
-            final CommandRouted commandRouted = newRouterFor(command, context).add(finalizeDraft)
-                                                                              .routeAll();
+            final FinalizeDraft finalizeDraft = FinalizeDraft
+                    .newBuilder()
+                    .setId(taskId())
+                    .build();
             completeProcess();
-            return commandRouted;
+            return finalizeDraft;
         });
     }
 

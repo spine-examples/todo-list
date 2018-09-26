@@ -20,12 +20,12 @@
 
 package io.spine.examples.todolist.client;
 
+import io.spine.base.CommandMessage;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskLabels;
-import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
@@ -49,7 +49,7 @@ public interface TodoClient {
      *
      * @param commandMessage the command to post
      */
-    void postCommand(TodoCommand commandMessage);
+    void postCommand(CommandMessage commandMessage);
 
     /**
      * Obtains the single {@link MyListView}.

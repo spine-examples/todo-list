@@ -24,6 +24,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
+import io.spine.base.CommandMessage;
+import io.spine.base.Time;
 import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
 import io.spine.client.ActorRequestFactory;
@@ -50,7 +52,6 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
-import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
@@ -65,7 +66,6 @@ import io.spine.server.procman.ProcessManagerDispatcher;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.StorageFactorySwitch;
 import io.spine.server.tenant.TenantIndex;
-import io.spine.base.Time;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -123,9 +123,9 @@ class TaskCreationWizardTest {
                                                            .setId(getId())
                                                            .setTaskId(taskId)
                                                            .build();
-            final List<? extends TodoCommand> commands = producesCommands(cmd);
+            final List<? extends CommandMessage> commands = producesCommands(cmd);
             assertEquals(1, commands.size());
-            final TodoCommand producedCommand = commands.get(0);
+            final CommandMessage producedCommand = commands.get(0);
             assertThat(producedCommand, instanceOf(CreateDraft.class));
             final CreateDraft createDraftCmd = (CreateDraft) producedCommand;
             assertEquals(taskId, createDraftCmd.getId());
@@ -161,7 +161,7 @@ class TaskCreationWizardTest {
                                                      .setPriority(priority)
                                                      .setDueDate(dueDate)
                                                      .build();
-            final List<? extends TodoCommand> produced = producesCommands(cmd);
+            final List<? extends CommandMessage> produced = producesCommands(cmd);
             assertEquals(3, produced.size());
             final StringChange descriptionChange = StringChange.newBuilder()
                                                                .setNewValue(descriptionValue)
@@ -215,8 +215,8 @@ class TaskCreationWizardTest {
                                            .addAllExistingLabels(existingLabelIds)
                                            .addNewLabels(newLabel)
                                            .build();
-            final List<? extends TodoCommand> producedCommands = producesCommands(cmd);
-            final Collection<Matcher<? super TodoCommand>> expectedCommands = ImmutableList.of(
+            final List<? extends CommandMessage> producedCommands = producesCommands(cmd);
+            final Collection<Matcher<? super CommandMessage>> expectedCommands = ImmutableList.of(
                     instanceOf(AssignLabelToTask.class), // 3 label assignments
                     instanceOf(AssignLabelToTask.class),
                     instanceOf(AssignLabelToTask.class),
@@ -258,7 +258,7 @@ class TaskCreationWizardTest {
             final CompleteTaskCreation cmd = CompleteTaskCreation.newBuilder()
                                                                  .setId(getId())
                                                                  .build();
-            final List<? extends TodoCommand> produced = producesCommands(cmd);
+            final List<? extends CommandMessage> produced = producesCommands(cmd);
             assertEquals(1, produced.size());
             final FinalizeDraft expectedCmd = FinalizeDraft.newBuilder()
                                                            .setId(getTaskId())
@@ -323,7 +323,7 @@ class TaskCreationWizardTest {
             assertFalse(deleted, "Should not be deleted");
         }
 
-        List<? extends Message> dispatch(TodoCommand command) {
+        List<? extends Message> dispatch(CommandMessage command) {
             final Command cmd = requestFactory.command()
                                               .create(command);
             final CommandEnvelope envelope = CommandEnvelope.of(cmd);
@@ -335,7 +335,7 @@ class TaskCreationWizardTest {
             return result;
         }
 
-        List<? extends TodoCommand> producesCommands(TodoCommand source) {
+        List<? extends CommandMessage> producesCommands(CommandMessage source) {
             final List<? extends Message> events = dispatch(source);
             assertFalse(events.isEmpty());
             assertEquals(1, events.size());
@@ -343,9 +343,9 @@ class TaskCreationWizardTest {
             assertThat(event, instanceOf(CommandRouted.class));
             final CommandRouted commandRouted = (CommandRouted) event;
             final List<Command> commands = commandRouted.getProducedList();
-            final List<? extends TodoCommand> result =
+            final List<? extends CommandMessage> result =
                     commands.stream()
-                            .map(cmd -> (TodoCommand) AnyPacker.unpack(cmd.getMessage()))
+                            .map(cmd -> (CommandMessage) AnyPacker.unpack(cmd.getMessage()))
                             .collect(toList());
             return result;
         }
