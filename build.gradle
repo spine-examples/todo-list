@@ -154,11 +154,11 @@ subprojects {
         // todo try make it protobuf
         implementation "io.spine:spine-client:$spineVersion"
 
-        compileOnly "io.spine.tools:spine-model-assembler:$spineVersion"
+        annotationProcessor "io.spine.tools:spine-model-assembler:$spineVersion"
 
         testImplementation deps.test.hamcrest
 
-        testImplementation "io.spine:spine-testutil-base:${spineBaseVersion}"
+        testImplementation "io.spine:spine-testlib:${spineBaseVersion}"
         testImplementation "io.spine:spine-testutil-core:${spineVersion}"
         testImplementation "io.spine:spine-testutil-client:${spineVersion}"
 
