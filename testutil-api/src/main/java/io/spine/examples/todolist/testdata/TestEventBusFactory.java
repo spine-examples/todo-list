@@ -21,7 +21,7 @@
 package io.spine.examples.todolist.testdata;
 
 import io.spine.server.event.EventBus;
-import io.spine.server.event.EventEnricher;
+import io.spine.server.event.Enricher;
 import io.spine.server.storage.StorageFactory;
 
 /**
@@ -38,11 +38,11 @@ public class TestEventBusFactory {
      * Returns a pre-configured {@link EventBus.Builder} instance.
      *
      * @param storageFactory the {@link StorageFactory} to set
-     * @param eventEnricher  the {@link EventEnricher} to set
+     * @param eventEnricher  the {@link Enricher} to set
      * @return the {@code EventBus.Builder} instance
      */
     public static EventBus.Builder newEventBusBuilder(StorageFactory storageFactory,
-                                                      EventEnricher eventEnricher) {
+                                                      Enricher eventEnricher) {
         return EventBus.newBuilder()
                        .setStorageFactory(storageFactory)
                        .setEnricher(eventEnricher);

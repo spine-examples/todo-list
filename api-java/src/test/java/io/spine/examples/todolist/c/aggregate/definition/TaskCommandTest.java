@@ -21,16 +21,17 @@
 package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.protobuf.Message;
-import io.spine.client.TestActorRequestFactory;
+import io.spine.base.CommandMessage;
 import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.server.BoundedContext;
-import io.spine.server.aggregate.AggregatePartCommandTest;
+import io.spine.testing.client.TestActorRequestFactory;
+import io.spine.testing.server.aggregate.AggregatePartCommandTest;
 
-import static io.spine.Identifier.newUuid;
+import static io.spine.base.Identifier.newUuid;
 
 /**
  * The parent class for the {@link TaskPart} test classes.
@@ -44,6 +45,10 @@ abstract class TaskCommandTest<C extends Message> extends AggregatePartCommandTe
             TestActorRequestFactory.newInstance(getClass());
     TaskPart aggregate;
     TaskId taskId;
+
+    protected TaskCommandTest(Object aggregateId, CommandMessage commandMessage) {
+        super(aggregateId, commandMessage);
+    }
 
     @Override
     protected void setUp() {

@@ -26,7 +26,7 @@ import io.spine.cli.Screen;
 import io.spine.cli.action.Action;
 import io.spine.cli.action.CommandAction;
 import io.spine.cli.action.EditCommandAction;
-import io.spine.util.GenericTypeIndex;
+import io.spine.reflect.GenericTypeIndex;
 import io.spine.validate.ConstraintViolation;
 import io.spine.validate.ValidatingBuilder;
 import io.spine.validate.ValidatingBuilders;
@@ -150,11 +150,6 @@ public abstract class CommandView<M extends Message,
         @Override
         public int getIndex() {
             return this.index;
-        }
-
-        @Override
-        public Class<?> getArgumentIn(Class<? extends CommandView> cls) {
-            return Default.getArgument(this, cls);
         }
     }
 

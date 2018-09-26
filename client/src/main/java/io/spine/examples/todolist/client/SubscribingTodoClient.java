@@ -25,8 +25,7 @@ import io.spine.client.Subscription;
 import io.spine.examples.todolist.q.projection.MyListView;
 
 /**
- * A TodoList gRPC client able to make calls to
- * the {@link io.spine.server.SubscriptionService SubscriptionService}.
+ * A TodoList gRPC client able to make calls to the {@code SubscriptionService}.
  *
  * @author Dmytro Dashenkov
  */
