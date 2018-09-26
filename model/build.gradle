@@ -19,5 +19,4 @@
  */
 
 // todo try to build with model compiler instead
-apply from: protobufPlugin
 apply from: "$rootDir/scripts/publish.gradle"
