@@ -19,9 +19,9 @@
  */
 
 dependencies {
-    implementation "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
-    implementation "com.google.cloud.sql:mysql-socket-factory:$cloudSqlSocketFactoryVersion"
-    implementation project(path: ':server')
+    compile "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
+    compile "com.google.cloud.sql:mysql-socket-factory:$cloudSqlSocketFactoryVersion"
+    compile project(path: ':server')
 }
 
 // A task to run the server. See `LocalCloudSqlServer` for the details.

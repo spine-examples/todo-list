@@ -19,8 +19,9 @@
  */
 
 dependencies {
-    implementation project(path: ':model')
-    implementation "io.spine:spine-server:$spineVersion"
+    compile "io.spine:spine-server:$spineVersion"
+    compile project(path: ':model')
 
-    testImplementation project(path: ':testutil-api')
+    testCompile "io.spine:spine-testutil-server:$spineVersion"
+    testCompile project(path: ':testutil-api')
 }

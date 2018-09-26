@@ -19,10 +19,10 @@
  */
 
 dependencies {
-    implementation "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
-    implementation "mysql:mysql-connector-java$mysqlDriverVersion"
+    compile "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
+    compile "mysql:mysql-connector-java$mysqlDriverVersion"
 
-    implementation project(path: ':server')
+    compile project(path: ':server')
 }
 
 // A task to run the server. See `LocalMySqlServer` for the details.
