@@ -20,10 +20,11 @@
 
 package io.spine.examples.todolist;
 
-import com.google.common.base.Optional;
 import com.google.protobuf.Message;
 import io.spine.core.Enrichments;
 import io.spine.core.EventContext;
+
+import java.util.Optional;
 
 /**
  * Utility class for working with enrichments.

@@ -20,8 +20,7 @@
 
 package io.spine.examples.todolist.context;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
+import io.spine.core.EventContext;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdsList;
@@ -35,8 +34,11 @@ import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
+import io.spine.server.event.Enricher;
 import io.spine.server.event.EventBus;
-import io.spine.server.event.EventEnricher;
+
+import java.util.Optional;
+import java.util.function.BiFunction;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -59,19 +61,19 @@ public class TodoListEnrichments {
         this.labelRepository = builder.labelRepository;
     }
 
-    EventEnricher createEnricher() {
-        final EventEnricher enricher =
-                EventEnricher.newBuilder()
-                             .add(LabelId.class, LabelDetails.class, labelIdToLabelDetails())
-                             .add(TaskId.class, TaskDetails.class, taskIdToTaskDetails())
-                             .add(TaskId.class, LabelIdsList.class, taskIdToLabelList())
-                             .add(TaskId.class, Task.class, taskIdToTask())
-                             .build();
+    Enricher createEnricher() {
+        final Enricher enricher = Enricher
+                .newBuilder()
+                .add(LabelId.class, LabelDetails.class, labelIdToLabelDetails())
+                .add(TaskId.class, TaskDetails.class, taskIdToTaskDetails())
+                .add(TaskId.class, LabelIdsList.class, taskIdToLabelList())
+                .add(TaskId.class, Task.class, taskIdToTask())
+                .build();
         return enricher;
     }
 
-    private Function<TaskId, Task> taskIdToTask() {
-        final Function<TaskId, Task> result = taskId -> {
+    private BiFunction<TaskId, EventContext, Task> taskIdToTask() {
+        final BiFunction<TaskId, EventContext, Task> result = (taskId, eventContext) -> {
             if (taskId == null) {
                 return Task.getDefaultInstance();
             }
@@ -85,8 +87,8 @@ public class TodoListEnrichments {
         return result;
     }
 
-    private Function<TaskId, TaskDetails> taskIdToTaskDetails() {
-        final Function<TaskId, TaskDetails> result = taskId -> {
+    private BiFunction<TaskId, EventContext, TaskDetails> taskIdToTaskDetails() {
+        final BiFunction<TaskId, EventContext, TaskDetails> result = (taskId, eventContext) -> {
             if (taskId == null) {
                 return TaskDetails.getDefaultInstance();
             }
@@ -105,8 +107,8 @@ public class TodoListEnrichments {
         return result;
     }
 
-    private Function<TaskId, LabelIdsList> taskIdToLabelList() {
-        final Function<TaskId, LabelIdsList> result = taskId -> {
+    private BiFunction<TaskId, EventContext, LabelIdsList> taskIdToLabelList() {
+        final BiFunction<TaskId, EventContext, LabelIdsList> result = (taskId, eventContext) -> {
             if (taskId == null) {
                 return LabelIdsList.getDefaultInstance();
             }
@@ -122,8 +124,8 @@ public class TodoListEnrichments {
         return result;
     }
 
-    private Function<LabelId, LabelDetails> labelIdToLabelDetails() {
-        final Function<LabelId, LabelDetails> result = labelId -> {
+    private BiFunction<LabelId, EventContext, LabelDetails> labelIdToLabelDetails() {
+        final BiFunction<LabelId, EventContext, LabelDetails> result = (labelId, eventContext) -> {
             if (labelId == null) {
                 return LabelDetails.getDefaultInstance();
             }

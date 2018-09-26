@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.repository;
 
-import com.google.protobuf.Message;
+import io.spine.base.EventMessage;
 import io.spine.core.EventContext;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdsList;
@@ -84,7 +84,7 @@ public class LabelledTasksViewRepository
         routing.route(TaskDueDateUpdated.class, fromContext());
     }
 
-    private static <T extends Message> EventRoute<LabelId, T> fromContext() {
+    private static <T extends EventMessage> EventRoute<LabelId, T> fromContext() {
         return (message, context) -> getLabelIdsSet(context);
     }
 

@@ -35,7 +35,7 @@ import io.spine.examples.todolist.c.events.LabelCreated;
 import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
 import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
 import io.spine.examples.todolist.c.rejection.Rejections;
-import io.spine.server.aggregate.AggregateCommandTest;
+import io.spine.testing.server.aggregate.AggregateCommandTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -43,14 +43,14 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static io.spine.Identifier.newUuid;
+import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.c.aggregate.LabelAggregate.DEFAULT_LABEL_COLOR;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.UPDATED_LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.updateLabelDetailsInstance;
 import static io.spine.protobuf.AnyPacker.pack;
-import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
+import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

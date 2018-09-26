@@ -33,7 +33,7 @@ import java.util.List;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
-import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
+import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

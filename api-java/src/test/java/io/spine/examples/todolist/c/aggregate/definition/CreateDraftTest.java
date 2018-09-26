@@ -40,7 +40,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIP
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
-import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
+import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
