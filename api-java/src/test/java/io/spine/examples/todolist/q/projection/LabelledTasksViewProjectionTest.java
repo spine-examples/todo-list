@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.q.projection;
 
+import io.spine.core.BoundedContextNames;
 import io.spine.core.Event;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelId;
@@ -36,8 +37,8 @@ import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.events.TaskReopened;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
 import io.spine.server.BoundedContext;
+import io.spine.server.event.Enricher;
 import io.spine.server.event.EventBus;
-import io.spine.server.event.EventEnricher;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.StorageFactorySwitch;
@@ -46,7 +47,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.Identifier.newUuid;
+import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
 import static io.spine.examples.todolist.testdata.TestEventBusFactory.newEventBusBuilder;
 import static io.spine.examples.todolist.testdata.TestEventEnricherFactory.LABEL_TITLE;
@@ -88,9 +89,9 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
     @BeforeEach
     void setUp() {
         final StorageFactorySwitch storageFactorySwitch = newInstance(
-                BoundedContext.newName(BOUNDED_CONTEXT_NAME), false);
+                BoundedContextNames.newName(BOUNDED_CONTEXT_NAME), false);
         final StorageFactory storageFactory = storageFactorySwitch.get();
-        final EventEnricher eventEnricher = eventEnricherInstance();
+        final Enricher eventEnricher = eventEnricherInstance();
         final EventBus.Builder eventBusBuilder = newEventBusBuilder(storageFactory, eventEnricher);
         final BoundedContext boundedContext = boundedContextInstance(eventBusBuilder,
                                                                      storageFactorySwitch);

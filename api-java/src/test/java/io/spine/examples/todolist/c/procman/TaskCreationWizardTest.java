@@ -29,10 +29,10 @@ import io.spine.base.Time;
 import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
 import io.spine.client.ActorRequestFactory;
-import io.spine.client.TestActorRequestFactory;
 import io.spine.core.Command;
 import io.spine.core.CommandClass;
 import io.spine.core.CommandEnvelope;
+import io.spine.core.CommandId;
 import io.spine.core.Event;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
@@ -59,13 +59,15 @@ import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.protobuf.AnyPacker;
 import io.spine.server.commandbus.CommandBus;
 import io.spine.server.commandbus.CommandDispatcher;
-import io.spine.server.commandstore.CommandStore;
-import io.spine.server.procman.CommandRouted;
 import io.spine.server.procman.ProcessManager;
-import io.spine.server.procman.ProcessManagerDispatcher;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.StorageFactorySwitch;
 import io.spine.server.tenant.TenantIndex;
+import io.spine.system.server.CommandHandled;
+import io.spine.system.server.CommandSplit;
+import io.spine.system.server.CommandTransformed;
+import io.spine.testing.client.TestActorRequestFactory;
+import io.spine.testing.server.procman.PmDispatcher;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -78,14 +80,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import static io.spine.Identifier.newUuid;
-import static io.spine.core.CommandClass.of;
+import static io.spine.base.Identifier.newUuid;
+import static io.spine.core.BoundedContextNames.newName;
+import static io.spine.core.CommandClass.from;
 import static io.spine.examples.todolist.TaskCreation.Stage.CANCELED;
 import static io.spine.examples.todolist.TaskCreation.Stage.COMPLETED;
 import static io.spine.examples.todolist.TaskCreation.Stage.CONFIRMATION;
 import static io.spine.examples.todolist.TaskCreation.Stage.LABEL_ASSIGNMENT;
 import static io.spine.examples.todolist.TaskCreation.Stage.TASK_DEFINITION;
-import static io.spine.server.BoundedContext.newName;
 import static io.spine.server.storage.StorageFactorySwitch.newInstance;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.util.stream.Collectors.toList;
@@ -123,9 +125,7 @@ class TaskCreationWizardTest {
                                                            .setId(getId())
                                                            .setTaskId(taskId)
                                                            .build();
-            final List<? extends CommandMessage> commands = producesCommands(cmd);
-            assertEquals(1, commands.size());
-            final CommandMessage producedCommand = commands.get(0);
+            CommandId commandId = transformsCommand(cmd);
             assertThat(producedCommand, instanceOf(CreateDraft.class));
             final CreateDraft createDraftCmd = (CreateDraft) producedCommand;
             assertEquals(taskId, createDraftCmd.getId());
@@ -327,7 +327,7 @@ class TaskCreationWizardTest {
             final Command cmd = requestFactory.command()
                                               .create(command);
             final CommandEnvelope envelope = CommandEnvelope.of(cmd);
-            final List<Event> events = ProcessManagerDispatcher.dispatch(wizard, envelope);
+            final List<Event> events = PmDispatcher.dispatch(wizard, envelope);
             final List<? extends Message> result = events.stream()
                                                          .map(Event::getMessage)
                                                          .map(AnyPacker::<Message>unpack)
@@ -335,19 +335,26 @@ class TaskCreationWizardTest {
             return result;
         }
 
-        List<? extends CommandMessage> producesCommands(CommandMessage source) {
+        CommandId transformsCommand(CommandMessage source) {
             final List<? extends Message> events = dispatch(source);
             assertFalse(events.isEmpty());
             assertEquals(1, events.size());
             final Message event = events.get(0);
-            assertThat(event, instanceOf(CommandRouted.class));
-            final CommandRouted commandRouted = (CommandRouted) event;
-            final List<Command> commands = commandRouted.getProducedList();
-            final List<? extends CommandMessage> result =
-                    commands.stream()
-                            .map(cmd -> (CommandMessage) AnyPacker.unpack(cmd.getMessage()))
-                            .collect(toList());
-            return result;
+            assertThat(event, instanceOf(CommandTransformed.class));
+            final CommandTransformed commandTransformed = (CommandTransformed) event;
+            final CommandId produced = commandTransformed.getProduced();
+            return produced;
+        }
+
+        List<? extends CommandId> splitsCommand(CommandMessage source) {
+            final List<? extends Message> events = dispatch(source);
+            assertFalse(events.isEmpty());
+            assertEquals(1, events.size());
+            final Message event = events.get(0);
+            assertThat(event, instanceOf(CommandSplit.class));
+            final CommandSplit commandSplit = (CommandSplit) event;
+            final List<CommandId> produced = commandSplit.getProducedList();
+            return produced;
         }
 
         void startWizard() {
@@ -411,14 +418,14 @@ class TaskCreationWizardTest {
             @Override
             public Set<CommandClass> getMessageClasses() {
                 return ImmutableSet.of(
-                        of(CreateDraft.class),
-                        of(UpdateTaskDueDate.class),
-                        of(UpdateTaskPriority.class),
-                        of(UpdateTaskDescription.class),
-                        of(CreateBasicLabel.class),
-                        of(UpdateLabelDetails.class),
-                        of(AssignLabelToTask.class),
-                        of(FinalizeDraft.class)
+                        from(CreateDraft.class),
+                        from(UpdateTaskDueDate.class),
+                        from(UpdateTaskPriority.class),
+                        from(UpdateTaskDescription.class),
+                        from(CreateBasicLabel.class),
+                        from(UpdateLabelDetails.class),
+                        from(AssignLabelToTask.class),
+                        from(FinalizeDraft.class)
                 );
             }
 
