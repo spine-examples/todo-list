@@ -123,8 +123,6 @@ public final class BoundedContexts {
         return eventBus;
     }
 
-    @SuppressWarnings("Guava" /* Spine API is Java 7-based
-                                 and uses `Optional` from Google Guava. */)
     @VisibleForTesting
     static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
         final Optional<StorageFactory> storageFactory = eventBus.getStorageFactory();

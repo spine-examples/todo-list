@@ -47,8 +47,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @author Illia Shepilov
  */
-@SuppressWarnings("Guava") // Because com.google.common.base.Function is used
-                           // until the migration of Spine to Java 8 is performed.
 public class TodoListEnrichments {
 
     private final TaskRepository taskRepo;
