@@ -20,12 +20,15 @@
 
 package io.spine.examples.todolist.c.aggregate.rejection;
 
+import io.spine.examples.todolist.AddLabelsRejected;
 import io.spine.examples.todolist.AssignLabelToTaskRejected;
 import io.spine.examples.todolist.RejectedTaskCommandDetails;
 import io.spine.examples.todolist.RemoveLabelFromTaskRejected;
 import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
+import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
+import io.spine.examples.todolist.c.rejection.CannotAddLabels;
 import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
 import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
 
@@ -34,7 +37,7 @@ import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
  *
  * @author Illia Shepilov
  */
-public class TaskLabelsPartRejections {
+public final class TaskLabelsPartRejections {
 
     private TaskLabelsPartRejections() {
     }
@@ -79,5 +82,15 @@ public class TaskLabelsPartRejections {
                                            .setCommandDetails(commandDetails)
                                            .build();
         throw new CannotRemoveLabelFromTask(removeLabelRejected);
+    }
+
+    public static void throwCannotAddLabelsToTask(AddLabels cmd) throws CannotAddLabels {
+        AddLabelsRejected addLabelsRejected = AddLabelsRejected
+                .newBuilder()
+                .setId(cmd.getId())
+                .addAllExistingLabels(cmd.getExistingLabelsList())
+                .addAllNewLabels(cmd.getNewLabelsList())
+                .build();
+        throw new CannotAddLabels(addLabelsRejected);
     }
 }

@@ -46,11 +46,13 @@ import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
 import io.spine.server.entity.Repository;
 import io.spine.testing.client.TestActorRequestFactory;
+import io.spine.testing.server.ShardingReset;
 import io.spine.testing.server.aggregate.AggregatePartCommandTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Collection;
 import java.util.List;
@@ -76,6 +78,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Illia Shepilov
  */
+@ExtendWith(ShardingReset.class)
 class TaskLabelsPartTest {
 
     @Nested
@@ -264,6 +267,7 @@ class TaskLabelsPartTest {
             super(TASK_ID, commandMessage);
         }
 
+        @BeforeEach
         @Override
         public void setUp() {
             super.setUp();
@@ -276,7 +280,7 @@ class TaskLabelsPartTest {
             final BoundedContext boundedContext = BoundedContexts.create();
             commandBus = boundedContext.getCommandBus();
             responseObserver = StreamObservers.memoizingObserver();
-            labelId = createLabelId();
+            labelId = LABEL_ID;
             TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, id);
             return root;
         }

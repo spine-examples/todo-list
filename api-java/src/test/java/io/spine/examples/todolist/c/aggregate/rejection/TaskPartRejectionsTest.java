@@ -20,6 +20,8 @@
 
 package io.spine.examples.todolist.c.aggregate.rejection;
 
+import com.google.common.testing.NullPointerTester;
+import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.RejectedTaskCommandDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections;
@@ -28,13 +30,16 @@ import io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.Updat
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.rejection.CannotCreateDraft;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDescription;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDueDate;
 import io.spine.testing.UtilityClassTest;
+import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.TaskCreationRejections.throwCannotCreateDraft;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDescription;
@@ -93,6 +98,15 @@ class TaskPartRejectionsTest extends UtilityClassTest<TaskPartRejections> {
 
         UpdateRejectionsTest() {
             super(UpdateRejections.class);
+        }
+
+        @Override
+        protected void configure(NullPointerTester tester) {
+            tester.setDefault(UpdateTaskDueDate.class, UpdateTaskDueDate.getDefaultInstance());
+            tester.setDefault(UpdateTaskDescription.class,
+                              UpdateTaskDescription.getDefaultInstance());
+            tester.setDefault(UpdateTaskPriority.class, UpdateTaskPriority.getDefaultInstance());
+            tester.setDefault(ValueMismatch.class, ValueMismatch.getDefaultInstance());
         }
 
         @Test

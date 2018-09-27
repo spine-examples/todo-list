@@ -42,10 +42,12 @@ import io.spine.server.event.EventBus;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.StorageFactorySwitch;
+import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
@@ -77,6 +79,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Illia Shepilov
  * @author Dmitry Ganzha
  */
+@ExtendWith(ShardingReset.class)
 class LabelledTasksViewProjectionTest extends ProjectionTest {
 
     private static final String BOUNDED_CONTEXT_NAME = "TodoListBoundedContext";
@@ -125,7 +128,8 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
 
             matchesExpectedValues(view);
 
-            eventBus.post(labelAssignedToTaskEvent);
+            final Event labelAssignedToTaskEvent2 = createEvent(labelAssignedToTask);
+            eventBus.post(labelAssignedToTaskEvent2);
 
             labelledTaskItem = getProjectionState();
             listView = labelledTaskItem.getLabelledTasks();
@@ -157,7 +161,8 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
-            eventBus.post(labelAssignedToTaskEvent);
+            final Event labelAssignedToTaskEvent2 = createEvent(labelAssignedToTask);
+            eventBus.post(labelAssignedToTaskEvent2);
 
             final LabelledTasksView labelledTasksView = getProjectionState();
             assertEquals(LABEL_ID, labelledTasksView.getLabelId());
@@ -188,7 +193,6 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
-            eventBus.post(labelAssignedToTaskEvent);
 
             final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
             final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask);
@@ -209,7 +213,8 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final TaskItem taskView = listView.getItems(0);
             assertEquals(TASK_ID, taskView.getId());
 
-            eventBus.post(deletedTaskRestoredEvent);
+            final Event deletedTaskRestoredEvent2 = createEvent(deletedTaskRestored);
+            eventBus.post(deletedTaskRestoredEvent2);
             labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
             listView = getProjectionState()

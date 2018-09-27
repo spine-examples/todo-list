@@ -20,9 +20,10 @@
 
 package io.spine.examples.todolist.c.procman;
 
-import com.google.protobuf.Message;
 import io.spine.base.CommandMessage;
 import io.spine.core.CommandContext;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskCreation;
 import io.spine.examples.todolist.TaskCreation.Stage;
 import io.spine.examples.todolist.TaskCreationId;
@@ -34,10 +35,13 @@ import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
+import io.spine.examples.todolist.c.commands.SkipLabels;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
+import io.spine.examples.todolist.c.rejection.CannotAddLabels;
 import io.spine.examples.todolist.c.rejection.CannotMoveToStage;
 import io.spine.server.command.Assign;
 import io.spine.server.command.Command;
+import io.spine.server.model.Nothing;
 import io.spine.server.procman.ProcessManager;
 
 import java.util.Collection;
@@ -51,7 +55,7 @@ import static io.spine.examples.todolist.TaskCreation.Stage.COMPLETED;
 import static io.spine.examples.todolist.TaskCreation.Stage.CONFIRMATION;
 import static io.spine.examples.todolist.TaskCreation.Stage.LABEL_ASSIGNMENT;
 import static io.spine.examples.todolist.TaskCreation.Stage.TASK_DEFINITION;
-import static java.util.Collections.emptyList;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAddLabelsToTask;
 
 /**
  * A process manager supervising the task creation process.
@@ -130,7 +134,12 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
 
     @Command
     Collection<? extends CommandMessage> handle(AddLabels command, CommandContext context)
-            throws CannotMoveToStage {
+            throws CannotMoveToStage, CannotAddLabels {
+        List<LabelId> existingLabels = command.getExistingLabelsList();
+        List<LabelDetails> newLabels = command.getNewLabelsList();
+        if (existingLabels.isEmpty() && newLabels.isEmpty()) {
+            throwCannotAddLabelsToTask(command);
+        }
         final WizardCommands commands = commands();
         return transit(CONFIRMATION, () -> {
             final Collection<? extends CommandMessage> existingLabelsCommands =
@@ -142,6 +151,11 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
             result.addAll(newLabelsCommands);
             return result;
         });
+    }
+
+    @Assign
+    Nothing handle(SkipLabels command, CommandContext context) throws CannotMoveToStage {
+        return transit(CONFIRMATION, this::nothing);
     }
 
     @Command
@@ -158,10 +172,10 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     }
 
     @Assign
-    List<? extends Message> handle(CancelTaskCreation command) throws CannotMoveToStage {
+    Nothing handle(CancelTaskCreation command) throws CannotMoveToStage {
         return transit(CANCELED, () -> {
             completeProcess();
-            return emptyList();
+            return nothing();
         });
     }
 

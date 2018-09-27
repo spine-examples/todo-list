@@ -39,11 +39,13 @@ import io.spine.examples.todolist.c.rejection.Rejections;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.server.entity.Repository;
 import io.spine.testing.client.TestActorRequestFactory;
+import io.spine.testing.server.ShardingReset;
 import io.spine.testing.server.aggregate.AggregateCommandTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -61,6 +63,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
+@ExtendWith(ShardingReset.class)
 class LabelAggregateTest {
 
     @Nested
@@ -173,7 +176,7 @@ class LabelAggregateTest {
         @Test
         @DisplayName("produce CannotUpdateLabelDetails rejection " +
                 "when the label details does not match expected")
-        void cannotUpdateLabelDetails() {
+        void cannotUpdateLabelDetails() throws CannotUpdateLabelDetails {
             final LabelDetails expectedLabelDetails = LabelDetails.newBuilder()
                                                                   .setColor(LabelColor.BLUE)
                                                                   .setTitle(LABEL_TITLE)
@@ -182,10 +185,12 @@ class LabelAggregateTest {
                                                              .setColor(LabelColor.RED)
                                                              .setTitle(UPDATED_LABEL_TITLE)
                                                              .build();
-            updateLabelDetailsInstance(entityId(), expectedLabelDetails, newLabelDetails);
+            UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(entityId(),
+                                                                               expectedLabelDetails,
+                                                                               newLabelDetails);
             final CannotUpdateLabelDetails rejection =
                     assertThrows(CannotUpdateLabelDetails.class,
-                                 () -> aggregate.handle(message()));
+                                 () -> aggregate.handle(updateLabelDetails));
             final Rejections.CannotUpdateLabelDetails cannotUpdateLabelDetails =
                     rejection.getMessageThrown();
             final LabelDetailsUpdateRejected rejectionDetails =

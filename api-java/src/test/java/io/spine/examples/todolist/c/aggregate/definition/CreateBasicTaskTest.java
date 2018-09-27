@@ -25,9 +25,11 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.events.TaskCreated;
+import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -40,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 /**
  * @author Illia Shepilov
  */
+@ExtendWith(ShardingReset.class)
 @DisplayName("CreateBasicTask command should be interpreted by TaskPart and")
 public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
 

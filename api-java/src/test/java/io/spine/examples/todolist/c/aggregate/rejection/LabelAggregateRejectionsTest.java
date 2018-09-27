@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.c.aggregate.rejection;
 
+import com.google.common.testing.NullPointerTester;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
@@ -41,10 +42,10 @@ class LabelAggregateRejectionsTest extends UtilityClassTest<LabelAggregateReject
         super(LabelAggregateRejections.class);
     }
 
-    @Test
-    @DisplayName("have the private constructor")
-    void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(LabelAggregateRejections.class);
+    @Override
+    protected void configure(NullPointerTester tester) {
+        tester.setDefault(UpdateLabelDetails.class, UpdateLabelDetails.getDefaultInstance());
+        tester.setDefault(ValueMismatch.class, ValueMismatch.getDefaultInstance());
     }
 
     @Test

@@ -28,9 +28,11 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.events.TaskDeleted;
 import io.spine.examples.todolist.c.rejection.CannotDeleteTask;
+import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -47,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
+@ExtendWith(ShardingReset.class)
 @DisplayName("DeleteTask command should be interpreted by TaskPart and")
 public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
 

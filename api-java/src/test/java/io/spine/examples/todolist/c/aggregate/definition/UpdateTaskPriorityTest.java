@@ -36,9 +36,11 @@ import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskPriority;
 import io.spine.examples.todolist.c.rejection.Rejections;
+import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -60,7 +62,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * @author Illia Shepilov
  */
-
+@ExtendWith(ShardingReset.class)
 @DisplayName("UpdateTaskPriority command should be interpreted by TaskPart and")
 public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> {
 

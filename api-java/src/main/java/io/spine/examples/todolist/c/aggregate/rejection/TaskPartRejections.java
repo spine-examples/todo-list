@@ -52,18 +52,20 @@ import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDescription;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDueDate;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskPriority;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Utility class for working with {@link TaskPart} rejection.
  *
  * @author Illia Shepilov
  */
-public class TaskPartRejections {
+public final class TaskPartRejections {
 
     private TaskPartRejections() {
         // Prevent instantiation of this utility class.
     }
 
-    public static class UpdateRejections {
+    public static final class UpdateRejections {
 
         private UpdateRejections() {
         }
@@ -77,6 +79,8 @@ public class TaskPartRejections {
          */
         public static void throwCannotUpdateTaskDescription(UpdateTaskDescription cmd)
                 throws CannotUpdateTaskDescription {
+            checkNotNull(cmd);
+
             final RejectedTaskCommandDetails commandDetails =
                     newRejectedTaskCommandDetails(cmd.getId());
             final DescriptionUpdateRejected descriptionUpdateRejected =
@@ -95,6 +99,8 @@ public class TaskPartRejections {
          */
         public static void throwCannotUpdateTaskDueDate(UpdateTaskDueDate cmd)
                 throws CannotUpdateTaskDueDate {
+            checkNotNull(cmd);
+
             final RejectedTaskCommandDetails commandDetails =
                     newRejectedTaskCommandDetails(cmd.getId());
             final TaskDueDateUpdateRejected dueDateUpdateRejected =
@@ -114,6 +120,9 @@ public class TaskPartRejections {
          */
         public static void throwCannotUpdateTaskDueDate(
                 UpdateTaskDueDate cmd, ValueMismatch mismatch) throws CannotUpdateTaskDueDate {
+            checkNotNull(cmd);
+            checkNotNull(mismatch);
+
             final RejectedTaskCommandDetails commandDetails =
                     newRejectedTaskCommandDetails(cmd.getId());
             final TaskDueDateUpdateRejected dueDateUpdateRejected =
@@ -135,6 +144,9 @@ public class TaskPartRejections {
         public static void throwCannotUpdateDescription(
                 UpdateTaskDescription cmd, ValueMismatch mismatch)
                 throws CannotUpdateTaskDescription {
+            checkNotNull(cmd);
+            checkNotNull(mismatch);
+
             final RejectedTaskCommandDetails commandDetails =
                     newRejectedTaskCommandDetails(cmd.getId());
             final DescriptionUpdateRejected descriptionUpdateRejected =
@@ -155,6 +167,9 @@ public class TaskPartRejections {
          */
         public static void throwCannotUpdateTaskPriority(
                 UpdateTaskPriority cmd, ValueMismatch mismatch) throws CannotUpdateTaskPriority {
+            checkNotNull(cmd);
+            checkNotNull(mismatch);
+
             final RejectedTaskCommandDetails commandDetails =
                     newRejectedTaskCommandDetails(cmd.getId());
             final PriorityUpdateRejected priorityUpdateRejected =
@@ -174,6 +189,8 @@ public class TaskPartRejections {
          */
         public static void throwCannotUpdateTaskPriority(UpdateTaskPriority cmd)
                 throws CannotUpdateTaskPriority {
+            checkNotNull(cmd);
+
             final RejectedTaskCommandDetails commandDetails =
                     newRejectedTaskCommandDetails(cmd.getId());
             final PriorityUpdateRejected priorityUpdateRejected =
@@ -184,7 +201,7 @@ public class TaskPartRejections {
         }
     }
 
-    public static class TaskCreationRejections {
+    public static final class TaskCreationRejections {
 
         private TaskCreationRejections() {
         }
@@ -207,7 +224,7 @@ public class TaskPartRejections {
         }
     }
 
-    public static class ChangeStatusRejections {
+    public static final class ChangeStatusRejections {
 
         private ChangeStatusRejections() {
         }
