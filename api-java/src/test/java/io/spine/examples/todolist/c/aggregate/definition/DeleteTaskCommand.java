@@ -36,6 +36,7 @@ import java.util.List;
 
 import static io.spine.examples.todolist.TaskStatus.DELETED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
@@ -50,9 +51,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("DeleteTask command should be interpreted by TaskPart and")
 public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
 
+    DeleteTaskCommand() {
+        super(TASK_ID, deleteTaskInstance());
+    }
+
     @Override
     @BeforeEach
-    protected void setUp() {
+    public void setUp() {
         super.setUp();
     }
 
@@ -61,11 +66,11 @@ public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
     void deleteTask() {
         dispatchCreateTaskCmd();
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
+        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
         final Task state = aggregate.getState();
 
-        assertEquals(taskId, state.getId());
+        assertEquals(entityId(), state.getId());
         assertEquals(DELETED, state.getTaskStatus());
     }
 
@@ -75,7 +80,7 @@ public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
     void cannotDeleteAlreadyDeletedTask() {
         dispatchCreateTaskCmd();
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
+        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         final CommandEnvelope deleteTaskEnvelope = envelopeOf(deleteTaskCmd);
         dispatchCommand(aggregate, deleteTaskEnvelope);
 
@@ -88,18 +93,18 @@ public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
     @DisplayName("produce TaskDeleted event")
     void produceEvent() {
         dispatchCreateTaskCmd();
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
+        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
 
         final List<? extends Message> messageList = dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDeleted.class, messageList.get(0)
                                                    .getClass());
         final TaskDeleted taskDeleted = (TaskDeleted) messageList.get(0);
-        assertEquals(taskId, taskDeleted.getTaskId());
+        assertEquals(entityId(), taskDeleted.getTaskId());
     }
 
     private void dispatchCreateTaskCmd() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }
 }

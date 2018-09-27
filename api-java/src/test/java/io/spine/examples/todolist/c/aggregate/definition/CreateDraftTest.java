@@ -37,6 +37,7 @@ import java.util.List;
 
 import static io.spine.examples.todolist.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
@@ -50,33 +51,37 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("CreateDraft command should be interpreted by TaskPart and")
 public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
 
+    CreateDraftTest() {
+        super(TASK_ID, createDraftInstance());
+    }
+
     @Override
     @BeforeEach
-    protected void setUp() {
+    public void setUp() {
         super.setUp();
     }
 
     @Test
     @DisplayName("produce TaskDraftCreated event")
     void produceEvent() {
-        final CreateDraft createDraftCmd = createDraftInstance(taskId);
+        final CreateDraft createDraftCmd = createDraftInstance(entityId());
         final List<? extends Message> messageList = dispatchCommand(aggregate,
                                                                     envelopeOf(createDraftCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDraftCreated.class, messageList.get(0)
                                                         .getClass());
         final TaskDraftCreated taskDraftCreated = (TaskDraftCreated) messageList.get(0);
-        assertEquals(taskId, taskDraftCreated.getId());
+        assertEquals(entityId(), taskDraftCreated.getId());
     }
 
     @Test
     @DisplayName("create the draft")
     void createDraft() {
-        final CreateDraft createDraftCmd = createDraftInstance(taskId);
+        final CreateDraft createDraftCmd = createDraftInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(createDraftCmd));
         final Task state = aggregate.getState();
 
-        assertEquals(taskId, state.getId());
+        assertEquals(entityId(), state.getId());
         assertEquals(DRAFT, state.getTaskStatus());
     }
 
@@ -84,13 +89,13 @@ public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
     @DisplayName("throw CannotCreateDraft rejection upon " +
             "an attempt to create draft with deleted task ID")
     void notCreateDraft() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
+        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
-        final CreateDraft createDraftCmd = createDraftInstance(taskId);
+        final CreateDraft createDraftCmd = createDraftInstance(entityId());
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatchCommand(aggregate,
                                                                envelopeOf(createDraftCmd)));
@@ -100,6 +105,6 @@ public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
                                          .getRejectionDetails()
                                          .getCommandDetails()
                                          .getTaskId();
-        assertEquals(taskId, actualId);
+        assertEquals(entityId(), actualId);
     }
 }

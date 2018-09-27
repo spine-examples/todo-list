@@ -32,6 +32,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +44,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DisplayName("CreateBasicTask command should be interpreted by TaskPart and")
 public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
 
+    CreateBasicTaskTest() {
+        super(TASK_ID, createTaskInstance());
+    }
+
     @Override
     @BeforeEach
     public void setUp() {
@@ -52,7 +57,7 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
     @Test
     @DisplayName("produce TaskCreated event")
     void produceEvent() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
         final List<? extends Message> messageList = dispatchCommand(aggregate,
                                                                     envelopeOf(createTaskCmd));
         assertNotNull(aggregate.getState()
@@ -63,7 +68,7 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
                                                    .getClass());
         final TaskCreated taskCreated = (TaskCreated) messageList.get(0);
 
-        assertEquals(taskId, taskCreated.getId());
+        assertEquals(entityId(), taskCreated.getId());
         assertEquals(DESCRIPTION, taskCreated.getDetails()
                                              .getDescription()
                                              .getValue());

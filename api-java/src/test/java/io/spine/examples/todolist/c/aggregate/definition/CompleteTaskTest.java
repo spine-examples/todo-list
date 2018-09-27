@@ -37,6 +37,7 @@ import java.util.List;
 
 import static io.spine.examples.todolist.TaskStatus.COMPLETED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
@@ -53,9 +54,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("CompleteTask command should be interpreted by TaskPart and")
 public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
 
+    CompleteTaskTest() {
+        super(TASK_ID, completeTaskInstance());
+    }
+
     @Override
     @BeforeEach
-    protected void setUp() {
+    public void setUp() {
         super.setUp();
     }
 
@@ -71,7 +76,7 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
                                                      .getClass());
         final TaskCompleted taskCompleted = (TaskCompleted) messageList.get(0);
 
-        assertEquals(taskId, taskCompleted.getTaskId());
+        assertEquals(entityId(), taskCompleted.getTaskId());
     }
 
     @Test
@@ -82,7 +87,7 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
         dispatchCompleteTaskCmd();
         final Task state = aggregate.getState();
 
-        assertEquals(taskId, state.getId());
+        assertEquals(entityId(), state.getId());
         assertEquals(COMPLETED, state.getTaskStatus());
     }
 
@@ -91,7 +96,7 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     void cannotCompleteDeletedTask() {
         dispatchCreateTaskCmd();
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
+        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
         final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
@@ -102,7 +107,7 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     @DisplayName("throw CannotCompleteTask rejection upon " +
             "an attempt to complete the task in draft state")
     void cannotCompleteDraft() {
-        final CreateDraft createDraftCmd = createDraftInstance(taskId);
+        final CreateDraft createDraftCmd = createDraftInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(createDraftCmd));
 
         final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
@@ -110,12 +115,12 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     }
 
     private void dispatchCreateTaskCmd() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }
 
     private List<? extends Message> dispatchCompleteTaskCmd() {
-        final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
+        final CompleteTask completeTaskCmd = completeTaskInstance(entityId());
         return dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
     }
 }

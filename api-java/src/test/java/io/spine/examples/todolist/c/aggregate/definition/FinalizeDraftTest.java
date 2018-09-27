@@ -22,6 +22,7 @@ package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
 import io.spine.examples.todolist.Task;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
@@ -34,6 +35,7 @@ import org.junit.jupiter.api.Test;
 import static io.spine.examples.todolist.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.TaskStatus.FINALIZED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
@@ -50,41 +52,45 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("FinalizeDraft command should be interpreted by TaskPart and")
 public class FinalizeDraftTest extends TaskCommandTest<FinalizeDraft> {
 
+    FinalizeDraftTest() {
+        super(TASK_ID, finalizeDraftInstance());
+    }
+
     @Override
     @BeforeEach
-    protected void setUp() {
+    public void setUp() {
         super.setUp();
     }
 
     @Test
     @DisplayName("finalize the task")
     void finalizeTask() {
-        final CreateDraft createDraftCmd = createDraftInstance(taskId);
+        final CreateDraft createDraftCmd = createDraftInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(createDraftCmd));
 
         Task state = aggregate.getState();
 
-        assertEquals(taskId, state.getId());
+        assertEquals(entityId(), state.getId());
         assertEquals(DRAFT, state.getTaskStatus());
 
-        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
+        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(finalizeDraftCmd));
         state = aggregate.getState();
 
-        assertEquals(taskId, state.getId());
+        assertEquals(entityId(), state.getId());
         assertEquals(FINALIZED, state.getTaskStatus());
     }
 
     @Test
     @DisplayName("throw CannotFinalizeDraft rejection upon an attempt to finalize the deleted task")
     void cannotFinalizeDeletedTask() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
+        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
-        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
+        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(entityId());
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatchCommand(aggregate, envelopeOf(finalizeDraftCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotFinalizeDraft.class));
@@ -94,7 +100,7 @@ public class FinalizeDraftTest extends TaskCommandTest<FinalizeDraft> {
     @DisplayName("throw CannotFinalizeDraft rejection upon an attempt to finalize " +
             "the task which is not a draft")
     void cannotFinalizeNotDraftTask() {
-        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(taskId);
+        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(entityId());
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatchCommand(aggregate, envelopeOf(finalizeDraftCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotFinalizeDraft.class));
