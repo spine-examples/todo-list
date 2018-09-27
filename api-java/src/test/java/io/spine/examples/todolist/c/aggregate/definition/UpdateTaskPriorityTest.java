@@ -46,7 +46,6 @@ import static io.spine.examples.todolist.TaskPriority.HIGH;
 import static io.spine.examples.todolist.TaskPriority.LOW;
 import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
@@ -66,7 +65,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> {
 
     UpdateTaskPriorityTest() {
-        super(TASK_ID, updateTaskPriorityInstance());
+        super(updateTaskPriorityInstance());
     }
 
     @Override

@@ -34,6 +34,8 @@ import io.spine.server.entity.Repository;
 import io.spine.testing.client.TestActorRequestFactory;
 import io.spine.testing.server.aggregate.AggregatePartCommandTest;
 
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
+
 /**
  * The parent class for the {@link TaskPart} test classes.
  * Provides the common methods for testing.
@@ -49,8 +51,8 @@ abstract class TaskCommandTest<C extends CommandMessage>
 
     TaskPart aggregate;
 
-    protected TaskCommandTest(TaskId aggregateId, C commandMessage) {
-        super(aggregateId, commandMessage);
+    protected TaskCommandTest(C commandMessage) {
+        super(TASK_ID, commandMessage);
     }
 
     @Override

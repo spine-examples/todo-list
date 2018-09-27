@@ -41,7 +41,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
@@ -61,7 +60,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescription> {
 
     UpdateTaskDescriptionTest() {
-        super(TASK_ID, updateTaskDescriptionInstance());
+        super(updateTaskDescriptionInstance());
     }
 
     @Override

@@ -37,7 +37,6 @@ import java.util.List;
 
 import static io.spine.examples.todolist.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
@@ -52,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
 
     CreateDraftTest() {
-        super(TASK_ID, createDraftInstance());
+        super(createDraftInstance());
     }
 
     @Override

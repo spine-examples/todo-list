@@ -58,7 +58,6 @@ import static io.spine.examples.todolist.TaskStatus.OPEN;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.LABEL_ID;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
@@ -82,7 +81,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
     private CommandBus commandBus;
 
     RestoreDeletedTaskTest() {
-        super(TASK_ID, restoreDeletedTaskInstance());
+        super(restoreDeletedTaskInstance());
     }
 
     @Override

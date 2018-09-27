@@ -37,7 +37,6 @@ import java.util.List;
 
 import static io.spine.examples.todolist.TaskStatus.COMPLETED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
@@ -55,7 +54,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
 
     CompleteTaskTest() {
-        super(TASK_ID, completeTaskInstance());
+        super(completeTaskInstance());
     }
 
     @Override

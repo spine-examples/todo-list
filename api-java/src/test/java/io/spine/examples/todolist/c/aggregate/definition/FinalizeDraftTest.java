@@ -22,7 +22,6 @@ package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
 import io.spine.examples.todolist.Task;
-import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
@@ -35,7 +34,6 @@ import org.junit.jupiter.api.Test;
 import static io.spine.examples.todolist.TaskStatus.DRAFT;
 import static io.spine.examples.todolist.TaskStatus.FINALIZED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createDraftInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
@@ -53,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class FinalizeDraftTest extends TaskCommandTest<FinalizeDraft> {
 
     FinalizeDraftTest() {
-        super(TASK_ID, finalizeDraftInstance());
+        super(finalizeDraftInstance());
     }
 
     @Override

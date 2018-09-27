@@ -32,7 +32,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,7 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
 
     CreateBasicTaskTest() {
-        super(TASK_ID, createTaskInstance());
+        super(createTaskInstance());
     }
 
     @Override

@@ -36,7 +36,6 @@ import java.util.List;
 
 import static io.spine.examples.todolist.TaskStatus.DELETED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
@@ -52,7 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
 
     DeleteTaskCommand() {
-        super(TASK_ID, deleteTaskInstance());
+        super(deleteTaskInstance());
     }
 
     @Override

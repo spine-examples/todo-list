@@ -43,7 +43,6 @@ import java.util.List;
 import static io.spine.base.Time.getCurrentTime;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DUE_DATE;
-import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
@@ -62,7 +61,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
 
     UpdateTaskDueDateTest() {
-        super(TASK_ID, updateTaskDueDateInstance());
+        super(updateTaskDueDateInstance());
     }
 
     @Override
