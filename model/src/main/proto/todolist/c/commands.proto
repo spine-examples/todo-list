@@ -293,7 +293,7 @@ message StartTaskCreation {
     TaskId task_id = 2 [(required) = true, (valid) = true];
 }
 
-// Sets the basic task data to the task being created.
+// Set the basic task data to the task being created.
 //
 message SetTaskDetails {
 
@@ -328,7 +328,8 @@ message SetTaskDetails {
 //
 // The new labels are specified by their data (label details).
 //
-// If neither new nor existing labels are specified, no labels are assigned to the task.
+// If neither new nor existing labels are specified, the `CannotAddLabels` rejection will be
+// thrown.
 //
 message AddLabels {
 
@@ -340,6 +341,16 @@ message AddLabels {
 
     // The details of the new labels to create and assign to the task.
     repeated LabelDetails new_labels = 3 [(valid) = true];
+}
+
+// Skip adding labels to the created task and procede to other creation stages.
+//
+// Use this command to skip the `LABEL_ASSIGNMENT` stage of task creation as using `AddLabels` with
+// empty arguments is not allowed.
+message SkipLabels {
+
+    // The ID of the task creation process.
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
 }
 
 // Complete the task creation process.

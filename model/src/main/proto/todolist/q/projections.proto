@@ -48,6 +48,7 @@ import "todolist/values.proto";
 //     // most recent on top.
 //
 message MyListView {
+    option (entity).kind = PROJECTION;
 
     TaskListId list_id = 1;
 
@@ -63,6 +64,7 @@ message MyListView {
 //     // most recent on top.
 //
 message DraftTasksView {
+    option (entity).kind = PROJECTION;
 
     TaskListId list_id = 1;
 
@@ -80,6 +82,7 @@ message DraftTasksView {
 //     // most recent on top.
 //
 message LabelledTasksView {
+    option (entity).kind = PROJECTION;
 
     LabelId label_id = 1;
 

@@ -22,6 +22,7 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -29,10 +30,12 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,6 +49,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Illia Shepilov
  */
+@ExtendWith(ShardingReset.class)
 @DisplayName("After execution of AssignLabelToTask command")
 class AssignLabelToTaskTest extends TodoClientTest {
 
@@ -184,7 +188,7 @@ class AssignLabelToTaskTest extends TodoClientTest {
 
     @Nested
     @DisplayName("TaskLabels part should")
-    class AssignLabelToTaskToTasklabels {
+    class AssignLabelToTaskToTaskLabels {
 
         @Test
         @DisplayName("contain label ID")
@@ -245,9 +249,8 @@ class AssignLabelToTaskTest extends TodoClientTest {
     }
 
     private TaskLabels obtainTaskLabelsWhenHandledAssignLabelToTask(LabelId labelId) {
-        final CreateDraft createDraft = createDraft();
-        client.postCommand(createDraft);
-        final TaskId taskId = createDraft.getId();
+        final CreateBasicTask createTask = createTask();
+        final TaskId taskId = createTask.getId();
         final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.postCommand(assignLabelToTask);
         final TaskLabels labels = client.getLabels(taskId);

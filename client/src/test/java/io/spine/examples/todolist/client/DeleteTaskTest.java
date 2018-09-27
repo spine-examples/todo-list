@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;

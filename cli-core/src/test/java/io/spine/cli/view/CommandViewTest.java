@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 import static io.spine.cli.NoOpAction.noOpActionProducer;
 import static io.spine.cli.view.CommandView.GenericParameter.COMMAND_MESSAGE;
 import static io.spine.cli.view.CommandView.GenericParameter.STATE_BUILDER;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.emptyList;
 import static org.junit.jupiter.api.Assertions.assertEquals;

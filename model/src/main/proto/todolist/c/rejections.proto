@@ -71,6 +71,13 @@ message CannotUpdateLabelDetails {
     LabelDetailsUpdateRejected rejection_details = 1;
 }
 
+// The rejection to add labels to a created task.
+//
+// Is currently thrown in case the label list was empty.
+message CannotAddLabels {
+    AddLabelsRejected rejection_details = 1;
+}
+
 // The rejection to assign label to task.
 //
 // It is thrown if an attempt is made to assign the label
