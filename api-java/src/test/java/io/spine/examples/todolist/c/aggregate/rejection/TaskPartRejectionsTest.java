@@ -23,6 +23,7 @@ package io.spine.examples.todolist.c.aggregate.rejection;
 import io.spine.examples.todolist.RejectedTaskCommandDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections;
+import io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.TaskCreationRejections;
 import io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
@@ -30,6 +31,7 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.rejection.CannotCreateDraft;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDescription;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDueDate;
+import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,7 +39,6 @@ import org.junit.jupiter.api.Test;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.TaskCreationRejections.throwCannotCreateDraft;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDescription;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDueDate;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -45,35 +46,29 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Illia Shepilov
  */
 @DisplayName("TaskPartRejections should")
-class TaskPartRejectionsTest {
+class TaskPartRejectionsTest extends UtilityClassTest<TaskPartRejections> {
 
     private final TaskId taskId = TaskId.getDefaultInstance();
 
-    @Test
-    @DisplayName("have the private constructor")
-    void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(TaskPartRejections.class);
+    TaskPartRejectionsTest() {
+        super(TaskPartRejections.class);
     }
 
     @Nested
     @DisplayName("ChangeStatusRejections should")
-    class ChangeStatusRejectionsTest {
+    class ChangeStatusRejectionsTest extends UtilityClassTest<ChangeStatusRejections> {
 
-        @Test
-        @DisplayName("have the private constructor")
-        void havePrivateConstructor() {
-            assertHasPrivateParameterlessCtor(ChangeStatusRejections.class);
+        ChangeStatusRejectionsTest() {
+            super(ChangeStatusRejections.class);
         }
     }
 
     @Nested
     @DisplayName("TaskCreationRejections should")
-    class TaskCreationRejectionsTest {
+    class TaskCreationRejectionsTest extends UtilityClassTest<TaskCreationRejections> {
 
-        @Test
-        @DisplayName("have the private constructor")
-        void havePrivateConstructor() {
-            assertHasPrivateParameterlessCtor(TaskPartRejections.TaskCreationRejections.class);
+        TaskCreationRejectionsTest() {
+            super(TaskCreationRejections.class);
         }
 
         @Test
@@ -94,12 +89,10 @@ class TaskPartRejectionsTest {
 
     @Nested
     @DisplayName("UpdateRejections should")
-    class UpdateRejectionsTest {
+    class UpdateRejectionsTest extends UtilityClassTest<UpdateRejections> {
 
-        @Test
-        @DisplayName("have the private constructor")
-        void havePrivateConstructor() {
-            assertHasPrivateParameterlessCtor(UpdateRejections.class);
+        UpdateRejectionsTest() {
+            super(UpdateRejections.class);
         }
 
         @Test

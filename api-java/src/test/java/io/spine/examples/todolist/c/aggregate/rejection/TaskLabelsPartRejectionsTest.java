@@ -26,12 +26,12 @@ import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
 import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
 import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
+import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAssignLabelToTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotRemoveLabelFromTask;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -39,15 +39,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Illia Shepilov
  */
 @DisplayName("TaskLabelsPartRejections should")
-class TaskLabelsPartRejectionsTest {
+class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartRejections> {
 
     private final TaskId taskId = TaskId.getDefaultInstance();
     private final LabelId labelId = LabelId.getDefaultInstance();
 
-    @Test
-    @DisplayName("have the private constructor")
-    void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(TaskLabelsPartRejections.class);
+    TaskLabelsPartRejectionsTest() {
+        super(TaskLabelsPartRejections.class);
     }
 
     @Test

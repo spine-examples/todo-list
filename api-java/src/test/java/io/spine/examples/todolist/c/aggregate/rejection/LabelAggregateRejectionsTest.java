@@ -20,31 +20,36 @@
 
 package io.spine.examples.todolist.c.aggregate.rejection;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
+import io.spine.testing.UtilityClassTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRejections.throwCannotUpdateLabelDetails;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 
 /**
  * @author Illia Shepilov
  */
 @DisplayName("LabelAggregateRejections should")
-class LabelAggregateRejectionsTest {
+class LabelAggregateRejectionsTest extends UtilityClassTest<LabelAggregateRejections> {
+
+    LabelAggregateRejectionsTest() {
+        super(LabelAggregateRejections.class);
+    }
 
     @Test
     @DisplayName("have the private constructor")
-    public void havePrivateConstructor() {
+    void havePrivateConstructor() {
         assertHasPrivateParameterlessCtor(LabelAggregateRejections.class);
     }
 
     @Test
     @DisplayName("throw CannotUpdateLabelDetails rejection")
-    public void throwCannotUpdateLabelDetailsRejection() {
+    void throwCannotUpdateLabelDetailsRejection() {
         final UpdateLabelDetails cmd = UpdateLabelDetails.getDefaultInstance();
         final ValueMismatch valueMismatch = ValueMismatch.getDefaultInstance();
         assertThrows(CannotUpdateLabelDetails.class,
