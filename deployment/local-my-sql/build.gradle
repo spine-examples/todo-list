@@ -20,7 +20,7 @@
 
 dependencies {
     compile "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
-    compile "mysql:mysql-connector-java$mysqlDriverVersion"
+    compile "mysql:mysql-connector-java:$mysqlDriverVersion"
 
     compile project(path: ':server')
 }

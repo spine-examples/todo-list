@@ -44,7 +44,7 @@ public final class TodoQueryServlet extends FirebaseQueryServlet {
 
     public TodoQueryServlet() {
         super(FirebaseQueryBridge.newBuilder()
-                                 .serQueryService(Application.instance()
+                                 .setQueryService(Application.instance()
                                                              .queryService())
                                  .setDatabase(FirebaseClient.database())
                                  .build());

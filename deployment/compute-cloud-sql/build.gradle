@@ -33,7 +33,7 @@ apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
-    compile "com.google.cloud.sql:mysql-socket-factory$cloudSqlSocketFactoryVersion"
+    compile "com.google.cloud.sql:mysql-socket-factory:$cloudSqlSocketFactoryVersion"
     compile "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
     compile project(path: ':server')
 

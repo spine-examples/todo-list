@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.web.CommandServlet;
+import io.spine.web.command.CommandServlet;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
