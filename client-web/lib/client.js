@@ -20,11 +20,12 @@
 
 let uuid = require("uuid");
 
-let client = require("spine-js-client/client/index.js").client;
+let client = require("spine-web-client/client/index.js").client;
 
 let TaskId = require("../proto/main/js/todolist/identifiers_pb").TaskId;
 let TaskDescription = require("../proto/main/js/todolist/values_pb").TaskDescription;
 let CreateBasicTask = require("../proto/main/js/todolist/c/commands_pb").CreateBasicTask;
+let MyListView = require("../proto/main/js/todolist/q/projections_pb").MyListView;
 
 let firebase = require("./firebase_client.js");
 
@@ -44,11 +45,11 @@ const HOST = "http://localhost:8080";
 export class Client {
 
     constructor() {
-        this._backendClient = new client.BackendClient(
-            new client.HttpClient(HOST),
-            new client.FirebaseClient(firebase.application),
-            new client.ActorRequestFactory("TodoList-actor")
-        );
+        this._backendClient = client.BackendClient.usingFirebase({
+            atEndpoint: HOST,
+            withFirebaseStorage: firebase.application,
+            forActor: "TodoList-actor"
+        });
     }
 
     /**
@@ -59,8 +60,12 @@ export class Client {
     submitNewTask(description) {
         let command = Client._createTaskCommand(description);
 
-        let type = new client.TypeUrl(
+        let typeUrl = new client.TypeUrl(
             "type.spine.examples.todolist/spine.examples.todolist.CreateBasicTask"
+        );
+        let type = new client.Type(
+            CreateBasicTask,
+            typeUrl
         );
         let typedCommand = new client.TypedMessage(
             command,
@@ -75,12 +80,25 @@ export class Client {
      * @param table the view to display the tasks in
      */
     fetchTasks(table) {
-        let type = new client.TypeUrl(
+        let typeUrl = new client.TypeUrl(
             "type.spine.examples.todolist/spine.examples.todolist.MyListView"
         );
-        this._backendClient.fetchAll(
-            type,
-            (view) => Client._fillTable(table, view),
+        let type = new client.Type(
+            MyListView,
+            typeUrl
+        );
+        this._backendClient.fetchAll({ofType: type}).atOnce().then(
+            views => {
+                let viewCount = views.length;
+                if (viewCount === 1) {
+                    let view = views[0];
+                    Client._fillTable(table, view);
+                } else if (viewCount > 1) {
+                    console.error(
+                        `Expected no more than one list view returned, but received ${viewCount}`
+                    );
+                }
+            },
             errorCallback);
     }
 
