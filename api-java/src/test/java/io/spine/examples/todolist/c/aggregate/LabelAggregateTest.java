@@ -185,9 +185,8 @@ class LabelAggregateTest {
                                                              .setColor(LabelColor.RED)
                                                              .setTitle(UPDATED_LABEL_TITLE)
                                                              .build();
-            UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(entityId(),
-                                                                               expectedLabelDetails,
-                                                                               newLabelDetails);
+            UpdateLabelDetails updateLabelDetails =
+                    updateLabelDetailsInstance(entityId(), expectedLabelDetails, newLabelDetails);
             final CannotUpdateLabelDetails rejection =
                     assertThrows(CannotUpdateLabelDetails.class,
                                  () -> aggregate.handle(updateLabelDetails));

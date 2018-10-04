@@ -144,9 +144,9 @@ final class WizardCommands {
                                                     .setPreviousValue(TP_UNDEFINED)
                                                     .build();
         final CommandMessage updateCommand = UpdateTaskPriority.newBuilder()
-                                                            .setId(taskId)
-                                                            .setPriorityChange(change)
-                                                            .build();
+                                                               .setId(taskId)
+                                                               .setPriorityChange(change)
+                                                               .build();
         return updateCommand;
     }
 
@@ -165,9 +165,9 @@ final class WizardCommands {
                                                       .setNewValue(dueDate)
                                                       .build();
         final CommandMessage updateCommand = UpdateTaskDueDate.newBuilder()
-                                                           .setId(taskId)
-                                                           .setDueDateChange(change)
-                                                           .build();
+                                                              .setId(taskId)
+                                                              .setDueDateChange(change)
+                                                              .build();
         return updateCommand;
     }
 
@@ -181,9 +181,9 @@ final class WizardCommands {
     Collection<? extends CommandMessage> assignExistingLabels(AddLabels src) {
         final Collection<? extends CommandMessage> commands =
                 src.getExistingLabelsList()
-                       .stream()
-                       .map(this::assignLabel)
-                       .collect(toSet());
+                   .stream()
+                   .map(this::assignLabel)
+                   .collect(toSet());
         return commands;
     }
 
@@ -201,9 +201,9 @@ final class WizardCommands {
     Collection<? extends CommandMessage> assignNewLabels(AddLabels src) {
         final Collection<? extends CommandMessage> commands =
                 src.getNewLabelsList()
-                       .stream()
-                       .flatMap(this::createAndAssignLabel)
-                       .collect(toList());
+                   .stream()
+                   .flatMap(this::createAndAssignLabel)
+                   .collect(toList());
         return commands;
     }
 
@@ -234,9 +234,9 @@ final class WizardCommands {
      */
     private static CommandMessage createLabel(LabelId labelId, LabelDetails label) {
         final CommandMessage createBasicLabel = CreateBasicLabel.newBuilder()
-                                                             .setLabelId(labelId)
-                                                             .setLabelTitle(label.getTitle())
-                                                             .build();
+                                                                .setLabelId(labelId)
+                                                                .setLabelTitle(label.getTitle())
+                                                                .build();
         return createBasicLabel;
     }
 

@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
+import io.spine.core.BoundedContextNames;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
@@ -37,7 +38,6 @@ import io.spine.server.storage.memory.InMemoryStorageFactory;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static io.spine.core.BoundedContextNames.newName;
 import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
@@ -53,7 +53,7 @@ public final class BoundedContexts {
     private static final String NAME = "TodoListBoundedContext";
 
     private static final StorageFactory IN_MEMORY_FACTORY =
-            InMemoryStorageFactory.newInstance(newName(NAME), false);
+            InMemoryStorageFactory.newInstance(BoundedContextNames.newName(NAME), false);
 
     private BoundedContexts() {
         // Disable instantiation from outside.
