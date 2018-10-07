@@ -41,8 +41,8 @@ repositories {
 
 dependencies {
     compile project(path: ':server')
-    compile "io.spine:spine-firebase-web:$spineGcloudVersion"
-    compile "io.spine:spine-web:$spineGcloudVersion"
+    compile "io.spine:spine-firebase-web:$spineWebVersion"
+    compile "io.spine:spine-web:$spineWebVersion"
 }
 
 configurations.all {

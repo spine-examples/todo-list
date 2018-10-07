@@ -50,7 +50,7 @@ import "todolist/values.proto";
 message MyListView {
     option (entity).kind = PROJECTION;
 
-    TaskListId list_id = 1;
+    TaskListId id = 1;
 
     TaskListView my_list = 2;
 }
@@ -66,7 +66,7 @@ message MyListView {
 message DraftTasksView {
     option (entity).kind = PROJECTION;
 
-    TaskListId list_id = 1;
+    TaskListId id = 1;
 
     TaskListView draft_tasks = 2;
 }
@@ -84,7 +84,7 @@ message DraftTasksView {
 message LabelledTasksView {
     option (entity).kind = PROJECTION;
 
-    LabelId label_id = 1;
+    LabelId id = 1;
 
     string label_title = 2 [(required) = true];
 

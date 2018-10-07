@@ -20,7 +20,7 @@
 
 let uuid = require("uuid");
 
-let client = require("spine-web-client/client/index.js").client;
+let client = require("spine-web-client/src/client/index.js").client;
 
 let TaskId = require("../proto/main/js/todolist/identifiers_pb").TaskId;
 let TaskDescription = require("../proto/main/js/todolist/values_pb").TaskDescription;
@@ -75,11 +75,11 @@ export class Client {
     }
 
     /**
-     * Fetches all the tasks from the server and displays them on the UI.
+     * Subscribes to all task list changes on the server and displays the on the UI.
      *
      * @param table the view to display the tasks in
      */
-    fetchTasks(table) {
+    subscribeToTaskChanges(table) {
         let typeUrl = new client.TypeUrl(
             "type.spine.examples.todolist/spine.examples.todolist.MyListView"
         );
@@ -87,26 +87,32 @@ export class Client {
             MyListView,
             typeUrl
         );
-        this._backendClient.fetchAll({ofType: type}).atOnce().then(
-            views => {
-                let viewCount = views.length;
-                if (viewCount === 1) {
-                    let view = views[0];
-                    Client._fillTable(table, view);
-                } else if (viewCount > 1) {
-                    console.error(
-                        `Expected no more than one list view returned, but received ${viewCount}`
-                    );
-                }
-            },
-            errorCallback);
+        this._backendClient.subscribeToEntities({ofType: type})
+            .then(({itemAdded, itemChanged, itemRemoved, unsubscribe}) => {
+                itemAdded.subscribe({
+                    next: view => {
+                        Client._fillTable(table, view);
+                    }
+                });
+                itemChanged.subscribe({
+                    next: view => {
+                        Client._fillTable(table, view);
+                    }
+                });
+                itemRemoved.subscribe({
+                    next: view => {
+                        Client._fillTable(table, view);
+                    }
+                });
+            })
+            .catch(errorCallback);
     }
 
     static _fillTable(table, myListView) {
-        let items = myListView.myList.items;
+        let items = myListView.getMyList().getItemsList();
         table.innerHTML = "";
         for (let item of items) {
-            let description = item.description.value;
+            let description = item.getDescription().getValue();
             table.innerHTML += `<div class="task_item">${description}</div>`;
         }
     }

@@ -18,28 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+package io.spine.examples.todolist.server;
 
-final def SPINE_VERSION = '0.10.97-SNAPSHOT'
+import io.spine.web.firebase.FirebaseSubscriptionBridge;
+import io.spine.web.firebase.FirebaseSubscriptionKeepUpServlet;
 
-project.ext {
-    // TODOList version
-    appVersion = SPINE_VERSION
+import javax.servlet.annotation.WebServlet;
 
-    // Spine dependencies' versions
-    spineVersion = SPINE_VERSION
-    spineJdbcStorageVersion = '0.10.80-SNAPSHOT'
-    spineBaseVersion = '0.10.100-SNAPSHOT'
-    spineWebVersion = '0.10.97-SNAPSHOT'
+@WebServlet(name = TodoSubscriptionKeepUpServlet.NAME, value = "/subscription/keep-up")
+@SuppressWarnings("serial")
+public class TodoSubscriptionKeepUpServlet extends FirebaseSubscriptionKeepUpServlet {
 
-    // Main scope third party dependencies' versions
-    servletApiVersion = '4.0.0'
-    cloudSqlSocketFactoryVersion = '1.0.4'
-    shadowJarVersion = '2.0.1'
-    mysqlDriverVersion = '6.0.6'
-    gsonVersion = '2.7'
-    nettyBoringsslVersion = '2.0.6.Final'
+    static final String NAME = "Subscription Keep Up Service";
 
-    // Test scope third party dependencies' versions
-    jUnitPlatformVersion = '1.0.0'
-    jUnitVersion = '5.0.0'
+    public TodoSubscriptionKeepUpServlet() {
+        super(FirebaseSubscriptionBridge.newBuilder()
+                                        .setQueryService(Application.instance().queryService())
+                                        .setDatabase(FirebaseClient.database())
+                                        .build());
+    }
 }

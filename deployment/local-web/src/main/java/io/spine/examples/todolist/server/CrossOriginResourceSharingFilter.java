@@ -43,7 +43,12 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
  */
 @WebFilter(
         filterName = CrossOriginResourceSharingFilter.NAME,
-        servletNames = {TodoCommandServlet.NAME, TodoQueryServlet.NAME}
+        servletNames = {
+                TodoCommandServlet.NAME,
+                TodoQueryServlet.NAME,
+                TodoSubscribeServlet.NAME,
+                TodoSubscriptionKeepUpServlet.NAME
+        }
 )
 public final class CrossOriginResourceSharingFilter extends HttpFilter {
 

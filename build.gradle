@@ -43,6 +43,7 @@ buildscript {
         classpath "org.junit.platform:junit-platform-gradle-plugin:${jUnitPlatformVersion}"
         classpath "io.spine.tools:spine-model-compiler:${spineBaseVersion}"
         classpath "io.spine.tools:spine-model-verifier:${spineVersion}"
+        classpath "io.spine.tools:spine-proto-js-plugin:${spineBaseVersion}"
     }
 
     // The below suppressions `GroovyAssignabilityCheck` is a workaround for the IDEA bug.

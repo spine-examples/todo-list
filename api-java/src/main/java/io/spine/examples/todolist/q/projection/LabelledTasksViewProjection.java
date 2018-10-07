@@ -90,13 +90,13 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     @Subscribe
     public void on(LabelRemovedFromTask event) {
         final LabelId labelId = event.getLabelId();
-        final boolean isEquals = getBuilder().getLabelId()
+        final boolean isEquals = getBuilder().getId()
                                              .equals(labelId);
         if (isEquals) {
             final List<TaskItem> views = new ArrayList<>(getBuilder().getLabelledTasks()
                                                                      .getItemsList());
             final TaskListView updatedView = removeViewsByLabelId(views, labelId);
-            getBuilder().setLabelledTasks(updatedView);
+            setLabelledTasks(updatedView);
         }
     }
 
@@ -105,7 +105,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         final List<TaskItem> views = new ArrayList<>(getBuilder().getLabelledTasks()
                                                                  .getItemsList());
         final TaskListView updatedView = removeViewsByTaskId(views, event.getTaskId());
-        getBuilder().setLabelledTasks(updatedView);
+        setLabelledTasks(updatedView);
     }
 
     @Subscribe
@@ -114,7 +114,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
                                                  .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
-        getBuilder().setLabelledTasks(taskListView);
+        setLabelledTasks(taskListView);
     }
 
     @Subscribe
@@ -123,7 +123,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
                                                  .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
-        getBuilder().setLabelledTasks(taskListView);
+        setLabelledTasks(taskListView);
     }
 
     @Subscribe
@@ -132,7 +132,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
                                                  .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
-        getBuilder().setLabelledTasks(taskListView);
+        setLabelledTasks(taskListView);
     }
 
     @Subscribe
@@ -141,7 +141,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
                                                  .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
-        getBuilder().setLabelledTasks(taskListView);
+        setLabelledTasks(taskListView);
     }
 
     @Subscribe
@@ -150,7 +150,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
                                                  .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
-        getBuilder().setLabelledTasks(taskListView);
+        setLabelledTasks(taskListView);
     }
 
     @Subscribe
@@ -175,7 +175,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         final TaskItem taskView = viewFor(taskDetails, labelId, taskId);
         final LabelDetails labelDetails = enrichment.getLabelDetails();
 
-        getBuilder().setLabelId(labelId);
+        getBuilder().setId(labelId);
         addTaskItem(taskView);
         updateLabelDetails(labelDetails);
     }
@@ -194,7 +194,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
                                                                  .getItemsList());
         views.add(taskView);
         final TaskListView taskListView = newTaskListView(views);
-        getBuilder().setLabelledTasks(taskListView);
+        setLabelledTasks(taskListView);
     }
 
     private void updateLabelDetails(LabelDetails newDetails) {
@@ -204,5 +204,10 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
             final String hexColor = valueOf(newDetails.getColor());
             getBuilder().setLabelColor(hexColor);
         }
+    }
+
+    private LabelledTasksViewVBuilder setLabelledTasks(TaskListView updatedView) {
+        return getBuilder().setId(getId())
+                           .setLabelledTasks(updatedView);
     }
 }

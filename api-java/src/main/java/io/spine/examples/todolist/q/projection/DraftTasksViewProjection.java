@@ -88,7 +88,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
         final TaskListView taskListView = TaskListView.newBuilder()
                                                       .addAllItems(views)
                                                       .build();
-        getBuilder().setDraftTasks(taskListView);
+        setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -96,7 +96,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
         final List<TaskItem> views = new ArrayList<>(getBuilder().getDraftTasks()
                                                                  .getItemsList());
         final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
-        getBuilder().setDraftTasks(taskListView);
+        setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -104,7 +104,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
         final List<TaskItem> views = new ArrayList<>(getBuilder().getDraftTasks()
                                                                  .getItemsList());
         final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
-        getBuilder().setDraftTasks(taskListView);
+        setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -113,7 +113,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
                                                  .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
-        getBuilder().setDraftTasks(taskListView);
+        setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -122,7 +122,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
                                                  .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
-        getBuilder().setDraftTasks(taskListView);
+        setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -131,7 +131,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
                                                  .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
-        getBuilder().setDraftTasks(taskListView);
+        setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -140,7 +140,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
                                                  .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
-        getBuilder().setDraftTasks(taskListView);
+        setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -149,7 +149,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
                                                  .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
-        getBuilder().setDraftTasks(taskListView);
+        setDraftTasks(taskListView);
     }
 
     @Subscribe
@@ -158,6 +158,11 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
                                                  .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
         final TaskListView taskListView = newTaskListView(updatedList);
-        getBuilder().setDraftTasks(taskListView);
+        setDraftTasks(taskListView);
+    }
+
+    private void setDraftTasks(TaskListView taskListView) {
+        getBuilder().setId(getId())
+                    .setDraftTasks(taskListView);
     }
 }
