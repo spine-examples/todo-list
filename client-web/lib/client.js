@@ -87,23 +87,17 @@ export class Client {
             MyListView,
             typeUrl
         );
+        // noinspection JSUnusedGlobalSymbols Used by the caller code.
+        let fillTable = {
+            next: view => {
+                Client._fillTable(table, view);
+            }
+        };
         this._backendClient.subscribeToEntities({ofType: type})
             .then(({itemAdded, itemChanged, itemRemoved, unsubscribe}) => {
-                itemAdded.subscribe({
-                    next: view => {
-                        Client._fillTable(table, view);
-                    }
-                });
-                itemChanged.subscribe({
-                    next: view => {
-                        Client._fillTable(table, view);
-                    }
-                });
-                itemRemoved.subscribe({
-                    next: view => {
-                        Client._fillTable(table, view);
-                    }
-                });
+                itemAdded.subscribe(fillTable);
+                itemChanged.subscribe(fillTable);
+                itemRemoved.subscribe(fillTable);
             })
             .catch(errorCallback);
     }

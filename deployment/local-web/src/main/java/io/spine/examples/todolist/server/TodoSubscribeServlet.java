@@ -27,11 +27,21 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * The {@code /subscription/create} endpoint of the TodoList system.
+ *
+ * <p>Handles {@code POST} requests to create a subscription to the topic. See
+ * {@link FirebaseSubscribeServlet} for more details.
+ *
+ * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
+ *
+ * @author Dmytro Kuzmin
+ */
 @WebServlet(name = TodoSubscribeServlet.NAME, value = "/subscription/create")
 @SuppressWarnings("serial")
 public final class TodoSubscribeServlet extends FirebaseSubscribeServlet {
 
-    static final String NAME = "Subscribe Service";
+    static final String NAME = "Subscription Creation Service";
 
     public TodoSubscribeServlet() {
         super(FirebaseSubscriptionBridge.newBuilder()

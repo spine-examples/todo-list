@@ -62,7 +62,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public final class TaskPartRejections {
 
     private TaskPartRejections() {
-        // Prevent instantiation of this utility class.
     }
 
     public static final class UpdateRejections {

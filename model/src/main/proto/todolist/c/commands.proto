@@ -343,10 +343,11 @@ message AddLabels {
     repeated LabelDetails new_labels = 3 [(valid) = true];
 }
 
-// Skip adding labels to the created task and procede to other creation stages.
+// Skip adding labels to the created task and proceed to other creation stages.
 //
 // Use this command to skip the `LABEL_ASSIGNMENT` stage of task creation as using `AddLabels` with
 // empty arguments is not allowed.
+//
 message SkipLabels {
 
     // The ID of the task creation process.

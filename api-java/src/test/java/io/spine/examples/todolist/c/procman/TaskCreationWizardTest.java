@@ -95,6 +95,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * @author Dmytro Dashenkov
  */
+@SuppressWarnings("InnerClassMayBeStatic") // Nested test suites.
 @DisplayName("Task creation wizard on ")
 class TaskCreationWizardTest {
 
@@ -173,18 +174,15 @@ class TaskCreationWizardTest {
             assertThat(producedCommands, containsInAnyOrder(
                     UpdateTaskDescription.newBuilder()
                                          .setId(getTaskId())
-                                         .setDescriptionChange(
-                                                 descriptionChange)
+                                         .setDescriptionChange(descriptionChange)
                                          .build(),
                     UpdateTaskPriority.newBuilder()
                                       .setId(getTaskId())
-                                      .setPriorityChange(
-                                              priorityChange)
+                                      .setPriorityChange(priorityChange)
                                       .build(),
                     UpdateTaskDueDate.newBuilder()
                                      .setId(getTaskId())
-                                     .setDueDateChange(
-                                             dueDateChange)
+                                     .setDueDateChange(dueDateChange)
                                      .build()));
             assertEquals(LABEL_ASSIGNMENT, getStage());
         }
@@ -215,7 +213,6 @@ class TaskCreationWizardTest {
                                            .addAllExistingLabels(existingLabelIds)
                                            .addNewLabels(newLabel)
                                            .build();
-
             dispatch(cmd);
 
             final Collection<Matcher<? super CommandMessage>> expectedCommands = ImmutableList.of(

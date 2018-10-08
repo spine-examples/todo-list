@@ -62,10 +62,11 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRej
  *
  * <p>The task creation process has following stages:
  * <ol>
- *     <li><b>Task Definition</b> - the task building is started6 the task is being defined by its
+ *     <li><b>Task Definition</b> - the task building is started, the task is being defined by its
  *         primary fields. The process moves to this stage once the empty task draft is created.
  *     <li><b>Label Assignment</b> - the labels are being created and assigned to the supervised
- *         task. The process moves to this stage after the primary task data is set.
+ *         task. The process moves to this stage after the primary task data is set. This stage may
+ *         be skipped via the {@link SkipLabels} command.
  *     <li><b>Confirmation</b> - all the data is set to the label and the user may check if the data
  *         is correct.
  *     <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,

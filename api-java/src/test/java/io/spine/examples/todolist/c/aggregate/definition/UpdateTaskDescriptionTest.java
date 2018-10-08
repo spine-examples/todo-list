@@ -78,9 +78,8 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         dispatchCreateTaskCmd();
         final UpdateTaskDescription updateTaskDescriptionCmd =
                 updateTaskDescriptionInstance(entityId());
-        final List<? extends Message> messageList = dispatchCommand(aggregate,
-                                                                    envelopeOf(
-                                                                            updateTaskDescriptionCmd));
+        final List<? extends Message> messageList =
+                dispatchCommand(aggregate, envelopeOf(updateTaskDescriptionCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDescriptionUpdated.class, messageList.get(0)
                                                               .getClass());
