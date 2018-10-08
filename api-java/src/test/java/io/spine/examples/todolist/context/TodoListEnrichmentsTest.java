@@ -92,14 +92,14 @@ class TodoListEnrichmentsTest {
         final Any labelIds = enrichment.getContainer()
                                        .getItemsMap()
                                        .get(labelsEnrName.value());
-        final LabelsListEnrichment labelIdsEnr = unpack(labelIds);
+        final LabelsListEnrichment labelIdsEnr = (LabelsListEnrichment) unpack(labelIds);
         assertTrue(labelIdsEnr.getLabelIdsList().getIdsList().isEmpty());
 
         final TypeName taskTypeName = TypeName.from(TaskEnrichment.getDescriptor());
         final Any task = enrichment.getContainer()
                                    .getItemsMap()
                                    .get(taskTypeName.value());
-        final TaskEnrichment taskEnr = unpack(task);
+        final TaskEnrichment taskEnr = (TaskEnrichment) unpack(task);
         assertTrue(isDefault(taskEnr.getTask()));
     }
 
@@ -117,7 +117,7 @@ class TodoListEnrichmentsTest {
         final Any packerEnr = enrichment.getContainer()
                                        .getItemsMap()
                                        .get(enrTypeName.value());
-        final DetailsEnrichment enr = unpack(packerEnr);
+        final DetailsEnrichment enr = (DetailsEnrichment) unpack(packerEnr);
         assertTrue(isDefault(enr.getLabelDetails()));
         assertTrue(isDefault(enr.getTaskDetails()));
     }

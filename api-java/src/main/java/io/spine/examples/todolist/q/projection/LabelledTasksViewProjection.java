@@ -206,8 +206,8 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         }
     }
 
-    private LabelledTasksViewVBuilder setLabelledTasks(TaskListView updatedView) {
-        return getBuilder().setId(getId())
-                           .setLabelledTasks(updatedView);
+    private void setLabelledTasks(TaskListView updatedView) {
+        getBuilder().setId(getId())
+                    .setLabelledTasks(updatedView);
     }
 }

@@ -165,7 +165,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             eventBus.post(labelAssignedToTaskEvent2);
 
             final LabelledTasksView labelledTasksView = getProjectionState();
-            assertEquals(LABEL_ID, labelledTasksView.getLabelId());
+            assertEquals(LABEL_ID, labelledTasksView.getId());
             assertEquals(2, labelledTasksView.getLabelledTasks()
                                              .getItemsList()
                                              .size());
@@ -528,7 +528,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             eventBus.post(labelDetailsUpdatedEvent);
 
             final LabelledTasksView labelledTasksView = getProjectionState();
-            assertEquals(LABEL_ID, labelledTasksView.getLabelId());
+            assertEquals(LABEL_ID, labelledTasksView.getId());
             assertEquals(UPDATED_LABEL_TITLE, labelledTasksView.getLabelTitle());
             assertEquals(LabelColorView.RED_COLOR.getHexColor(), labelledTasksView.getLabelColor());
         }
@@ -550,7 +550,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             eventBus.post(labelDetailsUpdatedEvent);
 
             final LabelledTasksView labelledTasksView = getProjectionState();
-            assertEquals(LABEL_ID, labelledTasksView.getLabelId());
+            assertEquals(LABEL_ID, labelledTasksView.getId());
             assertNotEquals(UPDATED_LABEL_TITLE, labelledTasksView.getLabelTitle());
             assertNotEquals(LabelColorView.RED_COLOR.getHexColor(),
                             labelledTasksView.getLabelColor());

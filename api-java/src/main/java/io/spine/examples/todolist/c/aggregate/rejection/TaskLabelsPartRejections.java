@@ -32,6 +32,8 @@ import io.spine.examples.todolist.c.rejection.CannotAddLabels;
 import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
 import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Utility class for working with {@link TaskLabelsPart} rejection.
  *
@@ -51,6 +53,7 @@ public final class TaskLabelsPartRejections {
      */
     public static void throwCannotAssignLabelToTask(AssignLabelToTask cmd)
             throws CannotAssignLabelToTask {
+        checkNotNull(cmd);
         final RejectedTaskCommandDetails commandDetails =
                 RejectedTaskCommandDetails.newBuilder()
                                           .setTaskId(cmd.getId())
@@ -72,6 +75,7 @@ public final class TaskLabelsPartRejections {
      */
     public static void throwCannotRemoveLabelFromTask(RemoveLabelFromTask cmd)
             throws CannotRemoveLabelFromTask {
+        checkNotNull(cmd);
         final RejectedTaskCommandDetails commandDetails =
                 RejectedTaskCommandDetails.newBuilder()
                                           .setTaskId(cmd.getId())
@@ -85,6 +89,7 @@ public final class TaskLabelsPartRejections {
     }
 
     public static void throwCannotAddLabelsToTask(AddLabels cmd) throws CannotAddLabels {
+        checkNotNull(cmd);
         AddLabelsRejected addLabelsRejected = AddLabelsRejected
                 .newBuilder()
                 .setId(cmd.getId())
