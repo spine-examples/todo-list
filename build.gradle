@@ -93,6 +93,10 @@ allprojects {
         mavenCentral()
         mavenLocal()
         maven { url = repos.gradlePlugins }
+
+        maven { url = repos.oldSpine }
+        maven { url = repos.oldSpineSnapshots }
+
         maven { url = repos.spine }
         maven { url = repos.spineSnapshots }
     }
@@ -127,20 +131,12 @@ subprojects {
     apply plugin: 'io.spine.tools.spine-model-compiler'
     apply plugin: 'io.spine.tools.spine-model-verifier'
 
-// todo try uncomment
-//    compileJava {
-//        // The configuration for `spine-model-verifier`.
-//        options.compilerArgs += ["-processor", "io.spine.model.assemble.AssignLookup",
-//                                 "-AspineDirRoot=${rootDir}"]
-//    }
-
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
     dependencies {
         compile deps.build.slf4j
 
-        // todo try make it testCompile
         compile deps.test.slf4j
 
         compile deps.build.jsr305Annotations
@@ -153,7 +149,6 @@ subprojects {
 
         compile "io.spine:spine-base:$spineBaseVersion"
 
-        // todo try make it protobuf
         compile "io.spine:spine-client:$spineVersion"
 
         annotationProcessor "io.spine.tools:spine-model-assembler:$spineVersion"

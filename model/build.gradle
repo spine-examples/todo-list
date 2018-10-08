@@ -18,5 +18,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// todo try to build with model compiler instead
 apply from: "$rootDir/scripts/publish.gradle"

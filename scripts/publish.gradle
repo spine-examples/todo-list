@@ -31,7 +31,6 @@ task javadocJar(type: Jar, dependsOn: 'javadoc') {
 }
 
 apply plugin: 'maven-publish'
-// todo address publishing
 publishing {
     publications {
         mavenJava(MavenPublication) {
