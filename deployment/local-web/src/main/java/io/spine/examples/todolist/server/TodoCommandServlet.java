@@ -32,8 +32,6 @@ import javax.servlet.http.HttpServletResponse;
  * <p>Handles command {@code POST} requests. See {@link CommandServlet} for more details.
  *
  * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
- *
- * @author Dmytro Dashenkov
  */
 @WebServlet(name = TodoCommandServlet.NAME, value = "/command")
 @SuppressWarnings("serial")

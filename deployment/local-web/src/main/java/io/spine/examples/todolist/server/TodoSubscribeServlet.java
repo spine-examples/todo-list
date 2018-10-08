@@ -34,8 +34,6 @@ import javax.servlet.http.HttpServletResponse;
  * {@link FirebaseSubscribeServlet} for more details.
  *
  * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
- *
- * @author Dmytro Kuzmin
  */
 @WebServlet(name = TodoSubscribeServlet.NAME, value = "/subscription/create")
 @SuppressWarnings("serial")

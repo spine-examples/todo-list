@@ -33,8 +33,6 @@ import javax.servlet.http.HttpServletResponse;
  * <p>Handles query {@code POST} requests. See {@link FirebaseQueryServlet} for more details.
  *
  * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
- *
- * @author Dmytro Dashenkov
  */
 @WebServlet(name = TodoQueryServlet.NAME, value = "/query")
 @SuppressWarnings("serial")

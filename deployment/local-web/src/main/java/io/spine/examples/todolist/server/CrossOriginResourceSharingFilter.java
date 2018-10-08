@@ -38,8 +38,6 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
  *
  * <p>Requests from any origin are allowed. The requests are allowed to contain credentials and
  * the {@code Content-Type} header.
- *
- * @author Dmytro Dashenkov
  */
 @WebFilter(
         filterName = CrossOriginResourceSharingFilter.NAME,
