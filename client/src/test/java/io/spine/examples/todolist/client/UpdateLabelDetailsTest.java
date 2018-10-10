@@ -225,7 +225,7 @@ class UpdateLabelDetailsTest extends TodoClientTest {
         assertEquals(expectedListSize, labelledTasksViewList.size());
 
         final LabelledTasksView view = getLabelledTasksView(labelledTasksViewList);
-        assertEquals(labelId, view.getLabelId());
+        assertEquals(labelId, view.getId());
 
         return view;
     }

@@ -132,7 +132,7 @@ abstract class TodoClientTest {
         LabelledTasksView result = LabelledTasksView.getDefaultInstance();
 
         for (LabelledTasksView labelledView : tasksViewList) {
-            final boolean isEmpty = labelledView.getLabelId()
+            final boolean isEmpty = labelledView.getId()
                                                 .getValue()
                                                 .isEmpty();
             if (!isEmpty) {
