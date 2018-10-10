@@ -89,7 +89,7 @@ export class Client {
         );
         // noinspection JSUnusedGlobalSymbols Used by the caller code.
         let fillTable = {
-            next: view => {
+            next: (view) => {
                 Client._fillTable(table, view);
             }
         };
