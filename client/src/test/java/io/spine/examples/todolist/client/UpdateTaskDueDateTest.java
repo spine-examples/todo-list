@@ -43,9 +43,6 @@ import static io.spine.base.Time.getCurrentTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-/**
- * @author Illia Shepilov
- */
 @DisplayName("After execution of UpdateTaskDueDate command")
 class UpdateTaskDueDateTest extends TodoClientTest {
 

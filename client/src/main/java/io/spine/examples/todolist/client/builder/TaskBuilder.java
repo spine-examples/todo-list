@@ -29,8 +29,6 @@ import static io.spine.base.Identifier.newUuid;
 
 /**
  * Provides task command builders.
- *
- * @author Illia Shepilov
  */
 public final class TaskBuilder {
 

@@ -37,9 +37,6 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIP
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Illia Shepilov
- */
 @DisplayName("After execution of CreateBasicTask command")
 class CreateBasicTaskTest extends TodoClientTest {
 

@@ -26,8 +26,6 @@ import io.spine.examples.todolist.q.projection.MyListView;
 
 /**
  * A TodoList gRPC client able to make calls to the {@code SubscriptionService}.
- *
- * @author Dmytro Dashenkov
  */
 public interface SubscribingTodoClient extends TodoClient {
 

@@ -24,8 +24,6 @@ package io.spine.examples.todolist.client.builder;
  * Utility class for working with command builders.
  *
  * <p> Provides methods for building commands.
- *
- * @author Illia Shepilov
  */
 public final class CommandBuilder {
 

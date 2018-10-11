@@ -41,9 +41,6 @@ import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.a
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-/**
- * @author Illia Shepilov
- */
 class UpdateTaskPriorityTest extends TodoClientTest {
 
     private TodoClient client;

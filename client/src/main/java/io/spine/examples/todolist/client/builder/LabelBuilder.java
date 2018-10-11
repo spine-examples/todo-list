@@ -27,8 +27,6 @@ import static io.spine.base.Identifier.newUuid;
 
 /**
  * Provides label command builders.
- *
- * @author Illia Shepilov
  */
 public final class LabelBuilder {
 

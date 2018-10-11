@@ -66,9 +66,6 @@ import static java.util.stream.Collectors.toList;
 
 /**
  * An implementation of the TodoList gRPC client.
- *
- * @author Illia Shepilov
- * @author Dmitry Ganzha
  */
 @SuppressWarnings("OverlyCoupledClass")
 final class TodoClientImpl implements SubscribingTodoClient {

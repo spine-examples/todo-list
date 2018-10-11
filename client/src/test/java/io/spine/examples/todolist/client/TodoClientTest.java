@@ -52,9 +52,6 @@ import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
-/**
- * @author Illia Shepilov
- */
 abstract class TodoClientTest {
 
     static final String UPDATED_TASK_DESCRIPTION = "Updated.";

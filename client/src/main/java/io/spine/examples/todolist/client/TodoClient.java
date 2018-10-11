@@ -37,8 +37,6 @@ import java.util.List;
  * A client interface.
  *
  * <p> Provides methods to communicate with server.
- *
- * @author Illia Shepilov
  */
 public interface TodoClient {
 
