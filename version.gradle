@@ -22,7 +22,7 @@
 final def SPINE_VERSION = '0.11.00-SNAPSHOT'
 
 project.ext {
-    // TODOList version
+    // To-do List app version
     appVersion = SPINE_VERSION
 
     // Spine dependencies' versions
