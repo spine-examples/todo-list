@@ -21,8 +21,8 @@
 dependencies {
     compile project(path: ':client')
 
-    testCompile group: 'mysql', name: 'mysql-connector-java', version: mysqlDriverVersion
-    testCompile group: 'io.spine', name: 'jdbc-rdbms', version: spineJdbcStorageVersion
+    testCompile "mysql:mysql-connector-java:$mysqlDriverVersion"
+    testCompile "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
     testCompile group: 'org.junit.platform', name: 'junit-platform-console-standalone',
             version: jUnitPlatformVersion
 

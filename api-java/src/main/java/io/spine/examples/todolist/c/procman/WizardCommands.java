@@ -22,6 +22,7 @@ package io.spine.examples.todolist.c.procman;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Timestamp;
+import io.spine.base.CommandMessage;
 import io.spine.change.StringChange;
 import io.spine.change.TimestampChange;
 import io.spine.examples.todolist.LabelDetails;
@@ -35,7 +36,6 @@ import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
-import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
@@ -46,7 +46,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.of;
-import static io.spine.Identifier.newUuid;
+import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.LabelColor.GRAY;
 import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
 import static io.spine.validate.Validate.isNotDefault;
@@ -55,8 +55,6 @@ import static java.util.stream.Collectors.toSet;
 
 /**
  * A factory of commands emitted by the {@link TaskCreationWizard}.
- *
- * @author Dmytro Dashenkov
  */
 final class WizardCommands {
 
@@ -88,19 +86,19 @@ final class WizardCommands {
      * @param src the source command
      * @return new commands generated from the given {@code src} command
      */
-    Collection<? extends TodoCommand> setTaskDetails(SetTaskDetails src) {
-        final ImmutableSet.Builder<TodoCommand> commands = ImmutableSet.builder();
+    Collection<? extends CommandMessage> setTaskDetails(SetTaskDetails src) {
+        final ImmutableSet.Builder<CommandMessage> commands = ImmutableSet.builder();
         final TaskDescription description = src.getDescription();
-        final TodoCommand updateDescription = updateTaskDescription(description);
+        final CommandMessage updateDescription = updateTaskDescription(description);
         commands.add(updateDescription);
         final TaskPriority priority = src.getPriority();
         if (enumIsNotDefault(priority)) {
-            final TodoCommand updatePriority = updateTaskPriority(priority);
+            final CommandMessage updatePriority = updateTaskPriority(priority);
             commands.add(updatePriority);
         }
         final Timestamp dueDate = src.getDueDate();
         if (isNotDefault(dueDate)) {
-            final TodoCommand updateDueDate = updateTaskDueDate(dueDate);
+            final CommandMessage updateDueDate = updateTaskDueDate(dueDate);
             commands.add(updateDueDate);
         }
         return commands.build();
@@ -115,7 +113,7 @@ final class WizardCommands {
      * @param description the description to set to the target task
      * @return the command to the target task
      */
-    private TodoCommand updateTaskDescription(TaskDescription description) {
+    private CommandMessage updateTaskDescription(TaskDescription description) {
         checkArgument(isNotDefault(description));
         final StringChange change = StringChange.newBuilder()
                                                 .setNewValue(description.getValue())
@@ -137,16 +135,16 @@ final class WizardCommands {
      * @param priority the priority to set to the target task
      * @return the command to the target task
      */
-    private TodoCommand updateTaskPriority(TaskPriority priority) {
+    private CommandMessage updateTaskPriority(TaskPriority priority) {
         checkArgument(enumIsNotDefault(priority));
         final PriorityChange change = PriorityChange.newBuilder()
                                                     .setNewValue(priority)
                                                     .setPreviousValue(TP_UNDEFINED)
                                                     .build();
-        final TodoCommand updateCommand = UpdateTaskPriority.newBuilder()
-                                                            .setId(taskId)
-                                                            .setPriorityChange(change)
-                                                            .build();
+        final CommandMessage updateCommand = UpdateTaskPriority.newBuilder()
+                                                               .setId(taskId)
+                                                               .setPriorityChange(change)
+                                                               .build();
         return updateCommand;
     }
 
@@ -159,15 +157,15 @@ final class WizardCommands {
      * @param dueDate the priority to set to the target task
      * @return the command to the target task
      */
-    private TodoCommand updateTaskDueDate(Timestamp dueDate) {
+    private CommandMessage updateTaskDueDate(Timestamp dueDate) {
         checkArgument(isNotDefault(dueDate));
         final TimestampChange change = TimestampChange.newBuilder()
                                                       .setNewValue(dueDate)
                                                       .build();
-        final TodoCommand updateCommand = UpdateTaskDueDate.newBuilder()
-                                                           .setId(taskId)
-                                                           .setDueDateChange(change)
-                                                           .build();
+        final CommandMessage updateCommand = UpdateTaskDueDate.newBuilder()
+                                                              .setId(taskId)
+                                                              .setDueDateChange(change)
+                                                              .build();
         return updateCommand;
     }
 
@@ -178,12 +176,12 @@ final class WizardCommands {
      * @param src the command that defines the labels to assign
      * @return the commands assigning those tasks
      */
-    Collection<? extends TodoCommand> assignExistingLabels(AddLabels src) {
-        final Collection<? extends TodoCommand> commands =
+    Collection<? extends CommandMessage> assignExistingLabels(AddLabels src) {
+        final Collection<? extends CommandMessage> commands =
                 src.getExistingLabelsList()
-                       .stream()
-                       .map(this::assignLabel)
-                       .collect(toSet());
+                   .stream()
+                   .map(this::assignLabel)
+                   .collect(toSet());
         return commands;
     }
 
@@ -198,12 +196,12 @@ final class WizardCommands {
      * @param src the command that defines the new labels to assign to the task
      * @return commands creating and assigning those labels
      */
-    Collection<? extends TodoCommand> assignNewLabels(AddLabels src) {
-        final Collection<? extends TodoCommand> commands =
+    Collection<? extends CommandMessage> assignNewLabels(AddLabels src) {
+        final Collection<? extends CommandMessage> commands =
                 src.getNewLabelsList()
-                       .stream()
-                       .flatMap(this::createAndAssignLabel)
-                       .collect(toList());
+                   .stream()
+                   .flatMap(this::createAndAssignLabel)
+                   .collect(toList());
         return commands;
     }
 
@@ -214,13 +212,13 @@ final class WizardCommands {
      * @param label the label details describing the task to create
      * @return the command messages creating and assigning a label
      */
-    private Stream<? extends TodoCommand> createAndAssignLabel(LabelDetails label) {
+    private Stream<? extends CommandMessage> createAndAssignLabel(LabelDetails label) {
         final LabelId labelId = LabelId.newBuilder()
                                        .setValue(newUuid())
                                        .build();
-        final TodoCommand createBasicLabel = createLabel(labelId, label);
-        final TodoCommand updateLabelDetails = setColorToLabel(labelId, label);
-        final TodoCommand assignLabelToTask = assignLabel(labelId);
+        final CommandMessage createBasicLabel = createLabel(labelId, label);
+        final CommandMessage updateLabelDetails = setColorToLabel(labelId, label);
+        final CommandMessage assignLabelToTask = assignLabel(labelId);
         return of(createBasicLabel, updateLabelDetails, assignLabelToTask).stream();
     }
 
@@ -232,11 +230,11 @@ final class WizardCommands {
      * @return a command creating a basic label with the given ID and title; note that the label
      *         color is ignored for now
      */
-    private static TodoCommand createLabel(LabelId labelId, LabelDetails label) {
-        final TodoCommand createBasicLabel = CreateBasicLabel.newBuilder()
-                                                             .setLabelId(labelId)
-                                                             .setLabelTitle(label.getTitle())
-                                                             .build();
+    private static CommandMessage createLabel(LabelId labelId, LabelDetails label) {
+        final CommandMessage createBasicLabel = CreateBasicLabel.newBuilder()
+                                                                .setLabelId(labelId)
+                                                                .setLabelTitle(label.getTitle())
+                                                                .build();
         return createBasicLabel;
     }
 
@@ -250,7 +248,7 @@ final class WizardCommands {
      * @param label   the new label details
      * @return a command updating the label details
      */
-    private static TodoCommand setColorToLabel(LabelId labelId, LabelDetails label) {
+    private static CommandMessage setColorToLabel(LabelId labelId, LabelDetails label) {
         final LabelDetails previousDetails = label.toBuilder()
                                                   .setColor(GRAY)
                                                   .build();
@@ -258,7 +256,7 @@ final class WizardCommands {
                                                             .setPreviousDetails(previousDetails)
                                                             .setNewDetails(label)
                                                             .build();
-        final TodoCommand updateLabelDetails =
+        final CommandMessage updateLabelDetails =
                 UpdateLabelDetails.newBuilder()
                                   .setId(labelId)
                                   .setLabelDetailsChange(change)
@@ -273,7 +271,7 @@ final class WizardCommands {
      * @param labelId the ID of the label to assign
      * @return new instance of a command message
      */
-    private TodoCommand assignLabel(LabelId labelId) {
+    private CommandMessage assignLabel(LabelId labelId) {
         return AssignLabelToTask.newBuilder()
                                 .setId(taskId)
                                 .setLabelId(labelId)

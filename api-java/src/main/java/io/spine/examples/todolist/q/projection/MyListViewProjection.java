@@ -53,8 +53,6 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
  *
  * <p> Contains the task list view items.
  * <p> This view includes all tasks that are not in a draft state and not deleted.
- *
- * @author Illia Shepilov
  */
 @SuppressWarnings("OverlyCoupledClass")
 public class MyListViewProjection extends Projection<TaskListId, MyListView, MyListViewVBuilder> {
@@ -97,7 +95,8 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
         final List<TaskItem> views = new ArrayList<>(getBuilder().getMyList()
                                                                  .getItemsList());
         final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
-        getBuilder().setMyList(taskListView);
+        getBuilder().setId(getId())
+                    .setMyList(taskListView);
     }
 
     @Subscribe
@@ -182,7 +181,8 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
         final TaskListView listView = TaskListView.newBuilder()
                                                   .addAllItems(updatedList)
                                                   .build();
-        getBuilder().setMyList(listView);
+        getBuilder().setId(getId())
+                    .setMyList(listView);
     }
 
     private void addTaskItem(TaskItem taskView) {
@@ -190,6 +190,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
                                                                  .getItemsList());
         views.add(taskView);
         final TaskListView taskListView = newTaskListView(views);
-        getBuilder().setMyList(taskListView);
+        getBuilder().setId(getId())
+                    .setMyList(taskListView);
     }
 }

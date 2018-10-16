@@ -21,6 +21,7 @@
 package io.spine.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
+import io.spine.core.EventContext;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
@@ -30,9 +31,9 @@ import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
-import io.spine.server.event.EventEnricher;
+import io.spine.server.event.Enricher;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 /**
  * Provides event enricher for the test needs.
@@ -62,45 +63,46 @@ public class TestEventEnricherFactory {
                                                                   .setTitle(LABEL_TITLE)
                                                                   .build();
 
-    private static final Function<LabelId, LabelDetails> LABEL_ID_TO_LABEL_DETAILS =
-            labelId -> LABEL_DETAILS;
+    private static final BiFunction<LabelId, EventContext, LabelDetails> LABEL_ID_TO_LABEL_DETAILS =
+            (labelId, eventContext) -> LABEL_DETAILS;
 
-    private static final Function<TaskId, LabelIdsList> TASK_ID_TO_LABEL_IDS_LIST =
-            taskId -> {
+    private static final BiFunction<TaskId, EventContext, LabelIdsList> TASK_ID_TO_LABEL_IDS_LIST =
+            (taskId, eventContext) -> {
                 final LabelIdsList result = LabelIdsList.newBuilder()
                                                         .addIds(TestTaskEventFactory.LABEL_ID)
                                                         .build();
                 return result;
             };
 
-    private static final Function<TaskId, TaskDetails> TASK_ID_TO_TASK_DETAILS =
-            taskId -> TASK_DETAILS;
+    private static final BiFunction<TaskId, EventContext, TaskDetails> TASK_ID_TO_TASK_DETAILS =
+            (taskId, eventContext) -> TASK_DETAILS;
 
-    private static final Function<TaskId, Task> TASK_ID_TO_TASK = taskId -> TASK;
+    private static final BiFunction<TaskId, EventContext, Task> TASK_ID_TO_TASK =
+            (taskId, eventContext) -> TASK;
 
     private TestEventEnricherFactory() {
     }
 
     /**
-     * Provides a pre-configured {@link EventEnricher} event instance.
+     * Provides a pre-configured {@link Enricher} event instance.
      *
      * @return {@code EventEnricher}
      */
-    public static EventEnricher eventEnricherInstance() {
-        final EventEnricher result = EventEnricher.newBuilder()
-                                                  .add(LabelId.class,
-                                                       LabelDetails.class,
-                                                       LABEL_ID_TO_LABEL_DETAILS::apply)
-                                                  .add(TaskId.class,
-                                                       TaskDetails.class,
-                                                       TASK_ID_TO_TASK_DETAILS::apply)
-                                                  .add(TaskId.class,
-                                                       LabelIdsList.class,
-                                                       TASK_ID_TO_LABEL_IDS_LIST::apply)
-                                                  .add(TaskId.class,
-                                                       Task.class,
-                                                       TASK_ID_TO_TASK::apply)
-                                                  .build();
+    public static Enricher eventEnricherInstance() {
+        final Enricher result = Enricher.newBuilder()
+                                        .add(LabelId.class,
+                                             LabelDetails.class,
+                                             LABEL_ID_TO_LABEL_DETAILS)
+                                        .add(TaskId.class,
+                                             TaskDetails.class,
+                                             TASK_ID_TO_TASK_DETAILS)
+                                        .add(TaskId.class,
+                                             LabelIdsList.class,
+                                             TASK_ID_TO_LABEL_IDS_LIST)
+                                        .add(TaskId.class,
+                                             Task.class,
+                                             TASK_ID_TO_TASK)
+                                        .build();
         return result;
     }
 }

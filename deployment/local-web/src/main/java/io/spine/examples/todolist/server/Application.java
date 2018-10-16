@@ -27,8 +27,6 @@ import io.spine.server.QueryService;
 
 /**
  * The TodoList application.
- *
- * @author Dmytro Dashenkov
  */
 final class Application {
 

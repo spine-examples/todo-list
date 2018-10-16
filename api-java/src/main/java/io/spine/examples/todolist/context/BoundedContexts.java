@@ -21,7 +21,7 @@
 package io.spine.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
+import io.spine.core.BoundedContextNames;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
@@ -30,27 +30,27 @@ import io.spine.examples.todolist.repository.TaskCreationWizardRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
+import io.spine.server.event.Enricher;
 import io.spine.server.event.EventBus;
-import io.spine.server.event.EventEnricher;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
+
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
  * Utilities for creation the {@link BoundedContext} instances.
- *
- * @author Illia Shepilov
- * @author Dmytro Grankin
  */
 public final class BoundedContexts {
 
     /** The default name of the {@code BoundedContext}. */
+    @SuppressWarnings("DuplicateStringLiteralInspection") // Duplication with tests.
     private static final String NAME = "TodoListBoundedContext";
 
     private static final StorageFactory IN_MEMORY_FACTORY =
-            InMemoryStorageFactory.newInstance(BoundedContext.newName(NAME), false);
+            InMemoryStorageFactory.newInstance(BoundedContextNames.newName(NAME), false);
 
     private BoundedContexts() {
         // Disable instantiation from outside.
@@ -108,20 +108,18 @@ public final class BoundedContexts {
                                                    LabelAggregateRepository labelRepo,
                                                    TaskRepository taskRepo,
                                                    TaskLabelsRepository labelsRepo) {
-        final EventEnricher enricher = TodoListEnrichments.newBuilder()
-                                                          .setLabelRepository(labelRepo)
-                                                          .setTaskRepository(taskRepo)
-                                                          .setTaskLabelsRepository(labelsRepo)
-                                                          .build()
-                                                          .createEnricher();
+        final Enricher enricher = TodoListEnrichments.newBuilder()
+                                                     .setLabelRepository(labelRepo)
+                                                     .setTaskRepository(taskRepo)
+                                                     .setTaskLabelsRepository(labelsRepo)
+                                                     .build()
+                                                     .createEnricher();
         final EventBus.Builder eventBus = EventBus.newBuilder()
                                                   .setEnricher(enricher)
                                                   .setStorageFactory(storageFactory);
         return eventBus;
     }
 
-    @SuppressWarnings("Guava" /* Spine API is Java 7-based
-                                 and uses `Optional` from Google Guava. */)
     @VisibleForTesting
     static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
         final Optional<StorageFactory> storageFactory = eventBus.getStorageFactory();

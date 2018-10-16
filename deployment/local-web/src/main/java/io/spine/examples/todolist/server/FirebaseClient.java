@@ -27,8 +27,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * A Firebase Realtime Database client.
- *
- * @author Dmytro Dashenkov
  */
 final class FirebaseClient {
 

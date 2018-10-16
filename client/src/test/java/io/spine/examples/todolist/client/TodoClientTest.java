@@ -22,6 +22,7 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
@@ -42,7 +43,7 @@ import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static io.spine.Identifier.newUuid;
+import static io.spine.base.Identifier.newUuid;
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.client.TodoClientImpl.HOST;
 import static io.spine.examples.todolist.server.Server.newServer;
@@ -51,9 +52,6 @@ import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
-/**
- * @author Illia Shepilov
- */
 abstract class TodoClientTest {
 
     static final String UPDATED_TASK_DESCRIPTION = "Updated.";
@@ -131,7 +129,7 @@ abstract class TodoClientTest {
         LabelledTasksView result = LabelledTasksView.getDefaultInstance();
 
         for (LabelledTasksView labelledView : tasksViewList) {
-            final boolean isEmpty = labelledView.getLabelId()
+            final boolean isEmpty = labelledView.getId()
                                                 .getValue()
                                                 .isEmpty();
             if (!isEmpty) {

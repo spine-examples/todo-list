@@ -28,11 +28,10 @@ import org.junit.jupiter.api.Test;
 import static io.spine.examples.todolist.server.LocalMySqlServer.createBoundedContext;
 import static io.spine.examples.todolist.server.LocalMySqlServer.getActualArguments;
 import static io.spine.examples.todolist.server.LocalMySqlServer.getDefaultArguments;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("LocalMySqlServer should")

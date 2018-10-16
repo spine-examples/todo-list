@@ -22,8 +22,6 @@ package io.spine.examples.todolist;
 
 /**
  * An exception thrown when enrichment cannot be found in {@link io.spine.core.EventContext}.
- *
- * @author Illia Shepilov
  */
 class EnrichmentNotFoundException extends RuntimeException {
 

@@ -28,8 +28,6 @@ import io.spine.server.aggregate.AggregatePartRepository;
 
 /**
  * Repository for the {@link TaskLabelsPart}
- *
- * @author Illia Shepilov
  */
 public class TaskLabelsRepository
         extends AggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> {

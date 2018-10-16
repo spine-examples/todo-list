@@ -37,6 +37,7 @@ import "todolist/attributes.proto";
 import "todolist/values.proto";
 
 message Task {
+    option (entity).kind = AGGREGATE;
 
     // Task identifier.
     TaskId id = 1;
@@ -69,6 +70,7 @@ message Task {
 }
 
 message TaskLabels {
+    option (entity).kind = AGGREGATE;
 
     // Task identifier.
     TaskId task_id = 1;
@@ -91,6 +93,7 @@ message TaskLabels {
 // Similar to Google Mail labels, can be used for color-coding the task list.
 //
 message TaskLabel {
+    option (entity).kind = AGGREGATE;
 
     // Label identifier.
     LabelId id = 1;

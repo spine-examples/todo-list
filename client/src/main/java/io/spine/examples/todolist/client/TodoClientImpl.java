@@ -25,7 +25,8 @@ import com.google.protobuf.Message;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.stub.StreamObserver;
-import io.spine.Identifier;
+import io.spine.base.CommandMessage;
+import io.spine.base.Identifier;
 import io.spine.client.ActorRequestFactory;
 import io.spine.client.EntityStateUpdate;
 import io.spine.client.Query;
@@ -46,11 +47,9 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskLabels;
-import io.spine.examples.todolist.c.commands.TodoCommand;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
-import io.spine.protobuf.AnyPacker;
 import io.spine.time.ZoneOffsets;
 
 import javax.annotation.Nullable;
@@ -59,16 +58,14 @@ import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.collect.ImmutableSet.of;
-import static io.spine.Identifier.newUuid;
+import static io.spine.base.Identifier.newUuid;
+import static io.spine.protobuf.AnyPacker.unpack;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 
 /**
  * An implementation of the TodoList gRPC client.
- *
- * @author Illia Shepilov
- * @author Dmitry Ganzha
  */
 @SuppressWarnings("OverlyCoupledClass")
 final class TodoClientImpl implements SubscribingTodoClient {
@@ -95,7 +92,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     @Override
-    public void postCommand(TodoCommand cmd) {
+    public void postCommand(CommandMessage cmd) {
         final Command executableCmd = requestFactory.command()
                                                     .create(cmd);
         commandService.post(executableCmd);
@@ -109,7 +106,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                                .getMessagesList();
         return messages.isEmpty()
                ? MyListView.getDefaultInstance()
-               : AnyPacker.unpack(messages.get(0));
+               : unpack(messages.get(0), MyListView.class);
     }
 
     @Override
@@ -120,7 +117,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                                .getMessagesList();
         final List<LabelledTasksView> result = messages
                 .stream()
-                .map(AnyPacker::<LabelledTasksView>unpack)
+                .map(any -> unpack(any, LabelledTasksView.class))
                 .collect(toList());
 
         return result;
@@ -134,7 +131,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                                .getMessagesList();
         return messages.isEmpty()
                ? DraftTasksView.getDefaultInstance()
-               : AnyPacker.unpack(messages.get(0));
+               : unpack(messages.get(0), DraftTasksView.class);
     }
 
     @Override
@@ -218,8 +215,10 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                           .all(cls);
         final List<Any> messages = queryService.read(query)
                                                .getMessagesList();
+
+        @SuppressWarnings("unchecked") // Logically correct.
         final List<M> result = messages.stream()
-                                       .map(AnyPacker::<M>unpack)
+                                       .map(any -> (M) unpack(any))
                                        .collect(toList());
         return result;
     }
@@ -233,8 +232,10 @@ final class TodoClientImpl implements SubscribingTodoClient {
                    "Too many %s-s with ID %s:%s %s",
                    messageClass.getSimpleName(), Identifier.toString(id),
                    System.lineSeparator(), messages);
+
+        @SuppressWarnings("unchecked") // Logically correct.
         final Optional<M> result = messages.stream()
-                                           .map(AnyPacker::<M>unpack)
+                                           .map(any -> (M) unpack(any))
                                            .findFirst();
         return result;
     }
@@ -252,7 +253,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                     .build();
         final ActorRequestFactory result = ActorRequestFactory.newBuilder()
                                                               .setActor(userId)
-                                                              .setZoneOffset(ZoneOffsets.UTC)
+                                                              .setZoneOffset(ZoneOffsets.utc())
                                                               .build();
         return result;
     }
@@ -277,12 +278,13 @@ final class TodoClientImpl implements SubscribingTodoClient {
             this.delegate = targetObserver;
         }
 
+        @SuppressWarnings("unchecked") // Logically correct.
         @Override
         public void onNext(SubscriptionUpdate value) {
             value.getEntityStateUpdatesList()
                  .stream()
                  .map(EntityStateUpdate::getState)
-                 .map(AnyPacker::<M>unpack)
+                 .map(any -> (M) unpack(any))
                  .forEach(delegate::onNext);
         }
 

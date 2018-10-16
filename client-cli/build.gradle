@@ -19,7 +19,7 @@
  */
 
 dependencies {
-    compile group: 'org.jline', name: 'jline', version: '3.3.0'
+    compile 'org.jline:jline:3.3.0'
 
     compile project(path: ':client')
     compile project(path: ':cli-core')

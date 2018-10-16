@@ -28,8 +28,6 @@ import io.spine.protobuf.AnyPacker;
 
 /**
  * Utility class for working with mismatches.
- *
- * @author Illia Shepilov
  */
 class MismatchHelper {
 

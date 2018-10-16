@@ -32,9 +32,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-/**
- * @author Dmytro Dashenkov
- */
 @DisplayName("After CreateBasicLabel")
 class CreateLabelTest extends TodoClientTest {
 

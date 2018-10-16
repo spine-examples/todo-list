@@ -29,8 +29,6 @@ import static io.spine.util.Exceptions.illegalArgumentWithCauseOf;
 
 /**
  * The factory of credentials for the Firebase integration.
- *
- * @author Dmytro Dashenkov
  */
 final class FirebaseCredentials {
 

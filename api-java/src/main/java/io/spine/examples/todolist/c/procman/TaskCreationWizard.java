@@ -20,8 +20,10 @@
 
 package io.spine.examples.todolist.c.procman;
 
-import com.google.protobuf.Message;
+import io.spine.base.CommandMessage;
 import io.spine.core.CommandContext;
+import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskCreation;
 import io.spine.examples.todolist.TaskCreation.Stage;
 import io.spine.examples.todolist.TaskCreationId;
@@ -33,12 +35,13 @@ import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
+import io.spine.examples.todolist.c.commands.SkipLabels;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
-import io.spine.examples.todolist.c.commands.TodoCommand;
+import io.spine.examples.todolist.c.rejection.CannotAddLabels;
 import io.spine.examples.todolist.c.rejection.CannotMoveToStage;
 import io.spine.server.command.Assign;
-import io.spine.server.procman.CommandRouted;
-import io.spine.server.procman.CommandRouter;
+import io.spine.server.command.Command;
+import io.spine.server.model.Nothing;
 import io.spine.server.procman.ProcessManager;
 
 import java.util.Collection;
@@ -46,23 +49,24 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.of;
+import static com.google.common.collect.Lists.newArrayList;
 import static io.spine.examples.todolist.TaskCreation.Stage.CANCELED;
 import static io.spine.examples.todolist.TaskCreation.Stage.COMPLETED;
 import static io.spine.examples.todolist.TaskCreation.Stage.CONFIRMATION;
 import static io.spine.examples.todolist.TaskCreation.Stage.LABEL_ASSIGNMENT;
 import static io.spine.examples.todolist.TaskCreation.Stage.TASK_DEFINITION;
-import static java.util.Collections.emptyList;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAddLabelsToTask;
 
 /**
  * A process manager supervising the task creation process.
  *
  * <p>The task creation process has following stages:
  * <ol>
- *     <li><b>Task Definition</b> - the task building is started6 the task is being defined by its
+ *     <li><b>Task Definition</b> - the task building is started: the task is being defined by its
  *         primary fields. The process moves to this stage once the empty task draft is created.
  *     <li><b>Label Assignment</b> - the labels are being created and assigned to the supervised
- *         task. The process moves to this stage after the primary task data is set.
+ *         task. The process moves to this stage after the primary task data is set. This stage may
+ *         be skipped via the {@link SkipLabels} command.
  *     <li><b>Confirmation</b> - all the data is set to the label and the user may check if the data
  *         is correct.
  *     <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
@@ -92,8 +96,6 @@ import static java.util.Collections.emptyList;
  *                        --------------------------------------------> Canceled.
  *     }
  * </pre>
- *
- * @author Dmytro Dashenkov
  */
 @SuppressWarnings("unused") // Command handler methods invoked via reflection.
 public class TaskCreationWizard extends ProcessManager<TaskCreationId,
@@ -104,77 +106,75 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         super(id);
     }
 
-    @Assign
-    CommandRouted handle(StartTaskCreation command, CommandContext context)
+    @Command
+    CreateDraft handle(StartTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
         return transit(TASK_DEFINITION, () -> {
             final TaskId taskId = command.getTaskId();
-            final TodoCommand createDraft = CreateDraft.newBuilder()
-                                                       .setId(taskId)
-                                                       .build();
-            final CommandRouted commandRouted = newRouterFor(command, context).add(createDraft)
-                                                                              .routeAll();
+            final CreateDraft createDraft = CreateDraft
+                    .newBuilder()
+                    .setId(taskId)
+                    .build();
             initProcess(command);
-            return commandRouted;
+            return createDraft;
         });
     }
 
-    @Assign
-    CommandRouted handle(SetTaskDetails command, CommandContext context)
+    @Command
+    Collection<? extends CommandMessage> handle(SetTaskDetails command, CommandContext context)
             throws CannotMoveToStage {
         final WizardCommands commands = commands();
         return transit(LABEL_ASSIGNMENT, () -> {
-            final Collection<? extends TodoCommand> resultCommands =
+            final Collection<? extends CommandMessage> resultCommands =
                     commands.setTaskDetails(command);
-            final CommandRouter router = newRouterFor(command, context);
-            resultCommands.forEach(router::add);
-            final CommandRouted commandRouted = router.routeAll();
-            return commandRouted;
+            return resultCommands;
         });
     }
 
-    @Assign
-    List<? extends Message> handle(AddLabels command, CommandContext context)
-            throws CannotMoveToStage {
+    @Command
+    Collection<? extends CommandMessage> handle(AddLabels command, CommandContext context)
+            throws CannotMoveToStage, CannotAddLabels {
+        List<LabelId> existingLabels = command.getExistingLabelsList();
+        List<LabelDetails> newLabels = command.getNewLabelsList();
+        if (existingLabels.isEmpty() && newLabels.isEmpty()) {
+            throwCannotAddLabelsToTask(command);
+        }
         final WizardCommands commands = commands();
         return transit(CONFIRMATION, () -> {
-            final Collection<? extends TodoCommand> existingLabelsCommands =
+            final Collection<? extends CommandMessage> existingLabelsCommands =
                     commands.assignExistingLabels(command);
-            final Collection<? extends TodoCommand> newLabelsCommands =
+            final Collection<? extends CommandMessage> newLabelsCommands =
                     commands.assignNewLabels(command);
-            final List<? extends Message> result;
-            if (existingLabelsCommands.isEmpty() && newLabelsCommands.isEmpty()) {
-                result = emptyList();
-            } else {
-                final CommandRouter router = newRouterFor(command, context);
-                existingLabelsCommands.forEach(router::add);
-                newLabelsCommands.forEach(router::add);
-                final CommandRouted commandRouted = router.routeAll();
-                result = of(commandRouted);
-            }
+            Collection<CommandMessage> result = newArrayList();
+            result.addAll(existingLabelsCommands);
+            result.addAll(newLabelsCommands);
             return result;
         });
     }
 
     @Assign
-    CommandRouted handle(CompleteTaskCreation command, CommandContext context)
+    Nothing handle(SkipLabels command, CommandContext context) throws CannotMoveToStage {
+        return transit(CONFIRMATION, this::nothing);
+    }
+
+    @Command
+    FinalizeDraft handle(CompleteTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
         return transit(COMPLETED, () -> {
-            final TodoCommand finalizeDraft = FinalizeDraft.newBuilder()
-                                                           .setId(taskId())
-                                                           .build();
-            final CommandRouted commandRouted = newRouterFor(command, context).add(finalizeDraft)
-                                                                              .routeAll();
+            final FinalizeDraft finalizeDraft = FinalizeDraft
+                    .newBuilder()
+                    .setId(taskId())
+                    .build();
             completeProcess();
-            return commandRouted;
+            return finalizeDraft;
         });
     }
 
     @Assign
-    List<? extends Message> handle(CancelTaskCreation command) throws CannotMoveToStage {
+    Nothing handle(CancelTaskCreation command) throws CannotMoveToStage {
         return transit(CANCELED, () -> {
             completeProcess();
-            return emptyList();
+            return nothing();
         });
     }
 

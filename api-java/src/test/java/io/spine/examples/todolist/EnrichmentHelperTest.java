@@ -25,12 +25,9 @@ import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Illia Shepilov
- */
 @DisplayName("EnrichmentHelper should")
 class EnrichmentHelperTest {
 

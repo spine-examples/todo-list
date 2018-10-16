@@ -19,9 +19,8 @@
  */
 
 dependencies {
-    compile group: 'io.spine', name: 'jdbc-rdbms', version: spineJdbcStorageVersion
-    compile group: 'com.google.cloud.sql', name: 'mysql-socket-factory',
-                                           version: cloudSqlSocketFactoryVersion
+    compile "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
+    compile "com.google.cloud.sql:mysql-socket-factory:$cloudSqlSocketFactoryVersion"
     compile project(path: ':server')
 }
 

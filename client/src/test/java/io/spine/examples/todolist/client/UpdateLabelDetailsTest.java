@@ -47,9 +47,6 @@ import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.a
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-/**
- * @author Illia Shepilov
- */
 @DisplayName("After execution of UpdateLabelDetails command")
 class UpdateLabelDetailsTest extends TodoClientTest {
 
@@ -225,7 +222,7 @@ class UpdateLabelDetailsTest extends TodoClientTest {
         assertEquals(expectedListSize, labelledTasksViewList.size());
 
         final LabelledTasksView view = getLabelledTasksView(labelledTasksViewList);
-        assertEquals(labelId, view.getLabelId());
+        assertEquals(labelId, view.getId());
 
         return view;
     }

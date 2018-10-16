@@ -20,32 +20,32 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.web.firebase.FirebaseQueryBridge;
-import io.spine.web.firebase.FirebaseQueryServlet;
+import io.spine.web.firebase.FirebaseSubscribeServlet;
+import io.spine.web.firebase.FirebaseSubscriptionBridge;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The {@code /query} endpoint of the TodoList system.
+ * The {@code /subscription/create} endpoint of the TodoList system.
  *
- * <p>Handles query {@code POST} requests. See {@link FirebaseQueryServlet} for more details.
+ * <p>Handles {@code POST} requests to create a subscription to the topic. See
+ * {@link FirebaseSubscribeServlet} for more details.
  *
  * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
  */
-@WebServlet(name = TodoQueryServlet.NAME, value = "/query")
+@WebServlet(name = TodoSubscribeServlet.NAME, value = "/subscription/create")
 @SuppressWarnings("serial")
-public final class TodoQueryServlet extends FirebaseQueryServlet {
+public final class TodoSubscribeServlet extends FirebaseSubscribeServlet {
 
-    static final String NAME = "Query Service";
+    static final String NAME = "Subscription Creation Service";
 
-    public TodoQueryServlet() {
-        super(FirebaseQueryBridge.newBuilder()
-                                 .setQueryService(Application.instance()
-                                                             .queryService())
-                                 .setDatabase(FirebaseClient.database())
-                                 .build());
+    public TodoSubscribeServlet() {
+        super(FirebaseSubscriptionBridge.newBuilder()
+                                        .setQueryService(Application.instance().queryService())
+                                        .setDatabase(FirebaseClient.database())
+                                        .build());
     }
 
     @Override

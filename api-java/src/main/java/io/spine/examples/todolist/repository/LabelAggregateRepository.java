@@ -27,8 +27,6 @@ import io.spine.server.aggregate.AggregateRepository;
 
 /**
  * Repository for the {@link LabelAggregate}.
- *
- * @author Illia Shepilov
  */
 public class LabelAggregateRepository extends AggregateRepository<LabelId, LabelAggregate> {
 }

@@ -8,9 +8,8 @@
 coverage:
   ignore:
   - generated/*
+  - examples/*
   - test/*
-  - testutil-api/src/main/java/io/spine/examples/todolist/testdata/*
-
   status:
     patch: false
 

@@ -23,12 +23,10 @@ package io.spine.examples.todolist.client.builder;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 
-import static io.spine.Identifier.newUuid;
+import static io.spine.base.Identifier.newUuid;
 
 /**
  * Provides label command builders.
- *
- * @author Illia Shepilov
  */
 public final class LabelBuilder {
 

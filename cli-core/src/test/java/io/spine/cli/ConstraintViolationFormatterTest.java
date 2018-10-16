@@ -29,7 +29,7 @@ import java.util.List;
 
 import static io.spine.cli.ConstraintViolationFormatter.ERROR_MSG_FORMAT;
 import static io.spine.cli.ConstraintViolationFormatter.format;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

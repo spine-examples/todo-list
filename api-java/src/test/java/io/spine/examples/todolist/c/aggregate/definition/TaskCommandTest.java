@@ -20,53 +20,72 @@
 
 package io.spine.examples.todolist.c.aggregate.definition;
 
-import com.google.protobuf.Message;
-import io.spine.client.TestActorRequestFactory;
+import io.spine.base.CommandMessage;
+import io.spine.core.Command;
 import io.spine.core.CommandEnvelope;
+import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
-import io.spine.server.aggregate.AggregatePartCommandTest;
+import io.spine.server.entity.Repository;
+import io.spine.testing.client.TestActorRequestFactory;
+import io.spine.testing.server.aggregate.AggregatePartCommandTest;
 
-import static io.spine.Identifier.newUuid;
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 
 /**
  * The parent class for the {@link TaskPart} test classes.
  * Provides the common methods for testing.
- *
- * @author Illia Shepilov
  */
-abstract class TaskCommandTest<C extends Message> extends AggregatePartCommandTest<C, TaskPart> {
+@SuppressWarnings("PackageVisibleField") // for brevity of descendants.
+abstract class TaskCommandTest<C extends CommandMessage>
+        extends AggregatePartCommandTest<TaskId, C, Task, TaskPart, TaskAggregateRoot> {
 
     private final TestActorRequestFactory requestFactory =
             TestActorRequestFactory.newInstance(getClass());
+
     TaskPart aggregate;
-    TaskId taskId;
+
+    protected TaskCommandTest(C commandMessage) {
+        super(TASK_ID, commandMessage);
+    }
 
     @Override
-    protected void setUp() {
+    public void setUp() {
         super.setUp();
-        aggregate = aggregatePart().get();
+        aggregate = newPart(entityId());
     }
 
     @Override
-    protected TaskPart createAggregatePart() {
+    protected TaskPart newPart(TaskAggregateRoot root) {
+        TaskPart taskPart = new TaskPart(root);
+        return taskPart;
+    }
+
+    @Override
+    protected TaskAggregateRoot newRoot(TaskId id) {
         final BoundedContext boundedContext = BoundedContexts.create();
-        taskId = createTaskId();
-        final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, taskId);
-        return new TaskPart(root);
+        final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, id);
+        return root;
     }
 
-    CommandEnvelope envelopeOf(Message commandMessage) {
-        return CommandEnvelope.of(requestFactory.command()
-                                                .create(commandMessage));
+    @Override
+    protected Repository<TaskId, TaskPart> createEntityRepository() {
+        return new TaskRepository();
     }
 
-    private static TaskId createTaskId() {
-        return TaskId.newBuilder()
-                     .setValue(newUuid())
-                     .build();
+    CommandEnvelope envelopeOf(CommandMessage commandMessage) {
+        Command command = createNewCommand(commandMessage);
+        CommandEnvelope envelope = CommandEnvelope.of(command);
+        return envelope;
+    }
+
+    Command createNewCommand(CommandMessage commandMessage) {
+        Command command = requestFactory.command()
+                                        .create(commandMessage);
+        return command;
     }
 }

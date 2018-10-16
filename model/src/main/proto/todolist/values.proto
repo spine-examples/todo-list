@@ -122,11 +122,24 @@ message LabelDetailsUpdateRejected {
     change.ValueMismatch label_details_mismatch = 2;
 }
 
-// DTO for the rejected craete basic task command details.
+// DTO for the rejected create basic task command details.
 message CreateBasicTaskRejected {
 
     // An unsuccessful task command details.
     RejectedTaskCommandDetails command_details = 1;
+}
+
+// DTO for the rejected add labels command details.
+message AddLabelsRejected {
+
+    // The ID of the rejected task creation.
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
+
+    // The IDs of the existing labels that were assigned to the task.
+    repeated LabelId existing_labels = 2;
+
+    // The details of the new labels that were assigned to the task.
+    repeated LabelDetails new_labels = 3;
 }
 
 // DTO for the rejected assign label to task command details.

@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.Readers.newLineReader;
 import static io.spine.examples.todolist.Terminals.newTerminal;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**

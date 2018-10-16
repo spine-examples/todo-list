@@ -27,12 +27,12 @@ import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Utility class for working with {@link LabelAggregate} rejection.
- *
- * @author Illia Shepilov
  */
-public class LabelAggregateRejections {
+public final class LabelAggregateRejections {
 
     private LabelAggregateRejections() {
     }
@@ -48,6 +48,9 @@ public class LabelAggregateRejections {
     public static void throwCannotUpdateLabelDetails(UpdateLabelDetails cmd,
                                                      ValueMismatch mismatch)
             throws CannotUpdateLabelDetails {
+        checkNotNull(cmd);
+        checkNotNull(mismatch);
+
         final RejectedLabelCommandDetails commandDetails =
                 RejectedLabelCommandDetails.newBuilder()
                                            .setLabelId(cmd.getId())

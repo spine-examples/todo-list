@@ -20,7 +20,7 @@
 
 package io.spine.examples.todolist.repository;
 
-import com.google.protobuf.Message;
+import io.spine.base.EventMessage;
 import io.spine.core.EventContext;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdsList;
@@ -49,8 +49,6 @@ import static java.util.Collections.singleton;
 
 /**
  * Repository for the {@link LabelledTasksViewProjection}.
- *
- * @author Illia Shepilov
  */
 public class LabelledTasksViewRepository
         extends ProjectionRepository<LabelId, LabelledTasksViewProjection, LabelledTasksView> {
@@ -84,7 +82,7 @@ public class LabelledTasksViewRepository
         routing.route(TaskDueDateUpdated.class, fromContext());
     }
 
-    private static <T extends Message> EventRoute<LabelId, T> fromContext() {
+    private static <T extends EventMessage> EventRoute<LabelId, T> fromContext() {
         return (message, context) -> getLabelIdsSet(context);
     }
 

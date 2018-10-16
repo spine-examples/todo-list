@@ -25,8 +25,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'com.github.jengelman.gradle.plugins', name: 'shadow',
-                                                                version: shadowJarVersion
+        classpath "com.github.jengelman.gradle.plugins:shadow:$shadowJarVersion"
     }
 }
 
@@ -34,14 +33,13 @@ apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
-    compile group: 'com.google.cloud.sql', name: 'mysql-socket-factory',
-                                           version: cloudSqlSocketFactoryVersion
-    compile group: 'io.spine', name: 'jdbc-rdbms', version: spineJdbcStorageVersion
+    compile "com.google.cloud.sql:mysql-socket-factory:$cloudSqlSocketFactoryVersion"
+    compile "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
     compile project(path: ':server')
 
     // A Protobuf dependency to generate descriptor for Spine gRPC services.
     // This descriptor is required to configure gRPC services for a Google Cloud Endpoint.
-    protobuf group: 'io.spine', name: 'spine-client', version: spineVersion
+    protobuf "io.spine:spine-client:$spineVersion"
 }
 
 mainClassName = "io.spine.examples.todolist.server.ComputeCloudSqlServer"

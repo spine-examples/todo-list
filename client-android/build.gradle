@@ -22,7 +22,7 @@
 
 buildscript {
     ext.kotlin_version = '1.2.10'
-    apply from: "../ext.gradle"
+    apply from: "../version.gradle"
     
     repositories {
         google()
