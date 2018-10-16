@@ -27,7 +27,6 @@ import io.spine.server.aggregate.AggregateRoot;
 /**
  * Aggregate root for the tasks.
  *
- * @author Illia Shepilov
  * @see AggregateRoot
  */
 public class TaskAggregateRoot extends AggregateRoot<TaskId> {

@@ -27,8 +27,6 @@ import io.spine.server.procman.ProcessManagerRepository;
 
 /**
  * The process manager repository for the {@link TaskCreationWizard}.
- *
- * @author Dmytro Dashenkov
  */
 public class TaskCreationWizardRepository
         extends ProcessManagerRepository<TaskCreationId, TaskCreationWizard, TaskCreation> {

@@ -55,8 +55,6 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
  *
  * <p> Contains the data about the task view.
  * <p> This view includes all tasks per label that are neither in a draft state nor deleted.
- *
- * @author Illia Shepilov
  */
 @SuppressWarnings("OverlyCoupledClass")
 public class LabelledTasksViewProjection extends Projection<LabelId,

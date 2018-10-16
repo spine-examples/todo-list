@@ -31,8 +31,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Utility class for working with {@link LabelAggregate} rejection.
- *
- * @author Illia Shepilov
  */
 public final class LabelAggregateRejections {
 

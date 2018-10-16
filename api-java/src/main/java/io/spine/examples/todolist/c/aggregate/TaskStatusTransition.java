@@ -24,8 +24,6 @@ import io.spine.examples.todolist.TaskStatus;
 
 /**
  * This class defines possible transitions of {@link TaskStatus}.
- *
- * @author Illia Shepilov
  */
 enum TaskStatusTransition {
 

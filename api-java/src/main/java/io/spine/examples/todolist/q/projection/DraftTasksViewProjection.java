@@ -45,8 +45,6 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
  * A projection state of tasks in a "draft" state.
  *
  * <p> This view includes all non-deleted tasks, which creation is in progress.
- *
- * @author Illia Shepilov
  */
 public class DraftTasksViewProjection extends Projection<TaskListId,
                                                          DraftTasksView,

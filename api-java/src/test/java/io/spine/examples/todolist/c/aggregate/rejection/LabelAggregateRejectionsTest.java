@@ -32,9 +32,6 @@ import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRej
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Illia Shepilov
- */
 @DisplayName("LabelAggregateRejections should")
 class LabelAggregateRejectionsTest extends UtilityClassTest<LabelAggregateRejections> {
 

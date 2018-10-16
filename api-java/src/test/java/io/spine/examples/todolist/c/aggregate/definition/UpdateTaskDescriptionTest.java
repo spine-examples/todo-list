@@ -55,9 +55,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Illia Shepilov
- */
 @ExtendWith(ShardingReset.class)
 @DisplayName("UpdateTaskDescription command should be interpreted by TaskPart and")
 public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescription> {

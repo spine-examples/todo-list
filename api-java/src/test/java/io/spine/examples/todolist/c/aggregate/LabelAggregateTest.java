@@ -60,9 +60,6 @@ import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispa
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Illia Shepilov
- */
 @ExtendWith(ShardingReset.class)
 class LabelAggregateTest {
 

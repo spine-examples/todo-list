@@ -30,8 +30,6 @@ import static java.util.Collections.singleton;
 
 /**
  * Repository for the {@link MyListViewProjection}.
- *
- * @author Illia Shepilov
  */
 public class MyListViewRepository
         extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {

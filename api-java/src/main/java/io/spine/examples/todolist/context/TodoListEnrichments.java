@@ -44,8 +44,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Serves as class which adds enrichment fields to the {@link EventBus}.
- *
- * @author Illia Shepilov
  */
 public class TodoListEnrichments {
 

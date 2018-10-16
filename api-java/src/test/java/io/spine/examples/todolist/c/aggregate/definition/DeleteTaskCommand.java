@@ -46,9 +46,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Illia Shepilov
- */
 @ExtendWith(ShardingReset.class)
 @DisplayName("DeleteTask command should be interpreted by TaskPart and")
 public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {

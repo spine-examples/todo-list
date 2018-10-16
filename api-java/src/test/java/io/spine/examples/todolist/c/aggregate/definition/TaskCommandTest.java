@@ -39,8 +39,6 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID
 /**
  * The parent class for the {@link TaskPart} test classes.
  * Provides the common methods for testing.
- *
- * @author Illia Shepilov
  */
 @SuppressWarnings("PackageVisibleField") // for brevity of descendants.
 abstract class TaskCommandTest<C extends CommandMessage>

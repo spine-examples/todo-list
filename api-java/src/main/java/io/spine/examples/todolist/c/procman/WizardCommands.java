@@ -55,8 +55,6 @@ import static java.util.stream.Collectors.toSet;
 
 /**
  * A factory of commands emitted by the {@link TaskCreationWizard}.
- *
- * @author Dmytro Dashenkov
  */
 final class WizardCommands {
 

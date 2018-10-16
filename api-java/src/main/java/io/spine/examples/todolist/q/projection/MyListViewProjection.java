@@ -53,8 +53,6 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
  *
  * <p> Contains the task list view items.
  * <p> This view includes all tasks that are not in a draft state and not deleted.
- *
- * @author Illia Shepilov
  */
 @SuppressWarnings("OverlyCoupledClass")
 public class MyListViewProjection extends Projection<TaskListId, MyListView, MyListViewVBuilder> {

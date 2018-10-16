@@ -42,9 +42,6 @@ import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
  * Utilities for creation the {@link BoundedContext} instances.
- *
- * @author Illia Shepilov
- * @author Dmytro Grankin
  */
 public final class BoundedContexts {
 

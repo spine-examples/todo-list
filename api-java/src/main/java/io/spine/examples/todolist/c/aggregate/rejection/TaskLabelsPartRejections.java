@@ -36,8 +36,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Utility class for working with {@link TaskLabelsPart} rejection.
- *
- * @author Illia Shepilov
  */
 public final class TaskLabelsPartRejections {
 

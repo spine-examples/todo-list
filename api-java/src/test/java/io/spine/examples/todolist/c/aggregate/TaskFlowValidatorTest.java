@@ -25,9 +25,6 @@ import org.junit.jupiter.api.Test;
 
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 
-/**
- * @author Illia Shepilov
- */
 @DisplayName("TaskFlowValidator should")
 class TaskFlowValidatorTest {
 

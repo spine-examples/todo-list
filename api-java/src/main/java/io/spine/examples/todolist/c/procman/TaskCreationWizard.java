@@ -96,8 +96,6 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRej
  *                        --------------------------------------------> Canceled.
  *     }
  * </pre>
- *
- * @author Dmytro Dashenkov
  */
 @SuppressWarnings("unused") // Command handler methods invoked via reflection.
 public class TaskCreationWizard extends ProcessManager<TaskCreationId,

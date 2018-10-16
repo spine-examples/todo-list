@@ -96,8 +96,6 @@ import static java.util.Collections.singletonList;
 
 /**
  * The aggregate managing the state of a {@link Task}.
- *
- * @author Illia Shepilov
  */
 @SuppressWarnings({"ClassWithTooManyMethods", /* Task definition cannot be separated and should
                                                  process all commands and events related to it

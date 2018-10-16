@@ -39,9 +39,6 @@ import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispa
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-/**
- * @author Illia Shepilov
- */
 @ExtendWith(ShardingReset.class)
 @DisplayName("CreateBasicTask command should be interpreted by TaskPart and")
 public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {

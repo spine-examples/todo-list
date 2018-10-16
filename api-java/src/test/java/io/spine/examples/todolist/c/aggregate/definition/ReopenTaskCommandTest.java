@@ -48,9 +48,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Illia Shepilov
- */
 @ExtendWith(ShardingReset.class)
 @DisplayName("ReopenTask command should be interpreted by TaskPart and")
 public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {

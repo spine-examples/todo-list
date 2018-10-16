@@ -49,8 +49,6 @@ import static java.util.Collections.singleton;
 
 /**
  * Repository for the {@link LabelledTasksViewProjection}.
- *
- * @author Illia Shepilov
  */
 public class LabelledTasksViewRepository
         extends ProjectionRepository<LabelId, LabelledTasksViewProjection, LabelledTasksView> {

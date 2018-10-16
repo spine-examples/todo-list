@@ -72,9 +72,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Illia Shepilov
- */
 @ExtendWith(ShardingReset.class)
 @DisplayName("RestoreDeletedTask command should be interpreted by TaskPart and")
 public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> {

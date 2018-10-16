@@ -28,8 +28,6 @@ import java.util.Optional;
 
 /**
  * Utility class for working with enrichments.
- *
- * @author Illia Shepilov
  */
 public class EnrichmentHelper {
 
