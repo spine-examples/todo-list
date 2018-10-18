@@ -33,8 +33,6 @@ import java.util.Optional;
  *
  * <p>Also provides methods related to a history of navigation
  * between views, e.g. {@link #createBackAction(String, Shortcut)}.
- *
- * @author Dmytro Grankin
  */
 public interface Screen {
 

@@ -24,8 +24,6 @@ import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Provides formatting for {@link Action}.
- *
- * @author Dmytro Grankin
  */
 public class ActionFormatter {
 

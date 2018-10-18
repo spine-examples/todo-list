@@ -54,7 +54,6 @@ import static io.spine.cli.view.CommandView.GenericParameter.STATE_BUILDER;
  *
  * @param <M> the type of the command message
  * @param <B> the validating builder type for the command message
- * @author Dmytro Grankin
  */
 public abstract class CommandView<M extends Message,
                                   B extends ValidatingBuilder<M, ? extends Message.Builder>>

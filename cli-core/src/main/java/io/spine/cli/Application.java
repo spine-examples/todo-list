@@ -28,8 +28,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A command-line application.
  *
  * <p>Contains the elements that are common for the entire application, e.g. {@link Screen}.
- *
- * @author Dmytro Grankin
  */
 public final class Application {
 

@@ -32,7 +32,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @param <S> {@inheritDoc}
  * @param <D> {@inheritDoc}
- * @author Dmytro Grankin
  */
 public class TransitionAction<S extends View, D extends View> extends AbstractAction<S, D> {
 

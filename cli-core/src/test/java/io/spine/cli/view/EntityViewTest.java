@@ -30,9 +30,6 @@ import org.junit.jupiter.api.Test;
 import static io.spine.protobuf.TypeConverter.toMessage;
 import static java.lang.System.lineSeparator;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("EntityView should")
 class EntityViewTest {
 

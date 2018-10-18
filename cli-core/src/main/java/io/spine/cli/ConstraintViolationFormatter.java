@@ -30,8 +30,6 @@ import static com.google.common.collect.Lists.newLinkedList;
 
 /**
  * Utilities for {@code ConstraintViolation} formatting.
- *
- * @author Dmytro Grankin
  */
 public class ConstraintViolationFormatter {
 

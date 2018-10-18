@@ -52,8 +52,6 @@ import static java.util.Collections.unmodifiableSet;
  * <p>Automatically adds {@code back} action to the {@link #actions} before each render of actions.
  *
  * <p>In the end of rendering prompts a user to select an action to be executed.
- *
- * @author Dmytro Grankin
  */
 public abstract class AbstractView implements View {
 
