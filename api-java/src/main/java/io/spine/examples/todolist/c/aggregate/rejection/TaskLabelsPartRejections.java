@@ -94,6 +94,13 @@ public final class TaskLabelsPartRejections {
         throw rejection;
     }
 
+    /**
+     * Constructs and throws the {@link CannotAddLabels} rejection according to
+     * the passed parameters.
+     *
+     * @param cmd the {@code AddLabels} command which thrown the rejection
+     * @throws CannotAddLabels the rejection to throw
+     */
     public static void throwCannotAddLabelsToTask(AddLabels cmd) throws CannotAddLabels {
         checkNotNull(cmd);
         AddLabelsRejected addLabelsRejected = AddLabelsRejected
