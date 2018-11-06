@@ -33,8 +33,8 @@ public final class Application {
 
     private Screen screen;
 
+    /** Prevents instantiation of this class from outside. */
     private Application() {
-        // Prevent instantiation of this class from outside.
     }
 
     /**
