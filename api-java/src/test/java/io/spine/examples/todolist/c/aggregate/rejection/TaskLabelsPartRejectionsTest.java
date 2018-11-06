@@ -21,15 +21,19 @@
 package io.spine.examples.todolist.c.aggregate.rejection;
 
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
+import io.spine.examples.todolist.c.rejection.CannotAddLabels;
 import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
 import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
 import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAddLabelsToTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAssignLabelToTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotRemoveLabelFromTask;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -77,5 +81,22 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
                                          .getCommandDetails()
                                          .getTaskId();
         assertEquals(taskId, actualId);
+    }
+
+    @Test
+    @DisplayName("throw CannotAddLabels rejection")
+    void throwCannotAddLabelsToTaskRejection() {
+        TaskCreationId taskCreationId = TaskCreationId.getDefaultInstance();
+        final AddLabels cmd = AddLabels
+                .newBuilder()
+                .setId(taskCreationId)
+                .build();
+        final CannotAddLabels rejection =
+                assertThrows(CannotAddLabels.class,
+                             () -> throwCannotAddLabelsToTask(cmd));
+        final TaskCreationId actualId = rejection.getMessageThrown()
+                                                 .getRejectionDetails()
+                                                 .getId();
+        assertEquals(taskCreationId, actualId);
     }
 }
