@@ -22,7 +22,6 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
@@ -125,19 +124,14 @@ abstract class TodoClientTest {
                       .build();
     }
 
-    static LabelledTasksView getLabelledTasksView(List<LabelledTasksView> tasksViewList) {
-        LabelledTasksView result = LabelledTasksView.getDefaultInstance();
-
+    static LabelledTasksView getLabelledTasksView(LabelId labelId,
+                                                  Iterable<LabelledTasksView> tasksViewList) {
         for (LabelledTasksView labelledView : tasksViewList) {
-            final boolean isEmpty = labelledView.getId()
-                                                .getValue()
-                                                .isEmpty();
-            if (!isEmpty) {
-                result = labelledView;
+            if (labelId.equals(labelledView.getId())) {
+                return labelledView;
             }
         }
-
-        return result;
+        return LabelledTasksView.getDefaultInstance();
     }
 
     CreateBasicTask createTask() {

@@ -51,7 +51,7 @@ class EntityViewTest {
 
     private static class AnEntityView extends EntityView<Int32Value, StringValue> {
 
-        private static final StringValue STATE = toMessage("string");
+        private static final StringValue STATE = toMessage("string", StringValue.class);
 
         private AnEntityView(Int32Value id) {
             super(id, "View title");

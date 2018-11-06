@@ -44,7 +44,8 @@ public class TodoSubscriptionKeepUpServlet extends FirebaseSubscriptionKeepUpSer
     public TodoSubscriptionKeepUpServlet() {
         super(FirebaseSubscriptionBridge.newBuilder()
                                         .setQueryService(Application.instance().queryService())
-                                        .setDatabase(FirebaseClient.database())
+                                        .setFirebaseClient(Application.instance()
+                                                                      .firebaseClient())
                                         .build());
     }
 

@@ -84,7 +84,11 @@ public final class TaskPartRejections {
                     DescriptionUpdateRejected.newBuilder()
                                              .setCommandDetails(commandDetails)
                                              .build();
-            throw new CannotUpdateTaskDescription(descriptionUpdateRejected);
+            CannotUpdateTaskDescription rejection = CannotUpdateTaskDescription
+                    .newBuilder()
+                    .setRejectionDetails(descriptionUpdateRejected)
+                    .build();
+            throw rejection;
         }
 
         /**
@@ -104,7 +108,11 @@ public final class TaskPartRejections {
                     TaskDueDateUpdateRejected.newBuilder()
                                              .setCommandDetails(commandDetails)
                                              .build();
-            throw new CannotUpdateTaskDueDate(dueDateUpdateRejected);
+            CannotUpdateTaskDueDate rejection = CannotUpdateTaskDueDate
+                    .newBuilder()
+                    .setRejectionDetails(dueDateUpdateRejected)
+                    .build();
+            throw rejection;
         }
 
         /**
@@ -127,7 +135,11 @@ public final class TaskPartRejections {
                                              .setCommandDetails(commandDetails)
                                              .setDueDateMismatch(mismatch)
                                              .build();
-            throw new CannotUpdateTaskDueDate(dueDateUpdateRejected);
+            CannotUpdateTaskDueDate rejection = CannotUpdateTaskDueDate
+                    .newBuilder()
+                    .setRejectionDetails(dueDateUpdateRejected)
+                    .build();
+            throw rejection;
         }
 
         /**
@@ -151,7 +163,11 @@ public final class TaskPartRejections {
                                              .setCommandDetails(commandDetails)
                                              .setDescriptionMismatch(mismatch)
                                              .build();
-            throw new CannotUpdateTaskDescription(descriptionUpdateRejected);
+            CannotUpdateTaskDescription rejection = CannotUpdateTaskDescription
+                    .newBuilder()
+                    .setRejectionDetails(descriptionUpdateRejected)
+                    .build();
+            throw rejection;
         }
 
         /**
@@ -174,7 +190,11 @@ public final class TaskPartRejections {
                                           .setCommandDetails(commandDetails)
                                           .setPriorityMismatch(mismatch)
                                           .build();
-            throw new CannotUpdateTaskPriority(priorityUpdateRejected);
+            CannotUpdateTaskPriority rejection = CannotUpdateTaskPriority
+                    .newBuilder()
+                    .setRejectionDetails(priorityUpdateRejected)
+                    .build();
+            throw rejection;
         }
 
         /**
@@ -194,7 +214,11 @@ public final class TaskPartRejections {
                     PriorityUpdateRejected.newBuilder()
                                           .setCommandDetails(commandDetails)
                                           .build();
-            throw new CannotUpdateTaskPriority(priorityUpdateRejected);
+            CannotUpdateTaskPriority rejection = CannotUpdateTaskPriority
+                    .newBuilder()
+                    .setRejectionDetails(priorityUpdateRejected)
+                    .build();
+            throw rejection;
         }
     }
 
@@ -217,7 +241,11 @@ public final class TaskPartRejections {
                     CreateDraftRejected.newBuilder()
                                        .setCommandDetails(commandDetails)
                                        .build();
-            throw new CannotCreateDraft(createDraftRejected);
+            CannotCreateDraft rejection = CannotCreateDraft
+                    .newBuilder()
+                    .setRejectionDetails(createDraftRejected)
+                    .build();
+            throw rejection;
         }
     }
 
@@ -240,7 +268,11 @@ public final class TaskPartRejections {
                     ReopenTaskRejected.newBuilder()
                                       .setCommandDetails(commandDetails)
                                       .build();
-            throw new CannotReopenTask(reopenTaskRejected);
+            CannotReopenTask rejection = CannotReopenTask
+                    .newBuilder()
+                    .setRejectionDetails(reopenTaskRejected)
+                    .build();
+            throw rejection;
         }
 
         /**
@@ -257,7 +289,11 @@ public final class TaskPartRejections {
                     FinalizeDraftRejected.newBuilder()
                                          .setCommandDetails(commandDetails)
                                          .build();
-            throw new CannotFinalizeDraft(finalizeDraftRejected);
+            CannotFinalizeDraft rejection = CannotFinalizeDraft
+                    .newBuilder()
+                    .setRejectionDetails(finalizeDraftRejected)
+                    .build();
+            throw rejection;
         }
 
         /**
@@ -274,7 +310,11 @@ public final class TaskPartRejections {
                     DeleteTaskRejected.newBuilder()
                                       .setCommandDetails(commandDetails)
                                       .build();
-            throw new CannotDeleteTask(deleteTaskRejected);
+            CannotDeleteTask rejection = CannotDeleteTask
+                    .newBuilder()
+                    .setRejectionDetails(deleteTaskRejected)
+                    .build();
+            throw rejection;
         }
 
         /**
@@ -291,7 +331,11 @@ public final class TaskPartRejections {
                     CompleteTaskRejected.newBuilder()
                                         .setCommandDetails(commandDetails)
                                         .build();
-            throw new CannotCompleteTask(completeTaskRejected);
+            CannotCompleteTask rejection = CannotCompleteTask
+                    .newBuilder()
+                    .setRejectionDetails(completeTaskRejected)
+                    .build();
+            throw rejection;
         }
 
         /**
@@ -309,7 +353,11 @@ public final class TaskPartRejections {
                     RestoreDeletedTaskRejected.newBuilder()
                                               .setCommandDetails(commandDetails)
                                               .build();
-            throw new CannotRestoreDeletedTask(restoreDeletedTaskRejected);
+            CannotRestoreDeletedTask rejection = CannotRestoreDeletedTask
+                    .newBuilder()
+                    .setRejectionDetails(restoreDeletedTaskRejected)
+                    .build();
+            throw rejection;
         }
     }
 

@@ -160,7 +160,8 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         final LabelDetails newDetails = event.getLabelDetailsChange()
                                              .getNewDetails();
 
-        getBuilder().setLabelColor(valueOf(newDetails.getColor()))
+        getBuilder().setId(getId())
+                    .setLabelColor(valueOf(newDetails.getColor()))
                     .setLabelTitle(newDetails.getTitle())
                     .setLabelledTasks(taskListView);
     }

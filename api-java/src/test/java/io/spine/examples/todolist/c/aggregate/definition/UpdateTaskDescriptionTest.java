@@ -165,9 +165,9 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
                                                     .getTaskId();
         assertEquals(entityId(), actualTaskId);
 
-        final StringValue expectedStringValue = toMessage(expectedValue);
-        final StringValue actualStringValue = toMessage(actualValue);
-        final StringValue newStringValue = toMessage(newValue);
+        final StringValue expectedStringValue = toMessage(expectedValue, StringValue.class);
+        final StringValue actualStringValue = toMessage(actualValue, StringValue.class);
+        final StringValue newStringValue = toMessage(newValue, StringValue.class);
 
         final ValueMismatch mismatch = rejectionDetails.getDescriptionMismatch();
         assertEquals(expectedStringValue, unpack(mismatch.getExpected()));

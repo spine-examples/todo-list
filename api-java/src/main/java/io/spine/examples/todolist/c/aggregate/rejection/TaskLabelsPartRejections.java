@@ -61,7 +61,11 @@ public final class TaskLabelsPartRejections {
                                          .setCommandDetails(commandDetails)
                                          .setLabelId(cmd.getLabelId())
                                          .build();
-        throw new CannotAssignLabelToTask(assignLabelToTaskRejected);
+        CannotAssignLabelToTask rejection = CannotAssignLabelToTask
+                .newBuilder()
+                .setRejectionDetails(assignLabelToTaskRejected)
+                .build();
+        throw rejection;
     }
 
     /**
@@ -83,7 +87,11 @@ public final class TaskLabelsPartRejections {
                                            .setLabelId(cmd.getLabelId())
                                            .setCommandDetails(commandDetails)
                                            .build();
-        throw new CannotRemoveLabelFromTask(removeLabelRejected);
+        CannotRemoveLabelFromTask rejection = CannotRemoveLabelFromTask
+                .newBuilder()
+                .setRejectionDetails(removeLabelRejected)
+                .build();
+        throw rejection;
     }
 
     public static void throwCannotAddLabelsToTask(AddLabels cmd) throws CannotAddLabels {
@@ -94,6 +102,10 @@ public final class TaskLabelsPartRejections {
                 .addAllExistingLabels(cmd.getExistingLabelsList())
                 .addAllNewLabels(cmd.getNewLabelsList())
                 .build();
-        throw new CannotAddLabels(addLabelsRejected);
+        CannotAddLabels rejection = CannotAddLabels
+                .newBuilder()
+                .setRejectionDetails(addLabelsRejected)
+                .build();
+        throw rejection;
     }
 }

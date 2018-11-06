@@ -99,7 +99,8 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
             final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
             assertEquals(1, tasksViewList.size());
 
-            final LabelledTasksView labelledTasksView = getLabelledTasksView(tasksViewList);
+            final LabelledTasksView labelledTasksView =
+                    getLabelledTasksView(labelId, tasksViewList);
             final List<TaskItem> taskViews = labelledTasksView.getLabelledTasks()
                                                               .getItemsList();
             assertEquals(1, taskViews.size());

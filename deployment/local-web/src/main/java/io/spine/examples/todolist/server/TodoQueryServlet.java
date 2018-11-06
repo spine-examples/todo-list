@@ -20,12 +20,15 @@
 
 package io.spine.examples.todolist.server;
 
+import io.spine.web.firebase.FirebaseClientFactory;
 import io.spine.web.firebase.FirebaseQueryBridge;
 import io.spine.web.firebase.FirebaseQueryServlet;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static io.spine.web.firebase.FirebaseClientFactory.restClient;
 
 /**
  * The {@code /query} endpoint of the TodoList system.
@@ -44,7 +47,8 @@ public final class TodoQueryServlet extends FirebaseQueryServlet {
         super(FirebaseQueryBridge.newBuilder()
                                  .setQueryService(Application.instance()
                                                              .queryService())
-                                 .setDatabase(FirebaseClient.database())
+                                 .setFirebaseClient(Application.instance()
+                                                               .firebaseClient())
                                  .build());
     }
 

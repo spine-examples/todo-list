@@ -227,7 +227,13 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         final int expectedStageNumber = currentStage.getNumber() + 1;
         final int actualStageNumber = pendingStage.getNumber();
         if (expectedStageNumber != actualStageNumber) {
-            throw new CannotMoveToStage(getId(), pendingStage, currentStage);
+            CannotMoveToStage rejection = CannotMoveToStage
+                    .newBuilder()
+                    .setProcessId(getId())
+                    .setRequestedStage(pendingStage)
+                    .setCurrentStage(currentStage)
+                    .build();
+            throw rejection;
         }
     }
 

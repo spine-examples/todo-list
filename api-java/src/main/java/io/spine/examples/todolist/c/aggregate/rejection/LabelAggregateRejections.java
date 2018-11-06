@@ -60,6 +60,10 @@ public final class LabelAggregateRejections {
                                           .setCommandDetails(commandDetails)
                                           .setLabelDetailsMismatch(mismatch)
                                           .build();
-        throw new CannotUpdateLabelDetails(detailsUpdateRejected);
+        CannotUpdateLabelDetails rejection = CannotUpdateLabelDetails
+                .newBuilder()
+                .setRejectionDetails(detailsUpdateRejected)
+                .build();
+        throw rejection;
     }
 }

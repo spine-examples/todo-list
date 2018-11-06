@@ -115,7 +115,8 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
     private void labelDetailsUpdated(LabelDetailsUpdated event) {
         final LabelDetails labelDetails = event.getLabelDetailsChange()
                                                .getNewDetails();
-        getBuilder().setTitle(labelDetails.getTitle())
+        getBuilder().setId(getId())
+                    .setTitle(labelDetails.getTitle())
                     .setColor(labelDetails.getColor());
     }
 }

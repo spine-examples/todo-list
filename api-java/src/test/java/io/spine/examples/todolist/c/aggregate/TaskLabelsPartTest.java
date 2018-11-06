@@ -47,7 +47,7 @@ import io.spine.server.commandbus.CommandBus;
 import io.spine.server.entity.Repository;
 import io.spine.testing.client.TestActorRequestFactory;
 import io.spine.testing.server.ShardingReset;
-import io.spine.testing.server.aggregate.AggregatePartCommandTest;
+import io.spine.testing.server.aggregate.AggregateCommandTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -246,11 +246,10 @@ class TaskLabelsPartTest {
 
     @SuppressWarnings("PackageVisibleField") // for brevity of descendants.
     private abstract static class TaskLabelsCommandTest<C extends CommandMessage>
-            extends AggregatePartCommandTest<TaskId,
-                                             C,
-                                             TaskLabels,
-                                             TaskLabelsPart,
-                                             TaskAggregateRoot> {
+            extends AggregateCommandTest<TaskId,
+                                         C,
+                                         TaskLabels,
+                                         TaskLabelsPart> {
 
         private final TestActorRequestFactory requestFactory =
                 TestActorRequestFactory.newInstance(getClass());
@@ -270,21 +269,6 @@ class TaskLabelsPartTest {
             super.setUp();
             taskLabelsPart = newPart(entityId());
             createLabel();
-        }
-
-        @Override
-        protected TaskAggregateRoot newRoot(TaskId id) {
-            final BoundedContext boundedContext = BoundedContexts.create();
-            commandBus = boundedContext.getCommandBus();
-            responseObserver = StreamObservers.memoizingObserver();
-            labelId = LABEL_ID;
-            TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, id);
-            return root;
-        }
-
-        @Override
-        protected TaskLabelsPart newPart(TaskAggregateRoot root) {
-            return new TaskLabelsPart(root);
         }
 
         @Override
@@ -351,6 +335,25 @@ class TaskLabelsPartTest {
             return LabelId.newBuilder()
                           .setValue(newUuid())
                           .build();
+        }
+
+        private TaskAggregateRoot newRoot(TaskId id) {
+            final BoundedContext boundedContext = BoundedContexts.create();
+            commandBus = boundedContext.getCommandBus();
+            responseObserver = StreamObservers.memoizingObserver();
+            labelId = LABEL_ID;
+            TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, id);
+            return root;
+        }
+
+        private static TaskLabelsPart newPart(TaskAggregateRoot root) {
+            return new TaskLabelsPart(root);
+        }
+
+        private TaskLabelsPart newPart(TaskId id) {
+            TaskAggregateRoot root = newRoot(id);
+            TaskLabelsPart result = newPart(root);
+            return result;
         }
     }
 }

@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.client;
 
+import io.spine.base.Error;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelId;
@@ -33,6 +34,7 @@ import io.spine.examples.todolist.q.projection.LabelColorView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import io.spine.examples.todolist.testdata.TestLabelCommandFactory;
+import io.spine.validate.ValidationError;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -215,15 +217,13 @@ class UpdateLabelDetailsTest extends TodoClientTest {
         final LabelId updatedLabelId = isCorrectId ? labelId : createWrongTaskLabelId();
         final UpdateLabelDetails updateLabelDetails =
                 updateLabelDetailsInstance(updatedLabelId, previousLabelDetails, newLabelDetails);
-        client.postCommand(updateLabelDetails);
+       client.postCommand(updateLabelDetails);
 
         final List<LabelledTasksView> labelledTasksViewList = client.getLabelledTasksView();
         final int expectedListSize = isCorrectId ? 1 : 2;
         assertEquals(expectedListSize, labelledTasksViewList.size());
 
-        final LabelledTasksView view = getLabelledTasksView(labelledTasksViewList);
-        assertEquals(labelId, view.getId());
-
+        final LabelledTasksView view = getLabelledTasksView(labelId, labelledTasksViewList);
         return view;
     }
 

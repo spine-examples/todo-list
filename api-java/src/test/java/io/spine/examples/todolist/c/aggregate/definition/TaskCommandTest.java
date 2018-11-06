@@ -32,7 +32,7 @@ import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
 import io.spine.server.entity.Repository;
 import io.spine.testing.client.TestActorRequestFactory;
-import io.spine.testing.server.aggregate.AggregatePartCommandTest;
+import io.spine.testing.server.aggregate.AggregateCommandTest;
 
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID;
 
@@ -42,7 +42,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.TASK_ID
  */
 @SuppressWarnings("PackageVisibleField") // for brevity of descendants.
 abstract class TaskCommandTest<C extends CommandMessage>
-        extends AggregatePartCommandTest<TaskId, C, Task, TaskPart, TaskAggregateRoot> {
+        extends AggregateCommandTest<TaskId, C, Task, TaskPart> {
 
     private final TestActorRequestFactory requestFactory =
             TestActorRequestFactory.newInstance(getClass());
@@ -60,19 +60,6 @@ abstract class TaskCommandTest<C extends CommandMessage>
     }
 
     @Override
-    protected TaskPart newPart(TaskAggregateRoot root) {
-        TaskPart taskPart = new TaskPart(root);
-        return taskPart;
-    }
-
-    @Override
-    protected TaskAggregateRoot newRoot(TaskId id) {
-        final BoundedContext boundedContext = BoundedContexts.create();
-        final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, id);
-        return root;
-    }
-
-    @Override
     protected Repository<TaskId, TaskPart> createEntityRepository() {
         return new TaskRepository();
     }
@@ -87,5 +74,22 @@ abstract class TaskCommandTest<C extends CommandMessage>
         Command command = requestFactory.command()
                                         .create(commandMessage);
         return command;
+    }
+
+    private static TaskAggregateRoot newRoot(TaskId id) {
+        final BoundedContext boundedContext = BoundedContexts.create();
+        final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, id);
+        return root;
+    }
+
+    private static TaskPart newPart(TaskAggregateRoot root) {
+        TaskPart taskPart = new TaskPart(root);
+        return taskPart;
+    }
+
+    private static TaskPart newPart(TaskId id) {
+        TaskAggregateRoot root = newRoot(id);
+        TaskPart taskPart = newPart(root);
+        return taskPart;
     }
 }
