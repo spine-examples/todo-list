@@ -21,7 +21,7 @@
 dependencies {
     // Depend on JUnit in the production part of the code, as this module exposes testing utilities
     // that are based on JUnit.
-    compile deps.test.junit5Api
+    implementation deps.test.junit5Api
 
-    compile project(path: ':cli-core')
+    implementation project(path: ':cli-core')
 }

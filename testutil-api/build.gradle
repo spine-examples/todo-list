@@ -19,7 +19,7 @@
  */
 
 dependencies {
-    compile project(path: ':api-java')
-    compile project(path: ':model')
-    compile "io.spine:spine-testutil-core:${spineVersion}"
+    implementation project(path: ':api-java')
+    implementation project(path: ':model')
+    implementation "io.spine:spine-testutil-core:${spineVersion}"
 }

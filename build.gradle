@@ -135,34 +135,34 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     dependencies {
-        compile deps.build.slf4j
+        implementation deps.build.slf4j
 
-        compile deps.test.slf4j
+        implementation deps.test.slf4j
 
-        compile deps.build.jsr305Annotations
+        implementation deps.build.jsr305Annotations
 
-        compile deps.build.guava
+        implementation deps.build.guava
 
-        compile "com.google.code.gson:gson:$gsonVersion"
+        implementation "com.google.code.gson:gson:$gsonVersion"
 
-        compile deps.build.protobuf
+        implementation deps.build.protobuf
 
-        compile "io.spine:spine-base:$spineBaseVersion"
+        implementation "io.spine:spine-base:$spineBaseVersion"
 
-        compile "io.spine:spine-client:$spineVersion"
+        implementation "io.spine:spine-client:$spineVersion"
 
         annotationProcessor "io.spine.tools:spine-model-assembler:$spineVersion"
 
-        testCompile deps.test.hamcrest
+        testImplementation deps.test.hamcrest
 
-        testCompile "io.spine:spine-testlib:${spineBaseVersion}"
-        testCompile "io.spine:spine-testutil-core:${spineVersion}"
-        testCompile "io.spine:spine-testutil-client:${spineVersion}"
+        testImplementation "io.spine:spine-testlib:${spineBaseVersion}"
+        testImplementation "io.spine:spine-testutil-core:${spineVersion}"
+        testImplementation "io.spine:spine-testutil-client:${spineVersion}"
 
-        testCompile "io.spine:spine-testutil-server:${spineVersion}"
+        testImplementation "io.spine:spine-testutil-server:${spineVersion}"
 
-        testCompile deps.test.junit5Api
-        testCompile deps.test.junit5Runner
+        testImplementation deps.test.junit5Api
+        testImplementation deps.test.junit5Runner
     }
 
     configurations.all {

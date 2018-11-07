@@ -33,9 +33,9 @@ apply plugin: 'application'
 apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
-    compile "com.google.cloud.sql:mysql-socket-factory:$cloudSqlSocketFactoryVersion"
-    compile "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
-    compile project(path: ':server')
+    implementation "com.google.cloud.sql:mysql-socket-factory:$cloudSqlSocketFactoryVersion"
+    implementation "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
+    implementation project(path: ':server')
 
     // A Protobuf dependency to generate descriptor for Spine gRPC services.
     // This descriptor is required to configure gRPC services for a Google Cloud Endpoint.

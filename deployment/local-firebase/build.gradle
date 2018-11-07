@@ -23,7 +23,7 @@ ext {
 }
 
 dependencies {
-    compile project(path: ':server')
-    compile "io.spine:firebase-mirror:$firebaseMirrorVersion"
-    compile "io.netty:netty-tcnative-boringssl-static:$nettyBoringsslVersion"
+    implementation project(path: ':server')
+    implementation "io.spine:firebase-mirror:$firebaseMirrorVersion"
+    implementation "io.netty:netty-tcnative-boringssl-static:$nettyBoringsslVersion"
 }
