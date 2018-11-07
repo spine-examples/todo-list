@@ -69,16 +69,17 @@ public final class LabelBuilder {
          * @return the {@link CreateBasicLabel} command
          */
         public CreateBasicLabel build() {
-            final LabelId id = generateId();
+            LabelId id = generateId();
             builder.setLabelId(id);
             return builder.build();
         }
     }
 
     private static LabelId generateId() {
-        final LabelId id = LabelId.newBuilder()
-                                  .setValue(newUuid())
-                                  .build();
+        LabelId id = LabelId
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
         return id;
     }
 }

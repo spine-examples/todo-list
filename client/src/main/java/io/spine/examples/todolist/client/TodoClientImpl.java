@@ -93,17 +93,17 @@ final class TodoClientImpl implements SubscribingTodoClient {
 
     @Override
     public void postCommand(CommandMessage cmd) {
-        final Command executableCmd = requestFactory.command()
-                                                    .create(cmd);
+        Command executableCmd = requestFactory.command()
+                                              .create(cmd);
         commandService.post(executableCmd);
     }
 
     @Override
     public MyListView getMyListView() {
-        final Query query = requestFactory.query()
-                                          .all(MyListView.class);
-        final List<Any> messages = queryService.read(query)
-                                               .getMessagesList();
+        Query query = requestFactory.query()
+                                    .all(MyListView.class);
+        List<Any> messages = queryService.read(query)
+                                         .getMessagesList();
         return messages.isEmpty()
                ? MyListView.getDefaultInstance()
                : unpack(messages.get(0), MyListView.class);
@@ -111,11 +111,11 @@ final class TodoClientImpl implements SubscribingTodoClient {
 
     @Override
     public List<LabelledTasksView> getLabelledTasksView() {
-        final Query query = requestFactory.query()
-                                          .all(LabelledTasksView.class);
-        final List<Any> messages = queryService.read(query)
-                                               .getMessagesList();
-        final List<LabelledTasksView> result = messages
+        Query query = requestFactory.query()
+                                    .all(LabelledTasksView.class);
+        List<Any> messages = queryService.read(query)
+                                         .getMessagesList();
+        List<LabelledTasksView> result = messages
                 .stream()
                 .map(any -> unpack(any, LabelledTasksView.class))
                 .collect(toList());
@@ -125,10 +125,10 @@ final class TodoClientImpl implements SubscribingTodoClient {
 
     @Override
     public DraftTasksView getDraftTasksView() {
-        final Query query = requestFactory.query()
-                                          .all(DraftTasksView.class);
-        final List<Any> messages = queryService.read(query)
-                                               .getMessagesList();
+        Query query = requestFactory.query()
+                                    .all(DraftTasksView.class);
+        List<Any> messages = queryService.read(query)
+                                         .getMessagesList();
         return messages.isEmpty()
                ? DraftTasksView.getDefaultInstance()
                : unpack(messages.get(0), DraftTasksView.class);
@@ -141,7 +141,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
 
     @Override
     public Task getTaskOr(TaskId id, @Nullable Task other) {
-        final Optional<Task> found = findById(Task.class, id);
+        Optional<Task> found = findById(Task.class, id);
         return found.orElse(other);
     }
 
@@ -152,24 +152,24 @@ final class TodoClientImpl implements SubscribingTodoClient {
 
     @Override
     public TaskLabels getLabels(TaskId taskId) {
-        final Optional<TaskLabels> labels = findById(TaskLabels.class, taskId);
-        final TaskLabels result = labels.orElse(TaskLabels.newBuilder()
-                                                          .setTaskId(taskId)
-                                                          .build());
+        Optional<TaskLabels> labels = findById(TaskLabels.class, taskId);
+        TaskLabels result = labels.orElse(TaskLabels.newBuilder()
+                                                    .setTaskId(taskId)
+                                                    .build());
         return result;
     }
 
     @Nullable
     @Override
     public TaskLabel getLabelOr(LabelId id, @Nullable TaskLabel other) {
-        final Optional<TaskLabel> found = findById(TaskLabel.class, id);
+        Optional<TaskLabel> found = findById(TaskLabel.class, id);
         return found.orElse(other);
     }
 
     @Override
     public Subscription subscribeToTasks(StreamObserver<MyListView> observer) {
-        final Topic topic = requestFactory.topic()
-                                          .allOf(MyListView.class);
+        Topic topic = requestFactory.topic()
+                                    .allOf(MyListView.class);
         return subscribeTo(topic, observer);
     }
 
@@ -198,7 +198,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
      * @return the activated subscription
      */
     private <M extends Message> Subscription subscribeTo(Topic topic, StreamObserver<M> observer) {
-        final Subscription subscription = blockingSubscriptionService.subscribe(topic);
+        Subscription subscription = blockingSubscriptionService.subscribe(topic);
         subscriptionService.activate(subscription, new SubscriptionUpdateObserver<>(observer));
         return subscription;
     }
@@ -211,50 +211,52 @@ final class TodoClientImpl implements SubscribingTodoClient {
      * @return all the messages of the given type present in the system
      */
     private <M extends Message> List<M> getByType(Class<M> cls) {
-        final Query query = requestFactory.query()
-                                          .all(cls);
-        final List<Any> messages = queryService.read(query)
-                                               .getMessagesList();
+        Query query = requestFactory.query()
+                                    .all(cls);
+        List<Any> messages = queryService.read(query)
+                                         .getMessagesList();
 
         @SuppressWarnings("unchecked") // Logically correct.
-        final List<M> result = messages.stream()
-                                       .map(any -> (M) unpack(any))
-                                       .collect(toList());
+        List<M> result = messages.stream()
+                                 .map(any -> (M) unpack(any))
+                                 .collect(toList());
         return result;
     }
 
     private <M extends Message> Optional<M> findById(Class<M> messageClass, Message id) {
-        final Query query = requestFactory.query()
-                                          .byIds(messageClass, of(id));
-        final List<Any> messages = queryService.read(query)
-                                               .getMessagesList();
+        Query query = requestFactory.query()
+                                    .byIds(messageClass, of(id));
+        List<Any> messages = queryService.read(query)
+                                         .getMessagesList();
         checkState(messages.size() <= 1,
                    "Too many %s-s with ID %s:%s %s",
                    messageClass.getSimpleName(), Identifier.toString(id),
                    System.lineSeparator(), messages);
 
         @SuppressWarnings("unchecked") // Logically correct.
-        final Optional<M> result = messages.stream()
-                                           .map(any -> (M) unpack(any))
-                                           .findFirst();
+        Optional<M> result = messages.stream()
+                                     .map(any -> (M) unpack(any))
+                                     .findFirst();
         return result;
     }
 
     private static ManagedChannel initChannel(String host, int port) {
-        final ManagedChannel result = ManagedChannelBuilder.forAddress(host, port)
-                                                           .usePlaintext(true)
-                                                           .build();
+        ManagedChannel result = ManagedChannelBuilder.forAddress(host, port)
+                                                     .usePlaintext(true)
+                                                     .build();
         return result;
     }
 
     private static ActorRequestFactory actorRequestFactoryInstance() {
-        final UserId userId = UserId.newBuilder()
-                                    .setValue(newUuid())
-                                    .build();
-        final ActorRequestFactory result = ActorRequestFactory.newBuilder()
-                                                              .setActor(userId)
-                                                              .setZoneOffset(ZoneOffsets.utc())
-                                                              .build();
+        UserId userId = UserId
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
+        ActorRequestFactory result = ActorRequestFactory
+                .newBuilder()
+                .setActor(userId)
+                .setZoneOffset(ZoneOffsets.utc())
+                .build();
         return result;
     }
 

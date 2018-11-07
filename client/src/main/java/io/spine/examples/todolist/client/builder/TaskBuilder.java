@@ -80,7 +80,7 @@ public final class TaskBuilder {
          * @return the {@code CreateBasicTask} command
          */
         public CreateBasicTask build() {
-            final TaskId id = generateId();
+            TaskId id = generateId();
             builder.setId(id);
             return builder.build();
         }
@@ -98,16 +98,17 @@ public final class TaskBuilder {
          * @return the {@code CreateDraft} command
          */
         public CreateDraft build() {
-            final TaskId id = generateId();
+            TaskId id = generateId();
             builder.setId(id);
             return builder.build();
         }
     }
 
     private static TaskId generateId() {
-        final TaskId id = TaskId.newBuilder()
-                                .setValue(newUuid())
-                                .build();
+        TaskId id = TaskId
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
         return id;
     }
 }

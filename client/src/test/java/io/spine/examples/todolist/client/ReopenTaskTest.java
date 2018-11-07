@@ -62,14 +62,14 @@ class ReopenTaskTest extends TodoClientTest {
         @Test
         @DisplayName("contain the task view with uncompleted task")
         void containViewWithUncompletedTask() {
-            final TaskItem view = obtainViewWhenHandledCommandReopenTask(true);
+            TaskItem view = obtainViewWhenHandledCommandReopenTask(true);
             assertFalse(view.getCompleted());
         }
 
         @Test
         @DisplayName("contain the task view with completed task when command has wrong ID")
         void containViewWithCompletedTask() {
-            final TaskItem view = obtainViewWhenHandledCommandReopenTask(false);
+            TaskItem view = obtainViewWhenHandledCommandReopenTask(false);
             assertTrue(view.getCompleted());
         }
     }
@@ -81,68 +81,68 @@ class ReopenTaskTest extends TodoClientTest {
         @Test
         @DisplayName("contain the task view with uncompleted task")
         void containViewWithUncompletedTask() {
-            final TaskItem view = obtainTaskItemWhenHandledReopenTask(true);
+            TaskItem view = obtainTaskItemWhenHandledReopenTask(true);
             assertFalse(view.getCompleted());
         }
 
         @Test
         @DisplayName("contain the task view with completed task when command has wrong ID")
         void containViewWithCompletedTask() {
-            final TaskItem view = obtainTaskItemWhenHandledReopenTask(false);
+            TaskItem view = obtainTaskItemWhenHandledReopenTask(false);
             assertTrue(view.getCompleted());
         }
     }
 
     private TaskItem obtainViewWhenHandledCommandReopenTask(boolean isCorrectId) {
-        final CreateBasicTask createTask = createTask();
-        final TaskId createdTaskId = createTask.getId();
+        CreateBasicTask createTask = createTask();
+        TaskId createdTaskId = createTask.getId();
 
-        final CreateBasicLabel createLabel = createBasicLabel();
+        CreateBasicLabel createLabel = createBasicLabel();
         client.postCommand(createLabel);
 
-        final TaskId taskId = createTask.getId();
-        final LabelId labelId = createLabel.getLabelId();
+        TaskId taskId = createTask.getId();
+        LabelId labelId = createLabel.getLabelId();
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.postCommand(assignLabelToTask);
 
         completeAndReopenTask(isCorrectId, createdTaskId);
 
-        final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
+        List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
         assertEquals(1, labelledTasksView.size());
 
-        final List<TaskItem> taskViews = labelledTasksView.get(0)
-                                                          .getLabelledTasks()
-                                                          .getItemsList();
+        List<TaskItem> taskViews = labelledTasksView.get(0)
+                                                    .getLabelledTasks()
+                                                    .getItemsList();
         return checkAndObtainView(taskId, taskViews);
     }
 
     private TaskItem obtainTaskItemWhenHandledReopenTask(boolean isCorrectId) {
-        final CreateBasicTask createTask = createTask();
-        final TaskId idOfCreatedTask = createTask.getId();
+        CreateBasicTask createTask = createTask();
+        TaskId idOfCreatedTask = createTask.getId();
 
         completeAndReopenTask(isCorrectId, idOfCreatedTask);
 
-        final List<TaskItem> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+        List<TaskItem> taskViews = client.getMyListView()
+                                         .getMyList()
+                                         .getItemsList();
         return checkAndObtainView(idOfCreatedTask, taskViews);
     }
 
     private static TaskItem checkAndObtainView(TaskId idOfCreatedTask, List<TaskItem> taskViews) {
         assertEquals(1, taskViews.size());
 
-        final TaskItem view = taskViews.get(0);
+        TaskItem view = taskViews.get(0);
         assertEquals(idOfCreatedTask, view.getId());
         return view;
     }
 
     private void completeAndReopenTask(boolean isCorrectId, TaskId createdTaskId) {
-        final CompleteTask completeTask = completeTaskInstance(createdTaskId);
+        CompleteTask completeTask = completeTaskInstance(createdTaskId);
         client.postCommand(completeTask);
 
-        final TaskId reopenedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
-        final ReopenTask reopenTask = reopenTaskInstance(reopenedTaskId);
+        TaskId reopenedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
+        ReopenTask reopenTask = reopenTaskInstance(reopenedTaskId);
         client.postCommand(reopenTask);
     }
 }

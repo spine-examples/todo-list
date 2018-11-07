@@ -59,8 +59,8 @@ class UpdateTaskPriorityTest extends TodoClientTest {
         @Test
         @DisplayName("contain the task view with updated task priority")
         void containUpdatedView() {
-            final TaskPriority newPriority = TaskPriority.HIGH;
-            final TaskItem view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, true);
+            TaskPriority newPriority = TaskPriority.HIGH;
+            TaskItem view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, true);
             assertEquals(newPriority, view.getPriority());
         }
 
@@ -68,9 +68,8 @@ class UpdateTaskPriorityTest extends TodoClientTest {
         @DisplayName("contain the task view with non-updated task priority " +
                 "when command has wrong task ID")
         void containNonUpdated() {
-            final TaskPriority newPriority = TaskPriority.HIGH;
-            final TaskItem view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority,
-                                                                                 false);
+            TaskPriority newPriority = TaskPriority.HIGH;
+            TaskItem view = obtainViewWhenHandledCommandUpdateTaskPriority(newPriority, false);
             assertNotEquals(newPriority, view.getPriority());
         }
     }
@@ -82,9 +81,8 @@ class UpdateTaskPriorityTest extends TodoClientTest {
         @Test
         @DisplayName("contain the task view with updated task priority")
         void containUpdatedView() {
-            final TaskPriority newPriority = TaskPriority.HIGH;
-            final TaskItem view =
-                    obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, true);
+            TaskPriority newPriority = TaskPriority.HIGH;
+            TaskItem view = obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, true);
 
             assertEquals(newPriority, view.getPriority());
         }
@@ -93,9 +91,8 @@ class UpdateTaskPriorityTest extends TodoClientTest {
         @DisplayName("contain task view with non-updated task priority " +
                 "when command has wrong task ID")
         void containNonUpdatedView() {
-            final TaskPriority newPriority = TaskPriority.HIGH;
-            final TaskItem view =
-                    obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, false);
+            TaskPriority newPriority = TaskPriority.HIGH;
+            TaskItem view = obtainViewWhenHandledUpdateTaskPriorityCommand(newPriority, false);
 
             assertNotEquals(newPriority, view.getPriority());
         }
@@ -108,9 +105,8 @@ class UpdateTaskPriorityTest extends TodoClientTest {
         @Test
         @DisplayName("contain the task view with updated task priority")
         void containUpdatedView() {
-            final TaskPriority newPriority = TaskPriority.HIGH;
-            final TaskItem view =
-                    obtainTaskItemWhenHandledUpdateTaskPriority(newPriority, true);
+            TaskPriority newPriority = TaskPriority.HIGH;
+            TaskItem view = obtainTaskItemWhenHandledUpdateTaskPriority(newPriority, true);
 
             assertEquals(newPriority, view.getPriority());
         }
@@ -119,9 +115,8 @@ class UpdateTaskPriorityTest extends TodoClientTest {
         @DisplayName("contain task view with non-updated task priority " +
                 "when command has wrong task ID")
         void containNonUpdatedView() {
-            final TaskPriority newPriority = TaskPriority.HIGH;
-            final TaskItem view =
-                    obtainTaskItemWhenHandledUpdateTaskPriority(newPriority, false);
+            TaskPriority newPriority = TaskPriority.HIGH;
+            TaskItem view = obtainTaskItemWhenHandledUpdateTaskPriority(newPriority, false);
 
             assertNotEquals(newPriority, view.getPriority());
         }
@@ -129,17 +124,17 @@ class UpdateTaskPriorityTest extends TodoClientTest {
 
     private TaskItem obtainTaskItemWhenHandledUpdateTaskPriority(TaskPriority newPriority,
             boolean isCorrectId) {
-        final CreateBasicTask createTask = createBasicTask();
+        CreateBasicTask createTask = createBasicTask();
         client.postCommand(createTask);
 
-        final TaskId idOfCreatedTask = createTask.getId();
+        TaskId idOfCreatedTask = createTask.getId();
         updatePriority(newPriority, isCorrectId, idOfCreatedTask);
 
-        final List<TaskItem> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+        List<TaskItem> taskViews = client.getMyListView()
+                                         .getMyList()
+                                         .getItemsList();
         assertEquals(1, taskViews.size());
-        final TaskItem view = taskViews.get(0);
+        TaskItem view = taskViews.get(0);
 
         assertEquals(idOfCreatedTask, view.getId());
         return view;
@@ -147,29 +142,29 @@ class UpdateTaskPriorityTest extends TodoClientTest {
 
     private TaskItem obtainViewWhenHandledCommandUpdateTaskPriority(TaskPriority priority,
             boolean isCorrectId) {
-        final CreateBasicTask createTask = createBasicTask();
-        final TaskId createdTaskId = createTask.getId();
+        CreateBasicTask createTask = createBasicTask();
+        TaskId createdTaskId = createTask.getId();
         client.postCommand(createTask);
 
-        final CreateBasicLabel createLabel = createBasicLabel();
+        CreateBasicLabel createLabel = createBasicLabel();
         client.postCommand(createLabel);
 
-        final int expectedListSize = 1;
-        final AssignLabelToTask assignLabelToTask =
+        int expectedListSize = 1;
+        AssignLabelToTask assignLabelToTask =
                 assignLabelToTaskInstance(createdTaskId, createLabel.getLabelId());
         client.postCommand(assignLabelToTask);
 
         updatePriority(priority, isCorrectId, createdTaskId);
 
-        final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+        List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
         assertEquals(expectedListSize, tasksViewList.size());
-        final List<TaskItem> taskViews = tasksViewList.get(0)
-                                                      .getLabelledTasks()
-                                                      .getItemsList();
+        List<TaskItem> taskViews = tasksViewList.get(0)
+                                                .getLabelledTasks()
+                                                .getItemsList();
 
         assertEquals(expectedListSize, taskViews.size());
 
-        final TaskItem view = taskViews.get(0);
+        TaskItem view = taskViews.get(0);
         assertEquals(createLabel.getLabelId(), view.getLabelId());
         assertEquals(createdTaskId, view.getId());
 
@@ -178,18 +173,18 @@ class UpdateTaskPriorityTest extends TodoClientTest {
 
     private TaskItem obtainViewWhenHandledUpdateTaskPriorityCommand(TaskPriority newPriority,
             boolean isCorrectId) {
-        final CreateDraft createDraft = createDraft();
+        CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
-        final TaskId createdTaskId = createDraft.getId();
+        TaskId createdTaskId = createDraft.getId();
 
         updatePriority(newPriority, isCorrectId, createdTaskId);
 
-        final List<TaskItem> taskViews = client.getDraftTasksView()
-                                               .getDraftTasks()
-                                               .getItemsList();
+        List<TaskItem> taskViews = client.getDraftTasksView()
+                                         .getDraftTasks()
+                                         .getItemsList();
         assertEquals(1, taskViews.size());
 
-        final TaskItem view = taskViews.get(0);
+        TaskItem view = taskViews.get(0);
         assertEquals(createdTaskId, view.getId());
 
         return view;
@@ -197,8 +192,8 @@ class UpdateTaskPriorityTest extends TodoClientTest {
 
     private void updatePriority(TaskPriority newPriority, boolean isCorrectId,
             TaskId createdTaskId) {
-        final TaskId updatedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
-        final UpdateTaskPriority updateTaskPriority =
+        TaskId updatedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
+        UpdateTaskPriority updateTaskPriority =
                 updateTaskPriorityInstance(updatedTaskId, TaskPriority.TP_UNDEFINED, newPriority);
         client.postCommand(updateTaskPriority);
     }

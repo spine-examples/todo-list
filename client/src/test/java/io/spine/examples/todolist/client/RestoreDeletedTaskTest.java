@@ -57,27 +57,27 @@ class RestoreDeletedTaskTest extends TodoClientTest {
     @Test
     @DisplayName("LabelledTasksView should contain restored task")
     void containRestoredTask() {
-        final CreateBasicTask createTask = createTask();
-        final CreateBasicLabel createLabel = createLabel();
+        CreateBasicTask createTask = createTask();
+        CreateBasicLabel createLabel = createLabel();
 
-        final LabelId labelId = createLabel.getLabelId();
-        final TaskId taskId = createTask.getId();
+        LabelId labelId = createLabel.getLabelId();
+        TaskId taskId = createTask.getId();
 
         assignAndDeleteTask(labelId, taskId);
 
-        final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
+        RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
         client.postCommand(restoreDeletedTask);
 
-        final int expectedListSize = 1;
-        final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+        int expectedListSize = 1;
+        List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
         assertEquals(expectedListSize, tasksViewList.size());
 
-        final List<TaskItem> taskViews = tasksViewList.get(0)
-                                                      .getLabelledTasks()
-                                                      .getItemsList();
+        List<TaskItem> taskViews = tasksViewList.get(0)
+                                                .getLabelledTasks()
+                                                .getItemsList();
         assertEquals(expectedListSize, taskViews.size());
 
-        final TaskItem view = taskViews.get(0);
+        TaskItem view = taskViews.get(0);
 
         assertEquals(taskId, view.getId());
         assertEquals(labelId, view.getLabelId());
@@ -87,33 +87,32 @@ class RestoreDeletedTaskTest extends TodoClientTest {
     @DisplayName("LabelledTasksView should not contain restored task " +
             "when command has wrong task ID")
     void containEmptyView() {
-        final CreateBasicTask createTask = createTask();
-        final CreateBasicLabel createLabel = createLabel();
+        CreateBasicTask createTask = createTask();
+        CreateBasicLabel createLabel = createLabel();
 
-        final LabelId labelId = createLabel.getLabelId();
-        final TaskId taskId = createTask.getId();
+        LabelId labelId = createLabel.getLabelId();
+        TaskId taskId = createTask.getId();
 
         assignAndDeleteTask(labelId, taskId);
 
-        final RestoreDeletedTask restoreDeletedTask =
-                restoreDeletedTaskInstance(createWrongTaskId());
+        RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(createWrongTaskId());
         client.postCommand(restoreDeletedTask);
 
-        final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+        List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
         assertEquals(1, tasksViewList.size());
 
-        final TaskListView taskListView = tasksViewList.get(0)
-                                                       .getLabelledTasks();
-        final List<TaskItem> taskViews = taskListView.getItemsList();
+        TaskListView taskListView = tasksViewList.get(0)
+                                                 .getLabelledTasks();
+        List<TaskItem> taskViews = taskListView.getItemsList();
 
         assertTrue(taskViews.isEmpty());
     }
 
     private void assignAndDeleteTask(LabelId labelId, TaskId taskId) {
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.postCommand(assignLabelToTask);
 
-        final DeleteTask deleteTask = deleteTaskInstance(taskId);
+        DeleteTask deleteTask = deleteTaskInstance(taskId);
         client.postCommand(deleteTask);
     }
 }

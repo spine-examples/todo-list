@@ -61,7 +61,7 @@ abstract class TodoClientTest {
 
     @BeforeEach
     void setUp() throws InterruptedException {
-        final BoundedContext boundedContext = BoundedContexts.create();
+        BoundedContext boundedContext = BoundedContexts.create();
         server = newServer(PORT, boundedContext);
         startServer();
         client = TodoClient.instance(HOST, PORT);
@@ -72,14 +72,14 @@ abstract class TodoClientTest {
         server.shutdown();
         getClient().shutdown();
 
-        final Sharding sharding = new InProcessSharding(InMemoryTransportFactory.newInstance());
+        Sharding sharding = new InProcessSharding(InMemoryTransportFactory.newInstance());
         ServerEnvironment.getInstance()
                          .replaceSharding(sharding);
     }
 
     private void startServer() throws InterruptedException {
-        final CountDownLatch serverStartLatch = new CountDownLatch(1);
-        final Thread serverThread = new Thread(() -> {
+        CountDownLatch serverStartLatch = new CountDownLatch(1);
+        Thread serverThread = new Thread(() -> {
             try {
                 server.start();
                 serverStartLatch.countDown();
@@ -135,13 +135,13 @@ abstract class TodoClientTest {
     }
 
     CreateBasicTask createTask() {
-        final CreateBasicTask createTask = createBasicTask();
+        CreateBasicTask createTask = createBasicTask();
         getClient().postCommand(createTask);
         return createTask;
     }
 
     CreateBasicLabel createLabel() {
-        final CreateBasicLabel createLabel = createBasicLabel();
+        CreateBasicLabel createLabel = createBasicLabel();
         getClient().postCommand(createLabel);
         return createLabel;
     }
