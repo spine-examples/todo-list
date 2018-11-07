@@ -56,6 +56,7 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.rejection.CannotAddLabels;
+import io.spine.examples.todolist.c.rejection.CannotMoveToStage;
 import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
 import io.spine.server.commandbus.CommandDispatcher;
@@ -85,7 +86,6 @@ import static io.spine.examples.todolist.TaskCreation.Stage.TASK_DEFINITION;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -311,6 +311,28 @@ class TaskCreationWizardTest {
             dispatch(cmd);
             assertEquals(CANCELED, getStage());
             assertArchived();
+        }
+    }
+
+    @Nested
+    @DisplayName("any command should")
+    class AnyCommandShould extends CommandTest {
+
+        @BeforeEach
+        @Override
+        protected void setUp() {
+            super.setUp();
+            startWizard();
+        }
+
+        @Test
+        @DisplayName("throw CannotMoveToStage rejection if trying to move on incorrect stage")
+        void throwOnIncorrectStage() {
+            final CompleteTaskCreation cmd = CompleteTaskCreation.newBuilder()
+                                                                 .setId(getId())
+                                                                 .build();
+            final Throwable t = assertThrows(Throwable.class, () -> dispatch(cmd));
+            assertThat(Throwables.getRootCause(t), instanceOf(CannotMoveToStage.class));
         }
     }
 
