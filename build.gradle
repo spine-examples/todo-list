@@ -135,7 +135,7 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     dependencies {
-        implementation deps.build.slf4j
+        compile deps.build.slf4j
 
         implementation deps.test.slf4j
 
