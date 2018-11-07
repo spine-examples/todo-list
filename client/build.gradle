@@ -21,7 +21,7 @@
 apply from: "$rootDir/scripts/publish.gradle"
 
 dependencies {
-    implementation project(path: ':model')
+    compile project(path: ':model')
     testImplementation project(path: ':testutil-api')
     testImplementation project(path: ':server')
 }

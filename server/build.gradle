@@ -19,6 +19,6 @@
  */
 
 dependencies {
-    implementation project(path: ':model')
-    implementation project(path: ':api-java')
+    compile project(path: ':model')
+    compile project(path: ':api-java')
 }
