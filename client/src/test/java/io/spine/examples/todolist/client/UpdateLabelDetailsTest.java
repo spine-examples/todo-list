@@ -143,7 +143,7 @@ class UpdateLabelDetailsTest extends TodoClientTest {
     }
 
     private TaskItem obtainTaskItemWhenHandledUpdateLabelDetailsCommand(LabelColor newColor,
-            boolean isCorrectId) {
+            boolean correctId) {
         CreateBasicTask createTask = createBasicTask();
         client.postCommand(createTask);
 
@@ -157,7 +157,7 @@ class UpdateLabelDetailsTest extends TodoClientTest {
                                                                         idOfCreatedLabel);
         client.postCommand(assignLabelToTask);
 
-        LabelId idOfUpdatedLabel = isCorrectId ? idOfCreatedLabel : createWrongTaskLabelId();
+        LabelId idOfUpdatedLabel = correctId ? idOfCreatedLabel : createWrongTaskLabelId();
 
         LabelDetails previousLabelDetails = LabelDetailsVBuilder
                 .newBuilder()
@@ -187,7 +187,7 @@ class UpdateLabelDetailsTest extends TodoClientTest {
     private LabelledTasksView obtainViewWhenHandledCommandUpdateLabelDetails(
             LabelColor updatedColor,
             String updatedTitle,
-            boolean isCorrectId) {
+            boolean correctId) {
         CreateBasicTask createTask = createBasicTask();
         client.postCommand(createTask);
 
@@ -211,22 +211,22 @@ class UpdateLabelDetailsTest extends TodoClientTest {
                 .setTitle(updatedTitle)
                 .build();
         LabelDetails previousLabelDetails =
-                isCorrectId ? detailsWithCorrectId : LabelDetails.getDefaultInstance();
-        LabelId updatedLabelId = isCorrectId ? labelId : createWrongTaskLabelId();
+                correctId ? detailsWithCorrectId : LabelDetails.getDefaultInstance();
+        LabelId updatedLabelId = correctId ? labelId : createWrongTaskLabelId();
         UpdateLabelDetails updateLabelDetails =
                 updateLabelDetailsInstance(updatedLabelId, previousLabelDetails, newLabelDetails);
        client.postCommand(updateLabelDetails);
 
         List<LabelledTasksView> labelledTasksViewList = client.getLabelledTasksView();
-        int expectedListSize = isCorrectId ? 1 : 2;
+        int expectedListSize = correctId ? 1 : 2;
         assertEquals(expectedListSize, labelledTasksViewList.size());
 
         LabelledTasksView view = getLabelledTasksView(labelId, labelledTasksViewList);
         return view;
     }
 
-    private TaskItem obtainTaskItemWhenHandledUpdateLabelDetails(LabelColor newLabelColor,
-            boolean isCorrectId) {
+    private TaskItem
+    obtainTaskItemWhenHandledUpdateLabelDetails(LabelColor newLabelColor, boolean correctId) {
         CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
 
@@ -239,7 +239,7 @@ class UpdateLabelDetailsTest extends TodoClientTest {
         AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.postCommand(assignLabelToTask);
 
-        LabelId updatedLabelId = isCorrectId ? labelId : createWrongTaskLabelId();
+        LabelId updatedLabelId = correctId ? labelId : createWrongTaskLabelId();
 
         LabelDetails previousLabelDetails = LabelDetailsVBuilder
                 .newBuilder()
