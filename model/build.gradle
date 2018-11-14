@@ -18,5 +18,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: protobufPlugin
 apply from: "$rootDir/scripts/publish.gradle"

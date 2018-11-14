@@ -27,8 +27,6 @@ import io.spine.cli.Screen;
  *
  * <p>Typical instance of the class is a menu, in which the end-user selects an {@code Action}
  * to be executed from the actions list.
- *
- * @author Dmytro Grankin
  */
 public class ActionListView extends AbstractView {
 

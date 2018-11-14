@@ -23,7 +23,7 @@ package io.spine.examples.todolist.server;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 
 @DisplayName("LocalFirebaseServer should")
 class LocalFirebaseServerTest {

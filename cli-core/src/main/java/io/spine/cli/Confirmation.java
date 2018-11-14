@@ -30,9 +30,6 @@ import static java.lang.String.format;
  * This class serves for asking for a confirmation.
  *
  * <p>Valid confirmation values are `y` and `n`.
- *
- * @author Illia Shepilov
- * @author Dmytro Grankin
  */
 public class Confirmation {
 

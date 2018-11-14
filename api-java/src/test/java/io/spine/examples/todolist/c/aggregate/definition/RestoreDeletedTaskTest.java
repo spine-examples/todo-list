@@ -35,6 +35,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.events.LabelledTaskRestored;
 import io.spine.examples.todolist.c.rejection.CannotRestoreDeletedTask;
 import io.spine.examples.todolist.context.BoundedContexts;
@@ -44,9 +45,11 @@ import io.spine.protobuf.AnyPacker;
 import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
 import io.spine.server.event.EventStreamQuery;
+import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,22 +66,25 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createD
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.restoreDeletedTaskInstance;
+import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
-import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
+import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Illia Shepilov
- */
+@ExtendWith(ShardingReset.class)
 @DisplayName("RestoreDeletedTask command should be interpreted by TaskPart and")
 public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> {
 
     private MemoizingObserver<Ack> responseObserver;
     private BoundedContext boundedContext;
     private CommandBus commandBus;
+
+    RestoreDeletedTaskTest() {
+        super(restoreDeletedTaskInstance());
+    }
 
     @Override
     @BeforeEach
@@ -87,42 +93,46 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         responseObserver = StreamObservers.memoizingObserver();
         boundedContext = BoundedContexts.create();
         commandBus = boundedContext.getCommandBus();
-        final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, taskId);
+        TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, entityId());
         aggregate = new TaskPart(root);
     }
 
     @Test
     @DisplayName("produce LabelledTaskRestored event")
     void produceEvent() {
-        final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
-        final Command createTaskCmd = createDifferentCommand(createTask);
+        CreateBasicTask createTask = createTaskInstance(entityId(), DESCRIPTION);
+        Command createTaskCmd = createNewCommand(createTask);
         commandBus.post(createTaskCmd, responseObserver);
 
-        final CreateBasicLabel createLabel = createLabelInstance(LABEL_ID);
-        final Command createLabelCmd = createDifferentCommand(createLabel);
+        UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(entityId());
+        Command updateTaskPriorityCmd = createNewCommand(updateTaskPriority);
+        commandBus.post(updateTaskPriorityCmd, responseObserver);
+
+        CreateBasicLabel createLabel = createLabelInstance(LABEL_ID);
+        Command createLabelCmd = createNewCommand(createLabel);
         commandBus.post(createLabelCmd, responseObserver);
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, LABEL_ID);
-        final Command assignLabelToTaskCmd = createDifferentCommand(assignLabelToTask);
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(entityId(), LABEL_ID);
+        Command assignLabelToTaskCmd = createNewCommand(assignLabelToTask);
         commandBus.post(assignLabelToTaskCmd, responseObserver);
 
-        final DeleteTask deleteTask = deleteTaskInstance(taskId);
-        final Command deleteTaskCmd = createDifferentCommand(deleteTask);
+        DeleteTask deleteTask = deleteTaskInstance(entityId());
+        Command deleteTaskCmd = createNewCommand(deleteTask);
         commandBus.post(deleteTaskCmd, responseObserver);
 
-        final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
-        final Command restoreDeletedTaskCmd = createDifferentCommand(restoreDeletedTask);
+        RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(entityId());
+        Command restoreDeletedTaskCmd = createNewCommand(restoreDeletedTask);
         commandBus.post(restoreDeletedTaskCmd, responseObserver);
 
-        final EventStreamQuery query = EventStreamQuery.newBuilder()
-                                                       .build();
-        final EventStreamObserver eventStreamObserver = new EventStreamObserver();
+        EventStreamQuery query = EventStreamQuery.newBuilder()
+                                                 .build();
+        EventStreamObserver eventStreamObserver = new EventStreamObserver();
 
         boundedContext.getEventBus()
                       .getEventStore()
                       .read(query, eventStreamObserver);
-        final List<Event> events = eventStreamObserver.events;
-        final LabelledTaskRestored labelledTaskRestored =
+        List<Event> events = eventStreamObserver.events;
+        LabelledTaskRestored labelledTaskRestored =
                 events.stream()
                       .filter(event -> AnyPacker.unpack(event.getMessage())
                                                 .getClass()
@@ -131,7 +141,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
                       .map(event -> AnyPacker.unpack(event.getMessage()))
                       .map(LabelledTaskRestored.class::cast)
                       .orElseThrow(() -> new IllegalStateException("Event was not produced."));
-        assertEquals(taskId, labelledTaskRestored.getTaskId());
+        assertEquals(entityId(), labelledTaskRestored.getTaskId());
         assertEquals(LABEL_ID, labelledTaskRestored.getLabelId());
     }
 
@@ -140,13 +150,13 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
     void restoreTask() {
         createBasicTask();
 
-        final DeleteTask deleteTask = deleteTaskInstance(taskId);
+        DeleteTask deleteTask = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTask));
 
         restoreDeletedTask();
 
-        final Task state = aggregate.getState();
-        assertEquals(taskId, state.getId());
+        Task state = aggregate.getState();
+        assertEquals(entityId(), state.getId());
         assertEquals(OPEN, state.getTaskStatus());
     }
 
@@ -155,17 +165,17 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
     void restoreDraft() {
         createDraft();
 
-        final DeleteTask deleteTask = deleteTaskInstance(taskId);
+        DeleteTask deleteTask = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTask));
 
         Task state = aggregate.getState();
-        assertEquals(taskId, state.getId());
+        assertEquals(entityId(), state.getId());
         assertEquals(DELETED, state.getTaskStatus());
 
         restoreDeletedTask();
 
         state = aggregate.getState();
-        assertEquals(taskId, state.getId());
+        assertEquals(entityId(), state.getId());
         assertEquals(OPEN, state.getTaskStatus());
     }
 
@@ -175,10 +185,10 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
     void cannotRestoreCompletedTask() {
         createBasicTask();
 
-        final CompleteTask completeTask = completeTaskInstance(taskId);
+        CompleteTask completeTask = completeTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(completeTask));
 
-        final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
+        Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotRestoreDeletedTask.class));
     }
 
@@ -187,7 +197,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
     void cannotRestoreFinalizedTask() {
         createBasicTask();
 
-        final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
+        Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotRestoreDeletedTask.class));
     }
 
@@ -196,22 +206,22 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
     void cannotRestoreDraft() {
         createDraft();
 
-        final Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
+        Throwable t = assertThrows(Throwable.class, this::restoreDeletedTask);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotRestoreDeletedTask.class));
     }
 
     private void createBasicTask() {
-        final CreateBasicTask createTask = createTaskInstance(taskId, DESCRIPTION);
+        CreateBasicTask createTask = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTask));
     }
 
     private void createDraft() {
-        final CreateDraft createDraft = createDraftInstance(taskId);
+        CreateDraft createDraft = createDraftInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(createDraft));
     }
 
     private void restoreDeletedTask() {
-        final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(taskId);
+        RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(restoreDeletedTask));
     }
 

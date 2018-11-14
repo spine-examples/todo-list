@@ -21,14 +21,13 @@
 package io.spine.examples.todolist.client.builder;
 
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.LabelIdVBuilder;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 
-import static io.spine.Identifier.newUuid;
+import static io.spine.base.Identifier.newUuid;
 
 /**
  * Provides label command builders.
- *
- * @author Illia Shepilov
  */
 public final class LabelBuilder {
 
@@ -71,16 +70,17 @@ public final class LabelBuilder {
          * @return the {@link CreateBasicLabel} command
          */
         public CreateBasicLabel build() {
-            final LabelId id = generateId();
+            LabelId id = generateId();
             builder.setLabelId(id);
             return builder.build();
         }
     }
 
     private static LabelId generateId() {
-        final LabelId id = LabelId.newBuilder()
-                                  .setValue(newUuid())
-                                  .build();
+        LabelId id = LabelIdVBuilder
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
         return id;
     }
 }

@@ -20,34 +20,33 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.web.firebase.FirebaseQueryBridge;
-import io.spine.web.firebase.FirebaseQueryServlet;
+import io.spine.web.firebase.FirebaseSubscriptionBridge;
+import io.spine.web.firebase.FirebaseSubscriptionKeepUpServlet;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The {@code /query} endpoint of the TodoList system.
+ * The {@code /subscription/keep-up} endpoint of the TodoList system.
  *
- * <p>Handles query {@code POST} requests. See {@link FirebaseQueryServlet} for more details.
+ * <p>Handles {@code POST} requests to keep up a subscription. See
+ * {@link FirebaseSubscriptionKeepUpServlet} for more details.
  *
  * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
- *
- * @author Dmytro Dashenkov
  */
-@WebServlet(name = TodoQueryServlet.NAME, value = "/query")
+@WebServlet(name = TodoSubscriptionKeepUpServlet.NAME, value = "/subscription/keep-up")
 @SuppressWarnings("serial")
-public final class TodoQueryServlet extends FirebaseQueryServlet {
+public class TodoSubscriptionKeepUpServlet extends FirebaseSubscriptionKeepUpServlet {
 
-    static final String NAME = "Query Service";
+    static final String NAME = "Subscription Keep Up Service";
 
-    public TodoQueryServlet() {
-        super(FirebaseQueryBridge.newBuilder()
-                                 .serQueryService(Application.instance()
-                                                             .queryService())
-                                 .setDatabase(FirebaseClient.database())
-                                 .build());
+    public TodoSubscriptionKeepUpServlet() {
+        super(FirebaseSubscriptionBridge.newBuilder()
+                                        .setQueryService(Application.instance().queryService())
+                                        .setFirebaseClient(Application.instance()
+                                                                      .firebaseClient())
+                                        .build());
     }
 
     @Override

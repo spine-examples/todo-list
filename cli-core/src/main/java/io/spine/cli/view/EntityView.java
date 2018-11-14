@@ -32,7 +32,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @param <I> the type of entity identifier
  * @param <S> the type of the entity state
- * @author Dmytro Grankin
  */
 public abstract class EntityView<I extends Message, S extends Message> extends AbstractView {
 

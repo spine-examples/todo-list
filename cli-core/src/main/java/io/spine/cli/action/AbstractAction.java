@@ -33,7 +33,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  *
  * @param <S> {@inheritDoc}
  * @param <D> {@inheritDoc}
- * @author Dmytro Grankin
  */
 abstract class AbstractAction<S extends View, D extends View> implements Action<S, D> {
 

@@ -28,7 +28,6 @@ import io.spine.validate.ValidatingBuilder;
  *
  * @param <M> the type of the message
  * @param <B> the type of the validating builder for the message
- * @author Dmytro Grankin
  */
 public interface EditOperation<M extends Message,
                                B extends ValidatingBuilder<M, ? extends Message.Builder>> {

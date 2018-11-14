@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import static io.spine.examples.todolist.server.LocalCloudSqlServer.createBoundedContext;
 import static io.spine.examples.todolist.server.LocalCloudSqlServer.getActualArguments;
 import static io.spine.examples.todolist.server.LocalCloudSqlServer.getDefaultArguments;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;

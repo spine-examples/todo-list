@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.q.projection;
 
+import io.spine.core.BoundedContextNames;
 import io.spine.core.Event;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelId;
@@ -36,17 +37,19 @@ import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.events.TaskReopened;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
 import io.spine.server.BoundedContext;
+import io.spine.server.event.Enricher;
 import io.spine.server.event.EventBus;
-import io.spine.server.event.EventEnricher;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.StorageFactorySwitch;
+import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import static io.spine.Identifier.newUuid;
+import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
 import static io.spine.examples.todolist.testdata.TestEventBusFactory.newEventBusBuilder;
 import static io.spine.examples.todolist.testdata.TestEventEnricherFactory.LABEL_TITLE;
@@ -72,10 +75,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Illia Shepilov
- * @author Dmitry Ganzha
- */
+@ExtendWith(ShardingReset.class)
 class LabelledTasksViewProjectionTest extends ProjectionTest {
 
     private static final String BOUNDED_CONTEXT_NAME = "TodoListBoundedContext";
@@ -88,9 +88,9 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
     @BeforeEach
     void setUp() {
         final StorageFactorySwitch storageFactorySwitch = newInstance(
-                BoundedContext.newName(BOUNDED_CONTEXT_NAME), false);
+                BoundedContextNames.newName(BOUNDED_CONTEXT_NAME), false);
         final StorageFactory storageFactory = storageFactorySwitch.get();
-        final EventEnricher eventEnricher = eventEnricherInstance();
+        final Enricher eventEnricher = eventEnricherInstance();
         final EventBus.Builder eventBusBuilder = newEventBusBuilder(storageFactory, eventEnricher);
         final BoundedContext boundedContext = boundedContextInstance(eventBusBuilder,
                                                                      storageFactorySwitch);
@@ -124,7 +124,8 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
 
             matchesExpectedValues(view);
 
-            eventBus.post(labelAssignedToTaskEvent);
+            final Event labelAssignedToTaskEvent2 = createEvent(labelAssignedToTask);
+            eventBus.post(labelAssignedToTaskEvent2);
 
             labelledTaskItem = getProjectionState();
             listView = labelledTaskItem.getLabelledTasks();
@@ -156,10 +157,11 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
-            eventBus.post(labelAssignedToTaskEvent);
+            final Event labelAssignedToTaskEvent2 = createEvent(labelAssignedToTask);
+            eventBus.post(labelAssignedToTaskEvent2);
 
             final LabelledTasksView labelledTasksView = getProjectionState();
-            assertEquals(LABEL_ID, labelledTasksView.getLabelId());
+            assertEquals(LABEL_ID, labelledTasksView.getId());
             assertEquals(2, labelledTasksView.getLabelledTasks()
                                              .getItemsList()
                                              .size());
@@ -187,7 +189,6 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
             final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
-            eventBus.post(labelAssignedToTaskEvent);
 
             final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
             final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask);
@@ -208,7 +209,8 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             final TaskItem taskView = listView.getItems(0);
             assertEquals(TASK_ID, taskView.getId());
 
-            eventBus.post(deletedTaskRestoredEvent);
+            final Event deletedTaskRestoredEvent2 = createEvent(deletedTaskRestored);
+            eventBus.post(deletedTaskRestoredEvent2);
             labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
             listView = getProjectionState()
@@ -522,7 +524,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             eventBus.post(labelDetailsUpdatedEvent);
 
             final LabelledTasksView labelledTasksView = getProjectionState();
-            assertEquals(LABEL_ID, labelledTasksView.getLabelId());
+            assertEquals(LABEL_ID, labelledTasksView.getId());
             assertEquals(UPDATED_LABEL_TITLE, labelledTasksView.getLabelTitle());
             assertEquals(LabelColorView.RED_COLOR.getHexColor(), labelledTasksView.getLabelColor());
         }
@@ -544,7 +546,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             eventBus.post(labelDetailsUpdatedEvent);
 
             final LabelledTasksView labelledTasksView = getProjectionState();
-            assertEquals(LABEL_ID, labelledTasksView.getLabelId());
+            assertEquals(LABEL_ID, labelledTasksView.getId());
             assertNotEquals(UPDATED_LABEL_TITLE, labelledTasksView.getLabelTitle());
             assertNotEquals(LabelColorView.RED_COLOR.getHexColor(),
                             labelledTasksView.getLabelColor());

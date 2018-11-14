@@ -34,9 +34,6 @@ import static io.spine.grpc.StreamObservers.memoizingObserver;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-/**
- * @author Dmytro Dashenkov
- */
 @DisplayName("SubscribingTodoClient should")
 class SubscribeToMyListTest extends TodoClientTest {
 
@@ -50,17 +47,17 @@ class SubscribeToMyListTest extends TodoClientTest {
     @Test
     @DisplayName("subscribe to MyList updates")
     void testSubscribe() throws InterruptedException {
-        final MemoizingObserver<MyListView> observer = memoizingObserver();
-        final Subscription subscription = client.subscribeToTasks(observer);
+        MemoizingObserver<MyListView> observer = memoizingObserver();
+        Subscription subscription = client.subscribeToTasks(observer);
         assertNotNull(subscription);
-        final CreateBasicTask command = createTask();
+        CreateBasicTask command = createTask();
         Thread.sleep(2000L);
-        final MyListView view = observer.firstResponse();
-        final TaskItem taskItem = view.getMyList()
-                                      .getItemsList()
-                                      .stream()
-                                      .findAny()
-                                      .orElseThrow(AssertionError::new);
+        MyListView view = observer.firstResponse();
+        TaskItem taskItem = view.getMyList()
+                                .getItemsList()
+                                .stream()
+                                .findAny()
+                                .orElseThrow(AssertionError::new);
         assertEquals(command.getId(), taskItem.getId());
         assertEquals(command.getDescription(), taskItem.getDescription());
         client.unSubscribe(subscription);

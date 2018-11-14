@@ -20,27 +20,33 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.web.command.CommandServlet;
+import io.spine.web.firebase.FirebaseSubscribeServlet;
+import io.spine.web.firebase.FirebaseSubscriptionBridge;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The {@code /command} endpoint of the TodoList system.
+ * The {@code /subscription/create} endpoint of the TodoList system.
  *
- * <p>Handles command {@code POST} requests. See {@link CommandServlet} for more details.
+ * <p>Handles {@code POST} requests to create a subscription to the topic. See
+ * {@link FirebaseSubscribeServlet} for more details.
  *
  * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
  */
-@WebServlet(name = TodoCommandServlet.NAME, value = "/command")
+@WebServlet(name = TodoSubscribeServlet.NAME, value = "/subscription/create")
 @SuppressWarnings("serial")
-public final class TodoCommandServlet extends CommandServlet {
+public final class TodoSubscribeServlet extends FirebaseSubscribeServlet {
 
-    static final String NAME = "Command Service";
+    static final String NAME = "Subscription Creation Service";
 
-    public TodoCommandServlet() {
-        super(Application.instance().commandService());
+    public TodoSubscribeServlet() {
+        super(FirebaseSubscriptionBridge.newBuilder()
+                                        .setQueryService(Application.instance().queryService())
+                                        .setFirebaseClient(Application.instance()
+                                                                      .firebaseClient())
+                                        .build());
     }
 
     @Override

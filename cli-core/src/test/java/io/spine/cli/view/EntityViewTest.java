@@ -30,9 +30,6 @@ import org.junit.jupiter.api.Test;
 import static io.spine.protobuf.TypeConverter.toMessage;
 import static java.lang.System.lineSeparator;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("EntityView should")
 class EntityViewTest {
 
@@ -54,7 +51,7 @@ class EntityViewTest {
 
     private static class AnEntityView extends EntityView<Int32Value, StringValue> {
 
-        private static final StringValue STATE = toMessage("string");
+        private static final StringValue STATE = toMessage("string", StringValue.class);
 
         private AnEntityView(Int32Value id) {
             super(id, "View title");

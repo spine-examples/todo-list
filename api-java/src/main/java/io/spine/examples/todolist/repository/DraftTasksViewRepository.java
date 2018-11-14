@@ -31,8 +31,6 @@ import static java.util.Collections.singleton;
 
 /**
  * Repository for the {@link DraftTasksViewProjection}.
- *
- * @author Illia Shepilov
  */
 public class DraftTasksViewRepository
         extends ProjectionRepository<TaskListId, DraftTasksViewProjection, DraftTasksView> {

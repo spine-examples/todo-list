@@ -27,12 +27,15 @@ import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
+import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Collection;
 import java.util.List;
@@ -43,9 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Illia Shepilov
- */
+@ExtendWith(ShardingReset.class)
 @DisplayName("After execution of AssignLabelToTask command")
 class AssignLabelToTaskTest extends TodoClientTest {
 
@@ -68,32 +69,32 @@ class AssignLabelToTaskTest extends TodoClientTest {
             createTask();
             createLabel();
 
-            final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+            List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
             assertTrue(tasksViewList.isEmpty());
         }
 
         @Test
         @DisplayName("contain TaskItem with label")
         void obtainViewsWithLabel() {
-            final CreateBasicTask createTask = createTask();
-            final CreateBasicLabel createLabel = createLabel();
+            CreateBasicTask createTask = createTask();
+            CreateBasicLabel createLabel = createLabel();
 
-            final TaskId taskId = createTask.getId();
-            final LabelId labelId = createLabel.getLabelId();
+            TaskId taskId = createTask.getId();
+            LabelId labelId = createLabel.getLabelId();
 
-            final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
             client.postCommand(assignLabelToTask);
 
-            final int expectedListSize = 1;
-            final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+            int expectedListSize = 1;
+            List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
             assertEquals(expectedListSize, tasksViewList.size());
 
-            final List<TaskItem> taskViews = tasksViewList.get(0)
-                                                          .getLabelledTasks()
-                                                          .getItemsList();
+            List<TaskItem> taskViews = tasksViewList.get(0)
+                                                    .getLabelledTasks()
+                                                    .getItemsList();
             assertEquals(expectedListSize, taskViews.size());
 
-            final TaskItem view = taskViews.get(0);
+            TaskItem view = taskViews.get(0);
 
             assertEquals(taskId, view.getId());
             assertEquals(labelId, view.getLabelId());
@@ -102,13 +103,13 @@ class AssignLabelToTaskTest extends TodoClientTest {
         @Test
         @DisplayName("contain two task view with labels")
         void obtainViewsWithLabels() {
-            final CreateBasicTask createTask = createTask();
-            final CreateBasicLabel createLabel = createLabel();
-            final CreateBasicLabel createSecondLabel = createLabel();
+            CreateBasicTask createTask = createTask();
+            CreateBasicLabel createLabel = createLabel();
+            CreateBasicLabel createSecondLabel = createLabel();
 
-            final LabelId firstLabelId = createLabel.getLabelId();
-            final LabelId secondLabelId = createSecondLabel.getLabelId();
-            final TaskId taskId = createTask.getId();
+            LabelId firstLabelId = createLabel.getLabelId();
+            LabelId secondLabelId = createSecondLabel.getLabelId();
+            TaskId taskId = createTask.getId();
 
             AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, firstLabelId);
             client.postCommand(assignLabelToTask);
@@ -116,13 +117,13 @@ class AssignLabelToTaskTest extends TodoClientTest {
             assignLabelToTask = assignLabelToTaskInstance(taskId, secondLabelId);
             client.postCommand(assignLabelToTask);
 
-            final List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+            List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
             assertEquals(2, tasksViewList.size());
 
-            final List<TaskItem> taskViews = tasksViewList.get(0)
-                                                          .getLabelledTasks()
-                                                          .getItemsList();
-            final Collection labelIds = newHashSet(firstLabelId, secondLabelId);
+            List<TaskItem> taskViews = tasksViewList.get(0)
+                                                    .getLabelledTasks()
+                                                    .getItemsList();
+            Collection labelIds = newHashSet(firstLabelId, secondLabelId);
             for (TaskItem view : taskViews) {
                 assertEquals(taskId, view.getId());
                 assertTrue(labelIds.contains(view.getLabelId()));
@@ -137,19 +138,19 @@ class AssignLabelToTaskTest extends TodoClientTest {
         @Test
         @DisplayName("contain the task view without label when command has wrong task ID")
         void obtainDraftViewWithoutLabels() {
-            final CreateBasicLabel createBasicLabel = createLabel();
-            final LabelId labelId = createBasicLabel.getLabelId();
+            CreateBasicLabel createBasicLabel = createLabel();
+            LabelId labelId = createBasicLabel.getLabelId();
 
-            final TaskItem view = obtainViewWhenHandledAssignLabelToTask(labelId, false);
+            TaskItem view = obtainViewWhenHandledAssignLabelToTask(labelId, false);
             assertNotEquals(labelId, view.getLabelId());
         }
 
         @Test
         @DisplayName("contain task view with label")
         void obtainDraftViewWithLabels() {
-            final CreateBasicLabel createBasicLabel = createLabel();
-            final LabelId labelId = createBasicLabel.getLabelId();
-            final TaskItem view = obtainViewWhenHandledAssignLabelToTask(labelId, true);
+            CreateBasicLabel createBasicLabel = createLabel();
+            LabelId labelId = createBasicLabel.getLabelId();
+            TaskItem view = obtainViewWhenHandledAssignLabelToTask(labelId, true);
 
             assertEquals(labelId, view.getLabelId());
         }
@@ -162,10 +163,10 @@ class AssignLabelToTaskTest extends TodoClientTest {
         @Test
         @DisplayName("contain task view with label")
         void obtainMyListViewWithLabels() {
-            final CreateBasicLabel createLabel = createLabel();
-            final LabelId labelId = createLabel.getLabelId();
+            CreateBasicLabel createLabel = createLabel();
+            LabelId labelId = createLabel.getLabelId();
 
-            final TaskItem view = obtainTaskItemWhenHandledAssignLabelToTask(labelId, true);
+            TaskItem view = obtainTaskItemWhenHandledAssignLabelToTask(labelId, true);
 
             assertEquals(labelId, view.getLabelId());
         }
@@ -173,10 +174,10 @@ class AssignLabelToTaskTest extends TodoClientTest {
         @Test
         @DisplayName("contain task view without label when command has wrong task ID")
         void obtainMyListViewWithoutLabels() {
-            final CreateBasicLabel createLabel = createLabel();
+            CreateBasicLabel createLabel = createLabel();
 
-            final LabelId labelId = createLabel.getLabelId();
-            final TaskItem view = obtainTaskItemWhenHandledAssignLabelToTask(labelId, false);
+            LabelId labelId = createLabel.getLabelId();
+            TaskItem view = obtainTaskItemWhenHandledAssignLabelToTask(labelId, false);
 
             assertNotEquals(labelId, view.getLabelId());
         }
@@ -184,17 +185,17 @@ class AssignLabelToTaskTest extends TodoClientTest {
 
     @Nested
     @DisplayName("TaskLabels part should")
-    class AssignLabelToTaskToTasklabels {
+    class AssignLabelToTaskToTaskLabels {
 
         @Test
         @DisplayName("contain label ID")
         void testContains() {
-            final CreateBasicLabel createLabel = createLabel();
-            final LabelId labelId = createLabel.getLabelId();
+            CreateBasicLabel createLabel = createLabel();
+            LabelId labelId = createLabel.getLabelId();
 
-            final TaskLabels labels = obtainTaskLabelsWhenHandledAssignLabelToTask(labelId);
-            final List<LabelId> labelIds = labels.getLabelIdsList()
-                                                 .getIdsList();
+            TaskLabels labels = obtainTaskLabelsWhenHandledAssignLabelToTask(labelId);
+            List<LabelId> labelIds = labels.getLabelIdsList()
+                                           .getIdsList();
             assertEquals(1, labelIds.size());
             assertEquals(labelId, labelIds.get(0));
         }
@@ -202,55 +203,55 @@ class AssignLabelToTaskTest extends TodoClientTest {
 
     private TaskItem obtainTaskItemWhenHandledAssignLabelToTask(LabelId labelId,
                                                                 boolean isCorrectId) {
-        final CreateBasicTask createTask = createTask();
+        CreateBasicTask createTask = createTask();
 
-        final TaskId idOfCreatedTask = createTask.getId();
-        final TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
+        TaskId idOfCreatedTask = createTask.getId();
+        TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfUpdatedTask,
-                                                                              labelId);
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfUpdatedTask, labelId);
         client.postCommand(assignLabelToTask);
 
-        final List<TaskItem> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+        List<TaskItem> taskViews = client.getMyListView()
+                                         .getMyList()
+                                         .getItemsList();
         assertEquals(1, taskViews.size());
 
-        final TaskItem view = taskViews.get(0);
+        TaskItem view = taskViews.get(0);
         assertEquals(idOfCreatedTask, view.getId());
 
         return view;
     }
 
     private TaskItem obtainViewWhenHandledAssignLabelToTask(LabelId labelId, boolean isCorrectId) {
-        final CreateDraft createDraft = createDraft();
+        CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
 
-        final TaskId createTaskId = createDraft.getId();
-        final TaskId taskIdToAssign = isCorrectId ? createTaskId : createWrongTaskId();
+        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
+        client.postCommand(updateTaskPriority);
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskIdToAssign,
-                                                                              labelId);
+        TaskId createTaskId = createDraft.getId();
+        TaskId taskIdToAssign = isCorrectId ? createTaskId : createWrongTaskId();
+
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskIdToAssign, labelId);
         client.postCommand(assignLabelToTask);
 
-        final List<TaskItem> taskViews = client.getDraftTasksView()
-                                               .getDraftTasks()
-                                               .getItemsList();
+        List<TaskItem> taskViews = client.getDraftTasksView()
+                                         .getDraftTasks()
+                                         .getItemsList();
         assertEquals(1, taskViews.size());
 
-        final TaskItem view = taskViews.get(0);
+        TaskItem view = taskViews.get(0);
         assertEquals(createTaskId, view.getId());
 
         return view;
     }
 
     private TaskLabels obtainTaskLabelsWhenHandledAssignLabelToTask(LabelId labelId) {
-        final CreateDraft createDraft = createDraft();
-        client.postCommand(createDraft);
-        final TaskId taskId = createDraft.getId();
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+        CreateBasicTask createTask = createTask();
+        TaskId taskId = createTask.getId();
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.postCommand(assignLabelToTask);
-        final TaskLabels labels = client.getLabels(taskId);
+        TaskLabels labels = client.getLabels(taskId);
         return labels;
     }
 }

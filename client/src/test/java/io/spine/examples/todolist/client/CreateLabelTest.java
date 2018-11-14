@@ -32,9 +32,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-/**
- * @author Dmytro Dashenkov
- */
 @DisplayName("After CreateBasicLabel")
 class CreateLabelTest extends TodoClientTest {
 
@@ -50,12 +47,12 @@ class CreateLabelTest extends TodoClientTest {
     @Test
     @DisplayName("label list should contain the label")
     void testContains() {
-        final CreateBasicLabel createBasicLabel = createLabel();
+        CreateBasicLabel createBasicLabel = createLabel();
         client.postCommand(createBasicLabel);
 
-        final List<TaskLabel> labels = client.getLabels();
+        List<TaskLabel> labels = client.getLabels();
         assertEquals(1, labels.size());
-        final TaskLabel label = labels.get(0);
+        TaskLabel label = labels.get(0);
         assertEquals(createBasicLabel.getLabelId(), label.getId());
         assertEquals(createBasicLabel.getLabelTitle(), label.getTitle());
     }
@@ -63,11 +60,11 @@ class CreateLabelTest extends TodoClientTest {
     @Test
     @DisplayName("the label should be reachable by ID")
     void testFetchable() {
-        final CreateBasicLabel createBasicLabel = createLabel();
+        CreateBasicLabel createBasicLabel = createLabel();
         client.postCommand(createBasicLabel);
 
-        final LabelId labelId = createBasicLabel.getLabelId();
-        final TaskLabel label = client.getLabelOr(labelId, null);
+        LabelId labelId = createBasicLabel.getLabelId();
+        TaskLabel label = client.getLabelOr(labelId, null);
         assertNotNull(label);
         assertEquals(labelId, label.getId());
         assertEquals(createBasicLabel.getLabelTitle(), label.getTitle());

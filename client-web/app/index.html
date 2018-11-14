@@ -25,9 +25,9 @@
 <script>
     let client = new Client();
 
-    function refreshList() {
+    function subscribeToTaskChanges() {
         let list = document.getElementById("task_list");
-        client.fetchTasks(list);
+        client.subscribeToTaskChanges(list);
     }
 
     function submitNewTask() {
@@ -39,9 +39,6 @@
             clearWarning();
             input.value = "";
             client.submitNewTask(description);
-            setTimeout(() => {
-                refreshList()
-            }, 2000);
         }
     }
 
@@ -55,7 +52,7 @@
     }
 
     window.onload = () => {
-        refreshList();
+        subscribeToTaskChanges();
     };
 </script>
 
@@ -65,7 +62,7 @@
 
     <p id="warning"></p>
 
-    <button onclick="submitNewTask()" id="crete_task_button">Create</button>
+    <button onclick="submitNewTask()" id="create_task_button">Create</button>
 
     <div id="task_list"></div>
 </div>

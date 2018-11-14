@@ -36,9 +36,11 @@ import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskPriority;
 import io.spine.examples.todolist.c.rejection.Rejections;
+import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -51,22 +53,23 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;
 import static io.spine.protobuf.AnyPacker.unpack;
-import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
+import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Illia Shepilov
- */
-
+@ExtendWith(ShardingReset.class)
 @DisplayName("UpdateTaskPriority command should be interpreted by TaskPart and")
 public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> {
 
+    UpdateTaskPriorityTest() {
+        super(updateTaskPriorityInstance());
+    }
+
     @Override
     @BeforeEach
-    protected void setUp() {
+    public void setUp() {
         super.setUp();
     }
 
@@ -76,10 +79,10 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
     void cannotUpdateDeletedTaskPriority() {
         dispatchCreateTaskCmd();
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
+        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
-        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
+        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(entityId());
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatchCommand(aggregate,
                                                                envelopeOf(updateTaskPriorityCmd)));
@@ -93,10 +96,10 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
     void cannotUpdateCompletedTaskPriority() {
         dispatchCreateTaskCmd();
 
-        final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
+        final CompleteTask completeTaskCmd = completeTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
 
-        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
+        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(entityId());
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatchCommand(aggregate,
                                                                envelopeOf(updateTaskPriorityCmd)));
@@ -108,7 +111,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
     void produceEvent() {
         dispatchCreateTaskCmd();
 
-        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(taskId);
+        final UpdateTaskPriority updateTaskPriorityCmd = updateTaskPriorityInstance(entityId());
         final List<? extends Message> messageList = dispatchCommand(aggregate,
                                                                     envelopeOf(
                                                                             updateTaskPriorityCmd));
@@ -117,7 +120,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
                                                            .getClass());
         final TaskPriorityUpdated taskPriorityUpdated = (TaskPriorityUpdated) messageList.get(0);
 
-        assertEquals(taskId, taskPriorityUpdated.getTaskId());
+        assertEquals(entityId(), taskPriorityUpdated.getTaskId());
         final TaskPriority newPriority = taskPriorityUpdated.getPriorityChange()
                                                             .getNewValue();
         assertEquals(HIGH, newPriority);
@@ -130,18 +133,18 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
         dispatchCreateTaskCmd();
 
         final UpdateTaskPriority updateTaskPriorityCmd =
-                updateTaskPriorityInstance(taskId, TP_UNDEFINED, updatedPriority);
+                updateTaskPriorityInstance(entityId(), TP_UNDEFINED, updatedPriority);
         dispatchCommand(aggregate, envelopeOf(updateTaskPriorityCmd));
         final Task state = aggregate.getState();
 
-        assertEquals(taskId, state.getId());
+        assertEquals(entityId(), state.getId());
         assertEquals(updatedPriority, state.getPriority());
     }
 
     @Test
     @DisplayName("produce CannotUpdateTaskPriority rejection")
     void produceRejection() {
-        final UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(taskId, LOW, HIGH);
+        final UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(entityId(), LOW, HIGH);
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatchCommand(aggregate,
                                                                envelopeOf(updateTaskPriority)));
@@ -155,7 +158,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
                 cannotUpdateTaskPriority.getRejectionDetails();
         final TaskId actualTaskId = rejectionDetails.getCommandDetails()
                                                     .getTaskId();
-        assertEquals(taskId, actualTaskId);
+        assertEquals(entityId(), actualTaskId);
 
         final PriorityChange priorityChange = updateTaskPriority.getPriorityChange();
         final ValueMismatch mismatch = rejectionDetails.getPriorityMismatch();
@@ -168,7 +171,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
     }
 
     private void dispatchCreateTaskCmd() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }
 

@@ -27,13 +27,10 @@ import org.junit.jupiter.api.Test;
 import static io.spine.cli.Confirmation.NEGATIVE_ANSWER;
 import static io.spine.cli.Confirmation.POSITIVE_ANSWER;
 import static io.spine.cli.Confirmation.ask;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("Confirmation should")
 class ConfirmationTest {
 

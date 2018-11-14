@@ -34,9 +34,11 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.events.TaskDescriptionUpdated;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDescription;
 import io.spine.examples.todolist.c.rejection.Rejections;
+import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -47,21 +49,23 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskDescriptionInstance;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static io.spine.protobuf.TypeConverter.toMessage;
-import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
+import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Illia Shepilov
- */
+@ExtendWith(ShardingReset.class)
 @DisplayName("UpdateTaskDescription command should be interpreted by TaskPart and")
 public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescription> {
 
+    UpdateTaskDescriptionTest() {
+        super(updateTaskDescriptionInstance());
+    }
+
     @Override
     @BeforeEach
-    protected void setUp() {
+    public void setUp() {
         super.setUp();
     }
 
@@ -70,17 +74,16 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     void produceEvent() {
         dispatchCreateTaskCmd();
         final UpdateTaskDescription updateTaskDescriptionCmd =
-                updateTaskDescriptionInstance(taskId);
-        final List<? extends Message> messageList = dispatchCommand(aggregate,
-                                                                    envelopeOf(
-                                                                            updateTaskDescriptionCmd));
+                updateTaskDescriptionInstance(entityId());
+        final List<? extends Message> messageList =
+                dispatchCommand(aggregate, envelopeOf(updateTaskDescriptionCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDescriptionUpdated.class, messageList.get(0)
                                                               .getClass());
         final TaskDescriptionUpdated taskDescriptionUpdated =
                 (TaskDescriptionUpdated) messageList.get(0);
 
-        assertEquals(taskId, taskDescriptionUpdated.getTaskId());
+        assertEquals(entityId(), taskDescriptionUpdated.getTaskId());
         final String newDescription = taskDescriptionUpdated.getDescriptionChange()
                                                             .getNewValue();
         assertEquals(DESCRIPTION, newDescription);
@@ -92,11 +95,11 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     void cannotUpdateDeletedTaskDescription() {
         dispatchCreateTaskCmd();
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
+        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
         final UpdateTaskDescription updateTaskDescriptionCmd =
-                updateTaskDescriptionInstance(taskId);
+                updateTaskDescriptionInstance(entityId());
         Throwable t = assertThrows(Throwable.class,
                                    () -> dispatchCommand(aggregate,
                                                          envelopeOf(updateTaskDescriptionCmd)));
@@ -113,7 +116,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
 
         final UpdateTaskDescription updateTaskDescriptionCmd =
-                updateTaskDescriptionInstance(taskId);
+                updateTaskDescriptionInstance(entityId());
         Throwable t = assertThrows(Throwable.class,
                                    () -> dispatchCommand(aggregate,
                                                          envelopeOf(updateTaskDescriptionCmd)));
@@ -127,11 +130,11 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         dispatchCreateTaskCmd();
 
         final UpdateTaskDescription updateTaskDescriptionCmd =
-                updateTaskDescriptionInstance(taskId, DESCRIPTION, newDescription);
+                updateTaskDescriptionInstance(entityId(), DESCRIPTION, newDescription);
         dispatchCommand(aggregate, envelopeOf(updateTaskDescriptionCmd));
         final Task state = aggregate.getState();
 
-        assertEquals(taskId, state.getId());
+        assertEquals(entityId(), state.getId());
         assertEquals(newDescription, state.getDescription()
                                           .getValue());
     }
@@ -139,7 +142,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     @Test
     @DisplayName("produce CannotUpdateTaskDescription rejection")
     void produceRejection() {
-        final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
+        final CreateBasicTask createBasicTask = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createBasicTask));
 
         final String expectedValue = "expected description";
@@ -147,7 +150,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         final String actualValue = createBasicTask.getDescription()
                                                   .getValue();
         final UpdateTaskDescription updateTaskDescription =
-                updateTaskDescriptionInstance(taskId, expectedValue, newValue);
+                updateTaskDescriptionInstance(entityId(), expectedValue, newValue);
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatchCommand(aggregate,
                                                                envelopeOf(updateTaskDescription)));
@@ -160,11 +163,11 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
         final DescriptionUpdateRejected rejectionDetails = rejection.getRejectionDetails();
         final TaskId actualTaskId = rejectionDetails.getCommandDetails()
                                                     .getTaskId();
-        assertEquals(taskId, actualTaskId);
+        assertEquals(entityId(), actualTaskId);
 
-        final StringValue expectedStringValue = toMessage(expectedValue);
-        final StringValue actualStringValue = toMessage(actualValue);
-        final StringValue newStringValue = toMessage(newValue);
+        final StringValue expectedStringValue = toMessage(expectedValue, StringValue.class);
+        final StringValue actualStringValue = toMessage(actualValue, StringValue.class);
+        final StringValue newStringValue = toMessage(newValue, StringValue.class);
 
         final ValueMismatch mismatch = rejectionDetails.getDescriptionMismatch();
         assertEquals(expectedStringValue, unpack(mismatch.getExpected()));
@@ -173,7 +176,7 @@ public class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescrip
     }
 
     private void dispatchCreateTaskCmd() {
-        final CreateBasicTask createBasicTask = createTaskInstance(taskId, DESCRIPTION);
+        final CreateBasicTask createBasicTask = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createBasicTask));
     }
 }

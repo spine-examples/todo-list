@@ -24,8 +24,6 @@ import io.spine.cli.Screen;
 
 /**
  * An interface for all views.
- *
- * @author Dmytro Grankin
  */
 public interface View {
 

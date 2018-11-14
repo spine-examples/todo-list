@@ -37,7 +37,7 @@ import io.spine.examples.todolist.client.TodoClient;
 
 import java.util.Optional;
 
-import static io.spine.Identifier.newUuid;
+import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

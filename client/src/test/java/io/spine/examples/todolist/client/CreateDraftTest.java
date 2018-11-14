@@ -33,9 +33,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Illia Shepilov
- */
 @DisplayName("After execution of CreateDraft command")
 class CreateDraftTest extends TodoClientTest {
 
@@ -51,12 +48,12 @@ class CreateDraftTest extends TodoClientTest {
     @Test
     @DisplayName("DraftTasksView should contain the task view")
     void obtainDraftView() {
-        final CreateDraft createDraft = createDraft();
+        CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
 
-        final DraftTasksView draftTasksView = client.getDraftTasksView();
-        final List<TaskItem> taskViewList = draftTasksView.getDraftTasks()
-                                                          .getItemsList();
+        DraftTasksView draftTasksView = client.getDraftTasksView();
+        List<TaskItem> taskViewList = draftTasksView.getDraftTasks()
+                                                    .getItemsList();
         assertEquals(1, taskViewList.size());
         assertEquals(createDraft.getId(), taskViewList.get(0)
                                                       .getId());
@@ -65,22 +62,22 @@ class CreateDraftTest extends TodoClientTest {
     @Test
     @DisplayName("LabelledTasksView should not contain the task view")
     void obtainLabelledView() {
-        final CreateDraft createDraft = createDraft();
+        CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
 
-        final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
+        List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
         assertTrue(labelledTasksView.isEmpty());
     }
 
     @Test
     @DisplayName("MyListView should not contain task view")
     void ObtainMyListView() {
-        final CreateDraft createDraft = createDraft();
+        CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
 
-        final List<TaskItem> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+        List<TaskItem> taskViews = client.getMyListView()
+                                         .getMyList()
+                                         .getItemsList();
         assertTrue(taskViews.isEmpty());
     }
 }

@@ -24,16 +24,22 @@ import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
+import io.spine.web.firebase.DatabaseUrl;
+import io.spine.web.firebase.FirebaseClient;
+
+import static io.spine.web.firebase.DatabaseUrl.from;
+import static io.spine.web.firebase.FirebaseClientFactory.restClient;
 
 /**
  * The TodoList application.
- *
- * @author Dmytro Dashenkov
  */
 final class Application {
 
+    private static final DatabaseUrl DATABASE_URL = from("https://spine-dev.firebaseio.com/");
+
     private final QueryService queryService;
     private final CommandService commandService;
+    private final FirebaseClient firebaseClient;
 
     /**
      * Prevents direct instantiation.
@@ -45,6 +51,7 @@ final class Application {
         this.commandService = CommandService.newBuilder()
                                             .add(boundedContext)
                                             .build();
+        this.firebaseClient = restClient(DATABASE_URL);
     }
 
     /**
@@ -59,6 +66,13 @@ final class Application {
      */
     CommandService commandService() {
         return commandService;
+    }
+
+    /**
+     * The Firebase client used in this application.
+     */
+    FirebaseClient firebaseClient() {
+        return firebaseClient;
     }
 
     static Application instance() {

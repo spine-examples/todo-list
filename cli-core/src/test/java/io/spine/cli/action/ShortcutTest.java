@@ -28,9 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("Shortcut should")
 class ShortcutTest {
 

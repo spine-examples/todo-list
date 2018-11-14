@@ -30,7 +30,6 @@ import io.spine.cli.view.View;
  * @param <S> the type of the source view
  * @param <D> the type of the destination view
  * @param <T> the type of the action to be created
- * @author Dmytro Grankin
  */
 public interface ActionProducer<S extends View,
                                 D extends View,

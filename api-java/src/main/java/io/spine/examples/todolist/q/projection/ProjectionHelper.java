@@ -44,8 +44,6 @@ import static io.spine.examples.todolist.q.projection.TaskItem.newBuilder;
 
 /**
  * Class provides methods to manipulate and handle views.
- *
- * @author Illia Shepilov
  */
 class ProjectionHelper {
 

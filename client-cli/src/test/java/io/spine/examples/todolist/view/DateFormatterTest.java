@@ -27,11 +27,11 @@ import org.junit.jupiter.api.Test;
 import java.util.Date;
 
 import static com.google.protobuf.util.Timestamps.toMillis;
+import static io.spine.base.Time.getCurrentTime;
 import static io.spine.examples.todolist.view.DateFormatter.DEFAULT_TIMESTAMP_VALUE;
 import static io.spine.examples.todolist.view.DateFormatter.format;
 import static io.spine.examples.todolist.view.DateFormatter.getDateFormat;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
-import static io.spine.base.Time.getCurrentTime;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**

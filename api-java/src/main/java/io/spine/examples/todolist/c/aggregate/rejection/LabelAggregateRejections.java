@@ -22,17 +22,19 @@ package io.spine.examples.todolist.c.aggregate.rejection;
 
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.LabelDetailsUpdateRejected;
+import io.spine.examples.todolist.LabelDetailsUpdateRejectedVBuilder;
 import io.spine.examples.todolist.RejectedLabelCommandDetails;
+import io.spine.examples.todolist.RejectedLabelCommandDetailsVBuilder;
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Utility class for working with {@link LabelAggregate} rejection.
- *
- * @author Illia Shepilov
  */
-public class LabelAggregateRejections {
+public final class LabelAggregateRejections {
 
     private LabelAggregateRejections() {
     }
@@ -48,15 +50,22 @@ public class LabelAggregateRejections {
     public static void throwCannotUpdateLabelDetails(UpdateLabelDetails cmd,
                                                      ValueMismatch mismatch)
             throws CannotUpdateLabelDetails {
-        final RejectedLabelCommandDetails commandDetails =
-                RejectedLabelCommandDetails.newBuilder()
-                                           .setLabelId(cmd.getId())
-                                           .build();
-        final LabelDetailsUpdateRejected detailsUpdateRejected =
-                LabelDetailsUpdateRejected.newBuilder()
-                                          .setCommandDetails(commandDetails)
-                                          .setLabelDetailsMismatch(mismatch)
-                                          .build();
-        throw new CannotUpdateLabelDetails(detailsUpdateRejected);
+        checkNotNull(cmd);
+        checkNotNull(mismatch);
+
+        RejectedLabelCommandDetails commandDetails = RejectedLabelCommandDetailsVBuilder
+                .newBuilder()
+                .setLabelId(cmd.getId())
+                .build();
+        LabelDetailsUpdateRejected detailsUpdateRejected = LabelDetailsUpdateRejectedVBuilder
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .setLabelDetailsMismatch(mismatch)
+                .build();
+        CannotUpdateLabelDetails rejection = CannotUpdateLabelDetails
+                .newBuilder()
+                .setRejectionDetails(detailsUpdateRejected)
+                .build();
+        throw rejection;
     }
 }

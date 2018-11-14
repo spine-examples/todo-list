@@ -28,9 +28,11 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.commands.ReopenTask;
 import io.spine.examples.todolist.c.rejection.CannotReopenTask;
+import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static io.spine.examples.todolist.TaskStatus.COMPLETED;
 import static io.spine.examples.todolist.TaskStatus.OPEN;
@@ -40,21 +42,23 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createD
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.createTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
-import static io.spine.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
+import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispatchCommand;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Illia Shepilov
- */
+@ExtendWith(ShardingReset.class)
 @DisplayName("ReopenTask command should be interpreted by TaskPart and")
 public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
 
+    ReopenTaskCommandTest() {
+        super(reopenTaskInstance());
+    }
+
     @Override
     @BeforeEach
-    protected void setUp() {
+    public void setUp() {
         super.setUp();
     }
 
@@ -63,7 +67,7 @@ public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
     void cannotReopenNotCompletedTask() {
         dispatchCreateTaskCmd();
 
-        final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
+        final ReopenTask reopenTaskCmd = reopenTaskInstance(entityId());
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatchCommand(aggregate, envelopeOf(reopenTaskCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotReopenTask.class));
@@ -73,18 +77,18 @@ public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
     @DisplayName("reopen completed task")
     void reopenTask() {
         dispatchCreateTaskCmd();
-        final CompleteTask completeTaskCmd = completeTaskInstance(taskId);
+        final CompleteTask completeTaskCmd = completeTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
 
         Task state = aggregate.getState();
-        assertEquals(taskId, state.getId());
+        assertEquals(entityId(), state.getId());
         assertEquals(COMPLETED, state.getTaskStatus());
 
-        final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
+        final ReopenTask reopenTaskCmd = reopenTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(reopenTaskCmd));
 
         state = aggregate.getState();
-        assertEquals(taskId, state.getId());
+        assertEquals(entityId(), state.getId());
         assertEquals(OPEN, state.getTaskStatus());
     }
 
@@ -92,10 +96,10 @@ public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
     @DisplayName("throw CannotReopenTask upon an attempt to reopen the deleted task")
     void cannotReopenDeletedTask() {
         dispatchCreateTaskCmd();
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(taskId);
+        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
-        final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
+        final ReopenTask reopenTaskCmd = reopenTaskInstance(entityId());
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatchCommand(aggregate, envelopeOf(reopenTaskCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotReopenTask.class));
@@ -104,17 +108,17 @@ public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
     @Test
     @DisplayName("throw CannotReopenTask upon an attempt to reopen the task in draft state")
     void cannotReopenDraft() {
-        final CreateDraft createDraftCmd = createDraftInstance(taskId);
+        final CreateDraft createDraftCmd = createDraftInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(createDraftCmd));
 
-        final ReopenTask reopenTaskCmd = reopenTaskInstance(taskId);
+        final ReopenTask reopenTaskCmd = reopenTaskInstance(entityId());
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatchCommand(aggregate, envelopeOf(reopenTaskCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotReopenTask.class));
     }
 
     private void dispatchCreateTaskCmd() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(taskId, DESCRIPTION);
+        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }
 }

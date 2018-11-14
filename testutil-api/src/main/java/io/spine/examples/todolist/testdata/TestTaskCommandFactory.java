@@ -22,24 +22,40 @@ package io.spine.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
 import io.spine.change.StringChange;
+import io.spine.change.StringChangeVBuilder;
 import io.spine.change.TimestampChange;
+import io.spine.change.TimestampChangeVBuilder;
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.LabelIdVBuilder;
 import io.spine.examples.todolist.PriorityChange;
+import io.spine.examples.todolist.PriorityChangeVBuilder;
 import io.spine.examples.todolist.TaskDescription;
+import io.spine.examples.todolist.TaskDescriptionVBuilder;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskIdVBuilder;
 import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.commands.CompleteTask;
+import io.spine.examples.todolist.c.commands.CompleteTaskVBuilder;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
+import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import io.spine.examples.todolist.c.commands.CreateDraft;
+import io.spine.examples.todolist.c.commands.CreateDraftVBuilder;
 import io.spine.examples.todolist.c.commands.DeleteTask;
+import io.spine.examples.todolist.c.commands.DeleteTaskVBuilder;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
+import io.spine.examples.todolist.c.commands.FinalizeDraftVBuilder;
 import io.spine.examples.todolist.c.commands.ReopenTask;
+import io.spine.examples.todolist.c.commands.ReopenTaskVBuilder;
 import io.spine.examples.todolist.c.commands.RestoreDeletedTask;
+import io.spine.examples.todolist.c.commands.RestoreDeletedTaskVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
+import io.spine.examples.todolist.c.commands.UpdateTaskDescriptionVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
+import io.spine.examples.todolist.c.commands.UpdateTaskDueDateVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriorityVBuilder;
 
-import static io.spine.Identifier.newUuid;
+import static io.spine.base.Identifier.newUuid;
 import static io.spine.base.Time.getCurrentTime;
 
 /**
@@ -47,14 +63,18 @@ import static io.spine.base.Time.getCurrentTime;
  *
  * @author Illia Shepilov
  */
+@SuppressWarnings({"ClassWithTooManyMethods", "OverlyCoupledClass"})
+// It's necessary to provide all task-related commands.
 public class TestTaskCommandFactory {
 
-    public static final TaskId TASK_ID = TaskId.newBuilder()
-                                               .setValue(newUuid())
-                                               .build();
-    public static final LabelId LABEL_ID = LabelId.newBuilder()
-                                                  .setValue(newUuid())
-                                                  .build();
+    public static final TaskId TASK_ID = TaskIdVBuilder
+            .newBuilder()
+            .setValue(newUuid())
+            .build();
+    public static final LabelId LABEL_ID = LabelIdVBuilder
+            .newBuilder()
+            .setValue(newUuid())
+            .build();
     public static final String DESCRIPTION = "Task description.";
     public static final Timestamp DUE_DATE = getCurrentTime();
     public static final String UPDATED_LABEL_TITLE = "labelTitle";
@@ -68,7 +88,7 @@ public class TestTaskCommandFactory {
      * @return the {@code CreateBasicTask} instance
      */
     public static CreateBasicTask createTaskInstance() {
-        final CreateBasicTask result = createTaskInstance(TASK_ID, DESCRIPTION);
+        CreateBasicTask result = createTaskInstance(TASK_ID, DESCRIPTION);
         return result;
     }
 
@@ -80,13 +100,15 @@ public class TestTaskCommandFactory {
      * @return the {@code CreateBasicTask} instance
      */
     public static CreateBasicTask createTaskInstance(TaskId id, String description) {
-        final TaskDescription taskDescription = TaskDescription.newBuilder()
-                                                               .setValue(description)
-                                                               .build();
-        final CreateBasicTask result = CreateBasicTask.newBuilder()
-                                                      .setId(id)
-                                                      .setDescription(taskDescription)
-                                                      .build();
+        TaskDescription taskDescription = TaskDescriptionVBuilder
+                .newBuilder()
+                .setValue(description)
+                .build();
+        CreateBasicTask result = CreateBasicTaskVBuilder
+                .newBuilder()
+                .setId(id)
+                .setDescription(taskDescription)
+                .build();
         return result;
     }
 
@@ -96,9 +118,9 @@ public class TestTaskCommandFactory {
      * @return the {@code UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance() {
-        final UpdateTaskDescription result = updateTaskDescriptionInstance(TASK_ID,
-                                                                           DESCRIPTION,
-                                                                           DESCRIPTION);
+        UpdateTaskDescription result = updateTaskDescriptionInstance(TASK_ID,
+                                                                     DESCRIPTION,
+                                                                     DESCRIPTION);
         return result;
     }
 
@@ -109,9 +131,9 @@ public class TestTaskCommandFactory {
      * @return the {@code UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId taskId) {
-        final UpdateTaskDescription result = updateTaskDescriptionInstance(taskId,
-                                                                           DESCRIPTION,
-                                                                           DESCRIPTION);
+        UpdateTaskDescription result = updateTaskDescriptionInstance(taskId,
+                                                                     DESCRIPTION,
+                                                                     DESCRIPTION);
         return result;
     }
 
@@ -126,14 +148,16 @@ public class TestTaskCommandFactory {
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id,
                                                                       String previousDescription,
                                                                       String newDescription) {
-        final StringChange change = StringChange.newBuilder()
-                                                .setPreviousValue(previousDescription)
-                                                .setNewValue(newDescription)
-                                                .build();
-        final UpdateTaskDescription result = UpdateTaskDescription.newBuilder()
-                                                                  .setId(id)
-                                                                  .setDescriptionChange(change)
-                                                                  .build();
+        StringChange change = StringChangeVBuilder
+                .newBuilder()
+                .setPreviousValue(previousDescription)
+                .setNewValue(newDescription)
+                .build();
+        UpdateTaskDescription result = UpdateTaskDescriptionVBuilder
+                .newBuilder()
+                .setId(id)
+                .setDescriptionChange(change)
+                .build();
         return result;
     }
 
@@ -143,9 +167,9 @@ public class TestTaskCommandFactory {
      * @return the {@code UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance() {
-        final UpdateTaskDueDate result = updateTaskDueDateInstance(TASK_ID,
-                                                                   Timestamp.getDefaultInstance(),
-                                                                   DUE_DATE);
+        UpdateTaskDueDate result = updateTaskDueDateInstance(TASK_ID,
+                                                             Timestamp.getDefaultInstance(),
+                                                             DUE_DATE);
         return result;
     }
 
@@ -155,9 +179,9 @@ public class TestTaskCommandFactory {
      * @return the {@code UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance(TaskId taskId) {
-        final UpdateTaskDueDate result = updateTaskDueDateInstance(taskId,
-                                                                   Timestamp.getDefaultInstance(),
-                                                                   DUE_DATE);
+        UpdateTaskDueDate result = updateTaskDueDateInstance(taskId,
+                                                             Timestamp.getDefaultInstance(),
+                                                             DUE_DATE);
         return result;
     }
 
@@ -172,14 +196,16 @@ public class TestTaskCommandFactory {
     public static UpdateTaskDueDate updateTaskDueDateInstance(TaskId id,
                                                               Timestamp previousDueDate,
                                                               Timestamp updatedDueDate) {
-        final TimestampChange dueDateChange = TimestampChange.newBuilder()
-                                                             .setPreviousValue(previousDueDate)
-                                                             .setNewValue(updatedDueDate)
-                                                             .build();
-        final UpdateTaskDueDate result = UpdateTaskDueDate.newBuilder()
-                                                          .setId(id)
-                                                          .setDueDateChange(dueDateChange)
-                                                          .build();
+        TimestampChange dueDateChange = TimestampChangeVBuilder
+                .newBuilder()
+                .setPreviousValue(previousDueDate)
+                .setNewValue(updatedDueDate)
+                .build();
+        UpdateTaskDueDate result = UpdateTaskDueDateVBuilder
+                .newBuilder()
+                .setId(id)
+                .setDueDateChange(dueDateChange)
+                .build();
         return result;
     }
 
@@ -189,9 +215,9 @@ public class TestTaskCommandFactory {
      * @return the {@code UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance() {
-        final UpdateTaskPriority result = updateTaskPriorityInstance(TASK_ID,
-                                                                     TaskPriority.TP_UNDEFINED,
-                                                                     TaskPriority.HIGH);
+        UpdateTaskPriority result = updateTaskPriorityInstance(TASK_ID,
+                                                               TaskPriority.TP_UNDEFINED,
+                                                               TaskPriority.HIGH);
         return result;
     }
 
@@ -201,9 +227,9 @@ public class TestTaskCommandFactory {
      * @return the {@code UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskId taskId) {
-        final UpdateTaskPriority result = updateTaskPriorityInstance(taskId,
-                                                                     TaskPriority.TP_UNDEFINED,
-                                                                     TaskPriority.HIGH);
+        UpdateTaskPriority result = updateTaskPriorityInstance(taskId,
+                                                               TaskPriority.TP_UNDEFINED,
+                                                               TaskPriority.HIGH);
         return result;
     }
 
@@ -217,14 +243,16 @@ public class TestTaskCommandFactory {
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskId id,
                                                                 TaskPriority previousPriority,
                                                                 TaskPriority newPriority) {
-        final PriorityChange taskPriorityChange = PriorityChange.newBuilder()
-                                                                .setPreviousValue(previousPriority)
-                                                                .setNewValue(newPriority)
-                                                                .build();
-        final UpdateTaskPriority result = UpdateTaskPriority.newBuilder()
-                                                            .setId(id)
-                                                            .setPriorityChange(taskPriorityChange)
-                                                            .build();
+        PriorityChange taskPriorityChange = PriorityChangeVBuilder
+                .newBuilder()
+                .setPreviousValue(previousPriority)
+                .setNewValue(newPriority)
+                .build();
+        UpdateTaskPriority result = UpdateTaskPriorityVBuilder
+                .newBuilder()
+                .setId(id)
+                .setPriorityChange(taskPriorityChange)
+                .build();
         return result;
     }
 
@@ -243,9 +271,10 @@ public class TestTaskCommandFactory {
      * @return the {@code CompleteTask} instance
      */
     public static CompleteTask completeTaskInstance(TaskId id) {
-        final CompleteTask result = CompleteTask.newBuilder()
-                                                .setId(id)
-                                                .build();
+        CompleteTask result = CompleteTaskVBuilder
+                .newBuilder()
+                .setId(id)
+                .build();
         return result;
     }
 
@@ -255,7 +284,7 @@ public class TestTaskCommandFactory {
      * @return the {@code ReopenTask} instance
      */
     public static ReopenTask reopenTaskInstance() {
-        final ReopenTask result = reopenTaskInstance(TASK_ID);
+        ReopenTask result = reopenTaskInstance(TASK_ID);
         return result;
     }
 
@@ -265,9 +294,10 @@ public class TestTaskCommandFactory {
      * @return the {@code ReopenTask} instance
      */
     public static ReopenTask reopenTaskInstance(TaskId id) {
-        final ReopenTask result = ReopenTask.newBuilder()
-                                            .setId(id)
-                                            .build();
+        ReopenTask result = ReopenTaskVBuilder
+                .newBuilder()
+                .setId(id)
+                .build();
         return result;
     }
 
@@ -277,7 +307,7 @@ public class TestTaskCommandFactory {
      * @return the {@code DeleteTask} instance
      */
     public static DeleteTask deleteTaskInstance() {
-        final DeleteTask result = deleteTaskInstance(TASK_ID);
+        DeleteTask result = deleteTaskInstance(TASK_ID);
         return result;
     }
 
@@ -287,9 +317,10 @@ public class TestTaskCommandFactory {
      * @return the {@code DeleteTask} instance
      */
     public static DeleteTask deleteTaskInstance(TaskId id) {
-        final DeleteTask result = DeleteTask.newBuilder()
-                                            .setId(id)
-                                            .build();
+        DeleteTask result = DeleteTaskVBuilder
+                .newBuilder()
+                .setId(id)
+                .build();
         return result;
     }
 
@@ -299,7 +330,7 @@ public class TestTaskCommandFactory {
      * @return the {@code RestoreDeletedTask} instance
      */
     public static RestoreDeletedTask restoreDeletedTaskInstance() {
-        final RestoreDeletedTask result = restoreDeletedTaskInstance(TASK_ID);
+        RestoreDeletedTask result = restoreDeletedTaskInstance(TASK_ID);
         return result;
     }
 
@@ -309,9 +340,10 @@ public class TestTaskCommandFactory {
      * @return the {@code RestoreDeletedTask} instance
      */
     public static RestoreDeletedTask restoreDeletedTaskInstance(TaskId id) {
-        final RestoreDeletedTask result = RestoreDeletedTask.newBuilder()
-                                                            .setId(id)
-                                                            .build();
+        RestoreDeletedTask result = RestoreDeletedTaskVBuilder
+                .newBuilder()
+                .setId(id)
+                .build();
         return result;
     }
 
@@ -321,7 +353,7 @@ public class TestTaskCommandFactory {
      * @return the {@code FinalizeDraft} instance
      */
     public static FinalizeDraft finalizeDraftInstance() {
-        final FinalizeDraft result = finalizeDraftInstance(TASK_ID);
+        FinalizeDraft result = finalizeDraftInstance(TASK_ID);
         return result;
     }
 
@@ -331,9 +363,10 @@ public class TestTaskCommandFactory {
      * @return the {@code FinalizeDraft} instance
      */
     public static FinalizeDraft finalizeDraftInstance(TaskId id) {
-        final FinalizeDraft result = FinalizeDraft.newBuilder()
-                                                  .setId(id)
-                                                  .build();
+        FinalizeDraft result = FinalizeDraftVBuilder
+                .newBuilder()
+                .setId(id)
+                .build();
         return result;
     }
 
@@ -343,7 +376,7 @@ public class TestTaskCommandFactory {
      * @return the {@code CreateDraft} instance
      */
     public static CreateDraft createDraftInstance() {
-        final CreateDraft result = createDraftInstance(TASK_ID);
+        CreateDraft result = createDraftInstance(TASK_ID);
         return result;
     }
 
@@ -353,9 +386,10 @@ public class TestTaskCommandFactory {
      * @return the {@code CreateDraft} instance
      */
     public static CreateDraft createDraftInstance(TaskId taskId) {
-        final CreateDraft result = CreateDraft.newBuilder()
-                                              .setId(taskId)
-                                              .build();
+        CreateDraft result = CreateDraftVBuilder
+                .newBuilder()
+                .setId(taskId)
+                .build();
         return result;
     }
 }

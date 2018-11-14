@@ -20,29 +20,27 @@
 
 package io.spine.examples.todolist.q.projection;
 
-import com.google.protobuf.Message;
+import io.spine.base.EventMessage;
 import io.spine.core.Event;
 import io.spine.core.EventEnvelope;
 import io.spine.examples.todolist.TaskListId;
 import io.spine.examples.todolist.testdata.TestEventEnricherFactory;
-import io.spine.server.command.TestEventFactory;
-import io.spine.server.event.EventEnricher;
+import io.spine.server.event.Enricher;
 import io.spine.server.event.EventFactory;
+import io.spine.testing.server.TestEventFactory;
 
-import static io.spine.Identifier.newUuid;
+import static io.spine.base.Identifier.newUuid;
 
 /**
  * The parent class for the projection test classes.
  * Provides the common methods for testing.
- *
- * @author Illia Shepilov
  */
 abstract class ProjectionTest {
 
     private final EventFactory eventFactory = TestEventFactory.newInstance(getClass());
-    private final EventEnricher enricher = TestEventEnricherFactory.eventEnricherInstance();
+    private final Enricher enricher = TestEventEnricherFactory.eventEnricherInstance();
 
-    Event createEvent(Message messageOrAny) {
+    Event createEvent(EventMessage messageOrAny) {
         final Event event = eventFactory.createEvent(messageOrAny, null);
         final EventEnvelope envelope = EventEnvelope.of(event);
         if (!enricher.canBeEnriched(envelope)) {

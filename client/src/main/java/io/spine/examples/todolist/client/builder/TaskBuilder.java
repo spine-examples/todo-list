@@ -22,15 +22,14 @@ package io.spine.examples.todolist.client.builder;
 
 import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskIdVBuilder;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 
-import static io.spine.Identifier.newUuid;
+import static io.spine.base.Identifier.newUuid;
 
 /**
  * Provides task command builders.
- *
- * @author Illia Shepilov
  */
 public final class TaskBuilder {
 
@@ -82,7 +81,7 @@ public final class TaskBuilder {
          * @return the {@code CreateBasicTask} command
          */
         public CreateBasicTask build() {
-            final TaskId id = generateId();
+            TaskId id = generateId();
             builder.setId(id);
             return builder.build();
         }
@@ -100,16 +99,17 @@ public final class TaskBuilder {
          * @return the {@code CreateDraft} command
          */
         public CreateDraft build() {
-            final TaskId id = generateId();
+            TaskId id = generateId();
             builder.setId(id);
             return builder.build();
         }
     }
 
     private static TaskId generateId() {
-        final TaskId id = TaskId.newBuilder()
-                                .setValue(newUuid())
-                                .build();
+        TaskId id = TaskIdVBuilder
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
         return id;
     }
 }

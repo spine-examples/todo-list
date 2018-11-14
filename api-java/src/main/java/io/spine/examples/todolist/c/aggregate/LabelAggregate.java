@@ -45,8 +45,6 @@ import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRej
 
 /**
  * The aggregate managing the state of a {@link TaskLabel}.
- *
- * @author Illia Shepilov
  */
 @SuppressWarnings("unused" /* The methods annotated with {@link Apply}
                               are declared {@code private} by design. */)
@@ -117,7 +115,8 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
     private void labelDetailsUpdated(LabelDetailsUpdated event) {
         final LabelDetails labelDetails = event.getLabelDetailsChange()
                                                .getNewDetails();
-        getBuilder().setTitle(labelDetails.getTitle())
+        getBuilder().setId(getId())
+                    .setTitle(labelDetails.getTitle())
                     .setColor(labelDetails.getColor());
     }
 }

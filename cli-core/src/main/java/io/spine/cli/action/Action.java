@@ -30,7 +30,6 @@ import io.spine.cli.view.View;
  *
  * @param <S> the type of the source view
  * @param <D> the type of the destination view
- * @author Dmytro Grankin
  */
 public interface Action<S extends View, D extends View> {
 

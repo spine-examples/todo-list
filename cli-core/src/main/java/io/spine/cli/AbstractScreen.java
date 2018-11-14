@@ -36,8 +36,6 @@ import static java.util.Collections.unmodifiableList;
  *
  * <p>Implements all methods except the I/O methods,
  * that are specific for a concrete implementation.
- *
- * @author Dmytro Grankin
  */
 public abstract class AbstractScreen implements Screen {
 

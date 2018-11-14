@@ -20,9 +20,8 @@
 
 package io.spine.examples.todolist.context;
 
-import com.google.common.base.Optional;
 import com.google.protobuf.Any;
-import com.google.protobuf.Message;
+import io.spine.base.EventMessage;
 import io.spine.core.Enrichment;
 import io.spine.core.Event;
 import io.spine.core.EventEnvelope;
@@ -37,17 +36,19 @@ import io.spine.examples.todolist.c.events.TaskDraftFinalized;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
-import io.spine.server.event.EventEnricher;
+import io.spine.server.event.Enricher;
 import io.spine.server.event.EventFactory;
 import io.spine.type.TypeName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.Identifier.newUuid;
+import java.util.Optional;
+
+import static io.spine.base.Identifier.newUuid;
 import static io.spine.core.EventEnvelope.of;
 import static io.spine.protobuf.AnyPacker.unpack;
-import static io.spine.server.command.TestEventFactory.newInstance;
+import static io.spine.testing.server.TestEventFactory.newInstance;
 import static io.spine.validate.Validate.isDefault;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -59,16 +60,16 @@ class TodoListEnrichmentsTest {
 
     private static final EventFactory events = newInstance(TodoListEnrichmentsTest.class);
 
-    private EventEnricher enricher;
+    private Enricher enricher;
 
     @BeforeEach
     void setUp() {
         final TaskRepository taskRepo = mock(TaskRepository.class);
         final LabelAggregateRepository labelRepo = mock(LabelAggregateRepository.class);
         final TaskLabelsRepository taskLabelsRepo = mock(TaskLabelsRepository.class);
-        when(taskRepo.find(any(TaskId.class))).thenReturn(Optional.absent());
-        when(labelRepo.find(any(LabelId.class))).thenReturn(Optional.absent());
-        when(taskLabelsRepo.find(any(TaskId.class))).thenReturn(Optional.absent());
+        when(taskRepo.find(any(TaskId.class))).thenReturn(Optional.empty());
+        when(labelRepo.find(any(LabelId.class))).thenReturn(Optional.empty());
+        when(taskLabelsRepo.find(any(TaskId.class))).thenReturn(Optional.empty());
         enricher = TodoListEnrichments.newBuilder()
                                       .setTaskRepository(taskRepo)
                                       .setLabelRepository(labelRepo)
@@ -91,14 +92,14 @@ class TodoListEnrichmentsTest {
         final Any labelIds = enrichment.getContainer()
                                        .getItemsMap()
                                        .get(labelsEnrName.value());
-        final LabelsListEnrichment labelIdsEnr = unpack(labelIds);
+        final LabelsListEnrichment labelIdsEnr = (LabelsListEnrichment) unpack(labelIds);
         assertTrue(labelIdsEnr.getLabelIdsList().getIdsList().isEmpty());
 
         final TypeName taskTypeName = TypeName.from(TaskEnrichment.getDescriptor());
         final Any task = enrichment.getContainer()
                                    .getItemsMap()
                                    .get(taskTypeName.value());
-        final TaskEnrichment taskEnr = unpack(task);
+        final TaskEnrichment taskEnr = (TaskEnrichment) unpack(task);
         assertTrue(isDefault(taskEnr.getTask()));
     }
 
@@ -116,12 +117,12 @@ class TodoListEnrichmentsTest {
         final Any packerEnr = enrichment.getContainer()
                                        .getItemsMap()
                                        .get(enrTypeName.value());
-        final DetailsEnrichment enr = unpack(packerEnr);
+        final DetailsEnrichment enr = (DetailsEnrichment) unpack(packerEnr);
         assertTrue(isDefault(enr.getLabelDetails()));
         assertTrue(isDefault(enr.getTaskDetails()));
     }
 
-    private static Event event(Message msg) {
+    private static Event event(EventMessage msg) {
         return events.createEvent(msg, Versions.zero());
     }
 

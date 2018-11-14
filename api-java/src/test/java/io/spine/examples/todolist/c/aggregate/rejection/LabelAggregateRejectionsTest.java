@@ -20,31 +20,34 @@
 
 package io.spine.examples.todolist.c.aggregate.rejection;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.google.common.testing.NullPointerTester;
 import io.spine.change.ValueMismatch;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
+import io.spine.testing.UtilityClassTest;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRejections.throwCannotUpdateLabelDetails;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 
-/**
- * @author Illia Shepilov
- */
 @DisplayName("LabelAggregateRejections should")
-class LabelAggregateRejectionsTest {
+class LabelAggregateRejectionsTest extends UtilityClassTest<LabelAggregateRejections> {
 
-    @Test
-    @DisplayName("have the private constructor")
-    public void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(LabelAggregateRejections.class);
+    LabelAggregateRejectionsTest() {
+        super(LabelAggregateRejections.class);
+    }
+
+    @Override
+    protected void configure(NullPointerTester tester) {
+        tester.setDefault(UpdateLabelDetails.class, UpdateLabelDetails.getDefaultInstance());
+        tester.setDefault(ValueMismatch.class, ValueMismatch.getDefaultInstance());
     }
 
     @Test
     @DisplayName("throw CannotUpdateLabelDetails rejection")
-    public void throwCannotUpdateLabelDetailsRejection() {
+    void throwCannotUpdateLabelDetailsRejection() {
         final UpdateLabelDetails cmd = UpdateLabelDetails.getDefaultInstance();
         final ValueMismatch valueMismatch = ValueMismatch.getDefaultInstance();
         assertThrows(CannotUpdateLabelDetails.class,

@@ -27,12 +27,9 @@ import org.junit.jupiter.api.Test;
 import static io.spine.cli.action.ActionFormatter.SHORTCUT_FORMAT;
 import static io.spine.cli.action.ActionFormatter.SHORTCUT_NAME_SEPARATOR;
 import static io.spine.cli.action.ActionFormatter.format;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
+import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("ActionFormatter should")
 class ActionFormatterTest {
 

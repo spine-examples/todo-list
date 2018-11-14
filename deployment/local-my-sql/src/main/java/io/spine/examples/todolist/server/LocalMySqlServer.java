@@ -23,7 +23,7 @@ package io.spine.examples.todolist.server;
 import com.google.common.annotations.VisibleForTesting;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.spine.Environment;
+import io.spine.base.Environment;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.server.BoundedContext;
 import io.spine.server.storage.StorageFactory;

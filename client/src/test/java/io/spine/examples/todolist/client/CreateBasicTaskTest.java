@@ -37,9 +37,6 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIP
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Illia Shepilov
- */
 @DisplayName("After execution of CreateBasicTask command")
 class CreateBasicTaskTest extends TodoClientTest {
 
@@ -55,42 +52,42 @@ class CreateBasicTaskTest extends TodoClientTest {
     @Test
     @DisplayName("LabelledTasksView should be empty")
     void obtainEmptyLabelledTasksView() {
-        final CreateBasicTask createBasicTask = createBasicTask();
+        CreateBasicTask createBasicTask = createBasicTask();
         client.postCommand(createBasicTask);
 
-        final List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
+        List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
         assertTrue(labelledTasksView.isEmpty());
     }
 
     @Test
     @DisplayName("DraftTaskItem should be empty")
     void obtainEmptyDraftViewList() {
-        final CreateBasicTask createBasicTask = createBasicTask();
+        CreateBasicTask createBasicTask = createBasicTask();
         client.postCommand(createBasicTask);
 
-        final List<TaskItem> taskViews = client.getDraftTasksView()
-                                               .getDraftTasks()
-                                               .getItemsList();
+        List<TaskItem> taskViews = client.getDraftTasksView()
+                                         .getDraftTasks()
+                                         .getItemsList();
         assertTrue(taskViews.isEmpty());
     }
 
     @Test
     @DisplayName("MyListView should contain the created task")
     void obtainMyListView() {
-        final CreateBasicTask createFirstTask = createBasicTask();
+        CreateBasicTask createFirstTask = createBasicTask();
         client.postCommand(createFirstTask);
 
-        final CreateBasicTask createSecondTask = createBasicTask();
+        CreateBasicTask createSecondTask = createBasicTask();
         client.postCommand(createSecondTask);
 
-        final List<TaskItem> taskViews = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+        List<TaskItem> taskViews = client.getMyListView()
+                                         .getMyList()
+                                         .getItemsList();
         assertEquals(2, taskViews.size());
 
-        final TaskItem firstView = taskViews.get(0);
-        final TaskItem secondView = taskViews.get(1);
-        final List<TaskId> taskIds = new ArrayList<>(2);
+        TaskItem firstView = taskViews.get(0);
+        TaskItem secondView = taskViews.get(1);
+        List<TaskId> taskIds = new ArrayList<>(2);
         taskIds.add(firstView.getId());
         taskIds.add(secondView.getId());
 
@@ -105,13 +102,13 @@ class CreateBasicTaskTest extends TodoClientTest {
     @Test
     @DisplayName("the task should be found")
     void obtainAllTasks() {
-        final CreateBasicTask createTask = createBasicTask();
+        CreateBasicTask createTask = createBasicTask();
         client.postCommand(createTask);
 
-        final List<Task> allTasks = client.getTasks();
+        List<Task> allTasks = client.getTasks();
 
         assertEquals(1, allTasks.size());
-        final Task singleTask = allTasks.get(0);
+        Task singleTask = allTasks.get(0);
 
         // Set fields
         assertEquals(createTask.getId(), singleTask.getId());

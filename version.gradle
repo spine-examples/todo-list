@@ -18,39 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.server;
 
-import com.google.auth.oauth2.GoogleCredentials;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.database.FirebaseDatabase;
+final def SPINE_VERSION = '1.0.0-pre1'
 
-/**
- * A Firebase Realtime Database client.
- *
- * @author Dmytro Dashenkov
- */
-final class FirebaseClient {
+project.ext {
+    // To-do List app version
+    appVersion = SPINE_VERSION
 
-    static {
-        final GoogleCredentials credentials = FirebaseCredentials.read();
-        final FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(credentials)
-                .setDatabaseUrl("https://spine-dev.firebaseio.com/")
-                .build();
-        FirebaseApp.initializeApp(options);
-    }
+    // Spine dependencies' versions
+    spineVersion = SPINE_VERSION
+    spineJdbcStorageVersion = '1.0.0-pre1'
+    spineBaseVersion = '1.0.0-pre1'
+    spineWebVersion = '1.0.0-pre1'
 
-    /**
-     * Prevents the utility class instantiation.
-     */
-    private FirebaseClient() {
-    }
+    // Main scope third party dependencies' versions
+    servletApiVersion = '4.0.0'
+    cloudSqlSocketFactoryVersion = '1.0.4'
+    shadowJarVersion = '2.0.1'
+    mysqlDriverVersion = '6.0.6'
+    gsonVersion = '2.7'
+    nettyBoringsslVersion = '2.0.6.Final'
 
-    /**
-     * Retrieves an instance of {@link FirebaseDatabase}.
-     */
-    static FirebaseDatabase database() {
-        return FirebaseDatabase.getInstance();
-    }
+    // Test scope third party dependencies' versions
+    jUnitPlatformVersion = '1.0.0'
+    jUnitVersion = '5.0.0'
 }

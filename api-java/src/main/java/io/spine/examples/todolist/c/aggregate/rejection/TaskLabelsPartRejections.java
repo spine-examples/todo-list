@@ -20,21 +20,28 @@
 
 package io.spine.examples.todolist.c.aggregate.rejection;
 
+import io.spine.examples.todolist.AddLabelsRejected;
+import io.spine.examples.todolist.AddLabelsRejectedVBuilder;
 import io.spine.examples.todolist.AssignLabelToTaskRejected;
+import io.spine.examples.todolist.AssignLabelToTaskRejectedVBuilder;
 import io.spine.examples.todolist.RejectedTaskCommandDetails;
+import io.spine.examples.todolist.RejectedTaskCommandDetailsVBuilder;
 import io.spine.examples.todolist.RemoveLabelFromTaskRejected;
+import io.spine.examples.todolist.RemoveLabelFromTaskRejectedVBuilder;
 import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
+import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
+import io.spine.examples.todolist.c.rejection.CannotAddLabels;
 import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
 import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Utility class for working with {@link TaskLabelsPart} rejection.
- *
- * @author Illia Shepilov
  */
-public class TaskLabelsPartRejections {
+public final class TaskLabelsPartRejections {
 
     private TaskLabelsPartRejections() {
     }
@@ -48,16 +55,21 @@ public class TaskLabelsPartRejections {
      */
     public static void throwCannotAssignLabelToTask(AssignLabelToTask cmd)
             throws CannotAssignLabelToTask {
-        final RejectedTaskCommandDetails commandDetails =
-                RejectedTaskCommandDetails.newBuilder()
-                                          .setTaskId(cmd.getId())
-                                          .build();
-        final AssignLabelToTaskRejected assignLabelToTaskRejected =
-                AssignLabelToTaskRejected.newBuilder()
-                                         .setCommandDetails(commandDetails)
-                                         .setLabelId(cmd.getLabelId())
-                                         .build();
-        throw new CannotAssignLabelToTask(assignLabelToTaskRejected);
+        checkNotNull(cmd);
+        RejectedTaskCommandDetails commandDetails = RejectedTaskCommandDetailsVBuilder
+                .newBuilder()
+                .setTaskId(cmd.getId())
+                .build();
+        AssignLabelToTaskRejected assignLabelToTaskRejected = AssignLabelToTaskRejectedVBuilder
+                .newBuilder()
+                .setCommandDetails(commandDetails)
+                .setLabelId(cmd.getLabelId())
+                .build();
+        CannotAssignLabelToTask rejection = CannotAssignLabelToTask
+                .newBuilder()
+                .setRejectionDetails(assignLabelToTaskRejected)
+                .build();
+        throw rejection;
     }
 
     /**
@@ -69,15 +81,42 @@ public class TaskLabelsPartRejections {
      */
     public static void throwCannotRemoveLabelFromTask(RemoveLabelFromTask cmd)
             throws CannotRemoveLabelFromTask {
-        final RejectedTaskCommandDetails commandDetails =
-                RejectedTaskCommandDetails.newBuilder()
-                                          .setTaskId(cmd.getId())
-                                          .build();
-        final RemoveLabelFromTaskRejected removeLabelRejected =
-                RemoveLabelFromTaskRejected.newBuilder()
-                                           .setLabelId(cmd.getLabelId())
-                                           .setCommandDetails(commandDetails)
-                                           .build();
-        throw new CannotRemoveLabelFromTask(removeLabelRejected);
+        checkNotNull(cmd);
+        RejectedTaskCommandDetails commandDetails = RejectedTaskCommandDetailsVBuilder
+                .newBuilder()
+                .setTaskId(cmd.getId())
+                .build();
+        RemoveLabelFromTaskRejected removeLabelRejected = RemoveLabelFromTaskRejectedVBuilder
+                .newBuilder()
+                .setLabelId(cmd.getLabelId())
+                .setCommandDetails(commandDetails)
+                .build();
+        CannotRemoveLabelFromTask rejection = CannotRemoveLabelFromTask
+                .newBuilder()
+                .setRejectionDetails(removeLabelRejected)
+                .build();
+        throw rejection;
+    }
+
+    /**
+     * Constructs and throws the {@link CannotAddLabels} rejection according to
+     * the passed parameters.
+     *
+     * @param cmd the {@code AddLabels} command which thrown the rejection
+     * @throws CannotAddLabels the rejection to throw
+     */
+    public static void throwCannotAddLabelsToTask(AddLabels cmd) throws CannotAddLabels {
+        checkNotNull(cmd);
+        AddLabelsRejected addLabelsRejected = AddLabelsRejectedVBuilder
+                .newBuilder()
+                .setId(cmd.getId())
+                .addAllExistingLabels(cmd.getExistingLabelsList())
+                .addAllNewLabels(cmd.getNewLabelsList())
+                .build();
+        CannotAddLabels rejection = CannotAddLabels
+                .newBuilder()
+                .setRejectionDetails(addLabelsRejected)
+                .build();
+        throw rejection;
     }
 }

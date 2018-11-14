@@ -21,66 +21,108 @@
 package io.spine.examples.todolist.c.aggregate.rejection;
 
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.LabelIdVBuilder;
+import io.spine.examples.todolist.TaskCreationId;
+import io.spine.examples.todolist.TaskCreationIdVBuilder;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskIdVBuilder;
+import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
+import io.spine.examples.todolist.c.commands.AssignLabelToTaskVBuilder;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
+import io.spine.examples.todolist.c.commands.RemoveLabelFromTaskVBuilder;
+import io.spine.examples.todolist.c.rejection.CannotAddLabels;
 import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
 import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
+import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.base.Identifier.newUuid;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAddLabelsToTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAssignLabelToTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotRemoveLabelFromTask;
-import static io.spine.test.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Illia Shepilov
- */
 @DisplayName("TaskLabelsPartRejections should")
-class TaskLabelsPartRejectionsTest {
+class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartRejections> {
 
-    private final TaskId taskId = TaskId.getDefaultInstance();
-    private final LabelId labelId = LabelId.getDefaultInstance();
-
-    @Test
-    @DisplayName("have the private constructor")
-    void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(TaskLabelsPartRejections.class);
+    TaskLabelsPartRejectionsTest() {
+        super(TaskLabelsPartRejections.class);
     }
 
     @Test
     @DisplayName("throw CannotRemoveLabelFromTask rejection")
     void throwCannotRemoveLabelFromTaskRejection() {
-        final RemoveLabelFromTask cmd = RemoveLabelFromTask.newBuilder()
-                                                           .setId(taskId)
-                                                           .setLabelId(labelId)
-                                                           .build();
-        final CannotRemoveLabelFromTask rejection =
+        TaskId taskId = taskId();
+        RemoveLabelFromTask cmd = RemoveLabelFromTaskVBuilder
+                .newBuilder()
+                .setId(taskId)
+                .setLabelId(labelId())
+                .build();
+        CannotRemoveLabelFromTask rejection =
                 assertThrows(CannotRemoveLabelFromTask.class,
                              () -> throwCannotRemoveLabelFromTask(cmd));
-        final TaskId actualId = rejection.getMessageThrown()
-                                         .getRejectionDetails()
-                                         .getCommandDetails()
-                                         .getTaskId();
+        TaskId actualId = rejection.getMessageThrown()
+                                   .getRejectionDetails()
+                                   .getCommandDetails()
+                                   .getTaskId();
         assertEquals(taskId, actualId);
     }
 
     @Test
     @DisplayName("throw CannotAssignLabelToTask rejection")
     void throwCannotAssignLabelToTaskRejection() {
-        final AssignLabelToTask cmd = AssignLabelToTask.newBuilder()
-                                                       .setLabelId(labelId)
-                                                       .setId(taskId)
-                                                       .build();
-        final CannotAssignLabelToTask rejection =
+        TaskId taskId = taskId();
+        AssignLabelToTask cmd = AssignLabelToTaskVBuilder
+                .newBuilder()
+                .setLabelId(labelId())
+                .setId(taskId)
+                .build();
+        CannotAssignLabelToTask rejection =
                 assertThrows(CannotAssignLabelToTask.class,
                              () -> throwCannotAssignLabelToTask(cmd));
-        final TaskId actualId = rejection.getMessageThrown()
-                                         .getRejectionDetails()
-                                         .getCommandDetails()
-                                         .getTaskId();
+        TaskId actualId = rejection.getMessageThrown()
+                                   .getRejectionDetails()
+                                   .getCommandDetails()
+                                   .getTaskId();
         assertEquals(taskId, actualId);
+    }
+
+    @Test
+    @DisplayName("throw CannotAddLabels rejection")
+    void throwCannotAddLabelsToTaskRejection() {
+        TaskCreationId taskCreationId = TaskCreationIdVBuilder
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
+        AddLabels cmd = AddLabels
+                .newBuilder()
+                .setId(taskCreationId)
+                .build();
+        CannotAddLabels rejection =
+                assertThrows(CannotAddLabels.class,
+                             () -> throwCannotAddLabelsToTask(cmd));
+        TaskCreationId actualId = rejection.getMessageThrown()
+                                           .getRejectionDetails()
+                                           .getId();
+        assertEquals(taskCreationId, actualId);
+    }
+
+    private static TaskId taskId() {
+        TaskId result = TaskIdVBuilder
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
+        return result;
+    }
+
+    private static LabelId labelId() {
+        LabelId result = LabelIdVBuilder
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
+        return result;
     }
 }
