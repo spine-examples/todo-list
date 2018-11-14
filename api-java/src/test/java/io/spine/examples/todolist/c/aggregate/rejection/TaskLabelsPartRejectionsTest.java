@@ -21,8 +21,11 @@
 package io.spine.examples.todolist.c.aggregate.rejection;
 
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.LabelIdVBuilder;
 import io.spine.examples.todolist.TaskCreationId;
+import io.spine.examples.todolist.TaskCreationIdVBuilder;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.TaskIdVBuilder;
 import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.AssignLabelToTaskVBuilder;
@@ -35,6 +38,7 @@ import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAddLabelsToTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAssignLabelToTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotRemoveLabelFromTask;
@@ -44,9 +48,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("TaskLabelsPartRejections should")
 class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartRejections> {
 
-    private final TaskId taskId = TaskId.getDefaultInstance();
-    private final LabelId labelId = LabelId.getDefaultInstance();
-
     TaskLabelsPartRejectionsTest() {
         super(TaskLabelsPartRejections.class);
     }
@@ -54,53 +55,74 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
     @Test
     @DisplayName("throw CannotRemoveLabelFromTask rejection")
     void throwCannotRemoveLabelFromTaskRejection() {
-        final RemoveLabelFromTask cmd = RemoveLabelFromTaskVBuilder
+        TaskId taskId = taskId();
+        RemoveLabelFromTask cmd = RemoveLabelFromTaskVBuilder
                 .newBuilder()
                 .setId(taskId)
-                .setLabelId(labelId)
+                .setLabelId(labelId())
                 .build();
-        final CannotRemoveLabelFromTask rejection =
+        CannotRemoveLabelFromTask rejection =
                 assertThrows(CannotRemoveLabelFromTask.class,
                              () -> throwCannotRemoveLabelFromTask(cmd));
-        final TaskId actualId = rejection.getMessageThrown()
-                                         .getRejectionDetails()
-                                         .getCommandDetails()
-                                         .getTaskId();
+        TaskId actualId = rejection.getMessageThrown()
+                                   .getRejectionDetails()
+                                   .getCommandDetails()
+                                   .getTaskId();
         assertEquals(taskId, actualId);
     }
 
     @Test
     @DisplayName("throw CannotAssignLabelToTask rejection")
     void throwCannotAssignLabelToTaskRejection() {
-        final AssignLabelToTask cmd = AssignLabelToTaskVBuilder
+        TaskId taskId = taskId();
+        AssignLabelToTask cmd = AssignLabelToTaskVBuilder
                 .newBuilder()
-                .setLabelId(labelId)
+                .setLabelId(labelId())
                 .setId(taskId)
                 .build();
-        final CannotAssignLabelToTask rejection =
+        CannotAssignLabelToTask rejection =
                 assertThrows(CannotAssignLabelToTask.class,
                              () -> throwCannotAssignLabelToTask(cmd));
-        final TaskId actualId = rejection.getMessageThrown()
-                                         .getRejectionDetails()
-                                         .getCommandDetails()
-                                         .getTaskId();
+        TaskId actualId = rejection.getMessageThrown()
+                                   .getRejectionDetails()
+                                   .getCommandDetails()
+                                   .getTaskId();
         assertEquals(taskId, actualId);
     }
 
     @Test
     @DisplayName("throw CannotAddLabels rejection")
     void throwCannotAddLabelsToTaskRejection() {
-        TaskCreationId taskCreationId = TaskCreationId.getDefaultInstance();
-        final AddLabels cmd = AddLabels
+        TaskCreationId taskCreationId = TaskCreationIdVBuilder
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
+        AddLabels cmd = AddLabels
                 .newBuilder()
                 .setId(taskCreationId)
                 .build();
-        final CannotAddLabels rejection =
+        CannotAddLabels rejection =
                 assertThrows(CannotAddLabels.class,
                              () -> throwCannotAddLabelsToTask(cmd));
-        final TaskCreationId actualId = rejection.getMessageThrown()
-                                                 .getRejectionDetails()
-                                                 .getId();
+        TaskCreationId actualId = rejection.getMessageThrown()
+                                           .getRejectionDetails()
+                                           .getId();
         assertEquals(taskCreationId, actualId);
+    }
+
+    private static TaskId taskId() {
+        TaskId result = TaskIdVBuilder
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
+        return result;
+    }
+
+    private static LabelId labelId() {
+        LabelId result = LabelIdVBuilder
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
+        return result;
     }
 }

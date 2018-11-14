@@ -28,6 +28,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import org.junit.jupiter.api.BeforeEach;
@@ -150,6 +151,9 @@ class UpdateTaskDescriptionTest extends TodoClientTest {
                                                                        boolean isCorrectId) {
         CreateBasicTask createTask = createBasicTask();
         client.postCommand(createTask);
+
+        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createTask.getId());
+        client.postCommand(updateTaskPriority);
 
         CreateBasicLabel createLabel = createBasicLabel();
         client.postCommand(createLabel);

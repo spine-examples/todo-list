@@ -28,6 +28,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import org.junit.jupiter.api.BeforeEach;
@@ -161,6 +162,9 @@ class UpdateTaskDueDateTest extends TodoClientTest {
             CreateBasicTask createTask = createBasicTask();
             TaskId createdTaskId = createTask.getId();
             client.postCommand(createTask);
+
+            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createdTaskId);
+            client.postCommand(updateTaskPriority);
 
             CreateBasicLabel createLabel = createBasicLabel();
             client.postCommand(createLabel);

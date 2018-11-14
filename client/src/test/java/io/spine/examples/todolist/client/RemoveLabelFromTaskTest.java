@@ -27,6 +27,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import org.junit.jupiter.api.BeforeEach;
@@ -176,6 +177,8 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
             boolean isCorrectId) {
         CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
+        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
+        client.postCommand(updateTaskPriority);
         TaskId taskId = createDraft.getId();
 
         assignAndRemoveLabel(labelId, isCorrectId, taskId);

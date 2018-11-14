@@ -30,6 +30,7 @@ import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.q.projection.LabelColorView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
@@ -147,6 +148,9 @@ class UpdateLabelDetailsTest extends TodoClientTest {
         CreateBasicTask createTask = createBasicTask();
         client.postCommand(createTask);
 
+        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createTask.getId());
+        client.postCommand(updateTaskPriority);
+
         CreateBasicLabel createLabel = createBasicLabel();
         client.postCommand(createLabel);
 
@@ -191,6 +195,9 @@ class UpdateLabelDetailsTest extends TodoClientTest {
         CreateBasicTask createTask = createBasicTask();
         client.postCommand(createTask);
 
+        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createTask.getId());
+        client.postCommand(updateTaskPriority);
+
         CreateBasicLabel createLabel = createBasicLabel();
         client.postCommand(createLabel);
 
@@ -229,6 +236,9 @@ class UpdateLabelDetailsTest extends TodoClientTest {
     obtainTaskItemWhenHandledUpdateLabelDetails(LabelColor newLabelColor, boolean correctId) {
         CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
+
+        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
+        client.postCommand(updateTaskPriority);
 
         CreateBasicLabel createBasicLabel = createBasicLabel();
         client.postCommand(createBasicLabel);

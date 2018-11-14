@@ -26,6 +26,7 @@ import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
@@ -94,6 +95,9 @@ class FinalizeDraftTest extends TodoClientTest {
 
             CreateBasicLabel createBasicLabel = createBasicLabel();
             client.postCommand(createBasicLabel);
+
+            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
+            client.postCommand(updateTaskPriority);
 
             TaskId taskId = createDraft.getId();
             LabelId labelId = createBasicLabel.getLabelId();

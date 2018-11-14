@@ -27,6 +27,7 @@ import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.CreateDraft;
+import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import io.spine.testing.server.ShardingReset;
@@ -224,6 +225,9 @@ class AssignLabelToTaskTest extends TodoClientTest {
     private TaskItem obtainViewWhenHandledAssignLabelToTask(LabelId labelId, boolean isCorrectId) {
         CreateDraft createDraft = createDraft();
         client.postCommand(createDraft);
+
+        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
+        client.postCommand(updateTaskPriority);
 
         TaskId createTaskId = createDraft.getId();
         TaskId taskIdToAssign = isCorrectId ? createTaskId : createWrongTaskId();
