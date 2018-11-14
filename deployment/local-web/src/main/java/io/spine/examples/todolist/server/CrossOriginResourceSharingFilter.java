@@ -43,7 +43,6 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
         filterName = CrossOriginResourceSharingFilter.NAME,
         servletNames = {
                 TodoCommandServlet.NAME,
-                TodoQueryServlet.NAME,
                 TodoSubscribeServlet.NAME,
                 TodoSubscriptionKeepUpServlet.NAME
         }
