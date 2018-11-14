@@ -142,8 +142,8 @@ class UpdateLabelDetailsTest extends TodoClientTest {
         }
     }
 
-    private TaskItem obtainTaskItemWhenHandledUpdateLabelDetailsCommand(LabelColor newColor,
-            boolean correctId) {
+    private TaskItem
+    obtainTaskItemWhenHandledUpdateLabelDetailsCommand(LabelColor newColor, boolean correctId) {
         CreateBasicTask createTask = createBasicTask();
         client.postCommand(createTask);
 
