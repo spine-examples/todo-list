@@ -28,6 +28,7 @@ import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelDetailsUpdateRejected;
+import io.spine.examples.todolist.LabelDetailsVBuilder;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -150,16 +151,18 @@ class LabelAggregateTest {
             assertEquals(UPDATED_LABEL_TITLE, state.getTitle());
 
             final LabelColor previousLabelColor = LabelColor.GREEN;
-            final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
-                                                                  .setTitle(UPDATED_LABEL_TITLE)
-                                                                  .setColor(previousLabelColor)
-                                                                  .build();
+            final LabelDetails previousLabelDetails = LabelDetailsVBuilder
+                    .newBuilder()
+                    .setTitle(UPDATED_LABEL_TITLE)
+                    .setColor(previousLabelColor)
+                    .build();
             final LabelColor updatedLabelColor = LabelColor.BLUE;
             final String updatedTitle = "updated title";
-            final LabelDetails newLabelDetails = LabelDetails.newBuilder()
-                                                             .setColor(updatedLabelColor)
-                                                             .setTitle(updatedTitle)
-                                                             .build();
+            final LabelDetails newLabelDetails = LabelDetailsVBuilder
+                    .newBuilder()
+                    .setColor(updatedLabelColor)
+                    .setTitle(updatedTitle)
+                    .build();
             updateLabelDetails = updateLabelDetailsInstance(entityId(), previousLabelDetails,
                                                             newLabelDetails);
             dispatchUpdateLabelDetails(updateLabelDetails);
@@ -174,14 +177,16 @@ class LabelAggregateTest {
         @DisplayName("produce CannotUpdateLabelDetails rejection " +
                 "when the label details does not match expected")
         void cannotUpdateLabelDetails() throws CannotUpdateLabelDetails {
-            final LabelDetails expectedLabelDetails = LabelDetails.newBuilder()
-                                                                  .setColor(LabelColor.BLUE)
-                                                                  .setTitle(LABEL_TITLE)
-                                                                  .build();
-            final LabelDetails newLabelDetails = LabelDetails.newBuilder()
-                                                             .setColor(LabelColor.RED)
-                                                             .setTitle(UPDATED_LABEL_TITLE)
-                                                             .build();
+            final LabelDetails expectedLabelDetails = LabelDetailsVBuilder
+                    .newBuilder()
+                    .setColor(LabelColor.BLUE)
+                    .setTitle(LABEL_TITLE)
+                    .build();
+            final LabelDetails newLabelDetails = LabelDetailsVBuilder
+                    .newBuilder()
+                    .setColor(LabelColor.RED)
+                    .setTitle(UPDATED_LABEL_TITLE)
+                    .build();
             UpdateLabelDetails updateLabelDetails =
                     updateLabelDetailsInstance(entityId(), expectedLabelDetails, newLabelDetails);
             final CannotUpdateLabelDetails rejection =
@@ -199,10 +204,11 @@ class LabelAggregateTest {
             assertEquals(pack(expectedLabelDetails), mismatch.getExpected());
             assertEquals(pack(newLabelDetails), mismatch.getNewValue());
 
-            final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
-                                                                .setColor(LabelColor.GRAY)
-                                                                .setTitle(LABEL_TITLE)
-                                                                .build();
+            final LabelDetails actualLabelDetails = LabelDetailsVBuilder
+                    .newBuilder()
+                    .setColor(LabelColor.GRAY)
+                    .setTitle(LABEL_TITLE)
+                    .build();
             assertEquals(pack(actualLabelDetails), mismatch.getActual());
         }
     }

@@ -25,7 +25,9 @@ import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
+import io.spine.examples.todolist.c.commands.AssignLabelToTaskVBuilder;
 import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
+import io.spine.examples.todolist.c.commands.RemoveLabelFromTaskVBuilder;
 import io.spine.examples.todolist.c.rejection.CannotAddLabels;
 import io.spine.examples.todolist.c.rejection.CannotAssignLabelToTask;
 import io.spine.examples.todolist.c.rejection.CannotRemoveLabelFromTask;
@@ -52,10 +54,11 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
     @Test
     @DisplayName("throw CannotRemoveLabelFromTask rejection")
     void throwCannotRemoveLabelFromTaskRejection() {
-        final RemoveLabelFromTask cmd = RemoveLabelFromTask.newBuilder()
-                                                           .setId(taskId)
-                                                           .setLabelId(labelId)
-                                                           .build();
+        final RemoveLabelFromTask cmd = RemoveLabelFromTaskVBuilder
+                .newBuilder()
+                .setId(taskId)
+                .setLabelId(labelId)
+                .build();
         final CannotRemoveLabelFromTask rejection =
                 assertThrows(CannotRemoveLabelFromTask.class,
                              () -> throwCannotRemoveLabelFromTask(cmd));
@@ -69,10 +72,11 @@ class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartReject
     @Test
     @DisplayName("throw CannotAssignLabelToTask rejection")
     void throwCannotAssignLabelToTaskRejection() {
-        final AssignLabelToTask cmd = AssignLabelToTask.newBuilder()
-                                                       .setLabelId(labelId)
-                                                       .setId(taskId)
-                                                       .build();
+        final AssignLabelToTask cmd = AssignLabelToTaskVBuilder
+                .newBuilder()
+                .setLabelId(labelId)
+                .setId(taskId)
+                .build();
         final CannotAssignLabelToTask rejection =
                 assertThrows(CannotAssignLabelToTask.class,
                              () -> throwCannotAssignLabelToTask(cmd));

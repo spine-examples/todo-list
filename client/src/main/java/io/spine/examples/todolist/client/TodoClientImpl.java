@@ -42,11 +42,13 @@ import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceBlockingS
 import io.spine.client.grpc.SubscriptionServiceGrpc.SubscriptionServiceStub;
 import io.spine.core.Command;
 import io.spine.core.UserId;
+import io.spine.core.UserIdVBuilder;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.TaskLabels;
+import io.spine.examples.todolist.TaskLabelsVBuilder;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.MyListView;
@@ -153,9 +155,9 @@ final class TodoClientImpl implements SubscribingTodoClient {
     @Override
     public TaskLabels getLabels(TaskId taskId) {
         Optional<TaskLabels> labels = findById(TaskLabels.class, taskId);
-        TaskLabels result = labels.orElse(TaskLabels.newBuilder()
-                                                    .setTaskId(taskId)
-                                                    .build());
+        TaskLabels result = labels.orElse(TaskLabelsVBuilder.newBuilder()
+                                                            .setTaskId(taskId)
+                                                            .build());
         return result;
     }
 
@@ -248,7 +250,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
     }
 
     private static ActorRequestFactory actorRequestFactoryInstance() {
-        UserId userId = UserId
+        UserId userId = UserIdVBuilder
                 .newBuilder()
                 .setValue(newUuid())
                 .build();

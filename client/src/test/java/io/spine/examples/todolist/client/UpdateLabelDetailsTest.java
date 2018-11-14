@@ -22,6 +22,7 @@ package io.spine.examples.todolist.client;
 
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelDetailsVBuilder;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
@@ -158,12 +159,12 @@ class UpdateLabelDetailsTest extends TodoClientTest {
 
         LabelId idOfUpdatedLabel = isCorrectId ? idOfCreatedLabel : createWrongTaskLabelId();
 
-        LabelDetails previousLabelDetails = LabelDetails
+        LabelDetails previousLabelDetails = LabelDetailsVBuilder
                 .newBuilder()
                 .setColor(LabelColor.GRAY)
                 .setTitle(LABEL_TITLE)
                 .build();
-        LabelDetails newLabelDetails = LabelDetails
+        LabelDetails newLabelDetails = LabelDetailsVBuilder
                 .newBuilder()
                 .setTitle(TestLabelCommandFactory.UPDATED_LABEL_TITLE)
                 .setColor(newColor)
@@ -199,12 +200,12 @@ class UpdateLabelDetailsTest extends TodoClientTest {
         AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
         client.postCommand(assignLabelToTask);
 
-        LabelDetails detailsWithCorrectId = LabelDetails
+        LabelDetails detailsWithCorrectId = LabelDetailsVBuilder
                 .newBuilder()
                 .setColor(LabelColor.GRAY)
                 .setTitle(createLabel.getLabelTitle())
                 .build();
-        LabelDetails newLabelDetails = LabelDetails
+        LabelDetails newLabelDetails = LabelDetailsVBuilder
                 .newBuilder()
                 .setColor(updatedColor)
                 .setTitle(updatedTitle)
@@ -240,12 +241,12 @@ class UpdateLabelDetailsTest extends TodoClientTest {
 
         LabelId updatedLabelId = isCorrectId ? labelId : createWrongTaskLabelId();
 
-        LabelDetails previousLabelDetails = LabelDetails
+        LabelDetails previousLabelDetails = LabelDetailsVBuilder
                 .newBuilder()
                 .setTitle(createBasicLabel.getLabelTitle())
                 .setColor(LabelColor.GRAY)
                 .build();
-        LabelDetails newLabelDetails = LabelDetails
+        LabelDetails newLabelDetails = LabelDetailsVBuilder
                 .newBuilder()
                 .setTitle(UPDATED_LABEL_TITLE)
                 .setColor(newLabelColor)

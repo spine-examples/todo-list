@@ -33,7 +33,9 @@ import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.CancelTaskCreation;
 import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateDraft;
+import io.spine.examples.todolist.c.commands.CreateDraftVBuilder;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
+import io.spine.examples.todolist.c.commands.FinalizeDraftVBuilder;
 import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.SkipLabels;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
@@ -110,8 +112,8 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     CreateDraft handle(StartTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
         return transit(TASK_DEFINITION, () -> {
-            final TaskId taskId = command.getTaskId();
-            final CreateDraft createDraft = CreateDraft
+            TaskId taskId = command.getTaskId();
+            CreateDraft createDraft = CreateDraftVBuilder
                     .newBuilder()
                     .setId(taskId)
                     .build();
@@ -123,10 +125,9 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     @Command
     Collection<? extends CommandMessage> handle(SetTaskDetails command, CommandContext context)
             throws CannotMoveToStage {
-        final WizardCommands commands = commands();
+        WizardCommands commands = commands();
         return transit(LABEL_ASSIGNMENT, () -> {
-            final Collection<? extends CommandMessage> resultCommands =
-                    commands.setTaskDetails(command);
+            Collection<? extends CommandMessage> resultCommands = commands.setTaskDetails(command);
             return resultCommands;
         });
     }
@@ -139,11 +140,11 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         if (existingLabels.isEmpty() && newLabels.isEmpty()) {
             throwCannotAddLabelsToTask(command);
         }
-        final WizardCommands commands = commands();
+        WizardCommands commands = commands();
         return transit(CONFIRMATION, () -> {
-            final Collection<? extends CommandMessage> existingLabelsCommands =
+            Collection<? extends CommandMessage> existingLabelsCommands =
                     commands.assignExistingLabels(command);
-            final Collection<? extends CommandMessage> newLabelsCommands =
+            Collection<? extends CommandMessage> newLabelsCommands =
                     commands.assignNewLabels(command);
             Collection<CommandMessage> result = newArrayList();
             result.addAll(existingLabelsCommands);
@@ -161,7 +162,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     FinalizeDraft handle(CompleteTaskCreation command, CommandContext context)
             throws CannotMoveToStage {
         return transit(COMPLETED, () -> {
-            final FinalizeDraft finalizeDraft = FinalizeDraft
+            FinalizeDraft finalizeDraft = FinalizeDraftVBuilder
                     .newBuilder()
                     .setId(taskId())
                     .build();
@@ -192,7 +193,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     private <R> R transit(Stage requestedStage, Supplier<R> commandHandler)
             throws CannotMoveToStage {
         checkCanMoveTo(requestedStage);
-        final R result = commandHandler.get();
+        R result = commandHandler.get();
         moveToStage(requestedStage);
         return result;
     }
@@ -223,9 +224,9 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         if (pendingStage == CANCELED && !isTerminated()) {
             return;
         }
-        final Stage currentStage = getBuilder().getStage();
-        final int expectedStageNumber = currentStage.getNumber() + 1;
-        final int actualStageNumber = pendingStage.getNumber();
+        Stage currentStage = getBuilder().getStage();
+        int expectedStageNumber = currentStage.getNumber() + 1;
+        int actualStageNumber = pendingStage.getNumber();
         if (expectedStageNumber != actualStageNumber) {
             CannotMoveToStage rejection = CannotMoveToStage
                     .newBuilder()
@@ -243,7 +244,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      * @return {@code true} if current process state is terminal, {@code false} otherwise
      */
     private boolean isTerminated() {
-        final Stage currentStage = getBuilder().getStage();
+        Stage currentStage = getBuilder().getStage();
         return currentStage == COMPLETED || currentStage == CANCELED;
     }
 
@@ -253,7 +254,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      * @param cmd the command starting the process
      */
     private void initProcess(StartTaskCreation cmd) {
-        final TaskCreationId id = getId();
+        TaskCreationId id = getId();
         checkArgument(id.equals(cmd.getId()));
         getBuilder().setId(id)
                     .setTaskId(cmd.getTaskId());
@@ -272,8 +273,8 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      * @return an instance of {@link WizardCommands} for this process
      */
     private WizardCommands commands() {
-        final TaskId taskId = taskId();
-        final WizardCommands result = WizardCommands.create(taskId);
+        TaskId taskId = taskId();
+        WizardCommands result = WizardCommands.create(taskId);
         return result;
     }
 }

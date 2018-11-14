@@ -22,10 +22,12 @@ package io.spine.examples.todolist.context;
 
 import io.spine.core.EventContext;
 import io.spine.examples.todolist.LabelDetails;
+import io.spine.examples.todolist.LabelDetailsVBuilder;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdsList;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskDetails;
+import io.spine.examples.todolist.TaskDetailsVBuilder;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabel;
 import io.spine.examples.todolist.c.aggregate.LabelAggregate;
@@ -93,10 +95,11 @@ public class TodoListEnrichments {
                 return TaskDetails.getDefaultInstance();
             }
             final Task state = aggregate.get().getState();
-            final TaskDetails details = TaskDetails.newBuilder()
-                                                   .setDescription(state.getDescription())
-                                                   .setPriority(state.getPriority())
-                                                   .build();
+            final TaskDetails details = TaskDetailsVBuilder
+                    .newBuilder()
+                    .setDescription(state.getDescription())
+                    .setPriority(state.getPriority())
+                    .build();
             return details;
         };
 
@@ -130,10 +133,11 @@ public class TodoListEnrichments {
                 return LabelDetails.getDefaultInstance();
             }
             final TaskLabel state = aggregate.get().getState();
-            final LabelDetails labelDetails = LabelDetails.newBuilder()
-                                                          .setColor(state.getColor())
-                                                          .setTitle(state.getTitle())
-                                                          .build();
+            final LabelDetails labelDetails = LabelDetailsVBuilder
+                    .newBuilder()
+                    .setColor(state.getColor())
+                    .setTitle(state.getTitle())
+                    .build();
             return labelDetails;
         };
         return result;
