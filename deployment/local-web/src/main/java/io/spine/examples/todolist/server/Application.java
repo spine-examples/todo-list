@@ -26,6 +26,9 @@ import io.spine.server.CommandService;
 import io.spine.server.QueryService;
 import io.spine.web.firebase.DatabaseUrl;
 import io.spine.web.firebase.FirebaseClient;
+import io.spine.web.firebase.FirebaseCredentials;
+
+import java.io.InputStream;
 
 import static io.spine.web.firebase.DatabaseUrl.from;
 import static io.spine.web.firebase.FirebaseClientFactory.restClient;
@@ -36,6 +39,7 @@ import static io.spine.web.firebase.FirebaseClientFactory.restClient;
 final class Application {
 
     private static final DatabaseUrl DATABASE_URL = from("https://spine-dev.firebaseio.com/");
+    private static final String SERVICE_ACCOUNT_FILE = "/spine-dev.json";
 
     private final QueryService queryService;
     private final CommandService commandService;
@@ -51,7 +55,9 @@ final class Application {
         this.commandService = CommandService.newBuilder()
                                             .add(boundedContext)
                                             .build();
-        this.firebaseClient = restClient(DATABASE_URL);
+        InputStream credentialStream = Application.class.getResourceAsStream(SERVICE_ACCOUNT_FILE);
+        FirebaseCredentials credentials = FirebaseCredentials.fromStream(credentialStream);
+        this.firebaseClient = restClient(DATABASE_URL, credentials);
     }
 
     /**
