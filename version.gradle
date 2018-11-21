@@ -19,7 +19,7 @@
  */
 
 
-final def SPINE_VERSION = '1.0.0-pre1'
+final def SPINE_VERSION = '1.0.0-SNAPSHOT'
 
 project.ext {
     // To-do List app version
@@ -28,7 +28,7 @@ project.ext {
     // Spine dependencies' versions
     spineVersion = SPINE_VERSION
     spineJdbcStorageVersion = '1.0.0-pre1'
-    spineBaseVersion = '1.0.0-pre1'
+    spineBaseVersion = '1.0.0-SNAPSHOT'
     spineWebVersion = '1.0.0-SNAPSHOT'
 
     // Main scope third party dependencies' versions
