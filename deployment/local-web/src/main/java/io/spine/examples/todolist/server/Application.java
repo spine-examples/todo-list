@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
@@ -46,17 +47,16 @@ final class Application {
     private final FirebaseClient firebaseClient;
 
     /**
-     * Prevents direct instantiation.
+     * Prevents direct instantiation for outer accessors.
      */
-    private Application(BoundedContext boundedContext) {
+    @VisibleForTesting
+    Application(BoundedContext boundedContext, FirebaseCredentials credentials) {
         this.queryService = QueryService.newBuilder()
                                         .add(boundedContext)
                                         .build();
         this.commandService = CommandService.newBuilder()
                                             .add(boundedContext)
                                             .build();
-        InputStream credentialStream = Application.class.getResourceAsStream(SERVICE_ACCOUNT_FILE);
-        FirebaseCredentials credentials = FirebaseCredentials.fromStream(credentialStream);
         this.firebaseClient = restClient(DATABASE_URL, credentials);
     }
 
@@ -81,6 +81,15 @@ final class Application {
         return firebaseClient;
     }
 
+    /**
+     * Obtains the Firebase database credentials from the local service account file.
+     */
+    private static FirebaseCredentials firebaseCredentials() {
+        InputStream credentialStream = Application.class.getResourceAsStream(SERVICE_ACCOUNT_FILE);
+        FirebaseCredentials result = FirebaseCredentials.fromStream(credentialStream);
+        return result;
+    }
+
     static Application instance() {
         return Singleton.INSTANCE.value;
     }
@@ -88,6 +97,7 @@ final class Application {
     private enum Singleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Application value = new Application(BoundedContexts.create());
+        private final Application value =
+                new Application(BoundedContexts.create(), firebaseCredentials());
     }
 }
