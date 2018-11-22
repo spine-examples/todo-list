@@ -29,7 +29,7 @@ project.ext {
     spineVersion = SPINE_VERSION
     spineJdbcStorageVersion = '1.0.0-pre1'
     spineBaseVersion = '1.0.0-pre1'
-    spineWebVersion = '1.0.0-pre1'
+    spineWebVersion = '1.0.0-SNAPSHOT'
 
     // Main scope third party dependencies' versions
     servletApiVersion = '4.0.0'

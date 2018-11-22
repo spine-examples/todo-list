@@ -20,7 +20,7 @@
 
 let uuid = require("uuid");
 
-let client = require("spine-web-client/client/index.js").client;
+let client = require("spine-web-client/index.js").client;
 
 let TaskId = require("../proto/main/js/todolist/identifiers_pb").TaskId;
 let TaskDescription = require("../proto/main/js/todolist/values_pb").TaskDescription;
