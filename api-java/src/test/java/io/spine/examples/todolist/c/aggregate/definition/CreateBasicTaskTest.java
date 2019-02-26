@@ -25,11 +25,9 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.events.TaskCreated;
-import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -39,7 +37,6 @@ import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispa
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ExtendWith(ShardingReset.class)
 @DisplayName("CreateBasicTask command should be interpreted by TaskPart and")
 public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
 
@@ -59,9 +56,9 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
         final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
         final List<? extends Message> messageList = dispatchCommand(aggregate,
                                                                     envelopeOf(createTaskCmd));
-        assertNotNull(aggregate.getState()
+        assertNotNull(aggregate.state()
                                .getCreated());
-        assertNotNull(aggregate.getId());
+        assertNotNull(aggregate.id());
         assertEquals(1, messageList.size());
         assertEquals(TaskCreated.class, messageList.get(0)
                                                    .getClass());
@@ -79,7 +76,7 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
         final CreateBasicTask createBasicTask = createTaskInstance();
         dispatchCommand(aggregate, envelopeOf(createBasicTask));
 
-        final Task state = aggregate.getState();
+        final Task state = aggregate.state();
         assertEquals(state.getId(), createBasicTask.getId());
         assertEquals(state.getTaskStatus(), TaskStatus.FINALIZED);
     }

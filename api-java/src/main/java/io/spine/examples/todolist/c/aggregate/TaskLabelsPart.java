@@ -55,11 +55,6 @@ import static java.util.Collections.singletonList;
 public class TaskLabelsPart
         extends AggregatePart<TaskId, TaskLabels, TaskLabelsVBuilder, TaskAggregateRoot> {
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param root
-     */
     public TaskLabelsPart(TaskAggregateRoot root) {
         super(root);
     }
@@ -70,9 +65,9 @@ public class TaskLabelsPart
         final TaskId taskId = cmd.getId();
 
         final Task taskState = getPartState(Task.class);
-        final boolean isLabelAssigned = getState().getLabelIdsList()
-                                                  .getIdsList()
-                                                  .contains(labelId);
+        final boolean isLabelAssigned = state().getLabelIdsList()
+                                               .getIdsList()
+                                               .contains(labelId);
         final boolean isValidTaskStatus = isValidTaskStatusToRemoveLabel(taskState.getTaskStatus());
         if (!isLabelAssigned || !isValidTaskStatus) {
             throwCannotRemoveLabelFromTask(cmd);
@@ -106,24 +101,24 @@ public class TaskLabelsPart
 
     @Apply
     private void labelAssignedToTask(LabelAssignedToTask event) {
-        final Collection<LabelId> list = new ArrayList<>(getBuilder().getLabelIdsList()
-                                                                     .getIdsList());
+        final Collection<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
+                                                                  .getIdsList());
         list.add(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
                                                       .addAllIds(list)
                                                       .build();
-        getBuilder().setTaskId(event.getTaskId());
-        getBuilder().setLabelIdsList(labelIdsList);
+        builder().setTaskId(event.getTaskId());
+        builder().setLabelIdsList(labelIdsList);
     }
 
     @Apply
     private void labelRemovedFromTask(LabelRemovedFromTask event) {
-        final Collection<LabelId> list = new ArrayList<>(getBuilder().getLabelIdsList()
-                                                                     .getIdsList());
+        final Collection<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
+                                                                  .getIdsList());
         list.remove(event.getLabelId());
         final LabelIdsList labelIdsList = LabelIdsList.newBuilder()
                                                       .addAllIds(list)
                                                       .build();
-        getBuilder().setLabelIdsList(labelIdsList);
+        builder().setLabelIdsList(labelIdsList);
     }
 }

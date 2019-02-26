@@ -37,17 +37,15 @@ import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.events.TaskReopened;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
 import io.spine.server.BoundedContext;
-import io.spine.server.event.Enricher;
+import io.spine.server.enrich.Enricher;
 import io.spine.server.event.EventBus;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.StorageFactorySwitch;
-import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
@@ -75,7 +73,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(ShardingReset.class)
 class LabelledTasksViewProjectionTest extends ProjectionTest {
 
     private static final String BOUNDED_CONTEXT_NAME = "TodoListBoundedContext";
@@ -96,7 +93,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
                                                                      storageFactorySwitch);
         repository = new LabelledTasksViewRepository();
         boundedContext.register(repository);
-        eventBus = boundedContext.getEventBus();
+        eventBus = boundedContext.eventBus();
     }
 
     @Nested
@@ -563,9 +560,10 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         assertEquals(LABEL_TITLE, labelledTaskItem.getLabelTitle());
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent") // In tests we know for sure it's there.
     private LabelledTasksView getProjectionState() {
         return repository.find(LABEL_ID)
                          .get()
-                         .getState();
+                         .state();
     }
 }

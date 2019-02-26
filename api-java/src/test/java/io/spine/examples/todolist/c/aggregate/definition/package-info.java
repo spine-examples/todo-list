@@ -18,31 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.repository;
-
-import io.spine.examples.todolist.TaskListId;
-import io.spine.examples.todolist.q.projection.MyListView;
-import io.spine.examples.todolist.q.projection.MyListViewProjection;
-import io.spine.server.projection.ProjectionRepository;
-
-import static io.spine.examples.todolist.q.projection.MyListViewProjection.ID;
-import static java.util.Collections.singleton;
-
 /**
- * Repository for the {@link MyListViewProjection}.
+ * The tests for commands received and handled by the aggregates.
  */
-public final class MyListViewRepository
-        extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {
+@ParametersAreNonnullByDefault
+package io.spine.examples.todolist.c.aggregate.definition;
 
-    public MyListViewRepository() {
-        super();
-        setUpEventRoute();
-    }
-
-    /**
-     * Adds the {@link io.spine.server.route.EventRoute EventRoute}s to the repository.
-     */
-    private void setUpEventRoute() {
-        eventRouting().replaceDefault(((message, context) -> singleton(ID)));
-    }
-}
+import javax.annotation.ParametersAreNonnullByDefault;

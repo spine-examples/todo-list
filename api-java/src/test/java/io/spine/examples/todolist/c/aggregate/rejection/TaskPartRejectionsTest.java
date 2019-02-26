@@ -35,11 +35,9 @@ import io.spine.examples.todolist.c.rejection.CannotCreateDraft;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDescription;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDueDate;
 import io.spine.testing.UtilityClassTest;
-import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.TaskCreationRejections.throwCannotCreateDraft;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDescription;

@@ -24,7 +24,6 @@ import com.google.protobuf.Message;
 import io.spine.base.CommandMessage;
 import io.spine.core.Ack;
 import io.spine.core.Command;
-import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskLabels;
@@ -45,14 +44,13 @@ import io.spine.grpc.StreamObservers;
 import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
 import io.spine.server.entity.Repository;
+import io.spine.server.type.CommandEnvelope;
 import io.spine.testing.client.TestActorRequestFactory;
-import io.spine.testing.server.ShardingReset;
 import io.spine.testing.server.aggregate.AggregateCommandTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Collection;
 import java.util.List;
@@ -75,7 +73,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(ShardingReset.class)
+@DisplayName("TaskLabelsPart should")
 class TaskLabelsPartTest {
 
     @Nested
@@ -107,7 +105,7 @@ class TaskLabelsPartTest {
         void testAssignLabelToTask() {
             dispatchCommand(taskLabelsPart, commandEnvelope());
 
-            final TaskLabels state = taskLabelsPart.getState();
+            final TaskLabels state = taskLabelsPart.state();
             final List<LabelId> labelIds = state.getLabelIdsList()
                                                 .getIdsList();
             assertEquals(entityId(), state.getTaskId());
@@ -168,13 +166,13 @@ class TaskLabelsPartTest {
         void removeLabelFromTask() {
             createBasicTask();
             assignLabelToTask();
-            final List<LabelId> labelIdsBeforeRemove = taskLabelsPart.getState()
+            final List<LabelId> labelIdsBeforeRemove = taskLabelsPart.state()
                                                                      .getLabelIdsList()
                                                                      .getIdsList();
             assertTrue(labelIdsBeforeRemove.contains(labelId));
 
             dispatchCommand(taskLabelsPart, commandEnvelope());
-            final List<LabelId> labelIdsAfterRemove = taskLabelsPart.getState()
+            final List<LabelId> labelIdsAfterRemove = taskLabelsPart.state()
                                                                     .getLabelIdsList()
                                                                     .getIdsList();
             assertTrue(labelIdsAfterRemove.isEmpty());
@@ -237,7 +235,7 @@ class TaskLabelsPartTest {
         @Test
         @DisplayName("assign all labels to the task")
         void testContainsAllLabels() {
-            final Collection<LabelId> actualLabels = taskLabelsPart.getState()
+            final Collection<LabelId> actualLabels = taskLabelsPart.state()
                                                                    .getLabelIdsList()
                                                                    .getIdsList();
             assertThat(actualLabels, containsInAnyOrder(labelIds.toArray()));
@@ -252,7 +250,7 @@ class TaskLabelsPartTest {
                                          TaskLabelsPart> {
 
         private final TestActorRequestFactory requestFactory =
-                TestActorRequestFactory.newInstance(getClass());
+                new TestActorRequestFactory(getClass());
 
         MemoizingObserver<Ack> responseObserver;
         CommandBus commandBus;
@@ -272,7 +270,7 @@ class TaskLabelsPartTest {
         }
 
         @Override
-        protected Repository<TaskId, TaskLabelsPart> createEntityRepository() {
+        protected Repository<TaskId, TaskLabelsPart> createRepository() {
             return new TaskLabelsRepository();
         }
 
@@ -339,7 +337,7 @@ class TaskLabelsPartTest {
 
         private TaskAggregateRoot newRoot(TaskId id) {
             final BoundedContext boundedContext = BoundedContexts.create();
-            commandBus = boundedContext.getCommandBus();
+            commandBus = boundedContext.commandBus();
             responseObserver = StreamObservers.memoizingObserver();
             labelId = LABEL_ID;
             TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, id);

@@ -34,11 +34,9 @@ import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDueDate;
 import io.spine.examples.todolist.c.rejection.Rejections;
-import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -56,7 +54,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(ShardingReset.class)
 @DisplayName("UpdateTaskDueDate command should be interpreted by TaskPart and")
 public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
 
@@ -121,9 +118,10 @@ public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
     void updateDueDate() {
         final Timestamp updatedDueDate = getCurrentTime();
         final UpdateTaskDueDate updateTaskDueDateCmd =
-                updateTaskDueDateInstance(entityId(), Timestamp.getDefaultInstance(), updatedDueDate);
+                updateTaskDueDateInstance(entityId(), Timestamp.getDefaultInstance(),
+                                          updatedDueDate);
         dispatchCommand(aggregate, envelopeOf(updateTaskDueDateCmd));
-        final Task state = aggregate.getState();
+        final Task state = aggregate.state();
 
         assertEquals(entityId(), state.getId());
         assertEquals(updatedDueDate, state.getDueDate());

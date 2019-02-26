@@ -36,11 +36,9 @@ import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskPriority;
 import io.spine.examples.todolist.c.rejection.Rejections;
-import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -59,7 +57,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(ShardingReset.class)
 @DisplayName("UpdateTaskPriority command should be interpreted by TaskPart and")
 public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> {
 
@@ -135,7 +132,7 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
         final UpdateTaskPriority updateTaskPriorityCmd =
                 updateTaskPriorityInstance(entityId(), TP_UNDEFINED, updatedPriority);
         dispatchCommand(aggregate, envelopeOf(updateTaskPriorityCmd));
-        final Task state = aggregate.getState();
+        final Task state = aggregate.state();
 
         assertEquals(entityId(), state.getId());
         assertEquals(updatedPriority, state.getPriority());
@@ -144,14 +141,14 @@ public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> 
     @Test
     @DisplayName("produce CannotUpdateTaskPriority rejection")
     void produceRejection() {
-        final UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(entityId(), LOW, HIGH);
+        final UpdateTaskPriority updateTaskPriority = updateTaskPriorityInstance(entityId(), LOW,
+                                                                                 HIGH);
         final Throwable t = assertThrows(Throwable.class,
                                          () -> dispatchCommand(aggregate,
                                                                envelopeOf(updateTaskPriority)));
         final Throwable cause = Throwables.getRootCause(t);
         assertThat(cause, instanceOf(CannotUpdateTaskPriority.class));
 
-        @SuppressWarnings("ConstantConditions") // Instance type checked before.
         final Rejections.CannotUpdateTaskPriority cannotUpdateTaskPriority =
                 ((CannotUpdateTaskPriority) cause).getMessageThrown();
         final PriorityUpdateRejected rejectionDetails =

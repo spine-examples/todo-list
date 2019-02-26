@@ -53,11 +53,6 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
     @VisibleForTesting
     static final LabelColor DEFAULT_LABEL_COLOR = LabelColor.GRAY;
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param id
-     */
     protected LabelAggregate(LabelId id) {
         super(id);
     }
@@ -76,7 +71,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
     @Assign
     List<? extends Message> handle(UpdateLabelDetails cmd)
             throws CannotUpdateLabelDetails {
-        final TaskLabel state = getState();
+        final TaskLabel state = state();
         final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
                                                             .setColor(state.getColor())
                                                             .setTitle(state.getTitle())
@@ -105,18 +100,18 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
 
     @Apply
     private void labelCreated(LabelCreated event) {
-        getBuilder().setId(event.getId())
-                    .setTitle(event.getDetails()
-                                   .getTitle())
-                    .setColor(DEFAULT_LABEL_COLOR);
+        builder().setId(event.getId())
+                 .setTitle(event.getDetails()
+                                .getTitle())
+                 .setColor(DEFAULT_LABEL_COLOR);
     }
 
     @Apply
     private void labelDetailsUpdated(LabelDetailsUpdated event) {
         final LabelDetails labelDetails = event.getLabelDetailsChange()
                                                .getNewDetails();
-        getBuilder().setId(getId())
-                    .setTitle(labelDetails.getTitle())
-                    .setColor(labelDetails.getColor());
+        builder().setId(id())
+                 .setTitle(labelDetails.getTitle())
+                 .setColor(labelDetails.getColor());
     }
 }

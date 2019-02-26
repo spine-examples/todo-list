@@ -47,6 +47,6 @@ public class DraftTasksViewRepository
      * and only with specified events below.
      */
     protected void setUpEventRoute() {
-        getEventRouting().replaceDefault(((message, context) -> singleton(ID)));
+        eventRouting().replaceDefault(((message, context) -> singleton(ID)));
     }
 }

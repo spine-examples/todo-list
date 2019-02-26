@@ -91,7 +91,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final TaskCreated taskCreatedEvent = taskCreatedInstance();
             dispatch(projection, createEvent(taskCreatedEvent));
 
-            final List<TaskItem> views = projection.getState()
+            final List<TaskItem> views = projection.state()
                                                    .getMyList()
                                                    .getItemsList();
             assertEquals(1, views.size());
@@ -118,7 +118,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final TaskDeleted taskDeletedEvent = taskDeletedInstance();
             dispatch(projection, createEvent(taskDeletedEvent));
 
-            List<TaskItem> views = projection.getState()
+            List<TaskItem> views = projection.state()
                                              .getMyList()
                                              .getItemsList();
             assertTrue(views.isEmpty());
@@ -140,7 +140,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                     taskDescriptionUpdatedInstance(expectedTaskId, UPDATED_DESCRIPTION);
             dispatch(projection, createEvent(descriptionUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -162,7 +162,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                                                    UPDATED_DESCRIPTION);
             dispatch(projection, createEvent(descriptionUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -190,7 +190,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                     taskDueDateUpdatedInstance(expectedTaskId, updatedDueDate);
             dispatch(projection, createEvent(taskDueDateUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -212,7 +212,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                     taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), updatedDueDate);
             dispatch(projection, createEvent(taskDueDateUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -239,7 +239,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                     taskPriorityUpdatedInstance(expectedTaskId, updatedTaskPriority);
             dispatch(projection, createEvent(taskPriorityUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -261,7 +261,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                     taskPriorityUpdatedInstance(TaskId.getDefaultInstance(), updatedTaskPriority);
             dispatch(projection, createEvent(taskPriorityUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -294,7 +294,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                     labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
             dispatch(projection, createEvent(labelDetailsUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getMyList();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -325,7 +325,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                     labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
             dispatch(projection, createEvent(labelDetailsUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getMyList();
             final int expectedViewListSize = 1;
             assertEquals(expectedViewListSize, taskListView.getItemsCount());
@@ -356,7 +356,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
             dispatch(projection, createEvent(labelRemovedFromTask));
 
-            final TaskItem taskView = projection.getState()
+            final TaskItem taskView = projection.state()
                                                 .getMyList()
                                                 .getItems(0);
             assertEquals(LabelId.getDefaultInstance(), taskView.getLabelId());
@@ -373,7 +373,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final TaskDraftFinalized taskDraftFinalized = taskDraftFinalizedInstance();
             dispatch(projection, createEvent(taskDraftFinalized));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getMyList();
             final int expectedViewListSize = 1;
             assertEquals(expectedViewListSize, taskListView.getItemsCount());
@@ -400,7 +400,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final TaskCompleted taskCompletedEvent = taskCompletedInstance();
             dispatch(projection, createEvent(taskCompletedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getMyList();
             final int expectedViewListSize = 1;
             assertEquals(expectedViewListSize, taskListView.getItemsCount());
@@ -421,7 +421,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                     taskCompletedInstance(TaskId.getDefaultInstance());
             dispatch(projection, createEvent(taskCompletedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getMyList();
             final int expectedViewListSize = 1;
             assertEquals(expectedViewListSize, taskListView.getItemsCount());
@@ -449,7 +449,7 @@ class MyListViewProjectionTest extends ProjectionTest {
             final TaskReopened taskReopenedEvent = taskReopenedInstance();
             dispatch(projection, createEvent(taskReopenedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getMyList();
             final int expectedViewListSize = 1;
             assertEquals(expectedViewListSize, taskListView.getItemsCount());
@@ -473,7 +473,7 @@ class MyListViewProjectionTest extends ProjectionTest {
                     taskReopenedInstance(TaskId.getDefaultInstance());
             dispatch(projection, createEvent(taskReopenedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getMyList();
             final int expectedViewListSize = 1;
             assertEquals(expectedViewListSize, taskListView.getItemsCount());

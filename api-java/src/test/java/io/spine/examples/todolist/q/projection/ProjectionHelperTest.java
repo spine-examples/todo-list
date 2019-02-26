@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("ProjectionHelper should")
-public class ProjectionHelperTest {
+class ProjectionHelperTest {
 
     private static final TaskId TASK_ID = TaskId.newBuilder()
                                                 .setValue(newUuid())

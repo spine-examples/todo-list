@@ -22,17 +22,15 @@ package io.spine.examples.todolist.c.aggregate.definition;
 
 import com.google.common.base.Throwables;
 import com.google.protobuf.Message;
-import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.events.TaskDeleted;
 import io.spine.examples.todolist.c.rejection.CannotDeleteTask;
-import io.spine.testing.server.ShardingReset;
+import io.spine.server.type.CommandEnvelope;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -46,7 +44,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(ShardingReset.class)
 @DisplayName("DeleteTask command should be interpreted by TaskPart and")
 public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
 
@@ -67,7 +64,7 @@ public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
 
         final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
-        final Task state = aggregate.getState();
+        final Task state = aggregate.state();
 
         assertEquals(entityId(), state.getId());
         assertEquals(DELETED, state.getTaskStatus());

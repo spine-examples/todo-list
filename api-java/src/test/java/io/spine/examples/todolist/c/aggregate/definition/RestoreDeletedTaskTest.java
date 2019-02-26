@@ -45,11 +45,9 @@ import io.spine.protobuf.AnyPacker;
 import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
 import io.spine.server.event.EventStreamQuery;
-import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,7 +72,6 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(ShardingReset.class)
 @DisplayName("RestoreDeletedTask command should be interpreted by TaskPart and")
 public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> {
 
@@ -92,7 +89,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         super.setUp();
         responseObserver = StreamObservers.memoizingObserver();
         boundedContext = BoundedContexts.create();
-        commandBus = boundedContext.getCommandBus();
+        commandBus = boundedContext.commandBus();
         TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, entityId());
         aggregate = new TaskPart(root);
     }
@@ -128,8 +125,8 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
                                                  .build();
         EventStreamObserver eventStreamObserver = new EventStreamObserver();
 
-        boundedContext.getEventBus()
-                      .getEventStore()
+        boundedContext.eventBus()
+                      .eventStore()
                       .read(query, eventStreamObserver);
         List<Event> events = eventStreamObserver.events;
         LabelledTaskRestored labelledTaskRestored =
@@ -155,7 +152,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
 
         restoreDeletedTask();
 
-        Task state = aggregate.getState();
+        Task state = aggregate.state();
         assertEquals(entityId(), state.getId());
         assertEquals(OPEN, state.getTaskStatus());
     }
@@ -168,13 +165,13 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         DeleteTask deleteTask = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTask));
 
-        Task state = aggregate.getState();
+        Task state = aggregate.state();
         assertEquals(entityId(), state.getId());
         assertEquals(DELETED, state.getTaskStatus());
 
         restoreDeletedTask();
 
-        state = aggregate.getState();
+        state = aggregate.state();
         assertEquals(entityId(), state.getId());
         assertEquals(OPEN, state.getTaskStatus());
     }

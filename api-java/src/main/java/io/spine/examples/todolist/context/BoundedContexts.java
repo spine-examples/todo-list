@@ -30,7 +30,7 @@ import io.spine.examples.todolist.repository.TaskCreationWizardRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
-import io.spine.server.event.Enricher;
+import io.spine.server.enrich.Enricher;
 import io.spine.server.event.EventBus;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;

@@ -36,7 +36,7 @@ import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
-import io.spine.server.event.Enricher;
+import io.spine.server.enrich.Enricher;
 import io.spine.server.event.EventBus;
 
 import java.util.Optional;
@@ -79,7 +79,7 @@ public class TodoListEnrichments {
             if (!aggregate.isPresent()) {
                 return Task.getDefaultInstance();
             }
-            final Task task = aggregate.get().getState();
+            final Task task = aggregate.get().state();
             return task;
         };
         return result;
@@ -94,7 +94,7 @@ public class TodoListEnrichments {
             if (!aggregate.isPresent()) {
                 return TaskDetails.getDefaultInstance();
             }
-            final Task state = aggregate.get().getState();
+            final Task state = aggregate.get().state();
             final TaskDetails details = TaskDetailsVBuilder
                     .newBuilder()
                     .setDescription(state.getDescription())
@@ -116,7 +116,7 @@ public class TodoListEnrichments {
                 return LabelIdsList.getDefaultInstance();
             }
             final LabelIdsList state = aggregate.get()
-                                                .getState()
+                                                .state()
                                                 .getLabelIdsList();
             return state;
         };
@@ -132,7 +132,7 @@ public class TodoListEnrichments {
             if (!aggregate.isPresent()) {
                 return LabelDetails.getDefaultInstance();
             }
-            final TaskLabel state = aggregate.get().getState();
+            final TaskLabel state = aggregate.get().state();
             final LabelDetails labelDetails = LabelDetailsVBuilder
                     .newBuilder()
                     .setColor(state.getColor())

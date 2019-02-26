@@ -31,7 +31,7 @@ import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
-import io.spine.server.event.Enricher;
+import io.spine.server.enrich.Enricher;
 
 import java.util.function.BiFunction;
 

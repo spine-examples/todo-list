@@ -24,7 +24,6 @@ import com.google.protobuf.Message;
 import io.spine.base.CommandMessage;
 import io.spine.change.ValueMismatch;
 import io.spine.core.Command;
-import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelDetailsUpdateRejected;
@@ -39,14 +38,13 @@ import io.spine.examples.todolist.c.rejection.CannotUpdateLabelDetails;
 import io.spine.examples.todolist.c.rejection.Rejections;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.server.entity.Repository;
+import io.spine.server.type.CommandEnvelope;
 import io.spine.testing.client.TestActorRequestFactory;
-import io.spine.testing.server.ShardingReset;
 import io.spine.testing.server.aggregate.AggregateCommandTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -61,7 +59,7 @@ import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispa
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(ShardingReset.class)
+@DisplayName("LabelAggregate should")
 class LabelAggregateTest {
 
     @Nested
@@ -93,7 +91,7 @@ class LabelAggregateTest {
         void createLabel() {
             createBasicLabel();
 
-            final TaskLabel state = aggregate.getState();
+            final TaskLabel state = aggregate.state();
 
             assertEquals(entityId(), state.getId());
             assertEquals(DEFAULT_LABEL_COLOR, state.getColor());
@@ -145,7 +143,7 @@ class LabelAggregateTest {
             UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(entityId());
             dispatchUpdateLabelDetails(updateLabelDetails);
 
-            TaskLabel state = aggregate.getState();
+            TaskLabel state = aggregate.state();
             assertEquals(entityId(), state.getId());
             assertEquals(LabelColor.GREEN, state.getColor());
             assertEquals(UPDATED_LABEL_TITLE, state.getTitle());
@@ -167,7 +165,7 @@ class LabelAggregateTest {
                                                             newLabelDetails);
             dispatchUpdateLabelDetails(updateLabelDetails);
 
-            state = aggregate.getState();
+            state = aggregate.state();
             assertEquals(entityId(), state.getId());
             assertEquals(updatedLabelColor, state.getColor());
             assertEquals(updatedTitle, state.getTitle());
@@ -176,7 +174,7 @@ class LabelAggregateTest {
         @Test
         @DisplayName("produce CannotUpdateLabelDetails rejection " +
                 "when the label details does not match expected")
-        void cannotUpdateLabelDetails() throws CannotUpdateLabelDetails {
+        void cannotUpdateLabelDetails() {
             final LabelDetails expectedLabelDetails = LabelDetailsVBuilder
                     .newBuilder()
                     .setColor(LabelColor.BLUE)
@@ -218,7 +216,7 @@ class LabelAggregateTest {
             extends AggregateCommandTest<LabelId, C, TaskLabel, LabelAggregate> {
 
         private final TestActorRequestFactory requestFactory =
-                TestActorRequestFactory.newInstance(getClass());
+                new TestActorRequestFactory(getClass());
 
         LabelAggregate aggregate;
 
@@ -238,7 +236,7 @@ class LabelAggregateTest {
         }
 
         @Override
-        protected Repository<LabelId, LabelAggregate> createEntityRepository() {
+        protected Repository<LabelId, LabelAggregate> createRepository() {
             return new LabelAggregateRepository();
         }
 

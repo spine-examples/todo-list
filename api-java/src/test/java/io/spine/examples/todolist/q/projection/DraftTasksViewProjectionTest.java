@@ -88,7 +88,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
         void addView() {
             taskDraftCreated();
 
-            final TaskListView listView = projection.getState()
+            final TaskListView listView = projection.state()
                                                     .getDraftTasks();
             assertEquals(1, listView.getItemsCount());
 
@@ -112,7 +112,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
             final TaskDraftFinalized taskDraftFinalizedEvent = taskDraftFinalizedInstance();
             dispatch(projection, createEvent(taskDraftFinalizedEvent));
 
-            final List<TaskItem> views = projection.getState()
+            final List<TaskItem> views = projection.state()
                                                    .getDraftTasks()
                                                    .getItemsList();
             assertTrue(views.isEmpty());
@@ -131,7 +131,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
             final TaskDeleted taskDeletedEvent = taskDeletedInstance();
             dispatch(projection, createEvent(taskDeletedEvent));
 
-            final List<TaskItem> views = projection.getState()
+            final List<TaskItem> views = projection.state()
                                                    .getDraftTasks()
                                                    .getItemsList();
             assertTrue(views.isEmpty());
@@ -153,7 +153,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                     taskDescriptionUpdatedInstance(expectedTaskId, UPDATED_DESCRIPTION);
             dispatch(projection, createEvent(descriptionUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -174,7 +174,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                                                    UPDATED_DESCRIPTION);
             dispatch(projection, createEvent(descriptionUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -202,7 +202,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                     taskDueDateUpdatedInstance(expectedTaskId, updatedDueDate);
             dispatch(projection, createEvent(taskDueDateUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -223,7 +223,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                     taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), updatedDueDate);
             dispatch(projection, createEvent(taskDueDateUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -251,7 +251,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                     taskPriorityUpdatedInstance(expectedTaskId, updatedTaskPriority);
             dispatch(projection, createEvent(taskPriorityUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -272,7 +272,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                     taskPriorityUpdatedInstance(TaskId.getDefaultInstance(), updatedTaskPriority);
             dispatch(projection, createEvent(taskPriorityUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -305,7 +305,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                     labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
             dispatch(projection, createEvent(labelDetailsUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -335,7 +335,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
                     labelDetailsUpdatedInstance(LABEL_ID, updatedColor, UPDATED_LABEL_TITLE);
             dispatch(projection, createEvent(labelDetailsUpdatedEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 
@@ -361,7 +361,7 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
             final LabelRemovedFromTask labelRemovedFromTaskEvent = labelRemovedFromTaskInstance();
             dispatch(projection, createEvent(labelRemovedFromTaskEvent));
 
-            final TaskListView taskListView = projection.getState()
+            final TaskListView taskListView = projection.state()
                                                         .getDraftTasks();
             assertEquals(1, taskListView.getItemsCount());
 

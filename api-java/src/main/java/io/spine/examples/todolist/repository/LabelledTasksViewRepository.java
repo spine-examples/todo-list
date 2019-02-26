@@ -50,7 +50,7 @@ import static java.util.Collections.singleton;
 /**
  * Repository for the {@link LabelledTasksViewProjection}.
  */
-public class LabelledTasksViewRepository
+public final class LabelledTasksViewRepository
         extends ProjectionRepository<LabelId, LabelledTasksViewProjection, LabelledTasksView> {
 
     public LabelledTasksViewRepository() {
@@ -60,12 +60,10 @@ public class LabelledTasksViewRepository
 
     /**
      * Adds the {@link EventRoute}s to the repository.
-     * Should to be overridden in an successor classes,
-     * otherwise all successors will use {@code LabelId}
-     * and only with specified events below.
      */
-    protected void setUpEventRoute() {
-        final EventRouting<LabelId> routing = getEventRouting();
+    @SuppressWarnings("OverlyCoupledMethod") // A lot of routed event types.
+    private void setUpEventRoute() {
+        final EventRouting<LabelId> routing = eventRouting();
         routing.route(LabelAssignedToTask.class, 
                       (message, context) -> singleton(message.getLabelId()));
         routing.route(LabelRemovedFromTask.class,

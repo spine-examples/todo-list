@@ -74,13 +74,13 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRej
  *     <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
  *         i.e. no stages may follow this stage. At this stage the supervised task is finalized and
  *         the current instance of {@code TaskCreationWizard} is
- *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived}. It is
+ *         {@linkplain io.spine.server.entity.Entity#isArchived()} () archived}. It is
  *         required that the process is in the <b>Confirmation</b> stage before moving to this
  *         stage.
  *     <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.
  *         The user may return to the supervised task (which persists as a draft) and finalize it
  *         manually. This is a terminal stage. This instance of {@code TaskCreationWizard}
- *         is {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived} on this
+ *         is {@linkplain io.spine.server.entity.Entity#isArchived() archived} on this
  *         stage.
  * </ol>
  *
@@ -199,10 +199,10 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * @return the ID of the supervised task
+     * Obtains the ID of the supervised task.
      */
     private TaskId taskId() {
-        return getBuilder().getTaskId();
+        return builder().getTaskId();
     }
 
     /**
@@ -211,7 +211,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      * @param stage the requested stage
      */
     private void moveToStage(Stage stage) {
-        getBuilder().setStage(stage);
+        builder().setStage(stage);
     }
 
     /**
@@ -224,13 +224,13 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         if (pendingStage == CANCELED && !isTerminated()) {
             return;
         }
-        Stage currentStage = getBuilder().getStage();
+        Stage currentStage = builder().getStage();
         int expectedStageNumber = currentStage.getNumber() + 1;
         int actualStageNumber = pendingStage.getNumber();
         if (expectedStageNumber != actualStageNumber) {
             CannotMoveToStage rejection = CannotMoveToStage
                     .newBuilder()
-                    .setProcessId(getId())
+                    .setProcessId(id())
                     .setRequestedStage(pendingStage)
                     .setCurrentStage(currentStage)
                     .build();
@@ -244,7 +244,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      * @return {@code true} if current process state is terminal, {@code false} otherwise
      */
     private boolean isTerminated() {
-        Stage currentStage = getBuilder().getStage();
+        Stage currentStage = builder().getStage();
         return currentStage == COMPLETED || currentStage == CANCELED;
     }
 
@@ -254,10 +254,10 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      * @param cmd the command starting the process
      */
     private void initProcess(StartTaskCreation cmd) {
-        TaskCreationId id = getId();
+        TaskCreationId id = id();
         checkArgument(id.equals(cmd.getId()));
-        getBuilder().setId(id)
-                    .setTaskId(cmd.getTaskId());
+        builder().setId(id)
+                 .setTaskId(cmd.getTaskId());
     }
 
     /**
