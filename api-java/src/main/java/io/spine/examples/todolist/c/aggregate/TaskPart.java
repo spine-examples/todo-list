@@ -71,8 +71,8 @@ import io.spine.server.command.Assign;
 
 import java.util.List;
 
-import static com.google.protobuf.util.Timestamps.compare;
 import static com.google.common.collect.Lists.newLinkedList;
+import static com.google.protobuf.util.Timestamps.compare;
 import static io.spine.base.Time.getCurrentTime;
 import static io.spine.examples.todolist.c.aggregate.MismatchHelper.of;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.ensureCompleted;
@@ -339,7 +339,7 @@ public class TaskPart extends AggregatePart<TaskId,
      *****************/
 
     @Apply
-    private void taskCreated(TaskCreated event) {
+    void taskCreated(TaskCreated event) {
         final TaskDetails taskDetails = event.getDetails();
         builder().setId(event.getId())
                  .setCreated(getCurrentTime())
@@ -349,7 +349,7 @@ public class TaskPart extends AggregatePart<TaskId,
     }
 
     @Apply
-    private void taskDescriptionUpdated(TaskDescriptionUpdated event) {
+    void taskDescriptionUpdated(TaskDescriptionUpdated event) {
         final String newDescriptionValue = event.getDescriptionChange()
                                                 .getNewValue();
         final TaskDescription newDescription = TaskDescription.newBuilder()
@@ -359,51 +359,51 @@ public class TaskPart extends AggregatePart<TaskId,
     }
 
     @Apply
-    private void taskDueDateUpdated(TaskDueDateUpdated event) {
+    void taskDueDateUpdated(TaskDueDateUpdated event) {
         final Timestamp newDueDate = event.getDueDateChange()
                                           .getNewValue();
         builder().setDueDate(newDueDate);
     }
 
     @Apply
-    private void taskPriorityUpdated(TaskPriorityUpdated event) {
+    void taskPriorityUpdated(TaskPriorityUpdated event) {
         final TaskPriority newPriority = event.getPriorityChange()
                                               .getNewValue();
         builder().setPriority(newPriority);
     }
 
     @Apply
-    private void taskReopened(TaskReopened event) {
+    void taskReopened(TaskReopened event) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    private void taskDeleted(TaskDeleted event) {
+    void taskDeleted(TaskDeleted event) {
         builder().setTaskStatus(TaskStatus.DELETED);
     }
 
     @Apply
-    private void deletedTaskRestored(DeletedTaskRestored event) {
+    void deletedTaskRestored(DeletedTaskRestored event) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    private void labelledTaskRestored(LabelledTaskRestored event) {
+    void labelledTaskRestored(LabelledTaskRestored event) {
         builder().setTaskStatus(TaskStatus.OPEN);
     }
 
     @Apply
-    private void taskCompleted(TaskCompleted event) {
+    void taskCompleted(TaskCompleted event) {
         builder().setTaskStatus(TaskStatus.COMPLETED);
     }
 
     @Apply
-    private void taskDraftFinalized(TaskDraftFinalized event) {
+    void taskDraftFinalized(TaskDraftFinalized event) {
         builder().setTaskStatus(TaskStatus.FINALIZED);
     }
 
     @Apply
-    private void draftCreated(TaskDraftCreated event) {
+    void draftCreated(TaskDraftCreated event) {
         builder().setId(event.getId())
                  .setCreated(event.getDraftCreationTime())
                  .setDescription(event.getDetails()
