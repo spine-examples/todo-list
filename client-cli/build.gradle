@@ -18,8 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+ext {
+    jlineVersion = '3.3.0'
+}
+
 dependencies {
-    implementation 'org.jline:jline:3.3.0'
+    implementation "org.jline:jline:$jlineVersion"
 
     implementation project(path: ':client')
     implementation project(path: ':cli-core')

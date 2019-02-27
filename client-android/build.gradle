@@ -36,21 +36,7 @@ buildscript {
 }
 
 allprojects {
-    repositories {
-        google()
-        jcenter()
-        mavenCentral()
-
-        maven {
-            url = 'http://maven.teamdev.com/repository/spine-snapshots'
-        }
-
-        maven {
-            url = 'http://maven.teamdev.com/repository/spine'
-        }
-
-        mavenLocal()
-    }
+    defaultRepositories(project)
 }
 
 task clean(type: Delete) {

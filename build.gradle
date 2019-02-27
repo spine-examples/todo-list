@@ -18,19 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-buildscript {
+buildscript {final scriptHandler ->
     apply from: "$rootDir/config/gradle/dependencies.gradle"
     apply from: 'version.gradle'
 
-    repositories {
-        maven { url = repos.gradlePlugins }
-        google()
-        jcenter()
-        mavenCentral()
-        mavenLocal()
-        maven { url = repos.spine }
-        maven { url = repos.spineSnapshots }
-    }
+    defaultRepositories(scriptHandler)
 
     dependencies {
         classpath deps.build.guava
@@ -39,23 +31,15 @@ buildscript {
             exclude group: 'com.google.guava'
         }
         classpath deps.build.gradlePlugins.protobuf
-        classpath "gradle.plugin.org.gretty:gretty:$grettyVersion"
-        classpath "org.junit.platform:junit-platform-gradle-plugin:$jUnitPlatformVersion"
+        classpath deps.build.gradlePlugins.errorProne
+        classpath ("gradle.plugin.org.gretty:gretty:$grettyVersion") {
+            exclude group: 'commons-logging'
+        }
         classpath "io.spine.tools:spine-model-compiler:$spineBaseVersion"
         classpath "io.spine.tools:spine-model-verifier:$spineVersion"
         classpath "io.spine.tools:spine-proto-js-plugin:$spineBaseVersion"
     }
-
-    // The below suppressions `GroovyAssignabilityCheck` is a workaround for the IDEA bug.
-    // See: https://youtrack.jetbrains.com/issue/IDEA-141744
-    //noinspection GroovyAssignabilityCheck
-    configurations.all {
-        //noinspection GroovyAssignabilityCheck
-        resolutionStrategy {
-            // don't cache changing modules at all
-            cacheChangingModulesFor 0, 'seconds'
-        }
-    }
+    forceConfiguration(scriptHandler)
 }
 
 plugins {
@@ -87,19 +71,7 @@ allprojects {
     version = appVersion  // Version in generated output. This is the version of the code.
     // For the deployment version see `project.ext.getDeploymentVersion`.
 
-    repositories {
-        jcenter()
-        google()
-        mavenCentral()
-        mavenLocal()
-        maven { url = repos.gradlePlugins }
-
-        maven { url = repos.oldSpine }
-        maven { url = repos.oldSpineSnapshots }
-
-        maven { url = repos.spine }
-        maven { url = repos.spineSnapshots }
-    }
+    defaultRepositories(project)
 }
 
 // Suppress building the root project.
@@ -127,9 +99,12 @@ subprojects {
     apply plugin: 'java' /* The `java` plugin is required at this level for Gradle Protobuf plugin.
                             See https://github.com/google/protobuf-gradle-plugin#adding-the-plugin-to-your-project */
     apply plugin: 'com.google.protobuf'
-    apply plugin: 'org.junit.platform.gradle.plugin'
+    apply plugin: 'net.ltgt.errorprone'
+    apply plugin: 'pmd'
     apply plugin: 'io.spine.tools.spine-model-compiler'
     apply plugin: 'io.spine.tools.spine-model-verifier'
+
+    apply from: deps.scripts.javacArgs
 
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -137,33 +112,47 @@ subprojects {
     dependencies {
         compile deps.build.slf4j
 
+        errorprone deps.build.errorProneCore
+        errorproneJavac deps.build.errorProneJavac
+
         implementation deps.test.slf4j
-
         implementation deps.build.jsr305Annotations
-
         implementation deps.build.guava
-
         implementation "com.google.code.gson:gson:$gsonVersion"
-
         implementation deps.build.protobuf
-
         implementation "io.spine:spine-base:$spineBaseVersion"
-
         implementation "io.spine:spine-client:$spineVersion"
 
         annotationProcessor "io.spine.tools:spine-model-assembler:$spineVersion"
 
+        testImplementation deps.test.junit5Api
+        testImplementation deps.test.junit5Runner
         testImplementation deps.test.hamcrest
-
         testImplementation "io.spine:spine-testlib:${spineBaseVersion}"
         testImplementation "io.spine:spine-testutil-core:${spineVersion}"
         testImplementation "io.spine:spine-testutil-client:${spineVersion}"
-
         testImplementation "io.spine:spine-testutil-server:${spineVersion}"
-
-        testImplementation deps.test.junit5Api
-        testImplementation deps.test.junit5Runner
     }
+
+    test {
+        useJUnitPlatform {
+            includeEngines 'junit-jupiter'
+        }
+    }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled = true
+            html.enabled = true
+        }
+    }
+
+    // todo try remove and see if test report fails/becomes spoiled
+    jacocoTestReport.dependsOn {
+        subprojects*.test
+    }
+
+    build.dependsOn jacocoTestReport
 
     configurations.all {
         resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
@@ -177,21 +166,6 @@ subprojects {
         test {
             java.srcDirs = [generatedTestJavaDir, generatedTestSpineDir, "${sourcesRootDir}/test/java"]
             resources.srcDirs = ["${generatedRootDir}/test/resources", "${sourcesRootDir}/test/resources"]
-        }
-    }
-
-    junitPlatform {
-        platformVersion "${jUnitPlatformVersion}"
-
-        logManager 'java.util.logging.LogManager'
-
-        selectors {
-            directory "${sourcesRootDir}/test/java"
-            packages 'io.spine.examples.todolist', 'io.spine.cli', 'io.spine.server'
-        }
-
-        filters {
-            includeClassNamePatterns '.*Test'
         }
     }
 
@@ -215,25 +189,7 @@ subprojects {
         }
     }
 
-    // This is a workaround to make JUnit 5 work with Jacoco library.
-    // There is an open issue here:
-    // <link>https://discuss.gradle.org/t/jacocotestreport-task-fails-if-jacoco-plugin-is-applied-in-afterevaluate/835</link>
-    // todo:13-12-16:illia.shepilov: revisit the workaround once the issue is resolved.
-    project.afterEvaluate {
-        def junitPlatformTestTask = project.tasks.getByName('junitPlatformTest')
-
-        // configure jacoco to analyze the junitPlatformTest task
-        jacoco {
-            // this tool version is known to be compatible with JUnit 5.
-            toolVersion = "0.7.6.201602180812"
-            applyTo junitPlatformTestTask
-        }
-
-        codeCoverageReport.dependsOn {
-            subprojects*.test
-        }
-    }
-
+    apply from: deps.scripts.pmd
 }
 
 idea.project.ipr {
@@ -245,25 +201,6 @@ idea.project.ipr {
                 .find { it.@name == 'VcsDirectoryMappings' }
                 .mapping.@vcs = 'Git'
     }
-}
-
-task codeCoverageReport(type: JacocoReport) {
-    executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
-
-    subprojects.each {
-        sourceSets it.sourceSets.main
-    }
-
-    reports {
-        xml.enabled = true
-        xml.destination = new File("${buildDir}/reports/jacoco/report.xml")
-        html.enabled = false
-        csv.enabled = false
-    }
-}
-
-codeCoverageReport.dependsOn {
-    subprojects*.test
 }
 
 // This Travis configuration is copied from Protobuf Gradle Plugin build.
