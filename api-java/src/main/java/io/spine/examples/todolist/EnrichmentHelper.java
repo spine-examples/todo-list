@@ -25,6 +25,8 @@ import io.spine.core.EventContext;
 
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Utility class for working with enrichments.
  */
@@ -44,6 +46,8 @@ public final class EnrichmentHelper {
      */
     public static <T extends EnrichmentMessage, E extends Class<T>>
     T getEnrichment(E enrichmentClass, EventContext context) {
+        checkNotNull(enrichmentClass);
+        checkNotNull(context);
         final Optional<T> enrichmentOptional = context.find(enrichmentClass);
         if (enrichmentOptional.isPresent()) {
             return enrichmentOptional.get();

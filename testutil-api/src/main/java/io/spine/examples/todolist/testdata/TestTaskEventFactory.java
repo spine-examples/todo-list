@@ -47,10 +47,8 @@ import static io.spine.base.Time.getCurrentTime;
 
 /**
  * A factory of the task events for the test needs.
- *
- * @author Illia Shepilov
  */
-public class TestTaskEventFactory {
+public final class TestTaskEventFactory {
 
     public static final String UPDATED_DESCRIPTION = "Updated description.";
     public static final String DESCRIPTION = "Task description.";

@@ -20,13 +20,13 @@
 
 package io.spine.examples.todolist;
 
+import com.google.common.testing.NullPointerTester;
 import io.spine.core.EventContext;
 import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
 import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("EnrichmentHelper should")
@@ -34,6 +34,11 @@ class EnrichmentHelperTest extends UtilityClassTest<EnrichmentHelper> {
 
     EnrichmentHelperTest() {
         super(EnrichmentHelper.class);
+    }
+
+    @Override
+    protected void configure(NullPointerTester tester) {
+        tester.setDefault(EventContext.class, EventContext.getDefaultInstance());
     }
 
     @Test
