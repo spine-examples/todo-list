@@ -59,6 +59,8 @@ class EditCommandActionTest {
         bot = new Bot();
     }
 
+    @SuppressWarnings({"CheckReturnValue", "ResultOfMethodCallIgnored"})
+    // Method called to throw exception.
     @Test
     @DisplayName("not allow empty edits")
     void notAllowEmptyEdits() {

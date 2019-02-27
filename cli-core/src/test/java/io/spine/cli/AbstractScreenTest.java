@@ -93,6 +93,7 @@ class AbstractScreenTest {
         assertFalse(back.isPresent());
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent") // In test we know for sure it's there.
     @Test
     @DisplayName("create back action if there is back destination")
     void createBackAction() {

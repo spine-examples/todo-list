@@ -41,8 +41,8 @@ class AbstractActionProducerTest {
         assertThrows(NullPointerException.class, () -> newProducer(VALID_NAME, null));
     }
 
-    private static AbstractActionProducer<View, View, Action<View, View>> newProducer(String name,
-                                                                                      Shortcut shortcut) {
+    private static AbstractActionProducer<View, View, Action<View, View>>
+    newProducer(String name, Shortcut shortcut) {
         return new AnAbstractActionProducer<>(name, shortcut);
     }
 

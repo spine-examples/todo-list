@@ -65,6 +65,8 @@ class ConfirmationTest {
         assertFalse(result);
     }
 
+    @SuppressWarnings({"CheckReturnValue", "ResultOfMethodCallIgnored"})
+    // Just verify inner state of the bot.
     @Test
     @DisplayName("ask a user again while question is not valid")
     void askAgainWhileAnswerIsNotValid() {

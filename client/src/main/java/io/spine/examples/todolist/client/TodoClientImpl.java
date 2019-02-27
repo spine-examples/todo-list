@@ -244,7 +244,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
 
     private static ManagedChannel initChannel(String host, int port) {
         ManagedChannel result = ManagedChannelBuilder.forAddress(host, port)
-                                                     .usePlaintext(true)
+                                                     .usePlaintext()
                                                      .build();
         return result;
     }
@@ -268,7 +268,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
      *
      * <p>The errors and completion acknowledgements are translated directly to the delegate.
      *
-     * <p>The {@linkplain SubscriptionUpdate#getEntityStateUpdatesList() messages} are unpacked
+     * <p>The {@linkplain SubscriptionUpdate#getEntityUpdates() messages} are unpacked
      * and sent to the delegate observer one by one.
      *
      * @param <M> the type of the delegate observer messages
@@ -285,7 +285,8 @@ final class TodoClientImpl implements SubscribingTodoClient {
         @SuppressWarnings("unchecked") // Logically correct.
         @Override
         public void onNext(SubscriptionUpdate value) {
-            value.getEntityStateUpdatesList()
+            value.getEntityUpdates()
+                 .getUpdatesList()
                  .stream()
                  .map(EntityStateUpdate::getState)
                  .map(any -> (M) unpack(any))

@@ -47,9 +47,6 @@ public abstract class AbstractScreen implements Screen {
      */
     private final List<View> history = newArrayList();
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void renderView(View view) {
         if (isPreviousView(view)) {
@@ -61,9 +58,6 @@ public abstract class AbstractScreen implements Screen {
         view.render(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Optional<TransitionAction<View, View>> createBackAction(String name, Shortcut shortcut) {
         final int currentIndex = getCurrentViewIndex();

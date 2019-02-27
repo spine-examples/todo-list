@@ -28,10 +28,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * Abstract base class for the {@link ActionProducer}.
- *
- * @param <S> {@inheritDoc}
- * @param <D> {@inheritDoc}
- * @param <T> {@inheritDoc}
  */
 public abstract class AbstractActionProducer<S extends View,
                                              D extends View,

@@ -29,7 +29,6 @@ import io.spine.cli.action.EditCommandAction;
 import io.spine.reflect.GenericTypeIndex;
 import io.spine.validate.ConstraintViolation;
 import io.spine.validate.ValidatingBuilder;
-import io.spine.validate.ValidatingBuilders;
 import io.spine.validate.ValidationException;
 
 import java.util.Collection;
@@ -69,8 +68,6 @@ public abstract class CommandView<M extends Message,
 
     /**
      * Renders {@link #recentViolations} and the {@link #state} of the command message.
-     *
-     * @param screen {@inheritDoc}
      */
     @Override
     protected void renderBody(Screen screen) {
@@ -83,8 +80,6 @@ public abstract class CommandView<M extends Message,
      * {@inheritDoc}
      *
      * <p>Handles a {@link ValidationException} in the case of occurrence.
-     *
-     * @param action {@inheritDoc}
      */
     @Override
     protected void executeAction(Action action) {
@@ -125,7 +120,7 @@ public abstract class CommandView<M extends Message,
         final Class<? extends CommandView<M, B>> aClass =
                 (Class<? extends CommandView<M, B>>) getClass();
         final Class<B> builderClass = TypeInfo.getBuilderClass(aClass);
-        final B builder = ValidatingBuilders.newInstance(builderClass);
+        final B builder = ValidatingBuilder.newInstance(builderClass);
         return builder;
     }
 
@@ -170,7 +165,7 @@ public abstract class CommandView<M extends Message,
         Class<B> getBuilderClass(Class<? extends CommandView<M, B>> entityClass) {
             checkNotNull(entityClass);
             @SuppressWarnings("unchecked") // The type is ensured by this class declaration.
-            final Class<B> builderClass = (Class<B>) STATE_BUILDER.getArgumentIn(entityClass);
+            final Class<B> builderClass = (Class<B>) STATE_BUILDER.argumentIn(entityClass);
             return builderClass;
         }
     }

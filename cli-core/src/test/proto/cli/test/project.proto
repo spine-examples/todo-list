@@ -18,12 +18,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: "$rootDir/scripts/publish.gradle"
+syntax = "proto3";
 
-dependencies {
-    compile project(path: ':model')
-    testImplementation project(path: ':testutil-api')
-    testImplementation project(path: ':server')
+package io.spine.cli;
 
-    implementation deps.grpc.grpcProtobuf
+import "spine/options.proto";
+
+option (type_url_prefix) = "type.spine.cli";
+option java_package = "io.spine.cli";
+option java_outer_classname = "ProjectProto";
+option java_multiple_files = true;
+
+message ProjectId {
+    string value = 1;
 }

@@ -23,8 +23,8 @@ package io.spine.cli.action;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.google.common.truth.Truth.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -51,7 +51,7 @@ class ShortcutTest {
     @Test
     @DisplayName("consider other classes not equal")
     void considerOtherClassesNotEqual() {
-        assertFalse(SHORTCUT.equals(null)); // `assertNotEquals` does not suit for null comparison.
+        assertThat(SHORTCUT).isNotNull();
         assertNotEquals(VALUE, SHORTCUT);
     }
 

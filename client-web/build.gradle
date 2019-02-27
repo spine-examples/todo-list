@@ -20,6 +20,8 @@
 
 ext {
     compiledProto = "$projectDir/proto"
+    genProtoMain = "$compiledProto/main"
+    genProtoTest = "$compiledProto/test"
 }
 
 apply from: "$projectDir/scripts/js.gradle"
@@ -40,9 +42,6 @@ protobuf {
     }
     generateProtoTasks {
         all().each { final task ->
-            task.plugins {
-                task.generateDescriptorSet = false
-            }
             task.builtins {
                 // TODO:2018-05-14:dmytro.dashenkov: Disable `java` and `grpc` plugins.
                 // TODO https://github.com/SpineEventEngine/todo-list/issues/62
@@ -52,20 +51,24 @@ protobuf {
                 }
 
                 task.generateDescriptorSet = true
-                task.descriptorSetOptions.path = "${projectDir}/build/descriptors/${task.sourceSet.name}/known_types.desc"
+                final def testClassifier = task.sourceSet.name == "test" ? "_test" : ""
+                final def descriptorName = "${project.group}_${project.name}_${project.version}${testClassifier}.desc"
+                task.descriptorSetOptions.path = "${projectDir}/build/descriptors/${task.sourceSet.name}/${descriptorName}"
             }
             compileProtoToJs.dependsOn task
         }
     }
 }
 
-compileJs.dependsOn compileProtoToJs
-
 apply plugin: 'io.spine.tools.proto-js-plugin'
 
 protoJs {
+    mainGenProtoDir = genProtoMain
+    testGenProtoDir = genProtoTest
+
     generateParsersTask().dependsOn compileProtoToJs
     compileJs.dependsOn generateParsersTask()
 }
 
-compileJava.enabled = false
+project.compileJava.enabled = false
+project.compileTestJava.enabled = false

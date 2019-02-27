@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server;
 
+import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
@@ -28,14 +29,10 @@ import io.spine.server.transport.GrpcContainer;
 
 import java.io.IOException;
 
-import static io.spine.server.event.EventStore.log;
-
 /**
  * Sample gRPC server implementation.
- *
- * @author Illia Shepilov
  */
-public class Server {
+public class Server implements Logging {
 
     private final int port;
     private final GrpcContainer grpcContainer;
@@ -117,7 +114,7 @@ public class Server {
      */
     public void start() throws IOException {
         startServer();
-        log().info("Server started, listening to commands on the port {}.", port);
+        _info("Server started, listening to commands on the port {}.", port);
         awaitTermination();
     }
 

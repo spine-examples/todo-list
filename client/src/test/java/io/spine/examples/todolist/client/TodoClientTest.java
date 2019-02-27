@@ -34,10 +34,6 @@ import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.server.Server;
 import io.spine.server.BoundedContext;
-import io.spine.server.ServerEnvironment;
-import io.spine.server.delivery.InProcessSharding;
-import io.spine.server.delivery.Sharding;
-import io.spine.server.transport.memory.InMemoryTransportFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -76,10 +72,6 @@ abstract class TodoClientTest {
     public void tearDown() {
         server.shutdown();
         getClient().shutdown();
-
-        Sharding sharding = new InProcessSharding(InMemoryTransportFactory.newInstance());
-        ServerEnvironment.getInstance()
-                         .replaceSharding(sharding);
     }
 
     private void startServer() throws InterruptedException {
