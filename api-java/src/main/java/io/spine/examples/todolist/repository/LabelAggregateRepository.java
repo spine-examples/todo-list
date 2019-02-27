@@ -20,13 +20,12 @@
 
 package io.spine.examples.todolist.repository;
 
-import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.examples.todolist.LabelId;
-import io.spine.server.BoundedContext;
+import io.spine.examples.todolist.c.aggregate.LabelAggregate;
 import io.spine.server.aggregate.AggregateRepository;
 
 /**
- * Repository for the {@link LabelAggregate}.
+ * Repository managing {@link LabelAggregate} instances.
  */
 public class LabelAggregateRepository extends AggregateRepository<LabelId, LabelAggregate> {
 }
