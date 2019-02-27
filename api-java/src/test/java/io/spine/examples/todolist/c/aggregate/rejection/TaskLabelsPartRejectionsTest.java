@@ -45,7 +45,7 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRej
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DisplayName("TaskLabelsPartRejections should")
+@DisplayName("TaskLabelsPartRejections utility should")
 class TaskLabelsPartRejectionsTest extends UtilityClassTest<TaskLabelsPartRejections> {
 
     TaskLabelsPartRejectionsTest() {

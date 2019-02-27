@@ -23,7 +23,7 @@ package io.spine.examples.todolist.client.builder;
 /**
  * Utility class for working with command builders.
  *
- * <p> Provides methods for building commands.
+ * <p>Provides methods for building commands.
  */
 public final class CommandBuilder {
 

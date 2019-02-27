@@ -74,7 +74,7 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRej
  *     <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
  *         i.e. no stages may follow this stage. At this stage the supervised task is finalized and
  *         the current instance of {@code TaskCreationWizard} is
- *         {@linkplain io.spine.server.entity.Entity#isArchived()} () archived}. It is
+ *         {@linkplain io.spine.server.entity.Entity#isArchived() archived}. It is
  *         required that the process is in the <b>Confirmation</b> stage before moving to this
  *         stage.
  *     <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.

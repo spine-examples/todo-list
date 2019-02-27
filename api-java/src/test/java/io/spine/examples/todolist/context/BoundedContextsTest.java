@@ -21,20 +21,18 @@
 package io.spine.examples.todolist.context;
 
 import io.spine.server.event.EventBus;
+import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.context.BoundedContexts.createBoundedContext;
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DisplayName("BoundedContexts should")
-class BoundedContextsTest {
+@DisplayName("BoundedContexts utility should")
+class BoundedContextsTest extends UtilityClassTest<BoundedContexts> {
 
-    @Test
-    @DisplayName("have the private parameterless constructor")
-    void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(BoundedContexts.class);
+    BoundedContextsTest() {
+        super(BoundedContexts.class);
     }
 
     @Test

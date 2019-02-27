@@ -29,7 +29,7 @@ import io.spine.protobuf.AnyPacker;
 /**
  * Utility class for working with mismatches.
  */
-class MismatchHelper {
+final class MismatchHelper {
 
     private MismatchHelper() {
     }
@@ -43,8 +43,10 @@ class MismatchHelper {
      * @param version          the version of the entity in which the mismatch is discovered
      * @return new {@code ValueMismatch} instance
      */
-    static ValueMismatch of(TaskPriority expectedPriority, TaskPriority actualPriority,
-            TaskPriority newPriority, Version version) {
+    static ValueMismatch valueMismatch(TaskPriority expectedPriority,
+                                       TaskPriority actualPriority,
+                                       TaskPriority newPriority,
+                                       Version version) {
         final TaskPriorityValue actualPriorityValue =
                 TaskPriorityValue.newBuilder()
                                  .setPriorityValue(actualPriority)

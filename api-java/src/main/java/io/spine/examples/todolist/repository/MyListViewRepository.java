@@ -31,9 +31,11 @@ import static java.util.Collections.singleton;
 /**
  * Repository for the {@link MyListViewProjection}.
  */
-public final class MyListViewRepository
+public class MyListViewRepository
         extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {
 
+    @SuppressWarnings("OverridableMethodCallDuringObjectConstruction")
+    // Relying onto implementor judgement.
     public MyListViewRepository() {
         super();
         setUpEventRoute();
@@ -41,8 +43,11 @@ public final class MyListViewRepository
 
     /**
      * Adds the {@link io.spine.server.route.EventRoute EventRoute}s to the repository.
+     * Should be overridden in the descendant classes,
+     * otherwise all successors will use {@code MyListViewProjection.ID}
+     * and only with the events specified below.
      */
-    private void setUpEventRoute() {
-        eventRouting().replaceDefault(((message, context) -> singleton(ID)));
+    protected void setUpEventRoute() {
+        eventRouting().replaceDefault((message, context) -> singleton(ID));
     }
 }

@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.c.procman;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Timestamp;
 import io.spine.base.CommandMessage;
@@ -52,7 +53,6 @@ import java.util.Collection;
 import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.of;
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.LabelColor.GRAY;
 import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
@@ -230,7 +230,7 @@ final class WizardCommands {
         CommandMessage createBasicLabel = createLabel(labelId, label);
         CommandMessage updateLabelDetails = setColorToLabel(labelId, label);
         CommandMessage assignLabelToTask = assignLabel(labelId);
-        return of(createBasicLabel, updateLabelDetails, assignLabelToTask).stream();
+        return ImmutableList.of(createBasicLabel, updateLabelDetails, assignLabelToTask).stream();
     }
 
     /**

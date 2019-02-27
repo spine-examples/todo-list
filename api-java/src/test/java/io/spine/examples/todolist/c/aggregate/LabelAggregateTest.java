@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.c.aggregate;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.protobuf.Message;
 import io.spine.base.CommandMessage;
 import io.spine.change.ValueMismatch;
@@ -63,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class LabelAggregateTest {
 
     @Nested
-    @DisplayName("CreateBasicLabel command should be interpreted by LabelAggregate and")
+    @DisplayName("interpret CreateBasicLabel command and")
     class CreateBasicLabelCommand extends LabelAggregateCommandTest<CreateBasicLabel> {
 
         CreateBasicLabelCommand() {
@@ -100,7 +101,7 @@ class LabelAggregateTest {
     }
 
     @Nested
-    @DisplayName("UpdateLabelDetails command should be interpreted by LabelAggregate and")
+    @DisplayName("interpret UpdateLabelDetails command and")
     class UpdateLabelDetailsCommand extends LabelAggregateCommandTest<UpdateLabelDetails> {
 
         UpdateLabelDetailsCommand() {
@@ -113,6 +114,7 @@ class LabelAggregateTest {
             createBasicLabel();
         }
 
+        @CanIgnoreReturnValue
         private List<? extends Message> dispatchUpdateLabelDetails(UpdateLabelDetails details) {
             return dispatchCommand(aggregate, envelopeOf(details));
         }
@@ -171,6 +173,8 @@ class LabelAggregateTest {
             assertEquals(updatedTitle, state.getTitle());
         }
 
+        @SuppressWarnings({"CheckReturnValue", "ResultOfMethodCallIgnored"})
+        // Method called to throw exception.
         @Test
         @DisplayName("produce CannotUpdateLabelDetails rejection " +
                 "when the label details does not match expected")
@@ -220,7 +224,7 @@ class LabelAggregateTest {
 
         LabelAggregate aggregate;
 
-        protected LabelAggregateCommandTest(C commandMessage) {
+        LabelAggregateCommandTest(C commandMessage) {
             super(LABEL_ID, commandMessage);
         }
 
@@ -240,6 +244,7 @@ class LabelAggregateTest {
             return new LabelAggregateRepository();
         }
 
+        @CanIgnoreReturnValue
         List<? extends Message> createBasicLabel() {
             final CreateBasicLabel createBasicLabel = createLabelInstance();
             final Command command = createNewCommand(createBasicLabel);

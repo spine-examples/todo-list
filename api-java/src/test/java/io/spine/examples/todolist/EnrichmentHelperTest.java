@@ -22,6 +22,7 @@ package io.spine.examples.todolist;
 
 import io.spine.core.EventContext;
 import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
+import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -29,12 +30,10 @@ import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("EnrichmentHelper should")
-class EnrichmentHelperTest {
+class EnrichmentHelperTest extends UtilityClassTest<EnrichmentHelper> {
 
-    @Test
-    @DisplayName("have the private constructor")
-    void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(EnrichmentHelper.class);
+    EnrichmentHelperTest() {
+        super(EnrichmentHelper.class);
     }
 
     @Test

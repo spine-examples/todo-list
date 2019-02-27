@@ -51,8 +51,8 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
 /**
  * A projection state of the finalized tasks.
  *
- * <p> Contains the task list view items.
- * <p> This view includes all tasks that are not in a draft state and not deleted.
+ * <p>Contains the task list view items.
+ * <p>This view includes all tasks that are not in a draft state and not deleted.
  */
 @SuppressWarnings("OverlyCoupledClass")
 public class MyListViewProjection extends Projection<TaskListId, MyListView, MyListViewVBuilder> {
@@ -179,7 +179,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
         addTaskItem(view);
     }
 
-    private void updateMyListView(List<TaskItem> updatedList) {
+    private void updateMyListView(Iterable<TaskItem> updatedList) {
         final TaskListView listView = TaskListView.newBuilder()
                                                   .addAllItems(updatedList)
                                                   .build();

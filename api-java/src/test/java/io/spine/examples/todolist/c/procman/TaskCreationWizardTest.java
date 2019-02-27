@@ -89,10 +89,10 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.TaskCreation.Stage.CANCELED;
@@ -110,7 +110,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("InnerClassMayBeStatic") // Nested test suites.
 @DisplayName("Task creation wizard on ")
 class TaskCreationWizardTest {
 
@@ -190,7 +189,7 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setNewValue(dueDate)
                     .build();
-            Stack<CommandMessage> producedCommands = memoizingHandler().received;
+            ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
 
             assertThat(producedCommands, containsInAnyOrder(
                     UpdateTaskDescriptionVBuilder.newBuilder()
@@ -245,7 +244,7 @@ class TaskCreationWizardTest {
                     instanceOf(CreateBasicLabel.class),  // 1 label creation with details updates
                     instanceOf(UpdateLabelDetails.class)
             );
-            Stack<CommandMessage> producedCommands = memoizingHandler().received;
+            ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
             assertThat(producedCommands, containsInAnyOrder(expectedCommands));
             assertEquals(CONFIRMATION, getStage());
         }
@@ -308,7 +307,7 @@ class TaskCreationWizardTest {
                     .setId(getId())
                     .build();
             dispatch(cmd);
-            Stack<CommandMessage> producedCommands = memoizingHandler().received;
+            ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
             CommandMessage producedCommand = producedCommands.pop();
             FinalizeDraft expectedCmd = FinalizeDraftVBuilder
                     .newBuilder()
@@ -478,8 +477,9 @@ class TaskCreationWizardTest {
 
         private static final class MemoizingCommandHandler implements CommandDispatcher<Object> {
 
-            private final Stack<CommandMessage> received = new Stack<>();
+            private final ArrayDeque<CommandMessage> received = new ArrayDeque<>();
 
+            @SuppressWarnings("BadImport") // Actually enhances readability.
             @Override
             public Set<CommandClass> messageClasses() {
                 return ImmutableSet.of(

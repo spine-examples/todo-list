@@ -74,7 +74,7 @@ import java.util.List;
 import static com.google.common.collect.Lists.newLinkedList;
 import static com.google.protobuf.util.Timestamps.compare;
 import static io.spine.base.Time.getCurrentTime;
-import static io.spine.examples.todolist.c.aggregate.MismatchHelper.of;
+import static io.spine.examples.todolist.c.aggregate.MismatchHelper.valueMismatch;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.ensureCompleted;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.ensureDeleted;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.ensureNeitherCompletedNorDeleted;
@@ -103,8 +103,9 @@ import static java.util.Collections.singletonList;
                                                  The {@code AggregatePart} does it with methods
                                                  annotated as {@code Assign} and {@code Apply}.
                                                  In that case class has too many methods.*/
-        "OverlyCoupledClass"}) /* As each method needs dependencies  necessary to perform execution
-                                                 that class also overly coupled.*/
+        "OverlyCoupledClass" /* As each method needs dependencies  necessary to perform execution
+                                                 that class also overly coupled.*/,
+        "unused" /* Methods are used reflectively by Spine. */})
 public class TaskPart extends AggregatePart<TaskId,
                                             Task,
                                             TaskVBuilder,
@@ -204,8 +205,8 @@ public class TaskPart extends AggregatePart<TaskId,
 
         if (!isEquals) {
             final TaskPriority newPriority = priorityChange.getNewValue();
-            final ValueMismatch mismatch = of(expectedPriority, actualPriority, newPriority,
-                                              getVersion());
+            final ValueMismatch mismatch =
+                    valueMismatch(expectedPriority, actualPriority, newPriority, getVersion());
             throwCannotUpdateTaskPriority(cmd, mismatch);
         }
 

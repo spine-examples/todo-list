@@ -46,8 +46,7 @@ import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRej
 /**
  * The aggregate managing the state of a {@link TaskLabel}.
  */
-@SuppressWarnings("unused" /* The methods annotated with {@link Apply}
-                              are declared {@code private} by design. */)
+@SuppressWarnings("unused") // A lot of reflectively used handler methods.
 public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuilder> {
 
     @VisibleForTesting

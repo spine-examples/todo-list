@@ -22,6 +22,7 @@ package io.spine.examples.todolist.q.projection;
 
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.TaskId;
+import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("ProjectionHelper should")
-class ProjectionHelperTest {
+class ProjectionHelperTest extends UtilityClassTest<ProjectionHelper> {
 
     private static final TaskId TASK_ID = TaskId.newBuilder()
                                                 .setValue(newUuid())
@@ -48,15 +49,13 @@ class ProjectionHelperTest {
     private TaskItem viewWithDefaultTaskId;
     private List<TaskItem> viewList;
 
+    ProjectionHelperTest() {
+        super(ProjectionHelper.class);
+    }
+
     @BeforeEach
     public void setUp() {
         viewList = createViewList();
-    }
-
-    @Test
-    @DisplayName("have the private constructor")
-    public void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(ProjectionHelper.class);
     }
 
     @Test

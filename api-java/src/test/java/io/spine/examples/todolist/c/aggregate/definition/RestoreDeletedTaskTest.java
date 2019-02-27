@@ -41,6 +41,7 @@ import io.spine.examples.todolist.c.rejection.CannotRestoreDeletedTask;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.grpc.MemoizingObserver;
 import io.spine.grpc.StreamObservers;
+import io.spine.logging.Logging;
 import io.spine.protobuf.AnyPacker;
 import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
@@ -48,8 +49,6 @@ import io.spine.server.event.EventStreamQuery;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -222,7 +221,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         dispatchCommand(aggregate, envelopeOf(restoreDeletedTask));
     }
 
-    private static class EventStreamObserver implements StreamObserver<Event> {
+    private static class EventStreamObserver implements StreamObserver<Event>, Logging {
 
         private final List<Event> events = newArrayList();
 
@@ -233,23 +232,12 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
 
         @Override
         public void onError(Throwable t) {
-            log().error("Occurred exception", t);
+            _error("Occurred exception", t);
         }
 
         @Override
         public void onCompleted() {
-            log().info("completed");
-        }
-
-        private enum LogSingleton {
-            INSTANCE;
-
-            @SuppressWarnings("NonSerializableFieldInSerializableClass")
-            private final Logger value = LoggerFactory.getLogger(EventStreamObserver.class);
-        }
-
-        private static Logger log() {
-            return LogSingleton.INSTANCE.value;
+            _info("completed");
         }
     }
 }

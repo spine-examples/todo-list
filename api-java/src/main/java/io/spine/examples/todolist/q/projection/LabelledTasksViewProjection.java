@@ -53,8 +53,8 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
 /**
  * A projection state of the created tasks marked with a certain label.
  *
- * <p> Contains the data about the task view.
- * <p> This view includes all tasks per label that are neither in a draft state nor deleted.
+ * <p>Contains the data about the task view.
+ * <p>This view includes all tasks per label that are neither in a draft state nor deleted.
  */
 @SuppressWarnings("OverlyCoupledClass")
 public class LabelledTasksViewProjection extends Projection<LabelId,
@@ -113,8 +113,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         final List<TaskItem> views = builder().getLabelledTasks()
                                               .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setLabelledTasks(taskListView);
+        updateLabelledTasks(updatedList);
     }
 
     @Subscribe
@@ -122,8 +121,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         final List<TaskItem> views = builder().getLabelledTasks()
                                               .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setLabelledTasks(taskListView);
+        updateLabelledTasks(updatedList);
     }
 
     @Subscribe
@@ -131,8 +129,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         final List<TaskItem> views = builder().getLabelledTasks()
                                               .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setLabelledTasks(taskListView);
+        updateLabelledTasks(updatedList);
     }
 
     @Subscribe
@@ -140,8 +137,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         final List<TaskItem> views = builder().getLabelledTasks()
                                               .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setLabelledTasks(taskListView);
+        updateLabelledTasks(updatedList);
     }
 
     @Subscribe
@@ -149,8 +145,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         final List<TaskItem> views = builder().getLabelledTasks()
                                               .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setLabelledTasks(taskListView);
+        updateLabelledTasks(updatedList);
     }
 
     @Subscribe
@@ -194,8 +189,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
         final List<TaskItem> views = new ArrayList<>(builder().getLabelledTasks()
                                                               .getItemsList());
         views.add(taskView);
-        final TaskListView taskListView = newTaskListView(views);
-        setLabelledTasks(taskListView);
+        updateLabelledTasks(views);
     }
 
     private void updateLabelDetails(LabelDetails newDetails) {
@@ -205,6 +199,11 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
             final String hexColor = valueOf(newDetails.getColor());
             builder().setLabelColor(hexColor);
         }
+    }
+
+    private void updateLabelledTasks(List<TaskItem> updatedList) {
+        final TaskListView taskListView = newTaskListView(updatedList);
+        setLabelledTasks(taskListView);
     }
 
     private void setLabelledTasks(TaskListView updatedView) {

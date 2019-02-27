@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.c.aggregate;
 
+import com.google.common.collect.ImmutableList;
 import com.google.protobuf.Message;
 import io.spine.base.CommandMessage;
 import io.spine.core.Ack;
@@ -55,7 +56,6 @@ import org.junit.jupiter.api.Test;
 import java.util.Collection;
 import java.util.List;
 
-import static com.google.common.collect.ImmutableList.of;
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.createLabelInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
@@ -77,7 +77,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TaskLabelsPartTest {
 
     @Nested
-    @DisplayName("AssignLabelToTask command should be interpreted by TaskLabelsPart and")
+    @DisplayName("interpret AssignLabelToTask command and")
     class AssignLabelToTaskCommand extends TaskLabelsCommandTest<AssignLabelToTask> {
 
         protected AssignLabelToTaskCommand() {
@@ -136,7 +136,7 @@ class TaskLabelsPartTest {
     }
 
     @Nested
-    @DisplayName("RemoveLabelFromTask command should be interpreted by TaskLabelsPart and")
+    @DisplayName("interpret RemoveLabelFromTask command and")
     class RemoveLabelFromTaskCommand extends TaskLabelsCommandTest<RemoveLabelFromTask> {
 
         protected RemoveLabelFromTaskCommand() {
@@ -212,10 +212,10 @@ class TaskLabelsPartTest {
     }
 
     @Nested
-    @DisplayName("Multiple AssignLabelToTask commands should")
+    @DisplayName("interpret Multiple AssignLabelToTask commands and")
     class AssignMultipleLabelsTest extends TaskLabelsCommandTest<CreateBasicTask> {
 
-        private final List<LabelId> labelIds = of(
+        private final List<LabelId> labelIds = ImmutableList.of(
                 createLabelId(), createLabelId(), createLabelId(), createLabelId()
         );
 

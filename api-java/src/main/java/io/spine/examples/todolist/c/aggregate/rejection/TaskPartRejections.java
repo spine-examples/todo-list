@@ -252,6 +252,7 @@ public final class TaskPartRejections {
         }
     }
 
+    @SuppressWarnings("OverlyCoupledClass") // A lot of rejection types.
     public static final class ChangeStatusRejections {
 
         private ChangeStatusRejections() {

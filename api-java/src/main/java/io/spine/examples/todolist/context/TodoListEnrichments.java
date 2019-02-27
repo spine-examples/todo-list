@@ -47,7 +47,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Serves as class which adds enrichment fields to the {@link EventBus}.
  */
-public class TodoListEnrichments {
+public final class TodoListEnrichments {
 
     private final TaskRepository taskRepo;
     private final TaskLabelsRepository taskLabelsRepo;

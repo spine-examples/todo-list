@@ -50,9 +50,11 @@ import static java.util.Collections.singleton;
 /**
  * Repository for the {@link LabelledTasksViewProjection}.
  */
-public final class LabelledTasksViewRepository
+public class LabelledTasksViewRepository
         extends ProjectionRepository<LabelId, LabelledTasksViewProjection, LabelledTasksView> {
 
+    @SuppressWarnings("OverridableMethodCallDuringObjectConstruction")
+    // Relying onto implementor judgement.
     public LabelledTasksViewRepository() {
         super();
         setUpEventRoute();
@@ -60,9 +62,12 @@ public final class LabelledTasksViewRepository
 
     /**
      * Adds the {@link EventRoute}s to the repository.
+     * Should be overridden in the descendant classes,
+     * otherwise all successors will use {@code LabelId}
+     * and only with the events specified below.
      */
     @SuppressWarnings("OverlyCoupledMethod") // A lot of routed event types.
-    private void setUpEventRoute() {
+    protected void setUpEventRoute() {
         final EventRouting<LabelId> routing = eventRouting();
         routing.route(LabelAssignedToTask.class, 
                       (message, context) -> singleton(message.getLabelId()));

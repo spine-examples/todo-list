@@ -28,7 +28,7 @@ import java.util.Optional;
 /**
  * Utility class for working with enrichments.
  */
-public class EnrichmentHelper {
+public final class EnrichmentHelper {
 
     private EnrichmentHelper() {
     }

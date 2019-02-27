@@ -45,7 +45,6 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejection
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DisplayName("TaskPartRejections should")
 class TaskPartRejectionsTest extends UtilityClassTest<TaskPartRejections> {
 
     private final TaskId taskId = TaskId.getDefaultInstance();

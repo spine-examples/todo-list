@@ -44,7 +44,7 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
 /**
  * A projection state of tasks in a "draft" state.
  *
- * <p> This view includes all non-deleted tasks, which creation is in progress.
+ * <p>This view includes all non-deleted tasks, which creation is in progress.
  */
 public class DraftTasksViewProjection extends Projection<TaskListId,
                                                          DraftTasksView,
@@ -110,8 +110,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
         final List<TaskItem> views = builder().getDraftTasks()
                                               .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setDraftTasks(taskListView);
+        updateDraftTasks(updatedList);
     }
 
     @Subscribe
@@ -119,8 +118,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
         final List<TaskItem> views = builder().getDraftTasks()
                                               .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setDraftTasks(taskListView);
+        updateDraftTasks(updatedList);
     }
 
     @Subscribe
@@ -128,8 +126,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
         final List<TaskItem> views = builder().getDraftTasks()
                                                  .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setDraftTasks(taskListView);
+        updateDraftTasks(updatedList);
     }
 
     @Subscribe
@@ -137,8 +134,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
         final List<TaskItem> views = builder().getDraftTasks()
                                               .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setDraftTasks(taskListView);
+        updateDraftTasks(updatedList);
     }
 
     @Subscribe
@@ -146,8 +142,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
         final List<TaskItem> views = builder().getDraftTasks()
                                               .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setDraftTasks(taskListView);
+        updateDraftTasks(updatedList);
     }
 
     @Subscribe
@@ -155,6 +150,10 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
         final List<TaskItem> views = builder().getDraftTasks()
                                               .getItemsList();
         final List<TaskItem> updatedList = updateTaskItemList(views, event);
+        updateDraftTasks(updatedList);
+    }
+
+    private void updateDraftTasks(List<TaskItem> updatedList) {
         final TaskListView taskListView = newTaskListView(updatedList);
         setDraftTasks(taskListView);
     }

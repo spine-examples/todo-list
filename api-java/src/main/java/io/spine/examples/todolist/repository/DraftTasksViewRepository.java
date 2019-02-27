@@ -24,7 +24,6 @@ import io.spine.examples.todolist.TaskListId;
 import io.spine.examples.todolist.q.projection.DraftTasksView;
 import io.spine.examples.todolist.q.projection.DraftTasksViewProjection;
 import io.spine.server.projection.ProjectionRepository;
-import io.spine.server.route.EventRoute;
 
 import static io.spine.examples.todolist.q.projection.DraftTasksViewProjection.ID;
 import static java.util.Collections.singleton;
@@ -35,18 +34,20 @@ import static java.util.Collections.singleton;
 public class DraftTasksViewRepository
         extends ProjectionRepository<TaskListId, DraftTasksViewProjection, DraftTasksView> {
 
+    @SuppressWarnings("OverridableMethodCallDuringObjectConstruction")
+    // Relying onto implementor judgement.
     public DraftTasksViewRepository() {
         super();
         setUpEventRoute();
     }
 
     /**
-     * Adds the {@link EventRoute}s to the repository.
-     * Should to be overridden in an successor classes,
+     * Adds the {@link io.spine.server.route.EventRoute EventRoute}s to the repository.
+     * Should be overridden in the descendant classes,
      * otherwise all successors will use {@code DraftTasksViewProjection.ID}
-     * and only with specified events below.
+     * and only with the events specified below.
      */
     protected void setUpEventRoute() {
-        eventRouting().replaceDefault(((message, context) -> singleton(ID)));
+        eventRouting().replaceDefault((message, context) -> singleton(ID));
     }
 }

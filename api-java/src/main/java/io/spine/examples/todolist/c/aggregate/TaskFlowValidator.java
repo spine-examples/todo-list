@@ -25,7 +25,7 @@ import io.spine.examples.todolist.TaskStatus;
 /**
  * Validates task commands and state transitions.
  */
-class TaskFlowValidator {
+final class TaskFlowValidator {
 
     private TaskFlowValidator() {
     }

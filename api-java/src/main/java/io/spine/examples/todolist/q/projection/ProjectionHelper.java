@@ -40,15 +40,14 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static io.spine.examples.todolist.q.projection.TaskItem.newBuilder;
-
 /**
  * Class provides methods to manipulate and handle views.
  */
-class ProjectionHelper {
+@SuppressWarnings("OverlyCoupledClass") // A lot of utility methods for projections.
+final class ProjectionHelper {
 
+    /** Prevents instantiation of this utility class. */
     private ProjectionHelper() {
-        // Prevent instantiation of this utility class.
     }
 
     /**
@@ -60,10 +59,11 @@ class ProjectionHelper {
      * @return {@link TaskListView} without deleted tasks
      */
     static TaskListView removeViewsByTaskId(List<TaskItem> tasks, TaskId id) {
-        final List<TaskItem> tasksToRemove = tasks.stream()
-                                                  .filter(t -> t.getId()
-                                                                .equals(id))
-                                                  .collect(Collectors.toList());
+        final List<TaskItem> tasksToRemove = tasks
+                .stream()
+                .filter(t -> t.getId()
+                              .equals(id))
+                .collect(Collectors.toList());
         return removeTasks(tasks, tasksToRemove);
     }
 
@@ -105,13 +105,15 @@ class ProjectionHelper {
             if (willUpdate) {
                 final LabelDetails labelDetails = event.getLabelDetailsChange()
                                                        .getNewDetails();
-                addedTask = newBuilder().setLabelColor(labelDetails.getColor())
-                                        .setDueDate(task.getDueDate())
-                                        .setPriority(task.getPriority())
-                                        .setDescription(task.getDescription())
-                                        .setLabelId(task.getLabelId())
-                                        .setId(task.getId())
-                                        .build();
+                addedTask = TaskItem
+                        .newBuilder()
+                        .setLabelColor(labelDetails.getColor())
+                        .setDueDate(task.getDueDate())
+                        .setPriority(task.getPriority())
+                        .setDescription(task.getDescription())
+                        .setLabelId(task.getLabelId())
+                        .setId(task.getId())
+                        .build();
             }
             updatedList.add(addedTask);
         }
@@ -232,8 +234,6 @@ class ProjectionHelper {
         return transformWithUpdate(tasks, targetTaskId, updateFn);
     }
 
-    @SuppressWarnings("MethodWithMultipleLoops") // It's fine, as there aren't a
-                                                 // lot of transformations per task.
     private static List<TaskItem> transformWithUpdate(List<TaskItem> tasks,
                                                       TaskId targetTaskId,
                                                       TaskTransformation transformation) {
@@ -244,9 +244,9 @@ class ProjectionHelper {
             final boolean willUpdate = task.getId()
                                            .equals(targetTaskId);
             if (willUpdate) {
-                TaskItem.Builder resultBuilder = newBuilder();
-
-                resultBuilder = resultBuilder.mergeFrom(task);
+                TaskItem.Builder resultBuilder = TaskItem
+                        .newBuilder()
+                        .mergeFrom(task);
                 resultBuilder = transformation.apply(resultBuilder);
 
                 addedView = resultBuilder.build();
