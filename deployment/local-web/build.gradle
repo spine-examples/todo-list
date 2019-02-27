@@ -19,18 +19,15 @@
  */
 
 buildscript {
-    ext {
-        grettyVersion = '2.0.0'
-    }
     repositories {
-        mavenCentral()
+        maven { url = repos.gradlePlugins }
     }
     dependencies {
-        classpath "org.akhikhl.gretty:gretty:$grettyVersion"
+        classpath "gradle.plugin.org.gretty:gretty:$grettyVersion"
     }
 }
 
-apply plugin: 'org.akhikhl.gretty'
+apply plugin: 'org.gretty'
 
 repositories {
     mavenCentral()

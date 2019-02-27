@@ -34,10 +34,11 @@ project.ext {
     // Main scope third party dependencies' versions
     servletApiVersion = '4.0.0'
     cloudSqlSocketFactoryVersion = '1.0.4'
-    shadowJarVersion = '2.0.1'
+    shadowJarVersion = '4.0.4'
     mysqlDriverVersion = '6.0.6'
     gsonVersion = '2.7'
     nettyBoringsslVersion = '2.0.6.Final'
+    grettyVersion = '2.3.1'
 
     // Test scope third party dependencies' versions
     jUnitPlatformVersion = '1.0.0'

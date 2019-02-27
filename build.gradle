@@ -39,11 +39,11 @@ buildscript {
             exclude group: 'com.google.guava'
         }
         classpath deps.build.gradlePlugins.protobuf
-        classpath 'org.akhikhl.gretty:gretty:+'
-        classpath "org.junit.platform:junit-platform-gradle-plugin:${jUnitPlatformVersion}"
-        classpath "io.spine.tools:spine-model-compiler:${spineBaseVersion}"
-        classpath "io.spine.tools:spine-model-verifier:${spineVersion}"
-        classpath "io.spine.tools:spine-proto-js-plugin:${spineBaseVersion}"
+        classpath "gradle.plugin.org.gretty:gretty:$grettyVersion"
+        classpath "org.junit.platform:junit-platform-gradle-plugin:$jUnitPlatformVersion"
+        classpath "io.spine.tools:spine-model-compiler:$spineBaseVersion"
+        classpath "io.spine.tools:spine-model-verifier:$spineVersion"
+        classpath "io.spine.tools:spine-proto-js-plugin:$spineBaseVersion"
     }
 
     // The below suppressions `GroovyAssignabilityCheck` is a workaround for the IDEA bug.
@@ -59,7 +59,7 @@ buildscript {
 }
 
 plugins {
-    id 'com.gradle.build-scan' version '1.0'
+    id 'com.gradle.build-scan' version '2.1'
 }
 
 // Apply configure-less Gretty multiple web-app setup.
@@ -70,11 +70,11 @@ plugins {
 //
 // For more information see: http://akhikhl.github.io/gretty-doc/Multiple-web-apps-configureless-setup.html
 // To run only selected farms see: http://akhikhl.github.io/gretty-doc/Configuring-default-farm.html
-apply plugin: 'org.akhikhl.gretty'
+apply plugin: 'org.gretty'
 
 buildScan {
-    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
-    licenseAgree = 'yes'
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
 }
 
 allprojects {
@@ -256,7 +256,7 @@ task codeCoverageReport(type: JacocoReport) {
 
     reports {
         xml.enabled = true
-        xml.destination = "${buildDir}/reports/jacoco/report.xml"
+        xml.destination = new File("${buildDir}/reports/jacoco/report.xml")
         html.enabled = false
         csv.enabled = false
     }
