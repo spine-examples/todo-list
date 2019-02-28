@@ -20,8 +20,8 @@
 
 ext {
     compiledProto = "$projectDir/proto"
-    genProtoMain = "$compiledProto/main"
-    genProtoTest = "$compiledProto/test"
+    genProtoMain = "$compiledProto/main/js"
+    genProtoTest = "$compiledProto/test/js"
 }
 
 apply from: "$projectDir/scripts/js.gradle"
