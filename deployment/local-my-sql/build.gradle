@@ -19,7 +19,8 @@
  */
 
 dependencies {
-    implementation "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
+    implementation "io.spine:spine-rdbms:$spineJdbcStorageVersion"
+    implementation "com.zaxxer:HikariCP:$hikariCpVersion"
     implementation "mysql:mysql-connector-java:$mysqlDriverVersion"
 
     implementation project(path: ':server')

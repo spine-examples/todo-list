@@ -38,7 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @DisplayName("CreateBasicTask command should be interpreted by TaskPart and")
-public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
+class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
 
     CreateBasicTaskTest() {
         super(createTaskInstance());

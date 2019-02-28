@@ -48,7 +48,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("CompleteTask command should be interpreted by TaskPart and")
-public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
+class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
 
     CompleteTaskTest() {
         super(completeTaskInstance());

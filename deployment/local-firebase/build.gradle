@@ -19,11 +19,12 @@
  */
 
 ext {
-    firebaseMirrorVersion = '0.10.15-SNAPSHOT'
+    firebaseMirrorVersion = '1.0.0-pre5'
 }
 
 dependencies {
     implementation project(path: ':server')
-    implementation "io.spine:firebase-mirror:$firebaseMirrorVersion"
+    implementation "io.spine:spine-firebase-mirror:$firebaseMirrorVersion"
+    implementation deps.build.firebaseAdmin
     implementation "io.netty:netty-tcnative-boringssl-static:$nettyBoringsslVersion"
 }

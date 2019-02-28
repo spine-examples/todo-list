@@ -19,7 +19,8 @@
  */
 
 dependencies {
-    implementation "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
+    implementation "io.spine:spine-rdbms:$spineJdbcStorageVersion"
+    implementation "com.zaxxer:HikariCP:$hikariCpVersion"
     implementation "com.google.cloud.sql:mysql-socket-factory:$cloudSqlSocketFactoryVersion"
     implementation project(path: ':server')
 }

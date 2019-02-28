@@ -34,6 +34,8 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
     implementation "com.google.cloud.sql:mysql-socket-factory:$cloudSqlSocketFactoryVersion"
+    implementation "com.zaxxer:HikariCP:$hikariCpVersion"
+    implementation deps.grpc.grpcProtobuf
     implementation "io.spine:spine-rdbms:$spineJdbcStorageVersion"
     implementation project(path: ':server')
 

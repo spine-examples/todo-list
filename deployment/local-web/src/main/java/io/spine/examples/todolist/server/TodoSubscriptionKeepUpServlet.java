@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.web.firebase.FirebaseSubscriptionBridge;
-import io.spine.web.firebase.FirebaseSubscriptionKeepUpServlet;
+import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
+import io.spine.web.subscription.servlet.SubscriptionKeepUpServlet;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,13 +31,13 @@ import javax.servlet.http.HttpServletResponse;
  * The {@code /subscription/keep-up} endpoint of the TodoList system.
  *
  * <p>Handles {@code POST} requests to keep up a subscription. See
- * {@link FirebaseSubscriptionKeepUpServlet} for more details.
+ * {@link SubscriptionKeepUpServlet} for more details.
  *
  * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
  */
 @WebServlet(name = TodoSubscriptionKeepUpServlet.NAME, value = "/subscription/keep-up")
 @SuppressWarnings("serial")
-public class TodoSubscriptionKeepUpServlet extends FirebaseSubscriptionKeepUpServlet {
+public class TodoSubscriptionKeepUpServlet extends SubscriptionKeepUpServlet {
 
     static final String NAME = "Subscription Keep Up Service";
 
@@ -51,5 +51,6 @@ public class TodoSubscriptionKeepUpServlet extends FirebaseSubscriptionKeepUpSer
 
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp) {
+        // NO-OP.
     }
 }

@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("DeleteTask command should be interpreted by TaskPart and")
-public class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
+class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
 
     DeleteTaskCommand() {
         super(deleteTaskInstance());

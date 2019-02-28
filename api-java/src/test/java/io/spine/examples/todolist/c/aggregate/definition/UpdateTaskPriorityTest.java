@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("UpdateTaskPriority command should be interpreted by TaskPart and")
-public class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> {
+class UpdateTaskPriorityTest extends TaskCommandTest<UpdateTaskPriority> {
 
     UpdateTaskPriorityTest() {
         super(updateTaskPriorityInstance());

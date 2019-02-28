@@ -19,7 +19,7 @@
  */
 
 
-final def SPINE_VERSION = '1.0.0-SNAPSHOT'
+final def SPINE_VERSION = '1.0.0-pre6'
 
 project.ext {
     // To-do List app version
@@ -27,7 +27,7 @@ project.ext {
 
     // Spine dependencies' versions
     spineVersion = SPINE_VERSION
-    spineJdbcStorageVersion = '1.0.0-pre5'
+    spineJdbcStorageVersion = SPINE_VERSION
     spineBaseVersion = SPINE_VERSION
     spineWebVersion = SPINE_VERSION
 
@@ -39,6 +39,7 @@ project.ext {
     gsonVersion = '2.7'
     nettyBoringsslVersion = '2.0.6.Final'
     grettyVersion = '2.3.1'
+    hikariCpVersion = '2.4.3'
 
     // Test scope third party dependencies' versions
     jUnitPlatformVersion = '1.0.0'

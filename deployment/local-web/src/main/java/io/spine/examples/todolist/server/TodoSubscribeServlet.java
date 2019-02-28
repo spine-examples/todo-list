@@ -20,8 +20,8 @@
 
 package io.spine.examples.todolist.server;
 
-import io.spine.web.firebase.FirebaseSubscribeServlet;
-import io.spine.web.firebase.FirebaseSubscriptionBridge;
+import io.spine.web.firebase.subscription.FirebaseSubscriptionBridge;
+import io.spine.web.subscription.servlet.SubscribeServlet;
 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,13 +31,13 @@ import javax.servlet.http.HttpServletResponse;
  * The {@code /subscription/create} endpoint of the TodoList system.
  *
  * <p>Handles {@code POST} requests to create a subscription to the topic. See
- * {@link FirebaseSubscribeServlet} for more details.
+ * {@link SubscribeServlet} for more details.
  *
  * <p>Handles {@code OPTIONS} requests for the purposes of CORS.
  */
 @WebServlet(name = TodoSubscribeServlet.NAME, value = "/subscription/create")
 @SuppressWarnings("serial")
-public final class TodoSubscribeServlet extends FirebaseSubscribeServlet {
+public final class TodoSubscribeServlet extends SubscribeServlet {
 
     static final String NAME = "Subscription Creation Service";
 
@@ -51,5 +51,6 @@ public final class TodoSubscribeServlet extends FirebaseSubscribeServlet {
 
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp) {
+        // NO-OP.
     }
 }

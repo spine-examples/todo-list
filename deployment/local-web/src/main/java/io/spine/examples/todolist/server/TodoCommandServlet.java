@@ -45,5 +45,6 @@ public final class TodoCommandServlet extends CommandServlet {
 
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp) {
+        // NO-OP.
     }
 }

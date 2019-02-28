@@ -21,13 +21,18 @@
 package io.spine.examples.todolist.server;
 
 import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.net.Url;
+import io.spine.net.UrlVBuilder;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
 import io.spine.web.firebase.DatabaseUrl;
+import io.spine.web.firebase.DatabaseUrlVBuilder;
 import io.spine.web.firebase.FirebaseClient;
+import io.spine.web.firebase.FirebaseCredentials;
 
-import static io.spine.web.firebase.DatabaseUrl.from;
+import java.io.InputStream;
+
 import static io.spine.web.firebase.FirebaseClientFactory.restClient;
 
 /**
@@ -35,12 +40,13 @@ import static io.spine.web.firebase.FirebaseClientFactory.restClient;
  */
 final class Application {
 
-    private static final DatabaseUrl DATABASE_URL = from("https://spine-dev.firebaseio.com/");
+    private static final String SERVICE_ACCOUNT_FILE = "/spine-dev.json";
+    private static final DatabaseUrl DATABASE_URL = databaseUrl();
 
     private final QueryService queryService;
+
     private final CommandService commandService;
     private final FirebaseClient firebaseClient;
-
     /**
      * Prevents direct instantiation.
      */
@@ -51,7 +57,7 @@ final class Application {
         this.commandService = CommandService.newBuilder()
                                             .add(boundedContext)
                                             .build();
-        this.firebaseClient = restClient(DATABASE_URL);
+        this.firebaseClient = initClient();
     }
 
     /**
@@ -73,6 +79,25 @@ final class Application {
      */
     FirebaseClient firebaseClient() {
         return firebaseClient;
+    }
+
+    private static FirebaseClient initClient() {
+        InputStream credentialStream = Application.class.getResourceAsStream(SERVICE_ACCOUNT_FILE);
+        FirebaseCredentials credentials = FirebaseCredentials.fromStream(credentialStream);
+        FirebaseClient client = restClient(DATABASE_URL, credentials);
+        return client;
+    }
+
+    private static DatabaseUrl databaseUrl() {
+        Url url = UrlVBuilder
+                .newBuilder()
+                .setSpec("https://spine-dev.firebaseio.com/")
+                .build();
+        DatabaseUrl databaseUrl = DatabaseUrlVBuilder
+                .newBuilder()
+                .setUrl(url)
+                .build();
+        return databaseUrl;
     }
 
     static Application instance() {

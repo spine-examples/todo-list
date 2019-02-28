@@ -55,7 +55,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("UpdateTaskDueDate command should be interpreted by TaskPart and")
-public class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
+class UpdateTaskDueDateTest extends TaskCommandTest<UpdateTaskDueDate> {
 
     UpdateTaskDueDateTest() {
         super(updateTaskDueDateInstance());

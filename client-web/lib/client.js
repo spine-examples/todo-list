@@ -20,7 +20,11 @@
 
 let uuid = require("uuid");
 
-let client = require("spine-web-client/client/index.js").client;
+
+let knownTypes =  require("../proto/main/js/index");
+
+let UserId = require("../proto/main/js/spine/core/user_id_pb").UserId;
+let spineWeb = require("spine-web/index.js");
 
 let TaskId = require("../proto/main/js/todolist/identifiers_pb").TaskId;
 let TaskDescription = require("../proto/main/js/todolist/values_pb").TaskDescription;
@@ -38,6 +42,7 @@ const errorCallback = (error) => {
 };
 
 const HOST = "http://localhost:8080";
+const ACTOR = "TodoList-actor";
 
 /**
  * The client of the TodoList application.
@@ -45,10 +50,11 @@ const HOST = "http://localhost:8080";
 export class Client {
 
     constructor() {
-        this._backendClient = client.BackendClient.usingFirebase({
-            atEndpoint: HOST,
-            withFirebaseStorage: firebase.application,
-            forActor: "TodoList-actor"
+        this._firebaseClient = spineWeb.init({
+            protoIndexFiles: [knownTypes],
+            endpointUrl: HOST,
+            firebaseDatabase: firebase.application.database(),
+            actorProvider: Client._actorProvider()
         });
     }
 
@@ -59,19 +65,7 @@ export class Client {
      */
     submitNewTask(description) {
         let command = Client._createTaskCommand(description);
-
-        let typeUrl = new client.TypeUrl(
-            "type.spine.examples.todolist/spine.examples.todolist.CreateBasicTask"
-        );
-        let type = new client.Type(
-            CreateBasicTask,
-            typeUrl
-        );
-        let typedCommand = new client.TypedMessage(
-            command,
-            type
-        );
-        this._backendClient.sendCommand(typedCommand, logSuccess, errorCallback, errorCallback);
+        this._firebaseClient.sendCommand(command, logSuccess, errorCallback, errorCallback);
     }
 
     /**
@@ -80,10 +74,10 @@ export class Client {
      * @param table the view to display the tasks in
      */
     subscribeToTaskChanges(table) {
-        let typeUrl = new client.TypeUrl(
+        let typeUrl = new spineWeb.TypeUrl(
             "type.spine.examples.todolist/spine.examples.todolist.MyListView"
         );
-        let type = new client.Type(
+        let type = new spineWeb.Type(
             MyListView,
             typeUrl
         );
@@ -93,13 +87,19 @@ export class Client {
                 Client._fillTable(table, view);
             }
         };
-        this._backendClient.subscribeToEntities({ofType: type})
+        this._firebaseClient.subscribeToEntities({ofType: type})
             .then(({itemAdded, itemChanged, itemRemoved, unsubscribe}) => {
                 itemAdded.subscribe(fillTable);
                 itemChanged.subscribe(fillTable);
                 itemRemoved.subscribe(fillTable);
             })
             .catch(errorCallback);
+    }
+
+    static _actorProvider() {
+        let userId = new UserId();
+        userId.setValue(ACTOR);
+        return new spineWeb.ActorProvider(userId);
     }
 
     static _fillTable(table, myListView) {

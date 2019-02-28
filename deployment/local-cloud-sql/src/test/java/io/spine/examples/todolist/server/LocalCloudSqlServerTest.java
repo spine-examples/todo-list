@@ -66,7 +66,7 @@ class LocalCloudSqlServerTest {
     @DisplayName("create signletenant BoundedContext")
     void createSingletenantBoundedContext() {
         final BoundedContext boundedContext = createBoundedContext(getDefaultArguments());
-        final StorageFactory storageFactory = boundedContext.getStorageFactory();
+        final StorageFactory storageFactory = boundedContext.storageFactory();
         assertFalse(storageFactory.isMultitenant());
     }
 }

@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("CreateDraft command should be interpreted by TaskPart and")
-public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
+class CreateDraftTest extends TaskCommandTest<CreateDraft> {
 
     CreateDraftTest() {
         super(createDraftInstance());

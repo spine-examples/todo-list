@@ -72,7 +72,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("RestoreDeletedTask command should be interpreted by TaskPart and")
-public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> {
+class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> {
 
     private MemoizingObserver<Ack> responseObserver;
     private BoundedContext boundedContext;

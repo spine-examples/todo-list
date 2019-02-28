@@ -47,7 +47,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("ReopenTask command should be interpreted by TaskPart and")
-public class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
+class ReopenTaskCommandTest extends TaskCommandTest<ReopenTask> {
 
     ReopenTaskCommandTest() {
         super(reopenTaskInstance());

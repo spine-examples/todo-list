@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("FinalizeDraft command should be interpreted by TaskPart and")
-public class FinalizeDraftTest extends TaskCommandTest<FinalizeDraft> {
+class FinalizeDraftTest extends TaskCommandTest<FinalizeDraft> {
 
     FinalizeDraftTest() {
         super(finalizeDraftInstance());
