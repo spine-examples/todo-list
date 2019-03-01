@@ -64,24 +64,24 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRej
  *
  * <p>The task creation process has following stages:
  * <ol>
- * <li><b>Task Definition</b> - the task building is started: the task is being defined by its
- * primary fields. The process moves to this stage once the empty task draft is created.
- * <li><b>Label Assignment</b> - the labels are being created and assigned to the supervised
- * task. The process moves to this stage after the primary task data is set. This stage may
- * be skipped via the {@link SkipLabels} command.
- * <li><b>Confirmation</b> - all the data is set to the label and the user may check if the data
- * is correct.
- * <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
- * i.e. no stages may follow this stage. At this stage the supervised task is finalized and
- * the current instance of {@code TaskCreationWizard} is
- * {@linkplain io.spine.server.entity.Entity#isArchived() archived}. It is
- * required that the process is in the <b>Confirmation</b> stage before moving to this
- * stage.
- * <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.
- * The user may return to the supervised task (which persists as a draft) and finalize it
- * manually. This is a terminal stage. This instance of {@code TaskCreationWizard}
- * is {@linkplain io.spine.server.entity.Entity#isArchived() archived} on this
- * stage.
+ *     <li><b>Task Definition</b> - the task building is started: the task is being defined by its
+ *         primary fields. The process moves to this stage once the empty task draft is created.
+ *     <li><b>Label Assignment</b> - the labels are being created and assigned to the supervised
+ *         task. The process moves to this stage after the primary task data is set. This stage may
+ *         be skipped via the {@link SkipLabels} command.
+ *     <li><b>Confirmation</b> - all the data is set to the label and the user may check if the data
+ *         is correct.
+ *     <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
+ *         i.e. no stages may follow this stage. At this stage the supervised task is finalized and
+ *         the current instance of {@code TaskCreationWizard} is
+ *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived}. It is
+ *         required that the process is in the <b>Confirmation</b> stage before moving to this
+ *         stage.
+ *     <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.
+ *         The user may return to the supervised task (which persists as a draft) and finalize it
+ *         manually. This is a terminal stage. This instance of {@code TaskCreationWizard}
+ *         is {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived} on this
+ *         stage.
  * </ol>
  *
  * <p>On any stage (except for the terminal ones), the process can be moved to the <b>Canceled</b>

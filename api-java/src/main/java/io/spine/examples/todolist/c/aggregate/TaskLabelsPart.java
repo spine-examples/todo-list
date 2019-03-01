@@ -72,10 +72,11 @@ public class TaskLabelsPart
             throwCannotRemoveLabelFromTask(cmd);
         }
 
-        LabelRemovedFromTask labelRemoved = LabelRemovedFromTask.newBuilder()
-                                                                .setTaskId(taskId)
-                                                                .setLabelId(labelId)
-                                                                .build();
+        LabelRemovedFromTask labelRemoved = LabelRemovedFromTask
+                .newBuilder()
+                .setTaskId(taskId)
+                .setLabelId(labelId)
+                .build();
         return singletonList(labelRemoved);
     }
 
@@ -91,10 +92,11 @@ public class TaskLabelsPart
             throwCannotAssignLabelToTask(cmd);
         }
 
-        LabelAssignedToTask labelAssigned = LabelAssignedToTask.newBuilder()
-                                                               .setTaskId(taskId)
-                                                               .setLabelId(labelId)
-                                                               .build();
+        LabelAssignedToTask labelAssigned = LabelAssignedToTask
+                .newBuilder()
+                .setTaskId(taskId)
+                .setLabelId(labelId)
+                .build();
         return singletonList(labelAssigned);
     }
 
@@ -103,9 +105,10 @@ public class TaskLabelsPart
         Collection<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
                                                             .getIdsList());
         list.add(event.getLabelId());
-        LabelIdsList labelIdsList = LabelIdsList.newBuilder()
-                                                .addAllIds(list)
-                                                .build();
+        LabelIdsList labelIdsList = LabelIdsList
+                .newBuilder()
+                .addAllIds(list)
+                .build();
         builder().setTaskId(event.getTaskId());
         builder().setLabelIdsList(labelIdsList);
     }
@@ -115,9 +118,10 @@ public class TaskLabelsPart
         Collection<LabelId> list = new ArrayList<>(builder().getLabelIdsList()
                                                             .getIdsList());
         list.remove(event.getLabelId());
-        LabelIdsList labelIdsList = LabelIdsList.newBuilder()
-                                                .addAllIds(list)
-                                                .build();
+        LabelIdsList labelIdsList = LabelIdsList
+                .newBuilder()
+                .addAllIds(list)
+                .build();
         builder().setLabelIdsList(labelIdsList);
     }
 }

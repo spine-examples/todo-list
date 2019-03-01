@@ -32,6 +32,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public final class EnrichmentHelper {
 
+    /** Prevents instantiation of this utility class. */
     private EnrichmentHelper() {
     }
 

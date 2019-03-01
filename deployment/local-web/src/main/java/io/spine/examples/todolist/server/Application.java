@@ -52,12 +52,14 @@ final class Application {
      * Prevents direct instantiation.
      */
     private Application(BoundedContext boundedContext) {
-        this.queryService = QueryService.newBuilder()
-                                        .add(boundedContext)
-                                        .build();
-        this.commandService = CommandService.newBuilder()
-                                            .add(boundedContext)
-                                            .build();
+        this.queryService = QueryService
+                .newBuilder()
+                .add(boundedContext)
+                .build();
+        this.commandService = CommandService
+                .newBuilder()
+                .add(boundedContext)
+                .build();
         this.firebaseClient = initClient();
     }
 

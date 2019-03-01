@@ -38,12 +38,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DisplayName("ProjectionHelper should")
 class ProjectionHelperTest extends UtilityClassTest<ProjectionHelper> {
 
-    private static final TaskId TASK_ID = TaskId.newBuilder()
-                                                .setValue(newUuid())
-                                                .build();
-    private static final LabelId LABEL_ID = LabelId.newBuilder()
-                                                   .setValue(newUuid())
-                                                   .build();
+    private static final TaskId TASK_ID = TaskId
+            .newBuilder()
+            .setValue(newUuid())
+            .build();
+
+    private static final LabelId LABEL_ID = LabelId
+            .newBuilder()
+            .setValue(newUuid())
+            .build();
+
     private TaskItem viewWithDefaultLabelId;
     private TaskItem viewWithDefaultTaskId;
     private List<TaskItem> viewList;

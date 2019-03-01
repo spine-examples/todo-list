@@ -39,19 +39,21 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DisplayName("TaskView should")
 class TaskViewTest extends ViewTest {
 
-    private final TaskItem task = TaskItem.newBuilder()
-                                          .setDescription(newDescription("my task description"))
-                                          .setPriority(NORMAL)
-                                          .setDueDate(getCurrentTime())
-                                          .build();
+    private final TaskItem task = TaskItem
+            .newBuilder()
+            .setDescription(newDescription("my task description"))
+            .setPriority(NORMAL)
+            .setDueDate(getCurrentTime())
+            .build();
     private final TaskView taskView = new TaskView(TaskId.getDefaultInstance());
 
     @Test
     @DisplayName("throw the exception if nonexistent task ID is specified")
     void notAllowNonexistentTaskId() {
-        TaskId id = TaskId.newBuilder()
-                          .setValue("invalid ID")
-                          .build();
+        TaskId id = TaskId
+                .newBuilder()
+                .setValue("invalid ID")
+                .build();
         assertThrows(IllegalStateException.class, () -> taskView.load(id));
     }
 

@@ -110,9 +110,10 @@ class TodoListEnrichmentsTest {
     @Test
     @DisplayName("create EventEnricher that defaults absent Label to default message")
     void moreEnricherDefaultsTest() {
-        LabelledTaskRestored eventMsg = LabelledTaskRestored.newBuilder()
-                                                            .setLabelId(randomLabelId())
-                                                            .build();
+        LabelledTaskRestored eventMsg = LabelledTaskRestored
+                .newBuilder()
+                .setLabelId(randomLabelId())
+                .build();
         EventEnvelope envelope = enricher.enrich(EventEnvelope.of(event(eventMsg)));
         EventEnvelope enriched = enricher.enrich(envelope);
         Enrichment enrichment = enriched.context()

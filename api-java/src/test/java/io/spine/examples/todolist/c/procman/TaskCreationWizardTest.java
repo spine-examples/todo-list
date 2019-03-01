@@ -467,9 +467,10 @@ class TaskCreationWizardTest {
         }
 
         private CommandBus createCommandBus() {
-            BoundedContext emptyContext = BoundedContext.newBuilder()
-                                                        .setCommandBus(CommandBus.newBuilder())
-                                                        .build();
+            BoundedContext emptyContext = BoundedContext
+                    .newBuilder()
+                    .setCommandBus(CommandBus.newBuilder())
+                    .build();
             CommandBus commandBus = emptyContext.commandBus();
             commandBus.register(memoizingHandler);
             return commandBus;

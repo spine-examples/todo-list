@@ -174,8 +174,7 @@ public class TaskPart extends AggregatePart<TaskId,
 
         if (!isEquals) {
             Timestamp newDueDate = change.getNewValue();
-            ValueMismatch mismatch = unexpectedValue(expectedDueDate, actualDueDate,
-                                                     newDueDate);
+            ValueMismatch mismatch = unexpectedValue(expectedDueDate, actualDueDate, newDueDate);
             throwCannotUpdateTaskDueDate(cmd, mismatch);
         }
 

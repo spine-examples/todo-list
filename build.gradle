@@ -32,7 +32,7 @@ buildscript {final scriptHandler ->
         }
         classpath deps.build.gradlePlugins.protobuf
         classpath deps.build.gradlePlugins.errorProne
-        classpath ("gradle.plugin.org.gretty:gretty:$grettyVersion") {
+        classpath ("gradle.plugin.org.gretty:gretty:+") {
             exclude group: 'commons-logging'
         }
         classpath "io.spine.tools:spine-model-compiler:$spineBaseVersion"

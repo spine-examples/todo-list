@@ -27,6 +27,7 @@ import io.spine.examples.todolist.TaskStatus;
  */
 final class TaskFlowValidator {
 
+    /** Prevents instantiation of this utility class. */
     private TaskFlowValidator() {
     }
 

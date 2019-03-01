@@ -73,9 +73,10 @@ class TaskPartRejectionsTest extends UtilityClassTest<TaskPartRejections> {
         @Test
         @DisplayName("throw CannotCreateDraft rejection")
         void throwCannotCreateDraftRejection() {
-            CreateDraft cmd = CreateDraft.newBuilder()
-                                         .setId(taskId)
-                                         .build();
+            CreateDraft cmd = CreateDraft
+                    .newBuilder()
+                    .setId(taskId)
+                    .build();
             CannotCreateDraft rejection = assertThrows(CannotCreateDraft.class,
                                                        () -> throwCannotCreateDraft(cmd));
             TaskId actual = rejection.getMessageThrown()
@@ -106,9 +107,10 @@ class TaskPartRejectionsTest extends UtilityClassTest<TaskPartRejections> {
         @Test
         @DisplayName("throw CannotUpdateTaskDueDate rejection")
         void throwCannotUpdateTaskDueDateRejection() {
-            UpdateTaskDueDate cmd = UpdateTaskDueDate.newBuilder()
-                                                     .setId(taskId)
-                                                     .build();
+            UpdateTaskDueDate cmd = UpdateTaskDueDate
+                    .newBuilder()
+                    .setId(taskId)
+                    .build();
             CannotUpdateTaskDueDate rejection =
                     assertThrows(CannotUpdateTaskDueDate.class,
                                  () -> throwCannotUpdateTaskDueDate(cmd));
@@ -122,9 +124,10 @@ class TaskPartRejectionsTest extends UtilityClassTest<TaskPartRejections> {
         @Test
         @DisplayName("throw CannotUpdateTaskDescription rejection")
         void throwCannotUpdateTaskDescriptionRejection() {
-            UpdateTaskDescription cmd = UpdateTaskDescription.newBuilder()
-                                                             .setId(taskId)
-                                                             .build();
+            UpdateTaskDescription cmd = UpdateTaskDescription
+                    .newBuilder()
+                    .setId(taskId)
+                    .build();
             CannotUpdateTaskDescription rejection =
                     assertThrows(CannotUpdateTaskDescription.class,
                                  () -> throwCannotUpdateTaskDescription(cmd));

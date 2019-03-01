@@ -533,9 +533,10 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            LabelId wrongLabelId = LabelId.newBuilder()
-                                          .setValue(newUuid())
-                                          .build();
+            LabelId wrongLabelId = LabelId
+                    .newBuilder()
+                    .setValue(newUuid())
+                    .build();
 
             LabelDetailsUpdated labelDetailsUpdated =
                     labelDetailsUpdatedInstance(wrongLabelId, LabelColor.RED, UPDATED_LABEL_TITLE);

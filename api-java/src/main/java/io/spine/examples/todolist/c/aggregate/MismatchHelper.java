@@ -31,6 +31,7 @@ import io.spine.protobuf.AnyPacker;
  */
 final class MismatchHelper {
 
+    /** Prevents instantiation of this utility class. */
     private MismatchHelper() {
     }
 

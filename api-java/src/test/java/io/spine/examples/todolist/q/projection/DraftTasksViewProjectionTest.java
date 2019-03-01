@@ -322,9 +322,10 @@ class DraftTasksViewProjectionTest extends ProjectionTest {
             dispatch(projection, createEvent(taskDraftCreatedEvent));
 
             TaskId expectedTaskId = taskDraftCreatedEvent.getId();
-            LabelId wrongLabelId = LabelId.newBuilder()
-                                          .setValue(newUuid())
-                                          .build();
+            LabelId wrongLabelId = LabelId
+                    .newBuilder()
+                    .setValue(newUuid())
+                    .build();
             LabelAssignedToTask labelAssignedToTaskEvent =
                     labelAssignedToTaskInstance(expectedTaskId, wrongLabelId);
             dispatch(projection, createEvent(labelAssignedToTaskEvent));

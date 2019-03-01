@@ -48,9 +48,10 @@ class MyTasksListViewTest extends ViewTest {
     private static final int VIEW_INDEX = 0;
 
     private final Bot bot = new Bot();
-    private final TaskItem taskView = TaskItem.newBuilder()
-                                              .setDescription(newDescription("task desc"))
-                                              .build();
+    private final TaskItem taskView = TaskItem
+            .newBuilder()
+            .setDescription(newDescription("task desc"))
+            .build();
 
     @Test
     @DisplayName("refresh task list")
@@ -75,12 +76,14 @@ class MyTasksListViewTest extends ViewTest {
     @DisplayName("create action for every task view")
     void createActions() {
         int tasksCount = 5;
-        TaskListView taskListView = TaskListView.newBuilder()
-                                                .addAllItems(nCopies(tasksCount, taskView))
-                                                .build();
-        MyListView myListView = MyListView.newBuilder()
-                                          .setMyList(taskListView)
-                                          .build();
+        TaskListView taskListView = TaskListView
+                .newBuilder()
+                .addAllItems(nCopies(tasksCount, taskView))
+                .build();
+        MyListView myListView = MyListView
+                .newBuilder()
+                .setMyList(taskListView)
+                .build();
         Collection<TransitionActionProducer> actions = taskActionProducersFor(myListView);
         assertEquals(tasksCount, actions.size());
     }
