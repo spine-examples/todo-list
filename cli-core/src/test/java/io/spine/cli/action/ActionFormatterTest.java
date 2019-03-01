@@ -44,16 +44,16 @@ class ActionFormatterTest {
     @Test
     @DisplayName("format Shortcut")
     void formatShortcut() {
-        final String expected = String.format(SHORTCUT_FORMAT, SHORTCUT);
+        String expected = String.format(SHORTCUT_FORMAT, SHORTCUT);
         assertEquals(expected, format(SHORTCUT));
     }
 
     @Test
     @DisplayName("format Action")
     void formatAction() {
-        final Action action = new NoOpAction("action", SHORTCUT);
-        final String formattedShortcut = format(action.getShortcut());
-        final String expected = formattedShortcut + SHORTCUT_NAME_SEPARATOR + action.getName();
+        Action action = new NoOpAction("action", SHORTCUT);
+        String formattedShortcut = format(action.getShortcut());
+        String expected = formattedShortcut + SHORTCUT_NAME_SEPARATOR + action.getName();
         assertEquals(expected, format(action));
     }
 }

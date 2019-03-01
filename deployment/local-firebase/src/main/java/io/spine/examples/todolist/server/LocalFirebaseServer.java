@@ -40,8 +40,6 @@ import static io.spine.examples.todolist.server.Server.newServer;
  *
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
- *
- * @author Dmytro Dashenkov
  */
 public class LocalFirebaseServer {
 
@@ -58,9 +56,9 @@ public class LocalFirebaseServer {
     private LocalFirebaseServer() {}
 
     public static void main(String[] args) throws IOException {
-        final BoundedContext boundedContext = BoundedContexts.create();
+        BoundedContext boundedContext = BoundedContexts.create();
         startSubscriptionMirror(boundedContext);
-        final Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
+        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
     }
 
@@ -70,8 +68,8 @@ public class LocalFirebaseServer {
      * @param boundedContext the {@link BoundedContext} to take the entity updates from
      */
     private static void startSubscriptionMirror(BoundedContext boundedContext) {
-        final Firestore firestore = FirebaseClients.initializeFirestore();
-        final FirebaseSubscriptionMirror subscriptionMirror =
+        Firestore firestore = FirebaseClients.initializeFirestore();
+        FirebaseSubscriptionMirror subscriptionMirror =
                 FirebaseSubscriptionMirror.newBuilder()
                                           .addBoundedContext(boundedContext)
                                           .setFirestore(firestore)

@@ -28,8 +28,10 @@ import io.spine.cli.view.View;
  *
  * <p>Actions with same {@link Shortcut} are considered equal.
  *
- * @param <S> the type of the source view
- * @param <D> the type of the destination view
+ * @param <S>
+ *         the type of the source view
+ * @param <D>
+ *         the type of the destination view
  */
 public interface Action<S extends View, D extends View> {
 

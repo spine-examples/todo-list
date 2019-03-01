@@ -26,7 +26,6 @@ import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.CreateBasicTaskVBuilder;
 import io.spine.examples.todolist.view.NewTaskView.DescriptionEditOperation;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,9 +37,6 @@ import static io.spine.examples.todolist.view.NewTaskView.EMPTY_VALUE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("NewTaskView should")
 class NewTaskViewTest extends ViewTest {
 
@@ -54,18 +50,18 @@ class NewTaskViewTest extends ViewTest {
     @Test
     @DisplayName("handle empty description")
     void handleEmptyDescription() {
-        final CreateBasicTaskVBuilder cleanBuilder = CreateBasicTaskVBuilder.newBuilder();
-        final String expectedRepresentation = DESCRIPTION_LABEL + ' ' + EMPTY_VALUE;
+        CreateBasicTaskVBuilder cleanBuilder = CreateBasicTaskVBuilder.newBuilder();
+        String expectedRepresentation = DESCRIPTION_LABEL + ' ' + EMPTY_VALUE;
         assertEquals(expectedRepresentation, view.renderState(cleanBuilder));
     }
 
     @Test
     @DisplayName("handle non-empty description")
     void handleNonEmptyDescription() {
-        final CreateBasicTaskVBuilder state =
+        CreateBasicTaskVBuilder state =
                 CreateBasicTaskVBuilder.newBuilder()
                                        .setDescription(VALID_DESCRIPTION);
-        final String expectedRepresentation =
+        String expectedRepresentation =
                 DESCRIPTION_LABEL + ' ' + VALID_DESCRIPTION.getValue();
         assertEquals(expectedRepresentation, view.renderState(state));
     }
@@ -73,15 +69,15 @@ class NewTaskViewTest extends ViewTest {
     @Test
     @DisplayName("update the ID if the view was rendered")
     void updateId() {
-        final TaskId initialId = view.getState()
-                                     .getId();
+        TaskId initialId = view.getState()
+                               .getId();
 
         view.addAction(noOpActionProducer(ACTION_NAME, QUIT_SHORTCUT));
         bot.addAnswer(QUIT_SHORTCUT.getValue());
         bot.screen()
            .renderView(view);
-        final TaskId idAfterRender = view.getState()
-                                         .getId();
+        TaskId idAfterRender = view.getState()
+                                   .getId();
         assertNotEquals(initialId.getValue(), idAfterRender.getValue());
     }
 
@@ -96,7 +92,7 @@ class NewTaskViewTest extends ViewTest {
         void editDescription() {
             bot.addAnswer(VALID_DESCRIPTION.getValue());
 
-            final CreateBasicTaskVBuilder state = view.getState();
+            CreateBasicTaskVBuilder state = view.getState();
             descriptionEdit.start(bot.screen(), state);
 
             assertEquals(VALID_DESCRIPTION, state.getDescription());

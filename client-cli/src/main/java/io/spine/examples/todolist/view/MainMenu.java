@@ -27,10 +27,8 @@ import static io.spine.cli.action.TransitionAction.transitionProducer;
 
 /**
  * Root view of the application.
- *
- * @author Dmytro Grankin
  */
-public class MainMenu extends ActionListView {
+public final class MainMenu extends ActionListView {
 
     private MainMenu() {
         super("Main menu");
@@ -42,7 +40,7 @@ public class MainMenu extends ActionListView {
      * @return the new instance
      */
     public static MainMenu create() {
-        final MainMenu mainMenu = new MainMenu();
+        MainMenu mainMenu = new MainMenu();
         mainMenu.addAction(transitionProducer("My tasks", new Shortcut("m"),
                                               MyTasksMenu.create()));
         return mainMenu;

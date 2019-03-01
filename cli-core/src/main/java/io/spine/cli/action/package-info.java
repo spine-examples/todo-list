@@ -21,7 +21,6 @@
 /**
  * This package provides classes for user actions in CLI.
  */
-
 @ParametersAreNonnullByDefault
 package io.spine.cli.action;
 

@@ -45,10 +45,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The task creation wizard test environment.
  *
  * <p>Provides values and routines for sending commands to the procman and verifying the results.
- *
- * @author Dmytro Dashenkov
  */
-@SuppressWarnings("OverlyCoupledClass") // OK for this class.
 public class TaskCreationWizardTestEnv {
 
     private final TodoClient client;
@@ -60,7 +57,8 @@ public class TaskCreationWizardTestEnv {
     /**
      * Creates a new instance of {@code TaskCreationWizardTestEnv} with the given client.
      *
-     * @param todoClient the {@code TodoClient} to connect to the TodoList server
+     * @param todoClient
+     *         the {@code TodoClient} to connect to the TodoList server
      * @return new instance of {@code TaskCreationWizardTestEnv}
      */
     public static TaskCreationWizardTestEnv with(TodoClient todoClient) {
@@ -71,10 +69,11 @@ public class TaskCreationWizardTestEnv {
     // -----------------------
 
     public void createDraft(TaskCreationId pid, TaskId taskId) {
-        final StartTaskCreation startCreation = StartTaskCreation.newBuilder()
-                                                                 .setId(pid)
-                                                                 .setTaskId(taskId)
-                                                                 .build();
+        StartTaskCreation startCreation = StartTaskCreation
+                .newBuilder()
+                .setId(pid)
+                .setTaskId(taskId)
+                .build();
         client.postCommand(startCreation);
     }
 
@@ -84,55 +83,63 @@ public class TaskCreationWizardTestEnv {
 
     public void setDetails(TaskCreationId pid, String description,
                            TaskPriority priority, Timestamp dueDate) {
-        final TaskDescription descValue = TaskDescription.newBuilder()
-                                                         .setValue(description)
-                                                         .build();
-        final SetTaskDetails setDescription = SetTaskDetails.newBuilder()
-                                                            .setId(pid)
-                                                            .setDescription(descValue)
-                                                            .setPriority(priority)
-                                                            .setDueDate(dueDate)
-                                                            .build();
+        TaskDescription descValue = TaskDescription
+                .newBuilder()
+                .setValue(description)
+                .build();
+        SetTaskDetails setDescription = SetTaskDetails
+                .newBuilder()
+                .setId(pid)
+                .setDescription(descValue)
+                .setPriority(priority)
+                .setDueDate(dueDate)
+                .build();
         client.postCommand(setDescription);
     }
 
     public void addLabel(TaskCreationId pid, LabelId labelId) {
-        final AddLabels addLabels = AddLabels.newBuilder()
-                                             .setId(pid)
-                                             .addExistingLabels(labelId)
-                                             .build();
+        AddLabels addLabels = AddLabels
+                .newBuilder()
+                .setId(pid)
+                .addExistingLabels(labelId)
+                .build();
         client.postCommand(addLabels);
     }
 
     public void skipLabels(TaskCreationId pid) {
-        final AddLabels addLabels = AddLabels.newBuilder()
-                                             .setId(pid)
-                                             .build();
+        AddLabels addLabels = AddLabels
+                .newBuilder()
+                .setId(pid)
+                .build();
         client.postCommand(addLabels);
     }
 
     public void complete(TaskCreationId pid) {
-        final CompleteTaskCreation completeTaskCreation = CompleteTaskCreation.newBuilder()
-                                                                              .setId(pid)
-                                                                              .build();
+        CompleteTaskCreation completeTaskCreation = CompleteTaskCreation
+                .newBuilder()
+                .setId(pid)
+                .build();
         client.postCommand(completeTaskCreation);
     }
 
     public void cancel(TaskCreationId pid) {
-        final CancelTaskCreation completeTaskCreation = CancelTaskCreation.newBuilder()
-                                                                          .setId(pid)
-                                                                          .build();
+        CancelTaskCreation completeTaskCreation = CancelTaskCreation
+                .newBuilder()
+                .setId(pid)
+                .build();
         client.postCommand(completeTaskCreation);
     }
 
     public LabelId createNewLabel(String title) {
-        final LabelId id = LabelId.newBuilder()
-                                  .setValue(newUuid())
-                                  .build();
-        final CreateBasicLabel cmd = CreateBasicLabel.newBuilder()
-                                                     .setLabelId(id)
-                                                     .setLabelTitle(title)
-                                                     .build();
+        LabelId id = LabelId
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
+        CreateBasicLabel cmd = CreateBasicLabel
+                .newBuilder()
+                .setLabelId(id)
+                .setLabelTitle(title)
+                .build();
         client.postCommand(cmd);
         return id;
     }
@@ -141,12 +148,13 @@ public class TaskCreationWizardTestEnv {
     // -------------
 
     public Task taskById(TaskId id) {
-        final Optional<Task> taskOptional = client.getTasks()
-                                                  .stream()
-                                                  .filter(task -> id.equals(task.getId()))
-                                                  .findAny();
+        Optional<Task> taskOptional =
+                client.getTasks()
+                      .stream()
+                      .filter(task -> id.equals(task.getId()))
+                      .findAny();
         assertTrue(taskOptional.isPresent());
-        final Task actualTask = taskOptional.get();
+        Task actualTask = taskOptional.get();
         return actualTask;
     }
 

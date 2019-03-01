@@ -194,9 +194,12 @@ final class TodoClientImpl implements SubscribingTodoClient {
      * Subscribes the given {@link StreamObserver} to the given topic and activates
      * the subscription.
      *
-     * @param topic    the topic to subscribe to
-     * @param observer the observer to subscribe
-     * @param <M>      the type of the result messages
+     * @param topic
+     *         the topic to subscribe to
+     * @param observer
+     *         the observer to subscribe
+     * @param <M>
+     *         the type of the result messages
      * @return the activated subscription
      */
     private <M extends Message> Subscription subscribeTo(Topic topic, StreamObserver<M> observer) {
@@ -208,8 +211,10 @@ final class TodoClientImpl implements SubscribingTodoClient {
     /**
      * Retrieves all the messages of the given type.
      *
-     * @param cls the class of the desired messages
-     * @param <M> the compile-time type of the desired messages
+     * @param cls
+     *         the class of the desired messages
+     * @param <M>
+     *         the compile-time type of the desired messages
      * @return all the messages of the given type present in the system
      */
     private <M extends Message> List<M> getByType(Class<M> cls) {
@@ -219,9 +224,9 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                          .getMessagesList();
 
         @SuppressWarnings("unchecked") // Logically correct.
-        List<M> result = messages.stream()
-                                 .map(any -> (M) unpack(any))
-                                 .collect(toList());
+                List<M> result = messages.stream()
+                                         .map(any -> (M) unpack(any))
+                                         .collect(toList());
         return result;
     }
 
@@ -236,9 +241,9 @@ final class TodoClientImpl implements SubscribingTodoClient {
                    System.lineSeparator(), messages);
 
         @SuppressWarnings("unchecked") // Logically correct.
-        Optional<M> result = messages.stream()
-                                     .map(any -> (M) unpack(any))
-                                     .findFirst();
+                Optional<M> result = messages.stream()
+                                             .map(any -> (M) unpack(any))
+                                             .findFirst();
         return result;
     }
 
@@ -271,7 +276,8 @@ final class TodoClientImpl implements SubscribingTodoClient {
      * <p>The {@linkplain SubscriptionUpdate#getEntityUpdates() messages} are unpacked
      * and sent to the delegate observer one by one.
      *
-     * @param <M> the type of the delegate observer messages
+     * @param <M>
+     *         the type of the delegate observer messages
      */
     private static final class SubscriptionUpdateObserver<M extends Message>
             implements StreamObserver<SubscriptionUpdate> {

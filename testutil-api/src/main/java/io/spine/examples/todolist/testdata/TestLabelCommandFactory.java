@@ -31,16 +31,15 @@ import static io.spine.base.Identifier.newUuid;
 
 /**
  * A factory of the label commands for the test needs.
- *
- * @author Illia Shepilov
  */
-public class TestLabelCommandFactory {
+public final class TestLabelCommandFactory {
 
     public static final String LABEL_TITLE = "label title";
     public static final String UPDATED_LABEL_TITLE = "updated label title";
-    public static final LabelId LABEL_ID = LabelId.newBuilder()
-                                                  .setValue(newUuid())
-                                                  .build();
+    public static final LabelId LABEL_ID = LabelId
+            .newBuilder()
+            .setValue(newUuid())
+            .build();
 
     private TestLabelCommandFactory() {
     }
@@ -51,7 +50,7 @@ public class TestLabelCommandFactory {
      * @return the {@code CreateBasicLabel} instance
      */
     public static CreateBasicLabel createLabelInstance() {
-        final CreateBasicLabel result = createLabelInstance(LABEL_ID);
+        CreateBasicLabel result = createLabelInstance(LABEL_ID);
         return result;
     }
 
@@ -61,10 +60,11 @@ public class TestLabelCommandFactory {
      * @return the {@code CreateBasicLabel} instance
      */
     public static CreateBasicLabel createLabelInstance(LabelId labelId) {
-        final CreateBasicLabel result = CreateBasicLabel.newBuilder()
-                                                        .setLabelId(labelId)
-                                                        .setLabelTitle(LABEL_TITLE)
-                                                        .build();
+        CreateBasicLabel result = CreateBasicLabel
+                .newBuilder()
+                .setLabelId(labelId)
+                .setLabelTitle(LABEL_TITLE)
+                .build();
         return result;
     }
 
@@ -74,14 +74,16 @@ public class TestLabelCommandFactory {
      * @return the {@code UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelId labelId) {
-        final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
-                                                              .setTitle(LABEL_TITLE)
-                                                              .setColor(LabelColor.GRAY)
-                                                              .build();
-        final LabelDetails newLabelDetails = LabelDetails.newBuilder()
-                                                         .setTitle(UPDATED_LABEL_TITLE)
-                                                         .setColor(LabelColor.GREEN)
-                                                         .build();
+        LabelDetails previousLabelDetails = LabelDetails
+                .newBuilder()
+                .setTitle(LABEL_TITLE)
+                .setColor(LabelColor.GRAY)
+                .build();
+        LabelDetails newLabelDetails = LabelDetails
+                .newBuilder()
+                .setTitle(UPDATED_LABEL_TITLE)
+                .setColor(LabelColor.GREEN)
+                .build();
         return updateLabelDetailsInstance(labelId, previousLabelDetails, newLabelDetails);
     }
 
@@ -91,37 +93,41 @@ public class TestLabelCommandFactory {
      * @return the {@code UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance() {
-        final LabelDetails previousLabelDetails = LabelDetails.newBuilder()
-                                                              .setTitle(LABEL_TITLE)
-                                                              .setColor(LabelColor.GRAY)
-                                                              .build();
-        final LabelDetails newLabelDetails = LabelDetails.newBuilder()
-                                                         .setTitle(UPDATED_LABEL_TITLE)
-                                                         .setColor(LabelColor.GREEN)
-                                                         .build();
+        LabelDetails previousLabelDetails = LabelDetails
+                .newBuilder()
+                .setTitle(LABEL_TITLE)
+                .setColor(LabelColor.GRAY)
+                .build();
+        LabelDetails newLabelDetails = LabelDetails
+                .newBuilder()
+                .setTitle(UPDATED_LABEL_TITLE)
+                .setColor(LabelColor.GREEN)
+                .build();
         return updateLabelDetailsInstance(LABEL_ID, previousLabelDetails, newLabelDetails);
     }
 
     /**
      * Provides the {@link UpdateLabelDetails} event by specified label color and title.
      *
-     * @param previousLabelDetails the previous label details
-     * @param newLabelDetails      the new label details
+     * @param previousLabelDetails
+     *         the previous label details
+     * @param newLabelDetails
+     *         the new label details
      * @return the {@code UpdateLabelDetails} instance.
      */
     public static UpdateLabelDetails updateLabelDetailsInstance(LabelId id,
-            LabelDetails previousLabelDetails,
-            LabelDetails newLabelDetails) {
-        final LabelDetailsChange labelDetailsChange =
-                LabelDetailsChange.newBuilder()
-                                  .setPreviousDetails(previousLabelDetails)
-                                  .setNewDetails(newLabelDetails)
-                                  .build();
-        final UpdateLabelDetails result =
-                UpdateLabelDetails.newBuilder()
-                                  .setId(id)
-                                  .setLabelDetailsChange(labelDetailsChange)
-                                  .build();
+                                                                LabelDetails previousLabelDetails,
+                                                                LabelDetails newLabelDetails) {
+        LabelDetailsChange labelDetailsChange = LabelDetailsChange
+                .newBuilder()
+                .setPreviousDetails(previousLabelDetails)
+                .setNewDetails(newLabelDetails)
+                .build();
+        UpdateLabelDetails result = UpdateLabelDetails
+                .newBuilder()
+                .setId(id)
+                .setLabelDetailsChange(labelDetailsChange)
+                .build();
         return result;
     }
 }

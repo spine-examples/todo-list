@@ -25,20 +25,17 @@ import io.spine.examples.todolist.q.projection.TaskItem;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static io.spine.base.Time.getCurrentTime;
 import static io.spine.examples.todolist.TaskPriority.NORMAL;
 import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.view.DateFormatter.format;
 import static io.spine.examples.todolist.view.TaskView.DESCRIPTION_VALUE;
 import static io.spine.examples.todolist.view.TaskView.DUE_DATE_VALUE;
 import static io.spine.examples.todolist.view.TaskView.PRIORITY_VALUE;
-import static io.spine.base.Time.getCurrentTime;
 import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("TaskView should")
 class TaskViewTest extends ViewTest {
 
@@ -52,16 +49,16 @@ class TaskViewTest extends ViewTest {
     @Test
     @DisplayName("throw the exception if nonexistent task ID is specified")
     void notAllowNonexistentTaskId() {
-        final TaskId id = TaskId.newBuilder()
-                                .setValue("invalid ID")
-                                .build();
+        TaskId id = TaskId.newBuilder()
+                          .setValue("invalid ID")
+                          .build();
         assertThrows(IllegalStateException.class, () -> taskView.load(id));
     }
 
     @Test
     @DisplayName("render TaskItem state")
     void renderTaskItem() {
-        final String expectedResult =
+        String expectedResult =
                 DESCRIPTION_VALUE + task.getDescription() + lineSeparator() +
                         PRIORITY_VALUE + task.getPriority() + lineSeparator() +
                         DUE_DATE_VALUE + format(task.getDueDate());

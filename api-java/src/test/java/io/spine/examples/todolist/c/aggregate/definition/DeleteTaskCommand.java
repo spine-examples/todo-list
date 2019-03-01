@@ -62,9 +62,9 @@ class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
     void deleteTask() {
         dispatchCreateTaskCmd();
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
+        DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
-        final Task state = aggregate.state();
+        Task state = aggregate.state();
 
         assertEquals(entityId(), state.getId());
         assertEquals(DELETED, state.getTaskStatus());
@@ -76,12 +76,12 @@ class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
     void cannotDeleteAlreadyDeletedTask() {
         dispatchCreateTaskCmd();
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
-        final CommandEnvelope deleteTaskEnvelope = envelopeOf(deleteTaskCmd);
+        DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
+        CommandEnvelope deleteTaskEnvelope = envelopeOf(deleteTaskCmd);
         dispatchCommand(aggregate, deleteTaskEnvelope);
 
-        final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate, deleteTaskEnvelope));
+        Throwable t = assertThrows(Throwable.class,
+                                   () -> dispatchCommand(aggregate, deleteTaskEnvelope));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotDeleteTask.class));
     }
 
@@ -89,18 +89,18 @@ class DeleteTaskCommand extends TaskCommandTest<DeleteTask> {
     @DisplayName("produce TaskDeleted event")
     void produceEvent() {
         dispatchCreateTaskCmd();
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
+        DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
 
-        final List<? extends Message> messageList = dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
+        List<? extends Message> messageList = dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDeleted.class, messageList.get(0)
                                                    .getClass());
-        final TaskDeleted taskDeleted = (TaskDeleted) messageList.get(0);
+        TaskDeleted taskDeleted = (TaskDeleted) messageList.get(0);
         assertEquals(entityId(), taskDeleted.getTaskId());
     }
 
     private void dispatchCreateTaskCmd() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
+        CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }
 }

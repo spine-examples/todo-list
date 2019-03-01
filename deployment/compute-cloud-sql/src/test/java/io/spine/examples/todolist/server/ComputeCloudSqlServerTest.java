@@ -41,8 +41,8 @@ class ComputeCloudSqlServerTest {
     @Test
     @DisplayName("create signletenant BoundedContext")
     void createSingletenantBoundedContext() {
-        final BoundedContext boundedContext = createBoundedContext();
-        final StorageFactory storageFactory = boundedContext.storageFactory();
+        BoundedContext boundedContext = createBoundedContext();
+        StorageFactory storageFactory = boundedContext.storageFactory();
         assertFalse(storageFactory.isMultitenant());
     }
 }

@@ -27,9 +27,6 @@ import org.junit.jupiter.api.Test;
 import static java.lang.System.lineSeparator;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("Bot should")
 class BotTest {
 

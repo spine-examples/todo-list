@@ -20,7 +20,6 @@
 
 package io.spine.cli.view;
 
-import com.google.protobuf.StringValue;
 import io.spine.cli.Bot;
 import io.spine.cli.CreateProject;
 import io.spine.cli.CreateProjectVBuilder;
@@ -62,7 +61,7 @@ class CommandViewTest {
     @DisplayName("render state representation")
     void renderStateRepresentation() {
         view.renderBody(bot.screen());
-        final String expectedBody =
+        String expectedBody =
                 view.renderState(CreateProjectVBuilder.newBuilder()) + lineSeparator();
         bot.assertOutput(expectedBody);
     }
@@ -70,7 +69,7 @@ class CommandViewTest {
     @Test
     @DisplayName("wrap ValidationException and re-render itself")
     void displayViewOnValidationException() {
-        final Action throwVException = new ThrowValidationExceptionAction();
+        Action throwVException = new ThrowValidationExceptionAction();
         assertThrows(ValidationException.class, throwVException::execute);
         assertFalse(view.wasRendered);
 

@@ -151,6 +151,32 @@ class AssignLabelToTaskTest extends TodoClientTest {
 
             assertEquals(labelId, view.getLabelId());
         }
+
+        private TaskItem
+        obtainViewWhenHandledAssignLabelToTask(LabelId labelId, boolean isCorrectId) {
+            CreateDraft createDraft = createDraft();
+            client.postCommand(createDraft);
+
+            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
+            client.postCommand(updateTaskPriority);
+
+            TaskId createTaskId = createDraft.getId();
+            TaskId taskIdToAssign = isCorrectId ? createTaskId : createWrongTaskId();
+
+            AssignLabelToTask assignLabelToTask =
+                    assignLabelToTaskInstance(taskIdToAssign, labelId);
+            client.postCommand(assignLabelToTask);
+
+            List<TaskItem> taskViews = client.getDraftTasksView()
+                                             .getDraftTasks()
+                                             .getItemsList();
+            assertEquals(1, taskViews.size());
+
+            TaskItem view = taskViews.get(0);
+            assertEquals(createTaskId, view.getId());
+
+            return view;
+        }
     }
 
     @Nested
@@ -178,6 +204,28 @@ class AssignLabelToTaskTest extends TodoClientTest {
 
             assertNotEquals(labelId, view.getLabelId());
         }
+
+        private TaskItem
+        obtainTaskItemWhenHandledAssignLabelToTask(LabelId labelId, boolean isCorrectId) {
+            CreateBasicTask createTask = createTask();
+
+            TaskId idOfCreatedTask = createTask.getId();
+            TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
+
+            AssignLabelToTask assignLabelToTask =
+                    assignLabelToTaskInstance(idOfUpdatedTask, labelId);
+            client.postCommand(assignLabelToTask);
+
+            List<TaskItem> taskViews = client.getMyListView()
+                                             .getMyList()
+                                             .getItemsList();
+            assertEquals(1, taskViews.size());
+
+            TaskItem view = taskViews.get(0);
+            assertEquals(idOfCreatedTask, view.getId());
+
+            return view;
+        }
     }
 
     @Nested
@@ -196,59 +244,14 @@ class AssignLabelToTaskTest extends TodoClientTest {
             assertEquals(1, labelIds.size());
             assertEquals(labelId, labelIds.get(0));
         }
-    }
 
-    private TaskItem obtainTaskItemWhenHandledAssignLabelToTask(LabelId labelId,
-                                                                boolean isCorrectId) {
-        CreateBasicTask createTask = createTask();
-
-        TaskId idOfCreatedTask = createTask.getId();
-        TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
-
-        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfUpdatedTask, labelId);
-        client.postCommand(assignLabelToTask);
-
-        List<TaskItem> taskViews = client.getMyListView()
-                                         .getMyList()
-                                         .getItemsList();
-        assertEquals(1, taskViews.size());
-
-        TaskItem view = taskViews.get(0);
-        assertEquals(idOfCreatedTask, view.getId());
-
-        return view;
-    }
-
-    private TaskItem obtainViewWhenHandledAssignLabelToTask(LabelId labelId, boolean isCorrectId) {
-        CreateDraft createDraft = createDraft();
-        client.postCommand(createDraft);
-
-        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
-        client.postCommand(updateTaskPriority);
-
-        TaskId createTaskId = createDraft.getId();
-        TaskId taskIdToAssign = isCorrectId ? createTaskId : createWrongTaskId();
-
-        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskIdToAssign, labelId);
-        client.postCommand(assignLabelToTask);
-
-        List<TaskItem> taskViews = client.getDraftTasksView()
-                                         .getDraftTasks()
-                                         .getItemsList();
-        assertEquals(1, taskViews.size());
-
-        TaskItem view = taskViews.get(0);
-        assertEquals(createTaskId, view.getId());
-
-        return view;
-    }
-
-    private TaskLabels obtainTaskLabelsWhenHandledAssignLabelToTask(LabelId labelId) {
-        CreateBasicTask createTask = createTask();
-        TaskId taskId = createTask.getId();
-        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.postCommand(assignLabelToTask);
-        TaskLabels labels = client.getLabels(taskId);
-        return labels;
+        private TaskLabels obtainTaskLabelsWhenHandledAssignLabelToTask(LabelId labelId) {
+            CreateBasicTask createTask = createTask();
+            TaskId taskId = createTask.getId();
+            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            client.postCommand(assignLabelToTask);
+            TaskLabels labels = client.getLabels(taskId);
+            return labels;
+        }
     }
 }

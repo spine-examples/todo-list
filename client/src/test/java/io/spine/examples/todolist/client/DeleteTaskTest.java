@@ -183,17 +183,17 @@ class DeleteTaskTest extends TodoClientTest {
             TaskId taskId = createTask.getId();
             assertEquals(taskId, view.getId());
         }
-    }
 
-    private List<TaskItem> obtainTaskItemListWhenHandledDeleteTask(TaskId idOfCreatedTask,
-            boolean isCorrectId) {
-        TaskId idOfDeletedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
+        private List<TaskItem>
+        obtainTaskItemListWhenHandledDeleteTask(TaskId idOfCreatedTask, boolean isCorrectId) {
+            TaskId idOfDeletedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
 
-        DeleteTask deleteTask = deleteTaskInstance(idOfDeletedTask);
-        client.postCommand(deleteTask);
+            DeleteTask deleteTask = deleteTaskInstance(idOfDeletedTask);
+            client.postCommand(deleteTask);
 
-        return client.getMyListView()
-                     .getMyList()
-                     .getItemsList();
+            return client.getMyListView()
+                         .getMyList()
+                         .getItemsList();
+        }
     }
 }

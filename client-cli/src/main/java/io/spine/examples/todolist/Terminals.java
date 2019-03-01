@@ -29,13 +29,11 @@ import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
  * Utilities for creating {@linkplain Terminal terminals}.
- *
- * @author Dmytro Grankin
  */
-class Terminals {
+final class Terminals {
 
+    /** Prevents instantiation of this utility class. */
     private Terminals() {
-        // Prevent instantiation of this utility class.
     }
 
     /**

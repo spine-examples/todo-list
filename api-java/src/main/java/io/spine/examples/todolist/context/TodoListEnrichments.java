@@ -60,7 +60,7 @@ public final class TodoListEnrichments {
     }
 
     Enricher createEnricher() {
-        final Enricher enricher = Enricher
+        Enricher enricher = Enricher
                 .newBuilder()
                 .add(LabelId.class, LabelDetails.class, labelIdToLabelDetails())
                 .add(TaskId.class, TaskDetails.class, taskIdToTaskDetails())
@@ -71,31 +71,33 @@ public final class TodoListEnrichments {
     }
 
     private BiFunction<TaskId, EventContext, Task> taskIdToTask() {
-        final BiFunction<TaskId, EventContext, Task> result = (taskId, eventContext) -> {
+        BiFunction<TaskId, EventContext, Task> result = (taskId, eventContext) -> {
             if (taskId == null) {
                 return Task.getDefaultInstance();
             }
-            final Optional<TaskPart> aggregate = taskRepo.find(taskId);
+            Optional<TaskPart> aggregate = taskRepo.find(taskId);
             if (!aggregate.isPresent()) {
                 return Task.getDefaultInstance();
             }
-            final Task task = aggregate.get().state();
+            Task task = aggregate.get()
+                                 .state();
             return task;
         };
         return result;
     }
 
     private BiFunction<TaskId, EventContext, TaskDetails> taskIdToTaskDetails() {
-        final BiFunction<TaskId, EventContext, TaskDetails> result = (taskId, eventContext) -> {
+        BiFunction<TaskId, EventContext, TaskDetails> result = (taskId, eventContext) -> {
             if (taskId == null) {
                 return TaskDetails.getDefaultInstance();
             }
-            final Optional<TaskPart> aggregate = taskRepo.find(taskId);
+            Optional<TaskPart> aggregate = taskRepo.find(taskId);
             if (!aggregate.isPresent()) {
                 return TaskDetails.getDefaultInstance();
             }
-            final Task state = aggregate.get().state();
-            final TaskDetails details = TaskDetailsVBuilder
+            Task state = aggregate.get()
+                                  .state();
+            TaskDetails details = TaskDetailsVBuilder
                     .newBuilder()
                     .setDescription(state.getDescription())
                     .setPriority(state.getPriority())
@@ -107,33 +109,34 @@ public final class TodoListEnrichments {
     }
 
     private BiFunction<TaskId, EventContext, LabelIdsList> taskIdToLabelList() {
-        final BiFunction<TaskId, EventContext, LabelIdsList> result = (taskId, eventContext) -> {
+        BiFunction<TaskId, EventContext, LabelIdsList> result = (taskId, eventContext) -> {
             if (taskId == null) {
                 return LabelIdsList.getDefaultInstance();
             }
-            final Optional<TaskLabelsPart> aggregate = taskLabelsRepo.find(taskId);
+            Optional<TaskLabelsPart> aggregate = taskLabelsRepo.find(taskId);
             if (!aggregate.isPresent()) {
                 return LabelIdsList.getDefaultInstance();
             }
-            final LabelIdsList state = aggregate.get()
-                                                .state()
-                                                .getLabelIdsList();
+            LabelIdsList state = aggregate.get()
+                                          .state()
+                                          .getLabelIdsList();
             return state;
         };
         return result;
     }
 
     private BiFunction<LabelId, EventContext, LabelDetails> labelIdToLabelDetails() {
-        final BiFunction<LabelId, EventContext, LabelDetails> result = (labelId, eventContext) -> {
+        BiFunction<LabelId, EventContext, LabelDetails> result = (labelId, eventContext) -> {
             if (labelId == null) {
                 return LabelDetails.getDefaultInstance();
             }
-            final Optional<LabelAggregate> aggregate = labelRepository.find(labelId);
+            Optional<LabelAggregate> aggregate = labelRepository.find(labelId);
             if (!aggregate.isPresent()) {
                 return LabelDetails.getDefaultInstance();
             }
-            final TaskLabel state = aggregate.get().state();
-            final LabelDetails labelDetails = LabelDetailsVBuilder
+            TaskLabel state = aggregate.get()
+                                       .state();
+            LabelDetails labelDetails = LabelDetailsVBuilder
                     .newBuilder()
                     .setColor(state.getColor())
                     .setTitle(state.getTitle())
@@ -153,7 +156,7 @@ public final class TodoListEnrichments {
     }
 
     /**
-     * A builder for {@code EventEnricherSupplier} instances.
+     * A builder for {@code TodoListEnrichments} instances.
      */
     public static class Builder {
 

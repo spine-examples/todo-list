@@ -26,10 +26,8 @@ import io.spine.server.storage.StorageFactorySwitch;
 
 /**
  * Provides bounded context for the test needs.
- *
- * @author Illia Shepilov
  */
-public class TestBoundedContextFactory {
+public final class TestBoundedContextFactory {
 
     private TestBoundedContextFactory() {
     }
@@ -38,7 +36,8 @@ public class TestBoundedContextFactory {
      * Provides a new {@link BoundedContext} instance
      * built with the specified {@link EventBus.Builder} and {@link StorageFactorySwitch}.
      *
-     * @param eventBus {@code EventBus.Builder} instance
+     * @param eventBus
+     *         {@code EventBus.Builder} instance
      * @return the {@code BoundedContext} instance
      */
     public static BoundedContext boundedContextInstance(EventBus.Builder eventBus,

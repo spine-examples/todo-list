@@ -44,10 +44,8 @@ import static java.lang.String.valueOf;
  * <p>{@link MyListView} mainly consists of
  * {@linkplain TransitionAction transition actions}.
  * The action gives short info about the task and leads to a {@link TaskView}.
- *
- * @author Dmytro Grankin
  */
-public class MyTasksListView extends ActionListView {
+public final class MyTasksListView extends ActionListView {
 
     private static final String EMPTY_TASKS_LIST_MSG = "<no tasks>";
 
@@ -58,15 +56,13 @@ public class MyTasksListView extends ActionListView {
 
     /**
      * Refreshes the tasks list and renders the view.
-     *
-     * @param screen {@inheritDoc}
      */
     @Override
     public void render(Screen screen) {
         clearActions();
 
-        final MyListView myListView = getClient().getMyListView();
-        final Collection<TransitionActionProducer> producers = taskActionProducersFor(myListView);
+        MyListView myListView = getClient().getMyListView();
+        Collection<TransitionActionProducer> producers = taskActionProducersFor(myListView);
 
         if (producers.isEmpty()) {
             screen.println(EMPTY_TASKS_LIST_MSG);
@@ -79,9 +75,12 @@ public class MyTasksListView extends ActionListView {
     /**
      * Creates {@link TransitionActionProducer} with {@code MyTasksListView} destination.
      *
-     * @param name     the name for the action
-     * @param shortcut the shortcut for the action
-     * @param <S>      the type of the source view
+     * @param name
+     *         the name for the action
+     * @param shortcut
+     *         the shortcut for the action
+     * @param <S>
+     *         the type of the source view
      * @return the new producer
      */
     public static <S extends View> TransitionActionProducer<S, MyTasksListView>
@@ -91,11 +90,11 @@ public class MyTasksListView extends ActionListView {
 
     @VisibleForTesting
     static Collection<TransitionActionProducer> taskActionProducersFor(MyListView myListView) {
-        final Collection<TransitionActionProducer> producers = new ArrayList<>();
-        final List<TaskItem> tasks = myListView.getMyList()
-                                               .getItemsList();
+        Collection<TransitionActionProducer> producers = new ArrayList<>();
+        List<TaskItem> tasks = myListView.getMyList()
+                                         .getItemsList();
         for (TaskItem task : tasks) {
-            final int index = tasks.indexOf(task);
+            int index = tasks.indexOf(task);
             producers.add(newOpenTaskViewProducer(task, index));
         }
         return producers;
@@ -104,11 +103,11 @@ public class MyTasksListView extends ActionListView {
     @VisibleForTesting
     static TransitionActionProducer<MyTasksListView, TaskView>
     newOpenTaskViewProducer(TaskItem task, int viewIndex) {
-        final String name = task.getDescription()
-                                .getValue();
-        final String shortcutValue = valueOf(viewIndex + 1);
-        final Shortcut shortcut = new Shortcut(shortcutValue);
-        final TaskView destination = new TaskView(task.getId());
+        String name = task.getDescription()
+                          .getValue();
+        String shortcutValue = valueOf(viewIndex + 1);
+        Shortcut shortcut = new Shortcut(shortcutValue);
+        TaskView destination = new TaskView(task.getId());
         return transitionProducer(name, shortcut, destination);
     }
 }

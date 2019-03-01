@@ -65,12 +65,12 @@ class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     void produceEvent() {
         dispatchCreateTaskCmd();
 
-        final List<? extends Message> messageList = dispatchCompleteTaskCmd();
+        List<? extends Message> messageList = dispatchCompleteTaskCmd();
 
         assertEquals(1, messageList.size());
         assertEquals(TaskCompleted.class, messageList.get(0)
                                                      .getClass());
-        final TaskCompleted taskCompleted = (TaskCompleted) messageList.get(0);
+        TaskCompleted taskCompleted = (TaskCompleted) messageList.get(0);
 
         assertEquals(entityId(), taskCompleted.getTaskId());
     }
@@ -81,7 +81,7 @@ class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
         dispatchCreateTaskCmd();
 
         dispatchCompleteTaskCmd();
-        final Task state = aggregate.state();
+        Task state = aggregate.state();
 
         assertEquals(entityId(), state.getId());
         assertEquals(COMPLETED, state.getTaskStatus());
@@ -92,10 +92,10 @@ class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     void cannotCompleteDeletedTask() {
         dispatchCreateTaskCmd();
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
+        DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
-        final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
+        Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
     }
 
@@ -103,20 +103,20 @@ class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     @DisplayName("throw CannotCompleteTask rejection upon " +
             "an attempt to complete the task in draft state")
     void cannotCompleteDraft() {
-        final CreateDraft createDraftCmd = createDraftInstance(entityId());
+        CreateDraft createDraftCmd = createDraftInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(createDraftCmd));
 
-        final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
+        Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
     }
 
     private void dispatchCreateTaskCmd() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
+        CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }
 
     private List<? extends Message> dispatchCompleteTaskCmd() {
-        final CompleteTask completeTaskCmd = completeTaskInstance(entityId());
+        CompleteTask completeTaskCmd = completeTaskInstance(entityId());
         return dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
     }
 }

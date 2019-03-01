@@ -58,42 +58,45 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
 
     @Assign
     List<? extends Message> handle(CreateBasicLabel cmd) {
-        final LabelDetails.Builder labelDetails = LabelDetails.newBuilder()
-                                                              .setTitle(cmd.getLabelTitle());
-        final LabelCreated result = LabelCreated.newBuilder()
-                                                .setId(cmd.getLabelId())
-                                                .setDetails(labelDetails)
-                                                .build();
+        LabelDetails.Builder labelDetails = LabelDetails
+                .newBuilder()
+                .setTitle(cmd.getLabelTitle());
+        LabelCreated result = LabelCreated
+                .newBuilder()
+                .setId(cmd.getLabelId())
+                .setDetails(labelDetails)
+                .build();
         return Collections.singletonList(result);
     }
 
     @Assign
     List<? extends Message> handle(UpdateLabelDetails cmd)
             throws CannotUpdateLabelDetails {
-        final TaskLabel state = state();
-        final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
-                                                            .setColor(state.getColor())
-                                                            .setTitle(state.getTitle())
-                                                            .build();
-        final LabelDetailsChange labelDetailsChange = cmd.getLabelDetailsChange();
-        final LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
+        TaskLabel state = state();
+        LabelDetails actualLabelDetails = LabelDetails
+                .newBuilder()
+                .setColor(state.getColor())
+                .setTitle(state.getTitle())
+                .build();
+        LabelDetailsChange labelDetailsChange = cmd.getLabelDetailsChange();
+        LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
 
-        final boolean isEquals = actualLabelDetails.equals(expectedLabelDetails);
+        boolean isEquals = actualLabelDetails.equals(expectedLabelDetails);
 
         if (!isEquals) {
-            final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
-            final ValueMismatch mismatch = unexpectedValue(expectedLabelDetails,
-                                                           actualLabelDetails, newLabelDetails);
+            LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
+            ValueMismatch mismatch =
+                    unexpectedValue(expectedLabelDetails, actualLabelDetails, newLabelDetails);
             throwCannotUpdateLabelDetails(cmd, mismatch);
         }
 
-        final LabelId labelId = cmd.getId();
-        final LabelDetailsUpdated labelDetailsUpdated =
-                LabelDetailsUpdated.newBuilder()
-                                   .setLabelId(labelId)
-                                   .setLabelDetailsChange(labelDetailsChange)
-                                   .build();
-        final List<? extends Message> result = Collections.singletonList(labelDetailsUpdated);
+        LabelId labelId = cmd.getId();
+        LabelDetailsUpdated labelDetailsUpdated = LabelDetailsUpdated
+                .newBuilder()
+                .setLabelId(labelId)
+                .setLabelDetailsChange(labelDetailsChange)
+                .build();
+        List<? extends Message> result = Collections.singletonList(labelDetailsUpdated);
         return result;
     }
 
@@ -107,8 +110,8 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
 
     @Apply
     void labelDetailsUpdated(LabelDetailsUpdated event) {
-        final LabelDetails labelDetails = event.getLabelDetailsChange()
-                                               .getNewDetails();
+        LabelDetails labelDetails = event.getLabelDetailsChange()
+                                         .getNewDetails();
         builder().setId(id())
                  .setTitle(labelDetails.getTitle())
                  .setColor(labelDetails.getColor());

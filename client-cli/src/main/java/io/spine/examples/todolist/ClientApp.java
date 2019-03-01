@@ -49,17 +49,17 @@ public final class ClientApp {
     private static final String DEFAULT_HOST = HOST;
     private static final int DEFAULT_PORT = DEFAULT_CLIENT_SERVICE_PORT;
 
+    /** Prevent instantiation of this class. */
     private ClientApp() {
-        // Prevent instantiation of this class.
     }
 
     public static void main(String[] args) {
-        final Screen screen = new TerminalScreen();
+        Screen screen = new TerminalScreen();
         initCli(screen);
-        final TodoClient client = createClient(args);
+        TodoClient client = createClient(args);
         AppConfig.init(client);
 
-        final View entryPoint = MainMenu.create();
+        View entryPoint = MainMenu.create();
         screen.renderView(entryPoint);
 
         getClient().shutdown();
@@ -67,8 +67,8 @@ public final class ClientApp {
 
     private static TodoClient createClient(String[] arguments) {
         Logger log = Logging.get(ClientApp.class);
-        final String hostname;
-        final int port;
+        String hostname;
+        int port;
         if (arguments.length != ARGUMENTS_AMOUNT) {
             log.info("Expected arguments amount is {}. " +
                              "Default arguments will be used, hostname: {} and port: {}.",

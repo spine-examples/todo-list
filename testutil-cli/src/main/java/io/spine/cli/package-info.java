@@ -21,7 +21,6 @@
 /**
  * Test utilities for a `cli-core` based application.
  */
-
 @ParametersAreNonnullByDefault
 package io.spine.cli;
 

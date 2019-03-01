@@ -28,15 +28,13 @@ import static com.google.common.base.Preconditions.checkState;
 
 /**
  * Configuration of the client application.
- *
- * @author Dmytro Grankin
  */
-public class AppConfig {
+public final class AppConfig {
 
     private static TodoClient todoClient = null;
 
+    /** Prevents instantiation of this class. */
     private AppConfig() {
-        // Prevent instantiation of this class.
     }
 
     public static void init(TodoClient client) {

@@ -41,9 +41,10 @@ abstract class ProjectionTest {
     private final Enricher enricher = TestEventEnricherFactory.eventEnricherInstance();
 
     Event createEvent(EventMessage messageOrAny) {
-        final Event event = eventFactory.createEvent(messageOrAny, null);
-        final EventEnvelope envelope = EventEnvelope.of(event);
-        return enricher.enrich(envelope).outerObject();
+        Event event = eventFactory.createEvent(messageOrAny, null);
+        EventEnvelope envelope = EventEnvelope.of(event);
+        return enricher.enrich(envelope)
+                       .outerObject();
     }
 
     TaskListId createTaskListId() {

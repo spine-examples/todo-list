@@ -51,13 +51,15 @@ public final class LabelBuilder {
      * Builder for the {@link CreateBasicLabel} command.
      */
     public static final class CreateBasicLabelBuilder {
+
         private final CreateBasicLabel.Builder builder = CreateBasicLabel.newBuilder();
 
         /**
          * Sets the title to the {@link CreateBasicLabel.Builder}.
          *
-         * @param title the title of the command
-         * @return the {@link CreateBasicLabelBuilder} instance
+         * @param title
+         *         the title of the command
+         * @return the {@code CreateBasicLabelBuilder} instance
          */
         public CreateBasicLabelBuilder setTitle(String title) {
             builder.setLabelTitle(title);
@@ -74,13 +76,13 @@ public final class LabelBuilder {
             builder.setLabelId(id);
             return builder.build();
         }
-    }
 
-    private static LabelId generateId() {
-        LabelId id = LabelIdVBuilder
-                .newBuilder()
-                .setValue(newUuid())
-                .build();
-        return id;
+        private static LabelId generateId() {
+            LabelId id = LabelIdVBuilder
+                    .newBuilder()
+                    .setValue(newUuid())
+                    .build();
+            return id;
+        }
     }
 }

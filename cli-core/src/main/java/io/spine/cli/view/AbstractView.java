@@ -60,7 +60,8 @@ public abstract class AbstractView implements View {
 
     private static final String ACTION_SELECTION_HINT = format(new Shortcut("?"));
     private static final String SELECT_ACTION_MSG = "Select an action " + ACTION_SELECTION_HINT;
-    private static final String INVALID_SELECTION_MSG = "There is no action with specified shortcut.";
+    private static final String INVALID_SELECTION_MSG =
+            "There is no action with specified shortcut.";
 
     private final String title;
     private final Set<Action> actions;
@@ -68,7 +69,8 @@ public abstract class AbstractView implements View {
     /**
      * Creates a new instance without some {@link #actions}.
      *
-     * @param title the view title
+     * @param title
+     *         the view title
      */
     AbstractView(String title) {
         checkArgument(!isNullOrEmpty(title));
@@ -78,29 +80,29 @@ public abstract class AbstractView implements View {
 
     /**
      * Renders the view, prompts to select an action and then executes the action.
-     *
-     * @param screen {@inheritDoc}
      */
     @Override
     public void render(Screen screen) {
         renderTitle(screen);
         renderBody(screen);
         addBackAndRenderActions(screen);
-        final Action selectedAction = promptSelectAction(screen);
+        Action selectedAction = promptSelectAction(screen);
         executeAction(selectedAction);
     }
 
     /**
      * Renders a body of the view.
      *
-     * @param screen the screen to use
+     * @param screen
+     *         the screen to use
      */
     protected abstract void renderBody(Screen screen);
 
     /**
      * Executes the specified action.
      *
-     * @param action the action to execute
+     * @param action
+     *         the action to execute
      */
     protected void executeAction(Action action) {
         action.execute();
@@ -109,10 +111,14 @@ public abstract class AbstractView implements View {
     /**
      * Adds the {@link TransitionAction} created using the specified {@link ActionProducer}.
      *
-     * @param producer the producer of the action
-     * @param <S>      the type of the source view
-     * @param <D>      the type of the destination view
-     * @param <T>      the type of the action
+     * @param producer
+     *         the producer of the action
+     * @param <S>
+     *         the type of the source view
+     * @param <D>
+     *         the type of the destination view
+     * @param <T>
+     *         the type of the action
      */
     @SuppressWarnings("unchecked" /* Casts this to generic type to provide type covariance
                                      in the derived classes. */)
@@ -120,8 +126,8 @@ public abstract class AbstractView implements View {
             D extends View,
             T extends Action<S, D>>
     void addAction(ActionProducer<S, D, T> producer) {
-        final S source = (S) this;
-        final T action = producer.create(source);
+        S source = (S) this;
+        T action = producer.create(source);
         addAction(action);
     }
 
@@ -133,14 +139,14 @@ public abstract class AbstractView implements View {
     }
 
     private void renderTitle(Screen screen) {
-        final String titleUnderline = repeat("-", title.length());
+        String titleUnderline = repeat("-", title.length());
         screen.println(title);
         screen.println(titleUnderline);
     }
 
     private void addBackAndRenderActions(Screen screen) {
-        final Optional<TransitionAction<View, View>> back = screen.createBackAction(BACK_NAME,
-                                                                                    BACK_SHORTCUT);
+        Optional<TransitionAction<View, View>> back = screen.createBackAction(BACK_NAME,
+                                                                              BACK_SHORTCUT);
         back.ifPresent(actions::add);
         actions.stream()
                .map(Action::toString)
@@ -149,12 +155,13 @@ public abstract class AbstractView implements View {
 
     private Action promptSelectAction(Screen screen) {
         do {
-            final String shortcutValue = screen.promptUser(SELECT_ACTION_MSG);
-            final Optional<Action> selectedAction = actions.stream()
-                                                           .filter(action -> action.getShortcut()
-                                                                                   .getValue()
-                                                                                   .equals(shortcutValue))
-                                                           .findFirst();
+            String shortcutValue = screen.promptUser(SELECT_ACTION_MSG);
+            Optional<Action> selectedAction =
+                    actions.stream()
+                           .filter(action -> action.getShortcut()
+                                                   .getValue()
+                                                   .equals(shortcutValue))
+                           .findFirst();
             if (!selectedAction.isPresent()) {
                 screen.println(INVALID_SELECTION_MSG);
             } else {
@@ -181,8 +188,8 @@ public abstract class AbstractView implements View {
     }
 
     private static void checkHasNotReservedShortcut(Action action) {
-        final boolean hasReservedShortcut = action.getShortcut()
-                                                  .equals(BACK_SHORTCUT);
+        boolean hasReservedShortcut = action.getShortcut()
+                                            .equals(BACK_SHORTCUT);
         if (hasReservedShortcut) {
             throw newIllegalArgumentException("Action with reserved shortcut `%s` was specified.",
                                               BACK_SHORTCUT);

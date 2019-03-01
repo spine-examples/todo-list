@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.spine.base.Identifier.newUuid;
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -61,8 +60,8 @@ class ProjectionHelperTest extends UtilityClassTest<ProjectionHelper> {
     @Test
     @DisplayName("remove TaskItem from state by label ID")
     public void removeView() {
-        final int expectedListSize = 2;
-        final TaskListView view = ProjectionHelper.removeViewsByLabelId(viewList, LABEL_ID);
+        int expectedListSize = 2;
+        TaskListView view = ProjectionHelper.removeViewsByLabelId(viewList, LABEL_ID);
 
         assertEquals(expectedListSize, view.getItemsCount());
         assertFalse(viewList.contains(viewWithDefaultTaskId));
@@ -71,11 +70,12 @@ class ProjectionHelperTest extends UtilityClassTest<ProjectionHelper> {
     @Test
     @DisplayName("not remove TaskItem from state by wrong label ID")
     public void notRemoveViewByLabelId() {
-        final int expectedListSize = viewList.size();
-        final LabelId wrongLabelId = LabelId.newBuilder()
-                                            .setValue(newUuid())
-                                            .build();
-        final TaskListView view = ProjectionHelper.removeViewsByLabelId(viewList, wrongLabelId);
+        int expectedListSize = viewList.size();
+        LabelId wrongLabelId = LabelId
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
+        TaskListView view = ProjectionHelper.removeViewsByLabelId(viewList, wrongLabelId);
 
         assertEquals(expectedListSize, view.getItemsCount());
         assertTrue(viewList.contains(viewWithDefaultTaskId));
@@ -84,8 +84,8 @@ class ProjectionHelperTest extends UtilityClassTest<ProjectionHelper> {
     @Test
     @DisplayName("remove TaskItem from state by task ID")
     public void removeViewByTaskId() {
-        final int expectedListSize = 2;
-        final TaskListView view = ProjectionHelper.removeViewsByTaskId(viewList, TASK_ID);
+        int expectedListSize = 2;
+        TaskListView view = ProjectionHelper.removeViewsByTaskId(viewList, TASK_ID);
 
         assertEquals(expectedListSize, view.getItemsCount());
         assertFalse(viewList.contains(viewWithDefaultLabelId));
@@ -94,26 +94,29 @@ class ProjectionHelperTest extends UtilityClassTest<ProjectionHelper> {
     @Test
     @DisplayName("not remove TaskItem from state by wrong task ID")
     public void notRemoveTaskItemByTaskId() {
-        final int expectedListSize = viewList.size();
-        final TaskId wrongTaskId = TaskId.newBuilder()
-                                         .setValue(newUuid())
-                                         .build();
-        final TaskListView view = ProjectionHelper.removeViewsByTaskId(viewList, wrongTaskId);
+        int expectedListSize = viewList.size();
+        TaskId wrongTaskId = TaskId
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
+        TaskListView view = ProjectionHelper.removeViewsByTaskId(viewList, wrongTaskId);
 
         assertEquals(expectedListSize, view.getItemsCount());
         assertTrue(viewList.contains(viewWithDefaultTaskId));
     }
 
     private List<TaskItem> createViewList() {
-        final List<TaskItem> viewList = new ArrayList<>();
-        viewWithDefaultLabelId = TaskItem.newBuilder()
-                                         .setId(TASK_ID)
-                                         .setLabelId(LabelId.getDefaultInstance())
-                                         .build();
-        viewWithDefaultTaskId = TaskItem.newBuilder()
-                                        .setLabelId(LABEL_ID)
-                                        .setId(TaskId.getDefaultInstance())
-                                        .build();
+        List<TaskItem> viewList = new ArrayList<>();
+        viewWithDefaultLabelId = TaskItem
+                .newBuilder()
+                .setId(TASK_ID)
+                .setLabelId(LabelId.getDefaultInstance())
+                .build();
+        viewWithDefaultTaskId = TaskItem
+                .newBuilder()
+                .setLabelId(LABEL_ID)
+                .setId(TaskId.getDefaultInstance())
+                .build();
         viewList.add(viewWithDefaultLabelId);
         viewList.add(viewWithDefaultLabelId);
         viewList.add(viewWithDefaultTaskId);

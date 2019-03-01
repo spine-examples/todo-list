@@ -58,7 +58,7 @@ class ShortcutTest {
     @Test
     @DisplayName("return a value when toString is called")
     void overrideToString() {
-        final Shortcut shortcut = new Shortcut(VALUE);
+        Shortcut shortcut = new Shortcut(VALUE);
         assertEquals(VALUE, shortcut.toString());
     }
 }

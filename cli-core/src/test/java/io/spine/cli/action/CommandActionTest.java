@@ -70,7 +70,7 @@ class CommandActionTest {
         action.execute();
 
         assertEquals(expectedId, action.getCommandMessageBeforeExecution()
-                                           .getProjectId());
+                                       .getProjectId());
         assertTrue(view.wasRendered());
     }
 

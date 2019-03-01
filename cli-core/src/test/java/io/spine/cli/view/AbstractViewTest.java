@@ -74,19 +74,19 @@ class AbstractViewTest {
     @Test
     @DisplayName("add an action")
     void addAction() {
-        final Set<Action> actions = view.getActions();
-        final int sizeBeforeAddition = actions.size();
+        Set<Action> actions = view.getActions();
+        int sizeBeforeAddition = actions.size();
 
         view.addAction(transitionProducer(ACTION_NAME, SHORTCUT, view));
 
-        final int sizeAfterAddition = sizeBeforeAddition + 1;
+        int sizeAfterAddition = sizeBeforeAddition + 1;
         assertEquals(sizeAfterAddition, actions.size());
     }
 
     @Test
     @DisplayName("not add null action")
     void notAddNullAction() {
-        final NullProducer producer = new NullProducer(ACTION_NAME, SHORTCUT, view);
+        NullProducer producer = new NullProducer(ACTION_NAME, SHORTCUT, view);
         assertThrows(NullPointerException.class, () -> view.addAction(producer));
     }
 
@@ -94,17 +94,18 @@ class AbstractViewTest {
     @DisplayName("not add the action with the back shortcut")
     void notAddActionWithBackShortcut() {
         assertThrows(IllegalArgumentException.class,
-                     () -> view.addAction(transitionProducer(ACTION_NAME, getBackShortcut(), view)));
+                     () -> view.addAction(
+                             transitionProducer(ACTION_NAME, getBackShortcut(), view)));
     }
 
     @Test
     @DisplayName("not add the action with an occupied shortcut")
     void notAddActionWithOccupiedShortcut() {
-        final TransitionActionProducer<ActionListView, View> firstActionProducer =
+        TransitionActionProducer<ActionListView, View> firstActionProducer =
                 transitionProducer(ACTION_NAME, SHORTCUT, view);
         view.addAction(firstActionProducer);
 
-        final String secondActionName = firstActionProducer.getName() + " difference";
+        String secondActionName = firstActionProducer.getName() + " difference";
         assertThrows(IllegalArgumentException.class,
                      () -> view.addAction(transitionProducer(secondActionName, SHORTCUT, view)));
     }

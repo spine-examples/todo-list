@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 /**
  * Class provides methods to manipulate and handle views.
  */
-@SuppressWarnings("OverlyCoupledClass") // A lot of utility methods for projections.
+@SuppressWarnings("OverlyCoupledClass") // A lot of event types that are used by projections.
 final class ProjectionHelper {
 
     /** Prevents instantiation of this utility class. */
@@ -54,12 +54,14 @@ final class ProjectionHelper {
      * Removes the matching {@linkplain TaskItem task items}
      * from the specified list by the task ID.
      *
-     * @param tasks the list of the {@link TaskItem}
-     * @param id    the task ID of the task view
+     * @param tasks
+     *         the list of the {@link TaskItem}
+     * @param id
+     *         the task ID of the task view
      * @return {@link TaskListView} without deleted tasks
      */
     static TaskListView removeViewsByTaskId(List<TaskItem> tasks, TaskId id) {
-        final List<TaskItem> tasksToRemove = tasks
+        List<TaskItem> tasksToRemove = tasks
                 .stream()
                 .filter(t -> t.getId()
                               .equals(id))
@@ -71,15 +73,17 @@ final class ProjectionHelper {
      * Removes the matching {@linkplain TaskItem task items}
      * from the specified list by the label ID.
      *
-     * @param tasks the list of the {@link TaskItem}
-     * @param id    the label ID of the task view
+     * @param tasks
+     *         the list of the {@link TaskItem}
+     * @param id
+     *         the label ID of the task view
      * @return {@link TaskListView} without deleted tasks
      */
     static TaskListView removeViewsByLabelId(List<TaskItem> tasks, LabelId id) {
-        final List<TaskItem> tasksToRemove = tasks.stream()
-                                                  .filter(t -> t.getLabelId()
-                                                                .equals(id))
-                                                  .collect(Collectors.toList());
+        List<TaskItem> tasksToRemove = tasks.stream()
+                                            .filter(t -> t.getLabelId()
+                                                          .equals(id))
+                                            .collect(Collectors.toList());
         return removeTasks(tasks, tasksToRemove);
     }
 
@@ -91,20 +95,22 @@ final class ProjectionHelper {
     /**
      * Updates the label details of the matching {@link TaskItem} according to the event data.
      *
-     * @param tasks the list of the {@link TaskItem}
-     * @param event {@link LabelDetailsUpdated} instance
+     * @param tasks
+     *         the list of the {@link TaskItem}
+     * @param event
+     *         {@link LabelDetailsUpdated} instance
      * @return the list of the {@link TaskItem} with updated {@link LabelDetails}
      */
     static List<TaskItem> updateTaskItemList(List<TaskItem> tasks, LabelDetailsUpdated event) {
-        final int listSize = tasks.size();
-        final List<TaskItem> updatedList = new ArrayList<>(listSize);
+        int listSize = tasks.size();
+        List<TaskItem> updatedList = new ArrayList<>(listSize);
         for (TaskItem task : tasks) {
             TaskItem addedTask = task;
-            final boolean willUpdate = task.getLabelId()
-                                           .equals(event.getLabelId());
+            boolean willUpdate = task.getLabelId()
+                                     .equals(event.getLabelId());
             if (willUpdate) {
-                final LabelDetails labelDetails = event.getLabelDetailsChange()
-                                                       .getNewDetails();
+                LabelDetails labelDetails = event.getLabelDetailsChange()
+                                                 .getNewDetails();
                 addedTask = TaskItem
                         .newBuilder()
                         .setLabelColor(labelDetails.getColor())
@@ -123,14 +129,16 @@ final class ProjectionHelper {
     /**
      * Removes the label from the matching {@link TaskItem} according to the event data.
      *
-     * @param tasks the list of the {@link TaskItem}
-     * @param event {@link LabelRemovedFromTask} instance
+     * @param tasks
+     *         the list of the {@link TaskItem}
+     * @param event
+     *         {@link LabelRemovedFromTask} instance
      * @return the list of the {@link TaskItem} which does not contains specified label
      */
     static List<TaskItem> updateTaskItemList(List<TaskItem> tasks, LabelRemovedFromTask event) {
-        final TaskId targetTaskId = event.getTaskId();
+        TaskId targetTaskId = event.getTaskId();
 
-        final TaskTransformation updateFn =
+        TaskTransformation updateFn =
                 builder -> builder.setLabelId(LabelId.getDefaultInstance());
         return transformWithUpdate(tasks, targetTaskId, updateFn);
     }
@@ -138,58 +146,66 @@ final class ProjectionHelper {
     /**
      * Adds the label to the matching {@link TaskItem} according to the event data.
      *
-     * @param tasks the list of the {@link TaskItem}
-     * @param event {@link LabelAssignedToTask} instance
+     * @param tasks
+     *         the list of the {@link TaskItem}
+     * @param event
+     *         {@link LabelAssignedToTask} instance
      * @return the list of the {@link TaskItem} which contains specified label
      */
     static List<TaskItem> updateTaskItemList(List<TaskItem> tasks, LabelAssignedToTask event) {
-        final TaskId targetTaskId = event.getTaskId();
+        TaskId targetTaskId = event.getTaskId();
 
-        final TaskTransformation updateFn = builder -> builder.setLabelId(event.getLabelId());
+        TaskTransformation updateFn = builder -> builder.setLabelId(event.getLabelId());
         return transformWithUpdate(tasks, targetTaskId, updateFn);
     }
 
     /**
      * Marks the matching {@link TaskItem} as uncompleted according to the event data.
      *
-     * @param tasks the list of the {@link TaskItem}
-     * @param event {@link TaskReopened} instance
+     * @param tasks
+     *         the list of the {@link TaskItem}
+     * @param event
+     *         {@link TaskReopened} instance
      * @return the list of the {@link TaskItem}
      */
     static List<TaskItem> updateTaskItemList(List<TaskItem> tasks, TaskReopened event) {
-        final TaskId targetTaskId = event.getTaskId();
+        TaskId targetTaskId = event.getTaskId();
 
-        final TaskTransformation updateFn = builder -> builder.setCompleted(false);
+        TaskTransformation updateFn = builder -> builder.setCompleted(false);
         return transformWithUpdate(tasks, targetTaskId, updateFn);
     }
 
     /**
      * Marks the matching {@link TaskItem} as completed according to the event data.
      *
-     * @param tasks the list of the {@link TaskItem}
-     * @param event {@link TaskCompleted} instance
+     * @param tasks
+     *         the list of the {@link TaskItem}
+     * @param event
+     *         {@link TaskCompleted} instance
      * @return the list of the {@link TaskItem}
      */
     static List<TaskItem> updateTaskItemList(List<TaskItem> tasks, TaskCompleted event) {
-        final TaskId targetTaskId = event.getTaskId();
+        TaskId targetTaskId = event.getTaskId();
 
-        final TaskTransformation updateFn = builder -> builder.setCompleted(true);
+        TaskTransformation updateFn = builder -> builder.setCompleted(true);
         return transformWithUpdate(tasks, targetTaskId, updateFn);
     }
 
     /**
      * Updates task due date of the matching {@link TaskItem} according to the event data.
      *
-     * @param tasks the list of the {@link TaskItem}
-     * @param event {@link TaskDueDateUpdated} instance
+     * @param tasks
+     *         the list of the {@link TaskItem}
+     * @param event
+     *         {@link TaskDueDateUpdated} instance
      * @return the list of the {@link TaskItem} with updated task due date
      */
     static List<TaskItem> updateTaskItemList(List<TaskItem> tasks, TaskDueDateUpdated event) {
-        final TaskId targetTaskId = event.getTaskId();
+        TaskId targetTaskId = event.getTaskId();
 
-        final TaskTransformation updateFn = builder -> {
-            final Timestamp newDueDate = event.getDueDateChange()
-                                              .getNewValue();
+        TaskTransformation updateFn = builder -> {
+            Timestamp newDueDate = event.getDueDateChange()
+                                        .getNewValue();
             return builder.setDueDate(newDueDate);
         };
         return transformWithUpdate(tasks, targetTaskId, updateFn);
@@ -198,16 +214,18 @@ final class ProjectionHelper {
     /**
      * Updates the task priority of the matching {@link TaskItem} according to the event data.
      *
-     * @param tasks the list of the {@link TaskItem}
-     * @param event {@link TaskPriorityUpdated} instance
+     * @param tasks
+     *         the list of the {@link TaskItem}
+     * @param event
+     *         {@link TaskPriorityUpdated} instance
      * @return the list of the {@link TaskItem} with updated task priority
      */
     static List<TaskItem> updateTaskItemList(List<TaskItem> tasks, TaskPriorityUpdated event) {
-        final TaskId targetTaskId = event.getTaskId();
+        TaskId targetTaskId = event.getTaskId();
 
-        final TaskTransformation updateFn = builder -> {
-            final TaskPriority newPriority = event.getPriorityChange()
-                                                  .getNewValue();
+        TaskTransformation updateFn = builder -> {
+            TaskPriority newPriority = event.getPriorityChange()
+                                            .getNewValue();
             return builder.setPriority(newPriority);
         };
         return transformWithUpdate(tasks, targetTaskId, updateFn);
@@ -216,19 +234,22 @@ final class ProjectionHelper {
     /**
      * Updates the task description of the matching {@link TaskItem} according to the event data.
      *
-     * @param tasks the list of the {@link TaskItem}
-     * @param event {@link TaskDescriptionUpdated} instance
+     * @param tasks
+     *         the list of the {@link TaskItem}
+     * @param event
+     *         {@link TaskDescriptionUpdated} instance
      * @return the list of the {@link TaskItem} with updated task description
      */
     static List<TaskItem> updateTaskItemList(List<TaskItem> tasks, TaskDescriptionUpdated event) {
-        final TaskId targetTaskId = event.getTaskId();
+        TaskId targetTaskId = event.getTaskId();
 
-        final TaskTransformation updateFn = builder -> {
-            final String newDescriptionValue = event.getDescriptionChange()
-                                                    .getNewValue();
-            final TaskDescription newDescription = TaskDescription.newBuilder()
-                                                                  .setValue(newDescriptionValue)
-                                                                  .build();
+        TaskTransformation updateFn = builder -> {
+            String newDescriptionValue = event.getDescriptionChange()
+                                              .getNewValue();
+            TaskDescription newDescription = TaskDescription
+                    .newBuilder()
+                    .setValue(newDescriptionValue)
+                    .build();
             return builder.setDescription(newDescription);
         };
         return transformWithUpdate(tasks, targetTaskId, updateFn);
@@ -237,12 +258,12 @@ final class ProjectionHelper {
     private static List<TaskItem> transformWithUpdate(List<TaskItem> tasks,
                                                       TaskId targetTaskId,
                                                       TaskTransformation transformation) {
-        final int listSize = tasks.size();
-        final List<TaskItem> updatedList = new ArrayList<>(listSize);
+        int listSize = tasks.size();
+        List<TaskItem> updatedList = new ArrayList<>(listSize);
         for (TaskItem task : tasks) {
             TaskItem addedView = task;
-            final boolean willUpdate = task.getId()
-                                           .equals(targetTaskId);
+            boolean willUpdate = task.getId()
+                                     .equals(targetTaskId);
             if (willUpdate) {
                 TaskItem.Builder resultBuilder = TaskItem
                         .newBuilder()

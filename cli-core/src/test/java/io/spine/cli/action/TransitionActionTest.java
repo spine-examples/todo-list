@@ -37,9 +37,9 @@ class TransitionActionTest {
     @Test
     @DisplayName("render of a destination view")
     void renderDestinationView() {
-        final View source = new NoOpView();
-        final DisplayCounterView destination = new DisplayCounterView();
-        final Action<View, DisplayCounterView> action =
+        View source = new NoOpView();
+        DisplayCounterView destination = new DisplayCounterView();
+        Action<View, DisplayCounterView> action =
                 new TransitionAction<>(ACTION_NAME, SHORTCUT, source, destination);
 
         assertEquals(0, destination.displayedTimes);

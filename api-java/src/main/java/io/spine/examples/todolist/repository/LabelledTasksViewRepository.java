@@ -54,7 +54,7 @@ public class LabelledTasksViewRepository
         extends ProjectionRepository<LabelId, LabelledTasksViewProjection, LabelledTasksView> {
 
     @SuppressWarnings("OverridableMethodCallDuringObjectConstruction")
-    // Relying onto implementor judgement.
+    // Necessary so the implementors can specify their own routing schema.
     public LabelledTasksViewRepository() {
         super();
         setUpEventRoute();
@@ -68,8 +68,8 @@ public class LabelledTasksViewRepository
      */
     @SuppressWarnings("OverlyCoupledMethod") // A lot of routed event types.
     protected void setUpEventRoute() {
-        final EventRouting<LabelId> routing = eventRouting();
-        routing.route(LabelAssignedToTask.class, 
+        EventRouting<LabelId> routing = eventRouting();
+        routing.route(LabelAssignedToTask.class,
                       (message, context) -> singleton(message.getLabelId()));
         routing.route(LabelRemovedFromTask.class,
                       (message, context) -> singleton(message.getLabelId()));
@@ -90,9 +90,9 @@ public class LabelledTasksViewRepository
     }
 
     private static Set<LabelId> getLabelIdsSet(EventContext context) {
-        final LabelsListEnrichment enrichment = getEnrichment(LabelsListEnrichment.class, context);
-        final LabelIdsList labelsList = enrichment.getLabelIdsList();
-        final Set<LabelId> result = newHashSet(labelsList.getIdsList());
+        LabelsListEnrichment enrichment = getEnrichment(LabelsListEnrichment.class, context);
+        LabelIdsList labelsList = enrichment.getLabelIdsList();
+        Set<LabelId> result = newHashSet(labelsList.getIdsList());
         return result;
     }
 }

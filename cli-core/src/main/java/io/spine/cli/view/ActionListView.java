@@ -37,8 +37,6 @@ public class ActionListView extends AbstractView {
     /**
      * Does nothing. All the required behavior for this class is implemented in the
      * {@linkplain AbstractView#render(Screen) super} class.
-     *
-     * @param screen {@inheritDoc}
      */
     @Override
     protected void renderBody(Screen screen) {

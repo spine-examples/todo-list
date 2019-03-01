@@ -32,7 +32,8 @@ public interface SubscribingTodoClient extends TodoClient {
     /**
      * Subscribes the given {@code observer} onto the updates of the {@link MyListView} entity.
      *
-     * @param observer the result observer
+     * @param observer
+     *         the result observer
      * @return the new {@link Subscription}
      */
     Subscription subscribeToTasks(StreamObserver<MyListView> observer);
@@ -40,17 +41,19 @@ public interface SubscribingTodoClient extends TodoClient {
     /**
      * Cancels the given {@code subscription}.
      *
-     * @param subscription the subscription to cancel
+     * @param subscription
+     *         the subscription to cancel
      */
     void unSubscribe(Subscription subscription);
 
     /**
      * Creates a new instance of {@code SubscribingTodoClient}.
      *
-     * @param host the host of the server to connect to
-     * @param port the port of the server to connect to
+     * @param host
+     *         the host of the server to connect to
+     * @param port
+     *         the port of the server to connect to
      * @return new subscribing TodoList client
-     * @see TodoClient#instance(String, int)
      */
     static SubscribingTodoClient instance(String host, int port) {
         return new TodoClientImpl(host, port);

@@ -31,7 +31,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public abstract class AbstractActionProducer<S extends View,
                                              D extends View,
-                                             T extends Action<S, D>> implements ActionProducer<S, D, T> {
+                                             T extends Action<S, D>>
+        implements ActionProducer<S, D, T> {
 
     private final String name;
     private final Shortcut shortcut;

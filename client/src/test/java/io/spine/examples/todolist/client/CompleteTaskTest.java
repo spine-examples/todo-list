@@ -71,6 +71,36 @@ class CompleteTaskTest extends TodoClientTest {
             TaskItem view = obtainViewWhenHandledCommandCompleteTask(false);
             assertFalse(view.getCompleted());
         }
+
+        private TaskItem obtainViewWhenHandledCommandCompleteTask(boolean isCorrectId) {
+            CreateBasicTask createTask = createTask();
+            TaskId createdTaskId = createTask.getId();
+
+            CreateBasicLabel createLabel = createBasicLabel();
+            client.postCommand(createLabel);
+
+            TaskId taskId = createTask.getId();
+            LabelId labelId = createLabel.getLabelId();
+
+            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            client.postCommand(assignLabelToTask);
+
+            completeTask(isCorrectId, createdTaskId);
+
+            List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
+            int expectedListSize = 1;
+            assertEquals(expectedListSize, labelledTasksView.size());
+
+            List<TaskItem> taskViews = labelledTasksView.get(0)
+                                                        .getLabelledTasks()
+                                                        .getItemsList();
+            assertEquals(expectedListSize, taskViews.size());
+
+            TaskItem view = taskViews.get(0);
+            assertEquals(taskId, view.getId());
+
+            return view;
+        }
     }
 
     @Nested
@@ -90,53 +120,23 @@ class CompleteTaskTest extends TodoClientTest {
             TaskItem view = obtainTaskItemWhenHandledCompleteTask(false);
             assertFalse(view.getCompleted());
         }
-    }
 
-    private TaskItem obtainViewWhenHandledCommandCompleteTask(boolean isCorrectId) {
-        CreateBasicTask createTask = createTask();
-        TaskId createdTaskId = createTask.getId();
+        private TaskItem obtainTaskItemWhenHandledCompleteTask(boolean isCorrectId) {
+            CreateBasicTask createTask = createTask();
+            TaskId idOfCreatedTask = createTask.getId();
 
-        CreateBasicLabel createLabel = createBasicLabel();
-        client.postCommand(createLabel);
+            completeTask(isCorrectId, idOfCreatedTask);
 
-        TaskId taskId = createTask.getId();
-        LabelId labelId = createLabel.getLabelId();
+            List<TaskItem> taskViews = client.getMyListView()
+                                             .getMyList()
+                                             .getItemsList();
+            assertEquals(1, taskViews.size());
 
-        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.postCommand(assignLabelToTask);
+            TaskItem result = taskViews.get(0);
+            assertEquals(idOfCreatedTask, result.getId());
 
-        completeTask(isCorrectId, createdTaskId);
-
-        List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
-        int expectedListSize = 1;
-        assertEquals(expectedListSize, labelledTasksView.size());
-
-        List<TaskItem> taskViews = labelledTasksView.get(0)
-                                                    .getLabelledTasks()
-                                                    .getItemsList();
-        assertEquals(expectedListSize, taskViews.size());
-
-        TaskItem view = taskViews.get(0);
-        assertEquals(taskId, view.getId());
-
-        return view;
-    }
-
-    private TaskItem obtainTaskItemWhenHandledCompleteTask(boolean isCorrectId) {
-        CreateBasicTask createTask = createTask();
-        TaskId idOfCreatedTask = createTask.getId();
-
-        completeTask(isCorrectId, idOfCreatedTask);
-
-        List<TaskItem> taskViews = client.getMyListView()
-                                         .getMyList()
-                                         .getItemsList();
-        assertEquals(1, taskViews.size());
-
-        TaskItem result = taskViews.get(0);
-        assertEquals(idOfCreatedTask, result.getId());
-
-        return result;
+            return result;
+        }
     }
 
     private void completeTask(boolean isCorrectId, TaskId idOfCreatedTask) {

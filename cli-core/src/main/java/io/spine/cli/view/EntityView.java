@@ -30,8 +30,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * <p>This view adds rendering of an entity state.
  *
- * @param <I> the type of entity identifier
- * @param <S> the type of the entity state
+ * @param <I>
+ *         the type of entity identifier
+ * @param <S>
+ *         the type of the entity state
  */
 public abstract class EntityView<I extends Message, S extends Message> extends AbstractView {
 
@@ -45,20 +47,19 @@ public abstract class EntityView<I extends Message, S extends Message> extends A
 
     /**
      * Loads the entity state and then renders it.
-     *
-     * @param screen {@inheritDoc}
      */
     @Override
     protected void renderBody(Screen screen) {
-        final S state = load(id);
-        final String renderedState = renderState(state);
+        S state = load(id);
+        String renderedState = renderState(state);
         screen.println(renderedState);
     }
 
     /**
      * Loads entity state by the specified ID.
      *
-     * @param id the ID of the entity
+     * @param id
+     *         the ID of the entity
      * @return loaded entity state
      */
     protected abstract S load(I id);
@@ -66,7 +67,8 @@ public abstract class EntityView<I extends Message, S extends Message> extends A
     /**
      * Renders the specified entity state.
      *
-     * @param state the entity state
+     * @param state
+     *         the entity state
      * @return the rendered state
      */
     protected abstract String renderState(S state);

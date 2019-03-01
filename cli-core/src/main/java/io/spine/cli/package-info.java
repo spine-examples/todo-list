@@ -21,7 +21,6 @@
 /**
  * This package contains core elements for a CLI application.
  */
-
 @ParametersAreNonnullByDefault
 package io.spine.cli;
 

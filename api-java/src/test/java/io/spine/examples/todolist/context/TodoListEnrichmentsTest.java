@@ -63,64 +63,66 @@ class TodoListEnrichmentsTest {
 
     @BeforeEach
     void setUp() {
-        final TaskRepository taskRepo = mock(TaskRepository.class);
-        final LabelAggregateRepository labelRepo = mock(LabelAggregateRepository.class);
-        final TaskLabelsRepository taskLabelsRepo = mock(TaskLabelsRepository.class);
+        TaskRepository taskRepo = mock(TaskRepository.class);
+        LabelAggregateRepository labelRepo = mock(LabelAggregateRepository.class);
+        TaskLabelsRepository taskLabelsRepo = mock(TaskLabelsRepository.class);
         when(taskRepo.find(any(TaskId.class))).thenReturn(Optional.empty());
         when(labelRepo.find(any(LabelId.class))).thenReturn(Optional.empty());
         when(taskLabelsRepo.find(any(TaskId.class))).thenReturn(Optional.empty());
-        enricher = TodoListEnrichments.newBuilder()
-                                      .setTaskRepository(taskRepo)
-                                      .setLabelRepository(labelRepo)
-                                      .setTaskLabelsRepository(taskLabelsRepo)
-                                      .build()
-                                      .createEnricher();
+        enricher = TodoListEnrichments
+                .newBuilder()
+                .setTaskRepository(taskRepo)
+                .setLabelRepository(labelRepo)
+                .setTaskLabelsRepository(taskLabelsRepo)
+                .build()
+                .createEnricher();
     }
 
     @Test
     @DisplayName("create EventEnricher that defaults absent Task or TaskLabels to default message")
     void enricherDefaultsTest() {
-        final TaskDraftFinalized eventMsg = TaskDraftFinalized.newBuilder()
-                                                              .setTaskId(randomTaskId())
-                                                              .build();
-        final EventEnvelope envelope = enricher.enrich(EventEnvelope.of(event(eventMsg)));
-        final EventEnvelope enriched = enricher.enrich(envelope);
-        final Enrichment enrichment = enriched.context()
-                                              .getEnrichment();
+        TaskDraftFinalized eventMsg = TaskDraftFinalized
+                .newBuilder()
+                .setTaskId(randomTaskId())
+                .build();
+        EventEnvelope envelope = enricher.enrich(EventEnvelope.of(event(eventMsg)));
+        EventEnvelope enriched = enricher.enrich(envelope);
+        Enrichment enrichment = enriched.context()
+                                        .getEnrichment();
 
-        final TypeName labelsEnrName = TypeName.from(LabelsListEnrichment.getDescriptor());
-        final Any labelIds = enrichment.getContainer()
-                                       .getItemsMap()
-                                       .get(labelsEnrName.value());
-        final LabelsListEnrichment labelIdsEnr = (LabelsListEnrichment) unpack(labelIds);
+        TypeName labelsEnrName = TypeName.from(LabelsListEnrichment.getDescriptor());
+        Any labelIds = enrichment.getContainer()
+                                 .getItemsMap()
+                                 .get(labelsEnrName.value());
+        LabelsListEnrichment labelIdsEnr = (LabelsListEnrichment) unpack(labelIds);
         assertTrue(labelIdsEnr.getLabelIdsList()
                               .getIdsList()
                               .isEmpty());
 
-        final TypeName taskTypeName = TypeName.from(TaskEnrichment.getDescriptor());
-        final Any task = enrichment.getContainer()
-                                   .getItemsMap()
-                                   .get(taskTypeName.value());
-        final TaskEnrichment taskEnr = (TaskEnrichment) unpack(task);
+        TypeName taskTypeName = TypeName.from(TaskEnrichment.getDescriptor());
+        Any task = enrichment.getContainer()
+                             .getItemsMap()
+                             .get(taskTypeName.value());
+        TaskEnrichment taskEnr = (TaskEnrichment) unpack(task);
         assertTrue(isDefault(taskEnr.getTask()));
     }
 
     @Test
     @DisplayName("create EventEnricher that defaults absent Label to default message")
     void moreEnricherDefaultsTest() {
-        final LabelledTaskRestored eventMsg = LabelledTaskRestored.newBuilder()
-                                                                  .setLabelId(randomLabelId())
-                                                                  .build();
-        final EventEnvelope envelope = enricher.enrich(EventEnvelope.of(event(eventMsg)));
-        final EventEnvelope enriched = enricher.enrich(envelope);
-        final Enrichment enrichment = enriched.context()
-                                              .getEnrichment();
+        LabelledTaskRestored eventMsg = LabelledTaskRestored.newBuilder()
+                                                            .setLabelId(randomLabelId())
+                                                            .build();
+        EventEnvelope envelope = enricher.enrich(EventEnvelope.of(event(eventMsg)));
+        EventEnvelope enriched = enricher.enrich(envelope);
+        Enrichment enrichment = enriched.context()
+                                        .getEnrichment();
 
-        final TypeName enrTypeName = TypeName.from(DetailsEnrichment.getDescriptor());
-        final Any packerEnr = enrichment.getContainer()
-                                        .getItemsMap()
-                                        .get(enrTypeName.value());
-        final DetailsEnrichment enr = (DetailsEnrichment) unpack(packerEnr);
+        TypeName enrTypeName = TypeName.from(DetailsEnrichment.getDescriptor());
+        Any packerEnr = enrichment.getContainer()
+                                  .getItemsMap()
+                                  .get(enrTypeName.value());
+        DetailsEnrichment enr = (DetailsEnrichment) unpack(packerEnr);
         assertTrue(isDefault(enr.getLabelDetails()));
         assertTrue(isDefault(enr.getTaskDetails()));
     }

@@ -35,7 +35,7 @@ public class DraftTasksViewRepository
         extends ProjectionRepository<TaskListId, DraftTasksViewProjection, DraftTasksView> {
 
     @SuppressWarnings("OverridableMethodCallDuringObjectConstruction")
-    // Relying onto implementor judgement.
+    // Necessary so the implementors can specify their own routing schema.
     public DraftTasksViewRepository() {
         super();
         setUpEventRoute();

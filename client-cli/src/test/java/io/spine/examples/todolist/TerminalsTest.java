@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist;
 
+import io.spine.testing.UtilityClassTest;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.impl.DumbTerminal;
 import org.junit.jupiter.api.DisplayName;
@@ -30,22 +31,17 @@ import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("Terminals should")
-class TerminalsTest {
+class TerminalsTest extends UtilityClassTest<Terminals> {
 
-    @Test
-    @DisplayName("have the private constructor")
-    void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(Terminals.class);
+    TerminalsTest() {
+        super(Terminals.class);
     }
 
     @Test
     @DisplayName("create a new dumb terminal")
     void createNewDumbTerminal() {
-        final Terminal terminal = newTerminal();
+        Terminal terminal = newTerminal();
         assertThat(terminal, instanceOf(DumbTerminal.class));
     }
 }

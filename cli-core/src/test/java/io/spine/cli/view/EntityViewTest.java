@@ -45,7 +45,7 @@ class EntityViewTest {
     @DisplayName("load and render entity state")
     void loadAndRenderEntityState() {
         view.renderBody(bot.screen());
-        final String expectedBody = view.renderState(AnEntityView.STATE) + lineSeparator();
+        String expectedBody = view.renderState(AnEntityView.STATE) + lineSeparator();
         bot.assertOutput(expectedBody);
     }
 

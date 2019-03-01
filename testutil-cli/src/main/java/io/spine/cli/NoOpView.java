@@ -26,17 +26,13 @@ import io.spine.cli.view.View;
  * A view that does nothing.
  *
  * <p>Allows to determine the whether the view was rendered.
- *
- * @author Dmytro Grankin
  */
-public class NoOpView implements View {
+public final class NoOpView implements View {
 
     private boolean rendered;
 
     /**
      * Marks the view as {@link #rendered}.
-     *
-     * @param screen {@inheritDoc}
      */
     @Override
     public void render(Screen screen) {

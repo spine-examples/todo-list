@@ -57,8 +57,6 @@ import static java.lang.String.format;
  *
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
- *
- * @author Dmytro Grankin
  */
 @SuppressWarnings("DuplicateStringLiteralInspection" /* To avoid creation of a dumb base module
                                                         for servers in different modules. */)
@@ -69,21 +67,21 @@ public class LocalMySqlServer {
 
     private static final String DB_URL_FORMAT = "%s/%s?useSSL=false";
 
+    /** Prevents instantiation of this class. */
     private LocalMySqlServer() {
-        // Prevent instantiation of this class.
     }
 
     public static void main(String[] args) throws IOException {
-        final String[] actualArguments = getActualArguments(args);
-        final BoundedContext boundedContext = createBoundedContext(actualArguments);
-        final Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
+        String[] actualArguments = getActualArguments(args);
+        BoundedContext boundedContext = createBoundedContext(actualArguments);
+        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
     }
 
     @VisibleForTesting
     static String[] getActualArguments(String[] commandLineArguments) {
         Logger log = Logging.get(LocalMySqlServer.class);
-        final String[] defaultArguments = getDefaultArguments();
+        String[] defaultArguments = getDefaultArguments();
         if (commandLineArguments.length != defaultArguments.length) {
             log.info("The specified arguments don't match the length requirement. " +
                              "Required arguments size: {}. Default arguments will be used: {}.",
@@ -96,7 +94,7 @@ public class LocalMySqlServer {
 
     @VisibleForTesting
     static BoundedContext createBoundedContext(String[] args) {
-        final StorageFactory storageFactory = createStorageFactory(args);
+        StorageFactory storageFactory = createStorageFactory(args);
         return BoundedContexts.create(storageFactory);
     }
 
@@ -109,14 +107,14 @@ public class LocalMySqlServer {
 
     private static DataSource createDataSource(String[] args) {
         Logger log = Logging.get(LocalMySqlServer.class);
-        final HikariConfig config = new HikariConfig();
+        HikariConfig config = new HikariConfig();
 
-        final String dbName = args[0];
-        final String username = args[1];
-        final String password = args[2];
+        String dbName = args[0];
+        String username = args[1];
+        String password = args[2];
 
         log.info("Start `DataSource` creation. The following parameters will be used:");
-        final String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName);
+        String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName);
         config.setJdbcUrl(dbUrl);
         log.info("JDBC URL: {}", dbUrl);
 
@@ -126,7 +124,7 @@ public class LocalMySqlServer {
         config.setPassword(password);
         log.info("Password: {}", password);
 
-        final DataSource dataSource = new HikariDataSource(config);
+        DataSource dataSource = new HikariDataSource(config);
         return dataSource;
     }
 
@@ -141,25 +139,25 @@ public class LocalMySqlServer {
      * @return the prefix for a connection {@code URL}
      */
     private static String getDbUrlPrefix() {
-        final Environment environment = Environment.getInstance();
-        final String prefix = environment.isTests()
-                              ? "jdbc:h2:mem:"
-                              : properties.getProperty("db.prefix");
+        Environment environment = Environment.getInstance();
+        String prefix = environment.isTests()
+                        ? "jdbc:h2:mem:"
+                        : properties.getProperty("db.prefix");
         return prefix;
     }
 
     @VisibleForTesting
     static String[] getDefaultArguments() {
-        final String dbName = properties.getProperty("db.name");
-        final String username = properties.getProperty("db.username");
-        final String password = properties.getProperty("db.password");
+        String dbName = properties.getProperty("db.name");
+        String username = properties.getProperty("db.username");
+        String password = properties.getProperty("db.password");
         return new String[]{dbName, username, password};
     }
 
     private static Properties getProperties(String propertiesFile) {
-        final Properties properties = new Properties();
-        final InputStream stream = LocalMySqlServer.class.getClassLoader()
-                                                         .getResourceAsStream(propertiesFile);
+        Properties properties = new Properties();
+        InputStream stream = LocalMySqlServer.class.getClassLoader()
+                                                   .getResourceAsStream(propertiesFile);
         try {
             properties.load(stream);
         } catch (IOException e) {

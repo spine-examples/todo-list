@@ -48,8 +48,6 @@ import static java.lang.String.format;
  * <p>If you want to run this server locally, use {@code LocalCloudSqlServer} instead.
  *
  * <p>For the details, see the {@code README.md}.
- *
- * @author Dmytro Grankin
  */
 @SuppressWarnings("DuplicateStringLiteralInspection" /* To avoid creation of a dumb base module
                                                         for servers in different modules. */)
@@ -61,19 +59,19 @@ public class ComputeCloudSqlServer {
     private static final String DB_URL_FORMAT = "%s//google/%s?cloudSqlInstance=%s&" +
             "useSSL=false&socketFactory=com.google.cloud.sql.mysql.SocketFactory";
 
+    /** Prevents instantiation of this class. */
     private ComputeCloudSqlServer() {
-        // Prevent instantiation of this class.
     }
 
     public static void main(String[] args) throws IOException {
-        final BoundedContext boundedContext = createBoundedContext();
-        final Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
+        BoundedContext boundedContext = createBoundedContext();
+        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
     }
 
     @VisibleForTesting
     static BoundedContext createBoundedContext() {
-        final StorageFactory storageFactory = createStorageFactory();
+        StorageFactory storageFactory = createStorageFactory();
         return BoundedContexts.create(storageFactory);
     }
 
@@ -86,15 +84,15 @@ public class ComputeCloudSqlServer {
 
     private static DataSource createDataSource() {
         Logger log = Logging.get(ComputeCloudSqlServer.class);
-        final HikariConfig config = new HikariConfig();
+        HikariConfig config = new HikariConfig();
 
-        final String instanceConnectionName = properties.getProperty("db.instance");
-        final String dbName = properties.getProperty("db.name");
-        final String username = properties.getProperty("db.username");
-        final String password = properties.getProperty("db.password");
+        String instanceConnectionName = properties.getProperty("db.instance");
+        String dbName = properties.getProperty("db.name");
+        String username = properties.getProperty("db.username");
+        String password = properties.getProperty("db.password");
 
         log.info("Start `DataSource` creation. The following parameters will be used:");
-        final String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName, instanceConnectionName);
+        String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName, instanceConnectionName);
         config.setJdbcUrl(dbUrl);
         log.info("JDBC URL: {}", dbUrl);
 
@@ -104,7 +102,7 @@ public class ComputeCloudSqlServer {
         config.setPassword(password);
         log.info("Password: {}", password);
 
-        final DataSource dataSource = new HikariDataSource(config);
+        DataSource dataSource = new HikariDataSource(config);
         return dataSource;
     }
 
@@ -119,17 +117,17 @@ public class ComputeCloudSqlServer {
      * @return the prefix for a connection {@code URL}
      */
     private static String getDbUrlPrefix() {
-        final Environment environment = Environment.getInstance();
-        final String prefix = environment.isTests()
-                              ? "jdbc:h2:mem:"
-                              : properties.getProperty("db.prefix");
+        Environment environment = Environment.getInstance();
+        String prefix = environment.isTests()
+                        ? "jdbc:h2:mem:"
+                        : properties.getProperty("db.prefix");
         return prefix;
     }
 
     private static Properties getProperties(String propertiesFile) {
-        final Properties properties = new Properties();
-        final InputStream stream = ComputeCloudSqlServer.class.getClassLoader()
-                                                              .getResourceAsStream(propertiesFile);
+        Properties properties = new Properties();
+        InputStream stream = ComputeCloudSqlServer.class.getClassLoader()
+                                                        .getResourceAsStream(propertiesFile);
         try {
             properties.load(stream);
         } catch (IOException e) {

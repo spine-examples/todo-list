@@ -37,9 +37,6 @@ import static io.spine.examples.todolist.client.TodoClient.HOST;
 import static io.spine.examples.todolist.server.Server.newServer;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
-/**
- * @author Dmytro Grankin
- */
 abstract class ViewTest {
 
     private static final int PORT = DEFAULT_CLIENT_SERVICE_PORT;
@@ -48,11 +45,11 @@ abstract class ViewTest {
 
     @BeforeEach
     void setUp() throws InterruptedException {
-        final BoundedContext boundedContext = BoundedContexts.create();
+        BoundedContext boundedContext = BoundedContexts.create();
         server = newServer(PORT, boundedContext);
         startServer();
 
-        final TodoClient client = TodoClient.instance(HOST, PORT);
+        TodoClient client = TodoClient.instance(HOST, PORT);
         AppConfig.setClient(client);
     }
 
@@ -62,8 +59,8 @@ abstract class ViewTest {
     }
 
     private void startServer() throws InterruptedException {
-        final CountDownLatch serverStartLatch = new CountDownLatch(1);
-        final Thread serverThread = new Thread(() -> {
+        CountDownLatch serverStartLatch = new CountDownLatch(1);
+        Thread serverThread = new Thread(() -> {
             try {
                 server.start();
                 serverStartLatch.countDown();

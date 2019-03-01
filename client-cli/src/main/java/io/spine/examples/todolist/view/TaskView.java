@@ -36,10 +36,8 @@ import static java.lang.System.lineSeparator;
  * An {@link EntityView} of a {@link TaskItem}.
  *
  * <p>Renders the task and provides actions for working with the task.
- *
- * @author Dmytro Grankin
  */
-class TaskView extends EntityView<TaskId, TaskItem> {
+final class TaskView extends EntityView<TaskId, TaskItem> {
 
     static final String DUE_DATE_VALUE = "Due date: ";
     static final String DESCRIPTION_VALUE = "Description: ";
@@ -49,19 +47,16 @@ class TaskView extends EntityView<TaskId, TaskItem> {
         super(id, "My task details");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected TaskItem load(TaskId id) {
         //TODO:2017-07-19:dmytro.grankin: Allow to specify the source projection of task items.
-        final List<TaskItem> tasks = getClient().getMyListView()
-                                                .getMyList()
-                                                .getItemsList();
-        final Optional<TaskItem> optionalTask = tasks.stream()
-                                                     .filter(task -> task.getId()
-                                                                         .equals(id))
-                                                     .findFirst();
+        List<TaskItem> tasks = getClient().getMyListView()
+                                          .getMyList()
+                                          .getItemsList();
+        Optional<TaskItem> optionalTask = tasks.stream()
+                                               .filter(task -> task.getId()
+                                                                   .equals(id))
+                                               .findFirst();
         if (optionalTask.isPresent()) {
             return optionalTask.get();
         }
@@ -69,12 +64,9 @@ class TaskView extends EntityView<TaskId, TaskItem> {
         throw newIllegalStateException("There is no task with ID `%s`.", id);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String renderState(TaskItem state) {
-        final String date = format(state.getDueDate());
+        String date = format(state.getDueDate());
         return new StringBuilder().append(DESCRIPTION_VALUE)
                                   .append(state.getDescription())
                                   .append(lineSeparator())

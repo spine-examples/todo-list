@@ -74,13 +74,13 @@ class LabelAggregateTest {
         @Test
         @DisplayName("produce LabelCreated event")
         void produceLabel() {
-            final List<? extends Message> messageList = createBasicLabel();
+            List<? extends Message> messageList = createBasicLabel();
 
             assertEquals(1, messageList.size());
             assertEquals(LabelCreated.class, messageList.get(0)
                                                         .getClass());
 
-            final LabelCreated labelCreated = (LabelCreated) messageList.get(0);
+            LabelCreated labelCreated = (LabelCreated) messageList.get(0);
 
             assertEquals(entityId(), labelCreated.getId());
             assertEquals(LABEL_TITLE, labelCreated.getDetails()
@@ -92,7 +92,7 @@ class LabelAggregateTest {
         void createLabel() {
             createBasicLabel();
 
-            final TaskLabel state = aggregate.state();
+            TaskLabel state = aggregate.state();
 
             assertEquals(entityId(), state.getId());
             assertEquals(DEFAULT_LABEL_COLOR, state.getColor());
@@ -122,18 +122,18 @@ class LabelAggregateTest {
         @Test
         @DisplayName("produce LabelDetailsUpdated event")
         void produceEvent() {
-            final UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(entityId());
-            final List<? extends Message> messageList =
+            UpdateLabelDetails updateLabelDetails = updateLabelDetailsInstance(entityId());
+            List<? extends Message> messageList =
                     dispatchUpdateLabelDetails(updateLabelDetails);
 
             assertEquals(1, messageList.size());
             assertEquals(LabelDetailsUpdated.class, messageList.get(0)
                                                                .getClass());
 
-            final LabelDetailsUpdated labelDetailsUpdated =
+            LabelDetailsUpdated labelDetailsUpdated =
                     (LabelDetailsUpdated) messageList.get(0);
-            final LabelDetails details = labelDetailsUpdated.getLabelDetailsChange()
-                                                            .getNewDetails();
+            LabelDetails details = labelDetailsUpdated.getLabelDetailsChange()
+                                                      .getNewDetails();
             assertEquals(entityId(), labelDetailsUpdated.getLabelId());
             assertEquals(LabelColor.GREEN, details.getColor());
             assertEquals(UPDATED_LABEL_TITLE, details.getTitle());
@@ -150,15 +150,15 @@ class LabelAggregateTest {
             assertEquals(LabelColor.GREEN, state.getColor());
             assertEquals(UPDATED_LABEL_TITLE, state.getTitle());
 
-            final LabelColor previousLabelColor = LabelColor.GREEN;
-            final LabelDetails previousLabelDetails = LabelDetailsVBuilder
+            LabelColor previousLabelColor = LabelColor.GREEN;
+            LabelDetails previousLabelDetails = LabelDetailsVBuilder
                     .newBuilder()
                     .setTitle(UPDATED_LABEL_TITLE)
                     .setColor(previousLabelColor)
                     .build();
-            final LabelColor updatedLabelColor = LabelColor.BLUE;
-            final String updatedTitle = "updated title";
-            final LabelDetails newLabelDetails = LabelDetailsVBuilder
+            LabelColor updatedLabelColor = LabelColor.BLUE;
+            String updatedTitle = "updated title";
+            LabelDetails newLabelDetails = LabelDetailsVBuilder
                     .newBuilder()
                     .setColor(updatedLabelColor)
                     .setTitle(updatedTitle)
@@ -179,34 +179,34 @@ class LabelAggregateTest {
         @DisplayName("produce CannotUpdateLabelDetails rejection " +
                 "when the label details does not match expected")
         void cannotUpdateLabelDetails() {
-            final LabelDetails expectedLabelDetails = LabelDetailsVBuilder
+            LabelDetails expectedLabelDetails = LabelDetailsVBuilder
                     .newBuilder()
                     .setColor(LabelColor.BLUE)
                     .setTitle(LABEL_TITLE)
                     .build();
-            final LabelDetails newLabelDetails = LabelDetailsVBuilder
+            LabelDetails newLabelDetails = LabelDetailsVBuilder
                     .newBuilder()
                     .setColor(LabelColor.RED)
                     .setTitle(UPDATED_LABEL_TITLE)
                     .build();
             UpdateLabelDetails updateLabelDetails =
                     updateLabelDetailsInstance(entityId(), expectedLabelDetails, newLabelDetails);
-            final CannotUpdateLabelDetails rejection =
+            CannotUpdateLabelDetails rejection =
                     assertThrows(CannotUpdateLabelDetails.class,
                                  () -> aggregate.handle(updateLabelDetails));
-            final Rejections.CannotUpdateLabelDetails cannotUpdateLabelDetails =
+            Rejections.CannotUpdateLabelDetails cannotUpdateLabelDetails =
                     rejection.getMessageThrown();
-            final LabelDetailsUpdateRejected rejectionDetails =
+            LabelDetailsUpdateRejected rejectionDetails =
                     cannotUpdateLabelDetails.getRejectionDetails();
-            final LabelId actualLabelId = rejectionDetails.getCommandDetails()
-                                                          .getLabelId();
+            LabelId actualLabelId = rejectionDetails.getCommandDetails()
+                                                    .getLabelId();
             assertEquals(entityId(), actualLabelId);
 
-            final ValueMismatch mismatch = rejectionDetails.getLabelDetailsMismatch();
+            ValueMismatch mismatch = rejectionDetails.getLabelDetailsMismatch();
             assertEquals(pack(expectedLabelDetails), mismatch.getExpected());
             assertEquals(pack(newLabelDetails), mismatch.getNewValue());
 
-            final LabelDetails actualLabelDetails = LabelDetailsVBuilder
+            LabelDetails actualLabelDetails = LabelDetailsVBuilder
                     .newBuilder()
                     .setColor(LabelColor.GRAY)
                     .setTitle(LABEL_TITLE)
@@ -246,8 +246,8 @@ class LabelAggregateTest {
 
         @CanIgnoreReturnValue
         List<? extends Message> createBasicLabel() {
-            final CreateBasicLabel createBasicLabel = createLabelInstance();
-            final Command command = createNewCommand(createBasicLabel);
+            CreateBasicLabel createBasicLabel = createLabelInstance();
+            Command command = createNewCommand(createBasicLabel);
             return dispatchCommand(aggregate, CommandEnvelope.of(command));
         }
 

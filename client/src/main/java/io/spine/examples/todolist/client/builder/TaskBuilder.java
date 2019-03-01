@@ -62,12 +62,14 @@ public final class TaskBuilder {
      * Builder for the {@link CreateBasicTask} command.
      */
     public static final class CreateBasicTaskBuilder {
+
         private final CreateBasicTask.Builder builder = CreateBasicTask.newBuilder();
 
         /**
          * Sets the description to the {@link CreateBasicTask.Builder}.
          *
-         * @param description the description of the command
+         * @param description
+         *         the description of the command
          * @return the {@code CreateBasicTaskBuilder} instance
          */
         public CreateBasicTaskBuilder setDescription(TaskDescription description) {
@@ -91,6 +93,7 @@ public final class TaskBuilder {
      * Builder for the {@link CreateDraft} command.
      */
     public static final class CreateTaskDraftBuilder {
+
         private final CreateDraft.Builder builder = CreateDraft.newBuilder();
 
         /**

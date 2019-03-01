@@ -52,7 +52,7 @@ public final class Shortcut {
             return false;
         }
 
-        final Shortcut other = (Shortcut) o;
+        Shortcut other = (Shortcut) o;
 
         return Objects.equals(value, other.value);
     }

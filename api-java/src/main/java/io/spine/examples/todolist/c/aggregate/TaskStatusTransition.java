@@ -76,22 +76,26 @@ enum TaskStatusTransition {
      * Checks if the current status and new suggested status are associated
      * with one of the described above transitions.
      *
-     * @param currentStatus current status of the task
-     * @param newStatus     suggested new status of the task
+     * @param currentStatus
+     *         current status of the task
+     * @param newStatus
+     *         suggested new status of the task
      * @return {@code true} if passed status matches transition, {@code false} otherwise
      */
     private boolean matches(TaskStatus currentStatus, TaskStatus newStatus) {
-        final boolean isCurrentStatusMatches = this.currentStatus == currentStatus;
-        final boolean isNewStatusMatches = this.newStatus == newStatus;
-        final boolean result = isCurrentStatusMatches && isNewStatusMatches;
+        boolean isCurrentStatusMatches = this.currentStatus == currentStatus;
+        boolean isNewStatusMatches = this.newStatus == newStatus;
+        boolean result = isCurrentStatusMatches && isNewStatusMatches;
         return result;
     }
 
     /**
      * Verifies if the suggested status transition is valid.
      *
-     * @param currentStatus current status of the task
-     * @param newStatus     suggested new status of the task
+     * @param currentStatus
+     *         current status of the task
+     * @param newStatus
+     *         suggested new status of the task
      * @return {@code true} if passed statuses satisfy one of the transitions,
      *         {@code false} otherwise
      */

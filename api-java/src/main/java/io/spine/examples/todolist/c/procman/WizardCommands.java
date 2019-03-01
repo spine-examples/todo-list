@@ -77,7 +77,8 @@ final class WizardCommands {
      *
      * <p>The task ID may or may not identify the intended command handler.
      *
-     * @param taskId the ID of the task which the commands are associated with
+     * @param taskId
+     *         the ID of the task which the commands are associated with
      * @return new instance of {@code WizardCommands}
      */
     static WizardCommands create(TaskId taskId) {
@@ -90,7 +91,8 @@ final class WizardCommands {
      * <p>This method is guaranteed to generate at least one command. Effectively, each non-default
      * field of the {@code SetTaskDetails} command causes a command to be generated.
      *
-     * @param src the source command
+     * @param src
+     *         the source command
      * @return new commands generated from the given {@code src} command
      */
     Collection<? extends CommandMessage> setTaskDetails(SetTaskDetails src) {
@@ -117,7 +119,8 @@ final class WizardCommands {
      * <p>This method creates a command which initializes the task description, i.e. the task
      * doesn't have a description yet.
      *
-     * @param description the description to set to the target task
+     * @param description
+     *         the description to set to the target task
      * @return the command to the target task
      */
     private CommandMessage updateTaskDescription(TaskDescription description) {
@@ -140,7 +143,8 @@ final class WizardCommands {
      * <p>This method creates a command which initializes the task priority, i.e. the task priority
      * is not set yet.
      *
-     * @param priority the priority to set to the target task
+     * @param priority
+     *         the priority to set to the target task
      * @return the command to the target task
      */
     private CommandMessage updateTaskPriority(TaskPriority priority) {
@@ -164,7 +168,8 @@ final class WizardCommands {
      * <p>This method creates a command which initializes the task due date, i.e. the task due date
      * is not set yet.
      *
-     * @param dueDate the priority to set to the target task
+     * @param dueDate
+     *         the priority to set to the target task
      * @return the command to the target task
      */
     private CommandMessage updateTaskDueDate(Timestamp dueDate) {
@@ -185,33 +190,37 @@ final class WizardCommands {
      * Creates commands that assign the specified in {@code AddLabels} command existing labels to
      * the target task.
      *
-     * @param src the command that defines the labels to assign
+     * @param src
+     *         the command that defines the labels to assign
      * @return the commands assigning those tasks
      */
     Collection<? extends CommandMessage> assignExistingLabels(AddLabels src) {
-        Collection<? extends CommandMessage> commands = src.getExistingLabelsList()
-                                                           .stream()
-                                                           .map(this::assignLabel)
-                                                           .collect(toSet());
+        Collection<? extends CommandMessage> commands =
+                src.getExistingLabelsList()
+                   .stream()
+                   .map(this::assignLabel)
+                   .collect(toSet());
         return commands;
     }
 
     /**
      * Creates the commands that:
      * <ol>
-     *     <li>Create the specified in {@code AddLabels} command labels.
-     *     <li>Mutate the labels as specified in the command.
-     *     <li>Assign those labels to the target task.
+     * <li>Create the specified in {@code AddLabels} command labels.
+     * <li>Mutate the labels as specified in the command.
+     * <li>Assign those labels to the target task.
      * </ol>
      *
-     * @param src the command that defines the new labels to assign to the task
+     * @param src
+     *         the command that defines the new labels to assign to the task
      * @return commands creating and assigning those labels
      */
     Collection<? extends CommandMessage> assignNewLabels(AddLabels src) {
-        Collection<? extends CommandMessage> commands = src.getNewLabelsList()
-                                                           .stream()
-                                                           .flatMap(this::createAndAssignLabel)
-                                                           .collect(toList());
+        Collection<? extends CommandMessage> commands =
+                src.getNewLabelsList()
+                   .stream()
+                   .flatMap(this::createAndAssignLabel)
+                   .collect(toList());
         return commands;
     }
 
@@ -219,7 +228,8 @@ final class WizardCommands {
      * Generates commands that create a label from the given {@link LabelDetails} and assign that
      * label to the target task.
      *
-     * @param label the label details describing the task to create
+     * @param label
+     *         the label details describing the task to create
      * @return the command messages creating and assigning a label
      */
     private Stream<? extends CommandMessage> createAndAssignLabel(LabelDetails label) {
@@ -230,14 +240,17 @@ final class WizardCommands {
         CommandMessage createBasicLabel = createLabel(labelId, label);
         CommandMessage updateLabelDetails = setColorToLabel(labelId, label);
         CommandMessage assignLabelToTask = assignLabel(labelId);
-        return ImmutableList.of(createBasicLabel, updateLabelDetails, assignLabelToTask).stream();
+        return ImmutableList.of(createBasicLabel, updateLabelDetails, assignLabelToTask)
+                            .stream();
     }
 
     /**
      * Creates a label with the given ID from the given {@code LabelDetails}.
      *
-     * @param labelId the ID to assign to the new label
-     * @param label   the label data
+     * @param labelId
+     *         the ID to assign to the new label
+     * @param label
+     *         the label data
      * @return a command creating a basic label with the given ID and title; note that the label
      *         color is ignored for now
      */
@@ -256,20 +269,23 @@ final class WizardCommands {
      * <p>It is expected that the label color is the default {@code GRAY} and the label title has
      * not changed.
      *
-     * @param labelId the ID of the label to update
-     * @param label   the new label details
+     * @param labelId
+     *         the ID of the label to update
+     * @param label
+     *         the new label details
      * @return a command updating the label details
      */
     private static CommandMessage setColorToLabel(LabelId labelId, LabelDetails label) {
-        final LabelDetails previousDetails = label.toBuilder()
-                                                  .setColor(GRAY)
-                                                  .build();
-        final LabelDetailsChange change = LabelDetailsChangeVBuilder
+        LabelDetails previousDetails =
+                label.toBuilder()
+                     .setColor(GRAY)
+                     .build();
+        LabelDetailsChange change = LabelDetailsChangeVBuilder
                 .newBuilder()
                 .setPreviousDetails(previousDetails)
                 .setNewDetails(label)
                 .build();
-        final CommandMessage updateLabelDetails = UpdateLabelDetailsVBuilder
+        CommandMessage updateLabelDetails = UpdateLabelDetailsVBuilder
                 .newBuilder()
                 .setId(labelId)
                 .setLabelDetailsChange(change)
@@ -281,7 +297,8 @@ final class WizardCommands {
      * Creates an {@link AssignLabelToTask} command which assigns the label with the given ID to
      * the target task.
      *
-     * @param labelId the ID of the label to assign
+     * @param labelId
+     *         the ID of the label to assign
      * @return new instance of a command message
      */
     private CommandMessage assignLabel(LabelId labelId) {
@@ -296,7 +313,8 @@ final class WizardCommands {
      *
      * <p>A Protobuf enum value is considered non-default if its number is greater than zero.
      *
-     * @param priority the value to check
+     * @param priority
+     *         the value to check
      * @return {@code true} if the value is not default, {@code false} otherwise
      */
     private static boolean enumIsNotDefault(TaskPriority priority) {

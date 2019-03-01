@@ -46,27 +46,27 @@ class LocalCloudSqlServerTest {
     @Test
     @DisplayName("return default arguments on invalid custom arguments")
     void returnDefaultArguments() {
-        final String[] customArguments = {"firstArg", "secondArg"};
+        String[] customArguments = {"firstArg", "secondArg"};
         assertNotEquals(customArguments.length, getDefaultArguments().length);
 
-        final String[] actualArguments = getActualArguments(customArguments);
+        String[] actualArguments = getActualArguments(customArguments);
         assertArrayEquals(getDefaultArguments(), actualArguments);
     }
 
     @Test
     @DisplayName("return specified arguments if match length requirements")
     void returnSpecifiedArguments() {
-        final int requiredLength = getDefaultArguments().length;
-        final String[] customArguments = new String[requiredLength];
-        final String[] actualArguments = getActualArguments(customArguments);
+        int requiredLength = getDefaultArguments().length;
+        String[] customArguments = new String[requiredLength];
+        String[] actualArguments = getActualArguments(customArguments);
         assertEquals(customArguments, actualArguments);
     }
 
     @Test
     @DisplayName("create signletenant BoundedContext")
     void createSingletenantBoundedContext() {
-        final BoundedContext boundedContext = createBoundedContext(getDefaultArguments());
-        final StorageFactory storageFactory = boundedContext.storageFactory();
+        BoundedContext boundedContext = createBoundedContext(getDefaultArguments());
+        StorageFactory storageFactory = boundedContext.storageFactory();
         assertFalse(storageFactory.isMultitenant());
     }
 }

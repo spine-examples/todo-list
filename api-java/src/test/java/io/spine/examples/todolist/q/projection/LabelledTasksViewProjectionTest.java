@@ -84,13 +84,13 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
 
     @BeforeEach
     void setUp() {
-        final StorageFactorySwitch storageFactorySwitch = newInstance(
+        StorageFactorySwitch storageFactorySwitch = newInstance(
                 BoundedContextNames.newName(BOUNDED_CONTEXT_NAME), false);
-        final StorageFactory storageFactory = storageFactorySwitch.get();
-        final Enricher eventEnricher = eventEnricherInstance();
-        final EventBus.Builder eventBusBuilder = newEventBusBuilder(storageFactory, eventEnricher);
-        final BoundedContext boundedContext = boundedContextInstance(eventBusBuilder,
-                                                                     storageFactorySwitch);
+        StorageFactory storageFactory = storageFactorySwitch.get();
+        Enricher eventEnricher = eventEnricherInstance();
+        EventBus.Builder eventBusBuilder = newEventBusBuilder(storageFactory, eventEnricher);
+        BoundedContext boundedContext = boundedContextInstance(eventBusBuilder,
+                                                               storageFactorySwitch);
         repository = new LabelledTasksViewRepository();
         boundedContext.register(repository);
         eventBus = boundedContext.eventBus();
@@ -104,8 +104,8 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("add TaskItem to LabelledTasksView")
         void addView() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
             LabelledTasksView labelledTaskItem = getProjectionState();
 
@@ -121,7 +121,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
 
             matchesExpectedValues(view);
 
-            final Event labelAssignedToTaskEvent2 = createEvent(labelAssignedToTask);
+            Event labelAssignedToTaskEvent2 = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent2);
 
             labelledTaskItem = getProjectionState();
@@ -151,24 +151,24 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("remove TaskItem from LabelledTasksView")
         void removeView() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
-            final Event labelAssignedToTaskEvent2 = createEvent(labelAssignedToTask);
+            Event labelAssignedToTaskEvent2 = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent2);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             assertEquals(LABEL_ID, labelledTasksView.getId());
             assertEquals(2, labelledTasksView.getLabelledTasks()
                                              .getItemsList()
                                              .size());
 
-            final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
-            final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask);
+            LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
+            Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask);
             eventBus.post(labelRemovedFromTaskEvent);
 
-            final LabelledTasksView updatedLabelledTaskItem = getProjectionState();
-            final TaskListView labelledTasks = updatedLabelledTaskItem.getLabelledTasks();
+            LabelledTasksView updatedLabelledTaskItem = getProjectionState();
+            TaskListView labelledTasks = updatedLabelledTaskItem.getLabelledTasks();
 
             assertTrue(labelledTasks.getItemsList()
                                     .isEmpty());
@@ -183,16 +183,16 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("add TaskItem to LabelledTasksView")
         void addView() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
-            final Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask);
+            LabelRemovedFromTask labelRemovedFromTask = labelRemovedFromTaskInstance();
+            Event labelRemovedFromTaskEvent = createEvent(labelRemovedFromTask);
             eventBus.post(labelRemovedFromTaskEvent);
 
-            final LabelledTaskRestored deletedTaskRestored = labelledTaskRestoredInstance();
-            final Event deletedTaskRestoredEvent = createEvent(deletedTaskRestored);
+            LabelledTaskRestored deletedTaskRestored = labelledTaskRestoredInstance();
+            Event deletedTaskRestoredEvent = createEvent(deletedTaskRestored);
             eventBus.post(deletedTaskRestoredEvent);
 
             LabelledTasksView labelledTasksView = getProjectionState();
@@ -203,10 +203,10 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
 
             int expectedListSize = 1;
             assertEquals(expectedListSize, actualListSize);
-            final TaskItem taskView = listView.getItems(0);
+            TaskItem taskView = listView.getItems(0);
             assertEquals(TASK_ID, taskView.getId());
 
-            final Event deletedTaskRestoredEvent2 = createEvent(deletedTaskRestored);
+            Event deletedTaskRestoredEvent2 = createEvent(deletedTaskRestored);
             eventBus.post(deletedTaskRestoredEvent2);
             labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
@@ -230,16 +230,16 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("remove TaskItem from LabelledTasksView")
         void removesView() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final TaskDeleted taskDeleted = taskDeletedInstance();
-            final Event deletedTaskEvent = createEvent(taskDeleted);
+            TaskDeleted taskDeleted = taskDeletedInstance();
+            Event deletedTaskEvent = createEvent(taskDeleted);
             eventBus.post(deletedTaskEvent);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
 
             TaskListView listView = labelledTasksView.getLabelledTasks();
@@ -256,22 +256,22 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("update the task description in LabelledTasksView")
         void updateDescription() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final TaskDescriptionUpdated taskDescriptionUpdated = taskDescriptionUpdatedInstance();
-            final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated);
+            TaskDescriptionUpdated taskDescriptionUpdated = taskDescriptionUpdatedInstance();
+            Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated);
             eventBus.post(descriptionUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
 
-            final TaskListView listView = labelledTasksView.getLabelledTasks();
-            final int actualListSize = listView.getItemsCount();
+            TaskListView listView = labelledTasksView.getLabelledTasks();
+            int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskItem taskView = listView.getItems(0);
+            TaskItem taskView = listView.getItems(0);
             assertEquals(UPDATED_DESCRIPTION, taskView.getDescription()
                                                       .getValue());
         }
@@ -279,23 +279,23 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("not update the task description in LabelledTasksView by wrong task ID")
         void notUpdateDescription() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final TaskDescriptionUpdated taskDescriptionUpdated =
+            TaskDescriptionUpdated taskDescriptionUpdated =
                     taskDescriptionUpdatedInstance(TaskId.getDefaultInstance(),
                                                    UPDATED_DESCRIPTION);
-            final Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated);
+            Event descriptionUpdatedEvent = createEvent(taskDescriptionUpdated);
             eventBus.post(descriptionUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
-            final TaskListView listView = labelledTasksView.getLabelledTasks();
+            TaskListView listView = labelledTasksView.getLabelledTasks();
             int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskItem taskView = listView.getItems(0);
+            TaskItem taskView = listView.getItems(0);
             assertNotEquals(UPDATED_DESCRIPTION, taskView.getDescription());
         }
 
@@ -309,43 +309,43 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("update the task priority in LabelledTasksView")
         void updatePriority() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final TaskPriorityUpdated taskPriorityUpdated = taskPriorityUpdatedInstance();
-            final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated);
+            TaskPriorityUpdated taskPriorityUpdated = taskPriorityUpdatedInstance();
+            Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated);
             eventBus.post(taskPriorityUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
-            final TaskListView listView = labelledTasksView.getLabelledTasks();
-            final int actualListSize = listView.getItemsCount();
+            TaskListView listView = labelledTasksView.getLabelledTasks();
+            int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskItem taskView = listView.getItems(0);
+            TaskItem taskView = listView.getItems(0);
             assertEquals(UPDATED_TASK_PRIORITY, taskView.getPriority());
         }
 
         @Test
         @DisplayName("not update the task priority in LabelledTasksView by wrong task ID")
         void notUpdatePriority() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final TaskPriorityUpdated taskPriorityUpdated =
+            TaskPriorityUpdated taskPriorityUpdated =
                     taskPriorityUpdatedInstance(TaskId.getDefaultInstance(), UPDATED_TASK_PRIORITY);
-            final Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated);
+            Event taskPriorityUpdatedEvent = createEvent(taskPriorityUpdated);
             eventBus.post(taskPriorityUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
-            final TaskListView listView = labelledTasksView.getLabelledTasks();
-            final int actualListSize = listView.getItemsCount();
+            TaskListView listView = labelledTasksView.getLabelledTasks();
+            int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskItem taskView = listView.getItems(0);
+            TaskItem taskView = listView.getItems(0);
             assertNotEquals(UPDATED_TASK_PRIORITY, taskView.getPriority());
         }
     }
@@ -358,43 +358,43 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("update the task due date in LabelledTasksView")
         void updateDueDate() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final TaskDueDateUpdated taskDueDateUpdated = taskDueDateUpdatedInstance();
-            final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated);
+            TaskDueDateUpdated taskDueDateUpdated = taskDueDateUpdatedInstance();
+            Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated);
             eventBus.post(taskDueDateUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
-            final TaskListView listView = labelledTasksView.getLabelledTasks();
-            final int actualListSize = listView.getItemsCount();
+            TaskListView listView = labelledTasksView.getLabelledTasks();
+            int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskItem taskView = listView.getItems(0);
+            TaskItem taskView = listView.getItems(0);
             assertEquals(UPDATED_TASK_DUE_DATE, taskView.getDueDate());
         }
 
         @Test
         @DisplayName("not update the task due date in LabelledTasksView by wrong task ID")
         void doesNotUpdateDueDate() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final TaskDueDateUpdated taskDueDateUpdated =
+            TaskDueDateUpdated taskDueDateUpdated =
                     taskDueDateUpdatedInstance(TaskId.getDefaultInstance(), UPDATED_TASK_DUE_DATE);
-            final Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated);
+            Event taskDueDateUpdatedEvent = createEvent(taskDueDateUpdated);
             eventBus.post(taskDueDateUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
-            final TaskListView listView = labelledTasksView.getLabelledTasks();
-            final int actualListSize = listView.getItemsCount();
+            TaskListView listView = labelledTasksView.getLabelledTasks();
+            int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskItem taskView = listView.getItems(0);
+            TaskItem taskView = listView.getItems(0);
             assertNotEquals(UPDATED_TASK_DUE_DATE, taskView.getDueDate());
         }
     }
@@ -406,42 +406,42 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("set `completed` to true in LabelledTasksView")
         void setCompletedFlagToTrue() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final TaskCompleted taskCompleted = taskCompletedInstance();
-            final Event taskCompletedEvent = createEvent(taskCompleted);
+            TaskCompleted taskCompleted = taskCompletedInstance();
+            Event taskCompletedEvent = createEvent(taskCompleted);
             eventBus.post(taskCompletedEvent);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
-            final TaskListView listView = labelledTasksView.getLabelledTasks();
-            final int actualListSize = listView.getItemsCount();
+            TaskListView listView = labelledTasksView.getLabelledTasks();
+            int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskItem taskView = listView.getItems(0);
+            TaskItem taskView = listView.getItems(0);
             assertTrue(taskView.getCompleted());
         }
 
         @Test
         @DisplayName("set `completed` to false in LabelledTasksView")
         void setCompletedFlagToFalse() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final TaskCompleted taskCompleted = taskCompletedInstance();
-            final Event taskCompletedEvent = createEvent(taskCompleted);
+            TaskCompleted taskCompleted = taskCompletedInstance();
+            Event taskCompletedEvent = createEvent(taskCompleted);
             eventBus.post(taskCompletedEvent);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
-            final TaskListView listView = labelledTasksView.getLabelledTasks();
-            final int actualListSize = listView.getItemsCount();
+            TaskListView listView = labelledTasksView.getLabelledTasks();
+            int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskItem taskView = listView.getItems(0);
+            TaskItem taskView = listView.getItems(0);
             assertTrue(taskView.getCompleted());
         }
     }
@@ -453,50 +453,50 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("set `completed` to `false` in LabelledTasksView")
         void setCompletedFlagToFalse() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final TaskCompleted taskCompleted = taskCompletedInstance();
-            final Event taskCompletedEvent = createEvent(taskCompleted);
+            TaskCompleted taskCompleted = taskCompletedInstance();
+            Event taskCompletedEvent = createEvent(taskCompleted);
             eventBus.post(taskCompletedEvent);
 
-            final TaskReopened taskReopened = taskReopenedInstance();
-            final Event taskReopenedEvent = createEvent(taskReopened);
+            TaskReopened taskReopened = taskReopenedInstance();
+            Event taskReopenedEvent = createEvent(taskReopened);
             eventBus.post(taskReopenedEvent);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
-            final TaskListView listView = labelledTasksView.getLabelledTasks();
-            final int actualListSize = listView.getItemsCount();
+            TaskListView listView = labelledTasksView.getLabelledTasks();
+            int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskItem taskView = listView.getItems(0);
+            TaskItem taskView = listView.getItems(0);
             assertFalse(taskView.getCompleted());
         }
 
         @Test
         @DisplayName("set `completed` to `true` in LabelledTasksView")
         void setCompletedFlagToTrue() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final TaskCompleted taskCompleted = taskCompletedInstance();
-            final Event taskCompletedEvent = createEvent(taskCompleted);
+            TaskCompleted taskCompleted = taskCompletedInstance();
+            Event taskCompletedEvent = createEvent(taskCompleted);
             eventBus.post(taskCompletedEvent);
 
-            final TaskReopened taskReopened = taskReopenedInstance(TaskId.getDefaultInstance());
-            final Event taskReopenedEvent = createEvent(taskReopened);
+            TaskReopened taskReopened = taskReopenedInstance(TaskId.getDefaultInstance());
+            Event taskReopenedEvent = createEvent(taskReopened);
             eventBus.post(taskReopenedEvent);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             matchesExpectedValues(labelledTasksView);
-            final TaskListView listView = labelledTasksView.getLabelledTasks();
-            final int actualListSize = listView.getItemsCount();
+            TaskListView listView = labelledTasksView.getLabelledTasks();
+            int actualListSize = listView.getItemsCount();
             assertEquals(1, actualListSize);
 
-            final TaskItem taskView = listView.getItems(0);
+            TaskItem taskView = listView.getItems(0);
             assertTrue(taskView.getCompleted());
         }
     }
@@ -511,16 +511,16 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("update the label details in LabelledTasksView")
         void updateLabelDetails() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final LabelDetailsUpdated labelDetailsUpdated =
+            LabelDetailsUpdated labelDetailsUpdated =
                     labelDetailsUpdatedInstance(LABEL_ID, LabelColor.RED, UPDATED_LABEL_TITLE);
-            final Event labelDetailsUpdatedEvent = createEvent(labelDetailsUpdated);
+            Event labelDetailsUpdatedEvent = createEvent(labelDetailsUpdated);
             eventBus.post(labelDetailsUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             assertEquals(LABEL_ID, labelledTasksView.getId());
             assertEquals(UPDATED_LABEL_TITLE, labelledTasksView.getLabelTitle());
             assertEquals(LabelColorView.RED_COLOR.getHexColor(), labelledTasksView.getLabelColor());
@@ -529,20 +529,20 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
         @Test
         @DisplayName("not update the label details in LabelledTasksView by wrong task ID")
         void notUpdateLabelDetails() {
-            final LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
-            final Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
+            LabelAssignedToTask labelAssignedToTask = labelAssignedToTaskInstance();
+            Event labelAssignedToTaskEvent = createEvent(labelAssignedToTask);
             eventBus.post(labelAssignedToTaskEvent);
 
-            final LabelId wrongLabelId = LabelId.newBuilder()
-                                                .setValue(newUuid())
-                                                .build();
+            LabelId wrongLabelId = LabelId.newBuilder()
+                                          .setValue(newUuid())
+                                          .build();
 
-            final LabelDetailsUpdated labelDetailsUpdated =
+            LabelDetailsUpdated labelDetailsUpdated =
                     labelDetailsUpdatedInstance(wrongLabelId, LabelColor.RED, UPDATED_LABEL_TITLE);
-            final Event labelDetailsUpdatedEvent = createEvent(labelDetailsUpdated);
+            Event labelDetailsUpdatedEvent = createEvent(labelDetailsUpdated);
             eventBus.post(labelDetailsUpdatedEvent);
 
-            final LabelledTasksView labelledTasksView = getProjectionState();
+            LabelledTasksView labelledTasksView = getProjectionState();
             assertEquals(LABEL_ID, labelledTasksView.getId());
             assertNotEquals(UPDATED_LABEL_TITLE, labelledTasksView.getLabelTitle());
             assertNotEquals(LabelColorView.RED_COLOR.getHexColor(),

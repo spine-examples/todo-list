@@ -33,8 +33,10 @@ final class TaskFlowValidator {
     /**
      * Check whether the transition from the current task status to the new status is allowed.
      *
-     * @param currentStatus current task status
-     * @param newStatus     new task status
+     * @param currentStatus
+     *         current task status
+     * @param newStatus
+     *         new task status
      */
     static boolean isValidTransition(TaskStatus currentStatus, TaskStatus newStatus) {
         return TaskStatusTransition.isValid(currentStatus, newStatus);
@@ -71,7 +73,8 @@ final class TaskFlowValidator {
     /**
      * Verifies that the specified {@link TaskStatus} is neither completed nor deleted.
      *
-     * @param currentStatus task current state {@link TaskStatus}
+     * @param currentStatus
+     *         task current state {@link TaskStatus}
      * @return {@code true} if the status is neither completed nor deleted
      */
     static boolean ensureNeitherCompletedNorDeleted(TaskStatus currentStatus) {

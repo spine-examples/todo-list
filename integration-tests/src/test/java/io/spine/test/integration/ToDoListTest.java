@@ -42,6 +42,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.spine.base.Time.getCurrentTime;
 import static io.spine.examples.todolist.TaskPriority.HIGH;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
@@ -51,14 +52,11 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateT
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateTaskPriorityInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.removeLabelFromTaskInstance;
-import static io.spine.base.Time.getCurrentTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Dmitry Ganzha
- */
+@SuppressWarnings("OverlyCoupledClass")
 @DisplayName("TodoList Integration Test")
 public class ToDoListTest extends AbstractIntegrationTest {
 
@@ -74,22 +72,22 @@ public class ToDoListTest extends AbstractIntegrationTest {
     @Test
     @DisplayName("Create task -> Create label -> Assign label -> Complete task")
     void firstFlow() {
-        final CreateBasicTask basicTask = createBasicTask();
+        CreateBasicTask basicTask = createBasicTask();
         client.postCommand(basicTask);
 
-        final CreateBasicLabel basicLabel = createBasicLabel();
+        CreateBasicLabel basicLabel = createBasicLabel();
         client.postCommand(basicLabel);
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(
                 basicTask.getId(), basicLabel.getLabelId());
         client.postCommand(assignLabelToTask);
 
-        final CompleteTask completeTask = completeTaskInstance(basicTask.getId());
+        CompleteTask completeTask = completeTaskInstance(basicTask.getId());
         client.postCommand(completeTask);
 
-        final List<TaskItem> taskItems = client.getMyListView()
-                                               .getMyList()
-                                               .getItemsList();
+        List<TaskItem> taskItems = client.getMyListView()
+                                         .getMyList()
+                                         .getItemsList();
 
         assertEquals(1, taskItems.size());
 
@@ -101,39 +99,39 @@ public class ToDoListTest extends AbstractIntegrationTest {
     @DisplayName("Create task -> Create label -> Assign label -> Complete task -> Reopen task " +
             "-> Remove label")
     void secondFlow() {
-        final CreateBasicTask basicTask = createBasicTask();
+        CreateBasicTask basicTask = createBasicTask();
         client.postCommand(basicTask);
 
-        final CreateBasicLabel basicLabel = createBasicLabel();
+        CreateBasicLabel basicLabel = createBasicLabel();
         client.postCommand(basicLabel);
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(
                 basicTask.getId(), basicLabel.getLabelId());
         client.postCommand(assignLabelToTask);
 
-        final CompleteTask completeTask = completeTaskInstance(basicTask.getId());
+        CompleteTask completeTask = completeTaskInstance(basicTask.getId());
         client.postCommand(completeTask);
 
-        final ReopenTask reopenTask = reopenTaskInstance(basicTask.getId());
+        ReopenTask reopenTask = reopenTaskInstance(basicTask.getId());
         client.postCommand(reopenTask);
 
-        final RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(
+        RemoveLabelFromTask removeLabelFromTask = removeLabelFromTaskInstance(
                 basicTask.getId(),
                 basicLabel.getLabelId());
         client.postCommand(removeLabelFromTask);
 
-        final List<TaskItem> tasks = client.getMyListView()
-                                           .getMyList()
-                                           .getItemsList();
+        List<TaskItem> tasks = client.getMyListView()
+                                     .getMyList()
+                                     .getItemsList();
 
-        final List<TaskItem> labeledTasks = client.getLabelledTasksView()
-                                                  .get(0)
-                                                  .getLabelledTasks()
-                                                  .getItemsList();
+        List<TaskItem> labeledTasks = client.getLabelledTasksView()
+                                            .get(0)
+                                            .getLabelledTasks()
+                                            .getItemsList();
 
         assertEquals(1, tasks.size());
 
-        final TaskItem taskItem = tasks.get(0);
+        TaskItem taskItem = tasks.get(0);
 
         assertFalse(taskItem.getCompleted());
 
@@ -144,31 +142,31 @@ public class ToDoListTest extends AbstractIntegrationTest {
     @DisplayName("Create draft -> Update due date -> Update priority -> Create label " +
             "-> Assign label")
     void thirdFlow() {
-        final CreateDraft draftTask = createDraft();
+        CreateDraft draftTask = createDraft();
         client.postCommand(draftTask);
 
-        final Timestamp newDueDate = getCurrentTime();
-        final Timestamp previousDueDate = Timestamp.getDefaultInstance();
-        final UpdateTaskDueDate updateTaskDueDate =
+        Timestamp newDueDate = getCurrentTime();
+        Timestamp previousDueDate = Timestamp.getDefaultInstance();
+        UpdateTaskDueDate updateTaskDueDate =
                 updateTaskDueDateInstance(draftTask.getId(), previousDueDate, newDueDate);
         client.postCommand(updateTaskDueDate);
 
-        final TaskPriority newPriority = HIGH;
-        final UpdateTaskPriority updateTaskPriority =
+        TaskPriority newPriority = HIGH;
+        UpdateTaskPriority updateTaskPriority =
                 updateTaskPriorityInstance(draftTask.getId(), TaskPriority.TP_UNDEFINED,
                                            newPriority);
         client.postCommand(updateTaskPriority);
 
-        final CreateBasicLabel basicLabel = createBasicLabel();
+        CreateBasicLabel basicLabel = createBasicLabel();
         client.postCommand(basicLabel);
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(
                 draftTask.getId(), basicLabel.getLabelId());
         client.postCommand(assignLabelToTask);
 
-        final List<TaskItem> draftTasks = client.getDraftTasksView()
-                                                .getDraftTasks()
-                                                .getItemsList();
+        List<TaskItem> draftTasks = client.getDraftTasksView()
+                                          .getDraftTasks()
+                                          .getItemsList();
 
         assertEquals(1, draftTasks.size());
         assertEquals(newDueDate, draftTasks.get(0)
@@ -181,32 +179,32 @@ public class ToDoListTest extends AbstractIntegrationTest {
     @DisplayName("Create task -> Create label -> Assign label -> Update priority -> Delete task " +
             "-> Restore deleted task")
     void fourthFlow() {
-        final CreateBasicTask basicTask = createBasicTask();
+        CreateBasicTask basicTask = createBasicTask();
         client.postCommand(basicTask);
 
-        final CreateBasicLabel basicLabel = createBasicLabel();
+        CreateBasicLabel basicLabel = createBasicLabel();
         client.postCommand(basicLabel);
 
-        final AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(
+        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(
                 basicTask.getId(), basicLabel.getLabelId());
         client.postCommand(assignLabelToTask);
 
-        final TaskPriority newPriority = HIGH;
-        final UpdateTaskPriority updateTaskPriority =
+        TaskPriority newPriority = HIGH;
+        UpdateTaskPriority updateTaskPriority =
                 updateTaskPriorityInstance(basicTask.getId(), TaskPriority.TP_UNDEFINED,
                                            newPriority);
         client.postCommand(updateTaskPriority);
 
-        final DeleteTask deleteTask = deleteTaskInstance(basicTask.getId());
+        DeleteTask deleteTask = deleteTaskInstance(basicTask.getId());
         client.postCommand(deleteTask);
 
-        final RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(basicTask.getId());
+        RestoreDeletedTask restoreDeletedTask = restoreDeletedTaskInstance(basicTask.getId());
         client.postCommand(restoreDeletedTask);
 
-        final List<TaskItem> labeledTasks = client.getLabelledTasksView()
-                                                  .get(0)
-                                                  .getLabelledTasks()
-                                                  .getItemsList();
+        List<TaskItem> labeledTasks = client.getLabelledTasksView()
+                                            .get(0)
+                                            .getLabelledTasks()
+                                            .getItemsList();
 
         assertEquals(1, labeledTasks.size());
         assertEquals(newPriority, labeledTasks.get(0)

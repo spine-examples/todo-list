@@ -25,7 +25,7 @@ import com.google.common.annotations.VisibleForTesting;
 /**
  * Provides formatting for {@link Action}.
  */
-public class ActionFormatter {
+public final class ActionFormatter {
 
     @VisibleForTesting
     static final String SHORTCUT_NAME_SEPARATOR = " ";
@@ -33,14 +33,15 @@ public class ActionFormatter {
     @VisibleForTesting
     static final String SHORTCUT_FORMAT = "(%s)";
 
+    /** Prevents instantiation of this utility class. */
     private ActionFormatter() {
-        // Prevent instantiation of this utility class.
     }
 
     /**
      * Obtains formatted representation of the specified {@link Action}.
      *
-     * @param action the action to format
+     * @param action
+     *         the action to format
      * @return the formatted representation
      */
     public static String format(Action action) {
@@ -50,7 +51,8 @@ public class ActionFormatter {
     /**
      * Obtains formatted representation of the specified {@link Shortcut}.
      *
-     * @param shortcut the shortcut to format
+     * @param shortcut
+     *         the shortcut to format
      * @return the formatted representation
      */
     public static String format(Shortcut shortcut) {

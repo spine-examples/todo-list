@@ -50,8 +50,10 @@ public final class TaskLabelsPartRejections {
      * Constructs and throws the {@link CannotAssignLabelToTask} rejection according to
      * the passed parameters.
      *
-     * @param cmd the {@code AssignLabelToTask} command which thrown the rejection
-     * @throws CannotAssignLabelToTask the rejection to throw
+     * @param cmd
+     *         the {@code AssignLabelToTask} command which thrown the rejection
+     * @throws CannotAssignLabelToTask
+     *         the rejection to throw
      */
     public static void throwCannotAssignLabelToTask(AssignLabelToTask cmd)
             throws CannotAssignLabelToTask {
@@ -76,8 +78,10 @@ public final class TaskLabelsPartRejections {
      * Constructs and throws the {@link CannotRemoveLabelFromTask} rejection according to
      * the passed parameters.
      *
-     * @param cmd the {@code AssignLabelToTask} command which thrown the rejection
-     * @throws CannotRemoveLabelFromTask the rejection to throw
+     * @param cmd
+     *         the {@code AssignLabelToTask} command which thrown the rejection
+     * @throws CannotRemoveLabelFromTask
+     *         the rejection to throw
      */
     public static void throwCannotRemoveLabelFromTask(RemoveLabelFromTask cmd)
             throws CannotRemoveLabelFromTask {
@@ -102,8 +106,10 @@ public final class TaskLabelsPartRejections {
      * Constructs and throws the {@link CannotAddLabels} rejection according to
      * the passed parameters.
      *
-     * @param cmd the {@code AddLabels} command which thrown the rejection
-     * @throws CannotAddLabels the rejection to throw
+     * @param cmd
+     *         the {@code AddLabels} command which thrown the rejection
+     * @throws CannotAddLabels
+     *         the rejection to throw
      */
     public static void throwCannotAddLabelsToTask(AddLabels cmd) throws CannotAddLabels {
         checkNotNull(cmd);

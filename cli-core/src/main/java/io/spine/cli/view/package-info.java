@@ -21,7 +21,6 @@
 /**
  * This package contains CLI views.
  */
-
 @ParametersAreNonnullByDefault
 package io.spine.cli.view;
 

@@ -47,8 +47,8 @@ class LabelAggregateRejectionsTest extends UtilityClassTest<LabelAggregateReject
     @Test
     @DisplayName("throw CannotUpdateLabelDetails rejection")
     void throwCannotUpdateLabelDetailsRejection() {
-        final UpdateLabelDetails cmd = UpdateLabelDetails.getDefaultInstance();
-        final ValueMismatch valueMismatch = ValueMismatch.getDefaultInstance();
+        UpdateLabelDetails cmd = UpdateLabelDetails.getDefaultInstance();
+        ValueMismatch valueMismatch = ValueMismatch.getDefaultInstance();
         assertThrows(CannotUpdateLabelDetails.class,
                      () -> throwCannotUpdateLabelDetails(cmd, valueMismatch));
     }

@@ -33,9 +33,6 @@ import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static io.spine.testing.Tests.nullRef;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("AppConfig should")
 class AppConfigTest {
 
@@ -59,7 +56,7 @@ class AppConfigTest {
     @Test
     @DisplayName("allow initialization only once")
     void allowInitOnlyOnce() {
-        final TodoClient client = TodoClient.instance(HOST, DEFAULT_CLIENT_SERVICE_PORT);
+        TodoClient client = TodoClient.instance(HOST, DEFAULT_CLIENT_SERVICE_PORT);
         init(client);
 
         assertThrows(IllegalStateException.class, () -> init(client));

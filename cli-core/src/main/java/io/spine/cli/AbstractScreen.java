@@ -60,27 +60,27 @@ public abstract class AbstractScreen implements Screen {
 
     @Override
     public Optional<TransitionAction<View, View>> createBackAction(String name, Shortcut shortcut) {
-        final int currentIndex = getCurrentViewIndex();
-        final int previousIndex = getPreviousViewIndex();
+        int currentIndex = getCurrentViewIndex();
+        int previousIndex = getPreviousViewIndex();
 
         if (currentIndex == -1 || previousIndex == -1) {
             return Optional.empty();
         }
 
-        final View current = history.get(currentIndex);
-        final View previous = history.get(previousIndex);
-        final TransitionAction<View, View> back = new TransitionAction<>(name, shortcut,
-                                                                         current, previous);
+        View current = history.get(currentIndex);
+        View previous = history.get(previousIndex);
+        TransitionAction<View, View> back = new TransitionAction<>(name, shortcut,
+                                                                   current, previous);
         return Optional.of(back);
     }
 
     private boolean isCurrentView(View view) {
-        final int currIndex = getCurrentViewIndex();
+        int currIndex = getCurrentViewIndex();
         return currIndex != -1 && currIndex == history.indexOf(view);
     }
 
     private boolean isPreviousView(View view) {
-        final int prevIndex = getPreviousViewIndex();
+        int prevIndex = getPreviousViewIndex();
         return prevIndex != -1 && prevIndex == history.indexOf(view);
     }
 
@@ -89,7 +89,7 @@ public abstract class AbstractScreen implements Screen {
     }
 
     private int getPreviousViewIndex() {
-        final int currentIndex = getCurrentViewIndex();
+        int currentIndex = getCurrentViewIndex();
         return currentIndex == -1
                ? -1
                : currentIndex - 1;

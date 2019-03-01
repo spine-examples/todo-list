@@ -53,16 +53,16 @@ class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
     @Test
     @DisplayName("produce TaskCreated event")
     void produceEvent() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
-        final List<? extends Message> messageList = dispatchCommand(aggregate,
-                                                                    envelopeOf(createTaskCmd));
+        CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
+        List<? extends Message> messageList = dispatchCommand(aggregate,
+                                                              envelopeOf(createTaskCmd));
         assertNotNull(aggregate.state()
                                .getCreated());
         assertNotNull(aggregate.id());
         assertEquals(1, messageList.size());
         assertEquals(TaskCreated.class, messageList.get(0)
                                                    .getClass());
-        final TaskCreated taskCreated = (TaskCreated) messageList.get(0);
+        TaskCreated taskCreated = (TaskCreated) messageList.get(0);
 
         assertEquals(entityId(), taskCreated.getId());
         assertEquals(DESCRIPTION, taskCreated.getDetails()
@@ -73,10 +73,10 @@ class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
     @Test
     @DisplayName("create the task")
     void createTask() {
-        final CreateBasicTask createBasicTask = createTaskInstance();
+        CreateBasicTask createBasicTask = createTaskInstance();
         dispatchCommand(aggregate, envelopeOf(createBasicTask));
 
-        final Task state = aggregate.state();
+        Task state = aggregate.state();
         assertEquals(state.getId(), createBasicTask.getId());
         assertEquals(state.getTaskStatus(), TaskStatus.FINALIZED);
     }

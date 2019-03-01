@@ -48,7 +48,7 @@ public final class EnrichmentHelper {
     T getEnrichment(E enrichmentClass, EventContext context) {
         checkNotNull(enrichmentClass);
         checkNotNull(context);
-        final Optional<T> enrichmentOptional = context.find(enrichmentClass);
+        Optional<T> enrichmentOptional = context.find(enrichmentClass);
         if (enrichmentOptional.isPresent()) {
             return enrichmentOptional.get();
         }

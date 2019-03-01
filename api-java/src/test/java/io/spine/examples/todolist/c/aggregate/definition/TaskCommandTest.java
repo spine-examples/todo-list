@@ -77,8 +77,8 @@ abstract class TaskCommandTest<C extends CommandMessage>
     }
 
     private static TaskAggregateRoot newRoot(TaskId id) {
-        final BoundedContext boundedContext = BoundedContexts.create();
-        final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, id);
+        BoundedContext boundedContext = BoundedContexts.create();
+        TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, id);
         return root;
     }
 

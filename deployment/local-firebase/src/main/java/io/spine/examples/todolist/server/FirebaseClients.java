@@ -35,8 +35,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A utility for working with the Firebase client API.
- *
- * @author Dmytro Dashenkov
  */
 final class FirebaseClients {
 
@@ -58,24 +56,24 @@ final class FirebaseClients {
      */
     public static Firestore initializeFirestore() {
         Logger log = Logging.get(FirebaseClients.class);
-        final InputStream firebaseSecret = FirebaseClients.class
+        InputStream firebaseSecret = FirebaseClients.class
                 .getClassLoader()
                 .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
         checkNotNull(firebaseSecret,
                      "Required credentials file '%s' does not exist.", FIREBASE_SERVICE_ACC_SECRET);
-        final GoogleCredentials credentials;
+        GoogleCredentials credentials;
         try {
             credentials = GoogleCredentials.fromStream(firebaseSecret);
         } catch (IOException e) {
             log.error("Error while reading Firebase config file.", e);
             throw new IllegalStateException(e);
         }
-        final FirebaseOptions options = new FirebaseOptions.Builder()
+        FirebaseOptions options = new FirebaseOptions.Builder()
                 .setDatabaseUrl(DATABASE_URL)
                 .setCredentials(credentials)
                 .build();
         FirebaseApp.initializeApp(options);
-        final Firestore firestore = FirestoreClient.getFirestore();
+        Firestore firestore = FirestoreClient.getFirestore();
         return firestore;
     }
 }

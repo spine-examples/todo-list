@@ -32,17 +32,15 @@ import static io.spine.examples.todolist.server.Server.newServer;
  *
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
- *
- * @author Dmytro Grankin
  */
-public class LocalInMemoryServer {
+public final class LocalInMemoryServer {
 
     private LocalInMemoryServer() {
         // Prevent instantiation of this class.
     }
 
     public static void main(String[] args) throws IOException {
-        final Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, create());
+        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, create());
         server.start();
     }
 }

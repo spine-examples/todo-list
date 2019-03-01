@@ -49,7 +49,8 @@ public final class Application {
     /**
      * Initializes the application with the specified screen.
      *
-     * @param screen the screen to use
+     * @param screen
+     *         the screen to use
      */
     public void init(Screen screen) {
         if (this.screen != null) {

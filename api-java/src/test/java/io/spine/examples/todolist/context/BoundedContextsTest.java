@@ -38,7 +38,7 @@ class BoundedContextsTest extends UtilityClassTest<BoundedContexts> {
     @Test
     @DisplayName("not create BoundedContext from EventBus.Builder without a StorageFactory")
     void notCreateBoundedContextWithoutStorageFactory() {
-        final EventBus.Builder builder = EventBus.newBuilder();
+        EventBus.Builder builder = EventBus.newBuilder();
         assertThrows(IllegalStateException.class, () -> createBoundedContext(builder));
     }
 }

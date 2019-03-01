@@ -26,10 +26,8 @@ import io.spine.server.storage.StorageFactory;
 
 /**
  * Provides the {@link EventBus.Builder} instances for the test needs.
- *
- * @author Illia Shepilov
  */
-public class TestEventBusFactory {
+public final class TestEventBusFactory {
 
     private TestEventBusFactory() {
     }
@@ -37,8 +35,10 @@ public class TestEventBusFactory {
     /**
      * Returns a pre-configured {@link EventBus.Builder} instance.
      *
-     * @param storageFactory the {@link StorageFactory} to set
-     * @param eventEnricher  the {@link Enricher} to set
+     * @param storageFactory
+     *         the {@link StorageFactory} to set
+     * @param eventEnricher
+     *         the {@link Enricher} to set
      * @return the {@code EventBus.Builder} instance
      */
     public static EventBus.Builder newEventBusBuilder(StorageFactory storageFactory,

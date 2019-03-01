@@ -60,7 +60,7 @@ class FinalizeDraftTest extends TaskCommandTest<FinalizeDraft> {
     @Test
     @DisplayName("finalize the task")
     void finalizeTask() {
-        final CreateDraft createDraftCmd = createDraftInstance(entityId());
+        CreateDraft createDraftCmd = createDraftInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(createDraftCmd));
 
         Task state = aggregate.state();
@@ -68,7 +68,7 @@ class FinalizeDraftTest extends TaskCommandTest<FinalizeDraft> {
         assertEquals(entityId(), state.getId());
         assertEquals(DRAFT, state.getTaskStatus());
 
-        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(entityId());
+        FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(finalizeDraftCmd));
         state = aggregate.state();
 
@@ -79,16 +79,16 @@ class FinalizeDraftTest extends TaskCommandTest<FinalizeDraft> {
     @Test
     @DisplayName("throw CannotFinalizeDraft rejection upon an attempt to finalize the deleted task")
     void cannotFinalizeDeletedTask() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
+        CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
+        DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
-        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(entityId());
-        final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate,
-                                                               envelopeOf(finalizeDraftCmd)));
+        FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(entityId());
+        Throwable t = assertThrows(Throwable.class,
+                                   () -> dispatchCommand(aggregate,
+                                                         envelopeOf(finalizeDraftCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotFinalizeDraft.class));
     }
 
@@ -96,10 +96,10 @@ class FinalizeDraftTest extends TaskCommandTest<FinalizeDraft> {
     @DisplayName("throw CannotFinalizeDraft rejection upon an attempt to finalize " +
             "the task which is not a draft")
     void cannotFinalizeNotDraftTask() {
-        final FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(entityId());
-        final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate,
-                                                               envelopeOf(finalizeDraftCmd)));
+        FinalizeDraft finalizeDraftCmd = finalizeDraftInstance(entityId());
+        Throwable t = assertThrows(Throwable.class,
+                                   () -> dispatchCommand(aggregate,
+                                                         envelopeOf(finalizeDraftCmd)));
         assertThat(Throwables.getRootCause(t), instanceOf(CannotFinalizeDraft.class));
     }
 }

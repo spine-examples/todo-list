@@ -43,9 +43,12 @@ public final class LabelAggregateRejections {
      * Constructs and throws the {@link CannotUpdateLabelDetails} rejection according to
      * the passed parameters.
      *
-     * @param cmd      the rejected command
-     * @param mismatch the {@link ValueMismatch}
-     * @throws CannotUpdateLabelDetails the rejection to throw
+     * @param cmd
+     *         the rejected command
+     * @param mismatch
+     *         the {@link ValueMismatch}
+     * @throws CannotUpdateLabelDetails
+     *         the rejection to throw
      */
     public static void throwCannotUpdateLabelDetails(UpdateLabelDetails cmd,
                                                      ValueMismatch mismatch)

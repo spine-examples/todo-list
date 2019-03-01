@@ -34,8 +34,10 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
     /**
      * Creates a new instance.
      *
-     * @param boundedContext the bounded context to which the aggregate belongs
-     * @param id             the ID of the aggregate
+     * @param boundedContext
+     *         the bounded context to which the aggregate belongs
+     * @param id
+     *         the ID of the aggregate
      */
     public TaskAggregateRoot(BoundedContext boundedContext, TaskId id) {
         super(boundedContext, id);

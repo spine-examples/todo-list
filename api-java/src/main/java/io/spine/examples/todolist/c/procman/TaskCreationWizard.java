@@ -64,24 +64,24 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRej
  *
  * <p>The task creation process has following stages:
  * <ol>
- *     <li><b>Task Definition</b> - the task building is started: the task is being defined by its
- *         primary fields. The process moves to this stage once the empty task draft is created.
- *     <li><b>Label Assignment</b> - the labels are being created and assigned to the supervised
- *         task. The process moves to this stage after the primary task data is set. This stage may
- *         be skipped via the {@link SkipLabels} command.
- *     <li><b>Confirmation</b> - all the data is set to the label and the user may check if the data
- *         is correct.
- *     <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
- *         i.e. no stages may follow this stage. At this stage the supervised task is finalized and
- *         the current instance of {@code TaskCreationWizard} is
- *         {@linkplain io.spine.server.entity.Entity#isArchived() archived}. It is
- *         required that the process is in the <b>Confirmation</b> stage before moving to this
- *         stage.
- *     <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.
- *         The user may return to the supervised task (which persists as a draft) and finalize it
- *         manually. This is a terminal stage. This instance of {@code TaskCreationWizard}
- *         is {@linkplain io.spine.server.entity.Entity#isArchived() archived} on this
- *         stage.
+ * <li><b>Task Definition</b> - the task building is started: the task is being defined by its
+ * primary fields. The process moves to this stage once the empty task draft is created.
+ * <li><b>Label Assignment</b> - the labels are being created and assigned to the supervised
+ * task. The process moves to this stage after the primary task data is set. This stage may
+ * be skipped via the {@link SkipLabels} command.
+ * <li><b>Confirmation</b> - all the data is set to the label and the user may check if the data
+ * is correct.
+ * <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
+ * i.e. no stages may follow this stage. At this stage the supervised task is finalized and
+ * the current instance of {@code TaskCreationWizard} is
+ * {@linkplain io.spine.server.entity.Entity#isArchived() archived}. It is
+ * required that the process is in the <b>Confirmation</b> stage before moving to this
+ * stage.
+ * <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.
+ * The user may return to the supervised task (which persists as a draft) and finalize it
+ * manually. This is a terminal stage. This instance of {@code TaskCreationWizard}
+ * is {@linkplain io.spine.server.entity.Entity#isArchived() archived} on this
+ * stage.
  * </ol>
  *
  * <p>On any stage (except for the terminal ones), the process can be moved to the <b>Canceled</b>
@@ -125,11 +125,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     @Command
     Collection<? extends CommandMessage> handle(SetTaskDetails command, CommandContext context)
             throws CannotMoveToStage {
-        WizardCommands commands = commands();
-        return transit(LABEL_ASSIGNMENT, () -> {
-            Collection<? extends CommandMessage> resultCommands = commands.setTaskDetails(command);
-            return resultCommands;
-        });
+        return transit(LABEL_ASSIGNMENT, () -> commands().setTaskDetails(command));
     }
 
     @Command
@@ -183,12 +179,16 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      * Transits the process to the specified state by handling a command with the given command
      * handler.
      *
-     * @param requestedStage the stage to transit to
-     * @param commandHandler the routine of handling a command; returns the command handling result,
-     *                       an event or a list of events
-     * @param <R>            the type of the command handling result
+     * @param requestedStage
+     *         the stage to transit to
+     * @param commandHandler
+     *         the routine of handling a command; returns the command handling result,
+     *         an event or a list of events
+     * @param <R>
+     *         the type of the command handling result
      * @return the command handling result, an event or a list of events
-     * @throws CannotMoveToStage if the requested transition cannot be performed
+     * @throws CannotMoveToStage
+     *         if the requested transition cannot be performed
      */
     private <R> R transit(Stage requestedStage, Supplier<R> commandHandler)
             throws CannotMoveToStage {
@@ -208,7 +208,8 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     /**
      * Sets the current stage to the given value.
      *
-     * @param stage the requested stage
+     * @param stage
+     *         the requested stage
      */
     private void moveToStage(Stage stage) {
         builder().setStage(stage);
@@ -217,8 +218,10 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     /**
      * Checks if the process can move to the given stage.
      *
-     * @param pendingStage the stage to move to
-     * @throws CannotMoveToStage if the transition from current to specified stage is illegal
+     * @param pendingStage
+     *         the stage to move to
+     * @throws CannotMoveToStage
+     *         if the transition from current to specified stage is illegal
      */
     private void checkCanMoveTo(Stage pendingStage) throws CannotMoveToStage {
         if (pendingStage == CANCELED && !isTerminated()) {
@@ -251,7 +254,8 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     /**
      * Initializes the wizard state with the data from the given command.
      *
-     * @param cmd the command starting the process
+     * @param cmd
+     *         the command starting the process
      */
     private void initProcess(StartTaskCreation cmd) {
         TaskCreationId id = id();

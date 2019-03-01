@@ -28,7 +28,6 @@ import io.spine.cli.action.TransitionAction.TransitionActionProducer;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 import io.spine.examples.todolist.q.projection.TaskListView;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -43,9 +42,6 @@ import static java.util.Collections.nCopies;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("MyTasksListView should")
 class MyTasksListViewTest extends ViewTest {
 
@@ -62,44 +58,44 @@ class MyTasksListViewTest extends ViewTest {
         bot.screen()
            .renderView(new NoOpView()); // Needed to cause addition of back action in the view.
 
-        final MyTasksListView view = new MyTasksListView();
+        MyTasksListView view = new MyTasksListView();
         view.addAction(newOpenTaskViewProducer(taskView, 0));
         view.addAction(newOpenTaskViewProducer(taskView, 1));
-        final Set<Action> actionsToBeRemoved = view.getActions();
+        Set<Action> actionsToBeRemoved = view.getActions();
 
         bot.addAnswer("b");
         bot.screen()
            .renderView(view);
-        final Set<Action> refreshedActions = newHashSet(view.getActions());
-        final boolean containsActionsForRemoval = refreshedActions.retainAll(actionsToBeRemoved);
+        Set<Action> refreshedActions = newHashSet(view.getActions());
+        boolean containsActionsForRemoval = refreshedActions.retainAll(actionsToBeRemoved);
         assertFalse(containsActionsForRemoval);
     }
 
     @Test
     @DisplayName("create action for every task view")
     void createActions() {
-        final int tasksCount = 5;
-        final TaskListView taskListView = TaskListView.newBuilder()
-                                                      .addAllItems(nCopies(tasksCount, taskView))
-                                                      .build();
-        final MyListView myListView = MyListView.newBuilder()
-                                                .setMyList(taskListView)
+        int tasksCount = 5;
+        TaskListView taskListView = TaskListView.newBuilder()
+                                                .addAllItems(nCopies(tasksCount, taskView))
                                                 .build();
-        final Collection<TransitionActionProducer> actions = taskActionProducersFor(myListView);
+        MyListView myListView = MyListView.newBuilder()
+                                          .setMyList(taskListView)
+                                          .build();
+        Collection<TransitionActionProducer> actions = taskActionProducersFor(myListView);
         assertEquals(tasksCount, actions.size());
     }
 
     @Test
     @DisplayName("create open task view producer")
     void createOpenTaskItemProducer() {
-        final String shortcutValue = String.valueOf(VIEW_INDEX + 1);
-        final Shortcut expectedShortcut = new Shortcut(shortcutValue);
+        String shortcutValue = String.valueOf(VIEW_INDEX + 1);
+        Shortcut expectedShortcut = new Shortcut(shortcutValue);
 
-        final TransitionActionProducer<MyTasksListView, TaskView> producer =
+        TransitionActionProducer<MyTasksListView, TaskView> producer =
                 newOpenTaskViewProducer(taskView, VIEW_INDEX);
 
-        final String expectedDescription = taskView.getDescription()
-                                                   .getValue();
+        String expectedDescription = taskView.getDescription()
+                                             .getValue();
         assertEquals(expectedDescription, producer.getName());
         assertEquals(expectedShortcut, producer.getShortcut());
     }

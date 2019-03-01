@@ -42,10 +42,10 @@ class ClientAppTest {
     @Test
     @DisplayName("initialize the Application screen")
     void initApplicationScreen() {
-        final Application application = Application.getInstance();
+        Application application = Application.getInstance();
         application.setScreen(nullRef());
 
-        final Screen expectedScreen = new TerminalScreen();
+        Screen expectedScreen = new TerminalScreen();
         initCli(expectedScreen);
 
         assertEquals(expectedScreen, application.screen());

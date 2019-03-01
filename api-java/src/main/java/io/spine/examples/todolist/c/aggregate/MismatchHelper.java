@@ -37,35 +37,39 @@ final class MismatchHelper {
     /**
      * Creates a new instance of the {@link ValueMismatch} with the passed values.
      *
-     * @param expectedPriority the {@link TaskPriority} expected by the command
-     * @param actualPriority   the {@code TaskPriority} discovered instead of the expected
-     * @param newPriority      the new {@code TaskPriority} requested in the command
-     * @param version          the version of the entity in which the mismatch is discovered
+     * @param expectedPriority
+     *         the {@link TaskPriority} expected by the command
+     * @param actualPriority
+     *         the {@code TaskPriority} discovered instead of the expected
+     * @param newPriority
+     *         the new {@code TaskPriority} requested in the command
+     * @param version
+     *         the version of the entity in which the mismatch is discovered
      * @return new {@code ValueMismatch} instance
      */
     static ValueMismatch valueMismatch(TaskPriority expectedPriority,
                                        TaskPriority actualPriority,
                                        TaskPriority newPriority,
                                        Version version) {
-        final TaskPriorityValue actualPriorityValue =
-                TaskPriorityValue.newBuilder()
-                                 .setPriorityValue(actualPriority)
-                                 .build();
-        final TaskPriorityValue expectedPriorityValue =
-                TaskPriorityValue.newBuilder()
-                                 .setPriorityValue(expectedPriority)
-                                 .build();
-        final TaskPriorityValue newPriorityValue =
-                TaskPriorityValue.newBuilder()
-                                 .setPriorityValue(newPriority)
-                                 .build();
-        final ValueMismatch result =
-                ValueMismatch.newBuilder()
-                             .setExpected(AnyPacker.pack(expectedPriorityValue))
-                             .setActual(AnyPacker.pack(actualPriorityValue))
-                             .setNewValue(AnyPacker.pack(newPriorityValue))
-                             .setVersion(version.getNumber())
-                             .build();
+        TaskPriorityValue actualPriorityValue = TaskPriorityValue
+                .newBuilder()
+                .setPriorityValue(actualPriority)
+                .build();
+        TaskPriorityValue expectedPriorityValue = TaskPriorityValue
+                .newBuilder()
+                .setPriorityValue(expectedPriority)
+                .build();
+        TaskPriorityValue newPriorityValue = TaskPriorityValue
+                .newBuilder()
+                .setPriorityValue(newPriority)
+                .build();
+        ValueMismatch result = ValueMismatch
+                .newBuilder()
+                .setExpected(AnyPacker.pack(expectedPriorityValue))
+                .setActual(AnyPacker.pack(actualPriorityValue))
+                .setNewValue(AnyPacker.pack(newPriorityValue))
+                .setVersion(version.getNumber())
+                .build();
         return result;
     }
 }

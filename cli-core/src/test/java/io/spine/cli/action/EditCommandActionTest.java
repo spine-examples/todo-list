@@ -71,8 +71,8 @@ class EditCommandActionTest {
     @Test
     @DisplayName("create the action with one more edit")
     void createActionWithEdits() {
-        final Action action = editCommandActionProducer(ACTION_NAME, SHORTCUT,
-                                                        edits).create(view);
+        Action action = editCommandActionProducer(ACTION_NAME, SHORTCUT,
+                                                  edits).create(view);
         assertEquals(ACTION_NAME, action.getName());
         assertEquals(SHORTCUT, action.getShortcut());
     }
@@ -139,7 +139,7 @@ class EditCommandActionTest {
 
         @Override
         public void start(Screen screen, CommentVBuilder builder) {
-            final String commentValue = screen.promptUser("Enter a comment");
+            String commentValue = screen.promptUser("Enter a comment");
             builder.setValue(commentValue);
         }
     }

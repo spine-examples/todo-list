@@ -28,9 +28,6 @@ import static io.spine.cli.Application.getInstance;
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("Application should")
 class ApplicationTest {
 

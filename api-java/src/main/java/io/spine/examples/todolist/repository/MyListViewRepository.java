@@ -35,7 +35,7 @@ public class MyListViewRepository
         extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {
 
     @SuppressWarnings("OverridableMethodCallDuringObjectConstruction")
-    // Relying onto implementor judgement.
+    // Necessary so the implementors can specify their own routing schema.
     public MyListViewRepository() {
         super();
         setUpEventRoute();

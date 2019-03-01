@@ -31,28 +31,29 @@ import static com.google.common.collect.Lists.newLinkedList;
 /**
  * Utilities for {@code ConstraintViolation} formatting.
  */
-public class ConstraintViolationFormatter {
+public final class ConstraintViolationFormatter {
 
     @VisibleForTesting
     static final String ERROR_MSG_FORMAT = "Invalid `%s`.";
 
+    /** Prevents instantiation of this utility class. */
     private ConstraintViolationFormatter() {
-        // Prevent instantiation of this utility class.
     }
 
     /**
      * Formats the specified constraint violations into a user-friendly representation.
      *
-     * @param violations the violations to format
+     * @param violations
+     *         the violations to format
      * @return formatted error messages
      */
     public static List<String> format(Iterable<ConstraintViolation> violations) {
-        final List<String> messages = newLinkedList();
+        List<String> messages = newLinkedList();
         for (ConstraintViolation violation : violations) {
-            final FieldPath fieldPath = violation.getFieldPath();
-            final int fieldPathSize = fieldPath.getFieldNameCount();
-            final String unqualifiedName = fieldPath.getFieldName(fieldPathSize - 1);
-            final String errorMessage = String.format(ERROR_MSG_FORMAT, unqualifiedName);
+            FieldPath fieldPath = violation.getFieldPath();
+            int fieldPathSize = fieldPath.getFieldNameCount();
+            String unqualifiedName = fieldPath.getFieldName(fieldPathSize - 1);
+            String errorMessage = String.format(ERROR_MSG_FORMAT, unqualifiedName);
             messages.add(errorMessage);
         }
         return messages;

@@ -47,6 +47,7 @@ final class Application {
 
     private final CommandService commandService;
     private final FirebaseClient firebaseClient;
+
     /**
      * Prevents direct instantiation.
      */

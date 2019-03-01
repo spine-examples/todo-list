@@ -24,8 +24,7 @@ dependencies {
     testImplementation "mysql:mysql-connector-java:$mysqlDriverVersion"
     testImplementation "io.spine:spine-rdbms:$spineJdbcStorageVersion"
     testImplementation "com.zaxxer:HikariCP:$hikariCpVersion"
-    testImplementation group: 'org.junit.platform', name: 'junit-platform-console-standalone',
-            version: jUnitPlatformVersion
+    testImplementation "org.junit.platform:junit-platform-console-standalone:$jUnitPlatformVersion"
 
     testImplementation project(path: ':testutil-api')
     testImplementation project(path: ':server')

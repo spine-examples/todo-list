@@ -28,19 +28,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Base implementation of {@link Action}.
  *
- * <p>Executes transition from a {@link #source} to a {@link #destination}.
- *
- * @param <S> {@inheritDoc}
- * @param <D> {@inheritDoc}
+ * <p>Executes transition from a {@linkplain #getSource() source} to a
+ * {@link #getDestination() destintation}.
  */
-public class TransitionAction<S extends View, D extends View> extends AbstractAction<S, D> {
+public final class TransitionAction<S extends View, D extends View> extends AbstractAction<S, D> {
 
     public TransitionAction(String name, Shortcut shortcut, S source, D destination) {
         super(name, shortcut, source, destination);
     }
 
     /**
-     * Makes transition to a {@link #destination} view
+     * Makes transition to a {@linkplain #getDestination() destination} view
      * using the {@linkplain Application#screen() screen}.
      */
     @Override
@@ -53,11 +51,16 @@ public class TransitionAction<S extends View, D extends View> extends AbstractAc
     /**
      * Creates a new instance of a {@code TransitionActionProducer}.
      *
-     * @param name        the name for the action
-     * @param shortcut    the shortcut for the action
-     * @param destination the destination for the action
-     * @param <S>         the type of the source view
-     * @param <D>         the type of the destination view
+     * @param name
+     *         the name for the action
+     * @param shortcut
+     *         the shortcut for the action
+     * @param destination
+     *         the destination for the action
+     * @param <S>
+     *         the type of the source view
+     * @param <D>
+     *         the type of the destination view
      * @return the new producer
      */
     public static <S extends View, D extends View>
@@ -68,9 +71,6 @@ public class TransitionAction<S extends View, D extends View> extends AbstractAc
 
     /**
      * Producer of transition actions.
-     *
-     * @param <S> {@inheritDoc}
-     * @param <D> {@inheritDoc}
      */
     public static class TransitionActionProducer<S extends View,
                                                  D extends View>
@@ -84,9 +84,6 @@ public class TransitionAction<S extends View, D extends View> extends AbstractAc
             this.destination = destination;
         }
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public TransitionAction<S, D> create(S source) {
             return new TransitionAction<>(getName(), getShortcut(), source, destination);

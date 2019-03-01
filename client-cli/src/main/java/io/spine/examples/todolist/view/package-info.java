@@ -21,7 +21,6 @@
 /**
  * This package contains views of the application CLI.
  */
-
 @ParametersAreNonnullByDefault
 package io.spine.examples.todolist.view;
 
