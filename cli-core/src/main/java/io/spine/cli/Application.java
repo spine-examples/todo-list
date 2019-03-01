@@ -74,6 +74,7 @@ public final class Application {
         return Singleton.INSTANCE.value;
     }
 
+    @SuppressWarnings("ImmutableEnumChecker") // OK for this singleton.
     private enum Singleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")

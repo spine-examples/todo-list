@@ -30,7 +30,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  *
  * <p>Shortcut is the value used to distinguish and select different actions.
  */
-public class Shortcut {
+public final class Shortcut {
 
     private final String value;
 

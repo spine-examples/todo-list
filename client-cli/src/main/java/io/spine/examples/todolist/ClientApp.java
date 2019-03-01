@@ -26,12 +26,12 @@ import io.spine.cli.Screen;
 import io.spine.cli.view.View;
 import io.spine.examples.todolist.client.TodoClient;
 import io.spine.examples.todolist.view.MainMenu;
+import io.spine.logging.Logging;
 import org.slf4j.Logger;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.AppConfig.getClient;
 import static io.spine.examples.todolist.client.TodoClient.HOST;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * A command-line client application, which connects to a server using the host and port.
@@ -42,10 +42,8 @@ import static org.slf4j.LoggerFactory.getLogger;
  * <p>If the parameters were not specified to a command or the server was ran directly,
  * default {@linkplain TodoClient#HOST host}
  * and {@link io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT port} will be used.
- *
- * @author Illia Shepilov
  */
-public class ClientApp {
+public final class ClientApp {
 
     private static final int ARGUMENTS_AMOUNT = 2;
     private static final String DEFAULT_HOST = HOST;
@@ -68,12 +66,13 @@ public class ClientApp {
     }
 
     private static TodoClient createClient(String[] arguments) {
+        Logger log = Logging.get(ClientApp.class);
         final String hostname;
         final int port;
         if (arguments.length != ARGUMENTS_AMOUNT) {
-            log().info("Expected arguments amount is {}. " +
-                               "Default arguments will be used, hostname: {} and port: {}.",
-                       ARGUMENTS_AMOUNT, DEFAULT_HOST, DEFAULT_PORT);
+            log.info("Expected arguments amount is {}. " +
+                             "Default arguments will be used, hostname: {} and port: {}.",
+                     ARGUMENTS_AMOUNT, DEFAULT_HOST, DEFAULT_PORT);
             hostname = DEFAULT_HOST;
             port = DEFAULT_PORT;
         } else {
@@ -88,15 +87,5 @@ public class ClientApp {
     static void initCli(Screen screen) {
         Application.getInstance()
                    .init(screen);
-    }
-
-    private static Logger log() {
-        return LogSingleton.INSTANCE.value;
-    }
-
-    private enum LogSingleton {
-        INSTANCE;
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = getLogger(ClientApp.class);
     }
 }

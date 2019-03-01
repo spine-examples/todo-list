@@ -25,6 +25,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.spine.base.Environment;
 import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
@@ -39,7 +40,6 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.server.Server.newServer;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.lang.String.format;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * A Compute Engine {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
@@ -85,6 +85,7 @@ public class ComputeCloudSqlServer {
     }
 
     private static DataSource createDataSource() {
+        Logger log = Logging.get(ComputeCloudSqlServer.class);
         final HikariConfig config = new HikariConfig();
 
         final String instanceConnectionName = properties.getProperty("db.instance");
@@ -92,16 +93,16 @@ public class ComputeCloudSqlServer {
         final String username = properties.getProperty("db.username");
         final String password = properties.getProperty("db.password");
 
-        log().info("Start `DataSource` creation. The following parameters will be used:");
+        log.info("Start `DataSource` creation. The following parameters will be used:");
         final String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName, instanceConnectionName);
         config.setJdbcUrl(dbUrl);
-        log().info("JDBC URL: {}", dbUrl);
+        log.info("JDBC URL: {}", dbUrl);
 
         config.setUsername(username);
-        log().info("Username: {}", username);
+        log.info("Username: {}", username);
 
         config.setPassword(password);
-        log().info("Password: {}", password);
+        log.info("Password: {}", password);
 
         final DataSource dataSource = new HikariDataSource(config);
         return dataSource;
@@ -135,15 +136,5 @@ public class ComputeCloudSqlServer {
             throw illegalStateWithCauseOf(e);
         }
         return properties;
-    }
-
-    private static Logger log() {
-        return LogSingleton.INSTANCE.value;
-    }
-
-    private enum LogSingleton {
-        INSTANCE;
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = getLogger(ComputeCloudSqlServer.class);
     }
 }

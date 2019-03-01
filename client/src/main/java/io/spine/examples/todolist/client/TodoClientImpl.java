@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.client;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Any;
 import com.google.protobuf.Message;
 import io.grpc.ManagedChannel;
@@ -59,7 +60,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.ImmutableSet.of;
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
@@ -227,7 +227,7 @@ final class TodoClientImpl implements SubscribingTodoClient {
 
     private <M extends Message> Optional<M> findById(Class<M> messageClass, Message id) {
         Query query = requestFactory.query()
-                                    .byIds(messageClass, of(id));
+                                    .byIds(messageClass, ImmutableSet.of(id));
         List<Any> messages = queryService.read(query)
                                          .getMessagesList();
         checkState(messages.size() <= 1,

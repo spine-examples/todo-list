@@ -30,8 +30,8 @@ import io.spine.cli.view.View;
 import io.spine.examples.todolist.q.projection.MyListView;
 import io.spine.examples.todolist.q.projection.TaskItem;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import static io.spine.cli.action.TransitionAction.transitionProducer;
@@ -77,7 +77,7 @@ public class MyTasksListView extends ActionListView {
     }
 
     /**
-     * Creates {@link TransitionActionProducer} with {@link MyTasksListView} destination.
+     * Creates {@link TransitionActionProducer} with {@code MyTasksListView} destination.
      *
      * @param name     the name for the action
      * @param shortcut the shortcut for the action
@@ -91,7 +91,7 @@ public class MyTasksListView extends ActionListView {
 
     @VisibleForTesting
     static Collection<TransitionActionProducer> taskActionProducersFor(MyListView myListView) {
-        final Collection<TransitionActionProducer> producers = new LinkedList<>();
+        final Collection<TransitionActionProducer> producers = new ArrayList<>();
         final List<TaskItem> tasks = myListView.getMyList()
                                                .getItemsList();
         for (TaskItem task : tasks) {

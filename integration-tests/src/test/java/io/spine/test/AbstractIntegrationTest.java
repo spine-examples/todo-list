@@ -39,10 +39,13 @@ import org.slf4j.Logger;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
@@ -52,6 +55,7 @@ import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
+import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.String.format;
 import static java.util.Arrays.stream;
 import static java.util.Objects.nonNull;
@@ -202,21 +206,18 @@ public abstract class AbstractIntegrationTest {
         return clients;
     }
 
-    protected void asyncPerformanceTest(ToDoCommand command, Integer numberOfRequests)
-            throws InterruptedException {
-        final ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime()
-                                                                         .availableProcessors() *
-                                                                          2);
-        final CountDownLatch latch = new CountDownLatch(numberOfRequests);
+    protected void asyncPerformanceTest(ToDoCommand command, Integer numberOfRequests) {
+        int availableProcessors = Runtime.getRuntime()
+                                         .availableProcessors();
+        final ExecutorService pool = Executors.newFixedThreadPool(availableProcessors * 2);
+        Collection<Future<?>> tasks = new ArrayList<>();
         for (int i = 0; i < numberOfRequests; i++) {
             final int iterationIndex = i;
-            pool.submit(() -> {
-                command.execute(iterationIndex);
-                latch.countDown();
-            });
+            Future<?> task = pool.submit(() -> command.execute(iterationIndex));
+            tasks.add(task);
         }
         try {
-            latch.await();
+            tasks.forEach(AbstractIntegrationTest::waitForCompletion);
         } finally {
             pool.shutdownNow();
         }
@@ -225,4 +226,14 @@ public abstract class AbstractIntegrationTest {
     protected interface ToDoCommand {
         void execute(int iterationIndex);
     }
+
+    private static void waitForCompletion(Future<?> task) {
+        try {
+            task.get();
+        } catch (Throwable e) {
+            throw newIllegalStateException(e, "Test task did not complete normally, reason: %s",
+                                           e.getLocalizedMessage());
+        }
+    }
+
 }

@@ -25,8 +25,8 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
+import io.spine.logging.Logging;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -57,6 +57,7 @@ final class FirebaseClients {
      * @return the initialized instance of {@link Firestore}
      */
     public static Firestore initializeFirestore() {
+        Logger log = Logging.get(FirebaseClients.class);
         final InputStream firebaseSecret = FirebaseClients.class
                 .getClassLoader()
                 .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
@@ -66,7 +67,7 @@ final class FirebaseClients {
         try {
             credentials = GoogleCredentials.fromStream(firebaseSecret);
         } catch (IOException e) {
-            log().error("Error while reading Firebase config file.", e);
+            log.error("Error while reading Firebase config file.", e);
             throw new IllegalStateException(e);
         }
         final FirebaseOptions options = new FirebaseOptions.Builder()
@@ -76,15 +77,5 @@ final class FirebaseClients {
         FirebaseApp.initializeApp(options);
         final Firestore firestore = FirestoreClient.getFirestore();
         return firestore;
-    }
-
-    private static Logger log() {
-        return LogSingleton.INSTANCE.value;
-    }
-
-    private enum LogSingleton {
-        INSTANCE;
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = LoggerFactory.getLogger(FirebaseClients.class);
     }
 }

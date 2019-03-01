@@ -23,8 +23,8 @@ package io.spine.cli.action;
 import io.spine.cli.view.View;
 
 /**
- * <p>An {@code Action} takes the end-user from a {@linkplain #getSource()}  source view}
- * to a {@linkplain #getDestination()}  destination view}.
+ * <p>An {@code Action} takes the end-user from a {@linkplain #getSource() source view}
+ * to a {@linkplain #getDestination() destination view}.
  *
  * <p>Actions with same {@link Shortcut} are considered equal.
  *

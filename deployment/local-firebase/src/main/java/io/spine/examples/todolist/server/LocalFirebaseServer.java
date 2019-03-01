@@ -29,11 +29,9 @@ import io.spine.server.firebase.FirebaseSubscriptionMirror;
 import io.spine.type.TypeUrl;
 
 import java.io.IOException;
-import java.util.Collection;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.server.Server.newServer;
-import static io.spine.type.TypeUrl.of;
 
 /**
  * A local {@link Server} using
@@ -50,8 +48,8 @@ public class LocalFirebaseServer {
     /**
      * The types to reflect with the Firebase subscription mirror.
      */
-    private static final Collection<TypeUrl> MIRRORED_TYPES = ImmutableSet.of(
-            of(MyListView.class)
+    private static final ImmutableSet<TypeUrl> MIRRORED_TYPES = ImmutableSet.of(
+            TypeUrl.of(MyListView.class)
     );
 
     /**

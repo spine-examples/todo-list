@@ -42,7 +42,7 @@ public class ToDoListTest extends AbstractIntegrationTest {
     @Test
     @Disabled
     @DisplayName("Create tasks concurrently and retrieve projection")
-    void firstFlow() throws InterruptedException {
+    void firstFlow() {
         final TodoClient[] clients = getClients();
         final int numberOfRequests = 100;
         asyncPerformanceTest(iterationNumber -> {
@@ -60,7 +60,7 @@ public class ToDoListTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("Create tasks concurrently and retrieve aggregate state")
-    void secondFlow() throws InterruptedException {
+    void secondFlow() {
         final TodoClient[] clients = getClients();
         final int numberOfRequests = 100;
         asyncPerformanceTest(iterationNumber -> {

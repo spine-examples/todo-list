@@ -25,6 +25,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.spine.base.Environment;
 import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
@@ -39,7 +40,6 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.server.Server.newServer;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.lang.String.format;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * A local {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
@@ -90,11 +90,12 @@ public class LocalCloudSqlServer {
 
     @VisibleForTesting
     static String[] getActualArguments(String[] commandLineArguments) {
+        Logger log = Logging.get(LocalCloudSqlServer.class);
         final String[] defaultArguments = getDefaultArguments();
         if (commandLineArguments.length != defaultArguments.length) {
-            log().info("The specified arguments don't match the length requirement. " +
-                               "Required arguments size: {}. Default arguments will be used: {}.",
-                       defaultArguments.length, defaultArguments);
+            log.info("The specified arguments don't match the length requirement. " +
+                             "Required arguments size: {}. Default arguments will be used: {}.",
+                     defaultArguments.length, defaultArguments);
             return defaultArguments;
         } else {
             return commandLineArguments;
@@ -115,6 +116,7 @@ public class LocalCloudSqlServer {
     }
 
     private static DataSource createDataSource(String[] args) {
+        Logger log = Logging.get(LocalCloudSqlServer.class);
         final HikariConfig config = new HikariConfig();
 
         final String instanceConnectionName = args[0];
@@ -122,16 +124,17 @@ public class LocalCloudSqlServer {
         final String username = args[2];
         final String password = args[3];
 
-        log().info("Start `DataSource` creation. The following parameters will be used:");
-        final String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName, instanceConnectionName);
+        log.info("Start `DataSource` creation. The following parameters will be used:");
+        final String dbUrl =
+                format(DB_URL_FORMAT, getDbUrlPrefix(), dbName, instanceConnectionName);
         config.setJdbcUrl(dbUrl);
-        log().info("JDBC URL: {}", dbUrl);
+        log.info("JDBC URL: {}", dbUrl);
 
         config.setUsername(username);
-        log().info("Username: {}", username);
+        log.info("Username: {}", username);
 
         config.setPassword(password);
-        log().info("Password: {}", password);
+        log.info("Password: {}", password);
 
         final DataSource dataSource = new HikariDataSource(config);
         return dataSource;
@@ -174,15 +177,5 @@ public class LocalCloudSqlServer {
             throw illegalStateWithCauseOf(e);
         }
         return properties;
-    }
-
-    private static Logger log() {
-        return LogSingleton.INSTANCE.value;
-    }
-
-    private enum LogSingleton {
-        INSTANCE;
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = getLogger(LocalCloudSqlServer.class);
     }
 }

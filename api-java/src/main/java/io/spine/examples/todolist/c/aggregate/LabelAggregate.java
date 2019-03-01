@@ -98,7 +98,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
     }
 
     @Apply
-    private void labelCreated(LabelCreated event) {
+    void labelCreated(LabelCreated event) {
         builder().setId(event.getId())
                  .setTitle(event.getDetails()
                                 .getTitle())
@@ -106,7 +106,7 @@ public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuil
     }
 
     @Apply
-    private void labelDetailsUpdated(LabelDetailsUpdated event) {
+    void labelDetailsUpdated(LabelDetailsUpdated event) {
         final LabelDetails labelDetails = event.getLabelDetailsChange()
                                                .getNewDetails();
         builder().setId(id())
