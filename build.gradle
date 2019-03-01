@@ -109,6 +109,10 @@ subprojects {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 
+    compileJava {
+        options.compilerArgs += ["-processor", "io.spine.model.assemble.AssignLookup", "-AspineDirRoot=${rootDir}"]
+    }
+
     dependencies {
         compile deps.build.slf4j
 
@@ -145,11 +149,6 @@ subprojects {
             xml.enabled = true
             html.enabled = true
         }
-    }
-
-    // todo try remove and see if test report fails/becomes spoiled
-    jacocoTestReport.dependsOn {
-        subprojects*.test
     }
 
     build.dependsOn jacocoTestReport
