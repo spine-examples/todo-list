@@ -27,6 +27,7 @@ project.ext {
 
     // Spine dependencies' versions
     spineVersion = SPINE_VERSION
+
     spineJdbcStorageVersion = SPINE_VERSION
     spineBaseVersion = SPINE_VERSION
     spineWebVersion = SPINE_VERSION

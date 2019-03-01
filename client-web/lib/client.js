@@ -20,11 +20,11 @@
 
 let uuid = require("uuid");
 
-
 let knownTypes =  require("../proto/main/js/index");
 
 let UserId = require("../proto/main/js/spine/core/user_id_pb").UserId;
 let spineWeb = require("spine-web/index.js");
+
 
 let TaskId = require("../proto/main/js/todolist/identifiers_pb").TaskId;
 let TaskDescription = require("../proto/main/js/todolist/values_pb").TaskDescription;

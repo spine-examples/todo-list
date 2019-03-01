@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.server;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.net.Url;
 import io.spine.net.UrlVBuilder;
@@ -49,8 +50,9 @@ final class Application {
     private final FirebaseClient firebaseClient;
 
     /**
-     * Prevents direct instantiation.
+     * Prevents direct instantiation for outer accessors.
      */
+
     private Application(BoundedContext boundedContext) {
         this.queryService = QueryService
                 .newBuilder()
@@ -111,6 +113,7 @@ final class Application {
     private enum Singleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Application value = new Application(BoundedContexts.create());
+        private final Application value =
+                new Application(BoundedContexts.create(), firebaseCredentials());
     }
 }
