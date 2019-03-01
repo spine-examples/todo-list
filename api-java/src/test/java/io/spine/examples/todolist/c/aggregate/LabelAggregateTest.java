@@ -229,7 +229,7 @@ class LabelAggregateTest {
         }
 
         @BeforeEach
-        public void init() {
+        void init() {
             setUp();
         }
 

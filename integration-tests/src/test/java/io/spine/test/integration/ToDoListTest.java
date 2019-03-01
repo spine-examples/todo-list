@@ -58,7 +58,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("OverlyCoupledClass")
 @DisplayName("TodoList Integration Test")
-public class ToDoListTest extends AbstractIntegrationTest {
+class ToDoListTest extends AbstractIntegrationTest {
 
     private TodoClient client;
 

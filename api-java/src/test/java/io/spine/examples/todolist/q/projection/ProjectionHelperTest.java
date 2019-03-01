@@ -53,13 +53,13 @@ class ProjectionHelperTest extends UtilityClassTest<ProjectionHelper> {
     }
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         viewList = createViewList();
     }
 
     @Test
     @DisplayName("remove TaskItem from state by label ID")
-    public void removeView() {
+    void removeView() {
         int expectedListSize = 2;
         TaskListView view = ProjectionHelper.removeViewsByLabelId(viewList, LABEL_ID);
 
@@ -69,7 +69,7 @@ class ProjectionHelperTest extends UtilityClassTest<ProjectionHelper> {
 
     @Test
     @DisplayName("not remove TaskItem from state by wrong label ID")
-    public void notRemoveViewByLabelId() {
+    void notRemoveViewByLabelId() {
         int expectedListSize = viewList.size();
         LabelId wrongLabelId = LabelId
                 .newBuilder()
@@ -83,7 +83,7 @@ class ProjectionHelperTest extends UtilityClassTest<ProjectionHelper> {
 
     @Test
     @DisplayName("remove TaskItem from state by task ID")
-    public void removeViewByTaskId() {
+    void removeViewByTaskId() {
         int expectedListSize = 2;
         TaskListView view = ProjectionHelper.removeViewsByTaskId(viewList, TASK_ID);
 
@@ -93,7 +93,7 @@ class ProjectionHelperTest extends UtilityClassTest<ProjectionHelper> {
 
     @Test
     @DisplayName("not remove TaskItem from state by wrong task ID")
-    public void notRemoveTaskItemByTaskId() {
+    void notRemoveTaskItemByTaskId() {
         int expectedListSize = viewList.size();
         TaskId wrongTaskId = TaskId
                 .newBuilder()
