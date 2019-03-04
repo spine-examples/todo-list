@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -133,6 +133,22 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
             TaskItem view = obtainTaskItemWhenHandledRemoveLabeledFromTask(labelId, false);
             assertEquals(labelId, view.getLabelId());
         }
+
+        private TaskItem
+        obtainTaskItemWhenHandledRemoveLabeledFromTask(LabelId labelId, boolean isCorrectId) {
+            CreateDraft createDraft = createDraft();
+            client.postCommand(createDraft);
+            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
+            client.postCommand(updateTaskPriority);
+            TaskId taskId = createDraft.getId();
+
+            assignAndRemoveLabel(labelId, isCorrectId, taskId);
+
+            List<TaskItem> taskViews = client.getDraftTasksView()
+                                             .getDraftTasks()
+                                             .getItemsList();
+            return checkAndObtainView(taskId, taskViews);
+        }
     }
 
     @Nested
@@ -158,35 +174,19 @@ class RemoveLabelFromTaskTest extends TodoClientTest {
             TaskItem view = obtainTaskItemWhenHandledRemoveLabelFromTask(labelId, false);
             assertEquals(labelId, view.getLabelId());
         }
-    }
 
-    private TaskItem obtainTaskItemWhenHandledRemoveLabelFromTask(LabelId labelId,
-            boolean isCorrectId) {
-        CreateBasicTask createTask = createTask();
-        TaskId taskId = createTask.getId();
+        private TaskItem
+        obtainTaskItemWhenHandledRemoveLabelFromTask(LabelId labelId, boolean isCorrectId) {
+            CreateBasicTask createTask = createTask();
+            TaskId taskId = createTask.getId();
 
-        assignAndRemoveLabel(labelId, isCorrectId, taskId);
+            assignAndRemoveLabel(labelId, isCorrectId, taskId);
 
-        List<TaskItem> taskViews = client.getMyListView()
-                                         .getMyList()
-                                         .getItemsList();
-        return checkAndObtainView(taskId, taskViews);
-    }
-
-    private TaskItem obtainTaskItemWhenHandledRemoveLabeledFromTask(LabelId labelId,
-            boolean isCorrectId) {
-        CreateDraft createDraft = createDraft();
-        client.postCommand(createDraft);
-        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
-        client.postCommand(updateTaskPriority);
-        TaskId taskId = createDraft.getId();
-
-        assignAndRemoveLabel(labelId, isCorrectId, taskId);
-
-        List<TaskItem> taskViews = client.getDraftTasksView()
-                                         .getDraftTasks()
-                                         .getItemsList();
-        return checkAndObtainView(taskId, taskViews);
+            List<TaskItem> taskViews = client.getMyListView()
+                                             .getMyList()
+                                             .getItemsList();
+            return checkAndObtainView(taskId, taskViews);
+        }
     }
 
     private void assignAndRemoveLabel(LabelId labelId, boolean isCorrectId, TaskId taskId) {

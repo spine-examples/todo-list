@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -25,11 +25,9 @@ import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskStatus;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.c.events.TaskCreated;
-import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -39,9 +37,8 @@ import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispa
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ExtendWith(ShardingReset.class)
 @DisplayName("CreateBasicTask command should be interpreted by TaskPart and")
-public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
+class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
 
     CreateBasicTaskTest() {
         super(createTaskInstance());
@@ -56,16 +53,16 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
     @Test
     @DisplayName("produce TaskCreated event")
     void produceEvent() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
-        final List<? extends Message> messageList = dispatchCommand(aggregate,
-                                                                    envelopeOf(createTaskCmd));
-        assertNotNull(aggregate.getState()
+        CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
+        List<? extends Message> messageList = dispatchCommand(aggregate,
+                                                              envelopeOf(createTaskCmd));
+        assertNotNull(aggregate.state()
                                .getCreated());
-        assertNotNull(aggregate.getId());
+        assertNotNull(aggregate.id());
         assertEquals(1, messageList.size());
         assertEquals(TaskCreated.class, messageList.get(0)
                                                    .getClass());
-        final TaskCreated taskCreated = (TaskCreated) messageList.get(0);
+        TaskCreated taskCreated = (TaskCreated) messageList.get(0);
 
         assertEquals(entityId(), taskCreated.getId());
         assertEquals(DESCRIPTION, taskCreated.getDetails()
@@ -76,10 +73,10 @@ public class CreateBasicTaskTest extends TaskCommandTest<CreateBasicTask> {
     @Test
     @DisplayName("create the task")
     void createTask() {
-        final CreateBasicTask createBasicTask = createTaskInstance();
+        CreateBasicTask createBasicTask = createTaskInstance();
         dispatchCommand(aggregate, envelopeOf(createBasicTask));
 
-        final Task state = aggregate.getState();
+        Task state = aggregate.state();
         assertEquals(state.getId(), createBasicTask.getId());
         assertEquals(state.getTaskStatus(), TaskStatus.FINALIZED);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -30,7 +30,7 @@ import io.spine.examples.todolist.repository.TaskCreationWizardRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
-import io.spine.server.event.Enricher;
+import io.spine.server.enrich.Enricher;
 import io.spine.server.event.EventBus;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.memory.InMemoryStorageFactory;
@@ -52,8 +52,8 @@ public final class BoundedContexts {
     private static final StorageFactory IN_MEMORY_FACTORY =
             InMemoryStorageFactory.newInstance(BoundedContextNames.newName(NAME), false);
 
+    /** Prevents instantiation of this utility class. */
     private BoundedContexts() {
-        // Disable instantiation from outside.
     }
 
     /**
@@ -63,7 +63,7 @@ public final class BoundedContexts {
      * @return the {@link BoundedContext} instance
      */
     public static BoundedContext create() {
-        final BoundedContext result = create(IN_MEMORY_FACTORY);
+        BoundedContext result = create(IN_MEMORY_FACTORY);
         return result;
     }
 
@@ -71,27 +71,28 @@ public final class BoundedContexts {
      * Creates a new instance of the {@link BoundedContext}
      * using the specified {@link StorageFactory}.
      *
-     * @param storageFactory the storage factory to use
+     * @param storageFactory
+     *         the storage factory to use
      * @return the bounded context created with the storage factory
      */
     public static BoundedContext create(StorageFactory storageFactory) {
         checkNotNull(storageFactory);
 
-        final LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
-        final TaskRepository taskRepo = new TaskRepository();
-        final TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
+        LabelAggregateRepository labelAggregateRepo = new LabelAggregateRepository();
+        TaskRepository taskRepo = new TaskRepository();
+        TaskLabelsRepository taskLabelsRepo = new TaskLabelsRepository();
 
-        final MyListViewRepository myListViewRepo = new MyListViewRepository();
-        final LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
-        final DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
+        MyListViewRepository myListViewRepo = new MyListViewRepository();
+        LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
+        DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
 
-        final TaskCreationWizardRepository taskCreationRepo = new TaskCreationWizardRepository();
+        TaskCreationWizardRepository taskCreationRepo = new TaskCreationWizardRepository();
 
-        final EventBus.Builder eventBus = createEventBus(storageFactory,
-                                                         labelAggregateRepo,
-                                                         taskRepo,
-                                                         taskLabelsRepo);
-        final BoundedContext boundedContext = createBoundedContext(eventBus);
+        EventBus.Builder eventBus = createEventBus(storageFactory,
+                                                   labelAggregateRepo,
+                                                   taskRepo,
+                                                   taskLabelsRepo);
+        BoundedContext boundedContext = createBoundedContext(eventBus);
 
         boundedContext.register(taskRepo);
         boundedContext.register(taskLabelsRepo);
@@ -108,21 +109,23 @@ public final class BoundedContexts {
                                                    LabelAggregateRepository labelRepo,
                                                    TaskRepository taskRepo,
                                                    TaskLabelsRepository labelsRepo) {
-        final Enricher enricher = TodoListEnrichments.newBuilder()
-                                                     .setLabelRepository(labelRepo)
-                                                     .setTaskRepository(taskRepo)
-                                                     .setTaskLabelsRepository(labelsRepo)
-                                                     .build()
-                                                     .createEnricher();
-        final EventBus.Builder eventBus = EventBus.newBuilder()
-                                                  .setEnricher(enricher)
-                                                  .setStorageFactory(storageFactory);
+        Enricher enricher = TodoListEnrichments
+                .newBuilder()
+                .setLabelRepository(labelRepo)
+                .setTaskRepository(taskRepo)
+                .setTaskLabelsRepository(labelsRepo)
+                .build()
+                .createEnricher();
+        EventBus.Builder eventBus = EventBus
+                .newBuilder()
+                .setEnricher(enricher)
+                .setStorageFactory(storageFactory);
         return eventBus;
     }
 
     @VisibleForTesting
     static BoundedContext createBoundedContext(EventBus.Builder eventBus) {
-        final Optional<StorageFactory> storageFactory = eventBus.getStorageFactory();
+        Optional<StorageFactory> storageFactory = eventBus.getStorageFactory();
         if (!storageFactory.isPresent()) {
             throw newIllegalStateException("EventBus does not specify a StorageFactory.");
         }

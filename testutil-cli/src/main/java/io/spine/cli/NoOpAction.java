@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -39,7 +39,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  *
  * <p>Suits for the tests, where {@link Action} behavior does not play a role.
  */
-public class NoOpAction implements Action<AbstractView, View> {
+public final class NoOpAction implements Action<AbstractView, View> {
 
     private static final String UNSUPPORTED_MSG = "NoOpAction does not support transitions between views";
 
@@ -61,8 +61,10 @@ public class NoOpAction implements Action<AbstractView, View> {
     /**
      * Creates a new {@link NoOpActionProducer} instance.
      *
-     * @param name     the name for the action
-     * @param shortcut the shortcut for the action
+     * @param name
+     *         the name for the action
+     * @param shortcut
+     *         the shortcut for the action
      * @return the new producer
      */
     public static NoOpActionProducer noOpActionProducer(String name, Shortcut shortcut) {
@@ -118,7 +120,8 @@ public class NoOpAction implements Action<AbstractView, View> {
      *
      * <p>Purpose of this producer is simplify testing of {@link ActionProducer}-based API.
      */
-    public static class NoOpActionProducer extends AbstractActionProducer<AbstractView, View, NoOpAction> {
+    public static class NoOpActionProducer
+            extends AbstractActionProducer<AbstractView, View, NoOpAction> {
 
         private NoOpActionProducer(String name, Shortcut shortcut) {
             super(name, shortcut);

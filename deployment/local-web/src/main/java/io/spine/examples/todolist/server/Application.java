@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -22,16 +22,18 @@ package io.spine.examples.todolist.server;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.net.Url;
+import io.spine.net.UrlVBuilder;
 import io.spine.server.BoundedContext;
 import io.spine.server.CommandService;
 import io.spine.server.QueryService;
 import io.spine.web.firebase.DatabaseUrl;
+import io.spine.web.firebase.DatabaseUrlVBuilder;
 import io.spine.web.firebase.FirebaseClient;
 import io.spine.web.firebase.FirebaseCredentials;
 
 import java.io.InputStream;
 
-import static io.spine.web.firebase.DatabaseUrl.from;
 import static io.spine.web.firebase.FirebaseClientFactory.restClient;
 
 /**
@@ -39,25 +41,25 @@ import static io.spine.web.firebase.FirebaseClientFactory.restClient;
  */
 final class Application {
 
-    private static final DatabaseUrl DATABASE_URL = from("https://spine-dev.firebaseio.com/");
+    private static final String DATABASE_URL = "https://spine-dev.firebaseio.com/";
     private static final String SERVICE_ACCOUNT_FILE = "/spine-dev.json";
 
     private final QueryService queryService;
+
     private final CommandService commandService;
     private final FirebaseClient firebaseClient;
 
-    /**
-     * Prevents direct instantiation for outer accessors.
-     */
     @VisibleForTesting
-    Application(BoundedContext boundedContext, FirebaseCredentials credentials) {
-        this.queryService = QueryService.newBuilder()
-                                        .add(boundedContext)
-                                        .build();
-        this.commandService = CommandService.newBuilder()
-                                            .add(boundedContext)
-                                            .build();
-        this.firebaseClient = restClient(DATABASE_URL, credentials);
+    Application(BoundedContext boundedContext) {
+        this.queryService = QueryService
+                .newBuilder()
+                .add(boundedContext)
+                .build();
+        this.commandService = CommandService
+                .newBuilder()
+                .add(boundedContext)
+                .build();
+        this.firebaseClient = initClient();
     }
 
     /**
@@ -81,23 +83,34 @@ final class Application {
         return firebaseClient;
     }
 
-    /**
-     * Obtains the Firebase database credentials from the local service account file.
-     */
-    private static FirebaseCredentials firebaseCredentials() {
+    private static FirebaseClient initClient() {
         InputStream credentialStream = Application.class.getResourceAsStream(SERVICE_ACCOUNT_FILE);
-        FirebaseCredentials result = FirebaseCredentials.fromStream(credentialStream);
-        return result;
+        FirebaseCredentials credentials = FirebaseCredentials.fromStream(credentialStream);
+        FirebaseClient client = restClient(databaseUrl(), credentials);
+        return client;
+    }
+
+    private static DatabaseUrl databaseUrl() {
+        Url url = UrlVBuilder
+                .newBuilder()
+                .setSpec(DATABASE_URL)
+                .build();
+        DatabaseUrl databaseUrl = DatabaseUrlVBuilder
+                .newBuilder()
+                .setUrl(url)
+                .build();
+        return databaseUrl;
     }
 
     static Application instance() {
         return Singleton.INSTANCE.value;
     }
 
+    @SuppressWarnings("ImmutableEnumChecker") // OK for this singleton.
     private enum Singleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
         private final Application value =
-                new Application(BoundedContexts.create(), firebaseCredentials());
+                new Application(BoundedContexts.create());
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -21,26 +21,24 @@
 package io.spine.examples.todolist.context;
 
 import io.spine.server.event.EventBus;
+import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.context.BoundedContexts.createBoundedContext;
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DisplayName("BoundedContexts should")
-class BoundedContextsTest {
+@DisplayName("BoundedContexts utility should")
+class BoundedContextsTest extends UtilityClassTest<BoundedContexts> {
 
-    @Test
-    @DisplayName("have the private parameterless constructor")
-    void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(BoundedContexts.class);
+    BoundedContextsTest() {
+        super(BoundedContexts.class);
     }
 
     @Test
     @DisplayName("not create BoundedContext from EventBus.Builder without a StorageFactory")
     void notCreateBoundedContextWithoutStorageFactory() {
-        final EventBus.Builder builder = EventBus.newBuilder();
+        EventBus.Builder builder = EventBus.newBuilder();
         assertThrows(IllegalStateException.class, () -> createBoundedContext(builder));
     }
 }

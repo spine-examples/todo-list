@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -19,11 +19,12 @@
  */
 
 ext {
-    firebaseMirrorVersion = '0.10.15-SNAPSHOT'
+    firebaseMirrorVersion = '1.0.0-pre6'
 }
 
 dependencies {
     implementation project(path: ':server')
-    implementation "io.spine:firebase-mirror:$firebaseMirrorVersion"
+    implementation "io.spine:spine-firebase-mirror:$firebaseMirrorVersion"
+    implementation deps.build.firebaseAdmin
     implementation "io.netty:netty-tcnative-boringssl-static:$nettyBoringsslVersion"
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -41,10 +41,8 @@ import static java.util.Collections.singletonList;
  * A {@code CommandView}, that allows to create a task in a quick mode.
  *
  * <p>To create a task in the way, user should specify a task description only.
- *
- * @author Dmytro Grankin
  */
-public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBuilder> {
+public final class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBuilder> {
 
     static final String EMPTY_VALUE = "empty";
     static final String DESCRIPTION_LABEL = "Description:";
@@ -59,7 +57,7 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
      * @return the new instance.
      */
     public static NewTaskView create() {
-        final NewTaskView view = new NewTaskView();
+        NewTaskView view = new NewTaskView();
         view.addAction(editCommandActionProducer("Start input", new Shortcut("i"),
                                                  singletonList(new DescriptionEditOperation())));
         view.addAction(new NewTaskProducer());
@@ -68,8 +66,6 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
 
     /**
      * Updates ID of the command and renders the view.
-     *
-     * @param screen {@inheritDoc}
      */
     @Override
     public void render(Screen screen) {
@@ -77,16 +73,13 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
         super.render(screen);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected String renderState(CreateBasicTaskVBuilder state) {
-        final String rawDescription = state.getDescription()
-                                           .getValue();
-        final String resultDescription = rawDescription.isEmpty()
-                                         ? EMPTY_VALUE
-                                         : rawDescription;
+        String rawDescription = state.getDescription()
+                                     .getValue();
+        String resultDescription = rawDescription.isEmpty()
+                                   ? EMPTY_VALUE
+                                   : rawDescription;
         return DESCRIPTION_LABEL + ' ' + resultDescription;
     }
 
@@ -101,19 +94,16 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
      */
     @VisibleForTesting
     static class DescriptionEditOperation implements EditOperation<CreateBasicTask,
-                                                                   CreateBasicTaskVBuilder> {
+            CreateBasicTaskVBuilder> {
 
         private static final String PROMPT = "Please enter the task description";
 
         /**
          * Prompts a user for a task description and updates state of the specified builder.
-         *
-         * @param screen  {@inheritDoc}
-         * @param builder {@inheritDoc}
          */
         @Override
         public void start(Screen screen, CreateBasicTaskVBuilder builder) {
-            final String description = screen.promptUser(PROMPT);
+            String description = screen.promptUser(PROMPT);
             builder.setDescription(TaskDescriptionVBuilder.newBuilder()
                                                           .setValue(description)
                                                           .build());
@@ -143,9 +133,6 @@ public class NewTaskView extends CommandView<CreateBasicTask, CreateBasicTaskVBu
                                                                        CreateBasicTaskVBuilder,
                                                                        CreateTask> {
 
-        /**
-         * {@inheritDoc}
-         */
         @Override
         public CreateTask create(CommandView<CreateBasicTask, CreateBasicTaskVBuilder> source) {
             return new CreateTask(source);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -34,9 +34,6 @@ import static io.spine.examples.todolist.view.DateFormatter.getDateFormat;
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("DateFormatter should")
 class DateFormatterTest {
 
@@ -55,11 +52,11 @@ class DateFormatterTest {
     @Test
     @DisplayName("format timestamp")
     void formatTimestamp() {
-        final Timestamp timestamp = getCurrentTime();
-        final long millis = toMillis(timestamp);
-        final Date date = new Date(millis);
+        Timestamp timestamp = getCurrentTime();
+        long millis = toMillis(timestamp);
+        Date date = new Date(millis);
 
-        final String expectedValue = getDateFormat().format(date);
+        String expectedValue = getDateFormat().format(date);
         assertEquals(expectedValue, format(timestamp));
     }
 }

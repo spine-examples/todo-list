@@ -18,46 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package io.spine.examples.todolist.testdata;
+syntax = "proto3";
 
-import io.grpc.stub.StreamObserver;
-import io.spine.core.Response;
+package io.spine.cli;
 
-import java.util.List;
+import "spine/options.proto";
 
-import static com.google.common.collect.Lists.newLinkedList;
+option (type_url_prefix) = "type.spine.cli";
+option java_package = "io.spine.cli";
+option java_outer_classname = "CommandsProto";
+option java_multiple_files = true;
 
-/**
- * Provides the {@link StreamObserver} implementation for the test needs.
- *
- * @author Illia Shepilov
- */
-public class TestResponseObserver implements StreamObserver<Response> {
+import "cli/test/project.proto";
 
-    private final List<Response> responses = newLinkedList();
-    private Throwable throwable;
-    private boolean completed = false;
-
-    @Override
-    public void onNext(Response response) {
-        responses.add(response);
-    }
-
-    @Override
-    public void onError(Throwable throwable) {
-        this.throwable = throwable;
-    }
-
-    @Override
-    public void onCompleted() {
-        this.completed = true;
-    }
-
-    Throwable getThrowable() {
-        return throwable;
-    }
-
-    boolean isCompleted() {
-        return this.completed;
-    }
+message CreateProject {
+    ProjectId project_id = 1;
 }

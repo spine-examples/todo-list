@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -45,18 +45,18 @@ class ConstraintViolationFormatterTest {
     @Test
     @DisplayName("format constraint violations")
     void formatConstraintViolations() {
-        final NaturalNumberVBuilder builder = NaturalNumberVBuilder.newBuilder();
-        final int fieldIndexToBeUpdated = NaturalNumber.VALUE_FIELD_NUMBER - 1;
-        final FieldDescriptor fieldDescriptor = NaturalNumber.getDescriptor()
-                                                             .getFields()
-                                                             .get(fieldIndexToBeUpdated);
-        final String fieldNameToBeUpdated = fieldDescriptor.getName();
-        final String expectedErrorMsg = String.format(ERROR_MSG_FORMAT, fieldNameToBeUpdated);
+        NaturalNumberVBuilder builder = NaturalNumberVBuilder.newBuilder();
+        int fieldIndexToBeUpdated = NaturalNumber.VALUE_FIELD_NUMBER - 1;
+        FieldDescriptor fieldDescriptor = NaturalNumber.getDescriptor()
+                                                       .getFields()
+                                                       .get(fieldIndexToBeUpdated);
+        String fieldNameToBeUpdated = fieldDescriptor.getName();
+        String expectedErrorMsg = String.format(ERROR_MSG_FORMAT, fieldNameToBeUpdated);
 
-        final int invalidFieldValue = -1;
-        final ValidationException ex = assertThrows(ValidationException.class,
-                                                    () -> builder.setValue(invalidFieldValue));
-        final List<String> errorMessages = format(ex.getConstraintViolations());
+        int invalidFieldValue = -1;
+        ValidationException ex = assertThrows(ValidationException.class,
+                                              () -> builder.setValue(invalidFieldValue));
+        List<String> errorMessages = format(ex.getConstraintViolations());
         assertEquals(1, errorMessages.size());
         assertEquals(expectedErrorMsg, errorMessages.get(0));
     }

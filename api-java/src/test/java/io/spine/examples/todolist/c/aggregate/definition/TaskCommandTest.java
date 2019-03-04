@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -22,7 +22,6 @@ package io.spine.examples.todolist.c.aggregate.definition;
 
 import io.spine.base.CommandMessage;
 import io.spine.core.Command;
-import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
@@ -31,6 +30,7 @@ import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.examples.todolist.repository.TaskRepository;
 import io.spine.server.BoundedContext;
 import io.spine.server.entity.Repository;
+import io.spine.server.type.CommandEnvelope;
 import io.spine.testing.client.TestActorRequestFactory;
 import io.spine.testing.server.aggregate.AggregateCommandTest;
 
@@ -45,7 +45,7 @@ abstract class TaskCommandTest<C extends CommandMessage>
         extends AggregateCommandTest<TaskId, C, Task, TaskPart> {
 
     private final TestActorRequestFactory requestFactory =
-            TestActorRequestFactory.newInstance(getClass());
+            new TestActorRequestFactory(getClass());
 
     TaskPart aggregate;
 
@@ -60,7 +60,7 @@ abstract class TaskCommandTest<C extends CommandMessage>
     }
 
     @Override
-    protected Repository<TaskId, TaskPart> createEntityRepository() {
+    protected Repository<TaskId, TaskPart> createRepository() {
         return new TaskRepository();
     }
 
@@ -77,8 +77,8 @@ abstract class TaskCommandTest<C extends CommandMessage>
     }
 
     private static TaskAggregateRoot newRoot(TaskId id) {
-        final BoundedContext boundedContext = BoundedContexts.create();
-        final TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, id);
+        BoundedContext boundedContext = BoundedContexts.create();
+        TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, id);
         return root;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -34,8 +34,10 @@ public class TaskAggregateRoot extends AggregateRoot<TaskId> {
     /**
      * Creates a new instance.
      *
-     * @param boundedContext the bounded context to which the aggregate belongs
-     * @param id             the ID of the aggregate
+     * @param boundedContext
+     *         the bounded context to which the aggregate belongs
+     * @param id
+     *         the ID of the aggregate
      */
     public TaskAggregateRoot(BoundedContext boundedContext, TaskId id) {
         super(boundedContext, id);

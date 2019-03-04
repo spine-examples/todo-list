@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -29,11 +29,9 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.events.TaskDraftCreated;
 import io.spine.examples.todolist.c.rejection.CannotCreateDraft;
-import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -46,9 +44,8 @@ import static io.spine.testing.server.aggregate.AggregateMessageDispatcher.dispa
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(ShardingReset.class)
 @DisplayName("CreateDraft command should be interpreted by TaskPart and")
-public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
+class CreateDraftTest extends TaskCommandTest<CreateDraft> {
 
     CreateDraftTest() {
         super(createDraftInstance());
@@ -63,22 +60,22 @@ public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
     @Test
     @DisplayName("produce TaskDraftCreated event")
     void produceEvent() {
-        final CreateDraft createDraftCmd = createDraftInstance(entityId());
-        final List<? extends Message> messageList = dispatchCommand(aggregate,
-                                                                    envelopeOf(createDraftCmd));
+        CreateDraft createDraftCmd = createDraftInstance(entityId());
+        List<? extends Message> messageList = dispatchCommand(aggregate,
+                                                              envelopeOf(createDraftCmd));
         assertEquals(1, messageList.size());
         assertEquals(TaskDraftCreated.class, messageList.get(0)
                                                         .getClass());
-        final TaskDraftCreated taskDraftCreated = (TaskDraftCreated) messageList.get(0);
+        TaskDraftCreated taskDraftCreated = (TaskDraftCreated) messageList.get(0);
         assertEquals(entityId(), taskDraftCreated.getId());
     }
 
     @Test
     @DisplayName("create the draft")
     void createDraft() {
-        final CreateDraft createDraftCmd = createDraftInstance(entityId());
+        CreateDraft createDraftCmd = createDraftInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(createDraftCmd));
-        final Task state = aggregate.getState();
+        Task state = aggregate.state();
 
         assertEquals(entityId(), state.getId());
         assertEquals(DRAFT, state.getTaskStatus());
@@ -88,22 +85,22 @@ public class CreateDraftTest extends TaskCommandTest<CreateDraft> {
     @DisplayName("throw CannotCreateDraft rejection upon " +
             "an attempt to create draft with deleted task ID")
     void notCreateDraft() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
+        CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
+        DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
-        final CreateDraft createDraftCmd = createDraftInstance(entityId());
-        final Throwable t = assertThrows(Throwable.class,
-                                         () -> dispatchCommand(aggregate,
-                                                               envelopeOf(createDraftCmd)));
-        final Throwable cause = Throwables.getRootCause(t);
-        final CannotCreateDraft rejection = (CannotCreateDraft) cause;
-        final TaskId actualId = rejection.getMessageThrown()
-                                         .getRejectionDetails()
-                                         .getCommandDetails()
-                                         .getTaskId();
+        CreateDraft createDraftCmd = createDraftInstance(entityId());
+        Throwable t = assertThrows(Throwable.class,
+                                   () -> dispatchCommand(aggregate,
+                                                         envelopeOf(createDraftCmd)));
+        Throwable cause = Throwables.getRootCause(t);
+        CannotCreateDraft rejection = (CannotCreateDraft) cause;
+        TaskId actualId = rejection.getMessageThrown()
+                                   .getRejectionDetails()
+                                   .getCommandDetails()
+                                   .getTaskId();
         assertEquals(entityId(), actualId);
     }
 }

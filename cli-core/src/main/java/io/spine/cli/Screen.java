@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -39,15 +39,18 @@ public interface Screen {
     /**
      * Renders the specified view.
      *
-     * @param view the view to renderBody
+     * @param view
+     *         the view to renderBody
      */
     void renderView(View view);
 
     /**
      * Obtains the action leading from a current view to a previous view.
      *
-     * @param name     the name for the action
-     * @param shortcut the shortcut for the action
+     * @param name
+     *         the name for the action
+     * @param shortcut
+     *         the shortcut for the action
      * @return {@code Optional} of the back action,
      *         or {@code Optional.empty} if there is no previous view
      */
@@ -56,7 +59,8 @@ public interface Screen {
     /**
      * Prompts a user for an input and receives the input value.
      *
-     * @param prompt the prompt to display
+     * @param prompt
+     *         the prompt to display
      * @return the input value
      */
     String promptUser(String prompt);
@@ -64,7 +68,8 @@ public interface Screen {
     /**
      * Prints the message and a new line after it.
      *
-     * @param message the message to print
+     * @param message
+     *         the message to print
      */
     void println(String message);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,32 +20,36 @@
 
 package io.spine.examples.todolist;
 
-import com.google.protobuf.Message;
-import io.spine.core.Enrichments;
+import io.spine.base.EnrichmentMessage;
 import io.spine.core.EventContext;
 
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Utility class for working with enrichments.
  */
-public class EnrichmentHelper {
+public final class EnrichmentHelper {
 
+    /** Prevents instantiation of this utility class. */
     private EnrichmentHelper() {
     }
 
     /**
      * Obtains enrichment from the {@link EventContext} according to the enrichment class.
      *
-     * @param enrichmentClass the class of the enrichment
-     * @param context         the {@code EventContext}
+     * @param enrichmentClass
+     *         the class of the enrichment
+     * @param context
+     *         the {@code EventContext}
      * @return the enrichment if it is present, throws {@code EnrichmentNotFoundException} otherwise
      */
-    @SuppressWarnings("Guava") // Spine API is Java 7-based
-                               // and uses {@code Optional} from Google Guava.
-    public static <T extends Message, E extends Class<T>>
+    public static <T extends EnrichmentMessage, E extends Class<T>>
     T getEnrichment(E enrichmentClass, EventContext context) {
-        final Optional<T> enrichmentOptional = Enrichments.getEnrichment(enrichmentClass, context);
+        checkNotNull(enrichmentClass);
+        checkNotNull(context);
+        Optional<T> enrichmentOptional = context.find(enrichmentClass);
         if (enrichmentOptional.isPresent()) {
             return enrichmentOptional.get();
         }

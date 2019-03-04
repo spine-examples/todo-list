@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -25,16 +25,19 @@ import io.spine.examples.todolist.TaskStatus;
 /**
  * Validates task commands and state transitions.
  */
-class TaskFlowValidator {
+final class TaskFlowValidator {
 
+    /** Prevents instantiation of this utility class. */
     private TaskFlowValidator() {
     }
 
     /**
      * Check whether the transition from the current task status to the new status is allowed.
      *
-     * @param currentStatus current task status
-     * @param newStatus     new task status
+     * @param currentStatus
+     *         current task status
+     * @param newStatus
+     *         new task status
      */
     static boolean isValidTransition(TaskStatus currentStatus, TaskStatus newStatus) {
         return TaskStatusTransition.isValid(currentStatus, newStatus);
@@ -71,7 +74,8 @@ class TaskFlowValidator {
     /**
      * Verifies that the specified {@link TaskStatus} is neither completed nor deleted.
      *
-     * @param currentStatus task current state {@link TaskStatus}
+     * @param currentStatus
+     *         task current state {@link TaskStatus}
      * @return {@code true} if the status is neither completed nor deleted
      */
     static boolean ensureNeitherCompletedNorDeleted(TaskStatus currentStatus) {

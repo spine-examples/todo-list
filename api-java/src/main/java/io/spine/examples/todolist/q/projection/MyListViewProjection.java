@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -51,8 +51,8 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
 /**
  * A projection state of the finalized tasks.
  *
- * <p> Contains the task list view items.
- * <p> This view includes all tasks that are not in a draft state and not deleted.
+ * <p>Contains the task list view items.
+ * <p>This view includes all tasks that are not in a draft state and not deleted.
  */
 @SuppressWarnings("OverlyCoupledClass")
 public class MyListViewProjection extends Projection<TaskListId, MyListView, MyListViewVBuilder> {
@@ -71,8 +71,10 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     /**
      * Creates a new instance.
      *
-     * @param id the ID for the new instance
-     * @throws IllegalArgumentException if the ID is not of one of the supported types
+     * @param id
+     *         the ID for the new instance
+     * @throws IllegalArgumentException
+     *         if the ID is not of one of the supported types
      */
     public MyListViewProjection(TaskListId id) {
         super(id);
@@ -80,117 +82,120 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
 
     @Subscribe
     public void on(TaskCreated event) {
-        final TaskDetails taskDetails = event.getDetails();
-        final TaskItem taskView = TaskItem.newBuilder()
-                                          .setId(event.getId())
-                                          .setDescription(taskDetails.getDescription())
-                                          .setPriority(taskDetails.getPriority())
-                                          .setCompleted(taskDetails.getCompleted())
-                                          .build();
+        TaskDetails taskDetails = event.getDetails();
+        TaskItem taskView = TaskItem
+                .newBuilder()
+                .setId(event.getId())
+                .setDescription(taskDetails.getDescription())
+                .setPriority(taskDetails.getPriority())
+                .setCompleted(taskDetails.getCompleted())
+                .build();
         addTaskItem(taskView);
     }
 
     @Subscribe
     public void on(TaskDeleted event) {
-        final List<TaskItem> views = new ArrayList<>(getBuilder().getMyList()
-                                                                 .getItemsList());
-        final TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
-        getBuilder().setId(getId())
-                    .setMyList(taskListView);
+        List<TaskItem> views = new ArrayList<>(builder().getMyList()
+                                                        .getItemsList());
+        TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
+        builder().setId(id())
+                 .setMyList(taskListView);
     }
 
     @Subscribe
     public void on(TaskDescriptionUpdated event) {
-        final List<TaskItem> views = getBuilder().getMyList()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
+        List<TaskItem> views = builder().getMyList()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
         updateMyListView(updatedList);
     }
 
     @Subscribe
     public void on(TaskPriorityUpdated event) {
-        final List<TaskItem> views = getBuilder().getMyList()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
+        List<TaskItem> views = builder().getMyList()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
         updateMyListView(updatedList);
     }
 
     @Subscribe
     public void on(TaskDueDateUpdated event) {
-        final List<TaskItem> views = getBuilder().getMyList()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
+        List<TaskItem> views = builder().getMyList()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
         updateMyListView(updatedList);
     }
 
     @Subscribe
     public void on(TaskCompleted event) {
-        final List<TaskItem> views = getBuilder().getMyList()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
+        List<TaskItem> views = builder().getMyList()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
         updateMyListView(updatedList);
     }
 
     @Subscribe
     public void on(TaskReopened event) {
-        final List<TaskItem> views = getBuilder().getMyList()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
+        List<TaskItem> views = builder().getMyList()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
         updateMyListView(updatedList);
     }
 
     @Subscribe
     public void on(LabelAssignedToTask event) {
-        final List<TaskItem> views = getBuilder().getMyList()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
+        List<TaskItem> views = builder().getMyList()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
         updateMyListView(updatedList);
     }
 
     @Subscribe
     public void on(LabelRemovedFromTask event) {
-        final List<TaskItem> views = getBuilder().getMyList()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
+        List<TaskItem> views = builder().getMyList()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
         updateMyListView(updatedList);
     }
 
     @Subscribe
     public void on(LabelDetailsUpdated event) {
-        final List<TaskItem> views = getBuilder().getMyList()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
+        List<TaskItem> views = builder().getMyList()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
         updateMyListView(updatedList);
     }
 
     @Subscribe
     public void on(TaskDraftFinalized event, EventContext context) {
-        final TaskId taskId = event.getTaskId();
-        final TaskEnrichment enrichment = getEnrichment(TaskEnrichment.class, context);
-        final Task task = enrichment.getTask();
-        final TaskItem view = TaskItem.newBuilder()
-                                      .setId(taskId)
-                                      .setDescription(task.getDescription())
-                                      .setDueDate(task.getDueDate())
-                                      .setPriority(task.getPriority())
-                                      .build();
+        TaskId taskId = event.getTaskId();
+        TaskEnrichment enrichment = getEnrichment(TaskEnrichment.class, context);
+        Task task = enrichment.getTask();
+        TaskItem view = TaskItem
+                .newBuilder()
+                .setId(taskId)
+                .setDescription(task.getDescription())
+                .setDueDate(task.getDueDate())
+                .setPriority(task.getPriority())
+                .build();
         addTaskItem(view);
     }
 
-    private void updateMyListView(List<TaskItem> updatedList) {
-        final TaskListView listView = TaskListView.newBuilder()
-                                                  .addAllItems(updatedList)
-                                                  .build();
-        getBuilder().setId(getId())
-                    .setMyList(listView);
+    private void updateMyListView(Iterable<TaskItem> updatedList) {
+        TaskListView listView = TaskListView
+                .newBuilder()
+                .addAllItems(updatedList)
+                .build();
+        builder().setId(id())
+                 .setMyList(listView);
     }
 
     private void addTaskItem(TaskItem taskView) {
-        final List<TaskItem> views = new ArrayList<>(getBuilder().getMyList()
-                                                                 .getItemsList());
+        List<TaskItem> views = new ArrayList<>(builder().getMyList()
+                                                        .getItemsList());
         views.add(taskView);
-        final TaskListView taskListView = newTaskListView(views);
-        getBuilder().setId(getId())
-                    .setMyList(taskListView);
+        TaskListView taskListView = newTaskListView(views);
+        builder().setId(id())
+                 .setMyList(taskListView);
     }
 }

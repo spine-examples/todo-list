@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -33,10 +33,8 @@ import static java.lang.System.lineSeparator;
  * <p>Answers will be used in order of its addition.
  *
  * <p>This screen purposed for usage in {@link Bot}.
- *
- * @author Dmytro Grankin
  */
-public class TestScreen extends AbstractScreen {
+public final class TestScreen extends AbstractScreen {
 
     @SuppressWarnings("StringBufferField") // Used to collect output of the class.
     private final StringBuilder output = new StringBuilder();
@@ -48,7 +46,8 @@ public class TestScreen extends AbstractScreen {
      *
      * <p>The answer is removed after execution.
      *
-     * @param prompt the prompt to print
+     * @param prompt
+     *         the prompt to print
      * @return the removed answer
      */
     @Override
@@ -64,7 +63,8 @@ public class TestScreen extends AbstractScreen {
     /**
      * Appends the specified message and new line to the {@link #output}.
      *
-     * @param message the message to append
+     * @param message
+     *         the message to append
      */
     @Override
     public void println(String message) {

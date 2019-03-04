@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -27,18 +27,22 @@ import io.spine.cli.view.View;
  *
  * <p>Allows to specify construction of the {@link Action} for an unknown source.
  *
- * @param <S> the type of the source view
- * @param <D> the type of the destination view
- * @param <T> the type of the action to be created
+ * @param <S>
+ *         the type of the source view
+ * @param <D>
+ *         the type of the destination view
+ * @param <T>
+ *         the type of the action to be created
  */
 public interface ActionProducer<S extends View,
-                                D extends View,
-                                T extends Action<S, D>> {
+        D extends View,
+        T extends Action<S, D>> {
 
     /**
      * Creates the {@link Action} with the specified source.
      *
-     * @param source the source {@link View}
+     * @param source
+     *         the source {@link View}
      * @return the action with the source
      */
     T create(S source);

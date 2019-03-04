@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,6 +20,7 @@
 
 package io.spine.test.performance;
 
+import com.google.common.collect.ImmutableList;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.c.commands.CreateBasicTask;
 import io.spine.examples.todolist.client.TodoClient;
@@ -33,44 +34,41 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-/**
- * @author Dmitry Ganzha
- */
 @DisplayName("TodoList Performance Test")
-public class ToDoListTest extends AbstractIntegrationTest {
+class ToDoListTest extends AbstractIntegrationTest {
 
     @Test
     @Disabled
     @DisplayName("Create tasks concurrently and retrieve projection")
-    void firstFlow() throws InterruptedException {
-        final TodoClient[] clients = getClients();
-        final int numberOfRequests = 100;
+    void firstFlow() {
+        ImmutableList<TodoClient> clients = getClients();
+        int numberOfRequests = 100;
         asyncPerformanceTest(iterationNumber -> {
-            final CreateBasicTask basicTask = createBasicTask();
-            clients[iterationNumber % clients.length].postCommand(basicTask);
+            CreateBasicTask basicTask = createBasicTask();
+            clients.get(iterationNumber % clients.size())
+                   .postCommand(basicTask);
         }, numberOfRequests);
 
-        final List<TaskItem> taskItems = getClient().getMyListView()
-                                                    .getMyList()
-                                                    .getItemsList();
+        List<TaskItem> taskItems = getClient().getMyListView()
+                                              .getMyList()
+                                              .getItemsList();
 
-        final int expected = numberOfRequests;
-        assertEquals(expected, taskItems.size());
+        assertEquals(numberOfRequests, taskItems.size());
     }
 
     @Test
     @DisplayName("Create tasks concurrently and retrieve aggregate state")
-    void secondFlow() throws InterruptedException {
-        final TodoClient[] clients = getClients();
-        final int numberOfRequests = 100;
+    void secondFlow() {
+        ImmutableList<TodoClient> clients = getClients();
+        int numberOfRequests = 100;
         asyncPerformanceTest(iterationNumber -> {
-            final CreateBasicTask basicTask = createBasicTask();
-            clients[iterationNumber % clients.length].postCommand(basicTask);
+            CreateBasicTask basicTask = createBasicTask();
+            clients.get(iterationNumber % clients.size())
+                   .postCommand(basicTask);
         }, numberOfRequests);
 
-        final List<Task> tasks = getClient().getTasks();
+        List<Task> tasks = getClient().getTasks();
 
-        final int expected = numberOfRequests;
-        assertEquals(expected, tasks.size());
+        assertEquals(numberOfRequests, tasks.size());
     }
 }

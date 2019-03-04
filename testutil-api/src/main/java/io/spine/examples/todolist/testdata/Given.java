@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -25,19 +25,18 @@ import io.spine.examples.todolist.TaskDescriptionVBuilder;
 
 /**
  * Utilities for creating Protobuf messages with a single field.
- *
- * @author Dmytro Grankin
  */
-public class Given {
+public final class Given {
 
+    /** Prevents instantiation of this utility class. */
     private Given() {
-        // Prevent instantiation of this utility class.
     }
 
     /**
      * Obtains task description with the specified value.
      *
-     * @param value the description value
+     * @param value
+     *         the description value
      * @return the task description
      */
     public static TaskDescription newDescription(String value) {

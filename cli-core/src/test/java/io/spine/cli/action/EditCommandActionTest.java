@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -59,6 +59,8 @@ class EditCommandActionTest {
         bot = new Bot();
     }
 
+    @SuppressWarnings({"CheckReturnValue", "ResultOfMethodCallIgnored"})
+    // Method called to throw exception.
     @Test
     @DisplayName("not allow empty edits")
     void notAllowEmptyEdits() {
@@ -69,8 +71,8 @@ class EditCommandActionTest {
     @Test
     @DisplayName("create the action with one more edit")
     void createActionWithEdits() {
-        final Action action = editCommandActionProducer(ACTION_NAME, SHORTCUT,
-                                                        edits).create(view);
+        Action action = editCommandActionProducer(ACTION_NAME, SHORTCUT,
+                                                  edits).create(view);
         assertEquals(ACTION_NAME, action.getName());
         assertEquals(SHORTCUT, action.getShortcut());
     }
@@ -137,7 +139,7 @@ class EditCommandActionTest {
 
         @Override
         public void start(Screen screen, CommentVBuilder builder) {
-            final String commentValue = screen.promptUser("Enter a comment");
+            String commentValue = screen.promptUser("Enter a comment");
             builder.setValue(commentValue);
         }
     }

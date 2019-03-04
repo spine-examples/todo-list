@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -49,7 +49,8 @@ public final class Application {
     /**
      * Initializes the application with the specified screen.
      *
-     * @param screen the screen to use
+     * @param screen
+     *         the screen to use
      */
     public void init(Screen screen) {
         if (this.screen != null) {
@@ -74,6 +75,7 @@ public final class Application {
         return Singleton.INSTANCE.value;
     }
 
+    @SuppressWarnings("ImmutableEnumChecker") // OK for this singleton.
     private enum Singleton {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -45,7 +45,7 @@ class EntityViewTest {
     @DisplayName("load and render entity state")
     void loadAndRenderEntityState() {
         view.renderBody(bot.screen());
-        final String expectedBody = view.renderState(AnEntityView.STATE) + lineSeparator();
+        String expectedBody = view.renderState(AnEntityView.STATE) + lineSeparator();
         bot.assertOutput(expectedBody);
     }
 

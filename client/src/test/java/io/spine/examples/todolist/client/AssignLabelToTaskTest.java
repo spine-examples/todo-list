@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -30,12 +30,10 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.q.projection.LabelledTasksView;
 import io.spine.examples.todolist.q.projection.TaskItem;
-import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Collection;
 import java.util.List;
@@ -46,7 +44,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(ShardingReset.class)
 @DisplayName("After execution of AssignLabelToTask command")
 class AssignLabelToTaskTest extends TodoClientTest {
 
@@ -154,6 +151,32 @@ class AssignLabelToTaskTest extends TodoClientTest {
 
             assertEquals(labelId, view.getLabelId());
         }
+
+        private TaskItem
+        obtainViewWhenHandledAssignLabelToTask(LabelId labelId, boolean isCorrectId) {
+            CreateDraft createDraft = createDraft();
+            client.postCommand(createDraft);
+
+            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
+            client.postCommand(updateTaskPriority);
+
+            TaskId createTaskId = createDraft.getId();
+            TaskId taskIdToAssign = isCorrectId ? createTaskId : createWrongTaskId();
+
+            AssignLabelToTask assignLabelToTask =
+                    assignLabelToTaskInstance(taskIdToAssign, labelId);
+            client.postCommand(assignLabelToTask);
+
+            List<TaskItem> taskViews = client.getDraftTasksView()
+                                             .getDraftTasks()
+                                             .getItemsList();
+            assertEquals(1, taskViews.size());
+
+            TaskItem view = taskViews.get(0);
+            assertEquals(createTaskId, view.getId());
+
+            return view;
+        }
     }
 
     @Nested
@@ -181,6 +204,28 @@ class AssignLabelToTaskTest extends TodoClientTest {
 
             assertNotEquals(labelId, view.getLabelId());
         }
+
+        private TaskItem
+        obtainTaskItemWhenHandledAssignLabelToTask(LabelId labelId, boolean isCorrectId) {
+            CreateBasicTask createTask = createTask();
+
+            TaskId idOfCreatedTask = createTask.getId();
+            TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
+
+            AssignLabelToTask assignLabelToTask =
+                    assignLabelToTaskInstance(idOfUpdatedTask, labelId);
+            client.postCommand(assignLabelToTask);
+
+            List<TaskItem> taskViews = client.getMyListView()
+                                             .getMyList()
+                                             .getItemsList();
+            assertEquals(1, taskViews.size());
+
+            TaskItem view = taskViews.get(0);
+            assertEquals(idOfCreatedTask, view.getId());
+
+            return view;
+        }
     }
 
     @Nested
@@ -199,59 +244,14 @@ class AssignLabelToTaskTest extends TodoClientTest {
             assertEquals(1, labelIds.size());
             assertEquals(labelId, labelIds.get(0));
         }
-    }
 
-    private TaskItem obtainTaskItemWhenHandledAssignLabelToTask(LabelId labelId,
-                                                                boolean isCorrectId) {
-        CreateBasicTask createTask = createTask();
-
-        TaskId idOfCreatedTask = createTask.getId();
-        TaskId idOfUpdatedTask = isCorrectId ? idOfCreatedTask : createWrongTaskId();
-
-        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(idOfUpdatedTask, labelId);
-        client.postCommand(assignLabelToTask);
-
-        List<TaskItem> taskViews = client.getMyListView()
-                                         .getMyList()
-                                         .getItemsList();
-        assertEquals(1, taskViews.size());
-
-        TaskItem view = taskViews.get(0);
-        assertEquals(idOfCreatedTask, view.getId());
-
-        return view;
-    }
-
-    private TaskItem obtainViewWhenHandledAssignLabelToTask(LabelId labelId, boolean isCorrectId) {
-        CreateDraft createDraft = createDraft();
-        client.postCommand(createDraft);
-
-        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createDraft.getId());
-        client.postCommand(updateTaskPriority);
-
-        TaskId createTaskId = createDraft.getId();
-        TaskId taskIdToAssign = isCorrectId ? createTaskId : createWrongTaskId();
-
-        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskIdToAssign, labelId);
-        client.postCommand(assignLabelToTask);
-
-        List<TaskItem> taskViews = client.getDraftTasksView()
-                                         .getDraftTasks()
-                                         .getItemsList();
-        assertEquals(1, taskViews.size());
-
-        TaskItem view = taskViews.get(0);
-        assertEquals(createTaskId, view.getId());
-
-        return view;
-    }
-
-    private TaskLabels obtainTaskLabelsWhenHandledAssignLabelToTask(LabelId labelId) {
-        CreateBasicTask createTask = createTask();
-        TaskId taskId = createTask.getId();
-        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.postCommand(assignLabelToTask);
-        TaskLabels labels = client.getLabels(taskId);
-        return labels;
+        private TaskLabels obtainTaskLabelsWhenHandledAssignLabelToTask(LabelId labelId) {
+            CreateBasicTask createTask = createTask();
+            TaskId taskId = createTask.getId();
+            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            client.postCommand(assignLabelToTask);
+            TaskLabels labels = client.getLabels(taskId);
+            return labels;
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,11 +20,13 @@
 
 package io.spine.cli.action;
 
-import com.google.protobuf.StringValue;
 import io.spine.cli.Bot;
+import io.spine.cli.CreateProject;
+import io.spine.cli.CreateProjectVBuilder;
+import io.spine.cli.ProjectId;
+import io.spine.cli.ProjectIdVBuilder;
 import io.spine.cli.Screen;
 import io.spine.cli.view.CommandView;
-import io.spine.validate.StringValueVBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,8 +43,8 @@ class CommandActionTest {
     private static final String ACTION_NAME = "quit";
     private static final Shortcut QUIT = new Shortcut("q");
 
-    private final UpdateStringValueView view = new UpdateStringValueView();
-    private final UpdateStringValueAction action = new UpdateStringValueAction(view);
+    private final CreateProjectView view = new CreateProjectView();
+    private final CreateProjectAction action = new CreateProjectAction(view);
 
     @BeforeEach
     void setUp() {
@@ -59,49 +61,57 @@ class CommandActionTest {
     @Test
     @DisplayName("execute command and render a source view")
     void executeCommandAndRenderSource() {
-        final String expectedString = "A string value.";
-        final StringValueVBuilder viewState = view.getState();
-        viewState.setValue(expectedString);
+        ProjectId expectedId = ProjectIdVBuilder
+                .newBuilder()
+                .setValue("Some ID")
+                .build();
+        CreateProjectVBuilder viewState = view.getState();
+        viewState.setProjectId(expectedId);
         action.execute();
 
-        assertEquals(expectedString, action.getCommandMessageBeforeExecution()
-                                           .getValue());
+        assertEquals(expectedId, action.getCommandMessageBeforeExecution()
+                                       .getProjectId());
         assertTrue(view.wasRendered());
     }
 
     @Test
     @DisplayName("clear state of source view after successful execution")
     void clearSourceState() {
-        final StringValueVBuilder viewState = view.getState();
-        viewState.setValue("Non-default value");
+        ProjectId nonDefaultId = ProjectIdVBuilder
+                .newBuilder()
+                .setValue("Non-default ID")
+                .build();
+        CreateProjectVBuilder viewState = view.getState();
+        viewState.setProjectId(nonDefaultId);
         action.execute();
         assertTrue(isDefault(viewState.internalBuild()));
     }
 
-    private static class UpdateStringValueAction extends CommandAction<StringValue,
-                                                                           StringValueVBuilder> {
+    private static class CreateProjectAction
+            extends CommandAction<CreateProject, CreateProjectVBuilder> {
 
-        private StringValue commandMessageBeforeExecution;
+        private CreateProject commandMessageBeforeExecution;
 
-        private UpdateStringValueAction(CommandView<StringValue, StringValueVBuilder> source) {
+        private CreateProjectAction(CommandView<CreateProject, CreateProjectVBuilder> source) {
             super(source);
         }
 
         @Override
-        protected void post(StringValue commandMessage) {
+        protected void post(CreateProject commandMessage) {
             commandMessageBeforeExecution = commandMessage;
         }
 
-        private StringValue getCommandMessageBeforeExecution() {
+        private CreateProject getCommandMessageBeforeExecution() {
             return commandMessageBeforeExecution;
         }
     }
 
-    private static class UpdateStringValueView extends CommandView<StringValue, StringValueVBuilder> {
+    private static class CreateProjectView
+            extends CommandView<CreateProject, CreateProjectVBuilder> {
 
         private boolean rendered;
 
-        private UpdateStringValueView() {
+        private CreateProjectView() {
             super("View title");
         }
 
@@ -111,7 +121,7 @@ class CommandActionTest {
         }
 
         @Override
-        protected String renderState(StringValueVBuilder state) {
+        protected String renderState(CreateProjectVBuilder state) {
             return String.valueOf(rendered);
         }
 

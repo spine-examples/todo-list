@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -30,7 +30,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  *
  * <p>Shortcut is the value used to distinguish and select different actions.
  */
-public class Shortcut {
+public final class Shortcut {
 
     private final String value;
 
@@ -52,7 +52,7 @@ public class Shortcut {
             return false;
         }
 
-        final Shortcut other = (Shortcut) o;
+        Shortcut other = (Shortcut) o;
 
         return Objects.equals(value, other.value);
     }

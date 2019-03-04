@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,12 +20,12 @@
 
 package io.spine.cli.view;
 
-import com.google.protobuf.StringValue;
 import io.spine.cli.Bot;
+import io.spine.cli.CreateProject;
+import io.spine.cli.CreateProjectVBuilder;
 import io.spine.cli.Screen;
 import io.spine.cli.action.Action;
 import io.spine.cli.action.Shortcut;
-import io.spine.validate.StringValueVBuilder;
 import io.spine.validate.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -61,14 +61,15 @@ class CommandViewTest {
     @DisplayName("render state representation")
     void renderStateRepresentation() {
         view.renderBody(bot.screen());
-        final String expectedBody = view.renderState(StringValueVBuilder.newBuilder()) + lineSeparator();
+        String expectedBody =
+                view.renderState(CreateProjectVBuilder.newBuilder()) + lineSeparator();
         bot.assertOutput(expectedBody);
     }
 
     @Test
     @DisplayName("wrap ValidationException and re-render itself")
     void displayViewOnValidationException() {
-        final Action throwVException = new ThrowValidationExceptionAction();
+        Action throwVException = new ThrowValidationExceptionAction();
         assertThrows(ValidationException.class, throwVException::execute);
         assertFalse(view.wasRendered);
 
@@ -86,8 +87,9 @@ class CommandViewTest {
         @Test
         @DisplayName("obtain classes for the generic parameters")
         void obtainClassesForGenericParams() {
-            assertEquals(StringValue.class, COMMAND_MESSAGE.getArgumentIn(ACommandView.class));
-            assertEquals(StringValueVBuilder.class, STATE_BUILDER.getArgumentIn(ACommandView.class));
+            assertEquals(CreateProject.class, COMMAND_MESSAGE.argumentIn(ACommandView.class));
+            assertEquals(CreateProjectVBuilder.class,
+                         STATE_BUILDER.argumentIn(ACommandView.class));
         }
     }
 
@@ -102,7 +104,7 @@ class CommandViewTest {
         }
     }
 
-    private static class ACommandView extends CommandView<StringValue, StringValueVBuilder> {
+    private static class ACommandView extends CommandView<CreateProject, CreateProjectVBuilder> {
 
         private boolean wasRendered = false;
 
@@ -117,7 +119,7 @@ class CommandViewTest {
         }
 
         @Override
-        protected String renderState(StringValueVBuilder state) {
+        protected String renderState(CreateProjectVBuilder state) {
             return "state";
         }
     }

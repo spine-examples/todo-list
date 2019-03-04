@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -46,77 +46,74 @@ import static io.spine.examples.todolist.c.aggregate.rejection.LabelAggregateRej
 /**
  * The aggregate managing the state of a {@link TaskLabel}.
  */
-@SuppressWarnings("unused" /* The methods annotated with {@link Apply}
-                              are declared {@code private} by design. */)
+@SuppressWarnings("unused") // A lot of reflectively used handler methods.
 public class LabelAggregate extends Aggregate<LabelId, TaskLabel, TaskLabelVBuilder> {
 
     @VisibleForTesting
     static final LabelColor DEFAULT_LABEL_COLOR = LabelColor.GRAY;
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param id
-     */
     protected LabelAggregate(LabelId id) {
         super(id);
     }
 
     @Assign
     List<? extends Message> handle(CreateBasicLabel cmd) {
-        final LabelDetails.Builder labelDetails = LabelDetails.newBuilder()
-                                                              .setTitle(cmd.getLabelTitle());
-        final LabelCreated result = LabelCreated.newBuilder()
-                                                .setId(cmd.getLabelId())
-                                                .setDetails(labelDetails)
-                                                .build();
+        LabelDetails.Builder labelDetails = LabelDetails
+                .newBuilder()
+                .setTitle(cmd.getLabelTitle());
+        LabelCreated result = LabelCreated
+                .newBuilder()
+                .setId(cmd.getLabelId())
+                .setDetails(labelDetails)
+                .build();
         return Collections.singletonList(result);
     }
 
     @Assign
     List<? extends Message> handle(UpdateLabelDetails cmd)
             throws CannotUpdateLabelDetails {
-        final TaskLabel state = getState();
-        final LabelDetails actualLabelDetails = LabelDetails.newBuilder()
-                                                            .setColor(state.getColor())
-                                                            .setTitle(state.getTitle())
-                                                            .build();
-        final LabelDetailsChange labelDetailsChange = cmd.getLabelDetailsChange();
-        final LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
+        TaskLabel state = state();
+        LabelDetails actualLabelDetails = LabelDetails
+                .newBuilder()
+                .setColor(state.getColor())
+                .setTitle(state.getTitle())
+                .build();
+        LabelDetailsChange labelDetailsChange = cmd.getLabelDetailsChange();
+        LabelDetails expectedLabelDetails = labelDetailsChange.getPreviousDetails();
 
-        final boolean isEquals = actualLabelDetails.equals(expectedLabelDetails);
+        boolean isEquals = actualLabelDetails.equals(expectedLabelDetails);
 
         if (!isEquals) {
-            final LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
-            final ValueMismatch mismatch = unexpectedValue(expectedLabelDetails,
-                                                           actualLabelDetails, newLabelDetails);
+            LabelDetails newLabelDetails = labelDetailsChange.getNewDetails();
+            ValueMismatch mismatch =
+                    unexpectedValue(expectedLabelDetails, actualLabelDetails, newLabelDetails);
             throwCannotUpdateLabelDetails(cmd, mismatch);
         }
 
-        final LabelId labelId = cmd.getId();
-        final LabelDetailsUpdated labelDetailsUpdated =
-                LabelDetailsUpdated.newBuilder()
-                                   .setLabelId(labelId)
-                                   .setLabelDetailsChange(labelDetailsChange)
-                                   .build();
-        final List<? extends Message> result = Collections.singletonList(labelDetailsUpdated);
+        LabelId labelId = cmd.getId();
+        LabelDetailsUpdated labelDetailsUpdated = LabelDetailsUpdated
+                .newBuilder()
+                .setLabelId(labelId)
+                .setLabelDetailsChange(labelDetailsChange)
+                .build();
+        List<? extends Message> result = Collections.singletonList(labelDetailsUpdated);
         return result;
     }
 
     @Apply
-    private void labelCreated(LabelCreated event) {
-        getBuilder().setId(event.getId())
-                    .setTitle(event.getDetails()
-                                   .getTitle())
-                    .setColor(DEFAULT_LABEL_COLOR);
+    void labelCreated(LabelCreated event) {
+        builder().setId(event.getId())
+                 .setTitle(event.getDetails()
+                                .getTitle())
+                 .setColor(DEFAULT_LABEL_COLOR);
     }
 
     @Apply
-    private void labelDetailsUpdated(LabelDetailsUpdated event) {
-        final LabelDetails labelDetails = event.getLabelDetailsChange()
-                                               .getNewDetails();
-        getBuilder().setId(getId())
-                    .setTitle(labelDetails.getTitle())
-                    .setColor(labelDetails.getColor());
+    void labelDetailsUpdated(LabelDetailsUpdated event) {
+        LabelDetails labelDetails = event.getLabelDetailsChange()
+                                         .getNewDetails();
+        builder().setId(id())
+                 .setTitle(labelDetails.getTitle())
+                 .setColor(labelDetails.getColor());
     }
 }

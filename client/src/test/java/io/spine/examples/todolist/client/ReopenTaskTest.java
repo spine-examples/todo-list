@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -72,6 +72,30 @@ class ReopenTaskTest extends TodoClientTest {
             TaskItem view = obtainViewWhenHandledCommandReopenTask(false);
             assertTrue(view.getCompleted());
         }
+
+        private TaskItem obtainViewWhenHandledCommandReopenTask(boolean isCorrectId) {
+            CreateBasicTask createTask = createTask();
+            TaskId createdTaskId = createTask.getId();
+
+            CreateBasicLabel createLabel = createBasicLabel();
+            client.postCommand(createLabel);
+
+            TaskId taskId = createTask.getId();
+            LabelId labelId = createLabel.getLabelId();
+
+            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            client.postCommand(assignLabelToTask);
+
+            completeAndReopenTask(isCorrectId, createdTaskId);
+
+            List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
+            assertEquals(1, labelledTasksView.size());
+
+            List<TaskItem> taskViews = labelledTasksView.get(0)
+                                                        .getLabelledTasks()
+                                                        .getItemsList();
+            return checkAndObtainView(taskId, taskViews);
+        }
     }
 
     @Nested
@@ -91,42 +115,18 @@ class ReopenTaskTest extends TodoClientTest {
             TaskItem view = obtainTaskItemWhenHandledReopenTask(false);
             assertTrue(view.getCompleted());
         }
-    }
 
-    private TaskItem obtainViewWhenHandledCommandReopenTask(boolean isCorrectId) {
-        CreateBasicTask createTask = createTask();
-        TaskId createdTaskId = createTask.getId();
+        private TaskItem obtainTaskItemWhenHandledReopenTask(boolean isCorrectId) {
+            CreateBasicTask createTask = createTask();
+            TaskId idOfCreatedTask = createTask.getId();
 
-        CreateBasicLabel createLabel = createBasicLabel();
-        client.postCommand(createLabel);
+            completeAndReopenTask(isCorrectId, idOfCreatedTask);
 
-        TaskId taskId = createTask.getId();
-        LabelId labelId = createLabel.getLabelId();
-
-        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.postCommand(assignLabelToTask);
-
-        completeAndReopenTask(isCorrectId, createdTaskId);
-
-        List<LabelledTasksView> labelledTasksView = client.getLabelledTasksView();
-        assertEquals(1, labelledTasksView.size());
-
-        List<TaskItem> taskViews = labelledTasksView.get(0)
-                                                    .getLabelledTasks()
-                                                    .getItemsList();
-        return checkAndObtainView(taskId, taskViews);
-    }
-
-    private TaskItem obtainTaskItemWhenHandledReopenTask(boolean isCorrectId) {
-        CreateBasicTask createTask = createTask();
-        TaskId idOfCreatedTask = createTask.getId();
-
-        completeAndReopenTask(isCorrectId, idOfCreatedTask);
-
-        List<TaskItem> taskViews = client.getMyListView()
-                                         .getMyList()
-                                         .getItemsList();
-        return checkAndObtainView(idOfCreatedTask, taskViews);
+            List<TaskItem> taskViews = client.getMyListView()
+                                             .getMyList()
+                                             .getItemsList();
+            return checkAndObtainView(idOfCreatedTask, taskViews);
+        }
     }
 
     private static TaskItem checkAndObtainView(TaskId idOfCreatedTask, List<TaskItem> taskViews) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -22,9 +22,9 @@ dependencies {
     implementation project(path: ':client')
 
     testImplementation "mysql:mysql-connector-java:$mysqlDriverVersion"
-    testImplementation "io.spine:jdbc-rdbms:$spineJdbcStorageVersion"
-    testImplementation group: 'org.junit.platform', name: 'junit-platform-console-standalone',
-            version: jUnitPlatformVersion
+    testImplementation "io.spine:spine-rdbms:$spineJdbcStorageVersion"
+    testImplementation "com.zaxxer:HikariCP:$hikariCpVersion"
+    testImplementation "org.junit.platform:junit-platform-console-standalone:$jUnitPlatformVersion"
 
     testImplementation project(path: ':testutil-api')
     testImplementation project(path: ':server')
@@ -46,4 +46,12 @@ task performanceTest(type: JavaExec) {
     args '--scan-class-path'
     args "--reports-dir=$buildDir/test-results/junit-performanceTest"
     args '--exclude-package=io.spine.test.integration'
+}
+
+// Do not run integration tests in parallel so instantiated server and client do not overlap with 
+// their counterparts from the other thread.
+if (isTravis) {
+    tasks.withType(Test) {
+        maxParallelForks = 1
+    }
 }

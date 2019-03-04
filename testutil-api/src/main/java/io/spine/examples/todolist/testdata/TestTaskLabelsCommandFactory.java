@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -27,10 +27,8 @@ import io.spine.examples.todolist.c.commands.RemoveLabelFromTask;
 
 /**
  * A factory of the task label commands for the test needs.
- *
- * @author Illia Shepilov
  */
-public class TestTaskLabelsCommandFactory {
+public final class TestTaskLabelsCommandFactory {
 
     private static final TaskId TASK_ID = TestTaskCommandFactory.TASK_ID;
     private static final LabelId LABEL_ID = TestTaskCommandFactory.LABEL_ID;
@@ -44,10 +42,11 @@ public class TestTaskLabelsCommandFactory {
      * @return the {@code AssignLabelToTask} instance
      */
     public static AssignLabelToTask assignLabelToTaskInstance(TaskId taskId, LabelId labelId) {
-        final AssignLabelToTask result = AssignLabelToTask.newBuilder()
-                                                          .setId(taskId)
-                                                          .setLabelId(labelId)
-                                                          .build();
+        AssignLabelToTask result = AssignLabelToTask
+                .newBuilder()
+                .setId(taskId)
+                .setLabelId(labelId)
+                .build();
         return result;
     }
 
@@ -57,7 +56,7 @@ public class TestTaskLabelsCommandFactory {
      * @return the {@code AssignLabelToTask} instance
      */
     public static AssignLabelToTask assignLabelToTaskInstance() {
-        final AssignLabelToTask result = assignLabelToTaskInstance(TASK_ID, LABEL_ID);
+        AssignLabelToTask result = assignLabelToTaskInstance(TASK_ID, LABEL_ID);
         return result;
     }
 
@@ -67,7 +66,7 @@ public class TestTaskLabelsCommandFactory {
      * @return the {@code RemoveLabelFromTask} instance
      */
     public static RemoveLabelFromTask removeLabelFromTaskInstance() {
-        final RemoveLabelFromTask result = removeLabelFromTaskInstance(TASK_ID, LABEL_ID);
+        RemoveLabelFromTask result = removeLabelFromTaskInstance(TASK_ID, LABEL_ID);
         return result;
     }
 
@@ -77,10 +76,11 @@ public class TestTaskLabelsCommandFactory {
      * @return the {@code RemoveLabelFromTask} instance
      */
     public static RemoveLabelFromTask removeLabelFromTaskInstance(TaskId taskId, LabelId labelId) {
-        final RemoveLabelFromTask result = RemoveLabelFromTask.newBuilder()
-                                                              .setId(taskId)
-                                                              .setLabelId(labelId)
-                                                              .build();
+        RemoveLabelFromTask result = RemoveLabelFromTask
+                .newBuilder()
+                .setId(taskId)
+                .setLabelId(labelId)
+                .build();
         return result;
     }
 }

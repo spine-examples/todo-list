@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -31,27 +31,19 @@ import static io.spine.examples.todolist.Terminals.newTerminal;
 
 /**
  * A {@link Screen} of a command-line application.
- *
- * @author Dmytro Grankin
  */
-public class TerminalScreen extends AbstractScreen {
+public final class TerminalScreen extends AbstractScreen {
 
     private final LineReader reader = newLineReader();
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String promptUser(String prompt) {
         checkArgument(!isNullOrEmpty(prompt));
         println(prompt);
-        final String answer = reader.readLine();
+        String answer = reader.readLine();
         return answer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void println(String message) {
         checkArgument(!isNullOrEmpty(message));
@@ -61,7 +53,7 @@ public class TerminalScreen extends AbstractScreen {
     }
 
     private static LineReader newLineReader() {
-        final Terminal terminal = newTerminal();
+        Terminal terminal = newTerminal();
         return Readers.newLineReader(terminal);
     }
 }

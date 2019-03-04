@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -45,7 +45,7 @@ class AbstractScreenTest {
     @Test
     @DisplayName("render a view")
     void renderView() {
-        final NoOpView view = new NoOpView();
+        NoOpView view = new NoOpView();
         screen.renderView(view);
         assertTrue(view.wasRendered());
     }
@@ -53,10 +53,10 @@ class AbstractScreenTest {
     @Test
     @DisplayName("not modify history on a current view rendering")
     void notModifyHistoryOnCurrentViewRendering() {
-        final View view = new NoOpView();
+        View view = new NoOpView();
 
         screen.renderView(view);
-        final List<View> expectedHistory = screen.getHistory();
+        List<View> expectedHistory = screen.getHistory();
 
         screen.renderView(view);
         assertEquals(expectedHistory, screen.getHistory());
@@ -65,14 +65,14 @@ class AbstractScreenTest {
     @Test
     @DisplayName("make previous view current on its rendering")
     void makePreviousViewCurrent() {
-        final View first = new NoOpView();
-        final View second = new NoOpView();
+        View first = new NoOpView();
+        View second = new NoOpView();
 
         screen.renderView(first);
         screen.renderView(second);
 
-        final List<View> history = screen.getHistory();
-        final List<View> historyWithoutCurrentView =
+        List<View> history = screen.getHistory();
+        List<View> historyWithoutCurrentView =
                 newArrayList(history.subList(0, history.size() - 1));
 
         screen.renderView(first);
@@ -87,25 +87,26 @@ class AbstractScreenTest {
                                                                               BACK_SHORTCUT);
         assertFalse(back.isPresent());
 
-        final View view = new NoOpView();
+        View view = new NoOpView();
         screen.renderView(view);
         back = screen.createBackAction(BACK_NAME, BACK_SHORTCUT);
         assertFalse(back.isPresent());
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent") // In test we know for sure it's there.
     @Test
     @DisplayName("create back action if there is back destination")
     void createBackAction() {
-        final View first = new NoOpView();
-        final View second = new NoOpView();
-        final View third = new NoOpView();
+        View first = new NoOpView();
+        View second = new NoOpView();
+        View third = new NoOpView();
 
         screen.renderView(first);
         screen.renderView(second);
         screen.renderView(third);
 
-        final TransitionAction<View, View> back = screen.createBackAction(BACK_NAME, BACK_SHORTCUT)
-                                                        .get();
+        TransitionAction<View, View> back = screen.createBackAction(BACK_NAME, BACK_SHORTCUT)
+                                                  .get();
         assertEquals(BACK_NAME, back.getName());
         assertEquals(BACK_SHORTCUT, back.getShortcut());
         assertEquals(third, back.getSource());
@@ -115,12 +116,12 @@ class AbstractScreenTest {
     @Test
     @DisplayName("create back action and does not modify view history")
     void createBackAndNotModifyHistory() {
-        final View first = new NoOpView();
-        final View second = new NoOpView();
+        View first = new NoOpView();
+        View second = new NoOpView();
         screen.renderView(first);
         screen.renderView(second);
 
-        final List<View> expectedHistory = screen.getHistory();
+        List<View> expectedHistory = screen.getHistory();
         screen.createBackAction(BACK_NAME, BACK_SHORTCUT);
         assertEquals(expectedHistory, screen.getHistory());
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -31,9 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("NoOpAction should")
 class NoOpActionTest {
 
@@ -58,8 +55,8 @@ class NoOpActionTest {
     @Test
     @DisplayName("consider an action with same shortcut equal")
     void considerActionWithSameShortcutEqual() {
-        final String differentName = action.getName() + "difference";
-        final Action secondAction = new NoOpAction(differentName, action.getShortcut());
+        String differentName = action.getName() + "difference";
+        Action secondAction = new NoOpAction(differentName, action.getShortcut());
         assertEquals(action, secondAction);
         assertEquals(action.hashCode(), secondAction.hashCode());
     }
@@ -93,7 +90,7 @@ class NoOpActionTest {
     @Test
     @DisplayName("be created using the producer")
     void beCreatedByProducer() {
-        final Action action = noOpActionProducer(ACTION_NAME, SHORTCUT).create(null);
+        Action action = noOpActionProducer(ACTION_NAME, SHORTCUT).create(null);
         assertEquals(ACTION_NAME, action.getName());
         assertEquals(SHORTCUT, action.getShortcut());
     }

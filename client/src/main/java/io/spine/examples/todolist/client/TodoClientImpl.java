@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.client;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Any;
 import com.google.protobuf.Message;
 import io.grpc.ManagedChannel;
@@ -59,7 +60,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.collect.ImmutableSet.of;
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.protobuf.AnyPacker.unpack;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
@@ -194,9 +194,12 @@ final class TodoClientImpl implements SubscribingTodoClient {
      * Subscribes the given {@link StreamObserver} to the given topic and activates
      * the subscription.
      *
-     * @param topic    the topic to subscribe to
-     * @param observer the observer to subscribe
-     * @param <M>      the type of the result messages
+     * @param topic
+     *         the topic to subscribe to
+     * @param observer
+     *         the observer to subscribe
+     * @param <M>
+     *         the type of the result messages
      * @return the activated subscription
      */
     private <M extends Message> Subscription subscribeTo(Topic topic, StreamObserver<M> observer) {
@@ -208,8 +211,10 @@ final class TodoClientImpl implements SubscribingTodoClient {
     /**
      * Retrieves all the messages of the given type.
      *
-     * @param cls the class of the desired messages
-     * @param <M> the compile-time type of the desired messages
+     * @param cls
+     *         the class of the desired messages
+     * @param <M>
+     *         the compile-time type of the desired messages
      * @return all the messages of the given type present in the system
      */
     private <M extends Message> List<M> getByType(Class<M> cls) {
@@ -219,15 +224,15 @@ final class TodoClientImpl implements SubscribingTodoClient {
                                          .getMessagesList();
 
         @SuppressWarnings("unchecked") // Logically correct.
-        List<M> result = messages.stream()
-                                 .map(any -> (M) unpack(any))
-                                 .collect(toList());
+                List<M> result = messages.stream()
+                                         .map(any -> (M) unpack(any))
+                                         .collect(toList());
         return result;
     }
 
     private <M extends Message> Optional<M> findById(Class<M> messageClass, Message id) {
         Query query = requestFactory.query()
-                                    .byIds(messageClass, of(id));
+                                    .byIds(messageClass, ImmutableSet.of(id));
         List<Any> messages = queryService.read(query)
                                          .getMessagesList();
         checkState(messages.size() <= 1,
@@ -236,15 +241,15 @@ final class TodoClientImpl implements SubscribingTodoClient {
                    System.lineSeparator(), messages);
 
         @SuppressWarnings("unchecked") // Logically correct.
-        Optional<M> result = messages.stream()
-                                     .map(any -> (M) unpack(any))
-                                     .findFirst();
+                Optional<M> result = messages.stream()
+                                             .map(any -> (M) unpack(any))
+                                             .findFirst();
         return result;
     }
 
     private static ManagedChannel initChannel(String host, int port) {
         ManagedChannel result = ManagedChannelBuilder.forAddress(host, port)
-                                                     .usePlaintext(true)
+                                                     .usePlaintext()
                                                      .build();
         return result;
     }
@@ -268,10 +273,11 @@ final class TodoClientImpl implements SubscribingTodoClient {
      *
      * <p>The errors and completion acknowledgements are translated directly to the delegate.
      *
-     * <p>The {@linkplain SubscriptionUpdate#getEntityStateUpdatesList() messages} are unpacked
+     * <p>The {@linkplain SubscriptionUpdate#getEntityUpdates() messages} are unpacked
      * and sent to the delegate observer one by one.
      *
-     * @param <M> the type of the delegate observer messages
+     * @param <M>
+     *         the type of the delegate observer messages
      */
     private static final class SubscriptionUpdateObserver<M extends Message>
             implements StreamObserver<SubscriptionUpdate> {
@@ -285,7 +291,8 @@ final class TodoClientImpl implements SubscribingTodoClient {
         @SuppressWarnings("unchecked") // Logically correct.
         @Override
         public void onNext(SubscriptionUpdate value) {
-            value.getEntityStateUpdatesList()
+            value.getEntityUpdates()
+                 .getUpdatesList()
                  .stream()
                  .map(EntityStateUpdate::getState)
                  .map(any -> (M) unpack(any))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -41,17 +41,14 @@ import io.spine.examples.todolist.c.rejection.CannotRestoreDeletedTask;
 import io.spine.examples.todolist.context.BoundedContexts;
 import io.spine.grpc.MemoizingObserver;
 import io.spine.grpc.StreamObservers;
+import io.spine.logging.Logging;
 import io.spine.protobuf.AnyPacker;
 import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
 import io.spine.server.event.EventStreamQuery;
-import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -74,9 +71,8 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(ShardingReset.class)
 @DisplayName("RestoreDeletedTask command should be interpreted by TaskPart and")
-public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> {
+class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> {
 
     private MemoizingObserver<Ack> responseObserver;
     private BoundedContext boundedContext;
@@ -92,7 +88,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         super.setUp();
         responseObserver = StreamObservers.memoizingObserver();
         boundedContext = BoundedContexts.create();
-        commandBus = boundedContext.getCommandBus();
+        commandBus = boundedContext.commandBus();
         TaskAggregateRoot root = new TaskAggregateRoot(boundedContext, entityId());
         aggregate = new TaskPart(root);
     }
@@ -128,8 +124,8 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
                                                  .build();
         EventStreamObserver eventStreamObserver = new EventStreamObserver();
 
-        boundedContext.getEventBus()
-                      .getEventStore()
+        boundedContext.eventBus()
+                      .eventStore()
                       .read(query, eventStreamObserver);
         List<Event> events = eventStreamObserver.events;
         LabelledTaskRestored labelledTaskRestored =
@@ -155,7 +151,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
 
         restoreDeletedTask();
 
-        Task state = aggregate.getState();
+        Task state = aggregate.state();
         assertEquals(entityId(), state.getId());
         assertEquals(OPEN, state.getTaskStatus());
     }
@@ -168,13 +164,13 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         DeleteTask deleteTask = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTask));
 
-        Task state = aggregate.getState();
+        Task state = aggregate.state();
         assertEquals(entityId(), state.getId());
         assertEquals(DELETED, state.getTaskStatus());
 
         restoreDeletedTask();
 
-        state = aggregate.getState();
+        state = aggregate.state();
         assertEquals(entityId(), state.getId());
         assertEquals(OPEN, state.getTaskStatus());
     }
@@ -225,7 +221,7 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
         dispatchCommand(aggregate, envelopeOf(restoreDeletedTask));
     }
 
-    private static class EventStreamObserver implements StreamObserver<Event> {
+    private static class EventStreamObserver implements StreamObserver<Event>, Logging {
 
         private final List<Event> events = newArrayList();
 
@@ -236,23 +232,12 @@ public class RestoreDeletedTaskTest extends TaskCommandTest<RestoreDeletedTask> 
 
         @Override
         public void onError(Throwable t) {
-            log().error("Occurred exception", t);
+            _error("Occurred exception", t);
         }
 
         @Override
         public void onCompleted() {
-            log().info("completed");
-        }
-
-        private enum LogSingleton {
-            INSTANCE;
-
-            @SuppressWarnings("NonSerializableFieldInSerializableClass")
-            private final Logger value = LoggerFactory.getLogger(EventStreamObserver.class);
-        }
-
-        private static Logger log() {
-            return LogSingleton.INSTANCE.value;
+            _info("completed");
         }
     }
 }

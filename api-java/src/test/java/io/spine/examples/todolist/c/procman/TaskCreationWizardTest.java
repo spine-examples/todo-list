@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -32,8 +32,6 @@ import io.spine.change.TimestampChange;
 import io.spine.change.TimestampChangeVBuilder;
 import io.spine.client.ActorRequestFactory;
 import io.spine.core.Command;
-import io.spine.core.CommandClass;
-import io.spine.core.CommandEnvelope;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelDetailsVBuilder;
@@ -79,6 +77,8 @@ import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
 import io.spine.server.commandbus.CommandDispatcher;
 import io.spine.server.procman.ProcessManager;
+import io.spine.server.type.CommandClass;
+import io.spine.server.type.CommandEnvelope;
 import io.spine.testing.client.TestActorRequestFactory;
 import io.spine.testing.server.procman.PmDispatcher;
 import org.hamcrest.Matcher;
@@ -89,18 +89,18 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 
 import static io.spine.base.Identifier.newUuid;
-import static io.spine.core.CommandClass.from;
 import static io.spine.examples.todolist.TaskCreation.Stage.CANCELED;
 import static io.spine.examples.todolist.TaskCreation.Stage.COMPLETED;
 import static io.spine.examples.todolist.TaskCreation.Stage.CONFIRMATION;
 import static io.spine.examples.todolist.TaskCreation.Stage.LABEL_ASSIGNMENT;
 import static io.spine.examples.todolist.TaskCreation.Stage.TASK_DEFINITION;
+import static io.spine.server.type.CommandClass.from;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -110,12 +110,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SuppressWarnings("InnerClassMayBeStatic") // Nested test suites.
 @DisplayName("Task creation wizard on ")
 class TaskCreationWizardTest {
 
     private static final ActorRequestFactory requestFactory =
-            TestActorRequestFactory.newInstance(TaskCreationWizardTest.class);
+            new TestActorRequestFactory(TaskCreationWizardTest.class);
 
     @Nested
     @DisplayName("StartTaskCreation command should")
@@ -190,7 +189,7 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setNewValue(dueDate)
                     .build();
-            Stack<CommandMessage> producedCommands = memoizingHandler().received;
+            ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
 
             assertThat(producedCommands, containsInAnyOrder(
                     UpdateTaskDescriptionVBuilder.newBuilder()
@@ -245,7 +244,7 @@ class TaskCreationWizardTest {
                     instanceOf(CreateBasicLabel.class),  // 1 label creation with details updates
                     instanceOf(UpdateLabelDetails.class)
             );
-            Stack<CommandMessage> producedCommands = memoizingHandler().received;
+            ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
             assertThat(producedCommands, containsInAnyOrder(expectedCommands));
             assertEquals(CONFIRMATION, getStage());
         }
@@ -308,7 +307,7 @@ class TaskCreationWizardTest {
                     .setId(getId())
                     .build();
             dispatch(cmd);
-            Stack<CommandMessage> producedCommands = memoizingHandler().received;
+            ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
             CommandMessage producedCommand = producedCommands.pop();
             FinalizeDraft expectedCmd = FinalizeDraftVBuilder
                     .newBuilder()
@@ -381,16 +380,16 @@ class TaskCreationWizardTest {
         }
 
         TaskCreationId getId() {
-            return wizard.getId();
+            return wizard.id();
         }
 
         TaskId getTaskId() {
-            return wizard.getState()
+            return wizard.state()
                          .getTaskId();
         }
 
         TaskCreation.Stage getStage() {
-            return wizard.getState()
+            return wizard.state()
                          .getStage();
         }
 
@@ -468,20 +467,22 @@ class TaskCreationWizardTest {
         }
 
         private CommandBus createCommandBus() {
-            BoundedContext emptyContext = BoundedContext.newBuilder()
-                                                        .setCommandBus(CommandBus.newBuilder())
-                                                        .build();
-            CommandBus commandBus = emptyContext.getCommandBus();
+            BoundedContext emptyContext = BoundedContext
+                    .newBuilder()
+                    .setCommandBus(CommandBus.newBuilder())
+                    .build();
+            CommandBus commandBus = emptyContext.commandBus();
             commandBus.register(memoizingHandler);
             return commandBus;
         }
 
         private static final class MemoizingCommandHandler implements CommandDispatcher<Object> {
 
-            private final Stack<CommandMessage> received = new Stack<>();
+            private final ArrayDeque<CommandMessage> received = new ArrayDeque<>();
 
+            @SuppressWarnings("BadImport") // Actually enhances readability.
             @Override
-            public Set<CommandClass> getMessageClasses() {
+            public Set<CommandClass> messageClasses() {
                 return ImmutableSet.of(
                         from(CreateDraft.class),
                         from(UpdateTaskDueDate.class),
@@ -496,7 +497,7 @@ class TaskCreationWizardTest {
 
             @Override
             public Object dispatch(CommandEnvelope envelope) {
-                received.push(envelope.getMessage());
+                received.push(envelope.message());
                 return MemoizingCommandHandler.class.getName();
             }
 
@@ -505,12 +506,12 @@ class TaskCreationWizardTest {
                 // NoOp for test.
             }
         }
-    }
 
-    private static TaskCreationId newId() {
-        return TaskCreationIdVBuilder.newBuilder()
-                                     .setValue(newUuid())
-                                     .build();
+        private static TaskCreationId newId() {
+            return TaskCreationIdVBuilder.newBuilder()
+                                         .setValue(newUuid())
+                                         .build();
+        }
     }
 
     private static TaskId newTaskId() {

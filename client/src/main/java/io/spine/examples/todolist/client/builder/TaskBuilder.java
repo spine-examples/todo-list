@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -62,12 +62,14 @@ public final class TaskBuilder {
      * Builder for the {@link CreateBasicTask} command.
      */
     public static final class CreateBasicTaskBuilder {
+
         private final CreateBasicTask.Builder builder = CreateBasicTask.newBuilder();
 
         /**
          * Sets the description to the {@link CreateBasicTask.Builder}.
          *
-         * @param description the description of the command
+         * @param description
+         *         the description of the command
          * @return the {@code CreateBasicTaskBuilder} instance
          */
         public CreateBasicTaskBuilder setDescription(TaskDescription description) {
@@ -91,6 +93,7 @@ public final class TaskBuilder {
      * Builder for the {@link CreateDraft} command.
      */
     public static final class CreateTaskDraftBuilder {
+
         private final CreateDraft.Builder builder = CreateDraft.newBuilder();
 
         /**

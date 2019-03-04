@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -43,9 +43,12 @@ public final class LabelAggregateRejections {
      * Constructs and throws the {@link CannotUpdateLabelDetails} rejection according to
      * the passed parameters.
      *
-     * @param cmd      the rejected command
-     * @param mismatch the {@link ValueMismatch}
-     * @throws CannotUpdateLabelDetails the rejection to throw
+     * @param cmd
+     *         the rejected command
+     * @param mismatch
+     *         the {@link ValueMismatch}
+     * @throws CannotUpdateLabelDetails
+     *         the rejection to throw
      */
     public static void throwCannotUpdateLabelDetails(UpdateLabelDetails cmd,
                                                      ValueMismatch mismatch)

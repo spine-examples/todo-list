@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -27,10 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * A bot for user input imitation.
  *
  * <p>Handles {@link Application} configuration and provides I/O related assertions.
- *
- * @author Dmytro Grankin
  */
-public class Bot {
+public final class Bot {
 
     private final TestScreen screen;
 
@@ -47,7 +45,8 @@ public class Bot {
     /**
      * Adds the specified answer to the {@link TestScreen}.
      *
-     * @param answer the answer to add
+     * @param answer
+     *         the answer to add
      */
     public void addAnswer(String answer) {
         screen.addAnswer(answer);
@@ -56,7 +55,8 @@ public class Bot {
     /**
      * Asserts that expected and actual {@link TestScreen#getOutput() output} are equal.
      *
-     * @param expected the expected output
+     * @param expected
+     *         the expected output
      */
     public void assertOutput(String expected) {
         assertEquals(expected, screen.getOutput());

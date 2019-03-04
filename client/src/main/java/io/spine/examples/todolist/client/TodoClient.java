@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -36,7 +36,7 @@ import java.util.List;
 /**
  * A client interface.
  *
- * <p> Provides methods to communicate with server.
+ * <p>Provides methods to communicate with server.
  */
 public interface TodoClient {
 
@@ -45,7 +45,8 @@ public interface TodoClient {
     /**
      * Posts the given command to the {@code CommandService}.
      *
-     * @param commandMessage the command to post
+     * @param commandMessage
+     *         the command to post
      */
     void postCommand(CommandMessage commandMessage);
 
@@ -85,8 +86,10 @@ public interface TodoClient {
      * <p>Returns {@code null} iff the task is not found by ID and the {@code other} value is
      * {@code null}.
      *
-     * @param id    the task ID to search by
-     * @param other the default value of the task
+     * @param id
+     *         the task ID to search by
+     * @param other
+     *         the default value of the task
      * @return the task with the requested ID or {@code other} if the task is not found
      */
     @Nullable
@@ -102,7 +105,8 @@ public interface TodoClient {
     /**
      * Obtains the labels assigned to the task with the given ID.
      *
-     * @param taskId the task ID to search by
+     * @param taskId
+     *         the task ID to search by
      * @return the labels of the specified task
      */
     TaskLabels getLabels(TaskId taskId);
@@ -115,8 +119,10 @@ public interface TodoClient {
      * <p>Returns {@code null} iff the label is not found by ID and the {@code other} value is
      * {@code null}.
      *
-     * @param id    the label ID to search by
-     * @param other the default value of the label
+     * @param id
+     *         the label ID to search by
+     * @param other
+     *         the default value of the label
      * @return the label with the requested ID or {@code other} if the label is not found
      */
     @Nullable
@@ -132,8 +138,10 @@ public interface TodoClient {
      *
      * <p>The resulting {@code TodoClient} connects to the server at {@code host:port}.
      *
-     * @param host the host of the server to connect to
-     * @param port the port of the server to connect to
+     * @param host
+     *         the host of the server to connect to
+     * @param port
+     *         the port of the server to connect to
      * @return new TodoList client
      */
     static TodoClient instance(String host, int port) {

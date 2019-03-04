@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -28,10 +28,8 @@ import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
 
 /**
  * A factory of the label events for the test needs.
- *
- * @author Illia Shepilov
  */
-public class TestLabelEventFactory {
+public final class TestLabelEventFactory {
 
     private static final String LABEL_TITLE = TestLabelCommandFactory.LABEL_TITLE;
     private static final LabelColor LABEL_COLOR = LabelColor.GRAY;
@@ -52,25 +50,27 @@ public class TestLabelEventFactory {
     /**
      * Provides the {@link LabelDetailsUpdated} event by specified label color and title.
      *
-     * @param color the color of the updated label details
-     * @param title the title of the updated label details
+     * @param color
+     *         the color of the updated label details
+     * @param title
+     *         the title of the updated label details
      * @return the {@code LabelDetailsUpdated} instance
      */
-    public static LabelDetailsUpdated labelDetailsUpdatedInstance(LabelId labelId, LabelColor color,
-            String title) {
-        final LabelDetails.Builder labelDetailsBuilder =
-                LabelDetails.newBuilder()
-                            .setColor(color)
-                            .setTitle(title);
-        final LabelDetailsChange labelDetailsChange =
-                LabelDetailsChange.newBuilder()
-                                  .setNewDetails(labelDetailsBuilder)
-                                  .build();
-        final LabelDetailsUpdated result =
-                LabelDetailsUpdated.newBuilder()
-                                   .setLabelId(labelId)
-                                   .setLabelDetailsChange(labelDetailsChange)
-                                   .build();
+    public static LabelDetailsUpdated
+    labelDetailsUpdatedInstance(LabelId labelId, LabelColor color, String title) {
+        LabelDetails.Builder labelDetailsBuilder = LabelDetails
+                .newBuilder()
+                .setColor(color)
+                .setTitle(title);
+        LabelDetailsChange labelDetailsChange = LabelDetailsChange
+                .newBuilder()
+                .setNewDetails(labelDetailsBuilder)
+                .build();
+        LabelDetailsUpdated result = LabelDetailsUpdated
+                .newBuilder()
+                .setLabelId(labelId)
+                .setLabelDetailsChange(labelDetailsChange)
+                .build();
         return result;
     }
 }

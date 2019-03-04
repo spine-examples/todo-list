@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -53,6 +53,8 @@ import static java.util.Collections.singleton;
 public class LabelledTasksViewRepository
         extends ProjectionRepository<LabelId, LabelledTasksViewProjection, LabelledTasksView> {
 
+    @SuppressWarnings("OverridableMethodCallDuringObjectConstruction")
+    // Necessary so the implementors can specify their own routing schema.
     public LabelledTasksViewRepository() {
         super();
         setUpEventRoute();
@@ -60,13 +62,14 @@ public class LabelledTasksViewRepository
 
     /**
      * Adds the {@link EventRoute}s to the repository.
-     * Should to be overridden in an successor classes,
+     * Should be overridden in the descendant classes,
      * otherwise all successors will use {@code LabelId}
-     * and only with specified events below.
+     * and only with the events specified below.
      */
+    @SuppressWarnings("OverlyCoupledMethod") // A lot of routed event types.
     protected void setUpEventRoute() {
-        final EventRouting<LabelId> routing = getEventRouting();
-        routing.route(LabelAssignedToTask.class, 
+        EventRouting<LabelId> routing = eventRouting();
+        routing.route(LabelAssignedToTask.class,
                       (message, context) -> singleton(message.getLabelId()));
         routing.route(LabelRemovedFromTask.class,
                       (message, context) -> singleton(message.getLabelId()));
@@ -87,9 +90,9 @@ public class LabelledTasksViewRepository
     }
 
     private static Set<LabelId> getLabelIdsSet(EventContext context) {
-        final LabelsListEnrichment enrichment = getEnrichment(LabelsListEnrichment.class, context);
-        final LabelIdsList labelsList = enrichment.getLabelIdsList();
-        final Set<LabelId> result = newHashSet(labelsList.getIdsList());
+        LabelsListEnrichment enrichment = getEnrichment(LabelsListEnrichment.class, context);
+        LabelIdsList labelsList = enrichment.getLabelIdsList();
+        Set<LabelId> result = newHashSet(labelsList.getIdsList());
         return result;
     }
 }

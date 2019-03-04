@@ -9,7 +9,8 @@
   "author": "Spine Event Engine",
   "license": "Apache-2.0",
   "dependencies": {
-    "spine-web-client": "1.0.0-SNAPSHOT"
+    "rxjs": "6.3.3",
+    "spine-web": "0.15.0"
   },
   "devDependencies": {
     "webpack": "^4.8.3",

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -23,13 +23,15 @@ package io.spine.cli.action;
 import io.spine.cli.view.View;
 
 /**
- * <p>An {@code Action} takes the end-user from a {@linkplain #getSource()}  source view}
- * to a {@linkplain #getDestination()}  destination view}.
+ * <p>An {@code Action} takes the end-user from a {@linkplain #getSource() source view}
+ * to a {@linkplain #getDestination() destination view}.
  *
  * <p>Actions with same {@link Shortcut} are considered equal.
  *
- * @param <S> the type of the source view
- * @param <D> the type of the destination view
+ * @param <S>
+ *         the type of the source view
+ * @param <D>
+ *         the type of the destination view
  */
 public interface Action<S extends View, D extends View> {
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -60,8 +60,6 @@ import static io.spine.base.Time.getCurrentTime;
 
 /**
  * A factory of the task commands for the test needs.
- *
- * @author Illia Shepilov
  */
 @SuppressWarnings({"ClassWithTooManyMethods", "OverlyCoupledClass"})
 // It's necessary to provide all task-related commands.
@@ -95,8 +93,10 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link CreateBasicTask} instance.
      *
-     * @param id          an identifier of the created task
-     * @param description a description of the updated task
+     * @param id
+     *         an identifier of the created task
+     * @param description
+     *         a description of the updated task
      * @return the {@code CreateBasicTask} instance
      */
     public static CreateBasicTask createTaskInstance(TaskId id, String description) {
@@ -127,7 +127,8 @@ public class TestTaskCommandFactory {
     /**
      * Provides the {@link UpdateTaskDescription} instance by description and task ID specified.
      *
-     * @param taskId an identifier of the updated task
+     * @param taskId
+     *         an identifier of the updated task
      * @return the {@code UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId taskId) {
@@ -140,9 +141,12 @@ public class TestTaskCommandFactory {
     /**
      * Provides the {@link UpdateTaskDescription} instance by description and task ID specified.
      *
-     * @param id                  an identifier of the updated task
-     * @param previousDescription the previous description of the task
-     * @param newDescription      the description of the updated task
+     * @param id
+     *         an identifier of the updated task
+     * @param previousDescription
+     *         the previous description of the task
+     * @param newDescription
+     *         the description of the updated task
      * @return the {@code UpdateTaskDescription} instance
      */
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id,
@@ -189,8 +193,10 @@ public class TestTaskCommandFactory {
      * Provides the {@link UpdateTaskDueDate} instance with specified update due date and
      * {@link TaskId} fields.
      *
-     * @param previousDueDate the previous due date of the task
-     * @param updatedDueDate  the due date of the updated task
+     * @param previousDueDate
+     *         the previous due date of the task
+     * @param updatedDueDate
+     *         the due date of the updated task
      * @return {@link UpdateTaskDueDate} instance
      */
     public static UpdateTaskDueDate updateTaskDueDateInstance(TaskId id,
@@ -236,8 +242,10 @@ public class TestTaskCommandFactory {
     /**
      * Provides a pre-configured {@link UpdateTaskPriority} command instance.
      *
-     * @param previousPriority the previous task priority
-     * @param newPriority      the priority of the updated task
+     * @param previousPriority
+     *         the previous task priority
+     * @param newPriority
+     *         the priority of the updated task
      * @return the {@code UpdateTaskPriority} instance
      */
     public static UpdateTaskPriority updateTaskPriorityInstance(TaskId id,

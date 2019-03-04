@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -35,11 +35,9 @@ import io.spine.examples.todolist.c.rejection.CannotCreateDraft;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDescription;
 import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDueDate;
 import io.spine.testing.UtilityClassTest;
-import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.TaskCreationRejections.throwCannotCreateDraft;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDescription;
@@ -47,7 +45,6 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejection
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@DisplayName("TaskPartRejections should")
 class TaskPartRejectionsTest extends UtilityClassTest<TaskPartRejections> {
 
     private final TaskId taskId = TaskId.getDefaultInstance();
@@ -76,15 +73,16 @@ class TaskPartRejectionsTest extends UtilityClassTest<TaskPartRejections> {
         @Test
         @DisplayName("throw CannotCreateDraft rejection")
         void throwCannotCreateDraftRejection() {
-            final CreateDraft cmd = CreateDraft.newBuilder()
-                                               .setId(taskId)
-                                               .build();
-            final CannotCreateDraft rejection = assertThrows(CannotCreateDraft.class,
-                                                             () -> throwCannotCreateDraft(cmd));
-            final TaskId actual = rejection.getMessageThrown()
-                                           .getRejectionDetails()
-                                           .getCommandDetails()
-                                           .getTaskId();
+            CreateDraft cmd = CreateDraft
+                    .newBuilder()
+                    .setId(taskId)
+                    .build();
+            CannotCreateDraft rejection = assertThrows(CannotCreateDraft.class,
+                                                       () -> throwCannotCreateDraft(cmd));
+            TaskId actual = rejection.getMessageThrown()
+                                     .getRejectionDetails()
+                                     .getCommandDetails()
+                                     .getTaskId();
             assertEquals(taskId, actual);
         }
     }
@@ -109,33 +107,35 @@ class TaskPartRejectionsTest extends UtilityClassTest<TaskPartRejections> {
         @Test
         @DisplayName("throw CannotUpdateTaskDueDate rejection")
         void throwCannotUpdateTaskDueDateRejection() {
-            final UpdateTaskDueDate cmd = UpdateTaskDueDate.newBuilder()
-                                                           .setId(taskId)
-                                                           .build();
-            final CannotUpdateTaskDueDate rejection =
+            UpdateTaskDueDate cmd = UpdateTaskDueDate
+                    .newBuilder()
+                    .setId(taskId)
+                    .build();
+            CannotUpdateTaskDueDate rejection =
                     assertThrows(CannotUpdateTaskDueDate.class,
                                  () -> throwCannotUpdateTaskDueDate(cmd));
-            final RejectedTaskCommandDetails commandDetails = rejection.getMessageThrown()
-                                                                       .getRejectionDetails()
-                                                                       .getCommandDetails();
-            final TaskId actualId = commandDetails.getTaskId();
+            RejectedTaskCommandDetails commandDetails = rejection.getMessageThrown()
+                                                                 .getRejectionDetails()
+                                                                 .getCommandDetails();
+            TaskId actualId = commandDetails.getTaskId();
             assertEquals(taskId, actualId);
         }
 
         @Test
         @DisplayName("throw CannotUpdateTaskDescription rejection")
         void throwCannotUpdateTaskDescriptionRejection() {
-            final UpdateTaskDescription cmd = UpdateTaskDescription.newBuilder()
-                                                                   .setId(taskId)
-                                                                   .build();
-            final CannotUpdateTaskDescription rejection =
+            UpdateTaskDescription cmd = UpdateTaskDescription
+                    .newBuilder()
+                    .setId(taskId)
+                    .build();
+            CannotUpdateTaskDescription rejection =
                     assertThrows(CannotUpdateTaskDescription.class,
                                  () -> throwCannotUpdateTaskDescription(cmd));
-            final RejectedTaskCommandDetails commandDetails = rejection.getMessageThrown()
-                                                                       .getRejectionDetails()
-                                                                       .getCommandDetails();
+            RejectedTaskCommandDetails commandDetails = rejection.getMessageThrown()
+                                                                 .getRejectionDetails()
+                                                                 .getCommandDetails();
 
-            final TaskId actualId = commandDetails.getTaskId();
+            TaskId actualId = commandDetails.getTaskId();
             assertEquals(taskId, actualId);
         }
     }

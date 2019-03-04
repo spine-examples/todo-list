@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,14 +20,13 @@
 
 package io.spine.examples.todolist.repository;
 
-import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.aggregate.TaskAggregateRoot;
 import io.spine.examples.todolist.c.aggregate.TaskLabelsPart;
-import io.spine.server.BoundedContext;
 import io.spine.server.aggregate.AggregatePartRepository;
 
 /**
- * Repository for the {@link TaskLabelsPart}
+ * Repository managing {@link TaskLabelsPart} instances.
  */
 public class TaskLabelsRepository
         extends AggregatePartRepository<TaskId, TaskLabelsPart, TaskAggregateRoot> {

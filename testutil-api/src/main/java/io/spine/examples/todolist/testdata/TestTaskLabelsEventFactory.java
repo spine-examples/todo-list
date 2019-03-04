@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -27,10 +27,8 @@ import io.spine.examples.todolist.c.events.LabelRemovedFromTask;
 
 /**
  * A factory of the task label events for the test needs.
- *
- * @author Illia Shepilov
  */
-public class TestTaskLabelsEventFactory {
+public final class TestTaskLabelsEventFactory {
 
     private static final LabelId LABEL_ID = TestTaskEventFactory.LABEL_ID;
     private static final TaskId TASK_ID = TestTaskEventFactory.TASK_ID;
@@ -50,14 +48,16 @@ public class TestTaskLabelsEventFactory {
     /**
      * Provides {@link LabelAssignedToTask} event by specified task label ID.
      *
-     * @param labelId the ID of the assigned label
+     * @param labelId
+     *         the ID of the assigned label
      * @return the {@code LabelAssignedToTask} instance
      */
     public static LabelAssignedToTask labelAssignedToTaskInstance(TaskId taskId, LabelId labelId) {
-        final LabelAssignedToTask result = LabelAssignedToTask.newBuilder()
-                                                              .setTaskId(taskId)
-                                                              .setLabelId(labelId)
-                                                              .build();
+        LabelAssignedToTask result = LabelAssignedToTask
+                .newBuilder()
+                .setTaskId(taskId)
+                .setLabelId(labelId)
+                .build();
         return result;
     }
 
@@ -67,10 +67,11 @@ public class TestTaskLabelsEventFactory {
      * @return the {@code LabelRemovedFromTask} instance
      */
     public static LabelRemovedFromTask labelRemovedFromTaskInstance() {
-        final LabelRemovedFromTask result = LabelRemovedFromTask.newBuilder()
-                                                                .setTaskId(TASK_ID)
-                                                                .setLabelId(LABEL_ID)
-                                                                .build();
+        LabelRemovedFromTask result = LabelRemovedFromTask
+                .newBuilder()
+                .setTaskId(TASK_ID)
+                .setLabelId(LABEL_ID)
+                .build();
         return result;
     }
 }

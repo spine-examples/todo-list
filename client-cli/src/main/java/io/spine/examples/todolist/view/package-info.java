@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -21,7 +21,6 @@
 /**
  * This package contains views of the application CLI.
  */
-
 @ParametersAreNonnullByDefault
 package io.spine.examples.todolist.view;
 

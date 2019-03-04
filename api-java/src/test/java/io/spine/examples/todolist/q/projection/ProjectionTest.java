@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -22,11 +22,11 @@ package io.spine.examples.todolist.q.projection;
 
 import io.spine.base.EventMessage;
 import io.spine.core.Event;
-import io.spine.core.EventEnvelope;
 import io.spine.examples.todolist.TaskListId;
 import io.spine.examples.todolist.testdata.TestEventEnricherFactory;
-import io.spine.server.event.Enricher;
+import io.spine.server.enrich.Enricher;
 import io.spine.server.event.EventFactory;
+import io.spine.server.type.EventEnvelope;
 import io.spine.testing.server.TestEventFactory;
 
 import static io.spine.base.Identifier.newUuid;
@@ -41,13 +41,10 @@ abstract class ProjectionTest {
     private final Enricher enricher = TestEventEnricherFactory.eventEnricherInstance();
 
     Event createEvent(EventMessage messageOrAny) {
-        final Event event = eventFactory.createEvent(messageOrAny, null);
-        final EventEnvelope envelope = EventEnvelope.of(event);
-        if (!enricher.canBeEnriched(envelope)) {
-            return event;
-        }
-
-        return enricher.enrich(envelope).getOuterObject();
+        Event event = eventFactory.createEvent(messageOrAny, null);
+        EventEnvelope envelope = EventEnvelope.of(event);
+        return enricher.enrich(envelope)
+                       .outerObject();
     }
 
     TaskListId createTaskListId() {

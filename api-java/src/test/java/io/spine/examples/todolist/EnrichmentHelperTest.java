@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,21 +20,25 @@
 
 package io.spine.examples.todolist;
 
+import com.google.common.testing.NullPointerTester;
 import io.spine.core.EventContext;
 import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
+import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("EnrichmentHelper should")
-class EnrichmentHelperTest {
+class EnrichmentHelperTest extends UtilityClassTest<EnrichmentHelper> {
 
-    @Test
-    @DisplayName("have the private constructor")
-    void havePrivateConstructor() {
-        assertHasPrivateParameterlessCtor(EnrichmentHelper.class);
+    EnrichmentHelperTest() {
+        super(EnrichmentHelper.class);
+    }
+
+    @Override
+    protected void configure(NullPointerTester tester) {
+        tester.setDefault(EventContext.class, EventContext.getDefaultInstance());
     }
 
     @Test

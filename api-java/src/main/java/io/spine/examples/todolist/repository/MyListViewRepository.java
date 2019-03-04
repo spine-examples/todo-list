@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -34,6 +34,8 @@ import static java.util.Collections.singleton;
 public class MyListViewRepository
         extends ProjectionRepository<TaskListId, MyListViewProjection, MyListView> {
 
+    @SuppressWarnings("OverridableMethodCallDuringObjectConstruction")
+    // Necessary so the implementors can specify their own routing schema.
     public MyListViewRepository() {
         super();
         setUpEventRoute();
@@ -41,11 +43,11 @@ public class MyListViewRepository
 
     /**
      * Adds the {@link io.spine.server.route.EventRoute EventRoute}s to the repository.
-     * Should to be overridden in an successor classes,
+     * Should be overridden in the descendant classes,
      * otherwise all successors will use {@code MyListViewProjection.ID}
-     * and only with specified events below.
+     * and only with the events specified below.
      */
     protected void setUpEventRoute() {
-        getEventRouting().replaceDefault(((message, context) -> singleton(ID)));
+        eventRouting().replaceDefault((message, context) -> singleton(ID));
     }
 }

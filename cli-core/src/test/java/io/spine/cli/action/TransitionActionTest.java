@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -37,9 +37,9 @@ class TransitionActionTest {
     @Test
     @DisplayName("render of a destination view")
     void renderDestinationView() {
-        final View source = new NoOpView();
-        final DisplayCounterView destination = new DisplayCounterView();
-        final TransitionAction<View, DisplayCounterView> action =
+        View source = new NoOpView();
+        DisplayCounterView destination = new DisplayCounterView();
+        Action<View, DisplayCounterView> action =
                 new TransitionAction<>(ACTION_NAME, SHORTCUT, source, destination);
 
         assertEquals(0, destination.displayedTimes);

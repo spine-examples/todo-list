@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -42,7 +42,7 @@ class AbstractActionTest {
     @Test
     @DisplayName("not allow null or empty name")
     void notAllowEmptyStrings() {
-        final String emptyString = "";
+        String emptyString = "";
         assertThrows(IllegalArgumentException.class, () -> new AnAction(emptyString, SHORTCUT));
         assertThrows(IllegalArgumentException.class, () -> new AnAction(null, SHORTCUT));
     }
@@ -56,9 +56,9 @@ class AbstractActionTest {
     @Test
     @DisplayName("consider an action with same shortcut equal")
     void overrideEqualsAndHashCode() {
-        final Action firstAction = action;
-        final String differentName = firstAction.getName() + "difference";
-        final Action secondAction = new NoOpAction(differentName, action.getShortcut());
+        Action firstAction = action;
+        String differentName = firstAction.getName() + "difference";
+        Action secondAction = new NoOpAction(differentName, action.getShortcut());
         assertEquals(firstAction, secondAction);
         assertEquals(firstAction.hashCode(), secondAction.hashCode());
     }

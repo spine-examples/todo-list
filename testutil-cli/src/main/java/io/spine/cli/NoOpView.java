@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -26,17 +26,13 @@ import io.spine.cli.view.View;
  * A view that does nothing.
  *
  * <p>Allows to determine the whether the view was rendered.
- *
- * @author Dmytro Grankin
  */
-public class NoOpView implements View {
+public final class NoOpView implements View {
 
     private boolean rendered;
 
     /**
      * Marks the view as {@link #rendered}.
-     *
-     * @param screen {@inheritDoc}
      */
     @Override
     public void render(Screen screen) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -27,10 +27,8 @@ import static io.spine.cli.action.TransitionAction.transitionProducer;
 
 /**
  * Root view of the application.
- *
- * @author Dmytro Grankin
  */
-public class MainMenu extends ActionListView {
+public final class MainMenu extends ActionListView {
 
     private MainMenu() {
         super("Main menu");
@@ -42,7 +40,7 @@ public class MainMenu extends ActionListView {
      * @return the new instance
      */
     public static MainMenu create() {
-        final MainMenu mainMenu = new MainMenu();
+        MainMenu mainMenu = new MainMenu();
         mainMenu.addAction(transitionProducer("My tasks", new Shortcut("m"),
                                               MyTasksMenu.create()));
         return mainMenu;

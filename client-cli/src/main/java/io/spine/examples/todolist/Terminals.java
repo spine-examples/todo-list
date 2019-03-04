@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -29,13 +29,11 @@ import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 
 /**
  * Utilities for creating {@linkplain Terminal terminals}.
- *
- * @author Dmytro Grankin
  */
-class Terminals {
+final class Terminals {
 
+    /** Prevents instantiation of this utility class. */
     private Terminals() {
-        // Prevent instantiation of this utility class.
     }
 
     /**

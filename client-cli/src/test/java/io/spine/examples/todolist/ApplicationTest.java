@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -28,9 +28,6 @@ import static io.spine.cli.Application.getInstance;
 import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.fail;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("Application should")
 class ApplicationTest {
 

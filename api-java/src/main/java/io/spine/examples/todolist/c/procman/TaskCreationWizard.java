@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -125,11 +125,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     @Command
     Collection<? extends CommandMessage> handle(SetTaskDetails command, CommandContext context)
             throws CannotMoveToStage {
-        WizardCommands commands = commands();
-        return transit(LABEL_ASSIGNMENT, () -> {
-            Collection<? extends CommandMessage> resultCommands = commands.setTaskDetails(command);
-            return resultCommands;
-        });
+        return transit(LABEL_ASSIGNMENT, () -> commands().setTaskDetails(command));
     }
 
     @Command
@@ -183,12 +179,16 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      * Transits the process to the specified state by handling a command with the given command
      * handler.
      *
-     * @param requestedStage the stage to transit to
-     * @param commandHandler the routine of handling a command; returns the command handling result,
-     *                       an event or a list of events
-     * @param <R>            the type of the command handling result
+     * @param requestedStage
+     *         the stage to transit to
+     * @param commandHandler
+     *         the routine of handling a command; returns the command handling result,
+     *         an event or a list of events
+     * @param <R>
+     *         the type of the command handling result
      * @return the command handling result, an event or a list of events
-     * @throws CannotMoveToStage if the requested transition cannot be performed
+     * @throws CannotMoveToStage
+     *         if the requested transition cannot be performed
      */
     private <R> R transit(Stage requestedStage, Supplier<R> commandHandler)
             throws CannotMoveToStage {
@@ -199,38 +199,41 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * @return the ID of the supervised task
+     * Obtains the ID of the supervised task.
      */
     private TaskId taskId() {
-        return getBuilder().getTaskId();
+        return builder().getTaskId();
     }
 
     /**
      * Sets the current stage to the given value.
      *
-     * @param stage the requested stage
+     * @param stage
+     *         the requested stage
      */
     private void moveToStage(Stage stage) {
-        getBuilder().setStage(stage);
+        builder().setStage(stage);
     }
 
     /**
      * Checks if the process can move to the given stage.
      *
-     * @param pendingStage the stage to move to
-     * @throws CannotMoveToStage if the transition from current to specified stage is illegal
+     * @param pendingStage
+     *         the stage to move to
+     * @throws CannotMoveToStage
+     *         if the transition from current to specified stage is illegal
      */
     private void checkCanMoveTo(Stage pendingStage) throws CannotMoveToStage {
         if (pendingStage == CANCELED && !isTerminated()) {
             return;
         }
-        Stage currentStage = getBuilder().getStage();
+        Stage currentStage = builder().getStage();
         int expectedStageNumber = currentStage.getNumber() + 1;
         int actualStageNumber = pendingStage.getNumber();
         if (expectedStageNumber != actualStageNumber) {
             CannotMoveToStage rejection = CannotMoveToStage
                     .newBuilder()
-                    .setProcessId(getId())
+                    .setProcessId(id())
                     .setRequestedStage(pendingStage)
                     .setCurrentStage(currentStage)
                     .build();
@@ -244,20 +247,21 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      * @return {@code true} if current process state is terminal, {@code false} otherwise
      */
     private boolean isTerminated() {
-        Stage currentStage = getBuilder().getStage();
+        Stage currentStage = builder().getStage();
         return currentStage == COMPLETED || currentStage == CANCELED;
     }
 
     /**
      * Initializes the wizard state with the data from the given command.
      *
-     * @param cmd the command starting the process
+     * @param cmd
+     *         the command starting the process
      */
     private void initProcess(StartTaskCreation cmd) {
-        TaskCreationId id = getId();
+        TaskCreationId id = id();
         checkArgument(id.equals(cmd.getId()));
-        getBuilder().setId(id)
-                    .setTaskId(cmd.getTaskId());
+        builder().setId(id)
+                 .setTaskId(cmd.getTaskId());
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -25,6 +25,7 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.spine.base.Environment;
 import io.spine.examples.todolist.context.BoundedContexts;
+import io.spine.logging.Logging;
 import io.spine.server.BoundedContext;
 import io.spine.server.storage.StorageFactory;
 import io.spine.server.storage.jdbc.JdbcStorageFactory;
@@ -39,7 +40,6 @@ import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.server.Server.newServer;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static java.lang.String.format;
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * A local {@link Server} using {@link io.spine.server.storage.jdbc.JdbcStorageFactory
@@ -63,9 +63,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
  *
- * @author Dmytro Grankin
  * @see <a href="https://cloud.google.com/sdk/gcloud/">gcloud tool</a>
- * @see <a href="https://cloud.google.com/sql/docs/mysql/quickstart">Cloud SQL instance creation</a>
+ * @see <a href="https://cloud.google.com/sql/docs/mysql/quickstart">Cloud SQL instance
+ *         creation</a>
  */
 @SuppressWarnings("DuplicateStringLiteralInspection" /* To avoid creation of a dumb base module
                                                         for servers in different modules. */)
@@ -77,24 +77,25 @@ public class LocalCloudSqlServer {
     private static final String DB_URL_FORMAT = "%s//google/%s?cloudSqlInstance=%s&" +
             "useSSL=false&socketFactory=com.google.cloud.sql.mysql.SocketFactory";
 
+    /** Prevents instantiation of this class. */
     private LocalCloudSqlServer() {
-        // Prevent instantiation of this class.
     }
 
     public static void main(String[] args) throws IOException {
-        final String[] actualArguments = getActualArguments(args);
-        final BoundedContext boundedContext = createBoundedContext(actualArguments);
-        final Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
+        String[] actualArguments = getActualArguments(args);
+        BoundedContext boundedContext = createBoundedContext(actualArguments);
+        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
     }
 
     @VisibleForTesting
     static String[] getActualArguments(String[] commandLineArguments) {
-        final String[] defaultArguments = getDefaultArguments();
+        Logger log = Logging.get(LocalCloudSqlServer.class);
+        String[] defaultArguments = getDefaultArguments();
         if (commandLineArguments.length != defaultArguments.length) {
-            log().info("The specified arguments don't match the length requirement. " +
-                               "Required arguments size: {}. Default arguments will be used: {}.",
-                       defaultArguments.length, defaultArguments);
+            log.info("The specified arguments don't match the length requirement. " +
+                             "Required arguments size: {}. Default arguments will be used: {}.",
+                     defaultArguments.length, defaultArguments);
             return defaultArguments;
         } else {
             return commandLineArguments;
@@ -103,7 +104,7 @@ public class LocalCloudSqlServer {
 
     @VisibleForTesting
     static BoundedContext createBoundedContext(String[] args) {
-        final StorageFactory storageFactory = createStorageFactory(args);
+        StorageFactory storageFactory = createStorageFactory(args);
         return BoundedContexts.create(storageFactory);
     }
 
@@ -115,25 +116,27 @@ public class LocalCloudSqlServer {
     }
 
     private static DataSource createDataSource(String[] args) {
-        final HikariConfig config = new HikariConfig();
+        Logger log = Logging.get(LocalCloudSqlServer.class);
+        HikariConfig config = new HikariConfig();
 
-        final String instanceConnectionName = args[0];
-        final String dbName = args[1];
-        final String username = args[2];
-        final String password = args[3];
+        String instanceConnectionName = args[0];
+        String dbName = args[1];
+        String username = args[2];
+        String password = args[3];
 
-        log().info("Start `DataSource` creation. The following parameters will be used:");
-        final String dbUrl = format(DB_URL_FORMAT, getDbUrlPrefix(), dbName, instanceConnectionName);
+        log.info("Start `DataSource` creation. The following parameters will be used:");
+        String dbUrl =
+                format(DB_URL_FORMAT, getDbUrlPrefix(), dbName, instanceConnectionName);
         config.setJdbcUrl(dbUrl);
-        log().info("JDBC URL: {}", dbUrl);
+        log.info("JDBC URL: {}", dbUrl);
 
         config.setUsername(username);
-        log().info("Username: {}", username);
+        log.info("Username: {}", username);
 
         config.setPassword(password);
-        log().info("Password: {}", password);
+        log.info("Password: {}", password);
 
-        final DataSource dataSource = new HikariDataSource(config);
+        DataSource dataSource = new HikariDataSource(config);
         return dataSource;
     }
 
@@ -148,41 +151,31 @@ public class LocalCloudSqlServer {
      * @return the prefix for a connection {@code URL}
      */
     private static String getDbUrlPrefix() {
-        final Environment environment = Environment.getInstance();
-        final String prefix = environment.isTests()
-                              ? "jdbc:h2:mem:"
-                              : properties.getProperty("db.prefix");
+        Environment environment = Environment.getInstance();
+        String prefix = environment.isTests()
+                        ? "jdbc:h2:mem:"
+                        : properties.getProperty("db.prefix");
         return prefix;
     }
 
     @VisibleForTesting
     static String[] getDefaultArguments() {
-        final String instance = properties.getProperty("db.instance");
-        final String dbName = properties.getProperty("db.name");
-        final String username = properties.getProperty("db.username");
-        final String password = properties.getProperty("db.password");
+        String instance = properties.getProperty("db.instance");
+        String dbName = properties.getProperty("db.name");
+        String username = properties.getProperty("db.username");
+        String password = properties.getProperty("db.password");
         return new String[]{instance, dbName, username, password};
     }
 
     private static Properties getProperties(String propertiesFile) {
-        final Properties properties = new Properties();
-        final InputStream stream = LocalCloudSqlServer.class.getClassLoader()
-                                                            .getResourceAsStream(propertiesFile);
+        Properties properties = new Properties();
+        InputStream stream = LocalCloudSqlServer.class.getClassLoader()
+                                                      .getResourceAsStream(propertiesFile);
         try {
             properties.load(stream);
         } catch (IOException e) {
             throw illegalStateWithCauseOf(e);
         }
         return properties;
-    }
-
-    private static Logger log() {
-        return LogSingleton.INSTANCE.value;
-    }
-
-    private enum LogSingleton {
-        INSTANCE;
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = getLogger(LocalCloudSqlServer.class);
     }
 }

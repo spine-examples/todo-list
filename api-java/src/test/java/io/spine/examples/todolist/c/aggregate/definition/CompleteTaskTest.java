@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -29,11 +29,9 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.DeleteTask;
 import io.spine.examples.todolist.c.events.TaskCompleted;
 import io.spine.examples.todolist.c.rejection.CannotCompleteTask;
-import io.spine.testing.server.ShardingReset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.List;
 
@@ -49,9 +47,8 @@ import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ExtendWith(ShardingReset.class)
 @DisplayName("CompleteTask command should be interpreted by TaskPart and")
-public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
+class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
 
     CompleteTaskTest() {
         super(completeTaskInstance());
@@ -68,12 +65,12 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     void produceEvent() {
         dispatchCreateTaskCmd();
 
-        final List<? extends Message> messageList = dispatchCompleteTaskCmd();
+        List<? extends Message> messageList = dispatchCompleteTaskCmd();
 
         assertEquals(1, messageList.size());
         assertEquals(TaskCompleted.class, messageList.get(0)
                                                      .getClass());
-        final TaskCompleted taskCompleted = (TaskCompleted) messageList.get(0);
+        TaskCompleted taskCompleted = (TaskCompleted) messageList.get(0);
 
         assertEquals(entityId(), taskCompleted.getTaskId());
     }
@@ -84,7 +81,7 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
         dispatchCreateTaskCmd();
 
         dispatchCompleteTaskCmd();
-        final Task state = aggregate.getState();
+        Task state = aggregate.state();
 
         assertEquals(entityId(), state.getId());
         assertEquals(COMPLETED, state.getTaskStatus());
@@ -95,10 +92,10 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     void cannotCompleteDeletedTask() {
         dispatchCreateTaskCmd();
 
-        final DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
+        DeleteTask deleteTaskCmd = deleteTaskInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(deleteTaskCmd));
 
-        final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
+        Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
     }
 
@@ -106,20 +103,20 @@ public class CompleteTaskTest extends TaskCommandTest<CompleteTask> {
     @DisplayName("throw CannotCompleteTask rejection upon " +
             "an attempt to complete the task in draft state")
     void cannotCompleteDraft() {
-        final CreateDraft createDraftCmd = createDraftInstance(entityId());
+        CreateDraft createDraftCmd = createDraftInstance(entityId());
         dispatchCommand(aggregate, envelopeOf(createDraftCmd));
 
-        final Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
+        Throwable t = assertThrows(Throwable.class, this::dispatchCompleteTaskCmd);
         assertThat(Throwables.getRootCause(t), instanceOf(CannotCompleteTask.class));
     }
 
     private void dispatchCreateTaskCmd() {
-        final CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
+        CreateBasicTask createTaskCmd = createTaskInstance(entityId(), DESCRIPTION);
         dispatchCommand(aggregate, envelopeOf(createTaskCmd));
     }
 
     private List<? extends Message> dispatchCompleteTaskCmd() {
-        final CompleteTask completeTaskCmd = completeTaskInstance(entityId());
+        CompleteTask completeTaskCmd = completeTaskInstance(entityId());
         return dispatchCommand(aggregate, envelopeOf(completeTaskCmd));
     }
 }

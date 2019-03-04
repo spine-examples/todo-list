@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -79,6 +79,37 @@ class UpdateTaskDescriptionTest extends TodoClientTest {
             assertNotEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
             assertEquals(DESCRIPTION, actualDescription.getValue());
         }
+
+        private TaskItem obtainViewWhenHandledCommandUpdateTaskDescription(String newDescription,
+                                                                           boolean isCorrectId) {
+            CreateBasicTask createTask = createBasicTask();
+            client.postCommand(createTask);
+
+            UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createTask.getId());
+            client.postCommand(updateTaskPriority);
+
+            CreateBasicLabel createLabel = createBasicLabel();
+            client.postCommand(createLabel);
+            LabelId labelId = createLabel.getLabelId();
+            TaskId taskId = createTask.getId();
+
+            AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
+            client.postCommand(assignLabelToTask);
+
+            updateDescription(newDescription, isCorrectId, createTask);
+
+            List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
+            assertEquals(1, tasksViewList.get(0)
+                                         .getLabelledTasks()
+                                         .getItemsCount());
+            TaskItem view = tasksViewList.get(0)
+                                         .getLabelledTasks()
+                                         .getItems(0);
+            assertEquals(labelId, view.getLabelId());
+            assertEquals(taskId, view.getId());
+
+            return view;
+        }
     }
 
     @Nested
@@ -101,6 +132,36 @@ class UpdateTaskDescriptionTest extends TodoClientTest {
                     UPDATED_TASK_DESCRIPTION, true);
             assertEquals(UPDATED_TASK_DESCRIPTION, view.getDescription()
                                                        .getValue());
+        }
+
+        private TaskItem obtainViewWhenHandledUpdateTaskDescription(String newDescription,
+                                                                    boolean isCorrectId) {
+            CreateDraft createDraft = createDraft();
+            client.postCommand(createDraft);
+            TaskId createdTaskId = createDraft.getId();
+
+            TaskId updatedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
+            String previousDescription = client.getDraftTasksView()
+                                               .getDraftTasks()
+                                               .getItemsList()
+                                               .get(0)
+                                               .getDescription()
+                                               .getValue();
+            UpdateTaskDescription updateTaskDescription =
+                    updateTaskDescriptionInstance(updatedTaskId,
+                                                  previousDescription,
+                                                  newDescription);
+            client.postCommand(updateTaskDescription);
+
+            List<TaskItem> taskViews = client.getDraftTasksView()
+                                             .getDraftTasks()
+                                             .getItemsList();
+            assertEquals(1, taskViews.size());
+
+            TaskItem view = taskViews.get(0);
+            assertEquals(createdTaskId, view.getId());
+
+            return view;
         }
     }
 
@@ -127,83 +188,26 @@ class UpdateTaskDescriptionTest extends TodoClientTest {
             assertEquals(DESCRIPTION, actualDescription.getValue());
             assertNotEquals(UPDATED_TASK_DESCRIPTION, actualDescription);
         }
-    }
 
-    private TaskItem obtainTaskItemWhenHandledUpdateTaskDescriptionCommand(String newDescription,
-                                                                           boolean isCorrectId) {
-        CreateBasicTask createTask = createBasicTask();
-        client.postCommand(createTask);
+        private TaskItem
+        obtainTaskItemWhenHandledUpdateTaskDescriptionCommand(String newDescription,
+                                                              boolean isCorrectId) {
+            CreateBasicTask createTask = createBasicTask();
+            client.postCommand(createTask);
 
-        updateDescription(newDescription, isCorrectId, createTask);
+            updateDescription(newDescription, isCorrectId, createTask);
 
-        List<TaskItem> taskViews = client.getMyListView()
-                                         .getMyList()
-                                         .getItemsList();
-        assertEquals(1, taskViews.size());
+            List<TaskItem> taskViews = client.getMyListView()
+                                             .getMyList()
+                                             .getItemsList();
+            assertEquals(1, taskViews.size());
 
-        TaskItem view = taskViews.get(0);
-        assertEquals(createTask.getId(), view.getId());
+            TaskItem view = taskViews.get(0);
+            assertEquals(createTask.getId(), view.getId());
 
-        return view;
-    }
+            return view;
+        }
 
-    private TaskItem obtainViewWhenHandledCommandUpdateTaskDescription(String newDescription,
-                                                                       boolean isCorrectId) {
-        CreateBasicTask createTask = createBasicTask();
-        client.postCommand(createTask);
-
-        UpdateTaskPriority updateTaskPriority = setInitialTaskPriority(createTask.getId());
-        client.postCommand(updateTaskPriority);
-
-        CreateBasicLabel createLabel = createBasicLabel();
-        client.postCommand(createLabel);
-        LabelId labelId = createLabel.getLabelId();
-        TaskId taskId = createTask.getId();
-
-        AssignLabelToTask assignLabelToTask = assignLabelToTaskInstance(taskId, labelId);
-        client.postCommand(assignLabelToTask);
-
-        updateDescription(newDescription, isCorrectId, createTask);
-
-        List<LabelledTasksView> tasksViewList = client.getLabelledTasksView();
-        assertEquals(1, tasksViewList.get(0)
-                                     .getLabelledTasks()
-                                     .getItemsCount());
-        TaskItem view = tasksViewList.get(0)
-                                     .getLabelledTasks()
-                                     .getItems(0);
-        assertEquals(labelId, view.getLabelId());
-        assertEquals(taskId, view.getId());
-
-        return view;
-    }
-
-    private TaskItem obtainViewWhenHandledUpdateTaskDescription(String newDescription,
-                                                                boolean isCorrectId) {
-        CreateDraft createDraft = createDraft();
-        client.postCommand(createDraft);
-        TaskId createdTaskId = createDraft.getId();
-
-        TaskId updatedTaskId = isCorrectId ? createdTaskId : createWrongTaskId();
-        String previousDescription = client.getDraftTasksView()
-                                           .getDraftTasks()
-                                           .getItemsList()
-                                           .get(0)
-                                           .getDescription()
-                                           .getValue();
-        UpdateTaskDescription updateTaskDescription =
-                updateTaskDescriptionInstance(updatedTaskId, previousDescription, newDescription);
-        client.postCommand(updateTaskDescription);
-
-        List<TaskItem> taskViews = client.getDraftTasksView()
-                                         .getDraftTasks()
-                                         .getItemsList();
-        assertEquals(1, taskViews.size());
-
-        TaskItem view = taskViews.get(0);
-        assertEquals(createdTaskId, view.getId());
-
-        return view;
     }
 
     private void updateDescription(String newDescription, boolean isCorrectId,

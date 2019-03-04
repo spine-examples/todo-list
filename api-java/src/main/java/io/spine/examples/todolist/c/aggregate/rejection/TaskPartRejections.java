@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -81,8 +81,10 @@ public final class TaskPartRejections {
          * Constructs and throws the {@link CannotUpdateTaskDescription} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code UpdateTaskDescription} command which thrown the rejection
-         * @throws CannotUpdateTaskDescription the rejection to throw
+         * @param cmd
+         *         the {@code UpdateTaskDescription} command which thrown the rejection
+         * @throws CannotUpdateTaskDescription
+         *         the rejection to throw
          */
         public static void throwCannotUpdateTaskDescription(UpdateTaskDescription cmd)
                 throws CannotUpdateTaskDescription {
@@ -104,8 +106,10 @@ public final class TaskPartRejections {
          * Constructs and throws the {@link CannotUpdateTaskDueDate} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code UpdateTaskDueDate} command which thrown the rejection
-         * @throws CannotUpdateTaskDueDate the rejection to throw
+         * @param cmd
+         *         the {@code UpdateTaskDueDate} command which thrown the rejection
+         * @throws CannotUpdateTaskDueDate
+         *         the rejection to throw
          */
         public static void throwCannotUpdateTaskDueDate(UpdateTaskDueDate cmd)
                 throws CannotUpdateTaskDueDate {
@@ -127,12 +131,16 @@ public final class TaskPartRejections {
          * Constructs and throws the {@link CannotUpdateTaskDueDate} rejection
          * according to the passed parameters.
          *
-         * @param cmd      the {@code UpdateTaskDueDate} command which thrown the rejection
-         * @param mismatch the {@link ValueMismatch}
-         * @throws CannotUpdateTaskDueDate the rejection to throw
+         * @param cmd
+         *         the {@code UpdateTaskDueDate} command which thrown the rejection
+         * @param mismatch
+         *         the {@link ValueMismatch}
+         * @throws CannotUpdateTaskDueDate
+         *         the rejection to throw
          */
-        public static void throwCannotUpdateTaskDueDate(
-                UpdateTaskDueDate cmd, ValueMismatch mismatch) throws CannotUpdateTaskDueDate {
+        public static void throwCannotUpdateTaskDueDate(UpdateTaskDueDate cmd,
+                                                        ValueMismatch mismatch)
+                throws CannotUpdateTaskDueDate {
             checkNotNull(cmd);
             checkNotNull(mismatch);
 
@@ -153,12 +161,15 @@ public final class TaskPartRejections {
          * Constructs and throws the {@link CannotUpdateTaskDescription} rejection
          * according to the passed parameters.
          *
-         * @param cmd      the {@code UpdateTaskDescription} command which thrown the rejection
-         * @param mismatch the {@link ValueMismatch}
-         * @throws CannotUpdateTaskDescription the rejection to throw
+         * @param cmd
+         *         the {@code UpdateTaskDescription} command which thrown the rejection
+         * @param mismatch
+         *         the {@link ValueMismatch}
+         * @throws CannotUpdateTaskDescription
+         *         the rejection to throw
          */
-        public static void throwCannotUpdateDescription(
-                UpdateTaskDescription cmd, ValueMismatch mismatch)
+        public static void throwCannotUpdateDescription(UpdateTaskDescription cmd,
+                                                        ValueMismatch mismatch)
                 throws CannotUpdateTaskDescription {
             checkNotNull(cmd);
             checkNotNull(mismatch);
@@ -180,12 +191,16 @@ public final class TaskPartRejections {
          * Constructs and throws the {@link CannotUpdateTaskPriority} rejection
          * according to the passed parameters.
          *
-         * @param cmd      the {@code UpdateTaskPriority} command which thrown the rejection
-         * @param mismatch the {@link ValueMismatch}
-         * @throws CannotUpdateTaskPriority the rejection to throw
+         * @param cmd
+         *         the {@code UpdateTaskPriority} command which thrown the rejection
+         * @param mismatch
+         *         the {@link ValueMismatch}
+         * @throws CannotUpdateTaskPriority
+         *         the rejection to throw
          */
-        public static void throwCannotUpdateTaskPriority(
-                UpdateTaskPriority cmd, ValueMismatch mismatch) throws CannotUpdateTaskPriority {
+        public static void throwCannotUpdateTaskPriority(UpdateTaskPriority cmd,
+                                                         ValueMismatch mismatch)
+                throws CannotUpdateTaskPriority {
             checkNotNull(cmd);
             checkNotNull(mismatch);
 
@@ -206,8 +221,10 @@ public final class TaskPartRejections {
          * Constructs and throws the {@link CannotUpdateTaskPriority} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code UpdateTaskPriority} command which thrown the rejection
-         * @throws CannotUpdateTaskPriority the rejection to throw
+         * @param cmd
+         *         the {@code UpdateTaskPriority} command which thrown the rejection
+         * @throws CannotUpdateTaskPriority
+         *         the rejection to throw
          */
         public static void throwCannotUpdateTaskPriority(UpdateTaskPriority cmd)
                 throws CannotUpdateTaskPriority {
@@ -235,8 +252,10 @@ public final class TaskPartRejections {
          * Constructs and throws the {@link CannotCreateDraft} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code CreateDraft} command which thrown the rejection
-         * @throws CannotCreateDraft the rejection to throw
+         * @param cmd
+         *         the {@code CreateDraft} command which thrown the rejection
+         * @throws CannotCreateDraft
+         *         the rejection to throw
          */
         public static void throwCannotCreateDraft(CreateDraft cmd) throws CannotCreateDraft {
             RejectedTaskCommandDetails commandDetails = newRejectedTaskCommandDetails(cmd.getId());
@@ -252,6 +271,7 @@ public final class TaskPartRejections {
         }
     }
 
+    @SuppressWarnings("OverlyCoupledClass") // A lot of rejection types.
     public static final class ChangeStatusRejections {
 
         private ChangeStatusRejections() {
@@ -261,8 +281,10 @@ public final class TaskPartRejections {
          * Constructs and throws the {@link CannotReopenTask} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code ReopenTask} command which thrown the rejection
-         * @throws CannotReopenTask the rejection to throw
+         * @param cmd
+         *         the {@code ReopenTask} command which thrown the rejection
+         * @throws CannotReopenTask
+         *         the rejection to throw
          */
         public static void throwCannotReopenTask(ReopenTask cmd) throws CannotReopenTask {
             RejectedTaskCommandDetails commandDetails = newRejectedTaskCommandDetails(cmd.getId());
@@ -281,8 +303,10 @@ public final class TaskPartRejections {
          * Constructs and throws the {@link CannotFinalizeDraft} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code FinalizeDraft} command which thrown the rejection
-         * @throws CannotFinalizeDraft the rejection to throw
+         * @param cmd
+         *         the {@code FinalizeDraft} command which thrown the rejection
+         * @throws CannotFinalizeDraft
+         *         the rejection to throw
          */
         public static void throwCannotFinalizeDraft(FinalizeDraft cmd) throws CannotFinalizeDraft {
             RejectedTaskCommandDetails commandDetails = newRejectedTaskCommandDetails(cmd.getId());
@@ -301,8 +325,10 @@ public final class TaskPartRejections {
          * Constructs and throws the {@link CannotDeleteTask} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code DeleteTask} command which thrown the rejection
-         * @throws CannotDeleteTask the rejection to throw
+         * @param cmd
+         *         the {@code DeleteTask} command which thrown the rejection
+         * @throws CannotDeleteTask
+         *         the rejection to throw
          */
         public static void throwCannotDeleteTask(DeleteTask cmd) throws CannotDeleteTask {
             RejectedTaskCommandDetails commandDetails = newRejectedTaskCommandDetails(cmd.getId());
@@ -321,8 +347,10 @@ public final class TaskPartRejections {
          * Constructs and throws the {@link CannotCompleteTask} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code CompleteTask} command which thrown the rejection
-         * @throws CannotCompleteTask the rejection to throw
+         * @param cmd
+         *         the {@code CompleteTask} command which thrown the rejection
+         * @throws CannotCompleteTask
+         *         the rejection to throw
          */
         public static void throwCannotCompleteTask(CompleteTask cmd) throws CannotCompleteTask {
             RejectedTaskCommandDetails commandDetails = newRejectedTaskCommandDetails(cmd.getId());
@@ -341,8 +369,10 @@ public final class TaskPartRejections {
          * Constructs and throws the {@link CannotRestoreDeletedTask} rejection
          * according to the passed parameters.
          *
-         * @param cmd the {@code RestoreDeletedTask} command which thrown the rejection
-         * @throws CannotRestoreDeletedTask the {@code CannotRestoreDeletedTask} rejection
+         * @param cmd
+         *         the {@code RestoreDeletedTask} command which thrown the rejection
+         * @throws CannotRestoreDeletedTask
+         *         the {@code CannotRestoreDeletedTask} rejection
          */
         public static void throwCannotRestoreDeletedTask(RestoreDeletedTask cmd)
                 throws CannotRestoreDeletedTask {

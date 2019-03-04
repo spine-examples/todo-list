@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -29,11 +29,9 @@ import io.spine.server.firebase.FirebaseSubscriptionMirror;
 import io.spine.type.TypeUrl;
 
 import java.io.IOException;
-import java.util.Collection;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
 import static io.spine.examples.todolist.server.Server.newServer;
-import static io.spine.type.TypeUrl.of;
 
 /**
  * A local {@link Server} using
@@ -42,16 +40,14 @@ import static io.spine.type.TypeUrl.of;
  *
  * <p>The server exposes its {@code gRPC API} at
  * {@linkplain io.spine.client.ConnectionConstants#DEFAULT_CLIENT_SERVICE_PORT default port}.
- *
- * @author Dmytro Dashenkov
  */
 public class LocalFirebaseServer {
 
     /**
      * The types to reflect with the Firebase subscription mirror.
      */
-    private static final Collection<TypeUrl> MIRRORED_TYPES = ImmutableSet.of(
-            of(MyListView.class)
+    private static final ImmutableSet<TypeUrl> MIRRORED_TYPES = ImmutableSet.of(
+            TypeUrl.of(MyListView.class)
     );
 
     /**
@@ -60,9 +56,9 @@ public class LocalFirebaseServer {
     private LocalFirebaseServer() {}
 
     public static void main(String[] args) throws IOException {
-        final BoundedContext boundedContext = BoundedContexts.create();
+        BoundedContext boundedContext = BoundedContexts.create();
         startSubscriptionMirror(boundedContext);
-        final Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
+        Server server = newServer(DEFAULT_CLIENT_SERVICE_PORT, boundedContext);
         server.start();
     }
 
@@ -72,8 +68,8 @@ public class LocalFirebaseServer {
      * @param boundedContext the {@link BoundedContext} to take the entity updates from
      */
     private static void startSubscriptionMirror(BoundedContext boundedContext) {
-        final Firestore firestore = FirebaseClients.initializeFirestore();
-        final FirebaseSubscriptionMirror subscriptionMirror =
+        Firestore firestore = FirebaseClients.initializeFirestore();
+        FirebaseSubscriptionMirror subscriptionMirror =
                 FirebaseSubscriptionMirror.newBuilder()
                                           .addBoundedContext(boundedContext)
                                           .setFirestore(firestore)

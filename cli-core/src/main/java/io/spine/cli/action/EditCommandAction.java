@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -36,10 +36,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static io.spine.cli.ConstraintViolationFormatter.format;
 
 /**
- * An {@link Action}, that edits a {@linkplain CommandView#state state of the command view}.
+ * An {@link Action}, that edits a {@linkplain CommandView#getState() state of the command view}.
  *
- * @param <M> the type of the command message
- * @param <B> the validating builder type for the command message
+ * @param <M>
+ *         the type of the command message
+ * @param <B>
+ *         the validating builder type for the command message
  */
 public class EditCommandAction<M extends Message,
                                B extends ValidatingBuilder<M, ? extends Message.Builder>>
@@ -57,13 +59,13 @@ public class EditCommandAction<M extends Message,
     }
 
     /**
-     * Applies {@link #editOperations} to the {@linkplain CommandView#state source view state}
+     * Applies {@link #editOperations} to the {@linkplain CommandView#getState() source view state}
      * and then renders destination view.
      */
     @Override
     public void execute() {
-        final Screen screen = Application.getInstance()
-                                         .screen();
+        Screen screen = Application.getInstance()
+                                   .screen();
         for (EditOperation<M, B> edit : editOperations) {
             start(edit, screen);
         }
@@ -75,7 +77,7 @@ public class EditCommandAction<M extends Message,
         try {
             edit.start(screen, getSource().getState());
         } catch (ValidationException e) {
-            final List<String> errorMessages = format(e.getConstraintViolations());
+            List<String> errorMessages = format(e.getConstraintViolations());
             errorMessages.forEach(screen::println);
             start(edit, screen);
         }
@@ -84,28 +86,38 @@ public class EditCommandAction<M extends Message,
     /**
      * Creates a new instance of a {@code EditCommandActionProducer}.
      *
-     * @param name     the name for the action
-     * @param shortcut the shortcut for the action
-     * @param edits    the {@linkplain EditOperation edit operations} for the action
-     * @param <M>      the type of the command message
-     * @param <B>      the validating builder type for the command message
+     * @param name
+     *         the name for the action
+     * @param shortcut
+     *         the shortcut for the action
+     * @param edits
+     *         the {@linkplain EditOperation edit operations} for the action
+     * @param <M>
+     *         the type of the command message
+     * @param <B>
+     *         the validating builder type for the command message
      * @return the new producer
      */
     public static <M extends Message, B extends ValidatingBuilder<M, ? extends Message.Builder>>
-    EditCommandActionProducer<M, B> editCommandActionProducer(String name, Shortcut shortcut,
-                                                              Collection<EditOperation<M, B>> edits) {
+    EditCommandActionProducer<M, B> editCommandActionProducer(
+            String name, Shortcut shortcut,Collection<EditOperation<M, B>> edits) {
         return new EditCommandActionProducer<>(name, shortcut, edits);
     }
 
     /**
      * Producer of edit command actions.
      *
-     * @param <M> the type of the command message
-     * @param <B> the validating builder type for the command message
+     * @param <M>
+     *         the type of the command message
+     * @param <B>
+     *         the validating builder type for the command message
      */
-    public static class EditCommandActionProducer<M extends Message,
-                                                  B extends ValidatingBuilder<M, ? extends Message.Builder>>
-            extends AbstractActionProducer<CommandView<M, B>, CommandView<M, B>, EditCommandAction<M, B>> {
+    public static class EditCommandActionProducer<
+            M extends Message,
+            B extends ValidatingBuilder<M, ? extends Message.Builder>>
+            extends AbstractActionProducer<CommandView<M, B>,
+                                           CommandView<M, B>,
+                                           EditCommandAction<M, B>> {
 
         private final Collection<EditOperation<M, B>> edits;
 

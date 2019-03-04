@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -53,8 +53,8 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTas
 /**
  * A projection state of the created tasks marked with a certain label.
  *
- * <p> Contains the data about the task view.
- * <p> This view includes all tasks per label that are neither in a draft state nor deleted.
+ * <p>Contains the data about the task view.
+ * <p>This view includes all tasks per label that are neither in a draft state nor deleted.
  */
 @SuppressWarnings("OverlyCoupledClass")
 public class LabelledTasksViewProjection extends Projection<LabelId,
@@ -64,8 +64,10 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     /**
      * Creates a new instance.
      *
-     * @param id the ID for the new instance
-     * @throws IllegalArgumentException if the ID is not of one of the supported types
+     * @param id
+     *         the ID for the new instance
+     * @throws IllegalArgumentException
+     *         if the ID is not of one of the supported types
      */
     public LabelledTasksViewProjection(LabelId id) {
         super(id);
@@ -73,108 +75,103 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
 
     @Subscribe
     public void on(LabelAssignedToTask event, EventContext context) {
-        final LabelId labelId = event.getLabelId();
-        final TaskId taskId = event.getTaskId();
+        LabelId labelId = event.getLabelId();
+        TaskId taskId = event.getTaskId();
         addTaskItemAndUpdateLabelDetails(labelId, taskId, context);
     }
 
     @Subscribe
     public void on(LabelledTaskRestored event, EventContext context) {
-        final LabelId labelId = event.getLabelId();
-        final TaskId taskId = event.getTaskId();
+        LabelId labelId = event.getLabelId();
+        TaskId taskId = event.getTaskId();
         addTaskItemAndUpdateLabelDetails(labelId, taskId, context);
     }
 
     @Subscribe
     public void on(LabelRemovedFromTask event) {
-        final LabelId labelId = event.getLabelId();
-        final boolean isEquals = getBuilder().getId()
-                                             .equals(labelId);
+        LabelId labelId = event.getLabelId();
+        boolean isEquals = builder().getId()
+                                    .equals(labelId);
         if (isEquals) {
-            final List<TaskItem> views = new ArrayList<>(getBuilder().getLabelledTasks()
-                                                                     .getItemsList());
-            final TaskListView updatedView = removeViewsByLabelId(views, labelId);
+            List<TaskItem> views = new ArrayList<>(builder().getLabelledTasks()
+                                                            .getItemsList());
+            TaskListView updatedView = removeViewsByLabelId(views, labelId);
             setLabelledTasks(updatedView);
         }
     }
 
     @Subscribe
     public void on(TaskDeleted event) {
-        final List<TaskItem> views = new ArrayList<>(getBuilder().getLabelledTasks()
-                                                                 .getItemsList());
-        final TaskListView updatedView = removeViewsByTaskId(views, event.getTaskId());
+        List<TaskItem> views = new ArrayList<>(builder().getLabelledTasks()
+                                                        .getItemsList());
+        TaskListView updatedView = removeViewsByTaskId(views, event.getTaskId());
         setLabelledTasks(updatedView);
     }
 
     @Subscribe
     public void on(TaskDescriptionUpdated event) {
-        final List<TaskItem> views = getBuilder().getLabelledTasks()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setLabelledTasks(taskListView);
+        List<TaskItem> views = builder().getLabelledTasks()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
+        updateLabelledTasks(updatedList);
     }
 
     @Subscribe
     public void on(TaskPriorityUpdated event) {
-        final List<TaskItem> views = getBuilder().getLabelledTasks()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setLabelledTasks(taskListView);
+        List<TaskItem> views = builder().getLabelledTasks()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
+        updateLabelledTasks(updatedList);
     }
 
     @Subscribe
     public void on(TaskDueDateUpdated event) {
-        final List<TaskItem> views = getBuilder().getLabelledTasks()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setLabelledTasks(taskListView);
+        List<TaskItem> views = builder().getLabelledTasks()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
+        updateLabelledTasks(updatedList);
     }
 
     @Subscribe
     public void on(TaskCompleted event) {
-        final List<TaskItem> views = getBuilder().getLabelledTasks()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setLabelledTasks(taskListView);
+        List<TaskItem> views = builder().getLabelledTasks()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
+        updateLabelledTasks(updatedList);
     }
 
     @Subscribe
     public void on(TaskReopened event) {
-        final List<TaskItem> views = getBuilder().getLabelledTasks()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        setLabelledTasks(taskListView);
+        List<TaskItem> views = builder().getLabelledTasks()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
+        updateLabelledTasks(updatedList);
     }
 
     @Subscribe
     public void on(LabelDetailsUpdated event) {
-        final List<TaskItem> views = getBuilder().getLabelledTasks()
-                                                 .getItemsList();
-        final List<TaskItem> updatedList = updateTaskItemList(views, event);
-        final TaskListView taskListView = newTaskListView(updatedList);
-        final LabelDetails newDetails = event.getLabelDetailsChange()
-                                             .getNewDetails();
+        List<TaskItem> views = builder().getLabelledTasks()
+                                        .getItemsList();
+        List<TaskItem> updatedList = updateTaskItemList(views, event);
+        TaskListView taskListView = newTaskListView(updatedList);
+        LabelDetails newDetails = event.getLabelDetailsChange()
+                                       .getNewDetails();
 
-        getBuilder().setId(getId())
-                    .setLabelColor(valueOf(newDetails.getColor()))
-                    .setLabelTitle(newDetails.getTitle())
-                    .setLabelledTasks(taskListView);
+        builder().setId(id())
+                 .setLabelColor(valueOf(newDetails.getColor()))
+                 .setLabelTitle(newDetails.getTitle())
+                 .setLabelledTasks(taskListView);
     }
 
     private void addTaskItemAndUpdateLabelDetails(LabelId labelId, TaskId taskId,
                                                   EventContext context) {
-        final DetailsEnrichment enrichment = getEnrichment(DetailsEnrichment.class, context);
-        final TaskDetails taskDetails = enrichment.getTaskDetails();
+        DetailsEnrichment enrichment = getEnrichment(DetailsEnrichment.class, context);
+        TaskDetails taskDetails = enrichment.getTaskDetails();
 
-        final TaskItem taskView = viewFor(taskDetails, labelId, taskId);
-        final LabelDetails labelDetails = enrichment.getLabelDetails();
+        TaskItem taskView = viewFor(taskDetails, labelId, taskId);
+        LabelDetails labelDetails = enrichment.getLabelDetails();
 
-        getBuilder().setId(labelId);
+        builder().setId(labelId);
         addTaskItem(taskView);
         updateLabelDetails(labelDetails);
     }
@@ -189,24 +186,28 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     private void addTaskItem(TaskItem taskView) {
-        final List<TaskItem> views = new ArrayList<>(getBuilder().getLabelledTasks()
-                                                                 .getItemsList());
+        List<TaskItem> views = new ArrayList<>(builder().getLabelledTasks()
+                                                        .getItemsList());
         views.add(taskView);
-        final TaskListView taskListView = newTaskListView(views);
-        setLabelledTasks(taskListView);
+        updateLabelledTasks(views);
     }
 
     private void updateLabelDetails(LabelDetails newDetails) {
-        getBuilder().setLabelTitle(newDetails.getTitle());
+        builder().setLabelTitle(newDetails.getTitle());
 
         if (newDetails.getColor() != LabelColor.LC_UNDEFINED) {
-            final String hexColor = valueOf(newDetails.getColor());
-            getBuilder().setLabelColor(hexColor);
+            String hexColor = valueOf(newDetails.getColor());
+            builder().setLabelColor(hexColor);
         }
     }
 
+    private void updateLabelledTasks(List<TaskItem> updatedList) {
+        TaskListView taskListView = newTaskListView(updatedList);
+        setLabelledTasks(taskListView);
+    }
+
     private void setLabelledTasks(TaskListView updatedView) {
-        getBuilder().setId(getId())
-                    .setLabelledTasks(updatedView);
+        builder().setId(id())
+                 .setLabelledTasks(updatedView);
     }
 }

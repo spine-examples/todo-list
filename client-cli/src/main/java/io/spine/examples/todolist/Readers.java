@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -26,25 +26,25 @@ import org.jline.terminal.Terminal;
 
 /**
  * Utilities for creating {@linkplain LineReader line readers}.
- *
- * @author Dmytro Grankin
  */
-class Readers {
+final class Readers {
 
+    /** Prevents instantiation of this utility class. */
     private Readers() {
-        // Prevent instantiation of this utility class.
     }
 
     /**
      * Creates a {@link LineReader} with the specified {@link Terminal}.
      *
-     * @param terminal the terminal to use in the line reader
+     * @param terminal
+     *         the terminal to use in the line reader
      * @return new line reader
      */
     static LineReader newLineReader(Terminal terminal) {
-        final LineReader reader = LineReaderBuilder.builder()
-                                                   .terminal(terminal)
-                                                   .build();
+        LineReader reader = LineReaderBuilder
+                .builder()
+                .terminal(terminal)
+                .build();
         return reader;
     }
 }

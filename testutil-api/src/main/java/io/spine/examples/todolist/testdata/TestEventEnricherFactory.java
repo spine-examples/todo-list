@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -31,46 +31,54 @@ import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskPriority;
-import io.spine.server.event.Enricher;
+import io.spine.server.enrich.Enricher;
 
 import java.util.function.BiFunction;
 
 /**
  * Provides event enricher for the test needs.
- *
- * @author Illia Shepilov
  */
-public class TestEventEnricherFactory {
+public final class TestEventEnricherFactory {
 
     public static final String LABEL_TITLE = "a label title";
+
     private static final TaskDescription DESCRIPTION =
             TaskDescription.newBuilder()
                            .setValue(TestTaskEventFactory.DESCRIPTION)
                            .build();
+
     private static final Timestamp TASK_DUE_DATE = TestTaskEventFactory.TASK_DUE_DATE;
+
     private static final TaskPriority TASK_PRIORITY = TestTaskEventFactory.TASK_PRIORITY;
-    private static final TaskDetails TASK_DETAILS = TaskDetails.newBuilder()
-                                                               .setDescription(DESCRIPTION)
-                                                               .setPriority(TaskPriority.LOW)
-                                                               .build();
-    private static final Task TASK = Task.newBuilder()
-                                         .setDescription(DESCRIPTION)
-                                         .setDueDate(TASK_DUE_DATE)
-                                         .setPriority(TASK_PRIORITY)
-                                         .build();
-    private static final LabelDetails LABEL_DETAILS = LabelDetails.newBuilder()
-                                                                  .setColor(LabelColor.BLUE)
-                                                                  .setTitle(LABEL_TITLE)
-                                                                  .build();
+
+    private static final TaskDetails TASK_DETAILS = TaskDetails
+            .newBuilder()
+            .setDescription(DESCRIPTION)
+            .setPriority(TaskPriority.LOW)
+            .build();
+
+    private static final Task TASK = Task
+            .newBuilder()
+            .setDescription(DESCRIPTION)
+            .setDueDate(TASK_DUE_DATE)
+            .setPriority(TASK_PRIORITY)
+            .build();
+
+    private static final LabelDetails LABEL_DETAILS = LabelDetails
+            .newBuilder()
+            .setColor(LabelColor.BLUE)
+            .setTitle(LABEL_TITLE)
+            .build();
 
     private static final BiFunction<LabelId, EventContext, LabelDetails> LABEL_ID_TO_LABEL_DETAILS =
             (labelId, eventContext) -> LABEL_DETAILS;
 
     private static final BiFunction<TaskId, EventContext, LabelIdsList> TASK_ID_TO_LABEL_IDS_LIST =
             (taskId, eventContext) -> {
-                final LabelIdsList result = LabelIdsList.newBuilder()
-                                                        .addIds(TestTaskEventFactory.LABEL_ID)
-                                                        .build();
+                LabelIdsList result = LabelIdsList
+                        .newBuilder()
+                        .addIds(TestTaskEventFactory.LABEL_ID)
+                        .build();
                 return result;
             };
 
@@ -89,20 +97,21 @@ public class TestEventEnricherFactory {
      * @return {@code EventEnricher}
      */
     public static Enricher eventEnricherInstance() {
-        final Enricher result = Enricher.newBuilder()
-                                        .add(LabelId.class,
-                                             LabelDetails.class,
-                                             LABEL_ID_TO_LABEL_DETAILS)
-                                        .add(TaskId.class,
-                                             TaskDetails.class,
-                                             TASK_ID_TO_TASK_DETAILS)
-                                        .add(TaskId.class,
-                                             LabelIdsList.class,
-                                             TASK_ID_TO_LABEL_IDS_LIST)
-                                        .add(TaskId.class,
-                                             Task.class,
-                                             TASK_ID_TO_TASK)
-                                        .build();
+        Enricher result = Enricher
+                .newBuilder()
+                .add(LabelId.class,
+                     LabelDetails.class,
+                     LABEL_ID_TO_LABEL_DETAILS)
+                .add(TaskId.class,
+                     TaskDetails.class,
+                     TASK_ID_TO_TASK_DETAILS)
+                .add(TaskId.class,
+                     LabelIdsList.class,
+                     TASK_ID_TO_LABEL_IDS_LIST)
+                .add(TaskId.class,
+                     Task.class,
+                     TASK_ID_TO_TASK)
+                .build();
         return result;
     }
 }

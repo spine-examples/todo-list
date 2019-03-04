@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -31,22 +31,20 @@ import static com.google.protobuf.util.Timestamps.toMillis;
 
 /**
  * Formats a date into a user-friendly representation.
- *
- * @author Illia Shepilov
  */
-class DateFormatter {
+final class DateFormatter {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd";
 
     @VisibleForTesting
     static final String DEFAULT_TIMESTAMP_VALUE = "default";
 
+    /** Prevents instantiation of this utility class. */
     private DateFormatter() {
-        // Prevent instantiation of this utility class.
     }
 
     static String format(Timestamp timestamp) {
-        final long millis = toMillis(timestamp);
+        long millis = toMillis(timestamp);
         return millis == 0
                ? DEFAULT_TIMESTAMP_VALUE
                : getDateFormat().format(new Date(millis));
@@ -54,7 +52,7 @@ class DateFormatter {
 
     @VisibleForTesting
     static SimpleDateFormat getDateFormat() {
-        final SimpleDateFormat result = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
+        SimpleDateFormat result = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
         return result;
     }
 }

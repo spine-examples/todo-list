@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -28,8 +28,10 @@ import io.spine.validate.ValidatingBuilder;
 /**
  * A {@code CommandAction} posts a command obtained from a {@link CommandView} to a server.
  *
- * @param <M> the type of the command message
- * @param <B> the validating builder type for the command message
+ * @param <M>
+ *         the type of the command message
+ * @param <B>
+ *         the validating builder type for the command message
  */
 public abstract class CommandAction<M extends Message,
                                     B extends ValidatingBuilder<M, ? extends Message.Builder>>
@@ -50,8 +52,8 @@ public abstract class CommandAction<M extends Message,
      */
     @Override
     public void execute() {
-        final B sourceState = getSource().getState();
-        final M commandMessage = sourceState.build();
+        B sourceState = getSource().getState();
+        M commandMessage = sourceState.build();
         post(commandMessage);
 
         sourceState.clear();
@@ -63,20 +65,25 @@ public abstract class CommandAction<M extends Message,
     /**
      * Posts the specified command message to a server.
      *
-     * @param commandMessage the command message to post
+     * @param commandMessage
+     *         the command message to post
      */
     protected abstract void post(M commandMessage);
 
     /**
      * Producer of command actions.
      *
-     * @param <M> the type of the command message
-     * @param <B> the validating builder type for the command message
-     * @param <T> {@inheritDoc}
+     * @param <M>
+     *         the type of the command message
+     * @param <B>
+     *         the validating builder type for the command message
+     * @param <T>
+     *         the type of the action to be created
      */
-    public abstract static class CommandActionProducer<M extends Message,
-                                                       B extends ValidatingBuilder<M, ? extends Message.Builder>,
-                                                       T extends CommandAction<M, B>>
+    public abstract static class CommandActionProducer<
+            M extends Message,
+            B extends ValidatingBuilder<M, ? extends Message.Builder>,
+            T extends CommandAction<M, B>>
             extends AbstractActionProducer<CommandView<M, B>, CommandView<M, B>, T> {
 
         protected CommandActionProducer() {

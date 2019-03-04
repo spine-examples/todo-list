@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -36,7 +36,7 @@ import io.spine.examples.todolist.c.aggregate.TaskPart;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
-import io.spine.server.event.Enricher;
+import io.spine.server.enrich.Enricher;
 import io.spine.server.event.EventBus;
 
 import java.util.Optional;
@@ -47,7 +47,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Serves as class which adds enrichment fields to the {@link EventBus}.
  */
-public class TodoListEnrichments {
+public final class TodoListEnrichments {
 
     private final TaskRepository taskRepo;
     private final TaskLabelsRepository taskLabelsRepo;
@@ -60,7 +60,7 @@ public class TodoListEnrichments {
     }
 
     Enricher createEnricher() {
-        final Enricher enricher = Enricher
+        Enricher enricher = Enricher
                 .newBuilder()
                 .add(LabelId.class, LabelDetails.class, labelIdToLabelDetails())
                 .add(TaskId.class, TaskDetails.class, taskIdToTaskDetails())
@@ -71,31 +71,33 @@ public class TodoListEnrichments {
     }
 
     private BiFunction<TaskId, EventContext, Task> taskIdToTask() {
-        final BiFunction<TaskId, EventContext, Task> result = (taskId, eventContext) -> {
+        BiFunction<TaskId, EventContext, Task> result = (taskId, eventContext) -> {
             if (taskId == null) {
                 return Task.getDefaultInstance();
             }
-            final Optional<TaskPart> aggregate = taskRepo.find(taskId);
+            Optional<TaskPart> aggregate = taskRepo.find(taskId);
             if (!aggregate.isPresent()) {
                 return Task.getDefaultInstance();
             }
-            final Task task = aggregate.get().getState();
+            Task task = aggregate.get()
+                                 .state();
             return task;
         };
         return result;
     }
 
     private BiFunction<TaskId, EventContext, TaskDetails> taskIdToTaskDetails() {
-        final BiFunction<TaskId, EventContext, TaskDetails> result = (taskId, eventContext) -> {
+        BiFunction<TaskId, EventContext, TaskDetails> result = (taskId, eventContext) -> {
             if (taskId == null) {
                 return TaskDetails.getDefaultInstance();
             }
-            final Optional<TaskPart> aggregate = taskRepo.find(taskId);
+            Optional<TaskPart> aggregate = taskRepo.find(taskId);
             if (!aggregate.isPresent()) {
                 return TaskDetails.getDefaultInstance();
             }
-            final Task state = aggregate.get().getState();
-            final TaskDetails details = TaskDetailsVBuilder
+            Task state = aggregate.get()
+                                  .state();
+            TaskDetails details = TaskDetailsVBuilder
                     .newBuilder()
                     .setDescription(state.getDescription())
                     .setPriority(state.getPriority())
@@ -107,33 +109,34 @@ public class TodoListEnrichments {
     }
 
     private BiFunction<TaskId, EventContext, LabelIdsList> taskIdToLabelList() {
-        final BiFunction<TaskId, EventContext, LabelIdsList> result = (taskId, eventContext) -> {
+        BiFunction<TaskId, EventContext, LabelIdsList> result = (taskId, eventContext) -> {
             if (taskId == null) {
                 return LabelIdsList.getDefaultInstance();
             }
-            final Optional<TaskLabelsPart> aggregate = taskLabelsRepo.find(taskId);
+            Optional<TaskLabelsPart> aggregate = taskLabelsRepo.find(taskId);
             if (!aggregate.isPresent()) {
                 return LabelIdsList.getDefaultInstance();
             }
-            final LabelIdsList state = aggregate.get()
-                                                .getState()
-                                                .getLabelIdsList();
+            LabelIdsList state = aggregate.get()
+                                          .state()
+                                          .getLabelIdsList();
             return state;
         };
         return result;
     }
 
     private BiFunction<LabelId, EventContext, LabelDetails> labelIdToLabelDetails() {
-        final BiFunction<LabelId, EventContext, LabelDetails> result = (labelId, eventContext) -> {
+        BiFunction<LabelId, EventContext, LabelDetails> result = (labelId, eventContext) -> {
             if (labelId == null) {
                 return LabelDetails.getDefaultInstance();
             }
-            final Optional<LabelAggregate> aggregate = labelRepository.find(labelId);
+            Optional<LabelAggregate> aggregate = labelRepository.find(labelId);
             if (!aggregate.isPresent()) {
                 return LabelDetails.getDefaultInstance();
             }
-            final TaskLabel state = aggregate.get().getState();
-            final LabelDetails labelDetails = LabelDetailsVBuilder
+            TaskLabel state = aggregate.get()
+                                       .state();
+            LabelDetails labelDetails = LabelDetailsVBuilder
                     .newBuilder()
                     .setColor(state.getColor())
                     .setTitle(state.getTitle())
@@ -153,7 +156,7 @@ public class TodoListEnrichments {
     }
 
     /**
-     * A builder for {@code EventEnricherSupplier} instances.
+     * A builder for {@code TodoListEnrichments} instances.
      */
     public static class Builder {
 

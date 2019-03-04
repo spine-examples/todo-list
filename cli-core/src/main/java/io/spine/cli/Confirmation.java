@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -24,6 +24,8 @@ import com.google.common.annotations.VisibleForTesting;
 
 import java.util.Optional;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static io.spine.util.Preconditions2.checkNotEmptyOrBlank;
 import static java.lang.String.format;
 
 /**
@@ -31,7 +33,7 @@ import static java.lang.String.format;
  *
  * <p>Valid confirmation values are `y` and `n`.
  */
-public class Confirmation {
+public final class Confirmation {
 
     @VisibleForTesting
     static final String POSITIVE_ANSWER = "y";
@@ -46,19 +48,23 @@ public class Confirmation {
     private static final String MINOR_HINT = format(MINOR_HINT_FORMAT,
                                                     POSITIVE_ANSWER, NEGATIVE_ANSWER);
 
+    /** Prevents instantiation of this utility class. */
     private Confirmation() {
-        // Prevent instantiation of this utility class.
     }
 
     /**
      * Obtains a confirmation value for the specified question.
      *
-     * @param screen   the screen to use
-     * @param question the question to ask
+     * @param screen
+     *         the screen to use
+     * @param question
+     *         the question to ask
      * @return {@code true} if the positive answer was given, {@code false} otherwise
      */
     public static boolean ask(Screen screen, String question) {
-        final String questionWithHint = question + ' ' + MINOR_HINT;
+        checkNotNull(screen);
+        checkNotEmptyOrBlank(question);
+        String questionWithHint = question + ' ' + MINOR_HINT;
         Optional<String> answer = getValidAnswer(screen, questionWithHint);
 
         while (!answer.isPresent()) {
@@ -72,13 +78,15 @@ public class Confirmation {
     /**
      * Obtains valid value of the answer for the specified question.
      *
-     * @param screen   the screen to use
-     * @param question the question to ask
+     * @param screen
+     *         the screen to use
+     * @param question
+     *         the question to ask
      * @return a valid answer value
      *         or {@code Optional.empty()} if the answer is not valid
      */
     private static Optional<String> getValidAnswer(Screen screen, String question) {
-        final String answer = screen.promptUser(question);
+        String answer = screen.promptUser(question);
         boolean isValidAnswer = NEGATIVE_ANSWER.equals(answer) || POSITIVE_ANSWER.equals(answer);
         return isValidAnswer
                ? Optional.of(answer)

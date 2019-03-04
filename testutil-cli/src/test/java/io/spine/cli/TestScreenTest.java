@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -29,9 +29,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("TestScreen should")
 class TestScreenTest {
 
@@ -55,7 +52,7 @@ class TestScreenTest {
     @DisplayName("print a message and new line")
     void printMessage() {
         screen.println(MESSAGE);
-        final String expectedMessage = MESSAGE + lineSeparator();
+        String expectedMessage = MESSAGE + lineSeparator();
         assertEquals(expectedMessage, screen.getOutput());
     }
 
@@ -78,10 +75,10 @@ class TestScreenTest {
     @Test
     @DisplayName("print a prompt and remove the answer")
     void printPromptAndRemoveAnswer() {
-        final String prompt = "prompt";
+        String prompt = "prompt";
         screen.addAnswer(MESSAGE);
 
-        final String answer = screen.promptUser(prompt);
+        String answer = screen.promptUser(prompt);
 
         assertEquals(answer, MESSAGE);
         assertFalse(screen.hasAnswers());

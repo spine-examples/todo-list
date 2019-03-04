@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,6 +20,7 @@
 
 package io.spine.test;
 
+import com.google.common.collect.ImmutableList;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
@@ -39,10 +40,13 @@ import org.slf4j.Logger;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static io.spine.client.ConnectionConstants.DEFAULT_CLIENT_SERVICE_PORT;
@@ -52,8 +56,8 @@ import static io.spine.examples.todolist.testdata.Given.newDescription;
 import static io.spine.examples.todolist.testdata.TestLabelCommandFactory.LABEL_TITLE;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.DESCRIPTION;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
+import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.lang.String.format;
-import static java.util.Arrays.stream;
 import static java.util.Objects.nonNull;
 import static junit.framework.TestCase.fail;
 import static org.slf4j.LoggerFactory.getLogger;
@@ -65,10 +69,9 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  * <p>Use {@link #asyncPerformanceTest(ToDoCommand, Integer) asyncPerformanceTest method} to execute
  * operation in multithreaded environment.
- *
- * @author Dmitry Ganzha
  */
 public abstract class AbstractIntegrationTest {
+
     private static final String STORAGE_TYPE_PROPERTY_KEY = "storage.type";
     private static final String STORAGE_TYPE_IN_MEMORY = "in-memory";
     private static final String STORAGE_TYPE_JDBC = "jdbc";
@@ -104,9 +107,9 @@ public abstract class AbstractIntegrationTest {
     }
 
     private static Properties getProperties(String propertiesFile) {
-        final Properties properties = new Properties();
-        final InputStream stream = AbstractIntegrationTest.class.getClassLoader()
-                                                                .getResourceAsStream(propertiesFile);
+        Properties properties = new Properties();
+        InputStream stream = AbstractIntegrationTest.class.getClassLoader()
+                                                          .getResourceAsStream(propertiesFile);
         try {
             properties.load(stream);
         } catch (IOException e) {
@@ -115,25 +118,25 @@ public abstract class AbstractIntegrationTest {
         return properties;
     }
 
-    private StorageFactory createStorageFactory() {
+    private static StorageFactory createStorageFactory() {
         return JdbcStorageFactory.newBuilder()
                                  .setDataSource(createDataSource())
                                  .setMultitenant(false)
                                  .build();
     }
 
-    private DataSource createDataSource() {
-        final HikariConfig config = new HikariConfig();
+    private static DataSource createDataSource() {
+        HikariConfig config = new HikariConfig();
 
-        final String prefix = DB_CONFIG_PROPERTIES.getProperty("db.prefix");
-        final String dbName = DB_CONFIG_PROPERTIES.getProperty("db.name");
-        final String username = DB_CONFIG_PROPERTIES.getProperty("db.username");
-        final String password = DB_CONFIG_PROPERTIES.getProperty("db.password");
-        final String host = DB_CONFIG_PROPERTIES.getProperty("db.host");
-        final String port = DB_CONFIG_PROPERTIES.getProperty("db.port");
+        String prefix = DB_CONFIG_PROPERTIES.getProperty("db.prefix");
+        String dbName = DB_CONFIG_PROPERTIES.getProperty("db.name");
+        String username = DB_CONFIG_PROPERTIES.getProperty("db.username");
+        String password = DB_CONFIG_PROPERTIES.getProperty("db.password");
+        String host = DB_CONFIG_PROPERTIES.getProperty("db.host");
+        String port = DB_CONFIG_PROPERTIES.getProperty("db.port");
 
         LOGGER.info("Start `DataSource` creation. The following parameters will be used:");
-        final String dbUrl = format(DB_URL_FORMAT, prefix, host, port, dbName);
+        String dbUrl = format(DB_URL_FORMAT, prefix, host, port, dbName);
         config.setJdbcUrl(dbUrl);
         LOGGER.info("JDBC URL: {}", dbUrl);
 
@@ -143,13 +146,13 @@ public abstract class AbstractIntegrationTest {
         config.setPassword(password);
         LOGGER.info("Password: {}", password);
 
-        final DataSource dataSource = new HikariDataSource(config);
+        DataSource dataSource = new HikariDataSource(config);
         return dataSource;
     }
 
     @BeforeEach
     protected void setUp() throws InterruptedException {
-        final BoundedContext boundedContextInMemory = createBoundedContext();
+        BoundedContext boundedContextInMemory = createBoundedContext();
         server = newServer(PORT, boundedContextInMemory);
         startServer();
         client = TodoClient.instance(HOST, PORT);
@@ -162,12 +165,12 @@ public abstract class AbstractIntegrationTest {
     protected void tearDown() {
         server.shutdown();
         getClient().shutdown();
-        stream(getClients()).forEach(TodoClient::shutdown);
+        getClients().forEach(TodoClient::shutdown);
     }
 
     private void startServer() throws InterruptedException {
-        final CountDownLatch serverStartLatch = new CountDownLatch(1);
-        final Thread serverThread = new Thread(() -> {
+        CountDownLatch serverStartLatch = new CountDownLatch(1);
+        Thread serverThread = new Thread(() -> {
             try {
                 server.start();
                 serverStartLatch.countDown();
@@ -180,8 +183,9 @@ public abstract class AbstractIntegrationTest {
         serverStartLatch.await(100, TimeUnit.MILLISECONDS);
     }
 
-    private BoundedContext createBoundedContext() {
-        final String storageType = System.getProperty(STORAGE_TYPE_PROPERTY_KEY);
+    @SuppressWarnings("AccessOfSystemProperties") // OK for this test.
+    private static BoundedContext createBoundedContext() {
+        String storageType = System.getProperty(STORAGE_TYPE_PROPERTY_KEY);
         BoundedContext boundedContext = null;
         if (!nonNull(storageType) || storageType.equals(STORAGE_TYPE_IN_MEMORY)) {
             boundedContext = BoundedContexts.create();
@@ -198,31 +202,39 @@ public abstract class AbstractIntegrationTest {
         return client;
     }
 
-    protected TodoClient[] getClients() {
-        return clients;
+    protected ImmutableList<TodoClient> getClients() {
+        return ImmutableList.copyOf(clients);
     }
 
-    protected void asyncPerformanceTest(ToDoCommand command, Integer numberOfRequests)
-            throws InterruptedException {
-        final ExecutorService pool = Executors.newFixedThreadPool(Runtime.getRuntime()
-                                                                         .availableProcessors() *
-                                                                          2);
-        final CountDownLatch latch = new CountDownLatch(numberOfRequests);
+    protected void asyncPerformanceTest(ToDoCommand command, Integer numberOfRequests) {
+        int availableProcessors = Runtime.getRuntime()
+                                         .availableProcessors();
+        ExecutorService pool = Executors.newFixedThreadPool(availableProcessors * 2);
+        Collection<Future<?>> tasks = new ArrayList<>();
         for (int i = 0; i < numberOfRequests; i++) {
-            final int iterationIndex = i;
-            pool.submit(() -> {
-                command.execute(iterationIndex);
-                latch.countDown();
-            });
+            int iterationIndex = i;
+            Future<?> task = pool.submit(() -> command.execute(iterationIndex));
+            tasks.add(task);
         }
         try {
-            latch.await();
+            tasks.forEach(AbstractIntegrationTest::waitForCompletion);
         } finally {
             pool.shutdownNow();
         }
     }
 
     protected interface ToDoCommand {
+
         void execute(int iterationIndex);
     }
+
+    private static void waitForCompletion(Future<?> task) {
+        try {
+            task.get();
+        } catch (Throwable e) {
+            throw newIllegalStateException(e, "Test task did not complete normally, reason: %s",
+                                           e.getLocalizedMessage());
+        }
+    }
+
 }

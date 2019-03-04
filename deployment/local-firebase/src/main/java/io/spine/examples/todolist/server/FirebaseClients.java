@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -25,8 +25,8 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
+import io.spine.logging.Logging;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,8 +35,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A utility for working with the Firebase client API.
- *
- * @author Dmytro Dashenkov
  */
 final class FirebaseClients {
 
@@ -57,34 +55,25 @@ final class FirebaseClients {
      * @return the initialized instance of {@link Firestore}
      */
     public static Firestore initializeFirestore() {
-        final InputStream firebaseSecret = FirebaseClients.class
+        Logger log = Logging.get(FirebaseClients.class);
+        InputStream firebaseSecret = FirebaseClients.class
                 .getClassLoader()
                 .getResourceAsStream(FIREBASE_SERVICE_ACC_SECRET);
         checkNotNull(firebaseSecret,
                      "Required credentials file '%s' does not exist.", FIREBASE_SERVICE_ACC_SECRET);
-        final GoogleCredentials credentials;
+        GoogleCredentials credentials;
         try {
             credentials = GoogleCredentials.fromStream(firebaseSecret);
         } catch (IOException e) {
-            log().error("Error while reading Firebase config file.", e);
+            log.error("Error while reading Firebase config file.", e);
             throw new IllegalStateException(e);
         }
-        final FirebaseOptions options = new FirebaseOptions.Builder()
+        FirebaseOptions options = new FirebaseOptions.Builder()
                 .setDatabaseUrl(DATABASE_URL)
                 .setCredentials(credentials)
                 .build();
         FirebaseApp.initializeApp(options);
-        final Firestore firestore = FirestoreClient.getFirestore();
+        Firestore firestore = FirestoreClient.getFirestore();
         return firestore;
-    }
-
-    private static Logger log() {
-        return LogSingleton.INSTANCE.value;
-    }
-
-    private enum LogSingleton {
-        INSTANCE;
-        @SuppressWarnings("NonSerializableFieldInSerializableClass")
-        private final Logger value = LoggerFactory.getLogger(FirebaseClients.class);
     }
 }

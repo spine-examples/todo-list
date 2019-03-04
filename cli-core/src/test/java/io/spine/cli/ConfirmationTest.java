@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,6 +20,7 @@
 
 package io.spine.cli;
 
+import io.spine.testing.UtilityClassTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,11 +33,15 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Confirmation should")
-class ConfirmationTest {
+class ConfirmationTest extends UtilityClassTest<Confirmation> {
 
     private static final String QUESTION = "?";
 
     private Bot bot;
+
+    ConfirmationTest() {
+        super(Confirmation.class);
+    }
 
     @BeforeEach
     void setUp() {
@@ -53,7 +58,7 @@ class ConfirmationTest {
     @DisplayName("return true for a positive answer")
     void returnTrueForPositiveAnswer() {
         bot.addAnswer(POSITIVE_ANSWER);
-        final boolean result = ask(bot.screen(), QUESTION);
+        boolean result = ask(bot.screen(), QUESTION);
         assertTrue(result);
     }
 
@@ -61,14 +66,16 @@ class ConfirmationTest {
     @DisplayName("return false for a negative answer")
     void returnFalseForNegativeAnswer() {
         bot.addAnswer(NEGATIVE_ANSWER);
-        final boolean result = ask(bot.screen(), QUESTION);
+        boolean result = ask(bot.screen(), QUESTION);
         assertFalse(result);
     }
 
+    @SuppressWarnings({"CheckReturnValue", "ResultOfMethodCallIgnored"})
+    // Just verify inner state of the bot.
     @Test
     @DisplayName("ask a user again while question is not valid")
     void askAgainWhileAnswerIsNotValid() {
-        final String invalidAnswer = "";
+        String invalidAnswer = "";
         bot.addAnswer(invalidAnswer);
         bot.addAnswer(POSITIVE_ANSWER);
 

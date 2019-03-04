@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -23,7 +23,7 @@ package io.spine.examples.todolist.client.builder;
 /**
  * Utility class for working with command builders.
  *
- * <p> Provides methods for building commands.
+ * <p>Provides methods for building commands.
  */
 public final class CommandBuilder {
 

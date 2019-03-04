@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -19,7 +19,7 @@
  */
 
 
-final def SPINE_VERSION = '1.0.0-pre1'
+final def SPINE_VERSION = '1.0.0-pre6'
 
 project.ext {
     // To-do List app version
@@ -27,17 +27,20 @@ project.ext {
 
     // Spine dependencies' versions
     spineVersion = SPINE_VERSION
-    spineJdbcStorageVersion = '1.0.0-pre1'
-    spineBaseVersion = '1.0.0-pre1'
-    spineWebVersion = '1.0.0-SNAPSHOT'
+
+    spineJdbcStorageVersion = SPINE_VERSION
+    spineBaseVersion = SPINE_VERSION
+    spineWebVersion = SPINE_VERSION
 
     // Main scope third party dependencies' versions
     servletApiVersion = '4.0.0'
     cloudSqlSocketFactoryVersion = '1.0.4'
-    shadowJarVersion = '2.0.1'
+    shadowJarVersion = '4.0.4'
     mysqlDriverVersion = '6.0.6'
     gsonVersion = '2.7'
     nettyBoringsslVersion = '2.0.6.Final'
+    grettyVersion = '2.3.1'
+    hikariCpVersion = '2.4.3'
 
     // Test scope third party dependencies' versions
     jUnitPlatformVersion = '1.0.0'

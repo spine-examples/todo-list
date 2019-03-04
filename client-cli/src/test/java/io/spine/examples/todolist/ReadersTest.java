@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist;
 
+import io.spine.testing.UtilityClassTest;
 import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
 import org.junit.jupiter.api.DisplayName;
@@ -27,26 +28,20 @@ import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.Readers.newLineReader;
 import static io.spine.examples.todolist.Terminals.newTerminal;
-import static io.spine.testing.Tests.assertHasPrivateParameterlessCtor;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-/**
- * @author Dmytro Grankin
- */
 @DisplayName("Readers should")
-class ReadersTest {
+class ReadersTest extends UtilityClassTest<Readers> {
 
-    @Test
-    @DisplayName("have the private constructor")
-    void havePrivateCtor() {
-        assertHasPrivateParameterlessCtor(Readers.class);
+    ReadersTest() {
+        super(Readers.class);
     }
 
     @Test
     @DisplayName("Create `LineReader` with the specified `Terminal`")
     void createLineReader() {
-        final Terminal terminal = newTerminal();
-        final LineReader reader = newLineReader(terminal);
+        Terminal terminal = newTerminal();
+        LineReader reader = newLineReader(terminal);
         assertSame(terminal, reader.getTerminal());
     }
 }

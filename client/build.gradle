@@ -1,5 +1,5 @@
 /*
- * Copyright 2018, TeamDev. All rights reserved.
+ * Copyright 2019, TeamDev. All rights reserved.
  *
  * Redistribution and use in source and/or binary forms, with or without
  * modification, must retain the above copyright notice and the following
@@ -22,6 +22,17 @@ apply from: "$rootDir/scripts/publish.gradle"
 
 dependencies {
     compile project(path: ':model')
+
+    implementation deps.grpc.grpcProtobuf
+
     testImplementation project(path: ':testutil-api')
     testImplementation project(path: ':server')
+}
+
+// Do not run `client` tests in parallel so instantiated server and client do not overlap with 
+// their counterparts from the other thread.
+if (isTravis) {
+    tasks.withType(Test) {
+        maxParallelForks = 1
+    }
 }
