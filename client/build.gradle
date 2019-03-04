@@ -29,6 +29,8 @@ dependencies {
     testImplementation project(path: ':server')
 }
 
+// Do not run `client` tests in parallel so instantiated server and client do not overlap with 
+// their counterparts from the other thread.
 if (isTravis) {
     tasks.withType(Test) {
         maxParallelForks = 1
