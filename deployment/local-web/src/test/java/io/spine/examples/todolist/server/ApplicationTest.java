@@ -35,12 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @DisplayName("Application should")
 class ApplicationTest {
 
-    private Application application;
-
-    @BeforeEach
-    void setUp() {
-        application = new Application(BoundedContexts.create(), FirebaseCredentials.empty());
-    }
+    private final Application application = Application.instance();
 
     @Test
     @DisplayName("return non-null QueryService")

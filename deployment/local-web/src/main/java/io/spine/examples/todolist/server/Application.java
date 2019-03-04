@@ -41,19 +41,16 @@ import static io.spine.web.firebase.FirebaseClientFactory.restClient;
  */
 final class Application {
 
+    private static final String DATABASE_URL = "https://spine-dev.firebaseio.com/";
     private static final String SERVICE_ACCOUNT_FILE = "/spine-dev.json";
-    private static final DatabaseUrl DATABASE_URL = databaseUrl();
 
     private final QueryService queryService;
 
     private final CommandService commandService;
     private final FirebaseClient firebaseClient;
 
-    /**
-     * Prevents direct instantiation for outer accessors.
-     */
-
-    private Application(BoundedContext boundedContext) {
+    @VisibleForTesting
+    Application(BoundedContext boundedContext) {
         this.queryService = QueryService
                 .newBuilder()
                 .add(boundedContext)
@@ -89,14 +86,14 @@ final class Application {
     private static FirebaseClient initClient() {
         InputStream credentialStream = Application.class.getResourceAsStream(SERVICE_ACCOUNT_FILE);
         FirebaseCredentials credentials = FirebaseCredentials.fromStream(credentialStream);
-        FirebaseClient client = restClient(DATABASE_URL, credentials);
+        FirebaseClient client = restClient(databaseUrl(), credentials);
         return client;
     }
 
     private static DatabaseUrl databaseUrl() {
         Url url = UrlVBuilder
                 .newBuilder()
-                .setSpec("https://spine-dev.firebaseio.com/")
+                .setSpec(DATABASE_URL)
                 .build();
         DatabaseUrl databaseUrl = DatabaseUrlVBuilder
                 .newBuilder()
@@ -114,6 +111,6 @@ final class Application {
         INSTANCE;
         @SuppressWarnings("NonSerializableFieldInSerializableClass")
         private final Application value =
-                new Application(BoundedContexts.create(), firebaseCredentials());
+                new Application(BoundedContexts.create());
     }
 }
