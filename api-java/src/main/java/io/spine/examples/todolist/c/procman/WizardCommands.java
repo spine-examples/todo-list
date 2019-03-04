@@ -206,9 +206,9 @@ final class WizardCommands {
     /**
      * Creates the commands that:
      * <ol>
-     * <li>Create the specified in {@code AddLabels} command labels.
-     * <li>Mutate the labels as specified in the command.
-     * <li>Assign those labels to the target task.
+     *     <li>Create the specified in {@code AddLabels} command labels.
+     *     <li>Mutate the labels as specified in the command.
+     *     <li>Assign those labels to the target task.
      * </ol>
      *
      * @param src
