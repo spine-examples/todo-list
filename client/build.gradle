@@ -22,8 +22,9 @@ apply from: "$rootDir/scripts/publish.gradle"
 
 dependencies {
     compile project(path: ':model')
-    testImplementation project(path: ':testutil-api')
-    testImplementation project(path: ':server')
 
     implementation deps.grpc.grpcProtobuf
+
+    testImplementation project(path: ':testutil-api')
+    testImplementation project(path: ':server')
 }

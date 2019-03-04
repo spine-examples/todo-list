@@ -35,8 +35,8 @@ apply plugin: 'com.github.johnrengelman.shadow'
 dependencies {
     implementation "com.google.cloud.sql:mysql-socket-factory:$cloudSqlSocketFactoryVersion"
     implementation "com.zaxxer:HikariCP:$hikariCpVersion"
-    implementation deps.grpc.grpcProtobuf
     implementation "io.spine:spine-rdbms:$spineJdbcStorageVersion"
+    implementation deps.grpc.grpcProtobuf
     implementation project(path: ':server')
 
     // A Protobuf dependency to generate descriptor for Spine gRPC services.
