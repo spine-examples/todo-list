@@ -7,7 +7,7 @@ before_install:
   - chmod +x gradlew
 
 script:
-  - ./gradlew build codeCoverageReport --stacktrace
+  - ./gradlew check --stacktrace
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

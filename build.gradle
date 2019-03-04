@@ -144,15 +144,6 @@ subprojects {
         }
     }
 
-    jacocoTestReport {
-        reports {
-            xml.enabled = true
-            html.enabled = true
-        }
-    }
-
-    build.dependsOn jacocoTestReport
-
     configurations.all {
         resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
     }
@@ -224,3 +215,5 @@ if (isTravis) {
         }
     }
 }
+
+apply from: deps.scripts.jacoco
