@@ -28,3 +28,9 @@ dependencies {
     testImplementation project(path: ':testutil-api')
     testImplementation project(path: ':server')
 }
+
+if (isTravis) {
+    tasks.withType(Test) {
+        maxParallelForks = 1
+    }
+}

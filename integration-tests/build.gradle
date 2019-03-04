@@ -47,3 +47,9 @@ task performanceTest(type: JavaExec) {
     args "--reports-dir=$buildDir/test-results/junit-performanceTest"
     args '--exclude-package=io.spine.test.integration'
 }
+
+if (isTravis) {
+    tasks.withType(Test) {
+        maxParallelForks = 1
+    }
+}
