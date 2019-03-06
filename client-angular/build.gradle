@@ -23,7 +23,7 @@ apply from: "$rootDir/scripts/js.gradle"
 task ngTest {
   doLast {
     //noinspection GroovyAssignabilityCheck
-    npm 'run', 'test', '--', '--no-watch', '--no-progress', '--browsers=ChromeHeadlessCI'
+    npm 'run', 'test', '--', '--no-watch', '--no-progress', '--browsers=ChromeHeadlessCI', '--code-coverage'
   }
 
   //noinspection GroovyAssignabilityCheck
