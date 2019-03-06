@@ -30,7 +30,7 @@ ext {
 apply from: deps.scripts.jsBuildTasks
 
 // Do not update the package version as we are not going to publish it.
-buildJs.dependsOn.remove("updatePackageVersion")
+buildJs.dependsOn.remove(updatePackageVersion)
 
 dependencies {
     protobuf group: 'io.spine', name: 'spine-client', version: spineVersion, classifier: 'proto'
