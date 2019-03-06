@@ -20,13 +20,20 @@
 
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
-import * as firebase from 'firebase';
+import * as firebase from 'firebase/app';
+import 'firebase/database';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class FirebaseClient {
 
   constructor() {
-    this.firebaseApp = firebase.initializeApp(environment.firebaseConfig);
+    if (!firebase.apps.length) {
+      this.firebaseApp = firebase.initializeApp(environment.firebaseConfig);
+    } else {
+      this.firebaseApp = firebase.app();
+    }
   }
 
   private readonly firebaseApp: firebase.app.App;

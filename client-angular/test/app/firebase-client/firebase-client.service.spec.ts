@@ -20,13 +20,13 @@
 
 import {TestBed} from '@angular/core/testing';
 
-import {SpineWebClient} from './spine-web-client.service';
+import {FirebaseClient} from '../../../src/app/firebase-client/firebase-client.service';
 
-describe('SpineWebClient', () => {
+describe('FirebaseClient', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: SpineWebClient = TestBed.get(SpineWebClient);
+    const service: FirebaseClient = TestBed.get(FirebaseClient);
     expect(service).toBeTruthy();
   });
 });

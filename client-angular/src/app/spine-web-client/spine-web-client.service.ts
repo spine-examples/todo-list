@@ -23,10 +23,12 @@ import {Injectable} from '@angular/core';
 import {FirebaseClient} from '../firebase-client/firebase-client.service';
 import * as spineWeb from 'spine-web';
 import {ActorProvider, Client} from 'spine-web';
-import {UserId} from '../../../proto/main/js/spine/core/user_id_pb';
+import {UserId} from 'spine-web/proto/spine/core/user_id_pb';
 import * as knownTypes from '../../../proto/main/js/index';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class SpineWebClient {
 
   constructor(private firebaseClient: FirebaseClient) {
