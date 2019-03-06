@@ -25,7 +25,7 @@
             "styles": [
               "src/styles.css"
             ],
-            "scripts": ["node_modules/spine-web/index.js"],
+            "scripts": [],
             "es5BrowserSupport": true
           },
           "configurations": {
