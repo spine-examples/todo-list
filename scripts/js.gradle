@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: "$projectDir/scripts/js-cli.gradle"
+apply from: "$rootDir/scripts/js-cli.gradle"
 
 final def TASK_GROUP = 'JavaScript'
 
