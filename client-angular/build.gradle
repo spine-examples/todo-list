@@ -18,27 +18,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-include 'api-java'
-include 'model'
-include 'client'
-include 'server'
-include 'client-cli'
-include 'client-web'
-include 'client-angular'
-include 'cli-core'
-include 'testutil-api'
-include 'testutil-cli'
-include 'integration-tests'
-
-def deployment(final String name) {
-    final String path = ":$name"
-    include path
-    project(path).projectDir = new File("./deployment/$name")
-}
-
-deployment 'local-inmem'
-deployment 'local-my-sql'
-deployment 'local-cloud-sql'
-deployment 'compute-cloud-sql'
-deployment 'local-firebase'
-deployment 'local-web'
+apply from: "$rootDir/scripts/js.gradle"

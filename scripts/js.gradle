@@ -18,58 +18,59 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-apply from: "$rootDir/scripts/js-cli.gradle"
-
-final def TASK_GROUP = 'JavaScript'
-
 ext {
-    npmPublicationRoot = "$buildDir/npm-publication/"
-    bundleFile = "$projectDir/bundle.js"
+    // We do not publish To-Do List modules.
+    versionToPublishJs = '-'
+
+    compiledProto = "$projectDir/proto"
+    genProtoMain = "$compiledProto/main/js"
+    genProtoTest = "$compiledProto/test/js"
 }
 
+apply from: deps.scripts.jsBuildTasks
 
-/**
- * Installs the module dependencies using the `npm install` command.
- */
-task installDependencies {
-    group = TASK_GROUP
-    description = 'Installs the JavaScript dependencies.'
+// Do not update the package version as we are not going to publish it.
+buildJs.dependsOn.remove("updatePackageVersion")
 
-    inputs.files "$projectDir/package.json"
-    outputs.dir "$projectDir/node_modules"
+dependencies {
+    protobuf group: 'io.spine', name: 'spine-client', version: spineVersion, classifier: 'proto'
+    protobuf project(':model')
+}
 
-    doLast {
-        npm 'install'
+protobuf {
+    generatedFilesBaseDir = compiledProto
+    protoc {
+        artifact = deps.build.protoc
+    }
+    generateProtoTasks {
+        all().each { final task ->
+            task.builtins {
+                // TODO:2018-05-14:dmytro.dashenkov: Disable `java` and `grpc` plugins.
+                // TODO https://github.com/SpineEventEngine/todo-list/issues/62
+
+                js {
+                    option "import_style=commonjs"
+                }
+
+                task.generateDescriptorSet = true
+                final def testClassifier = task.sourceSet.name == "test" ? "_test" : ""
+                final def descriptorName = "${project.group}_${project.name}_${project.version}${testClassifier}.desc"
+                task.descriptorSetOptions.path = "${projectDir}/build/descriptors/${task.sourceSet.name}/${descriptorName}"
+            }
+            compileProtoToJs.dependsOn task
+        }
     }
 }
 
-/**
- * Compiles the JS into the `client-all.js` artifact.
- *
- * <p>This task executes the NPM `compile` script, which uses Webpack to assemble the artifact.
- *
- * <p>This task is a part of a standard Gradle build for the `:js-client` project.
- */
-task compileJs {
-    group = TASK_GROUP
-    description = 'Compiles the JavaScript sources into a single .js file.'
+apply plugin: 'io.spine.tools.proto-js-plugin'
 
-    inputs.files "$projectDir/webpack.config.js", fileTree("$projectDir/lib/")
-    outputs.files bundleFile
+protoJs {
+    mainGenProtoDir = genProtoMain
+    testGenProtoDir = genProtoTest
 
-    doLast {
-        npm 'run', 'compile'
-    }
-
-    dependsOn installDependencies
+    generateParsersTask().dependsOn compileProtoToJs
+    buildJs.dependsOn generateParsersTask()
 }
 
-task deleteCompiled(type: Delete) {
-    group = TASK_GROUP
-
-    delete compileJs.outputs.files
-}
-
-clean.dependsOn deleteCompiled
-
-build.dependsOn compileJs
+project.compileJava.enabled = false
+project.compileTestJava.enabled = false
