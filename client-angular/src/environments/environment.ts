@@ -6,7 +6,9 @@ import {commonEnvironment} from './environment.common';
 
 export const environment = {
   production: false,
-  firebaseConfig: commonEnvironment.firebaseConfig
+  firebaseConfig: commonEnvironment.firebaseConfig,
+  host: commonEnvironment.host,
+  actor: commonEnvironment.actor
 };
 
 /*

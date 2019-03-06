@@ -20,18 +20,42 @@
 
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
-import * as firebase from 'firebase';
+import {FirebaseClient} from '../firebase-client/firebase-client.service';
+import * as spineWeb from 'spine-web';
+import {ActorProvider, Client} from 'spine-web';
+import {UserId} from '../../../proto/main/js/spine/core/user_id_pb';
+import * as knownTypes from '../../../proto/main/js/index';
 
 @Injectable()
-export class FirebaseClient {
+export class SpineWebClient {
 
-  constructor() {
-    this.firebaseApp = firebase.initializeApp(environment.firebaseConfig);
+  constructor(private firebaseClient: FirebaseClient) {
+    this.client = spineWeb.init({
+      protoIndexFiles: [knownTypes],
+      endpointUrl: environment.host,
+      firebaseDatabase: firebaseClient.app.database(),
+      actorProvider: SpineWebClient.actorProvider()
+    });
   }
 
-  private readonly firebaseApp: firebase.app.App;
+  private readonly client: Client;
 
-  get app(): firebase.app.App {
-    return this.firebaseApp;
+  private static actorProvider(): ActorProvider {
+    const userId = new UserId();
+    userId.setValue(environment.actor);
+    return new spineWeb.ActorProvider(userId);
+  }
+
+  private static logSuccess(): void {
+    console.log('Command sent');
+  }
+
+  private static errorCallback(error): void {
+    console.error(error);
+  }
+
+  sendCommand(commandMessage): void {
+    this.client.sendCommand(commandMessage,
+      SpineWebClient.logSuccess, SpineWebClient.errorCallback, SpineWebClient.errorCallback);
   }
 }

@@ -18,15 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-export const commonEnvironment = {
-  firebaseConfig: {
-    apiKey: 'AIzaSyD8Nr2zrW9QFLbNS5Kg-Ank-QIZP_jo5pU',
-    authDomain: 'spine-dev.firebaseapp.com',
-    databaseURL: 'https://spine-dev.firebaseio.com',
-    projectId: 'spine-dev',
-    storageBucket: '',
-    messagingSenderId: '165066236051'
-  },
-  host: 'http://localhost:8080',
-  actor: 'TodoList-actor'
-};
+import {TestBed} from '@angular/core/testing';
+
+import {SpineWebClient} from './spine-web-client.service';
+
+describe('SpineWebClient', () => {
+  beforeEach(() => TestBed.configureTestingModule({}));
+
+  it('should be created', () => {
+    const service: SpineWebClient = TestBed.get(SpineWebClient);
+    expect(service).toBeTruthy();
+  });
+});
