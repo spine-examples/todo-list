@@ -29,7 +29,3 @@ task ngTest {
     //noinspection GroovyAssignabilityCheck
     check.dependsOn ngTest
 }
-
-pmd {
-    ruleSets = []
-}
