@@ -20,19 +20,19 @@
 
 import {TestBed} from '@angular/core/testing';
 
-import {SpineWebClient} from '../../../src/app/spine-web-client/spine-web-client.service';
 import {FirebaseApp} from '../../../src/app/firebase-app/firebase-app.service';
-import {TestFirebaseApp} from '../given/test-firebase-app';
+import 'firebase/database';
 
-describe('SpineWebClient', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [SpineWebClient, {provide: FirebaseApp, useValue: TestFirebaseApp.app()}],
-    });
-  });
+const APP_NAME = 'firebase-app';
+
+describe('FirebaseApp', () => {
+  beforeEach(() => TestBed.configureTestingModule({
+    providers: [FirebaseApp, {provide: 'appName', useValue: APP_NAME}]
+  }));
 
   it('should be created', () => {
-    const service: SpineWebClient = TestBed.get(SpineWebClient);
+    const service: FirebaseApp = TestBed.get(FirebaseApp);
     expect(service).toBeTruthy();
   });
 });
+

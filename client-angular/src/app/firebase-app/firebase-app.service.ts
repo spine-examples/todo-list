@@ -18,19 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {Inject, Injectable, Optional} from '@angular/core';
+import {FirebaseAppModule} from './firebase-app.module';
+
 import {environment} from '../../environments/environment';
 
 import * as firebase from 'firebase/app';
 import 'firebase/database';
 
+@Injectable({
+  providedIn: FirebaseAppModule
+})
 export class FirebaseApp {
 
-  private static firebaseApp: firebase.app.App;
+  constructor(@Inject('appName') @Optional() name?: string) {
+    this.app = firebase.initializeApp(environment.firebaseConfig, name);
+  }
 
-  static app() {
-    if (FirebaseApp.firebaseApp == null) {
-      FirebaseApp.firebaseApp = firebase.initializeApp(environment.firebaseConfig);
-    }
-    return FirebaseApp.firebaseApp;
+  private readonly app: firebase.app.App;
+
+  database(): firebase.database.Database {
+    return this.app.database();
   }
 }

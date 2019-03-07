@@ -18,21 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TestBed} from '@angular/core/testing';
-
-import {SpineWebClient} from '../../../src/app/spine-web-client/spine-web-client.service';
 import {FirebaseApp} from '../../../src/app/firebase-app/firebase-app.service';
-import {TestFirebaseApp} from '../given/test-firebase-app';
 
-describe('SpineWebClient', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [SpineWebClient, {provide: FirebaseApp, useValue: TestFirebaseApp.app()}],
-    });
-  });
+export class TestFirebaseApp {
 
-  it('should be created', () => {
-    const service: SpineWebClient = TestBed.get(SpineWebClient);
-    expect(service).toBeTruthy();
-  });
-});
+  private static readonly NAME: string = 'test-firebase-app';
+
+  private static readonly firebaseApp: FirebaseApp = new FirebaseApp(TestFirebaseApp.NAME);
+
+  static app() {
+    return TestFirebaseApp.firebaseApp;
+  }
+}
+

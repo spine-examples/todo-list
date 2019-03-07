@@ -25,18 +25,18 @@ import {ActorProvider, Client} from 'spine-web';
 import {UserId} from 'spine-web/proto/spine/core/user_id_pb';
 import {SpineWebClientModule} from './spine-web-client.module';
 import * as knownTypes from '../../../generated/main/js/index';
-import {FirebaseApp} from './firebase-app';
+import {FirebaseApp} from '../firebase-app/firebase-app.service';
 
 @Injectable({
   providedIn: SpineWebClientModule
 })
 export class SpineWebClient {
 
-  constructor() {
+  constructor(private readonly firebaseApp: FirebaseApp) {
     this.client = spineWeb.init({
       protoIndexFiles: [knownTypes],
       endpointUrl: environment.host,
-      firebaseDatabase: FirebaseApp.app().database(),
+      firebaseDatabase: firebaseApp.database(),
       actorProvider: SpineWebClient.actorProvider()
     });
   }
