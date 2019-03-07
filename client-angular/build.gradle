@@ -27,5 +27,5 @@ task ngTest {
     }
 
     //noinspection GroovyAssignabilityCheck
-    check.dependsOn ngTest
+    testJs.dependsOn ngTest
 }
