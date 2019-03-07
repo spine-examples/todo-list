@@ -26,6 +26,8 @@ task ngTest {
         npm 'run', 'test', '--', '--no-watch', '--no-progress', '--browsers=ChromeHeadlessCI', '--code-coverage'
     }
 
+    dependsOn buildJs
+    
     //noinspection GroovyAssignabilityCheck
     testJs.dependsOn ngTest
 }
