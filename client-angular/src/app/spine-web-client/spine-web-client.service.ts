@@ -24,7 +24,7 @@ import {FirebaseClient} from '../firebase-client/firebase-client.service';
 import * as spineWeb from 'spine-web';
 import {ActorProvider, Client} from 'spine-web';
 import {UserId} from 'spine-web/proto/spine/core/user_id_pb';
-import * as knownTypes from '../../../proto/main/js/index';
+import * as knownTypes from '../../../generated/main/js/index';
 
 @Injectable({
   providedIn: 'root'

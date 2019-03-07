@@ -22,9 +22,7 @@ ext {
     // We do not publish To-Do List modules.
     versionToPublishJs = '-'
 
-    compiledProto = "$projectDir/proto"
-    genProtoMain = "$compiledProto/main/js"
-    genProtoTest = "$compiledProto/test/js"
+    compiledProto = "$projectDir/generated"
 }
 
 apply from: deps.scripts.jsBuildTasks
@@ -32,8 +30,15 @@ apply from: deps.scripts.jsBuildTasks
 // Do not update the package version as we are not going to publish it.
 buildJs.dependsOn.remove(updatePackageVersion)
 
+configurations {
+    // Do not generate JS proto definitions for external dependencies.
+    protobuf.exclude group: 'io.spine', module: 'spine-base'
+    protobuf.exclude group: 'io.spine', module: 'spine-core'
+    protobuf.exclude group: 'io.spine', module: 'spine-client'
+    protobuf.exclude group: 'com.google.protobuf'
+}
+
 dependencies {
-    protobuf group: 'io.spine', name: 'spine-client', version: spineVersion, classifier: 'proto'
     protobuf project(':model')
 }
 
@@ -44,9 +49,15 @@ protobuf {
     }
     generateProtoTasks {
         all().each { final task ->
+            task.plugins {
+                task.generateDescriptorSet = false
+            }
             task.builtins {
                 // TODO:2018-05-14:dmytro.dashenkov: Disable `java` and `grpc` plugins.
                 // TODO https://github.com/SpineEventEngine/todo-list/issues/62
+
+                // Do not use Java builtin output in this project.
+                remove java
 
                 js {
                     option "import_style=commonjs"
@@ -62,12 +73,13 @@ protobuf {
     }
 }
 
+compileProtoToJs {
+    outputs.files compiledProto
+}
+
 apply plugin: 'io.spine.tools.proto-js-plugin'
 
 protoJs {
-    mainGenProtoDir = genProtoMain
-    testGenProtoDir = genProtoTest
-
     generateParsersTask().dependsOn compileProtoToJs
     buildJs.dependsOn generateParsersTask()
 }
