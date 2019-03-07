@@ -23,11 +23,9 @@ import {TestBed} from '@angular/core/testing';
 import {FirebaseApp} from '../../../src/app/firebase-app/firebase-app.service';
 import 'firebase/database';
 
-const APP_NAME = 'firebase-app';
-
 describe('FirebaseApp', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    providers: [FirebaseApp, {provide: 'appName', useValue: APP_NAME}]
+    providers: [FirebaseApp]
   }));
 
   it('should be created', () => {

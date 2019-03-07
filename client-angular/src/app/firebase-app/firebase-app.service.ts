@@ -31,8 +31,11 @@ import 'firebase/database';
 })
 export class FirebaseApp {
 
-  constructor(@Inject('appName') @Optional() name?: string) {
-    this.app = firebase.initializeApp(environment.firebaseConfig, name);
+  private static readonly DEFAULT_APP_NAME = 'default-app-name';
+
+  constructor(@Inject('firebaseAppName') @Optional() name?: string) {
+    const appName = name != null ? name : FirebaseApp.DEFAULT_APP_NAME;
+    this.app = firebase.initializeApp(environment.firebaseConfig, appName);
   }
 
   private readonly app: firebase.app.App;
