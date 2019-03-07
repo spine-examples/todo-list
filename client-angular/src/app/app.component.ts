@@ -19,6 +19,7 @@
  */
 
 import {Component} from '@angular/core';
+import {SpineWebClient} from './spine-web-client/spine-web-client.service';
 
 @Component({
   selector: 'app-root',
@@ -27,4 +28,11 @@ import {Component} from '@angular/core';
 })
 export class AppComponent {
   title = 'client-angular';
+
+  constructor(private spineWebClient: SpineWebClient) {
+  }
+
+  sendCommand(): void {
+    this.spineWebClient.sendCommand(null);
+  }
 }

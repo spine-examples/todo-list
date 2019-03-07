@@ -20,11 +20,13 @@
 
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
+import {FirebaseClientModule} from './firebase-client.module';
+
 import * as firebase from 'firebase/app';
 import 'firebase/database';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: FirebaseClientModule
 })
 export class FirebaseClient {
 

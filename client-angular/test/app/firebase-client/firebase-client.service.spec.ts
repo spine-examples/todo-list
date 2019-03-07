@@ -23,7 +23,9 @@ import {TestBed} from '@angular/core/testing';
 import {FirebaseClient} from '../../../src/app/firebase-client/firebase-client.service';
 
 describe('FirebaseClient', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+  beforeEach(() => TestBed.configureTestingModule({
+    providers: [FirebaseClient]
+  }));
 
   it('should be created', () => {
     const service: FirebaseClient = TestBed.get(FirebaseClient);
