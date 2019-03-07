@@ -21,13 +21,14 @@
 import {TestBed} from '@angular/core/testing';
 
 import {SpineWebClient} from '../../../src/app/spine-web-client/spine-web-client.service';
-import {FirebaseClientModule} from '../../../src/app/firebase-client/firebase-client.module';
 
 describe('SpineWebClient', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    providers: [SpineWebClient],
-    imports: [FirebaseClientModule]
-  }));
+  beforeEach(() => {
+    const firebaseClientMock = jasmine.createSpyObj('FirebaseClient', ['app']);
+    TestBed.configureTestingModule({
+      providers: [SpineWebClient],
+    });
+  });
 
   it('should be created', () => {
     const service: SpineWebClient = TestBed.get(SpineWebClient);

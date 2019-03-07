@@ -18,17 +18,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TestBed} from '@angular/core/testing';
+import {environment} from '../../environments/environment';
 
-import {FirebaseClient} from '../../../src/app/firebase-client/firebase-client.service';
+import * as firebase from 'firebase/app';
+import 'firebase/database';
 
-describe('FirebaseClient', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    providers: [FirebaseClient]
-  }));
+export class FirebaseApp {
 
-  it('should be created', () => {
-    const service: FirebaseClient = TestBed.get(FirebaseClient);
-    expect(service).toBeTruthy();
-  });
-});
+  private static firebaseApp: firebase.app.App;
+
+  static app() {
+    if (FirebaseApp.firebaseApp == null) {
+      FirebaseApp.firebaseApp = firebase.initializeApp(environment.firebaseConfig);
+    }
+    return FirebaseApp.firebaseApp;
+  }
+}

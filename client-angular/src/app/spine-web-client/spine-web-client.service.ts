@@ -20,23 +20,23 @@
 
 import {environment} from '../../environments/environment';
 import {Injectable} from '@angular/core';
-import {FirebaseClient} from '../firebase-client/firebase-client.service';
 import * as spineWeb from 'spine-web';
 import {ActorProvider, Client} from 'spine-web';
 import {UserId} from 'spine-web/proto/spine/core/user_id_pb';
 import {SpineWebClientModule} from './spine-web-client.module';
 import * as knownTypes from '../../../generated/main/js/index';
+import {FirebaseApp} from './firebase-app';
 
 @Injectable({
   providedIn: SpineWebClientModule
 })
 export class SpineWebClient {
 
-  constructor(private firebaseClient: FirebaseClient) {
+  constructor() {
     this.client = spineWeb.init({
       protoIndexFiles: [knownTypes],
       endpointUrl: environment.host,
-      firebaseDatabase: firebaseClient.app.database(),
+      firebaseDatabase: FirebaseApp.app().database(),
       actorProvider: SpineWebClient.actorProvider()
     });
   }
