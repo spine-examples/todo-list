@@ -20,11 +20,35 @@
 
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
+import {ActiveTasksComponent} from './tasks/active/active-tasks.component';
+import {DraftsComponent} from './tasks/drafts/drafts.component';
+import {CompletedTasksComponent} from './tasks/completed/completed-tasks.component';
+import {DeletedTasksComponent} from './tasks/deleted/deleted-tasks.component';
+import {TaskCreationWizardComponent} from './task-wizard/task-creation-wizard.component';
+import {TaskListComponent} from './tasks/task-list.component';
+import {LabelsComponent} from './labels/labels.component';
 
-const routes: Routes = [];
+const routes: Routes = [
+  {path: '', redirectTo: '/tasks', pathMatch: 'full'},
+
+  {
+    path: 'tasks',
+    component: TaskListComponent,
+    children: [
+      {path: 'active', component: ActiveTasksComponent, outlet: 'tasks'},
+      {path: 'drafts', component: DraftsComponent, outlet: 'tasks'},
+      {path: 'completed', component: CompletedTasksComponent, outlet: 'tasks'},
+      {path: 'deleted', component: DeletedTasksComponent, outlet: 'tasks'},
+    ]
+  },
+
+  {path: 'labels', component: LabelsComponent},
+  {path: 'wizard', component: TaskCreationWizardComponent}
+];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

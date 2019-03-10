@@ -24,10 +24,24 @@ import {NgModule} from '@angular/core';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {SpineWebClientModule} from './spine-web-client/spine-web-client.module';
+import { ActiveTasksComponent } from './tasks/active/active-tasks.component';
+import { CompletedTasksComponent } from './tasks/completed/completed-tasks.component';
+import { DraftsComponent } from './tasks/drafts/drafts.component';
+import { DeletedTasksComponent } from './tasks/deleted/deleted-tasks.component';
+import { TaskCreationWizardComponent } from './task-wizard/task-creation-wizard.component';
+import { TaskListComponent } from './tasks/task-list.component';
+import { LabelsComponent } from './labels/labels.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ActiveTasksComponent,
+    CompletedTasksComponent,
+    DraftsComponent,
+    DeletedTasksComponent,
+    TaskCreationWizardComponent,
+    TaskListComponent,
+    LabelsComponent
   ],
   imports: [
     BrowserModule,

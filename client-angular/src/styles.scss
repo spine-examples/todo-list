@@ -18,8 +18,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* You can add global styles to this file, and also import other style files */
-/* Application-wide Styles */
 h1 {
   color: #369;
   font-family: Arial, Helvetica, sans-serif;
@@ -43,4 +41,35 @@ body, input[type="text"], button {
 
 * {
   font-family: Arial, Helvetica, sans-serif;
+}
+
+nav a {
+  padding: 5px 10px;
+  text-decoration: none;
+  margin-top: 10px;
+  display: inline-block;
+  background-color: #eee;
+  border-radius: 4px;
+}
+nav a:visited, a:link {
+  color: #607d8b;
+}
+nav a:hover {
+  color: #039be5;
+  background-color: #cfd8dc;
+}
+nav a.active {
+  color: #039be5;
+}
+
+button {
+  margin-top: 20px;
+  font-family: Arial, serif;
+  background-color: #eee;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+button:hover {
+  background-color: #cfd8dc;
 }

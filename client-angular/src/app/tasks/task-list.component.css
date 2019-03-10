@@ -1,0 +1,11 @@
+.navPanel {
+  width: 600px;
+}
+
+a {
+  outline: solid #ffffff;
+}
+
+.labelLink {
+  float: right;
+}
