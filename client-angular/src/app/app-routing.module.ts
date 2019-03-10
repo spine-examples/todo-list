@@ -20,12 +20,12 @@
 
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {ActiveTasksComponent} from './tasks/active/active-tasks.component';
-import {DraftsComponent} from './tasks/drafts/drafts.component';
-import {CompletedTasksComponent} from './tasks/completed/completed-tasks.component';
-import {DeletedTasksComponent} from './tasks/deleted/deleted-tasks.component';
+import {ActiveTasksComponent} from './task-list/active/active-tasks.component';
+import {DraftsComponent} from './task-list/drafts/drafts.component';
+import {CompletedTasksComponent} from './task-list/completed/completed-tasks.component';
+import {DeletedTasksComponent} from './task-list/deleted/deleted-tasks.component';
 import {TaskCreationWizardComponent} from './task-creation-wizard/task-creation-wizard.component';
-import {TaskListComponent} from './tasks/task-list.component';
+import {TaskListComponent} from './task-list/task-list.component';
 import {LabelsComponent} from './labels/labels.component';
 import {TaskDetailsComponent} from './task-details/task-details.component';
 
