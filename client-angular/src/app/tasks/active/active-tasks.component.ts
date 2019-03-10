@@ -19,8 +19,8 @@
  */
 
 import {Component, OnInit} from '@angular/core';
-import {TaskId} from '../../../../generated/main/js/todolist/identifiers_pb';
-import {TaskItem} from '../../../../generated/main/js/todolist/q/projections_pb';
+import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
+import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TASKS} from '../../mock-items';
 
 @Component({

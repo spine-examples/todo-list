@@ -30,7 +30,7 @@ import {LabelsComponent} from './labels/labels.component';
 import {TaskDetailsComponent} from './task-details/task-details.component';
 
 const routes: Routes = [
-  {path: '', redirectTo: '/tasks', pathMatch: 'full'},
+  {path: '', redirectTo: '/tasks/(tasks:active)', pathMatch: 'full'},
 
   {
     path: 'tasks',

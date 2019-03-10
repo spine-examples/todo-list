@@ -24,7 +24,7 @@ import * as spineWeb from 'spine-web';
 import {ActorProvider, Client} from 'spine-web';
 import {UserId} from 'spine-web/proto/spine/core/user_id_pb';
 import {SpineWebClientModule} from './spine-web-client.module';
-import * as knownTypes from '../../../generated/main/js/index';
+import * as knownTypes from 'generated/main/js/index';
 import {FirebaseApp} from '../firebase-app/firebase-app.service';
 
 @Injectable({

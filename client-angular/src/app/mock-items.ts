@@ -20,9 +20,9 @@
 
 // todo remove
 
-import {TaskId} from '../../generated/main/js/todolist/identifiers_pb';
-import {TaskDescription} from '../../generated/main/js/todolist/values_pb';
-import {TaskItem} from '../../generated/main/js/todolist/q/projections_pb';
+import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
+import {TaskDescription} from 'generated/main/js/todolist/values_pb';
+import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 
 const task1 = new TaskItem();
 task1.setId(new TaskId('task-1'));
