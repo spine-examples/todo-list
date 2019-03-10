@@ -8,7 +8,7 @@ import { Location } from '@angular/common';
 })
 export class TaskCreationWizardComponent implements OnInit {
 
-  constructor(private location: Location) {
+  constructor(private readonly location: Location) {
   }
 
   ngOnInit() {

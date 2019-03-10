@@ -8,7 +8,7 @@ import {Location} from '@angular/common';
 })
 export class LabelsComponent implements OnInit {
 
-  constructor(private location: Location) {
+  constructor(private readonly location: Location) {
   }
 
   ngOnInit() {
@@ -19,6 +19,6 @@ export class LabelsComponent implements OnInit {
   }
 
   addLabel(): void {
-    console.log('To be honest I cannot add label');
+    console.log('To be honest I cannot add a new label');
   }
 }

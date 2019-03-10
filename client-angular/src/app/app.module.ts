@@ -28,9 +28,10 @@ import { ActiveTasksComponent } from './tasks/active/active-tasks.component';
 import { CompletedTasksComponent } from './tasks/completed/completed-tasks.component';
 import { DraftsComponent } from './tasks/drafts/drafts.component';
 import { DeletedTasksComponent } from './tasks/deleted/deleted-tasks.component';
-import { TaskCreationWizardComponent } from './task-wizard/task-creation-wizard.component';
+import { TaskCreationWizardComponent } from './task-creation-wizard/task-creation-wizard.component';
 import { TaskListComponent } from './tasks/task-list.component';
 import { LabelsComponent } from './labels/labels.component';
+import { TaskDetailsComponent } from './task-details/task-details.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { LabelsComponent } from './labels/labels.component';
     DeletedTasksComponent,
     TaskCreationWizardComponent,
     TaskListComponent,
-    LabelsComponent
+    LabelsComponent,
+    TaskDetailsComponent
   ],
   imports: [
     BrowserModule,

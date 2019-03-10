@@ -24,9 +24,10 @@ import {ActiveTasksComponent} from './tasks/active/active-tasks.component';
 import {DraftsComponent} from './tasks/drafts/drafts.component';
 import {CompletedTasksComponent} from './tasks/completed/completed-tasks.component';
 import {DeletedTasksComponent} from './tasks/deleted/deleted-tasks.component';
-import {TaskCreationWizardComponent} from './task-wizard/task-creation-wizard.component';
+import {TaskCreationWizardComponent} from './task-creation-wizard/task-creation-wizard.component';
 import {TaskListComponent} from './tasks/task-list.component';
 import {LabelsComponent} from './labels/labels.component';
+import {TaskDetailsComponent} from './task-details/task-details.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/tasks', pathMatch: 'full'},
@@ -41,6 +42,8 @@ const routes: Routes = [
       {path: 'deleted', component: DeletedTasksComponent, outlet: 'tasks'},
     ]
   },
+
+  {path: 'details/:id', component: TaskDetailsComponent},
 
   {path: 'labels', component: LabelsComponent},
   {path: 'wizard', component: TaskCreationWizardComponent}

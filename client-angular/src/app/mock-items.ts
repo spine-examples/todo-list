@@ -18,31 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {TaskId} from '../../../../generated/main/js/todolist/identifiers_pb';
-import {TaskItem} from '../../../../generated/main/js/todolist/q/projections_pb';
-import {TASKS} from '../../mock-items';
+// todo remove
 
-@Component({
-  selector: 'app-active-tasks',
-  templateUrl: './active-tasks.component.html',
-  styleUrls: ['./active-tasks.component.css']
-})
-export class ActiveTasksComponent implements OnInit {
+import {TaskId} from '../../generated/main/js/todolist/identifiers_pb';
+import {TaskDescription} from '../../generated/main/js/todolist/values_pb';
+import {TaskItem} from '../../generated/main/js/todolist/q/projections_pb';
 
-  tasks: TaskItem[] = TASKS;
+const task1 = new TaskItem();
+task1.setId(new TaskId('task-1'));
+task1.setDescription(new TaskDescription('Task 1'));
 
-  constructor() {
-  }
+const task2 = new TaskItem();
+task2.setId(new TaskId('task-2'));
+task2.setDescription(new TaskDescription('Task 2'));
 
-  ngOnInit() {
-  }
-
-  completeTask(taskId: TaskId): void {
-    alert(`Completing task with id: ${taskId}`);
-  }
-
-  deleteTask(taskId: TaskId): void {
-    alert(`Deleting task with id: ${taskId}`);
-  }
-}
+export const TASKS: TaskItem[] = [
+  task1,
+  task2,
+];
