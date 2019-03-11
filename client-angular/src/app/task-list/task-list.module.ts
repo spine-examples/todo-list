@@ -1,11 +1,12 @@
+import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
+import {RouterModule} from '@angular/router';
 import {TaskListComponent} from './task-list.component';
 import {ActiveTasksComponent} from './active/active-tasks.component';
 import {CompletedTasksComponent} from './completed/completed-tasks.component';
 import {DeletedTasksComponent} from './deleted/deleted-tasks.component';
 import {DraftsComponent} from './drafts/drafts.component';
-import {RouterModule} from '@angular/router';
-import {BrowserModule} from '@angular/platform-browser';
+import {TaskListRoutingModule} from './task-list.routes';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import {BrowserModule} from '@angular/platform-browser';
     DeletedTasksComponent,
     DraftsComponent
   ],
-  imports: [BrowserModule, RouterModule]
+  imports: [CommonModule, RouterModule, TaskListRoutingModule]
 })
-export class TaskListModule { }
+export class TaskListModule {
+}

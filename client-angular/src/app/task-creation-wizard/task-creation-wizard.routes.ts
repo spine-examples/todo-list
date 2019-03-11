@@ -17,43 +17,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
+import {TaskCreationWizardComponent} from './task-creation-wizard.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/task-list/tasks/(tasks:active)',
-    pathMatch: 'full'
-  },
-
-  {
-    path: 'task-list',
-    loadChildren: './task-list/task-list.module#TaskListModule'
-  },
-
-  {
-    path: 'details/:id',
-    loadChildren: './task-view/task-view.module#TaskViewModule'
-  },
-
-  {
-    path: 'labels',
-    loadChildren: './labels/labels.module#LabelsModule'
-  },
-
-  {
-    path: 'wizard',
-    loadChildren: './task-creation-wizard/task-creation-wizard.module#TaskCreationWizardModule'
+    component: TaskCreationWizardComponent
   }
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forRoot(routes)
-  ],
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {
+export class TaskCreationWizardRoutingModule {
 }

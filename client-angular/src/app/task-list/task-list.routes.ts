@@ -17,43 +17,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
+import {TaskListComponent} from './task-list.component';
+import {ActiveTasksComponent} from './active/active-tasks.component';
+import {CompletedTasksComponent} from './completed/completed-tasks.component';
+import {DeletedTasksComponent} from './deleted/deleted-tasks.component';
+import {DraftsComponent} from './drafts/drafts.component';
 
+/**
+ * ...
+ * The routes of this class have non-empty root `tasks` (forcing not very convenient navigation
+ * `task-list/tasks/...`) because of the known issue
+ * https://github.com/angular/angular/issues/10981#issuecomment-301787482. The issue, albeit
+ * closed, still persists.
+ */
 const routes: Routes = [
   {
-    path: '',
-    redirectTo: '/task-list/tasks/(tasks:active)',
-    pathMatch: 'full'
-  },
-
-  {
-    path: 'task-list',
-    loadChildren: './task-list/task-list.module#TaskListModule'
-  },
-
-  {
-    path: 'details/:id',
-    loadChildren: './task-view/task-view.module#TaskViewModule'
-  },
-
-  {
-    path: 'labels',
-    loadChildren: './labels/labels.module#LabelsModule'
-  },
-
-  {
-    path: 'wizard',
-    loadChildren: './task-creation-wizard/task-creation-wizard.module#TaskCreationWizardModule'
+    path: 'tasks',
+    component: TaskListComponent,
+    children: [
+      {path: 'active', component: ActiveTasksComponent, outlet: 'tasks'},
+      {path: 'completed', component: CompletedTasksComponent, outlet: 'tasks'},
+      {path: 'deleted', component: DeletedTasksComponent, outlet: 'tasks'},
+      {path: 'drafts', component: DraftsComponent, outlet: 'tasks'}
+    ]
   }
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forRoot(routes)
-  ],
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {
+export class TaskListRoutingModule {
 }
