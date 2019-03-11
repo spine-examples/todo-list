@@ -5,10 +5,10 @@ import { Location } from '@angular/common';
 // todo how to fetch task details https://angular.io/guide/router#fetch-data-before-navigating.
 @Component({
   selector: 'app-task-details',
-  templateUrl: './task-details.component.html',
-  styleUrls: ['./task-details.component.css']
+  templateUrl: './task-view.component.html',
+  styleUrls: ['./task-view.component.css']
 })
-export class TaskDetailsComponent implements OnInit {
+export class TaskViewComponent implements OnInit {
 
   private readonly taskId;
 

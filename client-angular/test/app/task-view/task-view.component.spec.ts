@@ -21,22 +21,22 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
-import {TaskDetailsComponent} from '../../../src/app/task-details/task-details.component';
+import {TaskViewComponent} from '../../../src/app/task-view/task-view.component';
 
-describe('TaskDetailsComponent', () => {
-  let component: TaskDetailsComponent;
-  let fixture: ComponentFixture<TaskDetailsComponent>;
+describe('TaskViewComponent', () => {
+  let component: TaskViewComponent;
+  let fixture: ComponentFixture<TaskViewComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TaskDetailsComponent],
+      declarations: [TaskViewComponent],
       imports: [RouterTestingModule.withRoutes([])]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TaskDetailsComponent);
+    fixture = TestBed.createComponent(TaskViewComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

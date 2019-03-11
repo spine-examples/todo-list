@@ -27,7 +27,7 @@ import {DeletedTasksComponent} from './task-list/deleted/deleted-tasks.component
 import {TaskCreationWizardComponent} from './task-creation-wizard/task-creation-wizard.component';
 import {TaskListComponent} from './task-list/task-list.component';
 import {LabelsComponent} from './labels/labels.component';
-import {TaskDetailsComponent} from './task-details/task-details.component';
+import {TaskViewComponent} from './task-view/task-view.component';
 
 const routes: Routes = [
   {path: '', redirectTo: '/tasks/(tasks:active)', pathMatch: 'full'},
@@ -43,7 +43,7 @@ const routes: Routes = [
     ]
   },
 
-  {path: 'details/:id', component: TaskDetailsComponent},
+  {path: 'details/:id', component: TaskViewComponent},
 
   {path: 'labels', component: LabelsComponent},
   {path: 'wizard', component: TaskCreationWizardComponent}

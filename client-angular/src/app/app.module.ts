@@ -24,33 +24,26 @@ import {NgModule} from '@angular/core';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {SpineWebClientModule} from './spine-web-client/spine-web-client.module';
-import { ActiveTasksComponent } from './task-list/active/active-tasks.component';
-import { CompletedTasksComponent } from './task-list/completed/completed-tasks.component';
-import { DraftsComponent } from './task-list/drafts/drafts.component';
-import { DeletedTasksComponent } from './task-list/deleted/deleted-tasks.component';
-import { TaskCreationWizardComponent } from './task-creation-wizard/task-creation-wizard.component';
-import { TaskListComponent } from './task-list/task-list.component';
-import { LabelsComponent } from './labels/labels.component';
-import { TaskDetailsComponent } from './task-details/task-details.component';
+import {TaskListModule} from './task-list/task-list.module';
+import {TaskViewModule} from './task-view/task-view.module';
+import {TaskCreationWizardModule} from './task-creation-wizard/task-creation-wizard.module';
+import {LabelsModule} from './labels/labels.module';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    ActiveTasksComponent,
-    CompletedTasksComponent,
-    DraftsComponent,
-    DeletedTasksComponent,
-    TaskCreationWizardComponent,
-    TaskListComponent,
-    LabelsComponent,
-    TaskDetailsComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    SpineWebClientModule
+    SpineWebClientModule,
+    TaskCreationWizardModule,
+    TaskListModule,
+    TaskViewModule,
+    LabelsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}
