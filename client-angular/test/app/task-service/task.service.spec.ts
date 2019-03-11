@@ -18,28 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, TestBed} from '@angular/core/testing';
-import {RouterTestingModule} from '@angular/router/testing';
-import {AppComponent} from '../../src/app/app.component';
-import {FirebaseApp} from '../../src/app/firebase-app/firebase-app.service';
-import {TestFirebaseApp} from './given/test-firebase-app';
+import { TestBed } from '@angular/core/testing';
 
-describe('AppComponent', () => {
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
-      declarations: [
-        AppComponent
-      ],
-      providers: [{provide: FirebaseApp, useValue: TestFirebaseApp.app()}]
-    }).compileComponents();
-  }));
+import { TaskService } from '../../../src/app/task-service/task.service';
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
+describe('TaskService', () => {
+  beforeEach(() => TestBed.configureTestingModule({}));
+
+  it('should be created', () => {
+    const service: TaskService = TestBed.get(TaskService);
+    expect(service).toBeTruthy();
   });
 });

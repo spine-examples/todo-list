@@ -23,7 +23,6 @@ import {NgModule} from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import {SpineWebClientModule} from './spine-web-client/spine-web-client.module';
 
 @NgModule({
   declarations: [
@@ -31,8 +30,7 @@ import {SpineWebClientModule} from './spine-web-client/spine-web-client.module';
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule,
-    SpineWebClientModule
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]

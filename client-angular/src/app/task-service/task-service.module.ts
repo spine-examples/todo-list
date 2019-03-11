@@ -1,9 +1,9 @@
 import {NgModule} from '@angular/core';
-import {LabelsComponent} from './labels.component';
 import {SpineWebClientModule} from '../spine-web-client/spine-web-client.module';
 
 @NgModule({
-  declarations: [LabelsComponent],
+  declarations: [],
   imports: [SpineWebClientModule]
 })
-export class LabelsModule { }
+export class TaskServiceModule {
+}
