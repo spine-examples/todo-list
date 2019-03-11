@@ -24,10 +24,6 @@ import {NgModule} from '@angular/core';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {SpineWebClientModule} from './spine-web-client/spine-web-client.module';
-import {TaskListModule} from './task-list/task-list.module';
-import {TaskViewModule} from './task-view/task-view.module';
-import {TaskCreationWizardModule} from './task-creation-wizard/task-creation-wizard.module';
-import {LabelsModule} from './labels/labels.module';
 
 @NgModule({
   declarations: [
@@ -36,11 +32,7 @@ import {LabelsModule} from './labels/labels.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    SpineWebClientModule,
-    TaskCreationWizardModule,
-    TaskListModule,
-    TaskViewModule,
-    LabelsModule
+    SpineWebClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

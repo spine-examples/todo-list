@@ -28,6 +28,10 @@ import {TaskCreationWizardComponent} from './task-creation-wizard/task-creation-
 import {TaskListComponent} from './task-list/task-list.component';
 import {LabelsComponent} from './labels/labels.component';
 import {TaskViewComponent} from './task-view/task-view.component';
+import {TaskCreationWizardModule} from './task-creation-wizard/task-creation-wizard.module';
+import {TaskListModule} from './task-list/task-list.module';
+import {TaskViewModule} from './task-view/task-view.module';
+import {LabelsModule} from './labels/labels.module';
 
 const routes: Routes = [
   {path: '', redirectTo: '/tasks/(tasks:active)', pathMatch: 'full'},
@@ -50,7 +54,13 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [
+    RouterModule.forRoot(routes),
+    TaskCreationWizardModule,
+    TaskListModule,
+    TaskViewModule,
+    LabelsModule
+  ],
   exports: [RouterModule]
 })
 export class AppRoutingModule {
