@@ -19,22 +19,31 @@
  */
 
 import {environment} from '../../environments/environment';
-import {Injectable, OnInit} from '@angular/core';
-import * as spineWeb from 'spine-web';
-import {ActorProvider, Client} from 'spine-web';
-import {UserId} from 'spine-web/proto/spine/core/user_id_pb';
+import {Injectable} from '@angular/core';
 import {SpineWebClientModule} from './spine-web-client.module';
-import * as knownTypes from 'generated/main/js/index';
 import {FirebaseApp} from '../firebase-app/firebase-app.service';
+import * as spineWeb from 'spine-web';
+import * as spineWebTypes from 'spine-web/proto/index';
+import {ActorProvider, Client} from 'spine-web';
+
+import * as knownTypes from 'generated/main/js/index';
+import {UserId} from 'spine-web/proto/spine/core/user_id_pb';
+import {Message} from 'google-protobuf';
 
 @Injectable({
   providedIn: SpineWebClientModule
 })
-export class SpineWebClient implements OnInit {
+export class SpineWebClient {
 
-  private client: Client;
+  private readonly client: Client;
 
   constructor(private readonly firebaseApp: FirebaseApp) {
+    this.client = spineWeb.init({
+      protoIndexFiles: [knownTypes, spineWebTypes],
+      endpointUrl: environment.host,
+      firebaseDatabase: this.firebaseApp.database(),
+      actorProvider: SpineWebClient.actorProvider()
+    });
   }
 
   private static actorProvider(): ActorProvider {
@@ -47,21 +56,12 @@ export class SpineWebClient implements OnInit {
     console.log('Command sent');
   }
 
-  private static errorCallback(error): void {
+  private static logError(error): void {
     console.error(error);
   }
 
-  ngOnInit(): void {
-    this.client = spineWeb.init({
-      protoIndexFiles: [knownTypes],
-      endpointUrl: environment.host,
-      firebaseDatabase: this.firebaseApp.database(),
-      actorProvider: SpineWebClient.actorProvider()
-    });
-  }
-
-  sendCommand(commandMessage): void {
+  sendCommand(commandMessage: Message): void {
     this.client.sendCommand(commandMessage,
-      SpineWebClient.logSuccess, SpineWebClient.errorCallback, SpineWebClient.errorCallback);
+      SpineWebClient.logSuccess, SpineWebClient.logError, SpineWebClient.logError);
   }
 }

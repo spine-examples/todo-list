@@ -23,7 +23,8 @@ let uuid = require("uuid");
 let knownTypes =  require("../generated/main/js/index");
 
 let UserId = require("spine-web/proto/spine/core/user_id_pb").UserId;
-let spineWeb = require("spine-web/index.js");
+let spineWeb = require("spine-web/index");
+let spineWebTypes = require('spine-web/proto/index');
 
 
 let TaskId = require("../generated/main/js/todolist/identifiers_pb").TaskId;
@@ -51,7 +52,7 @@ export class Client {
 
     constructor() {
         this._firebaseClient = spineWeb.init({
-            protoIndexFiles: [knownTypes],
+            protoIndexFiles: [knownTypes, spineWebTypes],
             endpointUrl: HOST,
             firebaseDatabase: firebase.application.database(),
             actorProvider: Client._actorProvider()

@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Inject, Injectable, OnInit, Optional} from '@angular/core';
+import {Inject, Injectable, Optional} from '@angular/core';
 import {FirebaseAppModule} from './firebase-app.module';
 
 import {environment} from '../../environments/environment';
@@ -29,27 +29,20 @@ import 'firebase/database';
 @Injectable({
   providedIn: FirebaseAppModule
 })
-export class FirebaseApp implements OnInit {
+export class FirebaseApp {
 
   private static readonly DEFAULT_APP_NAME = 'default-app-name';
 
-  private readonly appName: string;
-  private app: firebase.app.App;
+  private readonly app: firebase.app.App;
 
   constructor(@Inject('firebaseAppName') @Optional() name?: string) {
-    this.appName = name != null
-                   ? name
-                   : FirebaseApp.DEFAULT_APP_NAME;
+    const appName: string = name != null
+                            ? name
+                            : FirebaseApp.DEFAULT_APP_NAME;
+    this.app = firebase.initializeApp(environment.firebaseConfig, appName);
   }
 
   database(): firebase.database.Database {
-    if (this.app === null) {
-      throw new Error('Firebase app had not yet been initialized');
-    }
     return this.app.database();
-  }
-
-  ngOnInit(): void {
-    this.app = firebase.initializeApp(environment.firebaseConfig, this.appName);
   }
 }

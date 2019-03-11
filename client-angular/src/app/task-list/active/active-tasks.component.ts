@@ -18,21 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
-import {TASKS} from '../../mock-items';
+import {TaskService} from '../../task-service/task.service';
 
 @Component({
   selector: 'app-active-tasks',
   templateUrl: './active-tasks.component.html',
   styleUrls: ['./active-tasks.component.css']
 })
-export class ActiveTasksComponent {
+export class ActiveTasksComponent implements OnInit {
 
-  tasks: TaskItem[] = TASKS;
+  private readonly tasks: TaskItem[] = [];
 
-  constructor() {
+  constructor(private readonly taskService: TaskService) {
   }
 
   completeTask(taskId: TaskId): void {
@@ -41,5 +41,9 @@ export class ActiveTasksComponent {
 
   deleteTask(taskId: TaskId): void {
     alert(`Deleting task with id: ${taskId}`);
+  }
+
+  ngOnInit(): void {
+    this.taskService.subscribeToActive(this.tasks);
   }
 }

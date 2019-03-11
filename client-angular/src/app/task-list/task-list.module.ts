@@ -6,6 +6,7 @@ import {CompletedTasksComponent} from './completed/completed-tasks.component';
 import {DeletedTasksComponent} from './deleted/deleted-tasks.component';
 import {DraftsComponent} from './drafts/drafts.component';
 import {TaskListRoutingModule} from './task-list.routes';
+import {TaskServiceModule} from '../task-service/task-service.module';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,7 @@ import {TaskListRoutingModule} from './task-list.routes';
     DeletedTasksComponent,
     DraftsComponent
   ],
-  imports: [TaskListRoutingModule, CommonModule]
+  imports: [TaskListRoutingModule, CommonModule, TaskServiceModule]
 })
 export class TaskListModule {
 }

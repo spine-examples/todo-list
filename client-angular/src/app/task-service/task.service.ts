@@ -19,8 +19,13 @@
  */
 
 import {Injectable} from '@angular/core';
+import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskServiceModule} from './task-service.module';
 import {SpineWebClient} from '../spine-web-client/spine-web-client.service';
+
+import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
+import {TaskDescription} from 'generated/main/js/todolist/values_pb';
+import {CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
 
 @Injectable({
   providedIn: TaskServiceModule,
@@ -28,5 +33,8 @@ import {SpineWebClient} from '../spine-web-client/spine-web-client.service';
 export class TaskService {
 
   constructor(private readonly spineWebClient: SpineWebClient) {
+  }
+
+  subscribeToActive(tasks: TaskItem[]) {
   }
 }
