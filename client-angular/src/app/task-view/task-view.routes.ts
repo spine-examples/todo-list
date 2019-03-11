@@ -23,7 +23,7 @@ import {TaskViewComponent} from './task-view.component';
 
 const routes: Routes = [
   {
-    path: '',
+    path: ':id',
     component: TaskViewComponent
   }
 ];

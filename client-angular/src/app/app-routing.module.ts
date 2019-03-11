@@ -34,7 +34,7 @@ const routes: Routes = [
   },
 
   {
-    path: 'details/:id',
+    path: 'details',
     loadChildren: './task-view/task-view.module#TaskViewModule'
   },
 
