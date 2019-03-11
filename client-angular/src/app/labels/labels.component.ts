@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {Location} from '@angular/common';
 
 @Component({
@@ -6,12 +6,9 @@ import {Location} from '@angular/common';
   templateUrl: './labels.component.html',
   styleUrls: ['./labels.component.css']
 })
-export class LabelsComponent implements OnInit {
+export class LabelsComponent {
 
   constructor(private readonly location: Location) {
-  }
-
-  ngOnInit() {
   }
 
   back(): void {

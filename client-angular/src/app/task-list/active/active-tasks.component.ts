@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TASKS} from '../../mock-items';
@@ -28,14 +28,11 @@ import {TASKS} from '../../mock-items';
   templateUrl: './active-tasks.component.html',
   styleUrls: ['./active-tasks.component.css']
 })
-export class ActiveTasksComponent implements OnInit {
+export class ActiveTasksComponent {
 
   tasks: TaskItem[] = TASKS;
 
   constructor() {
-  }
-
-  ngOnInit() {
   }
 
   completeTask(taskId: TaskId): void {
