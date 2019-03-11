@@ -29,8 +29,7 @@ import {DraftsComponent} from './drafts/drafts.component';
  * ...
  * The routes of this class have non-empty root `tasks` (forcing not very convenient navigation
  * `task-list/tasks/...`) because of the known issue
- * https://github.com/angular/angular/issues/10981#issuecomment-301787482. The issue, albeit
- * closed, still persists.
+ * https://github.com/angular/angular/issues/10981. The issue, albeit closed, still persists.
  */
 const routes: Routes = [
   {
