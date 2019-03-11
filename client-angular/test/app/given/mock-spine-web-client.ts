@@ -18,5 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {MessageType} from '../../../src/app/spine-web-client/spine-web-client.service';
+
 export class MockSpineWebClient {
+  subscribeWithCallback<T>(messageType: MessageType<T>, onNext: (next: T) => void): Promise<any> {
+    return null;
+  }
 }

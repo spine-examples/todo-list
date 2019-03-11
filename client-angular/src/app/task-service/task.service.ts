@@ -19,9 +19,9 @@
  */
 
 import {Injectable} from '@angular/core';
-import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskServiceModule} from './task-service.module';
-import {SpineWebClient} from '../spine-web-client/spine-web-client.service';
+import {MessageType, SpineWebClient} from '../spine-web-client/spine-web-client.service';
 
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
@@ -35,6 +35,11 @@ export class TaskService {
   constructor(private readonly spineWebClient: SpineWebClient) {
   }
 
-  subscribeToActive(tasks: TaskItem[]) {
+  subscribeToActive(tasks: TaskItem[]): void {
+    const fillTable = (view: MyListView) => {
+      console.log('Obtained a new version of view');
+    };
+    const messageType = new MessageType<MyListView>(MyListView);
+    this.spineWebClient.subscribeWithCallback(messageType, fillTable);
   }
 }

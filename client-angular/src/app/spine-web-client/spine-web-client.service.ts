@@ -23,8 +23,8 @@ import {Injectable} from '@angular/core';
 import {SpineWebClientModule} from './spine-web-client.module';
 import {FirebaseApp} from '../firebase-app/firebase-app.service';
 import * as spineWeb from 'spine-web';
+import {ActorProvider, Client, Type, TypeUrl} from 'spine-web';
 import * as spineWebTypes from 'spine-web/proto/index';
-import {ActorProvider, Client} from 'spine-web';
 
 import * as knownTypes from 'generated/main/js/index';
 import {UserId} from 'spine-web/proto/spine/core/user_id_pb';
@@ -63,5 +63,38 @@ export class SpineWebClient {
   sendCommand(commandMessage: Message): void {
     this.client.sendCommand(commandMessage,
       SpineWebClient.logSuccess, SpineWebClient.logError, SpineWebClient.logError);
+  }
+
+  subscribeWithCallback<T>(messageType: MessageType<T>, onNext: (next: T) => void): Promise<any> {
+    const type = Type.forClass(messageType.type);
+    const callback = {
+      next: onNext
+    };
+    return new Promise<any>((resolve, reject) =>
+      this.client.subscribeToEntities({ofType: type})
+        .then(({itemAdded, itemChanged, itemRemoved, unsubscribe}) => {
+          itemAdded.subscribeWithCallback(callback);
+          itemChanged.subscribeWithCallback(callback);
+          itemRemoved.subscribeWithCallback(callback);
+          resolve(unsubscribe);
+        })
+        .catch(err => {
+          SpineWebClient.logError(err);
+          reject(err);
+        }));
+  }
+}
+
+export class MessageType<T extends Message> {
+
+  constructor(private readonly messageType: any) {
+  }
+
+  typeUrl(): string {
+    return this.messageType.typeUrl();
+  }
+
+  get type() {
+    return this.messageType;
   }
 }
