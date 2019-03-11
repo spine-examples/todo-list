@@ -19,7 +19,7 @@
  */
 
 import {environment} from '../../environments/environment';
-import {Injectable} from '@angular/core';
+import {Injectable, OnInit} from '@angular/core';
 import * as spineWeb from 'spine-web';
 import {ActorProvider, Client} from 'spine-web';
 import {UserId} from 'spine-web/proto/spine/core/user_id_pb';
@@ -30,18 +30,12 @@ import {FirebaseApp} from '../firebase-app/firebase-app.service';
 @Injectable({
   providedIn: SpineWebClientModule
 })
-export class SpineWebClient {
+export class SpineWebClient implements OnInit {
+
+  private client: Client;
 
   constructor(private readonly firebaseApp: FirebaseApp) {
-    this.client = spineWeb.init({
-      protoIndexFiles: [knownTypes],
-      endpointUrl: environment.host,
-      firebaseDatabase: firebaseApp.database(),
-      actorProvider: SpineWebClient.actorProvider()
-    });
   }
-
-  private readonly client: Client;
 
   private static actorProvider(): ActorProvider {
     const userId = new UserId();
@@ -55,6 +49,15 @@ export class SpineWebClient {
 
   private static errorCallback(error): void {
     console.error(error);
+  }
+
+  ngOnInit(): void {
+    this.client = spineWeb.init({
+      protoIndexFiles: [knownTypes],
+      endpointUrl: environment.host,
+      firebaseDatabase: this.firebaseApp.database(),
+      actorProvider: SpineWebClient.actorProvider()
+    });
   }
 
   sendCommand(commandMessage): void {
