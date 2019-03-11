@@ -1,6 +1,5 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
-import {RouterModule} from '@angular/router';
 import {TaskListComponent} from './task-list.component';
 import {ActiveTasksComponent} from './active/active-tasks.component';
 import {CompletedTasksComponent} from './completed/completed-tasks.component';
@@ -16,7 +15,7 @@ import {TaskListRoutingModule} from './task-list.routes';
     DeletedTasksComponent,
     DraftsComponent
   ],
-  imports: [CommonModule, RouterModule, TaskListRoutingModule]
+  imports: [TaskListRoutingModule, CommonModule]
 })
 export class TaskListModule {
 }

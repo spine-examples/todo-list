@@ -5,6 +5,7 @@ import {LabelsRoutingModule} from './labels.routes';
 
 @NgModule({
   declarations: [LabelsComponent],
-  imports: [SpineWebClientModule, LabelsRoutingModule]
+  imports: [LabelsRoutingModule, SpineWebClientModule]
 })
-export class LabelsModule { }
+export class LabelsModule {
+}
