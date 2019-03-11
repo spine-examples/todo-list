@@ -18,19 +18,5 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TestBed} from '@angular/core/testing';
-
-import {TaskService} from '../../../src/app/task-service/task.service';
-import {SpineWebClient} from '../../../src/app/spine-web-client/spine-web-client.service';
-import {MockSpineWebClient} from '../given/mock-spine-web-client';
-
-describe('TaskService', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    providers: [TaskService, {provide: SpineWebClient, useClass: MockSpineWebClient}]
-  }));
-
-  it('should be created', () => {
-    const service: TaskService = TestBed.get(TaskService);
-    expect(service).toBeTruthy();
-  });
-});
+export class MockSpineWebClient {
+}

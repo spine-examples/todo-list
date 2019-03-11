@@ -18,12 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { LabelService } from '../../../src/app/labels/label.service';
+import {LabelService} from '../../../src/app/labels/label.service';
+import {SpineWebClient} from '../../../src/app/spine-web-client/spine-web-client.service';
+import {MockSpineWebClient} from '../given/mock-spine-web-client';
 
 describe('LabelService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+  beforeEach(() => TestBed.configureTestingModule({
+    providers: [LabelService, {provide: SpineWebClient, useClass: MockSpineWebClient}]
+  }));
 
   it('should be created', () => {
     const service: LabelService = TestBed.get(LabelService);
