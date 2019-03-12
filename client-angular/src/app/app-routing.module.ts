@@ -21,6 +21,9 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
+/**
+ * The routes by which the end user navigates through the client.
+ */
 const routes: Routes = [
   {
     path: '',
@@ -49,6 +52,11 @@ const routes: Routes = [
   }
 ];
 
+/**
+ * The module which describes the navigation routes of the application.
+ *
+ * All child modules are loaded dynamically (thus lazily).
+ */
 @NgModule({
   imports: [
     RouterModule.forRoot(routes)

@@ -8,6 +8,9 @@ import {DraftsComponent} from './drafts/drafts.component';
 import {TaskListRoutingModule} from './task-list.routes';
 import {TaskServiceModule} from '../task-service/task-service.module';
 
+/**
+ * The module which displays the task list.
+ */
 @NgModule({
   declarations: [
     TaskListComponent,

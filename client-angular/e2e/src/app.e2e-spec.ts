@@ -21,6 +21,9 @@
 import {AppPage} from './app.po';
 import {browser, logging} from 'protractor';
 
+/**
+ * End-to-end test of the To-Do List client.
+ */
 describe('workspace-project App', () => {
   let page: AppPage;
 

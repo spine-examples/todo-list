@@ -28,6 +28,9 @@ const routes: Routes = [
   }
 ];
 
+/**
+ * The routing configuration of the {@link TaskViewModule}.
+ */
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]

@@ -4,6 +4,9 @@ import {Location} from '@angular/common';
 
 // TODO:2019-02-05:dmytro.kuzmin: How to fetch task details:
 // todo https://angular.io/guide/router#fetch-data-before-navigating.
+/**
+ * Component responsible for displaying a single task.
+ */
 @Component({
   selector: 'app-task-details',
   templateUrl: './task-view.component.html',

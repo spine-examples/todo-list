@@ -20,6 +20,9 @@
 
 import {commonEnvironment} from './environment.common';
 
+/**
+ * The environment configuration for the production.
+ */
 export const environment = {
   production: true,
   firebaseConfig: commonEnvironment.firebaseConfig,

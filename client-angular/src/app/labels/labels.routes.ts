@@ -28,6 +28,9 @@ const routes: Routes = [
   }
 ];
 
+/**
+ * The routes of the {@link LabelsModule}.
+ */
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]

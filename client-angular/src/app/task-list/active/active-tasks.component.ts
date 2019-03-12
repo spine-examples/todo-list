@@ -23,6 +23,10 @@ import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../task-service/task.service';
 
+/**
+ * A component displaying active tasks, i.e. those which are not completed, deleted, or in draft
+ * state.
+ */
 @Component({
   selector: 'app-active-tasks',
   templateUrl: './active-tasks.component.html',

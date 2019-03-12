@@ -28,6 +28,9 @@ const routes: Routes = [
   }
 ];
 
+/**
+ * The routing configuration of the {@link TaskCreationWizardModule}.
+ */
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]

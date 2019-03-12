@@ -25,12 +25,6 @@ import {CompletedTasksComponent} from './completed/completed-tasks.component';
 import {DeletedTasksComponent} from './deleted/deleted-tasks.component';
 import {DraftsComponent} from './drafts/drafts.component';
 
-/**
- * ...
- * The routes of this class have non-empty root `tasks` (forcing not very convenient navigation
- * `task-list/tasks/...`) because of the known issue
- * https://github.com/angular/angular/issues/10981. The issue, albeit closed, still persists.
- */
 const routes: Routes = [
   {
     path: 'tasks',
@@ -44,6 +38,14 @@ const routes: Routes = [
   }
 ];
 
+/**
+ * The routing configuration of the {@link TaskListModule}.
+ *
+ * The routes have non-empty root `tasks` (forcing not very convenient navigation
+ * `task-list/tasks/...`) because of the known
+ * {@linkplain https://github.com/angular/angular/issues/10981 issue}. The issue, albeit closed,
+ * still persists.
+ */
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]

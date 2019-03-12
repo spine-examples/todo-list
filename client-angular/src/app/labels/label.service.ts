@@ -27,6 +27,9 @@ import {SpineWebClient} from '../spine-web-client/spine-web-client.service';
 })
 export class LabelService {
 
+  /**
+   * @param spineWebClient a client for accessing Spine backend
+   */
   constructor(private readonly spineWebClient: SpineWebClient) {
   }
 }

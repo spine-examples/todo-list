@@ -31,6 +31,9 @@ import {UserId} from 'spine-web/proto/spine/core/user_id_pb';
 import {Message} from 'google-protobuf';
 import {Observable} from 'rxjs';
 
+/**
+ * A service which connects to the Spine backend using a common Firebase database.
+ */
 @Injectable({
   providedIn: SpineWebClientModule
 })
@@ -38,6 +41,10 @@ export class SpineWebClient {
 
   private readonly client: Client;
 
+  /**
+   * @param firebaseApp the Firebase app configured based on the
+   *                    {@linkplain environment#firebaseConfig environment}
+   */
   constructor(private readonly firebaseApp: FirebaseApp) {
     this.client = spineWeb.init({
       protoIndexFiles: [knownTypes, spineWebTypes],
@@ -47,35 +54,57 @@ export class SpineWebClient {
     });
   }
 
+  /**
+   * Creates an `ActorProvider` based on the {@linkplain environment#actor environment config}.
+   */
   private static actorProvider(): ActorProvider {
     const userId = new UserId();
     userId.setValue(environment.actor);
     return new spineWeb.ActorProvider(userId);
   }
 
-  private static logSuccess(): void {
+  /**
+   * Logs a command acknowledgement.
+   */
+  private static logAck(): void {
     console.log('Command sent');
   }
 
+  /**
+   * Logs error or rejection on sending a command.
+   */
   private static logError(error): void {
     console.error(error);
   }
 
+  /**
+   * Sends a given command to the backend.
+   */
   sendCommand(commandMessage: Message): void {
     this.client.sendCommand(commandMessage,
-      SpineWebClient.logSuccess, SpineWebClient.logError, SpineWebClient.logError);
+      SpineWebClient.logAck, SpineWebClient.logError, SpineWebClient.logError);
   }
 
-  subscribe<T extends Message>(messageType: new() => T): Promise<EntitySubscriptionObject<T>> {
+  /**
+   * Subscribes to a given message type.
+   *
+   * Returned object (in `Promise` form) contains all the subscription callbacks as well as the
+   * `unsubscribe` method.
+   *
+   * @template <T> the target message type
+   */
+  subscribe<T extends Message>(messageType: new() => T): Promise<SubscriptionCallbacks<T>> {
     const type = Type.forClass(messageType);
     return this.client.subscribeToEntities({ofType: type});
   }
 }
 
 /**
- * Represents a return type of the `subscribe` method.
+ * Object storing entity subscription callbacks.
+ *
+ * @template <T> the subscription target type
  */
-export interface EntitySubscriptionObject<T> {
+export interface SubscriptionCallbacks<T> {
   itemAdded: Observable<T>;
   itemChanged: Observable<T>;
   itemRemoved: Observable<T>;
