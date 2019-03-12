@@ -6,12 +6,12 @@ The client connects to the local backend server.
 
 How to run:
 
-1. Start the local backend server:
+1. Start the local backend server (from project root):
     ```bash
     ./gradlew :local-web:appRun
     ```
     
-2. Run the client:
+2. Run the client (in separate terminal):
     ```bash
     cd client-angular
     npm run ng serve 
