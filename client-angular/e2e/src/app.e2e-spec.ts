@@ -22,7 +22,7 @@ import {AppPage} from './app.po';
 import {browser, logging} from 'protractor';
 
 /**
- * End-to-end test of the To-Do List client.
+ * End-to-end test of the To-Do List Angular client.
  */
 describe('workspace-project App', () => {
   let page: AppPage;

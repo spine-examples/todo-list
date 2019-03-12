@@ -21,9 +21,6 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
-/**
- * The routes by which the end user navigates through the client.
- */
 const routes: Routes = [
   {
     path: '',

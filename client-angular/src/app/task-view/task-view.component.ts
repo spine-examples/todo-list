@@ -29,8 +29,7 @@ import {Location} from '@angular/common';
  */
 @Component({
   selector: 'app-task-details',
-  templateUrl: './task-view.component.html',
-  styleUrls: ['./task-view.component.css']
+  templateUrl: './task-view.component.html'
 })
 export class TaskViewComponent {
 

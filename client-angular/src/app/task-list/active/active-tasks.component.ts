@@ -29,8 +29,7 @@ import {TaskService} from '../../task-service/task.service';
  */
 @Component({
   selector: 'app-active-tasks',
-  templateUrl: './active-tasks.component.html',
-  styleUrls: ['./active-tasks.component.css']
+  templateUrl: './active-tasks.component.html'
 })
 export class ActiveTasksComponent implements OnInit, OnDestroy {
 

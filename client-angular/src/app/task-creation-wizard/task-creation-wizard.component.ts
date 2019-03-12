@@ -26,8 +26,7 @@ import {Location} from '@angular/common';
  */
 @Component({
   selector: 'app-task-creation-wizard',
-  templateUrl: './task-creation-wizard.component.html',
-  styleUrls: ['./task-creation-wizard.component.css']
+  templateUrl: './task-creation-wizard.component.html'
 })
 export class TaskCreationWizardComponent {
 

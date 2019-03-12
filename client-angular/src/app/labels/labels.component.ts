@@ -27,8 +27,7 @@ import {Location} from '@angular/common';
  */
 @Component({
   selector: 'app-labels',
-  templateUrl: './labels.component.html',
-  styleUrls: ['./labels.component.css']
+  templateUrl: './labels.component.html'
 })
 export class LabelsComponent {
 
