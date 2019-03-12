@@ -27,7 +27,7 @@ import * as firebase from 'firebase/app';
 import 'firebase/database';
 
 /**
- * A service which instantiates a {@link FirebaseApp} and provides access to its database.
+ * A service which instantiates a Firebase Application and provides access to its database.
  */
 @Injectable({
   providedIn: FirebaseAppModule
@@ -39,8 +39,7 @@ export class FirebaseApp {
   private readonly app: firebase.app.App;
 
   /**
-   * @param name the optional name of the instantiated app, if not specified, the default one is
-   *             used
+   * @param name the optional name of the application, if not specified, the default one is used
    */
   constructor(@Inject('firebaseAppName') @Optional() name?: string) {
     const appName: string = name != null

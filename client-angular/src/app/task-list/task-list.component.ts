@@ -36,6 +36,11 @@ export class TaskListComponent {
   constructor(private readonly taskService: TaskService) {
   }
 
+  /**
+   * Creates a simple task with random ID and fixed description.
+   *
+   * This is a temporary testing method.
+   */
   createBasicTask(): void {
     this.taskService.createBasicTask('Random task');
   }

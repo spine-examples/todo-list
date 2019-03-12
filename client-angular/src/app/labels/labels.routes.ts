@@ -29,7 +29,7 @@ const routes: Routes = [
 ];
 
 /**
- * The routes of the {@link LabelsModule}.
+ * The routing configuration of the {@link LabelsModule}.
  */
 @NgModule({
   imports: [RouterModule.forChild(routes)],

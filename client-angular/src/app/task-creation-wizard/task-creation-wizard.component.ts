@@ -22,7 +22,9 @@ import {Component} from '@angular/core';
 import {Location} from '@angular/common';
 
 /**
- * A component storing task creation wizard starting page.
+ * A component storing task creation wizard page.
+ *
+ * As it's currently not implemented, there is only a single page in wizard.
  */
 @Component({
   selector: 'app-task-creation-wizard',

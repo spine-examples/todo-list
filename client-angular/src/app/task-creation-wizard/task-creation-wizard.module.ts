@@ -23,7 +23,7 @@ import {TaskCreationWizardComponent} from './task-creation-wizard.component';
 import {TaskCreationWizardRoutingModule} from './task-creation-wizard.routes';
 
 /**
- * The module which displays a task creation wizard.
+ * The module which declares task creation wizard components.
  *
  * @see `io.spine.examples.todolist.c.procman.TaskCreationWizard` in `api-java`.
  */
