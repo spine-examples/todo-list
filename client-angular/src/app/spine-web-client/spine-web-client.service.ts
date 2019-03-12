@@ -74,9 +74,6 @@ export class SpineWebClient {
 
 /**
  * Represents a return type of the `subscribe` method.
- *
- * // todo this is a `typedef` in spine-web client, investigate if we can export such class from
- * // todo ...there.
  */
 export interface EntitySubscriptionObject<T> {
   itemAdded: Observable<T>;
