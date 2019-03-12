@@ -73,9 +73,9 @@ export class SpineWebClient {
     return new Promise<any>((resolve, reject) =>
       this.client.subscribeToEntities({ofType: type})
         .then(({itemAdded, itemChanged, itemRemoved, unsubscribe}) => {
-          itemAdded.subscribeWithCallback(callback);
-          itemChanged.subscribeWithCallback(callback);
-          itemRemoved.subscribeWithCallback(callback);
+          itemAdded.subscribe(callback);
+          itemChanged.subscribe(callback);
+          itemRemoved.subscribe(callback);
           resolve(unsubscribe);
         })
         .catch(err => {
