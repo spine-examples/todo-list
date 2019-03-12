@@ -15,7 +15,7 @@ How to run:
     ```bash
     cd client-angular
     npm run ng serve 
-    # or just `ng serve` if you have Angular installed.
+    # or just `ng serve` if you have Angular CLI installed.
     ```
     
 3. Navigate to `localhost:4200`.
