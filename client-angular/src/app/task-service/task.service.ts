@@ -21,7 +21,11 @@
 import {Injectable} from '@angular/core';
 import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskServiceModule} from './task-service.module';
-import {MessageType, SpineWebClient} from '../spine-web-client/spine-web-client.service';
+import {
+  EntitySubscriptionObject,
+  SpineWebClient
+} from '../spine-web-client/spine-web-client.service';
+import * as uuid from 'uuid';
 
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
@@ -35,11 +39,50 @@ export class TaskService {
   constructor(private readonly spineWebClient: SpineWebClient) {
   }
 
-  subscribeToActive(tasks: TaskItem[]): void {
-    const fillTable = (view: MyListView) => {
-      console.log('Obtained a new version of view');
+  private static newId() {
+    const id = new TaskId();
+    const value = uuid.v4();
+    id.setValue(value);
+    return id;
+  }
+
+  createBasicTask(description: string): void {
+    const cmd = new CreateBasicTask();
+    const id = TaskService.newId();
+    cmd.setId(id);
+    const taskDescription = new TaskDescription();
+    taskDescription.setValue(description);
+    cmd.setDescription(taskDescription);
+    this.spineWebClient.sendCommand(cmd);
+  }
+
+  // TODO:2019-02-05:dmytro.kuzmin: Actually filter by active, will require extending `TaskItem`
+  // todo projection.
+  subscribeToActive(tasks: TaskItem[]): Promise<() => void> {
+    const refreshTasks = {
+      next: (view: MyListView): void => {
+        const taskItems = view.getMyList().getItemsList();
+        // Refresh the array.
+        tasks.length = 0;
+        tasks.push(...taskItems);
+      }
     };
-    const messageType = new MessageType<MyListView>(MyListView);
-    this.spineWebClient.subscribeWithCallback(messageType, fillTable);
+    return new Promise((resolve, reject) =>
+      this.spineWebClient.subscribe(MyListView)
+        .then((subscriptionObject: EntitySubscriptionObject<MyListView>) => {
+          subscriptionObject.itemAdded.subscribe(refreshTasks);
+          subscriptionObject.itemChanged.subscribe(refreshTasks);
+          subscriptionObject.itemRemoved.subscribe(refreshTasks);
+
+          resolve(subscriptionObject.unsubscribe);
+        })
+        .catch(err => {
+          console.log(
+            'Cannot subscribe to entities of type (`%s`): %s',
+            MyListView.typeUrl(), err
+          );
+          reject(err);
+        })
+    );
   }
 }

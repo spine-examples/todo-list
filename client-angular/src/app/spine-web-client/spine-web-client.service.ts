@@ -29,6 +29,7 @@ import * as spineWebTypes from 'spine-web/proto/index';
 import * as knownTypes from 'generated/main/js/index';
 import {UserId} from 'spine-web/proto/spine/core/user_id_pb';
 import {Message} from 'google-protobuf';
+import {Observable} from 'rxjs';
 
 @Injectable({
   providedIn: SpineWebClientModule
@@ -65,36 +66,21 @@ export class SpineWebClient {
       SpineWebClient.logSuccess, SpineWebClient.logError, SpineWebClient.logError);
   }
 
-  subscribeWithCallback<T>(messageType: MessageType<T>, onNext: (next: T) => void): Promise<any> {
-    const type = Type.forClass(messageType.type);
-    const callback = {
-      next: onNext
-    };
-    return new Promise<any>((resolve, reject) =>
-      this.client.subscribeToEntities({ofType: type})
-        .then(({itemAdded, itemChanged, itemRemoved, unsubscribe}) => {
-          itemAdded.subscribe(callback);
-          itemChanged.subscribe(callback);
-          itemRemoved.subscribe(callback);
-          resolve(unsubscribe);
-        })
-        .catch(err => {
-          SpineWebClient.logError(err);
-          reject(err);
-        }));
+  subscribe<T extends Message>(messageType: new() => T): Promise<EntitySubscriptionObject<T>> {
+    const type = Type.forClass(messageType);
+    return this.client.subscribeToEntities({ofType: type});
   }
 }
 
-export class MessageType<T extends Message> {
-
-  constructor(private readonly messageType: any) {
-  }
-
-  typeUrl(): string {
-    return this.messageType.typeUrl();
-  }
-
-  get type() {
-    return this.messageType;
-  }
+/**
+ * Represents a return type of the `subscribe` method.
+ *
+ * // todo this is a `typedef` in spine-web client, investigate if we can export such class from
+ * // todo ...there.
+ */
+export interface EntitySubscriptionObject<T> {
+  itemAdded: Observable<T>;
+  itemChanged: Observable<T>;
+  itemRemoved: Observable<T>;
+  unsubscribe: () => void;
 }

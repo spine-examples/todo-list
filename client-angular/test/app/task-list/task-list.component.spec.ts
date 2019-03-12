@@ -22,6 +22,9 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {TaskListComponent} from '../../../src/app/task-list/task-list.component';
+import {TaskService} from '../../../src/app/task-service/task.service';
+import {SpineWebClient} from '../../../src/app/spine-web-client/spine-web-client.service';
+import {MockSpineWebClient} from '../given/mock-spine-web-client';
 
 describe('TaskListComponent', () => {
   let component: TaskListComponent;
@@ -30,7 +33,8 @@ describe('TaskListComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TaskListComponent],
-      imports: [RouterTestingModule.withRoutes([])]
+      imports: [RouterTestingModule.withRoutes([])],
+      providers: [TaskService, {provide: SpineWebClient, useClass: MockSpineWebClient}]
     })
       .compileComponents();
   }));

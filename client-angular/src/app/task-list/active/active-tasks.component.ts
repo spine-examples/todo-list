@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../task-service/task.service';
@@ -28,9 +28,10 @@ import {TaskService} from '../../task-service/task.service';
   templateUrl: './active-tasks.component.html',
   styleUrls: ['./active-tasks.component.css']
 })
-export class ActiveTasksComponent implements OnInit {
+export class ActiveTasksComponent implements OnInit, OnDestroy {
 
   private readonly tasks: TaskItem[] = [];
+  private unsubscribe: () => void;
 
   constructor(private readonly taskService: TaskService) {
   }
@@ -44,6 +45,15 @@ export class ActiveTasksComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.taskService.subscribeToActive(this.tasks);
+    this.taskService.subscribeToActive(this.tasks)
+      .then(unsubscribe => this.unsubscribe = unsubscribe);
+  }
+
+  ngOnDestroy(): void {
+    // todo handle the cases of component being destroyed before the subscription process is
+    // todo ...finished.
+    if (this.unsubscribe != null) {
+      this.unsubscribe();
+    }
   }
 }

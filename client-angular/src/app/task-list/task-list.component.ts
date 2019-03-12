@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {TaskService} from '../task-service/task.service';
 
 @Component({
   selector: 'app-tasks',
@@ -7,5 +8,10 @@ import {Component} from '@angular/core';
 })
 export class TaskListComponent {
 
-  constructor() { }
+  constructor(private readonly taskService: TaskService) {
+  }
+
+  createBasicTask(): void {
+    this.taskService.createBasicTask('Random task');
+  }
 }
