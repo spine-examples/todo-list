@@ -23,15 +23,13 @@ import {NgModule} from '@angular/core';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import { TaskServiceComponent } from './task-service/task-service.component';
 
 /**
  * The main application module.
  */
 @NgModule({
   declarations: [
-    AppComponent,
-    TaskServiceComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
