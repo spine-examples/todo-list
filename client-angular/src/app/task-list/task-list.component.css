@@ -68,17 +68,6 @@ a.labelLink {
   border-radius: 4px;
 }
 
-.tasks li.selected:hover {
-  background-color: #BBD8DC !important;
-  color: white;
-}
-
-.tasks li:hover {
-  color: #607D8B;
-  background-color: #DDD;
-  left: .1em;
-}
-
 .tasks .text {
   position: relative;
   top: -3px;
