@@ -70,7 +70,7 @@ export class TaskService {
     this.spineWebClient.sendCommand(cmd);
   }
 
-  // TODO:2019-02-05:dmytro.kuzmin: Actually filter by active, will require extending `TaskItem`
+  // TODO:2019-03-12:dmytro.kuzmin: Actually filter by active, will require extending `TaskItem`
   // todo projection.
   /**
    * Subscribes to the active tasks and reflects them to a given array.
