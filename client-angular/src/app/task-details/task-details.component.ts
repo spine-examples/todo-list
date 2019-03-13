@@ -18,30 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {RouterTestingModule} from '@angular/router/testing';
+import {Component} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {Location} from '@angular/common';
 
-import {TaskViewComponent} from '../../../src/app/task-view/task-view.component';
+/**
+ * Component responsible for displaying a single task.
+ */
+@Component({
+  selector: 'app-task-details',
+  templateUrl: './task-details.component.html'
+})
+export class TaskDetailsComponent {
 
-describe('TaskViewComponent', () => {
-  let component: TaskViewComponent;
-  let fixture: ComponentFixture<TaskViewComponent>;
+  private readonly taskId;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [TaskViewComponent],
-      imports: [RouterTestingModule.withRoutes([])]
-    })
-      .compileComponents();
-  }));
+  constructor(private readonly route: ActivatedRoute, private readonly location: Location) {
+    this.taskId = this.route.snapshot.paramMap.get('id');
+  }
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(TaskViewComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+  back(): void {
+    this.location.back();
+  }
+}

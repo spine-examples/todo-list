@@ -17,27 +17,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+import {TaskDetailsComponent} from './task-details.component';
 
-import {Component} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {Location} from '@angular/common';
+const routes: Routes = [
+  {
+    path: ':id',
+    component: TaskDetailsComponent
+  }
+];
 
 /**
- * Component responsible for displaying a single task.
+ * The routing configuration of the {@link TaskDetailsModule}.
  */
-@Component({
-  selector: 'app-task-details',
-  templateUrl: './task-view.component.html'
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
 })
-export class TaskViewComponent {
-
-  private readonly taskId;
-
-  constructor(private readonly route: ActivatedRoute, private readonly location: Location) {
-    this.taskId = this.route.snapshot.paramMap.get('id');
-  }
-
-  back(): void {
-    this.location.back();
-  }
+export class TaskDetailsRoutingModule {
 }

@@ -18,18 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
-import {TaskViewComponent} from './task-view.component';
-import {TaskViewRoutingModule} from './task-view.routes';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {RouterTestingModule} from '@angular/router/testing';
 
-/**
- * The module responsible for displaying a single task view.
- *
- * Presents the information about a task to the user and allows for task updates.
- */
-@NgModule({
-  declarations: [TaskViewComponent],
-  imports: [TaskViewRoutingModule]
-})
-export class TaskViewModule {
-}
+import {TaskDetailsComponent} from '../../../src/app/task-details/task-details.component';
+
+describe('TaskDetailsComponent', () => {
+  let component: TaskDetailsComponent;
+  let fixture: ComponentFixture<TaskDetailsComponent>;
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [TaskDetailsComponent],
+      imports: [RouterTestingModule.withRoutes([])]
+    })
+      .compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(TaskDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
