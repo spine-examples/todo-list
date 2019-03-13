@@ -27,7 +27,8 @@ const routes: Routes = [
     redirectTo: '/task-list/tasks/(tasks:active)',
     pathMatch: 'full'
   },
-
+  // TODO:2019-03-12:dmytro.kuzmin: Think about getting rid of lazy loading and importing
+  // todo everything statically into the main module.
   {
     path: 'task-list',
     loadChildren: './task-list/task-list.module#TaskListModule'
@@ -35,7 +36,7 @@ const routes: Routes = [
 
   {
     path: 'details',
-    loadChildren: './task-view/task-view.module#TaskViewModule'
+    loadChildren: './task-details/task-details.module#TaskDetailsModule'
   },
 
   {
