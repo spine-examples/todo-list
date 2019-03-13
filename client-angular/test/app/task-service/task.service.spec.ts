@@ -19,14 +19,14 @@
  */
 
 import {TestBed} from '@angular/core/testing';
+import {Client} from 'spine-web';
 
 import {TaskService} from '../../../src/app/task-service/task.service';
-import {SpineWebClient} from '../../../src/app/spine-web-client/spine-web-client.service';
 import {MockSpineWebClient} from '../given/mock-spine-web-client';
 
 describe('TaskService', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    providers: [TaskService, {provide: SpineWebClient, useClass: MockSpineWebClient}]
+    providers: [TaskService, {provide: Client, useClass: MockSpineWebClient}]
   }));
 
   it('should be created', () => {

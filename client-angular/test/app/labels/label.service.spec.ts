@@ -19,14 +19,14 @@
  */
 
 import {TestBed} from '@angular/core/testing';
+import {Client} from 'spine-web';
 
 import {LabelService} from '../../../src/app/labels/label.service';
-import {SpineWebClient} from '../../../src/app/spine-web-client/spine-web-client.service';
 import {MockSpineWebClient} from '../given/mock-spine-web-client';
 
 describe('LabelService', () => {
   beforeEach(() => TestBed.configureTestingModule({
-    providers: [LabelService, {provide: SpineWebClient, useClass: MockSpineWebClient}]
+    providers: [LabelService, {provide: Client, useClass: MockSpineWebClient}]
   }));
 
   it('should be created', () => {

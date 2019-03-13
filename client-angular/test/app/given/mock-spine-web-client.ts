@@ -18,14 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {SubscriptionCallbacks} from '../../../src/app/spine-web-client/spine-web-client.service';
 import {Message} from 'google-protobuf';
+import {Type} from 'spine-web';
 import {Observable} from 'rxjs';
 
 export class MockSpineWebClient {
 
   // noinspection JSUnusedGlobalSymbols, JSUnusedLocalSymbols Used by Angular TestBed.
-  subscribe<T extends Message>(messageType: new() => T): Promise<SubscriptionCallbacks<T>> {
+  subscribeToEntities<T extends Message>(ofType: Type<T>) {
     const observable = jasmine.createSpyObj<Observable<T>>('Observable', ['subscribe']);
     const subscriptionObject = {
       itemAdded: observable,

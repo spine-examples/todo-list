@@ -19,14 +19,14 @@
  */
 
 import {NgModule} from '@angular/core';
-import {SpineWebClientModule} from '../spine-web-client/spine-web-client.module';
+import {SpineClientProvider} from '../spine-client-provider/spine-client-provider.module';
 
 /**
  * A module which provides the {@link TaskService}.
  */
 @NgModule({
   declarations: [],
-  imports: [SpineWebClientModule]
+  imports: [SpineClientProvider]
 })
 export class TaskServiceModule {
 }

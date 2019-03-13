@@ -19,16 +19,14 @@
  */
 
 import {Injectable} from '@angular/core';
-import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskServiceModule} from './task-service.module';
-import {
-  SubscriptionCallbacks,
-  SpineWebClient
-} from '../spine-web-client/spine-web-client.service';
+import {Client, Type} from 'spine-web';
 import * as uuid from 'uuid';
+
+import {TaskServiceModule} from './task-service.module';
 
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
+import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
 
 /**
@@ -42,7 +40,7 @@ export class TaskService {
   /**
    * @param spineWebClient a client for accessing Spine backend
    */
-  constructor(private readonly spineWebClient: SpineWebClient) {
+  constructor(private readonly spineWebClient: Client) {
   }
 
   /**
@@ -55,6 +53,14 @@ export class TaskService {
     return id;
   }
 
+  private static logCmdAck() {
+    console.log('Command acknowledged by the server');
+  }
+
+  private static logCmdErr(err) {
+    console.log('Error when sending command to the server: %s', err);
+  }
+
   /**
    * Creates a task with a given description and a randomly generated ID.
    *
@@ -64,10 +70,12 @@ export class TaskService {
     const cmd = new CreateBasicTask();
     const id = TaskService.newId();
     cmd.setId(id);
+
     const taskDescription = new TaskDescription();
     taskDescription.setValue(description);
     cmd.setDescription(taskDescription);
-    this.spineWebClient.sendCommand(cmd);
+
+    this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
   }
 
   // TODO:2019-03-12:dmytro.kuzmin: Actually filter by active, will require extending `TaskItem`
@@ -92,9 +100,10 @@ export class TaskService {
         reflectInto.push(...taskItems);
       }
     };
+    const type = Type.forClass(MyListView);
     return new Promise((resolve, reject) =>
-      this.spineWebClient.subscribe(MyListView)
-        .then((subscriptionObject: SubscriptionCallbacks<MyListView>) => {
+      this.spineWebClient.subscribeToEntities({ofType: type})
+        .then((subscriptionObject) => {
           subscriptionObject.itemAdded.subscribe(refreshTasks);
           subscriptionObject.itemChanged.subscribe(refreshTasks);
           subscriptionObject.itemRemoved.subscribe(refreshTasks);

@@ -20,9 +20,9 @@
 
 import {async, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
+import {Client} from 'spine-web';
 import {AppComponent} from '../../src/app/app.component';
-import {FirebaseApp} from '../../src/app/firebase-app/firebase-app.service';
-import {TestFirebaseApp} from './given/test-firebase-app';
+import {MockSpineWebClient} from './given/mock-spine-web-client';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {
@@ -33,7 +33,7 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
-      providers: [{provide: FirebaseApp, useValue: TestFirebaseApp.app()}]
+      providers: [{provide: Client, useClass: MockSpineWebClient}]
     }).compileComponents();
   }));
 

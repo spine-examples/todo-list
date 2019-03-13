@@ -21,9 +21,10 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
+import {Client} from 'spine-web';
+
 import {TaskListComponent} from '../../../src/app/task-list/task-list.component';
 import {TaskService} from '../../../src/app/task-service/task.service';
-import {SpineWebClient} from '../../../src/app/spine-web-client/spine-web-client.service';
 import {MockSpineWebClient} from '../given/mock-spine-web-client';
 
 describe('TaskListComponent', () => {
@@ -34,7 +35,7 @@ describe('TaskListComponent', () => {
     TestBed.configureTestingModule({
       declarations: [TaskListComponent],
       imports: [RouterTestingModule.withRoutes([])],
-      providers: [TaskService, {provide: SpineWebClient, useClass: MockSpineWebClient}]
+      providers: [TaskService, {provide: Client, useClass: MockSpineWebClient}]
     })
       .compileComponents();
   }));

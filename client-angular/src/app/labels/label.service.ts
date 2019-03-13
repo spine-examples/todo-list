@@ -19,8 +19,8 @@
  */
 
 import {Injectable} from '@angular/core';
+import {Client} from 'spine-web';
 import {LabelsModule} from './labels.module';
-import {SpineWebClient} from '../spine-web-client/spine-web-client.service';
 
 /**
  * A service which operates with task labels.
@@ -33,6 +33,6 @@ export class LabelService {
   /**
    * @param spineWebClient a client for accessing Spine backend
    */
-  constructor(private readonly spineWebClient: SpineWebClient) {
+  constructor(private readonly spineWebClient: Client) {
   }
 }
