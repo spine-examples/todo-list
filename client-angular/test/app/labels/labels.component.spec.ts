@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {async, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Location} from '@angular/common';
 
@@ -26,7 +26,6 @@ import {LabelsComponent} from '../../../src/app/labels/labels.component';
 
 describe('LabelsComponent', () => {
   let component: LabelsComponent;
-  let fixture: ComponentFixture<LabelsComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -37,7 +36,7 @@ describe('LabelsComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(LabelsComponent);
+    const fixture = TestBed.createComponent(LabelsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -50,9 +49,11 @@ describe('LabelsComponent', () => {
     const location: Location = TestBed.get(Location);
     const initialPath = '/task-list/tasks/active';
     location.go(initialPath);
+
     const nextPath = 'labels';
     location.go(nextPath);
     component.back();
+
     expect(location.path()).toBe(initialPath);
   });
 

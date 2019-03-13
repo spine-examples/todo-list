@@ -19,14 +19,13 @@
  */
 
 import {Location} from '@angular/common';
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {async, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {TaskCreationWizardComponent} from '../../../src/app/task-creation-wizard/task-creation-wizard.component';
 
 describe('TaskCreationWizardComponent', () => {
   let component: TaskCreationWizardComponent;
-  let fixture: ComponentFixture<TaskCreationWizardComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -37,7 +36,7 @@ describe('TaskCreationWizardComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TaskCreationWizardComponent);
+    const fixture = TestBed.createComponent(TaskCreationWizardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -50,9 +49,11 @@ describe('TaskCreationWizardComponent', () => {
     const location: Location = TestBed.get(Location);
     const initialPath = '/task-list/tasks/active';
     location.go(initialPath);
+
     const nextPath = 'labels';
     location.go(nextPath);
     component.back();
+
     expect(location.path()).toBe(initialPath);
   });
 });

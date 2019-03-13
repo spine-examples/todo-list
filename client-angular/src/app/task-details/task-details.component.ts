@@ -31,10 +31,11 @@ import {Location} from '@angular/common';
 })
 export class TaskDetailsComponent {
 
-  private readonly taskId;
+  /** Visible for testing. */
+  readonly taskId;
 
-  constructor(private readonly route: ActivatedRoute, private readonly location: Location) {
-    this.taskId = this.route.snapshot.paramMap.get('id');
+  constructor(private readonly location: Location, route: ActivatedRoute) {
+    this.taskId = route.snapshot.paramMap.get('id');
   }
 
   back(): void {

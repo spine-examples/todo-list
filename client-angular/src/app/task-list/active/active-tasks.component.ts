@@ -32,8 +32,10 @@ import {TaskService} from '../../task-service/task.service';
 })
 export class ActiveTasksComponent implements OnInit, OnDestroy {
 
-  private readonly tasks: TaskItem[] = [];
   private unsubscribe: () => void;
+
+  /** Visible for testing. */
+  readonly tasks: TaskItem[] = [];
 
   constructor(private readonly taskService: TaskService) {
   }

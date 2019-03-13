@@ -19,20 +19,41 @@
  */
 
 import {Message} from 'google-protobuf';
-import {Type} from 'spine-web';
+import {Client, Type} from 'spine-web';
 import {Observable} from 'rxjs';
 
-export class MockSpineWebClient {
+interface SubscriptionData<T> {
+  itemAdded: Observable<T>;
+  itemChanged: Observable<T>;
+  itemRemoved: Observable<T>;
+  unsubscribe: () => void;
+}
 
-  // noinspection JSUnusedGlobalSymbols, JSUnusedLocalSymbols Used by Angular TestBed.
-  subscribeToEntities<T extends Message>(ofType: Type<T>) {
-    const observable = jasmine.createSpyObj<Observable<T>>('Observable', ['subscribe']);
-    const subscriptionObject = {
-      itemAdded: observable,
-      itemChanged: observable,
-      itemRemoved: observable,
-      unsubscribe: () => { }
-    };
-    return new Promise(resolve => resolve(subscriptionObject));
-  }
+function observableOf<T>(items: T[]): Observable<T> {
+  return Observable.create(observer => {
+    if (items.length > 0) {
+      items.forEach(item => observer.next(item));
+    }
+    observer.complete();
+  });
+}
+
+export function subscriptionDataOf<T>(added: T[],
+                                      changed: T[],
+                                      removed: T[],
+                                      unsubscribe: () => void)
+  : Promise<SubscriptionData<T>> {
+  return Promise.resolve({
+    itemAdded: observableOf(added),
+    itemChanged: observableOf(changed),
+    itemRemoved: observableOf(removed),
+    unsubscribe
+  });
+}
+
+const mockClient: jasmine.SpyObj<Client> =
+  jasmine.createSpyObj<Client>('Client', ['sendCommand', 'subscribeToEntities']);
+
+export function mockSpineWebClient() {
+  return mockClient;
 }
