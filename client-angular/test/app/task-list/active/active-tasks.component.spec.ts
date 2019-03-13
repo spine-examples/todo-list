@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {Client, Type} from 'spine-web';
@@ -39,10 +39,11 @@ import {
 describe('ActiveTasksComponent', () => {
 
   let component: ActiveTasksComponent;
+  let fixture: ComponentFixture<ActiveTasksComponent>;
 
   const unsubscribe = jasmine.createSpy();
 
-  beforeEach(async(() => {
+  beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ActiveTasksComponent, TaskItemComponent],
       imports: [RouterTestingModule.withRoutes([])],
@@ -53,26 +54,36 @@ describe('ActiveTasksComponent', () => {
     mockSpineWebClient().subscribeToEntities.and.returnValue(subscriptionDataOf(
       [houseTasks()], [], [], unsubscribe
     ));
-    const fixture = TestBed.createComponent(ActiveTasksComponent);
+
+    fixture = TestBed.createComponent(ActiveTasksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    tick(); // Wait for the fake subscription fetch.
   }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should receive active task list on initialization', fakeAsync(() => {
-    tick(); // Wait for the fake subscription fetch.
+  it('should receive active task list on initialization', () => {
     expect(component.tasks[0].getId().getValue()).toBe(HOUSE_TASK_1_ID);
     expect(component.tasks[0].getDescription().getValue()).toBe(HOUSE_TASK_1_DESC);
     expect(component.tasks[1].getId().getValue()).toBe(HOUSE_TASK_2_ID);
     expect(component.tasks[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
-  }));
+  });
 
-  it('should call unsubscribe method on destroy', fakeAsync(() => {
-    tick(); // Wait for the fake subscription fetch.
+  it('should call `unsubscribe` method on destroy', () => {
     component.ngOnDestroy();
     expect(unsubscribe).toHaveBeenCalled();
-  }));
+  });
+
+  it('create `app-task-item` for each of the received tasks', () => {
+    fixture.detectChanges();
+    const elements = fixture.nativeElement.getElementsByTagName('app-task-item');
+
+    expect(elements.length).toBe(2);
+    expect(elements[0].textContent).toContain(HOUSE_TASK_1_DESC);
+    expect(elements[1].textContent).toContain(HOUSE_TASK_2_DESC);
+  });
 });
