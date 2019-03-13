@@ -20,6 +20,7 @@
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
+import {Location} from '@angular/common';
 
 import {LabelsComponent} from '../../../src/app/labels/labels.component';
 
@@ -43,5 +44,21 @@ describe('LabelsComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should navigate back', () => {
+    const location: Location = TestBed.get(Location);
+    const initialPath = '/task-list/tasks/active';
+    location.go(initialPath);
+    const nextPath = 'labels';
+    location.go(nextPath);
+    component.back();
+    expect(location.path()).toBe(initialPath);
+  });
+
+  it('should print warning message when trying to add a new label', () => {
+    console.log = jasmine.createSpy('log');
+    component.addLabel();
+    expect(console.log).toHaveBeenCalledWith('To be honest I cannot add a new label');
   });
 });

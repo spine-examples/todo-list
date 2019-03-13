@@ -18,6 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {Location} from '@angular/common';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
@@ -43,5 +44,15 @@ describe('TaskCreationWizardComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should navigate back', () => {
+    const location: Location = TestBed.get(Location);
+    const initialPath = '/task-list/tasks/active';
+    location.go(initialPath);
+    const nextPath = 'labels';
+    location.go(nextPath);
+    component.back();
+    expect(location.path()).toBe(initialPath);
   });
 });
