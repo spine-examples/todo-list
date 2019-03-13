@@ -10,7 +10,8 @@ import * as spineWebTypes from 'spine-web/proto/index';
 import * as todoListTypes from 'generated/main/js/index';
 
 /**
- * Wraps actor {@linkplain environment#actor data} into the form suitable for Spine Web Client.
+ * Wraps actor {@linkplain environment#actor data} from the environment into the form suitable for
+ * Spine Web Client.
  */
 function actorProvider(): ActorProvider {
   const userId = new UserId();
