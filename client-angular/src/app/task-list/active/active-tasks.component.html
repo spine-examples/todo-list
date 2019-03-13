@@ -19,9 +19,7 @@
   -->
 
 <ol class="tasks">
-    <li class="taskItem" *ngFor="let task of tasks">
-        <a routerLink="/details/{{task.getId()}}">{{task.getDescription()}}</a>
-        <button (click)="completeTask(task.getId())">Complete</button>
-        <button (click)="deleteTask(task.getId())">X</button>
+    <li *ngFor="let task of tasks">
+        <app-task-item [task]="task"></app-task-item>
     </li>
 </ol>

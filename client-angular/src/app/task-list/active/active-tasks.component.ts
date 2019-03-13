@@ -19,7 +19,6 @@
  */
 
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../task-service/task.service';
 
@@ -37,14 +36,6 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
   private unsubscribe: () => void;
 
   constructor(private readonly taskService: TaskService) {
-  }
-
-  completeTask(taskId: TaskId): void {
-    alert(`Completing task with id: ${taskId}`);
-  }
-
-  deleteTask(taskId: TaskId): void {
-    alert(`Deleting task with id: ${taskId}`);
   }
 
   ngOnInit(): void {

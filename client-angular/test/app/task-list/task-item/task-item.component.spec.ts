@@ -21,29 +21,26 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
-import {Client} from 'spine-web';
-
-import {ActiveTasksComponent} from '../../../../src/app/task-list/active/active-tasks.component';
-import {TaskService} from '../../../../src/app/task-service/task.service';
-import {MockSpineWebClient} from '../../given/mock-spine-web-client';
 import {TaskItemComponent} from '../../../../src/app/task-list/task-item/task-item.component';
 
-describe('ActiveTasksComponent', () => {
-  let component: ActiveTasksComponent;
-  let fixture: ComponentFixture<ActiveTasksComponent>;
+import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+
+describe('TaskItemComponent', () => {
+  let component: TaskItemComponent;
+  let fixture: ComponentFixture<TaskItemComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ActiveTasksComponent, TaskItemComponent],
-      imports: [RouterTestingModule.withRoutes([])],
-      providers: [TaskService, {provide: Client, useClass: MockSpineWebClient}]
+      declarations: [TaskItemComponent],
+      imports: [RouterTestingModule.withRoutes([])]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ActiveTasksComponent);
+    fixture = TestBed.createComponent(TaskItemComponent);
     component = fixture.componentInstance;
+    component.task = new TaskItem();
     fixture.detectChanges();
   });
 
