@@ -51,6 +51,21 @@ describe('TaskService', () => {
     expect(service).toBeTruthy();
   });
 
+  it('should log command acknowledgement', () => {
+    console.log = jasmine.createSpy('log');
+    TaskService.logCmdAck();
+    expect(console.log).toHaveBeenCalledWith('Command acknowledged by the server');
+  });
+
+  it('should log command error', () => {
+    console.log = jasmine.createSpy('log');
+    const errorMessage = 'Failed to process command';
+    TaskService.logCmdErr(errorMessage);
+    expect(console.log).toHaveBeenCalledWith(
+      'Error when sending command to the server: %s', errorMessage
+    );
+  });
+
   it('should create basic task', () => {
     service.createBasicTask(HOUSE_TASK_1_DESC);
     expect(mockClient.sendCommand).toHaveBeenCalledWith(

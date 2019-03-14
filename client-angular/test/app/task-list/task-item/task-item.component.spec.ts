@@ -18,19 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {Component, ViewChild} from '@angular/core';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {TaskItemComponent} from '../../../../src/app/task-list/task-item/task-item.component';
 import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, task} from '../../given/tasks';
 
+import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+
 describe('TaskItemComponent', () => {
+  const taskItem = task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
+
   let component: TaskItemComponent;
   let fixture: ComponentFixture<TaskItemComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TaskItemComponent],
+      declarations: [TaskItemComponent, TestHostComponent],
       imports: [RouterTestingModule.withRoutes([])]
     })
       .compileComponents();
@@ -39,7 +44,7 @@ describe('TaskItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TaskItemComponent);
     component = fixture.componentInstance;
-    component.task = task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
+    component.task = taskItem;
     fixture.detectChanges();
   });
 
@@ -64,4 +69,28 @@ describe('TaskItemComponent', () => {
     component.deleteTask();
     expect(window.alert).toHaveBeenCalledWith(`Deleting task with ID: ${HOUSE_TASK_1_ID}`);
   });
+
+  it('should receive task item injected by the host component', () => {
+    const testHostFixture = TestBed.createComponent(TestHostComponent);
+    testHostFixture.detectChanges();
+    const testHostComponent = testHostFixture.componentInstance;
+    expect(testHostComponent.childTask).toBe(taskItem);
+  });
+
+  @Component({
+    selector: `host-component`,
+    template: `
+      <app-task-item [task]="task"></app-task-item>`
+  })
+  class TestHostComponent {
+
+    @ViewChild(TaskItemComponent)
+    private taskItemComponent: TaskItemComponent;
+
+    private readonly task: TaskItem = taskItem;
+
+    get childTask() {
+      return this.taskItemComponent.task;
+    }
+  }
 });
