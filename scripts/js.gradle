@@ -1,0 +1,88 @@
+/*
+ * Copyright 2019, TeamDev. All rights reserved.
+ *
+ * Redistribution and use in source and/or binary forms, with or without
+ * modification, must retain the above copyright notice and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+ext {
+    // We do not publish To-Do List modules.
+    versionToPublishJs = '-'
+
+    compiledProto = "$projectDir/generated"
+}
+
+apply from: deps.scripts.jsBuildTasks
+
+// Do not update the package version as we are not going to publish it.
+buildJs.dependsOn.remove(updatePackageVersion)
+
+configurations {
+    // Do not generate JS proto definitions for external dependencies.
+    protobuf.exclude group: 'io.spine', module: 'spine-base'
+    protobuf.exclude group: 'io.spine', module: 'spine-core'
+    protobuf.exclude group: 'io.spine', module: 'spine-client'
+    protobuf.exclude group: 'com.google.protobuf'
+}
+
+dependencies {
+    protobuf project(':model')
+}
+
+protobuf {
+    generatedFilesBaseDir = compiledProto
+    protoc {
+        artifact = deps.build.protoc
+    }
+    generateProtoTasks {
+        all().each { final task ->
+            task.plugins {
+                task.generateDescriptorSet = false
+            }
+            task.builtins {
+                // TODO:2018-05-14:dmytro.dashenkov: Disable `java` and `grpc` plugins.
+                // TODO https://github.com/SpineEventEngine/todo-list/issues/62
+
+                // Do not use Java builtin output in this project.
+                remove java
+
+                js {
+                    option "import_style=commonjs"
+                }
+
+                task.generateDescriptorSet = true
+                final def testClassifier = task.sourceSet.name == "test" ? "_test" : ""
+                final def descriptorName = "${project.group}_${project.name}_${project.version}${testClassifier}.desc"
+                task.descriptorSetOptions.path = "${projectDir}/build/descriptors/${task.sourceSet.name}/${descriptorName}"
+            }
+            compileProtoToJs.dependsOn task
+        }
+    }
+}
+
+compileProtoToJs {
+    outputs.files compiledProto
+}
+
+apply plugin: 'io.spine.tools.proto-js-plugin'
+
+protoJs {
+    generateParsersTask().dependsOn compileProtoToJs
+    buildJs.dependsOn generateParsersTask()
+}
+
+project.compileJava.enabled = false
+project.compileTestJava.enabled = false

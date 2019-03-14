@@ -19,56 +19,38 @@
  */
 
 ext {
-    compiledProto = "$projectDir/proto"
-    genProtoMain = "$compiledProto/main/js"
-    genProtoTest = "$compiledProto/test/js"
+    bundleFile = "$projectDir/bundle.js"
 }
 
-apply from: "$projectDir/scripts/js.gradle"
+apply from: "$rootDir/scripts/js.gradle"
 
-dependencies {
-    protobuf group: 'io.spine', name: 'spine-client', version: spineVersion, classifier: 'proto'
-    protobuf project(':model')
-}
+/**
+ * Compiles the JS into the `bundle.js` artifact.
+ *
+ * <p>This task executes the NPM `compile` script, which uses Webpack to assemble the artifact.
+ *
+ * <p>This task is a part of a standard Gradle build for the `:client-web` project.
+ */
+task bundleJs {
+    group = JAVA_SCRIPT_TASK_GROUP
+    description = 'Compiles the JavaScript sources into a single .js file.'
 
-task compileProtoToJs {
-    description = "Compiles Protobuf sources into JavaScript."
-}
+    inputs.files "$projectDir/webpack.config.js", fileTree("$projectDir/lib/")
+    outputs.files bundleFile
 
-protobuf {
-    generatedFilesBaseDir = compiledProto
-    protoc {
-        artifact = deps.build.protoc
+    doLast {
+        npm 'run', 'compile'
     }
-    generateProtoTasks {
-        all().each { final task ->
-            task.builtins {
-                // TODO:2018-05-14:dmytro.dashenkov: Disable `java` and `grpc` plugins.
-                // TODO https://github.com/SpineEventEngine/todo-list/issues/62
-                
-                js {
-                    option "import_style=commonjs"
-                }
 
-                task.generateDescriptorSet = true
-                final def testClassifier = task.sourceSet.name == "test" ? "_test" : ""
-                final def descriptorName = "${project.group}_${project.name}_${project.version}${testClassifier}.desc"
-                task.descriptorSetOptions.path = "${projectDir}/build/descriptors/${task.sourceSet.name}/${descriptorName}"
-            }
-            compileProtoToJs.dependsOn task
-        }
-    }
+    dependsOn buildJs
+
+    build.dependsOn bundleJs
 }
 
-apply plugin: 'io.spine.tools.proto-js-plugin'
+task deleteCompiled(type: Delete) {
+    group = JAVA_SCRIPT_TASK_GROUP
 
-protoJs {
-    mainGenProtoDir = genProtoMain
-    testGenProtoDir = genProtoTest
+    delete bundleJs.outputs.files
 
-    generateParsersTask().dependsOn compileProtoToJs
-    compileJs.dependsOn generateParsersTask()
+    clean.dependsOn deleteCompiled
 }
-
-project.compileJava.enabled = false
-project.compileTestJava.enabled = false

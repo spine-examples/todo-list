@@ -20,16 +20,17 @@
 
 let uuid = require("uuid");
 
-let knownTypes =  require("../proto/main/js/index");
+let knownTypes =  require("../generated/main/js/index");
 
-let UserId = require("../proto/main/js/spine/core/user_id_pb").UserId;
-let spineWeb = require("spine-web/index.js");
+let UserId = require("spine-web/proto/spine/core/user_id_pb").UserId;
+let spineWeb = require("spine-web/index");
+let spineWebTypes = require('spine-web/proto/index');
 
 
-let TaskId = require("../proto/main/js/todolist/identifiers_pb").TaskId;
-let TaskDescription = require("../proto/main/js/todolist/values_pb").TaskDescription;
-let CreateBasicTask = require("../proto/main/js/todolist/c/commands_pb").CreateBasicTask;
-let MyListView = require("../proto/main/js/todolist/q/projections_pb").MyListView;
+let TaskId = require("../generated/main/js/todolist/identifiers_pb").TaskId;
+let TaskDescription = require("../generated/main/js/todolist/values_pb").TaskDescription;
+let CreateBasicTask = require("../generated/main/js/todolist/c/commands_pb").CreateBasicTask;
+let MyListView = require("../generated/main/js/todolist/q/projections_pb").MyListView;
 
 let firebase = require("./firebase_client.js");
 
@@ -51,7 +52,7 @@ export class Client {
 
     constructor() {
         this._firebaseClient = spineWeb.init({
-            protoIndexFiles: [knownTypes],
+            protoIndexFiles: [knownTypes, spineWebTypes],
             endpointUrl: HOST,
             firebaseDatabase: firebase.application.database(),
             actorProvider: Client._actorProvider()

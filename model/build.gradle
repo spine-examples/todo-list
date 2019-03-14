@@ -18,4 +18,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+apply plugin: 'io.spine.tools.spine-model-compiler'
+
 apply from: "$rootDir/scripts/publish.gradle"

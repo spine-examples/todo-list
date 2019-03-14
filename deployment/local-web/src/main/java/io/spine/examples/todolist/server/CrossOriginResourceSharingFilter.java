@@ -44,6 +44,7 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
         servletNames = {
                 TodoCommandServlet.NAME,
                 TodoSubscribeServlet.NAME,
+                TodoSubscriptionCancelServlet.NAME,
                 TodoSubscriptionKeepUpServlet.NAME
         }
 )
