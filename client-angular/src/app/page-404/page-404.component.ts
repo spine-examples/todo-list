@@ -20,6 +20,9 @@
 
 import {Component} from '@angular/core';
 
+/**
+ * A view of the "404 Not Found" page.
+ */
 @Component({
   selector: 'app-page-404',
   templateUrl: './page-404.component.html',
