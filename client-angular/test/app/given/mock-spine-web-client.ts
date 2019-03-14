@@ -19,8 +19,8 @@
  */
 
 import {Message} from 'google-protobuf';
-import {Client, Type} from 'spine-web';
 import {Observable} from 'rxjs';
+import {Client, Type} from 'spine-web';
 
 interface SubscriptionData<T> {
   itemAdded: Observable<T>;

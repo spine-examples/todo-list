@@ -19,6 +19,7 @@
  */
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
+
 import {LabelsComponent} from './labels.component';
 
 const routes: Routes = [

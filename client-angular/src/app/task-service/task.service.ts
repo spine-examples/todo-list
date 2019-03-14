@@ -26,8 +26,8 @@ import {TaskServiceModule} from './task-service.module';
 
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
-import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
+import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 
 /**
  * A service which performs operations on To-Do List tasks.

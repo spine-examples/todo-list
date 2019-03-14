@@ -18,10 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TestBed} from '@angular/core/testing';
-
-import {Client} from 'spine-web';
 import {Injectable} from '@angular/core';
+import {TestBed} from '@angular/core/testing';
+import {Client} from 'spine-web';
+
 import {SpineClientProvider} from '../../../src/app/spine-client-provider/spine-client-provider.module';
 
 describe('SpineClientProvider', () => {

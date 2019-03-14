@@ -19,6 +19,7 @@
  */
 
 import {NgModule} from '@angular/core';
+
 import {LabelsComponent} from './labels.component';
 import {LabelsRoutingModule} from './labels.routes';
 import {SpineClientProvider} from '../spine-client-provider/spine-client-provider.module';

@@ -18,8 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
 import {Location} from '@angular/common';
+import {Component} from '@angular/core';
 
 /**
  * A component storing task creation wizard page.

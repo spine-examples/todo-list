@@ -19,6 +19,7 @@
  */
 
 import {NgModule} from '@angular/core';
+
 import {TaskDetailsComponent} from './task-details.component';
 import {TaskDetailsRoutingModule} from './task-details.routes';
 

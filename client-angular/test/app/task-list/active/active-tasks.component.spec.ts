@@ -26,7 +26,6 @@ import {Client, Type} from 'spine-web';
 import {ActiveTasksComponent} from '../../../../src/app/task-list/active/active-tasks.component';
 import {TaskService} from '../../../../src/app/task-service/task.service';
 import {TaskItemComponent} from '../../../../src/app/task-list/task-item/task-item.component';
-import {MyListView, TaskItem, TaskListView} from 'generated/main/js/todolist/q/projections_pb';
 import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {
   HOUSE_TASK_1_DESC,
@@ -35,6 +34,8 @@ import {
   HOUSE_TASK_2_ID,
   houseTasks
 } from '../../given/tasks';
+
+import {MyListView, TaskItem, TaskListView} from 'generated/main/js/todolist/q/projections_pb';
 
 describe('ActiveTasksComponent', () => {
   const mockClient = mockSpineWebClient();

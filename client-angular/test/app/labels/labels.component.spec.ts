@@ -18,9 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {Location} from '@angular/common';
 import {async, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-import {Location} from '@angular/common';
 
 import {LabelsComponent} from '../../../src/app/labels/labels.component';
 

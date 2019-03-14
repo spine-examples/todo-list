@@ -19,6 +19,7 @@
  */
 
 import {NgModule} from '@angular/core';
+
 import {SpineClientProvider} from '../spine-client-provider/spine-client-provider.module';
 
 /**

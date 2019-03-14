@@ -20,6 +20,7 @@
 
 import {Injectable} from '@angular/core';
 import {Client} from 'spine-web';
+
 import {LabelsModule} from './labels.module';
 
 /**

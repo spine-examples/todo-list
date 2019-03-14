@@ -19,7 +19,9 @@
  */
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
+
 import {TaskListComponent} from './task-list.component';
+
 import {ActiveTasksComponent} from './active/active-tasks.component';
 import {CompletedTasksComponent} from './completed/completed-tasks.component';
 import {DeletedTasksComponent} from './deleted/deleted-tasks.component';

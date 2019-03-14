@@ -18,8 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
 import {Location} from '@angular/common';
+import {Component} from '@angular/core';
 
 /**
  * The component which displays the label list as well as provides the basic navigation to

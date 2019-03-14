@@ -21,6 +21,7 @@
 import {async, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Client} from 'spine-web';
+
 import {AppComponent} from '../../src/app/app.component';
 import {mockSpineWebClient} from './given/mock-spine-web-client';
 

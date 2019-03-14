@@ -19,8 +19,9 @@
  */
 
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+
 import {TaskService} from '../../task-service/task.service';
+import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 
 /**
  * A component displaying active tasks, i.e. those which are not completed, deleted, or in draft
