@@ -38,6 +38,22 @@ const routes: Routes = [
       {path: 'deleted', component: DeletedTasksComponent, outlet: 'tasks'},
       {path: 'drafts', component: DraftsComponent, outlet: 'tasks'}
     ]
+  },
+  {
+    path: 'active',
+    redirectTo: '/task-list/tasks/(tasks:active)'
+  },
+  {
+    path: 'completed',
+    redirectTo: '/task-list/tasks/(tasks:completed)'
+  },
+  {
+    path: 'deleted',
+    redirectTo: '/task-list/tasks/(tasks:deleted)'
+  },
+  {
+    path: 'drafts',
+    redirectTo: '/task-list/tasks/(tasks:drafts)'
   }
 ];
 
