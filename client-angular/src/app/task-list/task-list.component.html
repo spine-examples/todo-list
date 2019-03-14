@@ -34,6 +34,6 @@
     <a routerLink="/labels" class="labelLink">Labels</a>
 </nav>
 <router-outlet name="tasks"></router-outlet>
-<button routerLink="/wizard">Add new task</button>
+<a routerLink="/wizard" color="primary" mat-stroked-button>Add new task</a>
 <!-- TODO:2019-02-05:dmytro.kuzmin: Remove when the normal task creation is ready.-->
 <button (click)="createBasicTask()">Create basic task just for test</button>
