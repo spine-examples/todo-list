@@ -28,29 +28,26 @@ export const HOUSE_TASK_1_DESC = 'Wash the dishes';
 export const HOUSE_TASK_2_ID = 'task-2';
 export const HOUSE_TASK_2_DESC = 'Clean the house';
 
+export function task(taskId: TaskId, taskDesc: TaskDescription): TaskItem {
+  const result = new TaskItem();
+  const id = new TaskId();
+  id.setValue(taskId);
+  result.setId(id);
+  const description = new TaskDescription();
+  description.setValue(taskDesc);
+  result.setDescription(description);
+  return result;
+}
+
 export function houseTasks(): MyListView {
-  const task1 = new TaskItem();
-  const id1 = new TaskId();
-  id1.setValue(HOUSE_TASK_1_ID);
-  task1.setId(id1);
-  const description1 = new TaskDescription();
-  description1.setValue(HOUSE_TASK_1_DESC);
-  task1.setDescription(description1);
-
-  const task2 = new TaskItem();
-  const id2 = new TaskId();
-  id2.setValue(HOUSE_TASK_2_ID);
-  task2.setId(id2);
-  const description2 = new TaskDescription();
-  description2.setValue(HOUSE_TASK_2_DESC);
-  task2.setDescription(description2);
-
-  const taskListView = new TaskListView();
-  taskListView.setItemsList([task1, task2]);
-
   const taskListId = new TaskListId();
   taskListId.setValue('task-list-ID');
 
+  const taskListView = new TaskListView();
+  taskListView.setItemsList([
+    task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC),
+    task(HOUSE_TASK_2_ID, HOUSE_TASK_2_DESC)
+  ]);
   const result = new MyListView();
   result.setId(taskListId);
   result.setMyList(taskListView);

@@ -37,7 +37,6 @@ import {
 } from '../../given/tasks';
 
 describe('ActiveTasksComponent', () => {
-
   let component: ActiveTasksComponent;
   let fixture: ComponentFixture<ActiveTasksComponent>;
 
@@ -78,7 +77,7 @@ describe('ActiveTasksComponent', () => {
     expect(unsubscribe).toHaveBeenCalled();
   });
 
-  it('create `app-task-item` for each of the received tasks', () => {
+  it('should create `app-task-item` for each of the received tasks', () => {
     fixture.detectChanges();
     const elements = fixture.nativeElement.getElementsByTagName('app-task-item');
 

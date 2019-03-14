@@ -16,11 +16,11 @@ export class TaskItemComponent {
   @Input()
   task: TaskItem;
 
-  completeTask(taskId: TaskId): void {
-    alert(`Completing task with id: ${taskId}`);
+  completeTask(): void {
+    alert(`Completing task with ID: ${this.task.getId()}`);
   }
 
-  deleteTask(taskId: TaskId): void {
-    alert(`Deleting task with id: ${taskId}`);
+  deleteTask(): void {
+    alert(`Deleting task with ID: ${this.task.getId()}`);
   }
 }

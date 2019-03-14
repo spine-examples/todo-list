@@ -22,8 +22,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {TaskItemComponent} from '../../../../src/app/task-list/task-item/task-item.component';
-
-import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, task} from '../../given/tasks';
 
 describe('TaskItemComponent', () => {
   let component: TaskItemComponent;
@@ -40,11 +39,29 @@ describe('TaskItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TaskItemComponent);
     component = fixture.componentInstance;
-    component.task = new TaskItem();
+    component.task = task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should have a link to task details', () => {
+    const element = fixture.nativeElement.querySelector('a');
+    expect(element.href).toContain('details/' + HOUSE_TASK_1_ID);
+    expect(element.textContent).toContain(HOUSE_TASK_1_DESC);
+  });
+
+  it('should allow to complete task', () => {
+    window.alert = jasmine.createSpy('alert');
+    component.completeTask();
+    expect(window.alert).toHaveBeenCalledWith('Completing task with ID: ' + HOUSE_TASK_1_ID);
+  });
+
+  it('should allow to delete task', () => {
+    window.alert = jasmine.createSpy('alert');
+    component.deleteTask();
+    expect(window.alert).toHaveBeenCalledWith('Deleting task with ID: ' + HOUSE_TASK_1_ID);
   });
 });
