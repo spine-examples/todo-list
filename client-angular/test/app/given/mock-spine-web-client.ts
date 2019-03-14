@@ -22,7 +22,7 @@ import {Message} from 'google-protobuf';
 import {Observable} from 'rxjs';
 import {Client, Type} from 'spine-web';
 
-interface SubscriptionData<T> {
+interface EntitySubscriptionObject<T> {
   itemAdded: Observable<T>;
   itemChanged: Observable<T>;
   itemRemoved: Observable<T>;
@@ -42,7 +42,7 @@ export function subscriptionDataOf<T>(added: T[],
                                       changed: T[],
                                       removed: T[],
                                       unsubscribe: () => void)
-  : Promise<SubscriptionData<T>> {
+  : Promise<EntitySubscriptionObject<T>> {
   return Promise.resolve({
     itemAdded: observableOf(added),
     itemChanged: observableOf(changed),
