@@ -19,10 +19,18 @@
   -->
 
 <nav class="navPanel">
-    <a [routerLink]="[{ outlets: { tasks: ['active'] } }]">Active</a>
-    <a [routerLink]="[{ outlets: { tasks: ['drafts'] } }]">Drafts</a>
-    <a [routerLink]="[{ outlets: { tasks: ['completed'] } }]">Completed</a>
-    <a [routerLink]="[{ outlets: { tasks: ['deleted'] } }]">Deleted</a>
+    <a [routerLink]="[{ outlets: { tasks: ['active'] } }]" [routerLinkActive]="['active']">
+        Active
+    </a>
+    <a [routerLink]="[{ outlets: { tasks: ['drafts'] } }]" [routerLinkActive]="['active']">
+        Drafts
+    </a>
+    <a [routerLink]="[{ outlets: { tasks: ['completed'] } }]" [routerLinkActive]="['active']">
+        Completed
+    </a>
+    <a [routerLink]="[{ outlets: { tasks: ['deleted'] } }]" [routerLinkActive]="['active']">
+        Deleted
+    </a>
     <a routerLink="/labels" class="labelLink">Labels</a>
 </nav>
 <router-outlet name="tasks"></router-outlet>
