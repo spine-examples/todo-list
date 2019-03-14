@@ -18,22 +18,32 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<nav class="navPanel">
-    <a [routerLink]="[{ outlets: { tasks: ['active'] } }]" [routerLinkActive]="['active']">
-        Active
-    </a>
-    <a [routerLink]="[{ outlets: { tasks: ['drafts'] } }]" [routerLinkActive]="['active']">
-        Drafts
-    </a>
-    <a [routerLink]="[{ outlets: { tasks: ['completed'] } }]" [routerLinkActive]="['active']">
-        Completed
-    </a>
-    <a [routerLink]="[{ outlets: { tasks: ['deleted'] } }]" [routerLinkActive]="['active']">
-        Deleted
-    </a>
-    <a routerLink="/labels" class="labelLink">Labels</a>
-</nav>
-<router-outlet name="tasks"></router-outlet>
-<button routerLink="/wizard">Add new task</button>
-<!-- TODO:2019-02-05:dmytro.kuzmin: Remove when the normal task creation is ready.-->
-<button (click)="createBasicTask()">Create basic task just for test</button>
+<mat-sidenav-container>
+    <mat-sidenav mode="side" opened class="task-list-sidenav">
+        <nav class="navPanel">
+            <div [routerLink]="[{ outlets: { tasks: ['active'] } }]" [routerLinkActive]="['active']">
+                Active
+            </div>
+            <div [routerLink]="[{ outlets: { tasks: ['drafts'] } }]" [routerLinkActive]="['active']">
+                Drafts
+            </div>
+            <div [routerLink]="[{ outlets: { tasks: ['completed'] } }]"
+               [routerLinkActive]="['active']">
+                Completed
+            </div>
+            <div [routerLink]="[{ outlets: { tasks: ['deleted'] } }]" [routerLinkActive]="['active']">
+                Deleted
+            </div>
+            <div routerLink="/labels" class="labelLink">Labels</div>
+        </nav>
+
+    </mat-sidenav>
+    <mat-sidenav-content class="task-list-content">
+        <router-outlet name="tasks"></router-outlet>
+        <button routerLink="/wizard">Add new task</button>
+        <!-- TODO:2019-02-05:dmytro.kuzmin: Remove when the normal task creation is ready.-->
+        <button (click)="createBasicTask()">Create basic task just for test</button>
+
+    </mat-sidenav-content>
+</mat-sidenav-container>
+

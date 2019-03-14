@@ -20,6 +20,7 @@
 
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 import {TaskListComponent} from './task-list.component';
 import {ActiveTasksComponent} from './active/active-tasks.component';
@@ -42,7 +43,7 @@ import {TaskItemComponent} from './task-item/task-item.component';
     DeletedTasksComponent,
     DraftsComponent
   ],
-  imports: [TaskListRoutingModule, CommonModule, TaskServiceModule]
+  imports: [TaskListRoutingModule, CommonModule, TaskServiceModule, MatSidenavModule]
 })
 export class TaskListModule {
 }
