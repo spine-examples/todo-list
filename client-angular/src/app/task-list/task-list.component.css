@@ -35,6 +35,10 @@
   color: #676767;
 }
 
+.navPanel div.active {
+  color: #039be5;;
+}
+
 .navPanel div:hover {
   color: #6a85be;
   font-weight: normal;

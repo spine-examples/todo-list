@@ -43,7 +43,12 @@ import {TaskItemComponent} from './task-item/task-item.component';
     DeletedTasksComponent,
     DraftsComponent
   ],
-  imports: [TaskListRoutingModule, CommonModule, TaskServiceModule, MatSidenavModule]
+  imports: [
+    TaskListRoutingModule,
+    CommonModule,
+    TaskServiceModule,
+    MatSidenavModule
+  ]
 })
 export class TaskListModule {
 }
