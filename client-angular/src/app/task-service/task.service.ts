@@ -87,8 +87,11 @@ export class TaskService {
    *
    * Active tasks are those which are not in draft state, completed, or deleted.
    *
+   * The tasks are retrieved from the `MyListView` projection, which is an application-wide
+   * singleton storing active and completed task items.
+   *
    * Subscription can be cancelled via the method return value, which is a `Promise` resolving to
-   * an `unsubscribe` function.
+   * the `unsubscribe` function.
    *
    * @param reflectInto the array which will receive subscription updates
    * @returns a `Promise` which resolves to an `unsubscribe` function
@@ -108,7 +111,6 @@ export class TaskService {
         .then((subscriptionObject) => {
           subscriptionObject.itemAdded.subscribe(refreshTasks);
           subscriptionObject.itemChanged.subscribe(refreshTasks);
-          subscriptionObject.itemRemoved.subscribe(refreshTasks);
 
           resolve(subscriptionObject.unsubscribe);
         })
