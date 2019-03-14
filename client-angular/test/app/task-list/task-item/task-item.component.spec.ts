@@ -49,19 +49,19 @@ describe('TaskItemComponent', () => {
 
   it('should have a link to task details', () => {
     const element = fixture.nativeElement.querySelector('a');
-    expect(element.href).toContain('details/' + HOUSE_TASK_1_ID);
+    expect(element.href).toContain(`details/${HOUSE_TASK_1_ID}`);
     expect(element.textContent).toContain(HOUSE_TASK_1_DESC);
   });
 
   it('should allow to complete task', () => {
     window.alert = jasmine.createSpy('alert');
     component.completeTask();
-    expect(window.alert).toHaveBeenCalledWith('Completing task with ID: ' + HOUSE_TASK_1_ID);
+    expect(window.alert).toHaveBeenCalledWith(`Completing task with ID: ${HOUSE_TASK_1_ID}`);
   });
 
   it('should allow to delete task', () => {
     window.alert = jasmine.createSpy('alert');
     component.deleteTask();
-    expect(window.alert).toHaveBeenCalledWith('Deleting task with ID: ' + HOUSE_TASK_1_ID);
+    expect(window.alert).toHaveBeenCalledWith(`Deleting task with ID: ${HOUSE_TASK_1_ID}`);
   });
 });

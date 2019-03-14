@@ -22,15 +22,71 @@ import {TestBed} from '@angular/core/testing';
 import {Client} from 'spine-web';
 
 import {TaskService} from '../../../src/app/task-service/task.service';
-import {mockSpineWebClient} from '../given/mock-spine-web-client';
+import {mockSpineWebClient, subscriptionDataOf} from '../given/mock-spine-web-client';
+import {
+  HOUSE_TASK_1_DESC,
+  HOUSE_TASK_1_ID,
+  HOUSE_TASK_2_DESC,
+  HOUSE_TASK_2_ID,
+  houseTasks
+} from '../given/tasks';
+
+import {CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
+import {MyListView} from 'generated/main/js/todolist/q/projections_pb';
+
 
 describe('TaskService', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    providers: [TaskService, {provide: Client, useValue: mockSpineWebClient()}]
-  }));
+  let service: TaskService;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [TaskService, {provide: Client, useValue: mockSpineWebClient()}]
+    });
+    service = TestBed.get(TaskService);
+  });
 
   it('should be created', () => {
-    const service: TaskService = TestBed.get(TaskService);
     expect(service).toBeTruthy();
+  });
+
+  it('should create basic task', () => {
+    service.createBasicTask(HOUSE_TASK_1_DESC);
+    expect(mockSpineWebClient().sendCommand).toHaveBeenCalledWith(
+      jasmine.any(CreateBasicTask), TaskService.logCmdAck, TaskService.logCmdErr
+    );
+  });
+
+  it('should subscribe to active tasks', () => {
+    const unsubscribe = () => {
+    };
+    mockSpineWebClient().subscribeToEntities.and.returnValue(subscriptionDataOf(
+      [houseTasks()], [], [], unsubscribe
+    ));
+    const taskItems = [];
+    service.subscribeToActive(taskItems)
+      .then(receivedUnsubscribeFunc => {
+          expect(receivedUnsubscribeFunc).toBe(unsubscribe);
+          expect(taskItems.length).toBe(2);
+          expect(taskItems[0].getId().getValue()).toBe(HOUSE_TASK_1_ID);
+          expect(taskItems[0].getDescription().getValue()).toBe(HOUSE_TASK_1_DESC);
+          expect(taskItems[1].getId().getValue()).toBe(HOUSE_TASK_2_ID);
+          expect(taskItems[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
+        }
+      ).catch(() => fail('Subscription promise should have been resolved'));
+  });
+
+  it('should log and then rethrow error if subscription fails', () => {
+    const errorMessage = 'Subscription failed';
+    mockSpineWebClient().subscribeToEntities.and.returnValue(Promise.reject(errorMessage));
+    console.log = jasmine.createSpy('log');
+    const taskItems = [];
+    service.subscribeToActive(taskItems)
+      .then(() => fail('Subscription promise should have failed'))
+      .catch(err => {
+        expect(console.log).toHaveBeenCalledWith(
+          'Cannot subscribe to entities of type (`%s`): %s', MyListView.typeUrl(), errorMessage
+        );
+        expect(err).toBe(errorMessage);
+      });
   });
 });

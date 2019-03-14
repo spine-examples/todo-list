@@ -53,11 +53,13 @@ export class TaskService {
     return id;
   }
 
-  private static logCmdAck() {
+  /** Visible for testing. */
+  static logCmdAck() {
     console.log('Command acknowledged by the server');
   }
 
-  private static logCmdErr(err) {
+  /** Visible for testing. */
+  static logCmdErr(err) {
     console.log('Error when sending command to the server: %s', err);
   }
 
