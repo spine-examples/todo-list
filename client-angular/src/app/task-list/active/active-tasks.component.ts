@@ -49,7 +49,7 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     // TODO:2019-03-12:dmytro.kuzmin: Handle the cases of component being destroyed before the
     // todo subscription process is finished.
-    if (this.unsubscribe != null) {
+    if (this.unsubscribe) {
       this.unsubscribe();
     }
   }
