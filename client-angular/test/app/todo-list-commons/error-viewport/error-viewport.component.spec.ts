@@ -18,24 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
-import {Component} from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-/**
- * A component storing task creation wizard page.
- *
- * As it's currently not implemented, there is only a single page in wizard.
- */
-@Component({
-  selector: 'app-task-creation-wizard',
-  templateUrl: './task-creation-wizard.component.html'
-})
-export class TaskCreationWizardComponent {
+import { ErrorViewport } from '../../../../src/app/todo-list-commons/error-viewport/error-viewport.component';
 
-  constructor(private readonly location: Location) {
-  }
+describe('ErrorViewport', () => {
+  let component: ErrorViewport;
+  let fixture: ComponentFixture<ErrorViewport>;
 
-  back(): void {
-    this.location.back();
-  }
-}
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [ ErrorViewport ]
+    })
+    .compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ErrorViewport);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

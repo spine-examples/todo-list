@@ -18,34 +18,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {async, TestBed} from '@angular/core/testing';
+import {RouterTestingModule} from '@angular/router/testing';
 
-import {TaskDefinitionComponent} from './page-1/task-definition.component';
-import {LabelAssignmentComponent} from './page-2/label-assignment.component';
+import {PageHeader} from '../../../../src/app/todo-list-commons/page-header/page-header.component';
 
-const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'page1',
-    pathMatch: 'full'
-  },
-  {
-    path: 'page1',
-    component: TaskDefinitionComponent
-  },
-  {
-    path: 'page2',
-    component: LabelAssignmentComponent
-  }
-];
+describe('PageHeader', () => {
+  let component: PageHeader;
 
-/**
- * The routing configuration of the {@link TaskCreationWizardModule}.
- */
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class TaskCreationWizardRoutingModule {
-}
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [PageHeader],
+      imports: [RouterTestingModule.withRoutes([])]
+    })
+      .compileComponents();
+  }));
+
+  beforeEach(() => {
+    const fixture = TestBed.createComponent(PageHeader);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

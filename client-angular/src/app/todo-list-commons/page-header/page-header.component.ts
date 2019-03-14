@@ -18,34 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {Component, Input} from '@angular/core';
 
-import {TaskDefinitionComponent} from './page-1/task-definition.component';
-import {LabelAssignmentComponent} from './page-2/label-assignment.component';
-
-const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'page1',
-    pathMatch: 'full'
-  },
-  {
-    path: 'page1',
-    component: TaskDefinitionComponent
-  },
-  {
-    path: 'page2',
-    component: LabelAssignmentComponent
-  }
-];
-
-/**
- * The routing configuration of the {@link TaskCreationWizardModule}.
- */
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+@Component({
+  selector: 'app-page-header',
+  templateUrl: './page-header.component.html'
 })
-export class TaskCreationWizardRoutingModule {
+export class PageHeader {
+
+  @Input()
+  private readonly text;
 }

@@ -20,8 +20,11 @@
 
 import {NgModule} from '@angular/core';
 
-import {TaskCreationWizardComponent} from './task-creation-wizard.component';
+import {MatButtonModule} from '@angular/material/button';
 import {TaskCreationWizardRoutingModule} from './task-creation-wizard.routes';
+import {TodoListCommonsModule} from '../todo-list-commons/todo-list-commons.module';
+import {TaskDefinitionComponent} from './page-1/task-definition.component';
+import {LabelAssignmentComponent} from './page-2/label-assignment.component';
 
 /**
  * The module which declares task creation wizard components.
@@ -29,8 +32,16 @@ import {TaskCreationWizardRoutingModule} from './task-creation-wizard.routes';
  * @see `io.spine.examples.todolist.c.procman.TaskCreationWizard` in `api-java`.
  */
 @NgModule({
-  declarations: [TaskCreationWizardComponent],
-  imports: [TaskCreationWizardRoutingModule]
+  declarations: [
+    TaskDefinitionComponent,
+    LabelAssignmentComponent
+  ],
+  imports: [
+    TaskCreationWizardRoutingModule,
+    TodoListCommonsModule,
+
+    MatButtonModule
+  ]
 })
 export class TaskCreationWizardModule {
 }

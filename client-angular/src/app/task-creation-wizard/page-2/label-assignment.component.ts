@@ -18,34 +18,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {Component} from '@angular/core';
 
-import {TaskDefinitionComponent} from './page-1/task-definition.component';
-import {LabelAssignmentComponent} from './page-2/label-assignment.component';
-
-const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'page1',
-    pathMatch: 'full'
-  },
-  {
-    path: 'page1',
-    component: TaskDefinitionComponent
-  },
-  {
-    path: 'page2',
-    component: LabelAssignmentComponent
-  }
-];
-
-/**
- * The routing configuration of the {@link TaskCreationWizardModule}.
- */
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+@Component({
+  selector: 'app-label-assignment',
+  templateUrl: './label-assignment.component.html',
+  styleUrls: ['./label-assignment.component.css']
 })
-export class TaskCreationWizardRoutingModule {
+export class LabelAssignmentComponent {
+
+  cancel() {
+  }
+
+  finish() {
+  }
 }
