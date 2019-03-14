@@ -30,6 +30,5 @@ export const commonEnvironment = {
     storageBucket: '',
     messagingSenderId: '165066236051'
   },
-  host: 'http://localhost:8080',
-  actor: 'TodoList-actor'
+  host: 'http://localhost:8080'
 };

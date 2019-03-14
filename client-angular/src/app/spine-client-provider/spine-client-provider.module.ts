@@ -30,16 +30,6 @@ import * as spineWebTypes from 'spine-web/proto/index';
 import * as todoListTypes from 'generated/main/js/index';
 
 /**
- * Wraps actor {@linkplain environment#actor data} from the environment into the form suitable for
- * Spine Web Client.
- */
-function actorProvider(): ActorProvider {
-  const userId = new UserId();
-  userId.setValue(environment.actor);
-  return new ActorProvider(userId);
-}
-
-/**
  * Creates a {@link Client} instance based on the environment config.
  *
  * @param angularFire the Angular Fire database to use
@@ -49,7 +39,7 @@ function clientFactory(angularFire: AngularFireDatabase): Client {
     protoIndexFiles: [todoListTypes, spineWebTypes],
     endpointUrl: environment.host,
     firebaseDatabase: angularFire.database,
-    actorProvider: actorProvider()
+    actorProvider: new ActorProvider()
   });
 }
 

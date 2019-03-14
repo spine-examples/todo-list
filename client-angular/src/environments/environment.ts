@@ -38,6 +38,5 @@ import 'zone.js/dist/zone-error'; // Included with Angular CLI.
 export const environment = {
   production: false,
   firebaseConfig: commonEnvironment.firebaseConfig,
-  host: commonEnvironment.host,
-  actor: commonEnvironment.actor
+  host: commonEnvironment.host
 };
