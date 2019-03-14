@@ -18,24 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {TaskDetailsComponent} from './task-details.component';
+import {Page404Component} from '../../../src/app/page-404/page-404.component';
 
-const routes: Routes = [
-  {
-    path: ':id',
-    component: TaskDetailsComponent
-  }
-];
+describe('Page404Component', () => {
+  let component: Page404Component;
+  let fixture: ComponentFixture<Page404Component>;
 
-/**
- * The routing configuration of the {@link TaskDetailsModule}.
- */
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class TaskDetailsRoutingModule {
-}
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [Page404Component]
+    })
+      .compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(Page404Component);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

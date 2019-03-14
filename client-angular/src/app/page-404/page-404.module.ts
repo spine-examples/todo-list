@@ -19,23 +19,13 @@
  */
 
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
 
-import {TaskDetailsComponent} from './task-details.component';
+import {Page404Component} from './page-404.component';
+import {Page404RoutingModule} from './page-404.routes';
 
-const routes: Routes = [
-  {
-    path: ':id',
-    component: TaskDetailsComponent
-  }
-];
-
-/**
- * The routing configuration of the {@link TaskDetailsModule}.
- */
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  declarations: [Page404Component],
+  imports: [Page404RoutingModule]
 })
-export class TaskDetailsRoutingModule {
+export class Page404Module {
 }

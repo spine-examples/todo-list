@@ -47,6 +47,11 @@ const routes: Routes = [
   {
     path: 'wizard',
     loadChildren: './task-creation-wizard/task-creation-wizard.module#TaskCreationWizardModule'
+  },
+
+  {
+    path: '**',
+    loadChildren: './page-404/page-404.module#Page404Module'
   }
 ];
 

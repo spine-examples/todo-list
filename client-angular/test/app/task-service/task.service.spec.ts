@@ -34,7 +34,6 @@ import {
 import {CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
 import {MyListView} from 'generated/main/js/todolist/q/projections_pb';
 
-
 describe('TaskService', () => {
   const mockClient = mockSpineWebClient();
 

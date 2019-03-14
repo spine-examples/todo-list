@@ -18,24 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {Component} from '@angular/core';
 
-import {TaskDetailsComponent} from './task-details.component';
-
-const routes: Routes = [
-  {
-    path: ':id',
-    component: TaskDetailsComponent
-  }
-];
-
-/**
- * The routing configuration of the {@link TaskDetailsModule}.
- */
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+@Component({
+  selector: 'app-page-404',
+  templateUrl: './page-404.component.html',
+  styleUrls: ['./page-404.component.css']
 })
-export class TaskDetailsRoutingModule {
+export class Page404Component {
 }
