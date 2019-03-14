@@ -51,9 +51,6 @@ export function subscriptionDataOf<T>(added: T[],
   });
 }
 
-const mockClient: jasmine.SpyObj<Client> =
-  jasmine.createSpyObj<Client>('Client', ['sendCommand', 'subscribeToEntities']);
-
 export function mockSpineWebClient() {
-  return mockClient;
+  return jasmine.createSpyObj<Client>('Client', ['sendCommand', 'subscribeToEntities']);
 }

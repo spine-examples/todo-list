@@ -37,6 +37,8 @@ import {
 } from '../../given/tasks';
 
 describe('ActiveTasksComponent', () => {
+  const mockClient = mockSpineWebClient();
+
   let component: ActiveTasksComponent;
   let fixture: ComponentFixture<ActiveTasksComponent>;
 
@@ -46,11 +48,11 @@ describe('ActiveTasksComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ActiveTasksComponent, TaskItemComponent],
       imports: [RouterTestingModule.withRoutes([])],
-      providers: [TaskService, {provide: Client, useValue: mockSpineWebClient()}]
+      providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
 
-    mockSpineWebClient().subscribeToEntities.and.returnValue(subscriptionDataOf(
+    mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
       [houseTasks()], [], [], unsubscribe
     ));
 

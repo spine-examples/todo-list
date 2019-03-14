@@ -36,11 +36,13 @@ import {MyListView} from 'generated/main/js/todolist/q/projections_pb';
 
 
 describe('TaskService', () => {
+  const mockClient = mockSpineWebClient();
+
   let service: TaskService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [TaskService, {provide: Client, useValue: mockSpineWebClient()}]
+      providers: [TaskService, {provide: Client, useValue: mockClient}]
     });
     service = TestBed.get(TaskService);
   });
@@ -51,7 +53,7 @@ describe('TaskService', () => {
 
   it('should create basic task', () => {
     service.createBasicTask(HOUSE_TASK_1_DESC);
-    expect(mockSpineWebClient().sendCommand).toHaveBeenCalledWith(
+    expect(mockClient.sendCommand).toHaveBeenCalledWith(
       jasmine.any(CreateBasicTask), TaskService.logCmdAck, TaskService.logCmdErr
     );
   });
@@ -59,7 +61,7 @@ describe('TaskService', () => {
   it('should subscribe to active tasks', () => {
     const unsubscribe = () => {
     };
-    mockSpineWebClient().subscribeToEntities.and.returnValue(subscriptionDataOf(
+    mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
       [houseTasks()], [], [], unsubscribe
     ));
     const taskItems = [];
@@ -77,7 +79,7 @@ describe('TaskService', () => {
 
   it('should log and then rethrow error if subscription fails', () => {
     const errorMessage = 'Subscription failed';
-    mockSpineWebClient().subscribeToEntities.and.returnValue(Promise.reject(errorMessage));
+    mockClient.subscribeToEntities.and.returnValue(Promise.reject(errorMessage));
     console.log = jasmine.createSpy('log');
     const taskItems = [];
     service.subscribeToActive(taskItems)

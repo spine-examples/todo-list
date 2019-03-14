@@ -28,6 +28,8 @@ import {TaskService} from '../../../src/app/task-service/task.service';
 import {mockSpineWebClient} from '../given/mock-spine-web-client';
 
 describe('TaskListComponent', () => {
+  const mockClient = mockSpineWebClient();
+
   let component: TaskListComponent;
   let fixture: ComponentFixture<TaskListComponent>;
 
@@ -35,7 +37,7 @@ describe('TaskListComponent', () => {
     TestBed.configureTestingModule({
       declarations: [TaskListComponent],
       imports: [RouterTestingModule.withRoutes([])],
-      providers: [TaskService, {provide: Client, useValue: mockSpineWebClient()}]
+      providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
   }));
@@ -52,6 +54,6 @@ describe('TaskListComponent', () => {
 
   it('should allow creation of basic test task', () => {
     component.createBasicTask();
-    expect(mockSpineWebClient().sendCommand).toHaveBeenCalledTimes(1);
+    expect(mockClient.sendCommand).toHaveBeenCalledTimes(1);
   });
 });
