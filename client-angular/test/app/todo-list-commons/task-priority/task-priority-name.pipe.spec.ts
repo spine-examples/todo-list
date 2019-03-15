@@ -18,26 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {TaskPriorityName} from '../../../../src/app/todo-list-commons/task-priority-display-name/task-priority-name.pipe';
 
-import {AppRoutingModule} from './app-routing.module';
-import {AppComponent} from './app.component';
-
-/**
- * The main application module.
- */
-@NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule
-  ],
-  bootstrap: [AppComponent]
-})
-export class AppModule {
-}
+describe('PriorityDisplayNamePipe', () => {
+  it('create an instance', () => {
+    const pipe = new TaskPriorityName();
+    expect(pipe).toBeTruthy();
+  });
+});

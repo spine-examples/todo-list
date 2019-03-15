@@ -4,21 +4,24 @@ import {MatDividerModule} from '@angular/material/divider';
 
 import {ErrorViewport} from './error-viewport/error-viewport.component';
 import {PageHeader} from './page-header/page-header.component';
+import {TaskPriorityName} from './task-priority-display-name/task-priority-name.pipe';
 
 /**
- * The common components of the To-Do List application.
+ * The common components, directives and pipes of the To-Do List application.
  */
 @NgModule({
   declarations: [
     ErrorViewport,
-    PageHeader
+    PageHeader,
+    TaskPriorityName
   ],
   imports: [
     MatDividerModule
   ],
   exports: [
     ErrorViewport,
-    PageHeader
+    PageHeader,
+    TaskPriorityName
   ]
 })
 export class TodoListCommonsModule {

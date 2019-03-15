@@ -18,26 +18,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {Pipe, PipeTransform} from '@angular/core';
 
-import {AppRoutingModule} from './app-routing.module';
-import {AppComponent} from './app.component';
+import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 
 /**
- * The main application module.
+ * Converts task priority to its display name.
+ *
+ * Usage:
+ *   priority | taskPriorityName
+ * Example:
+ *   {{ TaskPriority.HIGH | taskPriorityName }}
+ *   formats to: 'High'
  */
-@NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule
-  ],
-  bootstrap: [AppComponent]
+@Pipe({
+  name: 'taskPriorityName'
 })
-export class AppModule {
+export class TaskPriorityName implements PipeTransform {
+
+  private static readonly transformations: Map<TaskPriority, string> = new Map([
+    [TaskPriority.HIGH, 'High'],
+    [TaskPriority.NORMAL, 'Normal'],
+    [TaskPriority.LOW, 'Low'],
+    [TaskPriority.TP_UNDEFINED, 'Undefined']
+  ]);
+
+  transform(value: TaskPriority): string {
+    const displayName = TaskPriorityName.transformations.get(value);
+    if (!displayName) {
+      throw new Error(`Task priority ${value} is unknown`);
+    }
+    return displayName;
+  }
 }

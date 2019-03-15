@@ -20,6 +20,10 @@
 
 import {Location} from '@angular/common';
 import {Component} from '@angular/core';
+import {FormControl} from '@angular/forms';
+import {Router} from '@angular/router';
+
+import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 
 @Component({
   selector: 'app-task-definition',
@@ -28,7 +32,22 @@ import {Component} from '@angular/core';
 })
 export class TaskDefinitionComponent {
 
-  constructor(private readonly location: Location) {
+  /**
+   * Possible task priorities.
+   */
+  private readonly POSSIBLE_PRIORITIES: TaskPriority =
+    [TaskPriority.HIGH, TaskPriority.NORMAL, TaskPriority.LOW];
+
+  /**
+   * Due date for tasks is allowed to be set starting from today.
+   */
+  private readonly today: Date = new Date();
+
+  private readonly description = new FormControl();
+  private readonly priority = new FormControl();
+  private readonly dueDate = new FormControl();
+
+  constructor(private readonly location: Location, private readonly router: Router) {
   }
 
   cancel(): void {
@@ -36,5 +55,6 @@ export class TaskDefinitionComponent {
   }
 
   next(): void {
+    this.router.navigate(['/wizard/page-2']);
   }
 }

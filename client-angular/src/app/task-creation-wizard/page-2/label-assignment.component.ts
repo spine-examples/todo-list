@@ -19,6 +19,7 @@
  */
 
 import {Component} from '@angular/core';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-label-assignment',
@@ -27,9 +28,14 @@ import {Component} from '@angular/core';
 })
 export class LabelAssignmentComponent {
 
+  constructor(private readonly router: Router) {
+  }
+
   cancel() {
+    this.router.navigate(['/task-list/drafts']);
   }
 
   finish() {
+    this.router.navigate(['/task-list/active']);
   }
 }

@@ -27,15 +27,15 @@ import {LabelAssignmentComponent} from './page-2/label-assignment.component';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'page1',
+    redirectTo: 'page-1',
     pathMatch: 'full'
   },
   {
-    path: 'page1',
+    path: 'page-1',
     component: TaskDefinitionComponent
   },
   {
-    path: 'page2',
+    path: 'page-2',
     component: LabelAssignmentComponent
   }
 ];
