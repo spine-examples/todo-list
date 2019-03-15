@@ -18,24 +18,15 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<mat-sidenav-container class = "task-list-container">
+<mat-sidenav-container class="task-list-container">
     <mat-sidenav mode="side" opened class="task-list-sidenav">
-        <nav class="navPanel">
-            <div [routerLink]="[{ outlets: { tasks: ['active'] } }]" [routerLinkActive]="['active']">
-                Active
-            </div>
-            <div [routerLink]="[{ outlets: { tasks: ['drafts'] } }]" [routerLinkActive]="['active']">
-                Drafts
-            </div>
-            <div [routerLink]="[{ outlets: { tasks: ['completed'] } }]"
-               [routerLinkActive]="['active']">
-                Completed
-            </div>
-            <div [routerLink]="[{ outlets: { tasks: ['deleted'] } }]" [routerLinkActive]="['active']">
-                Deleted
-            </div>
-            <div routerLink="/labels" class="labelLink">Labels</div>
-        </nav>
+        <mat-nav-list>
+            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['active'] } }]" [routerLinkActive]="['active']">Active</a>
+            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['drafts'] } }]" [routerLinkActive]="['active']">Drafts</a>
+            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['completed'] } }]" [routerLinkActive]="['active']">Completed</a>
+            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['deleted'] } }]" [routerLinkActive]="['active']"> Deleted</a>
+            <a mat-list-item routerLink="/labels" class="labelLink">Labels</a>
+        </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content class="task-list-content">
         <router-outlet name="tasks"></router-outlet>

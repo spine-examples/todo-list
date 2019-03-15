@@ -18,24 +18,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.navPanel {
-  width: 100px;
-}
-
-.navPanel div {
-  padding: 5px;
-  color: #676767;
-}
-
-.navPanel div.active {
-  color: #039be5;;
-}
-
-.navPanel div:hover {
-  color: #6a85be;
-  font-weight: normal;
-}
-
 .task-list-container{
   height: 100vh;
 }
