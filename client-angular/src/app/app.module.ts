@@ -37,7 +37,7 @@ import {AppComponent} from './app.component';
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    MatToolbarModule,
+    MatToolbarModule
   ],
   bootstrap: [AppComponent]
 })
