@@ -61,7 +61,7 @@ describe('TaskCreationWizardComponent', () => {
 
         TaskCreationWizardRoutingModule,
         TodoListComponentsModule,
-        TodoListPipesModule
+        TodoListPipesModule,
         TaskServiceModule,
 
         MatMomentDateModule,
