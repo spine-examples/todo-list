@@ -42,6 +42,9 @@ export class LabelAssignmentComponent {
   next() {
   }
 
+  /**
+   * Task will be saved as draft.
+   */
   cancel() {
     this.router.navigate(['/task-list/drafts']);
   }

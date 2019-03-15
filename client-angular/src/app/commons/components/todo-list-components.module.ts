@@ -18,11 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TaskPriorityName} from '../../../../src/app/commons/task-priority-display-name/task-priority-name.pipe';
+import {NgModule} from '@angular/core';
+import {MatDividerModule} from '@angular/material/divider';
 
-describe('PriorityDisplayNamePipe', () => {
-  it('create an instance', () => {
-    const pipe = new TaskPriorityName();
-    expect(pipe).toBeTruthy();
-  });
-});
+import {ErrorViewport} from './error-viewport/error-viewport.component';
+import {PageHeader} from './page-header/page-header.component';
+
+@NgModule({
+  declarations: [
+    ErrorViewport,
+    PageHeader
+  ],
+  imports: [
+    MatDividerModule
+  ],
+  exports: [
+    ErrorViewport,
+    PageHeader
+  ]
+})
+export class TodoListComponentsModule {
+}

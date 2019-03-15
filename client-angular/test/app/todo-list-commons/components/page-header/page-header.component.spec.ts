@@ -18,28 +18,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
+import {async, TestBed} from '@angular/core/testing';
+import {MatDividerModule} from '@angular/material/divider';
+import {RouterTestingModule} from '@angular/router/testing';
 
-@Component({
-  selector: 'app-confirmation',
-  templateUrl: './confirmation.component.html',
-  styleUrls: ['./confirmation.component.css']
-})
-export class ConfirmationComponent {
+import {PageHeader} from '../../../../../src/app/commons/components/page-header/page-header.component';
 
-  isCompleted(): boolean {
-    return true;
-  }
+describe('PageHeader', () => {
+  let component: PageHeader;
 
-  back() {
-  }
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [PageHeader],
+      imports: [
+        RouterTestingModule.withRoutes([]),
+        MatDividerModule
+      ]
+    })
+      .compileComponents();
+  }));
 
-  finish() {
-  }
+  beforeEach(() => {
+    const fixture = TestBed.createComponent(PageHeader);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-  /**
-   * Task will be saved as draft.
-   */
-  cancel() {
-  }
-}
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

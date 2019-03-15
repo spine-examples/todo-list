@@ -31,8 +31,9 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatStepperModule} from '@angular/material/stepper';
 
 import {TaskCreationWizardRoutingModule} from './task-creation-wizard.routes';
-import {TodoListCommonsModule} from '../commons/todo-list-commons.module';
+import {TodoListComponentsModule} from '../commons/components/todo-list-components.module';
 import {TaskServiceModule} from '../task-service/task-service.module';
+import {TodoListPipesModule} from '../commons/pipes/todo-list-pipes.module';
 import {TaskDefinitionComponent} from './step-1/task-definition.component';
 import {LabelAssignmentComponent} from './step-2/label-assignment.component';
 import {TaskCreationWizardComponent} from './task-creation-wizard.component';
@@ -55,8 +56,9 @@ import {ConfirmationComponent} from './step-3/confirmation.component';
     ReactiveFormsModule,
 
     TaskCreationWizardRoutingModule,
-    TodoListCommonsModule,
+    TodoListComponentsModule,
     TaskServiceModule,
+    TodoListPipesModule,
 
     MatMomentDateModule,
     MatButtonModule,

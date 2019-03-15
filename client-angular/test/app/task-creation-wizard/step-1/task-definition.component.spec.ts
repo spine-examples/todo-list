@@ -37,9 +37,10 @@ import {TaskDefinitionComponent} from '../../../../src/app/task-creation-wizard/
 import {LabelAssignmentComponent} from '../../../../src/app/task-creation-wizard/step-2/label-assignment.component';
 import {ConfirmationComponent} from '../../../../src/app/task-creation-wizard/step-3/confirmation.component';
 import {TaskCreationWizardRoutingModule} from '../../../../src/app/task-creation-wizard/task-creation-wizard.routes';
-import {TodoListCommonsModule} from '../../../../src/app/commons/todo-list-commons.module';
 import {TaskServiceModule} from '../../../../src/app/task-service/task-service.module';
 import {RouterTestingModule} from '@angular/router/testing';
+import {TodoListComponentsModule} from '../../../../src/app/commons/components/todo-list-components.module';
+import {TodoListPipesModule} from '../../../../src/app/commons/pipes/todo-list-pipes.module';
 
 
 describe('TaskDefinitionComponent', () => {
@@ -61,7 +62,8 @@ describe('TaskDefinitionComponent', () => {
         NoopAnimationsModule,
 
         TaskCreationWizardRoutingModule,
-        TodoListCommonsModule,
+        TodoListComponentsModule,
+        TodoListPipesModule,
         TaskServiceModule,
 
         MatMomentDateModule,
@@ -73,7 +75,7 @@ describe('TaskDefinitionComponent', () => {
         MatStepperModule
       ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

@@ -18,33 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, TestBed} from '@angular/core/testing';
-import {MatDividerModule} from '@angular/material/divider';
-import {RouterTestingModule} from '@angular/router/testing';
+import {TaskPriorityName} from '../../../../../src/app/commons/pipes/task-priority-display-name/task-priority-name.pipe';
 
-import {PageHeader} from '../../../../src/app/commons/page-header/page-header.component';
-
-describe('PageHeader', () => {
-  let component: PageHeader;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [PageHeader],
-      imports: [
-        RouterTestingModule.withRoutes([]),
-        MatDividerModule
-      ]
-    })
-      .compileComponents();
-  }));
-
-  beforeEach(() => {
-    const fixture = TestBed.createComponent(PageHeader);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+describe('PriorityDisplayNamePipe', () => {
+  it('create an instance', () => {
+    const pipe = new TaskPriorityName();
+    expect(pipe).toBeTruthy();
   });
 });

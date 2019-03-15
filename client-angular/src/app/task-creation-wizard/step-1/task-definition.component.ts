@@ -23,6 +23,8 @@ import {Component} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {Router} from '@angular/router';
 
+import {Timestamp} from 'google-protobuf';
+
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 
 @Component({
@@ -45,8 +47,7 @@ export class TaskDefinitionComponent {
 
   private readonly description = new FormControl();
   private readonly priority = new FormControl();
-
-  // private readonly dueDate = new FormControl();
+  private readonly dueDate = new FormControl();
 
   constructor(private readonly location: Location, private readonly router: Router) {
   }
@@ -55,11 +56,14 @@ export class TaskDefinitionComponent {
     return true;
   }
 
-  cancel(): void {
-    this.location.back();
-  }
-
   next(): void {
     console.log('next');
+  }
+
+  /**
+   * Just go back.
+   */
+  cancel(): void {
+    this.location.back();
   }
 }

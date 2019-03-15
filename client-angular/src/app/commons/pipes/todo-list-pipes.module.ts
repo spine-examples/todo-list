@@ -18,28 +18,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {NgModule} from '@angular/core';
 
-import { ErrorViewport } from '../../../../src/app/commons/error-viewport/error-viewport.component';
+import {TaskPriorityName} from './task-priority-display-name/task-priority-name.pipe';
 
-describe('ErrorViewport', () => {
-  let component: ErrorViewport;
-  let fixture: ComponentFixture<ErrorViewport>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ErrorViewport ]
-    })
-    .compileComponents();
-  }));
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ErrorViewport);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+@NgModule({
+  declarations: [
+    TaskPriorityName
+  ],
+  exports: [
+    TaskPriorityName
+  ]
+})
+export class TodoListPipesModule {
+}

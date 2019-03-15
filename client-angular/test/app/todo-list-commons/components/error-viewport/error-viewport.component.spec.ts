@@ -18,28 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-@Component({
-  selector: 'app-confirmation',
-  templateUrl: './confirmation.component.html',
-  styleUrls: ['./confirmation.component.css']
-})
-export class ConfirmationComponent {
+import { ErrorViewport } from '../../../../../src/app/commons/components/error-viewport/error-viewport.component';
 
-  isCompleted(): boolean {
-    return true;
-  }
+describe('ErrorViewport', () => {
+  let component: ErrorViewport;
+  let fixture: ComponentFixture<ErrorViewport>;
 
-  back() {
-  }
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [ ErrorViewport ]
+    })
+    .compileComponents();
+  }));
 
-  finish() {
-  }
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ErrorViewport);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-  /**
-   * Task will be saved as draft.
-   */
-  cancel() {
-  }
-}
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});
