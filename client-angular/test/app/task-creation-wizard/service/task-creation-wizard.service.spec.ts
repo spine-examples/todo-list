@@ -18,28 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { ErrorViewport } from '../../../../../src/app/commons/components/error-viewport/error-viewport.component';
+import {Client} from 'spine-web';
 
-describe('ErrorViewport', () => {
-  let component: ErrorViewport;
-  let fixture: ComponentFixture<ErrorViewport>;
+import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
+import {TaskService} from '../../../../src/app/task-service/task.service';
+import {mockSpineWebClient} from '../../given/mock-spine-web-client';
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ ErrorViewport ]
-    })
-    .compileComponents();
+describe('TaskCreationWizard', () => {
+  beforeEach(() => TestBed.configureTestingModule({
+    providers: [
+      TaskCreationWizard,
+      TaskService,
+      {provide: Client, useValue: mockSpineWebClient()}
+    ]
   }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ErrorViewport);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should be created', () => {
+    const service: TaskCreationWizard = TestBed.get(TaskCreationWizard);
+    expect(service).toBeTruthy();
   });
 });

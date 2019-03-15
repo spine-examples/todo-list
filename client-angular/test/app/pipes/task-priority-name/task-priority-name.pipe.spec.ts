@@ -18,34 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
-import {Component} from '@angular/core';
+import {TaskPriorityName} from '../../../../src/app/pipes/task-priority-display-name/task-priority-name.pipe';
 
-@Component({
-  selector: 'app-label-assignment',
-  templateUrl: './label-assignment.component.html',
-  styleUrls: ['./label-assignment.component.css']
-})
-export class LabelAssignmentComponent {
-
-  constructor(private readonly location: Location) {
-  }
-
-  isCompleted(): boolean {
-    return true;
-  }
-
-  back() {
-
-  }
-
-  next() {
-  }
-
-  /**
-   * Task will be saved as draft.
-   */
-  cancel() {
-    this.location.back();
-  }
-}
+describe('PriorityDisplayNamePipe', () => {
+  it('create an instance', () => {
+    const pipe = new TaskPriorityName();
+    expect(pipe).toBeTruthy();
+  });
+});

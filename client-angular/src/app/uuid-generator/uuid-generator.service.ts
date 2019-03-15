@@ -18,33 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, TestBed} from '@angular/core/testing';
-import {MatDividerModule} from '@angular/material/divider';
-import {RouterTestingModule} from '@angular/router/testing';
+import {Injectable} from '@angular/core';
 
-import {PageHeader} from '../../../../../src/app/commons/components/page-header/page-header.component';
+import {UuidGeneratorModule} from './uuid-generator.module';
 
-describe('PageHeader', () => {
-  let component: PageHeader;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [PageHeader],
-      imports: [
-        RouterTestingModule.withRoutes([]),
-        MatDividerModule
-      ]
-    })
-      .compileComponents();
-  }));
-
-  beforeEach(() => {
-    const fixture = TestBed.createComponent(PageHeader);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+/**
+ * A generator of UUID values.
+ */
+@Injectable({
+  providedIn: UuidGeneratorModule
+})
+export class UuidGenerator {
+}

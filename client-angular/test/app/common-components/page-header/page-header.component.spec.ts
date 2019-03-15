@@ -18,34 +18,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
-import {Component} from '@angular/core';
+import {async, TestBed} from '@angular/core/testing';
+import {MatDividerModule} from '@angular/material/divider';
+import {RouterTestingModule} from '@angular/router/testing';
 
-@Component({
-  selector: 'app-label-assignment',
-  templateUrl: './label-assignment.component.html',
-  styleUrls: ['./label-assignment.component.css']
-})
-export class LabelAssignmentComponent {
+import {PageHeader} from '../../../../src/app/common-components/page-header/page-header.component';
 
-  constructor(private readonly location: Location) {
-  }
+describe('PageHeader', () => {
+  let component: PageHeader;
 
-  isCompleted(): boolean {
-    return true;
-  }
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [PageHeader],
+      imports: [
+        RouterTestingModule.withRoutes([]),
+        MatDividerModule
+      ]
+    })
+      .compileComponents();
+  }));
 
-  back() {
+  beforeEach(() => {
+    const fixture = TestBed.createComponent(PageHeader);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-  }
-
-  next() {
-  }
-
-  /**
-   * Task will be saved as draft.
-   */
-  cancel() {
-    this.location.back();
-  }
-}
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

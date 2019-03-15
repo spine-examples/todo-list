@@ -18,34 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
-import {Component} from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-@Component({
-  selector: 'app-label-assignment',
-  templateUrl: './label-assignment.component.html',
-  styleUrls: ['./label-assignment.component.css']
-})
-export class LabelAssignmentComponent {
+import { ErrorViewport } from '../../../../src/app/common-components/error-viewport/error-viewport.component';
 
-  constructor(private readonly location: Location) {
-  }
+describe('ErrorViewport', () => {
+  let component: ErrorViewport;
+  let fixture: ComponentFixture<ErrorViewport>;
 
-  isCompleted(): boolean {
-    return true;
-  }
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [ ErrorViewport ]
+    })
+    .compileComponents();
+  }));
 
-  back() {
+  beforeEach(() => {
+    fixture = TestBed.createComponent(ErrorViewport);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-  }
-
-  next() {
-  }
-
-  /**
-   * Task will be saved as draft.
-   */
-  cancel() {
-    this.location.back();
-  }
-}
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

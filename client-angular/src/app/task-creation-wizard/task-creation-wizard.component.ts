@@ -20,6 +20,7 @@
 
 import {Component, ViewChild} from '@angular/core';
 
+import {TaskCreationWizard} from './service/task-creation-wizard.service';
 import {TaskDefinitionComponent} from './step-1/task-definition.component';
 import {LabelAssignmentComponent} from './step-2/label-assignment.component';
 import {ConfirmationComponent} from './step-3/confirmation.component';
@@ -27,7 +28,10 @@ import {ConfirmationComponent} from './step-3/confirmation.component';
 @Component({
   selector: 'app-task-creation-wizard',
   templateUrl: './task-creation-wizard.component.html',
-  styleUrls: ['./task-creation-wizard.component.css']
+  styleUrls: ['./task-creation-wizard.component.css'],
+  providers: [
+    TaskCreationWizard
+  ]
 })
 export class TaskCreationWizardComponent {
 

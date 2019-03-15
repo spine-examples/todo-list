@@ -18,11 +18,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TaskPriorityName} from '../../../../../src/app/commons/pipes/task-priority-display-name/task-priority-name.pipe';
+import { TestBed } from '@angular/core/testing';
 
-describe('PriorityDisplayNamePipe', () => {
-  it('create an instance', () => {
-    const pipe = new TaskPriorityName();
-    expect(pipe).toBeTruthy();
+import { UuidGenerator } from '../../../src/app/uuid-generator/uuid-generator.service';
+
+describe('UuidGenerator', () => {
+  beforeEach(() => TestBed.configureTestingModule({
+    providers: [UuidGenerator]
+  }));
+
+  it('should be created', () => {
+    const service: UuidGenerator = TestBed.get(UuidGenerator);
+    expect(service).toBeTruthy();
   });
 });

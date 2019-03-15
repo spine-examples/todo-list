@@ -18,6 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {Location} from '@angular/common';
 import {Component} from '@angular/core';
 
 @Component({
@@ -26,6 +27,9 @@ import {Component} from '@angular/core';
   styleUrls: ['./confirmation.component.css']
 })
 export class ConfirmationComponent {
+
+  constructor(private readonly location: Location) {
+  }
 
   isCompleted(): boolean {
     return true;
@@ -41,5 +45,6 @@ export class ConfirmationComponent {
    * Task will be saved as draft.
    */
   cancel() {
+    this.location.back();
   }
 }

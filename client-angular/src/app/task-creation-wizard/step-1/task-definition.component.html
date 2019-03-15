@@ -28,7 +28,7 @@
     <mat-form-field appearance="standard">
         <mat-label>Priority</mat-label>
         <mat-select [formControl]="priority" placeholder="Priority">
-            <mat-option *ngFor="let priority of POSSIBLE_PRIORITIES" [value]="priority">
+            <mat-option *ngFor="let priority of TASK_PRIORITIES" [value]="priority">
                 {{priority | taskPriorityName}}
             </mat-option>
         </mat-select>
@@ -36,9 +36,9 @@
 </p>
 <p>
     <mat-form-field>
-        <input [formControl]="dueDate" matInput [min]="today" [matDatepicker]="dueDate" placeholder="Due date">
-        <mat-datepicker-toggle matSuffix [for]="dueDate"></mat-datepicker-toggle>
-        <mat-datepicker #dueDate></mat-datepicker>
+        <input [formControl]="dueDate" matInput [min]="today" [matDatepicker]="dueDatePicker" placeholder="Due date">
+        <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+        <mat-datepicker #dueDatePicker></mat-datepicker>
     </mat-form-field>
 </p>
 <app-error-viewport></app-error-viewport>

@@ -21,10 +21,10 @@
 import {Location} from '@angular/common';
 import {Component} from '@angular/core';
 import {FormControl} from '@angular/forms';
-import {Router} from '@angular/router';
 
-import {Timestamp} from 'google-protobuf';
+import {TaskCreationWizard} from '../service/task-creation-wizard.service';
 
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 
 @Component({
@@ -37,7 +37,7 @@ export class TaskDefinitionComponent {
   /**
    * Possible task priorities.
    */
-  private readonly POSSIBLE_PRIORITIES: TaskPriority =
+  private readonly TASK_PRIORITIES: TaskPriority =
     [TaskPriority.HIGH, TaskPriority.NORMAL, TaskPriority.LOW];
 
   /**
@@ -45,19 +45,27 @@ export class TaskDefinitionComponent {
    */
   private readonly today: Date = new Date();
 
-  private readonly description = new FormControl();
-  private readonly priority = new FormControl();
-  private readonly dueDate = new FormControl();
+  private readonly description: FormControl = new FormControl();
+  private readonly priority: FormControl = new FormControl(TaskPriority.NORMAL);
+  private readonly dueDate: FormControl = new FormControl();
 
-  constructor(private readonly location: Location, private readonly router: Router) {
-  }
+  private completed = false;
 
-  isCompleted(): boolean {
-    return true;
+  constructor(private readonly wizard: TaskCreationWizard, private readonly location: Location) {
   }
 
   next(): void {
-    console.log('next');
+    this.resetCompleteness();
+    this.wizard.setTaskDetails({
+      description: this.description.value,
+      priority: this.priority.value,
+      dueDate: this.dueDate.value.toDate()
+    }).then(() => {
+      this.setCompleted();
+      this.informOnDraftCreation();
+    }).catch(err => {
+      this.reportError(err);
+    });
   }
 
   /**
@@ -65,5 +73,23 @@ export class TaskDefinitionComponent {
    */
   cancel(): void {
     this.location.back();
+  }
+
+  isCompleted(): boolean {
+    return this.completed;
+  }
+
+  private setCompleted(): void {
+    this.completed = true;
+  }
+
+  private resetCompleteness(): void {
+    this.completed = false;
+  }
+
+  private informOnDraftCreation(): void {
+  }
+
+  private reportError(err): void {
   }
 }

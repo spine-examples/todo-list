@@ -37,8 +37,8 @@ import {LabelAssignmentComponent} from '../../../../src/app/task-creation-wizard
 import {ConfirmationComponent} from '../../../../src/app/task-creation-wizard/step-3/confirmation.component';
 import {TaskCreationWizardRoutingModule} from '../../../../src/app/task-creation-wizard/task-creation-wizard.routes';
 import {TaskServiceModule} from '../../../../src/app/task-service/task-service.module';
-import {TodoListComponentsModule} from '../../../../src/app/commons/components/todo-list-components.module';
-import {TodoListPipesModule} from '../../../../src/app/commons/pipes/todo-list-pipes.module';
+import {TodoListComponentsModule} from '../../../../src/app/common-components/todo-list-components.module';
+import {TodoListPipesModule} from '../../../../src/app/pipes/todo-list-pipes.module';
 
 describe('LabelAssignmentComponent', () => {
   let component: LabelAssignmentComponent;
