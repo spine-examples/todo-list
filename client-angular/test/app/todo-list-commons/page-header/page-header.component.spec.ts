@@ -19,9 +19,10 @@
  */
 
 import {async, TestBed} from '@angular/core/testing';
+import {MatDividerModule} from '@angular/material/divider';
 import {RouterTestingModule} from '@angular/router/testing';
 
-import {PageHeader} from '../../../../src/app/todo-list-commons/page-header/page-header.component';
+import {PageHeader} from '../../../../src/app/commons/page-header/page-header.component';
 
 describe('PageHeader', () => {
   let component: PageHeader;
@@ -29,7 +30,10 @@ describe('PageHeader', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [PageHeader],
-      imports: [RouterTestingModule.withRoutes([])]
+      imports: [
+        RouterTestingModule.withRoutes([]),
+        MatDividerModule
+      ]
     })
       .compileComponents();
   }));

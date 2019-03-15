@@ -21,7 +21,8 @@
 import {CommonModule} from '@angular/common';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ReactiveFormsModule} from '@angular/forms';
-import {RouterTestingModule} from '@angular/router/testing';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+
 
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatButtonModule} from '@angular/material/button';
@@ -38,10 +39,12 @@ import {ConfirmationComponent} from '../../../../src/app/task-creation-wizard/st
 import {TaskCreationWizardRoutingModule} from '../../../../src/app/task-creation-wizard/task-creation-wizard.routes';
 import {TodoListCommonsModule} from '../../../../src/app/commons/todo-list-commons.module';
 import {TaskServiceModule} from '../../../../src/app/task-service/task-service.module';
+import {RouterTestingModule} from '@angular/router/testing';
 
-describe('ConfirmationComponent', () => {
-  let component: ConfirmationComponent;
-  let fixture: ComponentFixture<ConfirmationComponent>;
+
+describe('TaskDefinitionComponent', () => {
+  let component: TaskDefinitionComponent;
+  let fixture: ComponentFixture<TaskDefinitionComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -55,6 +58,7 @@ describe('ConfirmationComponent', () => {
         CommonModule,
         ReactiveFormsModule,
         RouterTestingModule.withRoutes([]),
+        NoopAnimationsModule,
 
         TaskCreationWizardRoutingModule,
         TodoListCommonsModule,
@@ -73,7 +77,7 @@ describe('ConfirmationComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConfirmationComponent);
+    fixture = TestBed.createComponent(TaskDefinitionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -20,7 +20,7 @@
 
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ErrorViewport } from '../../../../src/app/todo-list-commons/error-viewport/error-viewport.component';
+import { ErrorViewport } from '../../../../src/app/commons/error-viewport/error-viewport.component';
 
 describe('ErrorViewport', () => {
   let component: ErrorViewport;

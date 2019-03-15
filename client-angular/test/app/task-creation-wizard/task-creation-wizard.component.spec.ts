@@ -18,9 +18,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {CommonModule} from '@angular/common';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+import {ReactiveFormsModule} from '@angular/forms';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
-import { TaskCreationWizardComponent } from '../../../src/app/task-creation-wizard/task-creation-wizard.component';
+import {MatMomentDateModule} from '@angular/material-moment-adapter';
+import {MatButtonModule} from '@angular/material/button';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatSelectModule} from '@angular/material/select';
+import {MatStepperModule} from '@angular/material/stepper';
+
+import {TaskCreationWizardComponent} from '../../../src/app/task-creation-wizard/task-creation-wizard.component';
+import {TaskDefinitionComponent} from '../../../src/app/task-creation-wizard/step-1/task-definition.component';
+import {LabelAssignmentComponent} from '../../../src/app/task-creation-wizard/step-2/label-assignment.component';
+import {ConfirmationComponent} from '../../../src/app/task-creation-wizard/step-3/confirmation.component';
+import {TaskCreationWizardRoutingModule} from '../../../src/app/task-creation-wizard/task-creation-wizard.routes';
+import {TodoListCommonsModule} from '../../../src/app/commons/todo-list-commons.module';
+import {TaskServiceModule} from '../../../src/app/task-service/task-service.module';
 
 describe('TaskCreationWizardComponent', () => {
   let component: TaskCreationWizardComponent;
@@ -28,9 +46,32 @@ describe('TaskCreationWizardComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TaskCreationWizardComponent ]
+      declarations: [
+        TaskCreationWizardComponent,
+        TaskDefinitionComponent,
+        LabelAssignmentComponent,
+        ConfirmationComponent
+      ],
+      imports: [
+        CommonModule,
+        ReactiveFormsModule,
+        RouterTestingModule.withRoutes([]),
+        NoopAnimationsModule,
+
+        TaskCreationWizardRoutingModule,
+        TodoListCommonsModule,
+        TaskServiceModule,
+
+        MatMomentDateModule,
+        MatButtonModule,
+        MatDatepickerModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatSelectModule,
+        MatStepperModule
+      ]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

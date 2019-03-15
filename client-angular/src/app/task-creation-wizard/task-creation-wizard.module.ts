@@ -31,7 +31,7 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatStepperModule} from '@angular/material/stepper';
 
 import {TaskCreationWizardRoutingModule} from './task-creation-wizard.routes';
-import {TodoListCommonsModule} from '../todo-list-commons/todo-list-commons.module';
+import {TodoListCommonsModule} from '../commons/todo-list-commons.module';
 import {TaskServiceModule} from '../task-service/task-service.module';
 import {TaskDefinitionComponent} from './step-1/task-definition.component';
 import {LabelAssignmentComponent} from './step-2/label-assignment.component';

@@ -39,9 +39,9 @@ import {TaskCreationWizardRoutingModule} from '../../../../src/app/task-creation
 import {TodoListCommonsModule} from '../../../../src/app/commons/todo-list-commons.module';
 import {TaskServiceModule} from '../../../../src/app/task-service/task-service.module';
 
-describe('ConfirmationComponent', () => {
-  let component: ConfirmationComponent;
-  let fixture: ComponentFixture<ConfirmationComponent>;
+describe('LabelAssignmentComponent', () => {
+  let component: LabelAssignmentComponent;
+  let fixture: ComponentFixture<LabelAssignmentComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -73,7 +73,7 @@ describe('ConfirmationComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ConfirmationComponent);
+    fixture = TestBed.createComponent(LabelAssignmentComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

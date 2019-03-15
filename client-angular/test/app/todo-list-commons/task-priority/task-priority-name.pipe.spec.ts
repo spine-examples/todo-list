@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TaskPriorityName} from '../../../../src/app/todo-list-commons/task-priority-display-name/task-priority-name.pipe';
+import {TaskPriorityName} from '../../../../src/app/commons/task-priority-display-name/task-priority-name.pipe';
 
 describe('PriorityDisplayNamePipe', () => {
   it('create an instance', () => {
