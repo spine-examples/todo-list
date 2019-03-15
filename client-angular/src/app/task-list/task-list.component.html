@@ -18,7 +18,7 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<mat-sidenav-container>
+<mat-sidenav-container class = "task-list-container">
     <mat-sidenav mode="side" opened class="task-list-sidenav">
         <nav class="navPanel">
             <div [routerLink]="[{ outlets: { tasks: ['active'] } }]" [routerLinkActive]="['active']">
@@ -36,7 +36,6 @@
             </div>
             <div routerLink="/labels" class="labelLink">Labels</div>
         </nav>
-
     </mat-sidenav>
     <mat-sidenav-content class="task-list-content">
         <router-outlet name="tasks"></router-outlet>
@@ -46,4 +45,3 @@
 
     </mat-sidenav-content>
 </mat-sidenav-container>
-

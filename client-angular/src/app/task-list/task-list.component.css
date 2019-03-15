@@ -18,14 +18,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.task-list-content {
-  /* TODO:2019-03-14:serhii.lekariev: padding is here because otherwise sidebar nav is too small
-     TODO handle this better
-  */
-  padding-bottom: 50px;
-  padding-left: 10px;
-}
-
 .navPanel {
   width: 100px;
 }
@@ -42,4 +34,8 @@
 .navPanel div:hover {
   color: #6a85be;
   font-weight: normal;
+}
+
+.task-list-container{
+  height: 100vh;
 }
