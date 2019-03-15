@@ -18,15 +18,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Injectable} from '@angular/core';
-
-import {UuidGeneratorModule} from './uuid-generator.module';
+import {Message} from 'google-protobuf';
+import * as uuid from 'uuid';
 
 /**
  * A generator of UUID values.
  */
-@Injectable({
-  providedIn: UuidGeneratorModule
-})
 export class UuidGenerator {
+
+  static newId<T extends Message>(type: new() => T): T {
+    const result: T = new type();
+    const value = uuid.v4();
+    result.setValue(value);
+    return result;
+  }
 }

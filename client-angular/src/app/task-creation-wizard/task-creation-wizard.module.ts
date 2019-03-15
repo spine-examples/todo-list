@@ -32,12 +32,12 @@ import {MatStepperModule} from '@angular/material/stepper';
 
 import {TaskCreationWizardRoutingModule} from './task-creation-wizard.routes';
 import {TodoListComponentsModule} from '../common-components/todo-list-components.module';
-import {TaskServiceModule} from '../task-service/task-service.module';
 import {TodoListPipesModule} from '../pipes/todo-list-pipes.module';
 import {TaskDefinitionComponent} from './step-1/task-definition.component';
 import {LabelAssignmentComponent} from './step-2/label-assignment.component';
 import {TaskCreationWizardComponent} from './task-creation-wizard.component';
 import {ConfirmationComponent} from './step-3/confirmation.component';
+import {SpineClientProvider} from '../spine-client-provider/spine-client-provider.module';
 
 /**
  * The module which provides a wizard for step-by-step task creation.
@@ -57,7 +57,7 @@ import {ConfirmationComponent} from './step-3/confirmation.component';
 
     TaskCreationWizardRoutingModule,
     TodoListComponentsModule,
-    TaskServiceModule,
+    SpineClientProvider,
     TodoListPipesModule,
 
     MatMomentDateModule,

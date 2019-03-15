@@ -19,10 +19,11 @@
  */
 
 import {Location} from '@angular/common';
-import {Component} from '@angular/core';
+import {AfterViewInit, Component, Input} from '@angular/core';
 import {FormControl} from '@angular/forms';
+import {MatStepper} from '@angular/material/stepper';
 
-import {TaskCreationWizard} from '../service/task-creation-wizard.service';
+import {TaskCreationWizard} from '../wizard/task-creation-wizard.service';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
@@ -32,7 +33,14 @@ import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
   templateUrl: './task-definition.component.html',
   styleUrls: ['./task-definition.component.css']
 })
-export class TaskDefinitionComponent {
+export class TaskDefinitionComponent implements AfterViewInit {
+
+  @Input()
+  private readonly stepper: MatStepper;
+
+  private readonly description: FormControl = new FormControl();
+  private readonly priority: FormControl = new FormControl();
+  private readonly dueDate: FormControl = new FormControl();
 
   /**
    * Possible task priorities.
@@ -45,24 +53,23 @@ export class TaskDefinitionComponent {
    */
   private readonly today: Date = new Date();
 
-  private readonly description: FormControl = new FormControl();
-  private readonly priority: FormControl = new FormControl(TaskPriority.NORMAL);
-  private readonly dueDate: FormControl = new FormControl();
-
-  private completed = false;
-
   constructor(private readonly wizard: TaskCreationWizard, private readonly location: Location) {
   }
 
+  ngAfterViewInit(): void {
+    this.setNotCompleted();
+  }
+
   next(): void {
-    this.resetCompleteness();
+    // todo handle header bar navigation properly when we return to the page (ideally disable it).
     this.wizard.setTaskDetails({
       description: this.description.value,
       priority: this.priority.value,
-      dueDate: this.dueDate.value.toDate()
+      dueDate: this.dueDate.value
     }).then(() => {
-      this.setCompleted();
       this.informOnDraftCreation();
+      this.setCompleted();
+      this.stepper.next();
     }).catch(err => {
       this.reportError(err);
     });
@@ -75,21 +82,19 @@ export class TaskDefinitionComponent {
     this.location.back();
   }
 
-  isCompleted(): boolean {
-    return this.completed;
-  }
-
-  private setCompleted(): void {
-    this.completed = true;
-  }
-
-  private resetCompleteness(): void {
-    this.completed = false;
-  }
-
   private informOnDraftCreation(): void {
+    console.log('Draft created');
   }
 
   private reportError(err): void {
+    console.log(`Error when setting task details: ${err}`);
+  }
+
+  private setCompleted(): void {
+    this.stepper.selected.completed = true;
+  }
+
+  private setNotCompleted() {
+    this.stepper.selected.completed = false;
   }
 }

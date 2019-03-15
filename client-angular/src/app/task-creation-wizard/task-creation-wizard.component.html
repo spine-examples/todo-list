@@ -21,11 +21,11 @@
 <app-page-header text="New Task"></app-page-header>
 
 <mat-horizontal-stepper linear #stepper>
-    <mat-step [completed]="taskDefinition.isCompleted()">
+    <mat-step>
         <ng-template matStepLabel>Task definition</ng-template>
-        <app-task-definition></app-task-definition>
+        <app-task-definition [stepper]="stepper"></app-task-definition>
         <a mat-button color='primary' [disabled]="true">Previous</a>
-        <a (click)="taskDefinition.next(); stepper.next()" mat-button color='primary'>Next</a>
+        <a (click)="taskDefinition.next()" mat-button color='primary'>Next</a>
         <a (click)="taskDefinition.cancel()" mat-button color='primary'>Cancel</a>
     </mat-step>
     <mat-step [completed]="labelAssignment.isCompleted()">

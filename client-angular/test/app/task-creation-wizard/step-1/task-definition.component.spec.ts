@@ -43,7 +43,7 @@ import {TaskServiceModule} from '../../../../src/app/task-service/task-service.m
 import {RouterTestingModule} from '@angular/router/testing';
 import {TodoListComponentsModule} from '../../../../src/app/common-components/todo-list-components.module';
 import {TodoListPipesModule} from '../../../../src/app/pipes/todo-list-pipes.module';
-import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
+import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/wizard/task-creation-wizard.service';
 import {TaskService} from '../../../../src/app/task-service/task.service';
 import {mockSpineWebClient} from '../../given/mock-spine-web-client';
 

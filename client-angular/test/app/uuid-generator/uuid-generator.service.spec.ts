@@ -20,7 +20,7 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { UuidGenerator } from '../../../src/app/uuid-generator/uuid-generator.service';
+import { UuidGenerator } from '../../../src/app/uuid-generator/uuid-generator';
 
 describe('UuidGenerator', () => {
   beforeEach(() => TestBed.configureTestingModule({

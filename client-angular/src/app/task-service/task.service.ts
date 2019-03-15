@@ -20,9 +20,9 @@
 
 import {Injectable} from '@angular/core';
 import {Client, Type} from 'spine-web';
-import * as uuid from 'uuid';
 
 import {TaskServiceModule} from './task-service.module';
+import {UuidGenerator} from '../uuid-generator/uuid-generator';
 
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
@@ -43,16 +43,6 @@ export class TaskService {
   constructor(private readonly spineWebClient: Client) {
   }
 
-  /**
-   * Generates a new {@link TaskId}.
-   */
-  private static newId(): TaskId {
-    const id = new TaskId();
-    const value = uuid.v4();
-    id.setValue(value);
-    return id;
-  }
-
   /** Visible for testing. */
   static logCmdAck() {
     console.log('Command acknowledged by the server');
@@ -70,7 +60,7 @@ export class TaskService {
    */
   createBasicTask(description: string): void {
     const cmd = new CreateBasicTask();
-    const id = TaskService.newId();
+    const id = UuidGenerator.newId(TaskId);
     cmd.setId(id);
 
     const taskDescription = new TaskDescription();
