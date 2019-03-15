@@ -19,6 +19,8 @@
  */
 
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ErrorStateMatcher} from '@angular/material/core';
+import {FormControl, FormGroupDirective, NgForm, Validators} from '@angular/forms';
 
 import {TaskService} from '../../task-service/task.service';
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
@@ -29,7 +31,8 @@ import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
  */
 @Component({
   selector: 'app-active-tasks',
-  templateUrl: './active-tasks.component.html'
+  templateUrl: './active-tasks.component.html',
+  styleUrls: ['./active-tasks.component.css']
 })
 export class ActiveTasksComponent implements OnInit, OnDestroy {
 
@@ -40,6 +43,12 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
 
   constructor(private readonly taskService: TaskService) {
   }
+
+  descriptionFormControl = new FormControl('', [
+    Validators.required
+  ]);
+
+  matcher = new ValidTaskDescriptionMatcher();
 
   ngOnInit(): void {
     this.taskService.subscribeToActive(this.tasks)
@@ -52,5 +61,12 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
     if (this.unsubscribe) {
       this.unsubscribe();
     }
+  }
+}
+
+export class ValidTaskDescriptionMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const hasDescription = form && form.submitted;
+    return !!(control && control.invalid && (control.dirty || control.touched || hasDescription));
   }
 }
