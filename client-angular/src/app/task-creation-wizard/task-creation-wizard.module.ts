@@ -22,28 +22,33 @@ import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {ReactiveFormsModule} from '@angular/forms';
 
-import {MatButtonModule} from '@angular/material/button';
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
+import {MatButtonModule} from '@angular/material/button';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatSelectModule} from '@angular/material/select';
+import {MatStepperModule} from '@angular/material/stepper';
 
 import {TaskCreationWizardRoutingModule} from './task-creation-wizard.routes';
 import {TodoListCommonsModule} from '../todo-list-commons/todo-list-commons.module';
-import {TaskDefinitionComponent} from './page-1/task-definition.component';
-import {LabelAssignmentComponent} from './page-2/label-assignment.component';
 import {TaskServiceModule} from '../task-service/task-service.module';
+import {TaskDefinitionComponent} from './step-1/task-definition.component';
+import {LabelAssignmentComponent} from './step-2/label-assignment.component';
+import {TaskCreationWizardComponent} from './task-creation-wizard.component';
+import {ConfirmationComponent} from './step-3/confirmation.component';
 
 /**
- * The module which declares task creation wizard components.
+ * The module which provides a wizard for step-by-step task creation.
  *
- * @see `io.spine.examples.todolist.c.procman.TaskCreationWizard` in `api-java`.
+ * @see `io.spine.examples.todolist.c.procman.TaskCreationWizard` in `api-java`
  */
 @NgModule({
   declarations: [
+    TaskCreationWizardComponent,
     TaskDefinitionComponent,
-    LabelAssignmentComponent
+    LabelAssignmentComponent,
+    ConfirmationComponent
   ],
   imports: [
     CommonModule,
@@ -53,12 +58,13 @@ import {TaskServiceModule} from '../task-service/task-service.module';
     TodoListCommonsModule,
     TaskServiceModule,
 
-    MatButtonModule,
     MatMomentDateModule,
+    MatButtonModule,
     MatDatepickerModule,
     MatInputModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    MatStepperModule
   ]
 })
 export class TaskCreationWizardModule {

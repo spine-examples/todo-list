@@ -1,0 +1,45 @@
+<!--
+  ~ Copyright 2019, TeamDev. All rights reserved.
+  ~
+  ~ Redistribution and use in source and/or binary forms, with or without
+  ~ modification, must retain the above copyright notice and the following
+  ~ disclaimer.
+  ~
+  ~ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  ~ "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  ~ LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  ~ A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+  ~ OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+  ~ SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+  ~ LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+  ~ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+  ~ THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  -->
+
+<app-page-header text="New Task"></app-page-header>
+
+<mat-horizontal-stepper linear #stepper>
+    <mat-step [completed]="taskDefinition.isCompleted()">
+        <ng-template matStepLabel>Task definition</ng-template>
+        <app-task-definition></app-task-definition>
+        <a mat-button color='primary' [disabled]="true">Previous</a>
+        <a (click)="taskDefinition.next(); stepper.next()" mat-button color='primary'>Next</a>
+        <a (click)="taskDefinition.cancel()" mat-button color='primary'>Cancel</a>
+    </mat-step>
+    <mat-step [completed]="labelAssignment.isCompleted()">
+        <ng-template matStepLabel>Label assignment</ng-template>
+        <app-label-assignment></app-label-assignment>
+        <a (click)="labelAssignment.back(); stepper.previous()" mat-button color='primary'>Previous</a>
+        <a (click)="labelAssignment.next(); stepper.next()" mat-button color='primary'>Next</a>
+        <a (click)="labelAssignment.cancel()" mat-button color='primary'>Cancel</a>
+    </mat-step>
+    <mat-step [completed]="confirmation.isCompleted()">
+        <ng-template matStepLabel>Confirmation</ng-template>
+        <app-confirmation></app-confirmation>
+        <a (click)="confirmation.back(); stepper.previous()" mat-button color='primary'>Previous</a>
+        <a (click)="confirmation.finish()" mat-button color='primary'>Finish</a>
+        <a (click)="confirmation.cancel()" mat-button color='primary'>Cancel</a>
+    </mat-step>
+</mat-horizontal-stepper>

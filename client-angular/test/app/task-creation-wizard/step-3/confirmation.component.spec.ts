@@ -20,21 +20,21 @@
 
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TaskDefinitionComponent } from '../../../../src/app/task-creation-wizard/step-1/task-definition.component';
+import { ConfirmationComponent } from '../../../../src/app/task-creation-wizard/step-3/confirmation.component';
 
-describe('TaskDefinitionComponent', () => {
-  let component: TaskDefinitionComponent;
-  let fixture: ComponentFixture<TaskDefinitionComponent>;
+describe('ConfirmationComponent', () => {
+  let component: ConfirmationComponent;
+  let fixture: ComponentFixture<ConfirmationComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TaskDefinitionComponent ]
+      declarations: [ ConfirmationComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TaskDefinitionComponent);
+    fixture = TestBed.createComponent(ConfirmationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

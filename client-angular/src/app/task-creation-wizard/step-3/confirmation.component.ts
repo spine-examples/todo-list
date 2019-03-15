@@ -18,28 +18,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {Component} from '@angular/core';
 
-import { TaskDefinitionComponent } from '../../../../src/app/task-creation-wizard/step-1/task-definition.component';
+@Component({
+  selector: 'app-confirmation',
+  templateUrl: './confirmation.component.html',
+  styleUrls: ['./confirmation.component.css']
+})
+export class ConfirmationComponent {
 
-describe('TaskDefinitionComponent', () => {
-  let component: TaskDefinitionComponent;
-  let fixture: ComponentFixture<TaskDefinitionComponent>;
+  isCompleted(): boolean {
+    return true;
+  }
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ TaskDefinitionComponent ]
-    })
-    .compileComponents();
-  }));
+  back() {
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(TaskDefinitionComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+  }
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+  finish() {
+
+  }
+
+  cancel() {
+
+  }
+}

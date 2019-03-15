@@ -21,22 +21,12 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
-import {TaskDefinitionComponent} from './page-1/task-definition.component';
-import {LabelAssignmentComponent} from './page-2/label-assignment.component';
+import {TaskCreationWizardComponent} from './task-creation-wizard.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'page-1',
-    pathMatch: 'full'
-  },
-  {
-    path: 'page-1',
-    component: TaskDefinitionComponent
-  },
-  {
-    path: 'page-2',
-    component: LabelAssignmentComponent
+    component: TaskCreationWizardComponent
   }
 ];
 

@@ -18,28 +18,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {Component, ViewChild} from '@angular/core';
 
-import { TaskDefinitionComponent } from '../../../../src/app/task-creation-wizard/step-1/task-definition.component';
+import {TaskDefinitionComponent} from './step-1/task-definition.component';
+import {LabelAssignmentComponent} from './step-2/label-assignment.component';
+import {ConfirmationComponent} from './step-3/confirmation.component';
 
-describe('TaskDefinitionComponent', () => {
-  let component: TaskDefinitionComponent;
-  let fixture: ComponentFixture<TaskDefinitionComponent>;
+@Component({
+  selector: 'app-task-creation-wizard',
+  templateUrl: './task-creation-wizard.component.html',
+  styleUrls: ['./task-creation-wizard.component.css']
+})
+export class TaskCreationWizardComponent {
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [ TaskDefinitionComponent ]
-    })
-    .compileComponents();
-  }));
+  @ViewChild(TaskDefinitionComponent)
+  taskDefinition: TaskDefinitionComponent;
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(TaskDefinitionComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
+  @ViewChild(LabelAssignmentComponent)
+  labelAssignment: LabelAssignmentComponent;
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+  @ViewChild(ConfirmationComponent)
+  confirmation: ConfirmationComponent;
+}

@@ -20,7 +20,7 @@
 
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { LabelAssignmentComponent } from '../../../../src/app/task-creation-wizard/page-2/label-assignment.component';
+import { LabelAssignmentComponent } from '../../../../src/app/task-creation-wizard/step-2/label-assignment.component';
 
 describe('LabelAssignmentComponent', () => {
   let component: LabelAssignmentComponent;
