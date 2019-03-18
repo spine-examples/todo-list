@@ -30,40 +30,19 @@ import {DraftsComponent} from './drafts/drafts.component';
 
 const routes: Routes = [
   {
-    path: 'tasks',
+    path: '',
     component: TaskListComponent,
     children: [
-      {path: 'active', component: ActiveTasksComponent, outlet: 'tasks'},
-      {path: 'completed', component: CompletedTasksComponent, outlet: 'tasks'},
-      {path: 'deleted', component: DeletedTasksComponent, outlet: 'tasks'},
-      {path: 'drafts', component: DraftsComponent, outlet: 'tasks'}
+      {path: 'active', component: ActiveTasksComponent},
+      {path: 'completed', component: CompletedTasksComponent},
+      {path: 'deleted', component: DeletedTasksComponent},
+      {path: 'drafts', component: DraftsComponent}
     ]
-  },
-  {
-    path: 'active',
-    redirectTo: '/task-list/tasks/(tasks:active)'
-  },
-  {
-    path: 'completed',
-    redirectTo: '/task-list/tasks/(tasks:completed)'
-  },
-  {
-    path: 'deleted',
-    redirectTo: '/task-list/tasks/(tasks:deleted)'
-  },
-  {
-    path: 'drafts',
-    redirectTo: '/task-list/tasks/(tasks:drafts)'
   }
 ];
 
 /**
  * The routing configuration of the {@link TaskListModule}.
- *
- * The routes have non-empty root `tasks` (forcing not very convenient navigation
- * `task-list/tasks/...`) because of the known
- * {@linkplain https://github.com/angular/angular/issues/10981 issue}. The issue, albeit closed,
- * still persists.
  */
 @NgModule({
   imports: [RouterModule.forChild(routes)],
