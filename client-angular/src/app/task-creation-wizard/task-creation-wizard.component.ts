@@ -19,6 +19,8 @@
  */
 
 import {Component, ViewChild} from '@angular/core';
+import {MatHorizontalStepper} from '@angular/material';
+import {ActivatedRoute} from '@angular/router';
 
 import {TaskCreationWizard} from './service/task-creation-wizard.service';
 import {TaskDefinitionComponent} from './step-1-task-definition/task-definition.component';
@@ -35,6 +37,9 @@ import {ConfirmationComponent} from './step-3-confirmation/confirmation.componen
 })
 export class TaskCreationWizardComponent {
 
+  @ViewChild(MatHorizontalStepper)
+  stepper: MatHorizontalStepper;
+
   @ViewChild(TaskDefinitionComponent)
   taskDefinition: TaskDefinitionComponent;
 
@@ -43,4 +48,11 @@ export class TaskCreationWizardComponent {
 
   @ViewChild(ConfirmationComponent)
   confirmation: ConfirmationComponent;
+
+  constructor(route: ActivatedRoute) {
+    const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
+    if (taskCreationId) {
+
+    }
+  }
 }

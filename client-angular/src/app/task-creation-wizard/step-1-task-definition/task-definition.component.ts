@@ -19,7 +19,7 @@
  */
 
 import {Location} from '@angular/common';
-import {AfterViewInit, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {AfterViewInit, Component, Input} from '@angular/core';
 import {MatStepper} from '@angular/material/stepper';
 import {Moment} from 'moment';
 
@@ -34,7 +34,7 @@ import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
   templateUrl: './task-definition.component.html',
   styleUrls: ['./task-definition.component.css']
 })
-export class TaskDefinitionComponent implements AfterViewInit, OnChanges {
+export class TaskDefinitionComponent implements AfterViewInit {
 
   /** Visible for testing. */
   @Input()
@@ -62,8 +62,12 @@ export class TaskDefinitionComponent implements AfterViewInit, OnChanges {
     this.setNotCompleted();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log('Input changed 2');
+  /**
+   * Handles situations when we return to the "Task Definition" page from the later stages and it's
+   * initially marked as completed.
+   */
+  onInputChange(): void {
+    this.setNotCompleted();
   }
 
   next(): void {
@@ -88,10 +92,6 @@ export class TaskDefinitionComponent implements AfterViewInit, OnChanges {
     this.location.back();
   }
 
-  onInputChange(): void {
-    this.stepper.selected.completed = false;
-  }
-
   private createDraft(): void {
     console.log('Draft created');
   }
@@ -104,7 +104,7 @@ export class TaskDefinitionComponent implements AfterViewInit, OnChanges {
     this.stepper.selected.completed = true;
   }
 
-  private setNotCompleted() {
+  private setNotCompleted(): void {
     this.stepper.selected.completed = false;
   }
 }

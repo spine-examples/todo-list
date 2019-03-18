@@ -27,6 +27,10 @@ const routes: Routes = [
   {
     path: '',
     component: TaskCreationWizardComponent
+  },
+  {
+    path: ':taskCreationId',
+    component: TaskCreationWizardComponent
   }
 ];
 

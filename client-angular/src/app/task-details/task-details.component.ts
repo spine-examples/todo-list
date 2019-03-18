@@ -35,7 +35,7 @@ export class TaskDetailsComponent {
   readonly taskId;
 
   constructor(private readonly location: Location, route: ActivatedRoute) {
-    this.taskId = route.snapshot.paramMap.get('id');
+    this.taskId = route.snapshot.paramMap.get('id') ? route.snapshot.paramMap.get('id') : 'vitalik';
   }
 
   back(): void {
