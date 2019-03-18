@@ -18,7 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, ViewChild} from '@angular/core';
+import {Location} from '@angular/common';
+import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 import {MatHorizontalStepper} from '@angular/material';
 import {ActivatedRoute} from '@angular/router';
 
@@ -35,7 +36,7 @@ import {ConfirmationComponent} from './step-3-confirmation/confirmation.componen
     TaskCreationWizard
   ]
 })
-export class TaskCreationWizardComponent {
+export class TaskCreationWizardComponent implements AfterViewInit {
 
   @ViewChild(MatHorizontalStepper)
   stepper: MatHorizontalStepper;
@@ -49,10 +50,24 @@ export class TaskCreationWizardComponent {
   @ViewChild(ConfirmationComponent)
   confirmation: ConfirmationComponent;
 
-  constructor(route: ActivatedRoute) {
+  constructor(private changeDetector: ChangeDetectorRef, private readonly location: Location, route: ActivatedRoute) {
     const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
     if (taskCreationId) {
-
+      this.restoreWizard(taskCreationId);
+    } else {
+      const newCreationId = this.startWizard();
+      location.go(`:${newCreationId}`);
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.taskDefinition.description = 'dusya';
+    this.changeDetector.detectChanges();
+  }
+
+  private restoreWizard(taskCreationId) {
+  }
+
+  private startWizard() {
   }
 }

@@ -40,7 +40,7 @@ export class TaskDefinitionComponent implements AfterViewInit {
   @Input()
   stepper: MatStepper;
 
-  private description: string;
+  description: string;
   private priority: TaskPriority;
   private dueDate: Moment;
 
