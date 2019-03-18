@@ -20,7 +20,7 @@
 
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ErrorStateMatcher} from '@angular/material/core';
-import {FormControl, FormGroupDirective, NgForm, Validators} from '@angular/forms';
+import {FormControl, FormGroup, FormGroupDirective, NgForm, Validators} from '@angular/forms';
 
 import {TaskService} from '../../task-service/task.service';
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
@@ -45,10 +45,25 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
   }
 
   descriptionFormControl = new FormControl('', [
-    Validators.required
+    Validators.required,
+    ActiveTasksComponent.taskFormValidator
   ]);
 
   matcher = new ValidTaskDescriptionMatcher();
+
+  taskForms = new FormGroup({
+    descriptionFormControl: this.descriptionFormControl
+  });
+
+  static taskFormValidator(control: FormControl) {
+    const isWhitespaceOnly = (control.value || '').trim().length === 0;
+    const isValid = !isWhitespaceOnly;
+    return isValid ? null : {whitespace: true};
+  }
+
+  createBasicTask(taskDescription: string): void {
+    this.taskService.createBasicTask(taskDescription);
+  }
 
   ngOnInit(): void {
     this.taskService.subscribeToActive(this.tasks)

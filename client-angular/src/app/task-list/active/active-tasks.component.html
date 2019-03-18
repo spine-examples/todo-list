@@ -17,12 +17,15 @@
   ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
-<form class="add-quick-task-form" [formGroup]="active-tasks-forms">
+<form class="add-quick-task-form" [formGroup]="taskForms" autocomplete="off">
     <mat-form-field class="add-quick-task-full-width">
-        <input matInput placeholder="Wash my car..." [formControl]="descriptionFormControl"
-               [errorStateMatcher]="matcher">
-        <mat-hint>Enter task description</mat-hint>
-        <mat-error *ngIf="descriptionFormControl.hasError(required)">
+        <input #taskDescription
+               (keyup.enter)="createBasicTask(taskDescription.value); taskDescription.value=''"
+               class="task-description-textarea"
+               autofocus matInput placeholder="Enter task description"
+               [formControl]="descriptionFormControl"
+               [errorStateMatcher]="matcher"/>
+        <mat-error *ngIf="descriptionFormControl.hasError(input)">
             Task description cannot be empty.
         </mat-error>
     </mat-form-field>
