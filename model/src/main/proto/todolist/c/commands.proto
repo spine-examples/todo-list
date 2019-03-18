@@ -57,10 +57,7 @@ message CreateBasicTask {
     TaskId id = 1;
 
     // A description for the task created.
-    TaskDescription description = 2;
-
-    // Reserved for future extension.
-    reserved 3 to 10;
+    TaskDescription description = 2 [(valid) = true];
 }
 
 // Update a description of an existing task.
