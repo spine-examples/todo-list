@@ -52,13 +52,11 @@ function clientFactory(angularFire: AngularFireDatabase): Client {
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireDatabaseModule
   ],
-  providers: [
-    {
+  providers: [{
       provide: Client,
       useFactory: clientFactory,
       deps: [AngularFireDatabase]
-    }
-  ]
+    }]
 })
 export class SpineClientProvider {
 }

@@ -18,9 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.add-quick-task-form {
-  padding: 20px;
-}
 .add-quick-task-full-width {
   width: 30vw;
+}
+
+.add-quick-task-form {
+  display: flex;
+  justify-content: left;
+  align-items: center;
 }

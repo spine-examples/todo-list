@@ -24,6 +24,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import {MatInputModule} from '@angular/material';
 import {ReactiveFormsModule} from '@angular/forms';
+import {MatButtonModule} from '@angular/material/button';
 
 import {TaskListComponent} from './task-list.component';
 import {ActiveTasksComponent} from './active/active-tasks.component';
@@ -53,11 +54,13 @@ import {TaskItemComponent} from './task-item/task-item.component';
     MatSidenavModule,
     MatListModule,
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatButtonModule
   ],
   exports: [
     MatInputModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatButtonModule
   ]
 })
 export class TaskListModule {
