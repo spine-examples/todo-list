@@ -39,6 +39,9 @@ import {AppComponent} from './app.component';
     AppRoutingModule,
     MatToolbarModule
   ],
+  exports: [
+    MatToolbarModule
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
