@@ -20,7 +20,7 @@
 
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatButtonModule} from '@angular/material/button';
@@ -53,7 +53,7 @@ import {SpineClientProvider} from '../spine-client-provider/spine-client-provide
   ],
   imports: [
     CommonModule,
-    ReactiveFormsModule,
+    FormsModule,
 
     TaskCreationWizardRoutingModule,
     TodoListComponentsModule,

@@ -21,13 +21,13 @@
 <p>
     <mat-form-field appearance="standard">
         <mat-label>Description</mat-label>
-        <input [formControl]="description" matInput placeholder="Description" required>
+        <input [(ngModel)]="description" (ngModelChange)="onInputChange()" matInput placeholder="Description" required>
     </mat-form-field>
 </p>
 <p>
     <mat-form-field appearance="standard">
         <mat-label>Priority</mat-label>
-        <mat-select [formControl]="priority" placeholder="Priority">
+        <mat-select [(ngModel)]="priority" (ngModelChange)="onInputChange()" placeholder="Priority">
             <mat-option *ngFor="let priority of TASK_PRIORITIES" [value]="priority">
                 {{priority | taskPriorityName}}
             </mat-option>
@@ -36,7 +36,7 @@
 </p>
 <p>
     <mat-form-field>
-        <input [formControl]="dueDate" matInput [min]="today" [matDatepicker]="dueDatePicker" placeholder="Due date">
+        <input [(ngModel)]="dueDate" (ngModelChange)="onInputChange()" matInput [min]="today" [matDatepicker]="dueDatePicker" placeholder="Due date">
         <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
         <mat-datepicker #dueDatePicker></mat-datepicker>
     </mat-form-field>

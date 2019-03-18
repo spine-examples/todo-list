@@ -19,9 +19,10 @@
  */
 
 import {Location} from '@angular/common';
-import {AfterViewInit, Component, Input} from '@angular/core';
-import {FormControl} from '@angular/forms';
+import {AfterViewInit, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {MatStepper} from '@angular/material/stepper';
+import {Moment} from 'moment';
+
 
 import {TaskCreationWizard} from '../service/task-creation-wizard.service';
 
@@ -33,15 +34,15 @@ import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
   templateUrl: './task-definition.component.html',
   styleUrls: ['./task-definition.component.css']
 })
-export class TaskDefinitionComponent implements AfterViewInit {
+export class TaskDefinitionComponent implements AfterViewInit, OnChanges {
 
   /** Visible for testing. */
   @Input()
   stepper: MatStepper;
 
-  private readonly description: FormControl = new FormControl();
-  private readonly priority: FormControl = new FormControl();
-  private readonly dueDate: FormControl = new FormControl();
+  private description: string;
+  private priority: TaskPriority;
+  private dueDate: Moment;
 
   /**
    * Possible task priorities.
@@ -61,12 +62,16 @@ export class TaskDefinitionComponent implements AfterViewInit {
     this.setNotCompleted();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('Input changed 2');
+  }
+
   next(): void {
     // todo handle header bar navigation properly when we return to the page (ideally disable it).
     this.wizard.setTaskDetails({
-      description: this.description.value,
-      priority: this.priority.value,
-      dueDate: this.dueDate.value
+      description: this.description,
+      priority: this.priority,
+      dueDate: this.dueDate
     }).then(() => {
       this.createDraft();
       this.setCompleted();
@@ -81,6 +86,10 @@ export class TaskDefinitionComponent implements AfterViewInit {
    */
   cancel(): void {
     this.location.back();
+  }
+
+  onInputChange(): void {
+    this.stepper.selected.completed = false;
   }
 
   private createDraft(): void {
