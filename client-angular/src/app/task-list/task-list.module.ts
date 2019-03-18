@@ -21,6 +21,7 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatButtonModule} from '@angular/material';
 import {MatListModule} from '@angular/material/list';
 
 import {TaskListComponent} from './task-list.component';
@@ -49,6 +50,7 @@ import {TaskItemComponent} from './task-item/task-item.component';
     CommonModule,
     TaskServiceModule,
     MatSidenavModule,
+    MatButtonModule,
     MatListModule
   ]
 })
