@@ -21,6 +21,7 @@
 import {Component} from '@angular/core';
 
 import {TaskService} from '../task-service/task.service';
+import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 
 /**
  * The component aggregating various task list views as well as basic application navigation.
