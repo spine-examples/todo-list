@@ -18,9 +18,30 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<p>
-    Assign labels
+<p class="mat-h2">
+    Available labels:
 </p>
+<p>
+    <mat-selection-list>
+        <mat-list-option *ngFor="let label of LABELS"
+                         [style.background-color]="label.getLabelColor()">
+            {{label.getLabelTitle()}}
+        </mat-list-option>
+    </mat-selection-list>
+</p>
+<p>
+    <a routerLink="/labels" mat-stroked-button color="primary">Edit labels</a>
+</p>
+<p class="mat-h2">
+    Selected:
+    <mat-chip-list>
+        <mat-chip *ngFor="let label of LABELS" [style.background-color]="label.getLabelColor()">
+            {{label.getLabelTitle()}}
+        </mat-chip>
+    </mat-chip-list>
+</p>
+
+
 <a (click)="back()" mat-button color='primary'>Previous</a>
 <a (click)="next()" mat-button color='primary'>Next</a>
 <a (click)="cancel()" mat-button color='primary'>Cancel</a>

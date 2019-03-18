@@ -18,3 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+mat-list-option {
+  margin-bottom: 5px;
+}
+
+mat-chip-list {
+  display: inline-block;
+}

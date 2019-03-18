@@ -20,13 +20,15 @@
 
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormsModule} from '@angular/forms';
 
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatButtonModule} from '@angular/material/button';
+import {MatChipsModule} from '@angular/material/chips';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatListModule} from '@angular/material/list';
 import {MatSelectModule} from '@angular/material/select';
 import {MatStepperModule} from '@angular/material/stepper';
 
@@ -62,9 +64,11 @@ import {SpineClientProvider} from '../spine-client-provider/spine-client-provide
 
     MatMomentDateModule,
     MatButtonModule,
+    MatChipsModule,
     MatDatepickerModule,
     MatInputModule,
     MatFormFieldModule,
+    MatListModule,
     MatSelectModule,
     MatStepperModule
   ]
