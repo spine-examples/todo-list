@@ -46,6 +46,7 @@ import {TodoListPipesModule} from '../../../../src/app/pipes/todo-list-pipes.mod
 import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
 import {TaskService} from '../../../../src/app/task-service/task.service';
 import {mockSpineWebClient} from '../../given/mock-spine-web-client';
+import {mockStepper} from '../given/mock-stepper';
 
 
 describe('TaskDefinitionComponent', () => {
@@ -91,6 +92,7 @@ describe('TaskDefinitionComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(TaskDefinitionComponent);
     component = fixture.componentInstance;
+    component.stepper = mockStepper();
     fixture.detectChanges();
   });
 

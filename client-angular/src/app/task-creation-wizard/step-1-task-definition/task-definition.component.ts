@@ -35,8 +35,9 @@ import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 })
 export class TaskDefinitionComponent implements AfterViewInit {
 
+  /** Visible for testing. */
   @Input()
-  private readonly stepper: MatStepper;
+  stepper: MatStepper;
 
   private readonly description: FormControl = new FormControl();
   private readonly priority: FormControl = new FormControl();
