@@ -18,34 +18,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.navPanel {
-  width: 500px;
-}
-
-nav a {
-  padding: 5px 10px;
-  text-decoration: none;
-  margin-top: 10px;
-  display: inline-block;
-  background-color: #eee;
-  border-radius: 4px;
-  border-color: #ffffff;
-  /*outline: solid #ffffff;*/
-}
-
-nav a:visited, a:link {
-  color: #607d8b;
-}
-
-nav a:hover {
-  color: #039be5;
-  background-color: #cfd8dc;
-}
-
-nav a.active {
-  color: #039be5;
-}
-
-a.labelLink {
-  float: right;
+.task-list-container{
+  height: 100vh;
 }
