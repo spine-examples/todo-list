@@ -32,9 +32,9 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatStepperModule} from '@angular/material/stepper';
 
 import {TaskCreationWizardComponent} from '../../../../src/app/task-creation-wizard/task-creation-wizard.component';
-import {TaskDefinitionComponent} from '../../../../src/app/task-creation-wizard/step-1/task-definition.component';
-import {LabelAssignmentComponent} from '../../../../src/app/task-creation-wizard/step-2/label-assignment.component';
-import {ConfirmationComponent} from '../../../../src/app/task-creation-wizard/step-3/confirmation.component';
+import {TaskDefinitionComponent} from '../../../../src/app/task-creation-wizard/step-1-task-definition/task-definition.component';
+import {LabelAssignmentComponent} from '../../../../src/app/task-creation-wizard/step-2-label-assignment/label-assignment.component';
+import {ConfirmationComponent} from '../../../../src/app/task-creation-wizard/step-3-confirmation/confirmation.component';
 import {TaskCreationWizardRoutingModule} from '../../../../src/app/task-creation-wizard/task-creation-wizard.routes';
 import {TaskServiceModule} from '../../../../src/app/task-service/task-service.module';
 import {TodoListComponentsModule} from '../../../../src/app/common-components/todo-list-components.module';

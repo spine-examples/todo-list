@@ -33,10 +33,10 @@ import {MatStepperModule} from '@angular/material/stepper';
 import {TaskCreationWizardRoutingModule} from './task-creation-wizard.routes';
 import {TodoListComponentsModule} from '../common-components/todo-list-components.module';
 import {TodoListPipesModule} from '../pipes/todo-list-pipes.module';
-import {TaskDefinitionComponent} from './step-1/task-definition.component';
-import {LabelAssignmentComponent} from './step-2/label-assignment.component';
+import {TaskDefinitionComponent} from './step-1-task-definition/task-definition.component';
+import {LabelAssignmentComponent} from './step-2-label-assignment/label-assignment.component';
 import {TaskCreationWizardComponent} from './task-creation-wizard.component';
-import {ConfirmationComponent} from './step-3/confirmation.component';
+import {ConfirmationComponent} from './step-3-confirmation/confirmation.component';
 import {SpineClientProvider} from '../spine-client-provider/spine-client-provider.module';
 
 /**

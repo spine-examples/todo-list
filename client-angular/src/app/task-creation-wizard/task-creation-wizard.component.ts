@@ -20,10 +20,10 @@
 
 import {Component, ViewChild} from '@angular/core';
 
-import {TaskCreationWizard} from './wizard/task-creation-wizard.service';
-import {TaskDefinitionComponent} from './step-1/task-definition.component';
-import {LabelAssignmentComponent} from './step-2/label-assignment.component';
-import {ConfirmationComponent} from './step-3/confirmation.component';
+import {TaskCreationWizard} from './service/task-creation-wizard.service';
+import {TaskDefinitionComponent} from './step-1-task-definition/task-definition.component';
+import {LabelAssignmentComponent} from './step-2-label-assignment/label-assignment.component';
+import {ConfirmationComponent} from './step-3-confirmation/confirmation.component';
 
 @Component({
   selector: 'app-task-creation-wizard',

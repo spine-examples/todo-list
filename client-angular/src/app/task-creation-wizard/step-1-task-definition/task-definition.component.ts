@@ -23,7 +23,7 @@ import {AfterViewInit, Component, Input} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {MatStepper} from '@angular/material/stepper';
 
-import {TaskCreationWizard} from '../wizard/task-creation-wizard.service';
+import {TaskCreationWizard} from '../service/task-creation-wizard.service';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
