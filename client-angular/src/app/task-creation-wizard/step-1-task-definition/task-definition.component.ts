@@ -67,7 +67,7 @@ export class TaskDefinitionComponent implements AfterViewInit {
       priority: this.priority.value,
       dueDate: this.dueDate.value
     }).then(() => {
-      this.informOnDraftCreation();
+      this.createDraft();
       this.setCompleted();
       this.stepper.next();
     }).catch(err => {
@@ -82,7 +82,7 @@ export class TaskDefinitionComponent implements AfterViewInit {
     this.location.back();
   }
 
-  private informOnDraftCreation(): void {
+  private createDraft(): void {
     console.log('Draft created');
   }
 

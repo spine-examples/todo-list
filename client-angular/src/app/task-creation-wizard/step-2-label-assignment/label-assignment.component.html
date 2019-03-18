@@ -21,4 +21,7 @@
 <p>
     Assign labels
 </p>
+<a (click)="back(); stepper.previous()" mat-button color='primary'>Previous</a>
+<a (click)="next(); stepper.next()" mat-button color='primary'>Next</a>
+<a (click)="cancel()" mat-button color='primary'>Cancel</a>
 <app-error-viewport></app-error-viewport>

@@ -24,22 +24,13 @@
     <mat-step>
         <ng-template matStepLabel>Task definition</ng-template>
         <app-task-definition [stepper]="stepper"></app-task-definition>
-        <a mat-button color='primary' [disabled]="true">Previous</a>
-        <a (click)="taskDefinition.next()" mat-button color='primary'>Next</a>
-        <a (click)="taskDefinition.cancel()" mat-button color='primary'>Cancel</a>
     </mat-step>
-    <mat-step [completed]="labelAssignment.isCompleted()">
+    <mat-step>
         <ng-template matStepLabel>Label assignment</ng-template>
         <app-label-assignment></app-label-assignment>
-        <a (click)="labelAssignment.back(); stepper.previous()" mat-button color='primary'>Previous</a>
-        <a (click)="labelAssignment.next(); stepper.next()" mat-button color='primary'>Next</a>
-        <a (click)="labelAssignment.cancel()" mat-button color='primary'>Cancel</a>
     </mat-step>
-    <mat-step [completed]="confirmation.isCompleted()">
+    <mat-step>
         <ng-template matStepLabel>Confirmation</ng-template>
         <app-confirmation></app-confirmation>
-        <a (click)="confirmation.back(); stepper.previous()" mat-button color='primary'>Previous</a>
-        <a (click)="confirmation.finish()" mat-button color='primary'>Finish</a>
-        <a (click)="confirmation.cancel()" mat-button color='primary'>Cancel</a>
     </mat-step>
 </mat-horizontal-stepper>
