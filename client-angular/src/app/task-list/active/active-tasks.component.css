@@ -18,16 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.add-quick-task-full-width {
-  width: 30vw;
-}
-
 .task-item {
   width: 100%;
 }
 
-.add-quick-task-form {
-  display: flex;
-  justify-content: left;
-  align-items: center;
+.full-width {
+  width: 97.5%;
 }

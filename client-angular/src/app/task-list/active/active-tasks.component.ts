@@ -19,8 +19,7 @@
  */
 
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {ErrorStateMatcher} from '@angular/material/core';
-import {FormControl, FormGroup, FormGroupDirective, NgForm, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from '../../task-service/task.service';
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
@@ -34,7 +33,6 @@ import {TaskDescription} from 'generated/main/js/todolist/values_pb';
   selector: 'app-active-tasks',
   templateUrl: './active-tasks.component.html',
   styleUrls: ['./active-tasks.component.css'],
-
 })
 export class ActiveTasksComponent implements OnInit, OnDestroy {
 
@@ -42,25 +40,12 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
 
   /** Visible for testing. */
   readonly tasks: TaskItem[] = [];
+  private activeTasksForms: FormGroup;
 
-  constructor(private readonly taskService: TaskService) {
-  }
-
-  descriptionFormControl = new FormControl('', [
-    Validators.required,
-    ActiveTasksComponent.taskFormValidator
-  ]);
-
-  matcher = new ValidTaskDescriptionMatcher();
-
-  taskForms = new FormGroup({
-    descriptionFormControl: this.descriptionFormControl
-  });
-
-  static taskFormValidator(control: FormControl) {
-    const isWhitespaceOnly = (control.value || '').trim().length === 0;
-    const isValid = !isWhitespaceOnly;
-    return isValid ? null : {whitespace: true};
+  constructor(private readonly taskService: TaskService, private formBuilder: FormBuilder) {
+    this.activeTasksForms = formBuilder.group({
+      description: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
+    });
   }
 
   createBasicTask(taskDescription: string): void {
@@ -68,6 +53,7 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    console.log(this.formBuilder);
     this.taskService.subscribeToActive(this.tasks)
       .then(unsubscribe => this.unsubscribe = unsubscribe);
   }
@@ -78,12 +64,5 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
     if (this.unsubscribe) {
       this.unsubscribe();
     }
-  }
-}
-
-export class ValidTaskDescriptionMatcher implements ErrorStateMatcher {
-  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
-    const hasDescription = form && form.submitted;
-    return !!(control && control.invalid && (control.dirty || control.touched || hasDescription));
   }
 }

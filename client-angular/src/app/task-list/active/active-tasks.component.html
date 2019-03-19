@@ -18,16 +18,18 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<form class="add-quick-task-form" [formGroup]="taskForms" autocomplete="off">
-    <mat-form-field class="add-quick-task-full-width">
+<form class="add-quick-task-form" [formGroup]="activeTasksForms" autocomplete="off">
+    <mat-form-field class="full-width" appearance="outline">
+        <mat-label>Enter task description</mat-label>
         <input #taskDescription
-               (keyup.enter)="createBasicTask(taskDescription.value); taskDescription.value=''"
+               (keydown.enter)="createBasicTask(taskDescription.value); taskDescription.value='';"
                class="task-description-textarea"
-               autofocus matInput placeholder="Enter task description"
-               [formControlName]="descriptionFormControl"
-               [errorStateMatcher]="matcher"/>
-        <mat-error>
-            Task description cannot be empty.
+               autofocus
+               matInput
+               placeholder="What are you up to?"
+               [formControlName]="'description'">
+        <mat-error class="error">
+            Task description must contain at least 3 letters.
         </mat-error>
     </mat-form-field>
 </form>
