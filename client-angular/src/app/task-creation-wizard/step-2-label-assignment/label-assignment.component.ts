@@ -19,7 +19,10 @@
  */
 
 import {Location} from '@angular/common';
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
+import {MatStepper} from '@angular/material';
+
+import {LabelService} from '../../labels/label.service';
 
 import {LabelId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskLabel} from 'generated/main/js/todolist/model_pb';
@@ -32,9 +35,15 @@ import {LabelItem} from 'generated/main/js/todolist/q/projections_pb';
 })
 export class LabelAssignmentComponent {
 
-  labels: TaskLabel[];
+  @Input()
+  private readonly stepper: MatStepper;
 
-  constructor(private readonly location: Location) {
+
+  available: TaskLabel[];
+  selected: TaskLabel[];
+
+  constructor(private readonly location: Location, private readonly labelService: LabelService) {
+    labelService.fetchAllLabels().then(labels => this.available = labels);
   }
 
   isCompleted(): boolean {
@@ -52,5 +61,9 @@ export class LabelAssignmentComponent {
    */
   cancel() {
     this.location.back();
+  }
+
+  createBasicLabel() {
+    this.labelService.createBasicLabel();
   }
 }

@@ -23,7 +23,7 @@
 </p>
 <p>
     <mat-selection-list>
-        <mat-list-option *ngFor="let label of labels"
+        <mat-list-option *ngFor="let label of available"
                          [style.background-color]="label.getColor() | labelColorView">
             {{label.getTitle()}}
         </mat-list-option>
@@ -35,7 +35,7 @@
 <p class="mat-h2">
     Selected:
     <mat-chip-list>
-        <mat-chip *ngFor="let label of labels"
+        <mat-chip *ngFor="let label of selected"
                   [style.background-color]="label.getColor() | labelColorView">
             {{label.getTitle()}}
         </mat-chip>
@@ -46,4 +46,5 @@
 <a (click)="back()" mat-button color='primary'>Previous</a>
 <a (click)="next()" mat-button color='primary'>Next</a>
 <a (click)="cancel()" mat-button color='primary'>Cancel</a>
+<a (click)="createBasicLabel()" mat-button color='primary'>Create basic label just for test</a>
 <app-error-viewport></app-error-viewport>

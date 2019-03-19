@@ -22,10 +22,12 @@ import {Injectable} from '@angular/core';
 import {Client, Type} from 'spine-web';
 
 import {LabelsModule} from './labels.module';
+import {UuidGenerator} from '../uuid-generator/uuid-generator';
 
 import {LabelColor, TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 import {LabelId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {Task, TaskCreation, TaskLabel, TaskLabels} from 'generated/main/js/todolist/model_pb';
+import {CreateBasicLabel} from 'generated/main/js/todolist/c/commands_pb';
 
 /**
  * A service which operates with task labels.
@@ -39,6 +41,26 @@ export class LabelService {
    * @param spineWebClient a client for accessing Spine backend
    */
   constructor(private readonly spineWebClient: Client) {
+  }
+
+  /**
+   * Test method.
+   *
+   * todo remove
+   */
+  createBasicLabel(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        const cmd = new CreateBasicLabel();
+        const id = UuidGenerator.newId(LabelId);
+        cmd.setLabelId(id);
+        cmd.setLabelTitle('Valentin');
+        this.spineWebClient.sendCommand(cmd, resolve, reject, reject);
+      }
+    );
+  }
+
+  fetchAllLabels(): Promise<TaskLabel[]> {
+    return this.spineWebClient.fetchAll({ofType: Type.forClass(TaskLabel)}).atOnce();
   }
 
   fetchTaskLabels(taskId: TaskId): Promise<TaskLabel[]> {

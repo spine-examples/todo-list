@@ -82,7 +82,7 @@ export class TaskCreationWizardComponent implements AfterViewInit {
         this.taskDefinition.description = this.wizard.taskDescription;
         this.taskDefinition.priority = this.wizard.taskPriority;
         this.taskDefinition.dueDate = this.wizard.taskDueDate;
-        this.labelAssignment.labels = this.wizard.taskLabels;
+        this.labelAssignment.selected = this.wizard.taskLabels;
 
         this.changeDetector.detectChanges();
       })
