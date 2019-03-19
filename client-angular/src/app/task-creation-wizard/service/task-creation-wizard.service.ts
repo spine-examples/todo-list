@@ -46,32 +46,29 @@ export class TaskCreationWizard {
   constructor(private readonly spineWebClient: Client) {
   }
 
-  setTaskDetails(details: TaskDetails): Promise<void> {
-    if (!this.taskCreationId) {
-      return this.startTaskCreation().then(() => this.updateTaskDetails(details));
-    }
-    return this.updateTaskDetails(details);
+  queryCreationProcess(taskCreationId: TaskCreationId): void {
+
   }
 
-  private startTaskCreation(): Promise<void> {
+  startTaskCreation(): Promise<TaskCreationId> {
     const taskCreationId = UuidGenerator.newId(TaskCreationId);
     const taskId = UuidGenerator.newId(TaskId);
     const cmd = new StartTaskCreation();
     cmd.setId(taskCreationId);
     cmd.setTaskId(taskId);
-    return new Promise<void>(
+    return new Promise<TaskCreationId>(
       (resolve, reject) => {
         const startProcess = () => {
           this.taskCreationId = taskCreationId;
           this.taskId = taskId;
-          resolve();
+          resolve(taskCreationId);
         };
         this.spineWebClient.sendCommand(cmd, startProcess, reject, reject);
       }
     );
   }
 
-  private updateTaskDetails(details: TaskDetails): Promise<void> {
+  updateTaskDetails(details: TaskDetails): Promise<void> {
     const cmd = new SetTaskDetails();
     cmd.setId(this.taskCreationId);
 

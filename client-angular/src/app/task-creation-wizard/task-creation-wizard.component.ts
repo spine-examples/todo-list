@@ -50,13 +50,20 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   @ViewChild(ConfirmationComponent)
   confirmation: ConfirmationComponent;
 
-  constructor(private changeDetector: ChangeDetectorRef, private readonly location: Location, route: ActivatedRoute) {
+  constructor(private readonly changeDetector: ChangeDetectorRef,
+              private readonly wizard: TaskCreationWizard,
+              location: Location,
+              route: ActivatedRoute) {
     const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
+    console.log(`Task creation ID: ${taskCreationId}`);
     if (taskCreationId) {
       this.restoreWizard(taskCreationId);
     } else {
-      const newCreationId = this.startWizard();
-      location.go(`:${newCreationId}`);
+      wizard.startTaskCreation().then(
+        creationId => location.go(`/wizard/:${creationId.getValue()}`)
+      ).catch(
+        err => this.reportFatalError(err)
+      );
     }
   }
 
@@ -68,6 +75,9 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   private restoreWizard(taskCreationId) {
   }
 
-  private startWizard() {
+  /**
+   * Fatality.
+   */
+  private reportFatalError(err) {
   }
 }

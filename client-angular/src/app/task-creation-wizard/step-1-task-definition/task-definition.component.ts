@@ -72,12 +72,12 @@ export class TaskDefinitionComponent implements AfterViewInit {
 
   next(): void {
     // todo handle header bar navigation properly when we return to the page (ideally disable it).
-    this.wizard.setTaskDetails({
+    this.wizard.updateTaskDetails({
       description: this.description,
       priority: this.priority,
       dueDate: this.dueDate
     }).then(() => {
-      this.createDraft();
+      this.informOnDraftCreation();
       this.setCompleted();
       this.stepper.next();
     }).catch(err => {
@@ -92,7 +92,7 @@ export class TaskDefinitionComponent implements AfterViewInit {
     this.location.back();
   }
 
-  private createDraft(): void {
+  private informOnDraftCreation(): void {
     console.log('Draft created');
   }
 
