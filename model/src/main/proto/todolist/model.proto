@@ -85,7 +85,6 @@ message TaskLabels {
     reserved 3 to 20;
 }
 
-
 // Text label set to one or more tasks.
 //
 // Serves for grouping and filtering.

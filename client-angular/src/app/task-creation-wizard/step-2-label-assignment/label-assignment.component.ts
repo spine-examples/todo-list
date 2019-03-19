@@ -21,32 +21,9 @@
 import {Location} from '@angular/common';
 import {Component} from '@angular/core';
 
-import {UuidGenerator} from '../../uuid-generator/uuid-generator';
-
 import {LabelId} from 'generated/main/js/todolist/identifiers_pb';
+import {TaskLabel} from 'generated/main/js/todolist/model_pb';
 import {LabelItem} from 'generated/main/js/todolist/q/projections_pb';
-
-export function mockLabels(): LabelItem[] {
-  const label1 = new LabelItem();
-  const id1 = UuidGenerator.newId(LabelId);
-  label1.setId(id1);
-  label1.setLabelTitle('Reds');
-  label1.setLabelColor('#ff0000');
-
-  const label2 = new LabelItem();
-  const id2 = UuidGenerator.newId(LabelId);
-  label2.setId(id2);
-  label2.setLabelTitle('Blues');
-  label2.setLabelColor('#0000ff');
-
-
-  const label3 = new LabelItem();
-  const id3 = UuidGenerator.newId(LabelId);
-  label3.setId(id3);
-  label3.setLabelTitle('Grays');
-  label3.setLabelColor('#808080');
-  return [label1, label2, label3];
-}
 
 @Component({
   selector: 'app-label-assignment',
@@ -55,7 +32,7 @@ export function mockLabels(): LabelItem[] {
 })
 export class LabelAssignmentComponent {
 
-  private readonly LABELS: LabelItem[] = mockLabels();
+  labels: TaskLabel[];
 
   constructor(private readonly location: Location) {
   }

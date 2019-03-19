@@ -35,8 +35,9 @@
 <p class="mat-h2">
     Selected:
     <mat-chip-list>
-        <mat-chip *ngFor="let label of LABELS" [style.background-color]="label.getLabelColor()">
-            {{label.getLabelTitle()}}
+        <mat-chip *ngFor="let label of labels"
+                  [style.background-color]="label.getColor() | labelColorView">
+            {{label.getTitle()}}
         </mat-chip>
     </mat-chip-list>
 </p>

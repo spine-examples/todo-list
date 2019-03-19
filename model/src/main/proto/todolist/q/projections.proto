@@ -132,16 +132,3 @@ message TaskItem {
     // Whether the task is completed.
     bool completed = 21;
 }
-
-message LabelItem {
-    option (entity).kind = PROJECTION;
-
-    LabelId id = 1;
-
-    string label_title = 2 [(required) = true];
-
-    // A color of the label in hexadecimal format.
-    //
-    // E.g. RED ~ "#ff0000".
-    string label_color = 3;
-}

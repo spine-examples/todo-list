@@ -20,13 +20,16 @@
 
 import {NgModule} from '@angular/core';
 
-import {TaskPriorityName} from './task-priority-display-name/task-priority-name.pipe';
+import {LabelColorView} from './label-color/label-color.pipe';
+import {TaskPriorityName} from './task-priority-name/task-priority-name.pipe';
 
 @NgModule({
   declarations: [
+    LabelColorView,
     TaskPriorityName
   ],
   exports: [
+    LabelColorView,
     TaskPriorityName
   ]
 })

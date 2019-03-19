@@ -41,8 +41,8 @@ export class TaskDefinitionComponent implements AfterViewInit {
   stepper: MatStepper;
 
   description: string;
-  private priority: TaskPriority;
-  private dueDate: Moment;
+  priority: TaskPriority;
+  dueDate: Moment;
 
   /**
    * Possible task priorities.
@@ -71,16 +71,12 @@ export class TaskDefinitionComponent implements AfterViewInit {
   }
 
   next(): void {
-    // todo handle header bar navigation properly when we return to the page (ideally disable it).
-    this.wizard.updateTaskDetails({
-      description: this.description,
-      priority: this.priority,
-      dueDate: this.dueDate
-    }).then(() => {
-      this.informOnDraftCreation();
-      this.setCompleted();
-      this.stepper.next();
-    }).catch(err => {
+    this.wizard.updateTaskDetails(this.description, this.priority, this.dueDate)
+      .then(() => {
+        this.informOnDraftCreation();
+        this.setCompleted();
+        this.stepper.next();
+      }).catch(err => {
       this.reportError(err);
     });
   }

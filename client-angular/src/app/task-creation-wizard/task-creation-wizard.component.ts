@@ -28,6 +28,15 @@ import {TaskDefinitionComponent} from './step-1-task-definition/task-definition.
 import {LabelAssignmentComponent} from './step-2-label-assignment/label-assignment.component';
 import {ConfirmationComponent} from './step-3-confirmation/confirmation.component';
 
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
+import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
+import {TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
+import {TaskCreation, TaskLabel} from 'generated/main/js/todolist/model_pb';
+import {TaskDescription} from 'generated/main/js/todolist/values_pb';
+import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/commands_pb';
+
+type TaskCreationStage = TaskCreation.Stage;
+
 @Component({
   selector: 'app-task-creation-wizard',
   templateUrl: './task-creation-wizard.component.html',
@@ -37,6 +46,12 @@ import {ConfirmationComponent} from './step-3-confirmation/confirmation.componen
   ]
 })
 export class TaskCreationWizardComponent implements AfterViewInit {
+
+  private static readonly STEPS: Map<TaskCreation.Stage, number> = new Map([
+    [TaskCreation.Stage.TASK_DEFINITION, 0],
+    [TaskCreation.Stage.LABEL_ASSIGNMENT, 1],
+    [TaskCreation.Stage.CONFIRMATION, 2]
+  ]);
 
   @ViewChild(MatHorizontalStepper)
   stepper: MatHorizontalStepper;
@@ -50,34 +65,67 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   @ViewChild(ConfirmationComponent)
   confirmation: ConfirmationComponent;
 
-  constructor(private readonly changeDetector: ChangeDetectorRef,
-              private readonly wizard: TaskCreationWizard,
-              location: Location,
+  private readonly wizardInit: Promise<void>;
+
+  constructor(private readonly wizard: TaskCreationWizard,
+              private readonly changeDetector: ChangeDetectorRef,
+              private readonly location: Location,
               route: ActivatedRoute) {
     const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
-    console.log(`Task creation ID: ${taskCreationId}`);
-    if (taskCreationId) {
-      this.restoreWizard(taskCreationId);
-    } else {
-      wizard.startTaskCreation().then(
-        creationId => location.go(`/wizard/:${creationId.getValue()}`)
-      ).catch(
-        err => this.reportFatalError(err)
-      );
-    }
+    this.wizardInit = wizard.init(taskCreationId);
   }
 
   ngAfterViewInit(): void {
-    this.taskDefinition.description = 'dusya';
-    this.changeDetector.detectChanges();
-  }
+    this.wizardInit
+      .then(() => {
+        this.ensureLocation(this.wizard.id);
+        this.selectStep(this.wizard.stage);
 
-  private restoreWizard(taskCreationId) {
+        this.taskDefinition.description = this.wizard.description;
+        this.taskDefinition.priority = this.wizard.priority;
+        this.taskDefinition.dueDate = this.wizard.dueDate;
+        this.labelAssignment.labels = this.wizard.taskLabels;
+
+        this.changeDetector.detectChanges();
+      })
+      .catch(err => this.reportFatalError(err));
   }
 
   /**
    * Fatality.
+   *
+   * todo show in special window as getting this is real for the user.
    */
-  private reportFatalError(err) {
+  private reportFatalError(err): void {
+    throw new Error(err);
+  }
+
+  /**
+   * Re-navigates from '/wizard' to '/wizard:*taskCreationId*'.
+   *
+   * To create a new task, user can just navigate to '/wizard'. A task creation process will then
+   * be started and assigned a new ID.
+   *
+   * This method changes current location, so the user sees the "correct" URL with a task creation
+   * ID param.
+   */
+  private ensureLocation(id: TaskCreationId): void {
+    const idString = id.getValue();
+    const urlWithId = `/wizard/:${idString}`;
+    const alreadyWithId = this.location.isCurrentPathEqualTo(urlWithId);
+    if (!alreadyWithId) {
+      this.location.go(urlWithId);
+    }
+  }
+
+  private selectStep(stage: TaskCreation.Stage): void {
+    const index = TaskCreationWizardComponent.STEPS.get(stage);
+    console.log('index');
+    console.log(index);
+    if (index === undefined) {
+      this.reportFatalError(`There is no wizard step for stage ${stage}`);
+      return;
+    }
+    this.stepper.selectedIndex = index;
   }
 }

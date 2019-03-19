@@ -18,11 +18,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TaskPriorityName} from '../../../../src/app/pipes/task-priority-name/task-priority-name.pipe';
+import {Pipe, PipeTransform} from '@angular/core';
 
-describe('PriorityDisplayNamePipe', () => {
-  it('create an instance', () => {
-    const pipe = new TaskPriorityName();
-    expect(pipe).toBeTruthy();
-  });
-});
+import {LabelColor} from 'generated/main/js/todolist/attributes_pb';
+
+/**
+ * Obtains the string value of the `LabelColor`.
+ *
+ * Usage:
+ *   color | labelColorView
+ * Example:
+ *   {{ LabelColor.RED | labelColorView }}
+ *   resolves to: '#ff0000'
+ */
+@Pipe({
+  name: 'labelColorView'
+})
+export class LabelColorView implements PipeTransform {
+
+  private static readonly COLORS: Map<LabelColor, string> = new Map([
+    [LabelColor.RED, '#ff0000'],
+    [LabelColor.GREEN, '#008000'],
+    [LabelColor.BLUE, '#0000ff'],
+    [LabelColor.GRAY, '#808080']
+  ]);
+
+  transform(value: LabelColor): string {
+    const color = LabelColorView.COLORS.get(value);
+    if (!color) {
+      throw new Error(`There is no known string representation for color ${value}`);
+    }
+    return color;
+  }
+}

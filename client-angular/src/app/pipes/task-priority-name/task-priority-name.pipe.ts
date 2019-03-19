@@ -18,11 +18,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TaskPriorityName} from '../../../../src/app/pipes/task-priority-name/task-priority-name.pipe';
+import {Pipe, PipeTransform} from '@angular/core';
 
-describe('PriorityDisplayNamePipe', () => {
-  it('create an instance', () => {
-    const pipe = new TaskPriorityName();
-    expect(pipe).toBeTruthy();
-  });
-});
+import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
+
+/**
+ * Converts task priority to its display name.
+ *
+ * Usage:
+ *   priority | taskPriorityName
+ * Example:
+ *   {{ TaskPriority.HIGH | taskPriorityName }}
+ *   formats to: 'High'
+ */
+@Pipe({
+  name: 'taskPriorityName'
+})
+export class TaskPriorityName implements PipeTransform {
+
+  private static readonly NAMES: Map<TaskPriority, string> = new Map([
+    [TaskPriority.HIGH, 'High'],
+    [TaskPriority.NORMAL, 'Normal'],
+    [TaskPriority.LOW, 'Low'],
+    [TaskPriority.TP_UNDEFINED, 'Undefined']
+  ]);
+
+  transform(value: TaskPriority): string {
+    const displayName = TaskPriorityName.NAMES.get(value);
+    if (!displayName) {
+      throw new Error(`Task priority ${value} is unknown`);
+    }
+    return displayName;
+  }
+}

@@ -18,36 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Pipe, PipeTransform} from '@angular/core';
+import { LabelColorPipe } from '../../../../src/app/pipes/label-color/label-color.pipe';
 
-import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
-
-/**
- * Converts task priority to its display name.
- *
- * Usage:
- *   priority | taskPriorityName
- * Example:
- *   {{ TaskPriority.HIGH | taskPriorityName }}
- *   formats to: 'High'
- */
-@Pipe({
-  name: 'taskPriorityName'
-})
-export class TaskPriorityName implements PipeTransform {
-
-  private static readonly transformations: Map<TaskPriority, string> = new Map([
-    [TaskPriority.HIGH, 'High'],
-    [TaskPriority.NORMAL, 'Normal'],
-    [TaskPriority.LOW, 'Low'],
-    [TaskPriority.TP_UNDEFINED, 'Undefined']
-  ]);
-
-  transform(value: TaskPriority): string {
-    const displayName = TaskPriorityName.transformations.get(value);
-    if (!displayName) {
-      throw new Error(`Task priority ${value} is unknown`);
-    }
-    return displayName;
-  }
-}
+describe('LabelColorPipe', () => {
+  it('create an instance', () => {
+    const pipe = new LabelColorPipe();
+    expect(pipe).toBeTruthy();
+  });
+});
