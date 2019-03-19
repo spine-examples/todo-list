@@ -44,7 +44,7 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
 
   constructor(private readonly taskService: TaskService, private formBuilder: FormBuilder) {
     this.activeTasksForms = formBuilder.group({
-      description: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
+      descriptionFormControl: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
     });
   }
 
