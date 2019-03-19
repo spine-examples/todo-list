@@ -27,7 +27,7 @@ import {TaskCreationWizard} from '../service/task-creation-wizard.service';
 import {StringValue} from '../../pipes/string-value/string-value.pipe';
 import {MomentFromTimestamp} from '../../pipes/moment-from-timestamp/momentFromTimestamp.pipe';
 
-import {Timestamp} from 'spine-web/proto/google/protobuf/timestamp_pb';
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 

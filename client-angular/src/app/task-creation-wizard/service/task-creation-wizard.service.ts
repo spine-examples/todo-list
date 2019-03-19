@@ -21,16 +21,16 @@
 import {Injectable} from '@angular/core';
 import {Client, Type} from 'spine-web';
 
+import {StringValue} from '../../pipes/string-value/string-value.pipe';
 import {UuidGenerator} from '../../uuid-generator/uuid-generator';
 
 import {Message} from 'google-protobuf';
-import {Timestamp} from 'spine-web/proto/google/protobuf/timestamp_pb';
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {LabelColor, TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 import {LabelId, TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {Task, TaskCreation, TaskLabel} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/commands_pb';
-import {StringValue} from "../../pipes/string-value/string-value.pipe";
 
 export function mockLabels(): TaskLabel[] {
   const label1 = new TaskLabel();

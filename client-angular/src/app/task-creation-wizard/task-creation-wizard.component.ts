@@ -28,7 +28,7 @@ import {TaskDefinitionComponent} from './step-1-task-definition/task-definition.
 import {LabelAssignmentComponent} from './step-2-label-assignment/label-assignment.component';
 import {ConfirmationComponent} from './step-3-confirmation/confirmation.component';
 
-import {Timestamp} from 'spine-web/proto/google/protobuf/timestamp_pb';
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 import {TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskCreation, TaskLabel} from 'generated/main/js/todolist/model_pb';
@@ -109,7 +109,7 @@ export class TaskCreationWizardComponent implements AfterViewInit {
    */
   private ensureLocation(): void {
     const idString = this.wizard.id.getValue();
-    const urlWithId = `/wizard/:${idString}`;
+    const urlWithId = `/wizard/${idString}`;
     const alreadyWithId = this.location.isCurrentPathEqualTo(urlWithId);
     if (!alreadyWithId) {
       this.location.go(urlWithId);
@@ -126,6 +126,7 @@ export class TaskCreationWizardComponent implements AfterViewInit {
       this.reportFatalError(`There is no wizard step for stage ${currentStage}`);
       return;
     }
+    this.stepper.selected.completed = true;
     this.stepper.selectedIndex = index;
   }
 }

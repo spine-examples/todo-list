@@ -20,7 +20,7 @@
 
 import {Pipe, PipeTransform} from '@angular/core';
 import {Moment, unix} from 'moment';
-import {Timestamp} from 'spine-web/proto/google/protobuf/timestamp_pb';
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 
 /**
  * Obtains JS `Moment` from the passed `Timestamp` and vice versa.
