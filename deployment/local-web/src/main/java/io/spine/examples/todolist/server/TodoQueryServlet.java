@@ -51,5 +51,6 @@ public final class TodoQueryServlet extends QueryServlet {
 
     @Override
     protected void doOptions(HttpServletRequest req, HttpServletResponse resp) {
+        // NO-OP.
     }
 }
