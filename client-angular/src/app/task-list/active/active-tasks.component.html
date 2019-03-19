@@ -24,9 +24,9 @@
                (keyup.enter)="createBasicTask(taskDescription.value); taskDescription.value=''"
                class="task-description-textarea"
                autofocus matInput placeholder="Enter task description"
-               [formControl]="descriptionFormControl"
+               [formControlName]="descriptionFormControl"
                [errorStateMatcher]="matcher"/>
-        <mat-error *ngIf="descriptionFormControl.hasError(input)">
+        <mat-error>
             Task description cannot be empty.
         </mat-error>
     </mat-form-field>

@@ -33,7 +33,8 @@ import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 @Component({
   selector: 'app-active-tasks',
   templateUrl: './active-tasks.component.html',
-  styleUrls: ['./active-tasks.component.css']
+  styleUrls: ['./active-tasks.component.css'],
+
 })
 export class ActiveTasksComponent implements OnInit, OnDestroy {
 
