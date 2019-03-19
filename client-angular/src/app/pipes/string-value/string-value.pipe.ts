@@ -18,26 +18,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
+import {Message} from 'google-protobuf';
 
-import {LabelColorView} from './label-color-view/label-color-view.pipe';
-import {MomentFromTimestamp} from './moment-from-timestamp/momentFromTimestamp.pipe';
-import {StringValue} from './string-value/string-value.pipe';
-import {TaskPriorityName} from './task-priority-name/task-priority-name.pipe';
-
-@NgModule({
-  declarations: [
-    LabelColorView,
-    MomentFromTimestamp,
-    StringValue,
-    TaskPriorityName
-  ],
-  exports: [
-    LabelColorView,
-    MomentFromTimestamp,
-    StringValue,
-    TaskPriorityName
-  ]
+@Pipe({
+  name: 'stringValue'
 })
-export class TodoListPipesModule {
+export class StringValue implements PipeTransform {
+
+  private static readonly ERROR_MESSAGE =
+    'Expected Proto Message containing a single `string` field named `value`, received: ';
+
+  static back<T extends Message>(value: string, type: new() => T): T {
+    const result = new type();
+    if (!result.setValue) {
+      throw new Error(`${StringValue.ERROR_MESSAGE}${type}`);
+    }
+    result.setValue(value);
+    return result;
+  }
+
+  transform(value: any): string {
+    if (!value) {
+      return undefined;
+    }
+    if (!value.getValue) {
+      throw new Error(`${StringValue.ERROR_MESSAGE}${value}`);
+    }
+    return value.getValue();
+  }
 }

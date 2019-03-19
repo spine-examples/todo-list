@@ -23,11 +23,13 @@ import {AfterViewInit, Component, Input} from '@angular/core';
 import {MatStepper} from '@angular/material/stepper';
 import {Moment} from 'moment';
 
-
 import {TaskCreationWizard} from '../service/task-creation-wizard.service';
+import {StringValue} from '../../pipes/string-value/string-value.pipe';
+import {MomentFromTimestamp} from '../../pipes/moment-from-timestamp/momentFromTimestamp.pipe';
 
-import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
+import {Timestamp} from 'spine-web/proto/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
+import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 
 @Component({
   selector: 'app-task-definition',
@@ -40,9 +42,9 @@ export class TaskDefinitionComponent implements AfterViewInit {
   @Input()
   stepper: MatStepper;
 
-  description: string;
+  description: TaskDescription;
   priority: TaskPriority;
-  dueDate: Moment;
+  dueDate: Timestamp;
 
   /**
    * Possible task priorities.
@@ -55,36 +57,54 @@ export class TaskDefinitionComponent implements AfterViewInit {
    */
   private readonly today: Date = new Date();
 
-  constructor(private readonly wizard: TaskCreationWizard, private readonly location: Location) {
+  constructor(private readonly wizard: TaskCreationWizard,
+              private readonly location: Location) {
   }
 
   ngAfterViewInit(): void {
     this.setNotCompleted();
   }
 
+  setDescription(value: string): void {
+    console.log(`Setting task description to ${value}`);
+    this.onInputChange();
+    this.description = StringValue.back(value, TaskDescription);
+  }
+
+  setPriority(value: TaskPriority): void {
+    this.onInputChange();
+    this.priority = value;
+  }
+
+  setDueDate(value: Moment): void {
+    this.onInputChange();
+    this.dueDate = MomentFromTimestamp.back(value);
+  }
+
   /**
    * Handles situations when we return to the "Task Definition" page from the later stages and it's
    * initially marked as completed.
    */
-  onInputChange(): void {
+  private onInputChange(): void {
     this.setNotCompleted();
   }
 
-  next(): void {
+  private next(): void {
     this.wizard.updateTaskDetails(this.description, this.priority, this.dueDate)
       .then(() => {
         this.informOnDraftCreation();
         this.setCompleted();
         this.stepper.next();
-      }).catch(err => {
-      this.reportError(err);
-    });
+      })
+      .catch(err => {
+        this.reportError(err);
+      });
   }
 
   /**
    * Just go back.
    */
-  cancel(): void {
+  private cancel(): void {
     this.location.back();
   }
 

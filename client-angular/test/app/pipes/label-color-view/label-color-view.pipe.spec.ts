@@ -18,26 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
+import { LabelColorPipe } from '../../../../src/app/pipes/label-color-view/label-color-view.pipe';
 
-import {LabelColorView} from './label-color-view/label-color-view.pipe';
-import {MomentFromTimestamp} from './moment-from-timestamp/momentFromTimestamp.pipe';
-import {StringValue} from './string-value/string-value.pipe';
-import {TaskPriorityName} from './task-priority-name/task-priority-name.pipe';
-
-@NgModule({
-  declarations: [
-    LabelColorView,
-    MomentFromTimestamp,
-    StringValue,
-    TaskPriorityName
-  ],
-  exports: [
-    LabelColorView,
-    MomentFromTimestamp,
-    StringValue,
-    TaskPriorityName
-  ]
-})
-export class TodoListPipesModule {
-}
+describe('LabelColorPipe', () => {
+  it('create an instance', () => {
+    const pipe = new LabelColorPipe();
+    expect(pipe).toBeTruthy();
+  });
+});

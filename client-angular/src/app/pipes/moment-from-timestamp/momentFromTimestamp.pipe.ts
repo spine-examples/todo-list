@@ -19,35 +19,30 @@
  */
 
 import {Pipe, PipeTransform} from '@angular/core';
-
-import {LabelColor} from 'generated/main/js/todolist/attributes_pb';
+import {Moment, unix} from 'moment';
+import {Timestamp} from 'spine-web/proto/google/protobuf/timestamp_pb';
 
 /**
- * Obtains the string value of the `LabelColor`.
+ * Obtains JS `Moment` from the passed `Timestamp` and vice versa.
  *
  * Usage:
- *   color | labelColorView
- * Example:
- *   {{ LabelColor.RED | labelColorView }}
- *   resolves to: '#ff0000'
+ *   timestamp | momentFromTimestamp
  */
 @Pipe({
-  name: 'labelColorView'
+  name: 'momentFromTimestamp'
 })
-export class LabelColorView implements PipeTransform {
+export class MomentFromTimestamp implements PipeTransform {
 
-  private static readonly COLORS: Map<LabelColor, string> = new Map([
-    [LabelColor.RED, '#ff0000'],
-    [LabelColor.GREEN, '#008000'],
-    [LabelColor.BLUE, '#0000ff'],
-    [LabelColor.GRAY, '#808080']
-  ]);
+  static back(value: Moment): Timestamp {
+    const date = value.toDate();
+    return Timestamp.fromDate(date);
+  }
 
-  transform(value: LabelColor): string {
-    const color = LabelColorView.COLORS.get(value);
-    if (!color) {
-      throw new Error(`There is no known string representation for color ${value}`);
+  transform(value: Timestamp): Moment {
+    if (!value) {
+      return undefined;
     }
-    return color;
+    const unixSeconds = value.getSeconds();
+    return unix(unixSeconds);
   }
 }

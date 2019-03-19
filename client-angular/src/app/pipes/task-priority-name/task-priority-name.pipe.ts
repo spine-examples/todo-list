@@ -26,7 +26,7 @@ import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
  * Converts task priority to its display name.
  *
  * Usage:
- *   priority | taskPriorityName
+ *   task.getPriority() | taskPriorityName
  * Example:
  *   {{ TaskPriority.HIGH | taskPriorityName }}
  *   formats to: 'High'

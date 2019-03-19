@@ -19,17 +19,18 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Moment} from 'moment';
-import {Client} from 'spine-web';
+import {Client, Type} from 'spine-web';
 
 import {UuidGenerator} from '../../uuid-generator/uuid-generator';
 
-import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
+import {Message} from 'google-protobuf';
+import {Timestamp} from 'spine-web/proto/google/protobuf/timestamp_pb';
 import {LabelColor, TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 import {LabelId, TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {TaskCreation, TaskLabel} from 'generated/main/js/todolist/model_pb';
+import {Task, TaskCreation, TaskLabel} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/commands_pb';
+import {StringValue} from "../../pipes/string-value/string-value.pipe";
 
 export function mockLabels(): TaskLabel[] {
   const label1 = new TaskLabel();
@@ -67,24 +68,21 @@ export class TaskCreationWizard {
   private _stage: TaskCreation.Stage;
 
   private _taskId: TaskId;
-  private _description: string;
-  private _priority: TaskPriority;
-  private _dueDate: Moment;
+  private _taskDescription: TaskDescription;
+  private _taskPriority: TaskPriority;
+  private _taskDueDate: Timestamp;
   private _taskLabels: TaskLabel[];
 
   constructor(private readonly spineWebClient: Client) {
   }
 
-  init(taskCreationId: TaskCreationId): Promise<void> {
+  init(taskCreationId: string): Promise<void> {
     if (taskCreationId) {
-      return this.restore(taskCreationId);
+      const processId = StringValue.back(taskCreationId, TaskCreationId);
+      return this.restore(processId);
     } else {
       return this.start();
     }
-  }
-
-  private restore(taskCreationId: TaskCreationId): Promise<void> {
-    return Promise.resolve();
   }
 
   private start(): Promise<void> {
@@ -106,26 +104,62 @@ export class TaskCreationWizard {
     );
   }
 
-  updateTaskDetails(description: string, priority?: TaskPriority, dueDate?: Moment)
+  private restore(taskCreationId: TaskCreationId): Promise<void> {
+    return this.fetchProcessDetails(taskCreationId)
+      .then(() => this.fetchTaskDetails());
+  }
+
+  private fetchProcessDetails(taskCreationId: TaskCreationId): Promise<void> {
+    return this.fetchNonNull<TaskCreation>(TaskCreation, taskCreationId)
+      .then(taskCreation => {
+        this._id = taskCreationId;
+        this._taskId = taskCreation.getTaskId();
+        this._stage = taskCreation.getStage();
+      });
+  }
+
+  private fetchTaskDetails(): Promise<void> {
+    return this.fetchNonNull<Task>(Task, this._taskId)
+      .then(task => {
+        if (task.getDescription()) {
+          this._taskDescription = task.getDescription();
+        }
+        if (task.getPriority()) {
+          this._taskPriority = task.getPriority();
+        }
+        if (task.getDueDate()) {
+          this._taskDueDate = task.getDueDate();
+        }
+      });
+  }
+
+  updateTaskDetails(description: TaskDescription, priority?: TaskPriority, dueDate?: Timestamp)
     : Promise<void> {
     const cmd = new SetTaskDetails();
     cmd.setId(this._id);
-
-    const taskDescription = new TaskDescription();
-    taskDescription.setValue(description);
-    cmd.setDescription(taskDescription);
-
+    cmd.setDescription(description);
     if (priority) {
       cmd.setPriority(priority);
     }
     if (dueDate) {
-      const toDate = dueDate.toDate();
-      const taskDueDate = Timestamp.fromDate(toDate);
-      cmd.setDueDate(taskDueDate);
+      cmd.setDueDate(dueDate);
     }
     return new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
+  }
+
+  private fetchNonNull<T>(type: new() => T, id: Message): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      const dataCallback = taskCreation => {
+        if (!taskCreation) {
+          reject(`No entity found for ID: ${id}`);
+        } else {
+          resolve(taskCreation);
+        }
+      };
+      this.spineWebClient.fetchById(Type.forClass(type), id, dataCallback, reject);
+    });
   }
 
   get id(): TaskCreationId {
@@ -136,16 +170,16 @@ export class TaskCreationWizard {
     return this._stage;
   }
 
-  get description(): string {
-    return this._description;
+  get taskDescription(): TaskDescription {
+    return this._taskDescription;
   }
 
-  get priority(): TaskPriority {
-    return this._priority;
+  get taskPriority(): TaskPriority {
+    return this._taskPriority;
   }
 
-  get dueDate(): Moment {
-    return this._dueDate;
+  get taskDueDate(): Timestamp {
+    return this._taskDueDate;
   }
 
   get taskLabels(): TaskLabel[] {

@@ -28,14 +28,12 @@ import {TaskDefinitionComponent} from './step-1-task-definition/task-definition.
 import {LabelAssignmentComponent} from './step-2-label-assignment/label-assignment.component';
 import {ConfirmationComponent} from './step-3-confirmation/confirmation.component';
 
-import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
+import {Timestamp} from 'spine-web/proto/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 import {TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskCreation, TaskLabel} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/commands_pb';
-
-type TaskCreationStage = TaskCreation.Stage;
 
 @Component({
   selector: 'app-task-creation-wizard',
@@ -78,12 +76,12 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.wizardInit
       .then(() => {
-        this.ensureLocation(this.wizard.id);
-        this.selectStep(this.wizard.stage);
+        this.ensureLocation();
+        this.moveToCurrentStep();
 
-        this.taskDefinition.description = this.wizard.description;
-        this.taskDefinition.priority = this.wizard.priority;
-        this.taskDefinition.dueDate = this.wizard.dueDate;
+        this.taskDefinition.description = this.wizard.taskDescription;
+        this.taskDefinition.priority = this.wizard.taskPriority;
+        this.taskDefinition.dueDate = this.wizard.taskDueDate;
         this.labelAssignment.labels = this.wizard.taskLabels;
 
         this.changeDetector.detectChanges();
@@ -109,8 +107,8 @@ export class TaskCreationWizardComponent implements AfterViewInit {
    * This method changes current location, so the user sees the "correct" URL with a task creation
    * ID param.
    */
-  private ensureLocation(id: TaskCreationId): void {
-    const idString = id.getValue();
+  private ensureLocation(): void {
+    const idString = this.wizard.id.getValue();
     const urlWithId = `/wizard/:${idString}`;
     const alreadyWithId = this.location.isCurrentPathEqualTo(urlWithId);
     if (!alreadyWithId) {
@@ -118,12 +116,14 @@ export class TaskCreationWizardComponent implements AfterViewInit {
     }
   }
 
-  private selectStep(stage: TaskCreation.Stage): void {
-    const index = TaskCreationWizardComponent.STEPS.get(stage);
-    console.log('index');
-    console.log(index);
+  /**
+   * Selects the appropriate step in {@link stepper} according to the current wizard stage.
+   */
+  private moveToCurrentStep(): void {
+    const currentStage = this.wizard.stage;
+    const index = TaskCreationWizardComponent.STEPS.get(currentStage);
     if (index === undefined) {
-      this.reportFatalError(`There is no wizard step for stage ${stage}`);
+      this.reportFatalError(`There is no wizard step for stage ${currentStage}`);
       return;
     }
     this.stepper.selectedIndex = index;
