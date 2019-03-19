@@ -23,9 +23,9 @@
 </p>
 <p>
     <mat-selection-list>
-        <mat-list-option *ngFor="let label of LABELS"
-                         [style.background-color]="label.getLabelColor()">
-            {{label.getLabelTitle()}}
+        <mat-list-option *ngFor="let label of labels"
+                         [style.background-color]="label.getColor() | labelColorView">
+            {{label.getTitle()}}
         </mat-list-option>
     </mat-selection-list>
 </p>

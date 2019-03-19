@@ -40,7 +40,7 @@ import {LabelAssignmentComponent} from './step-2-label-assignment/label-assignme
 import {TaskCreationWizardComponent} from './task-creation-wizard.component';
 import {ConfirmationComponent} from './step-3-confirmation/confirmation.component';
 import {SpineClientProvider} from '../spine-client-provider/spine-client-provider.module';
-import {MomentFromTimestamp} from '../pipes/moment-from-timestamp/momentFromTimestamp.pipe';
+import {LabelsModule} from '../labels/labels.module';
 
 /**
  * The module which provides a wizard for step-by-step task creation.
@@ -62,6 +62,7 @@ import {MomentFromTimestamp} from '../pipes/moment-from-timestamp/momentFromTime
     TodoListComponentsModule,
     SpineClientProvider,
     TodoListPipesModule,
+    LabelsModule,
 
     MatMomentDateModule,
     MatButtonModule,

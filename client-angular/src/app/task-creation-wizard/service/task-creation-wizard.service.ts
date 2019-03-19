@@ -28,9 +28,10 @@ import {Message} from 'google-protobuf';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {LabelColor, TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 import {LabelId, TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {Task, TaskCreation, TaskLabel} from 'generated/main/js/todolist/model_pb';
+import {Task, TaskCreation, TaskLabel, TaskLabels} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/commands_pb';
+import {LabelService} from "../../labels/label.service";
 
 export function mockLabels(): TaskLabel[] {
   const label1 = new TaskLabel();
@@ -73,7 +74,8 @@ export class TaskCreationWizard {
   private _taskDueDate: Timestamp;
   private _taskLabels: TaskLabel[];
 
-  constructor(private readonly spineWebClient: Client) {
+  constructor(private readonly spineWebClient: Client,
+              private readonly labelService: LabelService) {
   }
 
   init(taskCreationId: string): Promise<void> {
@@ -106,7 +108,8 @@ export class TaskCreationWizard {
 
   private restore(taskCreationId: TaskCreationId): Promise<void> {
     return this.fetchProcessDetails(taskCreationId)
-      .then(() => this.fetchTaskDetails());
+      .then(() => this.fetchTaskDetails())
+      .then(() => this.fetchTaskLabels());
   }
 
   private fetchProcessDetails(taskCreationId: TaskCreationId): Promise<void> {
@@ -133,6 +136,27 @@ export class TaskCreationWizard {
       });
   }
 
+  private fetchTaskLabels(): Promise<void> {
+    console.log('Fetching task labels');
+    return this.labelService.fetchTaskLabels(this._taskId)
+      .then(labels => {
+        this._taskLabels = labels;
+      });
+  }
+
+  private fetchNonNull<T>(type: new() => T, id: Message): Promise<T> {
+    return new Promise<T>((resolve, reject) => {
+      const dataCallback = taskCreation => {
+        if (!taskCreation) {
+          reject(`No entity found for ID: ${id}`);
+        } else {
+          resolve(taskCreation);
+        }
+      };
+      this.spineWebClient.fetchById(Type.forClass(type), id, dataCallback, reject);
+    });
+  }
+
   updateTaskDetails(description: TaskDescription, priority?: TaskPriority, dueDate?: Timestamp)
     : Promise<void> {
     const cmd = new SetTaskDetails();
@@ -147,19 +171,6 @@ export class TaskCreationWizard {
     return new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
-  }
-
-  private fetchNonNull<T>(type: new() => T, id: Message): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      const dataCallback = taskCreation => {
-        if (!taskCreation) {
-          reject(`No entity found for ID: ${id}`);
-        } else {
-          resolve(taskCreation);
-        }
-      };
-      this.spineWebClient.fetchById(Type.forClass(type), id, dataCallback, reject);
-    });
   }
 
   get id(): TaskCreationId {

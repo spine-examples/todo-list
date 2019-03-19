@@ -19,9 +19,13 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Client} from 'spine-web';
+import {Client, Type} from 'spine-web';
 
 import {LabelsModule} from './labels.module';
+
+import {LabelColor, TaskPriority} from 'generated/main/js/todolist/attributes_pb';
+import {LabelId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
+import {Task, TaskCreation, TaskLabel, TaskLabels} from 'generated/main/js/todolist/model_pb';
 
 /**
  * A service which operates with task labels.
@@ -35,5 +39,33 @@ export class LabelService {
    * @param spineWebClient a client for accessing Spine backend
    */
   constructor(private readonly spineWebClient: Client) {
+  }
+
+  fetchTaskLabels(taskId: TaskId): Promise<TaskLabel[]> {
+    return this.fetchTaskLabelsInstance(taskId)
+      .then(labels => {
+        if (!labels) {
+          return Promise.resolve([]);
+        }
+        const ids = labels.getLabelIdsList().getIdsList();
+        const details = ids.map(id => this.fetchLabelDetails(id));
+        return Promise.all(details);
+      });
+  }
+
+  /**
+   * If `TaskLabels` instance is not found, it just means there is no assigned labels history, and
+   * not an error.
+   */
+  private fetchTaskLabelsInstance(taskId: TaskId): Promise<TaskLabels> {
+    return new Promise<TaskLabels>((resolve, reject) =>
+      this.spineWebClient.fetchById(Type.forClass(TaskLabels), taskId, resolve, reject)
+    );
+  }
+
+  private fetchLabelDetails(labelId: LabelId): Promise<TaskLabel> {
+    return new Promise<TaskLabel>((resolve, reject) =>
+      this.spineWebClient.fetchById(Type.forClass(TaskLabel), labelId, resolve, reject)
+    );
   }
 }
