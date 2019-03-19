@@ -22,6 +22,10 @@
   width: 30vw;
 }
 
+.task-item {
+  width: 100%;
+}
+
 .add-quick-task-form {
   display: flex;
   justify-content: left;

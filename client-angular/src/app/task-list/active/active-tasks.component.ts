@@ -24,6 +24,7 @@ import {FormControl, FormGroup, FormGroupDirective, NgForm, Validators} from '@a
 
 import {TaskService} from '../../task-service/task.service';
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 
 /**
  * A component displaying active tasks, i.e. those which are not completed, deleted, or in draft
