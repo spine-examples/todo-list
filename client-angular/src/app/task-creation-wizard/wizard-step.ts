@@ -48,6 +48,28 @@ export abstract class WizardStep implements AfterViewInit {
     // NO-OP by default.
   }
 
+  /**
+   * Handles situations when we return to the step from the later stages and it's initially marked
+   * as completed.
+   *
+   * Should be called in all descendant methods that change the inputs of the `TaskCreationWizard`.
+   */
+  protected onInputChange(): void {
+    this.setNotCompleted();
+  }
+
+  private setCompleted(): void {
+    this.stepper.selected.completed = true;
+  }
+
+  private setNotCompleted(): void {
+    this.stepper.selected.completed = false;
+  }
+
+  /*
+  * Navigation methods all of which are optional for the component.
+  */
+
   protected previous(): void {
     this.stepper.previous();
   }
@@ -75,24 +97,6 @@ export abstract class WizardStep implements AfterViewInit {
   }
 
   protected abstract doStep(): Promise<void>;
-
-  /**
-   * Handles situations when we return to the step from the later stages and it's initially marked
-   * as completed.
-   *
-   * Should be called in all descendant methods that change the inputs of the `TaskCreationWizard`.
-   */
-  protected onInputChange(): void {
-    this.setNotCompleted();
-  }
-
-  private setCompleted(): void {
-    this.stepper.selected.completed = true;
-  }
-
-  private setNotCompleted(): void {
-    this.stepper.selected.completed = false;
-  }
 
   /**
    * Checking current path is not working as {@link Location} wrapper does not go back itself after
