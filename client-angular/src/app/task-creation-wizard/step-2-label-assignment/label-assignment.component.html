@@ -23,7 +23,7 @@
 </p>
 <p>
     <mat-selection-list>
-        <mat-list-option *ngFor="let label of available"
+        <mat-list-option *ngFor="let label of available" (click)="switchSelected(label)"
                          [style.background-color]="label.getColor() | labelColorView">
             {{label.getTitle()}}
         </mat-list-option>

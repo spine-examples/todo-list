@@ -22,9 +22,8 @@ import {Injectable} from '@angular/core';
 import {Client, Type} from 'spine-web';
 import {UuidGenerator} from '../uuid-generator/uuid-generator';
 
-import {LabelColor, TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 import {LabelId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {Task, TaskCreation, TaskLabel, TaskLabels} from 'generated/main/js/todolist/model_pb';
+import {TaskLabel, TaskLabels} from 'generated/main/js/todolist/model_pb';
 import {CreateBasicLabel} from 'generated/main/js/todolist/c/commands_pb';
 
 /**
@@ -40,9 +39,7 @@ export class LabelService {
   }
 
   /**
-   * Test method.
-   *
-   * todo remove
+   * Temporary test-only method.
    */
   createBasicLabel(): Promise<void> {
     return new Promise<void>((resolve, reject) => {

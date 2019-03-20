@@ -118,17 +118,21 @@ export class TaskCreationWizardComponent implements AfterViewInit {
 
   /**
    * Selects the appropriate step in {@link stepper} according to the current wizard stage.
+   *
+   * Completes all the preceding steps (they still can be returned to).
    */
   private moveToCurrentStep(): void {
     const currentStage = this.wizard.stage;
+    console.log('Current stage:');
+    console.log(currentStage);
     const index = TaskCreationWizardComponent.STEPS.get(currentStage);
     if (index === undefined) {
       this.reportFatalError(`There is no wizard step for stage ${currentStage}`);
       return;
     }
-    // "Completing" the current step manually is required before moving to the selected index.
-    this.stepper.selected.completed = true;
+    for (let i = 0; i < index; i++) {
+      this.stepper.steps.toArray()[i].completed = true;
+    }
     this.stepper.selectedIndex = index;
-    this.stepper.selected.completed = false;
   }
 }

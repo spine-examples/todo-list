@@ -23,6 +23,7 @@ import {Client, Type} from 'spine-web';
 
 import {StringValue} from '../../pipes/string-value/string-value.pipe';
 import {UuidGenerator} from '../../uuid-generator/uuid-generator';
+import {LabelService} from '../../labels/label.service';
 
 import {Message} from 'google-protobuf';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
@@ -30,30 +31,12 @@ import {LabelColor, TaskPriority} from 'generated/main/js/todolist/attributes_pb
 import {LabelId, TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {Task, TaskCreation, TaskLabel, TaskLabels} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
-import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/commands_pb';
-import {LabelService} from "../../labels/label.service";
-
-export function mockLabels(): TaskLabel[] {
-  const label1 = new TaskLabel();
-  const id1 = UuidGenerator.newId(LabelId);
-  label1.setId(id1);
-  label1.setTitle('Reds');
-  label1.setColor(LabelColor.RED);
-
-  const label2 = new TaskLabel();
-  const id2 = UuidGenerator.newId(LabelId);
-  label2.setId(id2);
-  label2.setTitle('Blues');
-  label2.setColor(LabelColor.BLUE);
-
-
-  const label3 = new TaskLabel();
-  const id3 = UuidGenerator.newId(LabelId);
-  label3.setId(id3);
-  label3.setTitle('Grays');
-  label3.setColor(LabelColor.GRAY);
-  return [label1, label2, label3];
-}
+import {
+  AddLabels,
+  SetTaskDetails,
+  SkipLabels,
+  StartTaskCreation
+} from 'generated/main/js/todolist/c/commands_pb';
 
 /**
  * A service which executes commands specific to the Task Creation Wizard process.
@@ -98,7 +81,11 @@ export class TaskCreationWizard {
       this._id = taskCreationId;
       this._taskId = taskId;
       this._stage = TaskCreation.Stage.TASK_DEFINITION;
-      this._taskLabels = mockLabels();
+      this._taskLabels = [];
+      console.log('Process ID:');
+      console.log(this._id);
+      console.log('Task ID:');
+      console.log(this._taskId);
       resolve();
     };
     return new Promise<TaskCreationId>((resolve, reject) =>
@@ -137,7 +124,6 @@ export class TaskCreationWizard {
   }
 
   private fetchTaskLabels(): Promise<void> {
-    console.log('Fetching task labels');
     return this.labelService.fetchTaskLabels(this._taskId)
       .then(labels => {
         this._taskLabels = labels;
@@ -168,6 +154,45 @@ export class TaskCreationWizard {
     if (dueDate) {
       cmd.setDueDate(dueDate);
     }
+    return new Promise<void>((resolve, reject) =>
+      this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
+    );
+  }
+
+  /**
+   * The stub method currently used because of the issue with `Task` and `TaskLabels` aggregate
+   * parts.
+   *
+   * @see addLabelsReal
+   */
+  addLabels(labels: TaskLabel[]): Promise<void> {
+    return this.skipLabelAssignment();
+  }
+
+  /**
+   * Adds labels to the created task.
+   *
+   * This method is a back-up method for when the bug with aggregate parts overriding one another
+   * is fixed and the real method assigning process can be used.
+   *
+   * For now, the {@linkplain addLabels stub method} is used.
+   */
+  // noinspection JSUnusedGlobalSymbols See doc.
+  addLabelsReal(labels: TaskLabel[]): Promise<void> {
+    const cmd = new AddLabels();
+    cmd.setId(this._id);
+    const labelIds = labels.map(label => label.getId());
+    console.log('Label IDs:');
+    console.log(labelIds[0]);
+    cmd.setExistingLabelsList(labelIds);
+    return new Promise<void>((resolve, reject) =>
+      this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
+    );
+  }
+
+  skipLabelAssignment(): Promise<void> {
+    const cmd = new SkipLabels();
+    cmd.setId(this._id);
     return new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );

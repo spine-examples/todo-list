@@ -19,10 +19,11 @@
  */
 
 import {Location} from '@angular/common';
-import {Component, Input} from '@angular/core';
+import {AfterViewInit, Component, Input} from '@angular/core';
 import {MatStepper} from '@angular/material';
 
 import {LabelService} from '../../labels/label.service';
+import {TaskCreationWizard} from '../service/task-creation-wizard.service';
 
 import {LabelId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskLabel} from 'generated/main/js/todolist/model_pb';
@@ -33,33 +34,70 @@ import {LabelItem} from 'generated/main/js/todolist/q/projections_pb';
   templateUrl: './label-assignment.component.html',
   styleUrls: ['./label-assignment.component.css']
 })
-export class LabelAssignmentComponent {
+export class LabelAssignmentComponent implements AfterViewInit {
 
   @Input()
   private readonly stepper: MatStepper;
 
-
   available: TaskLabel[];
   selected: TaskLabel[];
 
-  constructor(private readonly location: Location, private readonly labelService: LabelService) {
+  constructor(private readonly wizard: TaskCreationWizard,
+              private readonly location: Location,
+              private readonly labelService: LabelService) {
     labelService.fetchAllLabels().then(labels => this.available = labels);
   }
 
-  isCompleted(): boolean {
-    return true;
+  ngAfterViewInit(): void {
+    this.setNotCompleted();
   }
 
-  back() {
+  switchSelected(label: TaskLabel): void {
+    this.setNotCompleted();
+    if (this.selected.includes(label)) {
+      console.log('Removing from selected');
+      const index = this.selected.indexOf(label);
+      this.selected.splice(index, 1);
+    } else {
+      console.log('Pushing to selected');
+      this.selected.push(label);
+    }
   }
 
-  next() {
+  back(): void {
+  }
+
+  next(): void {
+    let promise;
+    if (this.selected.length > 0) {
+      promise = this.wizard.addLabels(this.selected);
+    } else {
+      promise = this.wizard.skipLabelAssignment();
+    }
+    promise
+      .then(() => {
+        this.setCompleted();
+        this.stepper.next();
+      })
+      .catch(err => this.reportError(err));
   }
 
   /**
    * Task will be saved as draft.
    */
-  cancel() {
-    this.location.back();
+  cancel(): void {
+    // Go to the location before the wizard launch.
+  }
+
+  private setCompleted(): void {
+    this.stepper.selected.completed = true;
+  }
+
+  private setNotCompleted(): void {
+    this.stepper.selected.completed = false;
+  }
+
+  private reportError(err): void {
+    console.log(`Error when setting task details: ${err}`);
   }
 }
