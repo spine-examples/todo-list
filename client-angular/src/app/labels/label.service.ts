@@ -32,9 +32,7 @@ import {CreateBasicLabel} from 'generated/main/js/todolist/c/commands_pb';
 /**
  * A service which operates with task labels.
  */
-@Injectable({
-  providedIn: LabelsModule
-})
+@Injectable()
 export class LabelService {
 
   /**

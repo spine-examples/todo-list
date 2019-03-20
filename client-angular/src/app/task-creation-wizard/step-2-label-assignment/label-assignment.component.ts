@@ -62,8 +62,4 @@ export class LabelAssignmentComponent {
   cancel() {
     this.location.back();
   }
-
-  createBasicLabel() {
-    this.labelService.createBasicLabel();
-  }
 }

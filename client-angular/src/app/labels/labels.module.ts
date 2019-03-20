@@ -22,6 +22,7 @@ import {NgModule} from '@angular/core';
 
 import {LabelsComponent} from './labels.component';
 import {LabelsRoutingModule} from './labels.routes';
+import {LabelService} from './label.service';
 import {SpineClientProvider} from '../spine-client-provider/spine-client-provider.module';
 
 /**
@@ -29,7 +30,8 @@ import {SpineClientProvider} from '../spine-client-provider/spine-client-provide
  */
 @NgModule({
   declarations: [LabelsComponent],
-  imports: [LabelsRoutingModule, SpineClientProvider]
+  imports: [LabelsRoutingModule, SpineClientProvider],
+  providers: [LabelService]
 })
 export class LabelsModule {
 }

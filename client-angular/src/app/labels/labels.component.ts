@@ -21,6 +21,8 @@
 import {Location} from '@angular/common';
 import {Component} from '@angular/core';
 
+import {LabelService} from './label.service';
+
 /**
  * The component which displays the label list as well as provides the basic navigation to
  * add/modify labels.
@@ -31,7 +33,7 @@ import {Component} from '@angular/core';
 })
 export class LabelsComponent {
 
-  constructor(private readonly location: Location) {
+  constructor(private readonly location: Location, private readonly labelService: LabelService) {
   }
 
   back(): void {
@@ -40,5 +42,9 @@ export class LabelsComponent {
 
   addLabel(): void {
     console.log('To be honest I cannot add a new label');
+  }
+
+  createBasicLabel() {
+    this.labelService.createBasicLabel();
   }
 }
