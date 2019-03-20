@@ -113,6 +113,9 @@ export class TaskCreationWizardComponent implements AfterViewInit {
     const alreadyWithId = this.location.isCurrentPathEqualTo(urlWithId);
     if (!alreadyWithId) {
       this.location.go(urlWithId);
+      this.taskDefinition.isRedirect = true;
+      this.labelAssignment.isRedirect = true;
+      this.confirmation.isRedirect = true;
     }
   }
 

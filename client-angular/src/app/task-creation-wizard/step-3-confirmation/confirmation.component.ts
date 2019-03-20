@@ -34,22 +34,35 @@ export class ConfirmationComponent {
   @Input()
   private readonly stepper: MatStepper;
 
+  isRedirect = false;
+
   constructor(private readonly wizard: TaskCreationWizard,
               private readonly location: Location) {
   }
 
   back() {
+    this.stepper.previous();
   }
 
   finish() {
-    this.wizard.completeTaskCreation();
-    // then go back
+    this.wizard.completeTaskCreation().then(() => this.backFromWizard());
   }
 
   /**
    * Task will be saved as draft.
    */
   cancel() {
+    this.wizard.cancelTaskCreation().then(() => this.backFromWizard());
+  }
+
+  /**
+   * Checking current path is not working as {@link Location} wrapper does not go back itself after
+   * calling `back()`.
+   */
+  private backFromWizard(): void {
     this.location.back();
+    if (this.isRedirect) {
+      this.location.back();
+    }
   }
 }

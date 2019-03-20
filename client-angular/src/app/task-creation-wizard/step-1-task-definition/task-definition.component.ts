@@ -42,6 +42,8 @@ export class TaskDefinitionComponent implements AfterViewInit {
   @Input()
   stepper: MatStepper;
 
+  isRedirect = false;
+
   description: TaskDescription;
   priority: TaskPriority;
   dueDate: Timestamp;
@@ -109,6 +111,7 @@ export class TaskDefinitionComponent implements AfterViewInit {
    * Cancel draft creation.
    */
   private cancel(): void {
+    this.wizard.cancelTaskCreation().then(() => this.backFromWizard());
   }
 
   private informOnDraftCreation(): void {
@@ -125,5 +128,16 @@ export class TaskDefinitionComponent implements AfterViewInit {
 
   private setNotCompleted(): void {
     this.stepper.selected.completed = false;
+  }
+
+  /**
+   * Checking current path is not working as {@link Location} wrapper does not go back itself after
+   * calling `back()`.
+   */
+  private backFromWizard(): void {
+    this.location.back();
+    if (this.isRedirect) {
+      this.location.back();
+    }
   }
 }

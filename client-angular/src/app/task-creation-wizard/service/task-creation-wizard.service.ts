@@ -33,6 +33,7 @@ import {Task, TaskCreation, TaskLabel, TaskLabels} from 'generated/main/js/todol
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {
   AddLabels,
+  CancelTaskCreation,
   CompleteTaskCreation,
   SetTaskDetails,
   SkipLabels,
@@ -213,6 +214,14 @@ export class TaskCreationWizard {
 
   completeTaskCreation(): Promise<void> {
     const cmd = new CompleteTaskCreation();
+    cmd.setId(this._id);
+    return new Promise<void>((resolve, reject) =>
+      this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
+    );
+  }
+
+  cancelTaskCreation(): Promise<void> {
+    const cmd = new CancelTaskCreation();
     cmd.setId(this._id);
     return new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)

@@ -39,6 +39,8 @@ export class LabelAssignmentComponent implements AfterViewInit {
   @Input()
   private readonly stepper: MatStepper;
 
+  isRedirect = false;
+
   available: TaskLabel[];
   selected: TaskLabel[];
 
@@ -70,6 +72,7 @@ export class LabelAssignmentComponent implements AfterViewInit {
   }
 
   back(): void {
+    this.stepper.previous();
   }
 
   next(): void {
@@ -91,7 +94,7 @@ export class LabelAssignmentComponent implements AfterViewInit {
    * Task will be saved as draft.
    */
   cancel(): void {
-    // Go to the location before the wizard launch.
+    this.wizard.cancelTaskCreation().then(() => this.backFromWizard());
   }
 
   private setCompleted(): void {
@@ -104,5 +107,16 @@ export class LabelAssignmentComponent implements AfterViewInit {
 
   private reportError(err): void {
     console.log(`Error when setting task details: ${err}`);
+  }
+
+  /**
+   * Checking current path is not working as {@link Location} wrapper does not go back itself after
+   * calling `back()`.
+   */
+  private backFromWizard(): void {
+    this.location.back();
+    if (this.isRedirect) {
+      this.location.back();
+    }
   }
 }
