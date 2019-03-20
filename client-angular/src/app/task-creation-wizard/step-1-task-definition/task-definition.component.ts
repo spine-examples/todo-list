@@ -62,7 +62,6 @@ export class TaskDefinitionComponent extends WizardStep {
    * also required and should accept `TaskDescription`.
    */
   setDescription(value: string): void {
-    console.log(`Setting task description to ${value}`);
     this.onInputChange();
     this.description = StringValue.back(value, TaskDescription);
   }

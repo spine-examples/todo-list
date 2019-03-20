@@ -126,8 +126,6 @@ export class TaskCreationWizardComponent implements AfterViewInit {
    */
   private moveToCurrentStep(): void {
     const currentStage = this.wizard.stage;
-    console.log('Current stage:');
-    console.log(currentStage);
     const index = TaskCreationWizardComponent.STEPS.get(currentStage);
     if (index === undefined) {
       this.reportFatalError(`There is no wizard step for stage ${currentStage}`);

@@ -84,10 +84,6 @@ export class TaskCreationWizard {
       this._taskId = taskId;
       this._stage = TaskCreation.Stage.TASK_DEFINITION;
       this._taskLabels = [];
-      console.log('Process ID:');
-      console.log(this._id);
-      console.log('Task ID:');
-      console.log(this._taskId);
       resolve();
     };
     return new Promise<TaskCreationId>((resolve, reject) =>
@@ -191,8 +187,6 @@ export class TaskCreationWizard {
     const cmd = new AddLabels();
     cmd.setId(this._id);
     const labelIds = labels.map(label => label.getId());
-    console.log('Label IDs:');
-    console.log(labelIds[0]);
     cmd.setExistingLabelsList(labelIds);
 
     const addLabels = new Promise<void>((resolve, reject) =>
