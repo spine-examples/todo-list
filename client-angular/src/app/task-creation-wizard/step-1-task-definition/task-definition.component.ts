@@ -102,10 +102,9 @@ export class TaskDefinitionComponent implements AfterViewInit {
   }
 
   /**
-   * Just go back.
+   * Cancel draft creation.
    */
   private cancel(): void {
-    this.location.back();
   }
 
   private informOnDraftCreation(): void {
