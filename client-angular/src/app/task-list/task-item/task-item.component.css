@@ -20,3 +20,13 @@
 button {
   float: right;
 }
+
+::ng-deep app-task-item {
+  display:flex;
+  flex-grow:1;
+}
+
+.task-description {
+  display:inline-block;
+  width:100%;
+}

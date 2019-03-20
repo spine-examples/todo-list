@@ -19,5 +19,5 @@
   -->
 
 <a class="task-description" routerLink="/details/{{task.getId()}}">{{task.getDescription()}}</a>
-<button mat-icon-button (click)="deleteTask(); $event.stopPropagation();"><mat-icon>delete</mat-icon></button>
 <button mat-icon-button (click)="completeTask(); $event.stopPropagation();"><mat-icon>done</mat-icon></button>
+<button mat-icon-button (click)="deleteTask(); $event.stopPropagation();"><mat-icon>delete</mat-icon></button>

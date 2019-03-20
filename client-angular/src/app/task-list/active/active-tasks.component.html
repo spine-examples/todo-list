@@ -36,6 +36,6 @@
 
 <mat-nav-list class="tasks">
     <a mat-list-item *ngFor="let task of tasks">
-        <app-task-item routerLink="/details/{{task.getId()}}" class="task-item" [task]="task"></app-task-item>
+        <app-task-item class="task-item" [task]="task"></app-task-item>
     </a>
 </mat-nav-list>
