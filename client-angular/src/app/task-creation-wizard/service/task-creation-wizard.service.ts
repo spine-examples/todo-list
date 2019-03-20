@@ -33,6 +33,7 @@ import {Task, TaskCreation, TaskLabel, TaskLabels} from 'generated/main/js/todol
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {
   AddLabels,
+  CompleteTaskCreation,
   SetTaskDetails,
   SkipLabels,
   StartTaskCreation
@@ -154,9 +155,14 @@ export class TaskCreationWizard {
     if (dueDate) {
       cmd.setDueDate(dueDate);
     }
-    return new Promise<void>((resolve, reject) =>
+    const updateTask = new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
+    return updateTask.then(() => {
+      this._taskDescription = description;
+      this._taskPriority = priority;
+      this._taskDueDate = dueDate;
+    });
   }
 
   /**
@@ -166,7 +172,9 @@ export class TaskCreationWizard {
    * @see addLabelsReal
    */
   addLabels(labels: TaskLabel[]): Promise<void> {
-    return this.skipLabelAssignment();
+    return this.skipLabelAssignment().then(() => {
+      this._taskLabels = labels;
+    });
   }
 
   /**
@@ -185,13 +193,26 @@ export class TaskCreationWizard {
     console.log('Label IDs:');
     console.log(labelIds[0]);
     cmd.setExistingLabelsList(labelIds);
+
+    const addLabels = new Promise<void>((resolve, reject) =>
+      this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
+    );
+
+    return addLabels.then(() => {
+      this._taskLabels = labels;
+    });
+  }
+
+  skipLabelAssignment(): Promise<void> {
+    const cmd = new SkipLabels();
+    cmd.setId(this._id);
     return new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
   }
 
-  skipLabelAssignment(): Promise<void> {
-    const cmd = new SkipLabels();
+  completeTaskCreation(): Promise<void> {
+    const cmd = new CompleteTaskCreation();
     cmd.setId(this._id);
     return new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)

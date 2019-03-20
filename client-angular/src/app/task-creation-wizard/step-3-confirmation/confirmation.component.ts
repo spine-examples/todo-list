@@ -19,7 +19,10 @@
  */
 
 import {Location} from '@angular/common';
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
+import {MatStepper} from '@angular/material';
+
+import {TaskCreationWizard} from '../service/task-creation-wizard.service';
 
 @Component({
   selector: 'app-confirmation',
@@ -28,17 +31,19 @@ import {Component} from '@angular/core';
 })
 export class ConfirmationComponent {
 
-  constructor(private readonly location: Location) {
-  }
+  @Input()
+  private readonly stepper: MatStepper;
 
-  isCompleted(): boolean {
-    return true;
+  constructor(private readonly wizard: TaskCreationWizard,
+              private readonly location: Location) {
   }
 
   back() {
   }
 
   finish() {
+    this.wizard.completeTaskCreation();
+    // then go back
   }
 
   /**

@@ -17,9 +17,17 @@
   ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
-
-<p>
-  Confirm the task
+<p class="mat-h2">
+    Creating task: <i>'{{wizard.taskDescription}}'</i>
+</p>
+<p *ngIf="wizard.taskPriority" class="mat-h3">
+    with a priority: <i>'{{wizard.taskPriority | taskPriorityName}}'</i>
+</p>
+<p *ngIf="wizard.taskDueDate" class="mat-h3">
+    with a due date: <i>'{{wizard.taskDueDate | momentFromTimestamp}}'</i>
+</p>
+<p *ngIf="wizard.taskLabels && wizard.taskLabels.length > 0" class="mat-h3">
+    labelled as: <span *ngFor="let label of wizard.taskLabels"><i>{{label.getTitle()}} </i></span>
 </p>
 <a (click)="back()" mat-button color='primary'>Previous</a>
 <a (click)="finish()" mat-button color='primary'>Finish</a>
