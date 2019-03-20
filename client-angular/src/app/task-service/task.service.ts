@@ -124,7 +124,6 @@ export class TaskService {
   subscribeToActive(reflectInto: TaskItem[]): Promise<() => void> {
     const refreshTasks = {
       next: (view: MyListView): void => {
-        view.getMyList().getItemsList().forEach(item => console.log(item.getStatus()));
         const taskItems = view.getMyList().getItemsList()
           .filter(task => task.getStatus() === TaskStatus.OPEN);
         // Refresh the array.
