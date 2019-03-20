@@ -65,8 +65,8 @@ message TaskDetails {
     // A priority of the task.
     TaskPriority priority = 2 [(required) = true];
 
-    // Whether this task is completed.
-    bool completed = 3 [(required) = true];
+    // Status of the task.
+    TaskStatus status = 3 [(required) = true, (valid) = true];
 }
 
 // DTO for the label details.
