@@ -38,6 +38,10 @@ export class LabelService {
   constructor(private readonly spineWebClient: Client) {
   }
 
+  static sortLabels(a: TaskLabel, b: TaskLabel): number {
+    return a.getTitle().localeCompare(b.getTitle());
+  }
+
   /**
    * Temporary test-only method.
    */
@@ -46,7 +50,7 @@ export class LabelService {
         const cmd = new CreateBasicLabel();
         const id = UuidGenerator.newId(LabelId);
         cmd.setLabelId(id);
-        cmd.setLabelTitle('Valentin');
+        cmd.setLabelTitle('TestLabel');
         this.spineWebClient.sendCommand(cmd, resolve, reject, reject);
       }
     );

@@ -42,26 +42,31 @@ export class LabelAssignmentComponent implements AfterViewInit {
   available: TaskLabel[];
   selected: TaskLabel[];
 
+  private readonly loadAllLabels: Promise<TaskLabel[]>;
+
   constructor(private readonly wizard: TaskCreationWizard,
               private readonly location: Location,
-              private readonly labelService: LabelService) {
-    labelService.fetchAllLabels().then(labels => this.available = labels);
+              labelService: LabelService) {
+    this.loadAllLabels = labelService.fetchAllLabels();
   }
 
   ngAfterViewInit(): void {
+    this.loadAllLabels.then(labels => {
+      this.available = labels;
+      this.available.sort(LabelService.sortLabels);
+    });
     this.setNotCompleted();
   }
 
   switchSelected(label: TaskLabel): void {
     this.setNotCompleted();
     if (this.selected.includes(label)) {
-      console.log('Removing from selected');
       const index = this.selected.indexOf(label);
       this.selected.splice(index, 1);
     } else {
-      console.log('Pushing to selected');
       this.selected.push(label);
     }
+    this.selected.sort(LabelService.sortLabels);
   }
 
   back(): void {
