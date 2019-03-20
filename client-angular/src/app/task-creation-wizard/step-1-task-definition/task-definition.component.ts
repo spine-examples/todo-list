@@ -19,13 +19,13 @@
  */
 
 import {Location} from '@angular/common';
-import {AfterViewInit, Component, Input} from '@angular/core';
-import {MatStepper} from '@angular/material/stepper';
+import {Component} from '@angular/core';
 import {Moment} from 'moment';
 
 import {TaskCreationWizard} from '../service/task-creation-wizard.service';
 import {StringValue} from '../../pipes/string-value/string-value.pipe';
 import {MomentFromTimestamp} from '../../pipes/moment-from-timestamp/momentFromTimestamp.pipe';
+import {WizardStep} from '../wizard-step';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
@@ -36,17 +36,7 @@ import {TaskDescription} from 'generated/main/js/todolist/values_pb';
   templateUrl: './task-definition.component.html',
   styleUrls: ['./task-definition.component.css']
 })
-export class TaskDefinitionComponent implements AfterViewInit {
-
-  /** Visible for testing. */
-  @Input()
-  stepper: MatStepper;
-
-  isRedirect = false;
-
-  description: TaskDescription;
-  priority: TaskPriority;
-  dueDate: Timestamp;
+export class TaskDefinitionComponent extends WizardStep {
 
   /**
    * Possible task priorities.
@@ -59,12 +49,12 @@ export class TaskDefinitionComponent implements AfterViewInit {
    */
   private readonly today: Date = new Date();
 
-  constructor(private readonly wizard: TaskCreationWizard,
-              private readonly location: Location) {
-  }
+  description: TaskDescription;
+  priority: TaskPriority;
+  dueDate: Timestamp;
 
-  ngAfterViewInit(): void {
-    this.setNotCompleted();
+  constructor(wizard: TaskCreationWizard, location: Location) {
+    super(location, wizard);
   }
 
   /**
@@ -87,57 +77,7 @@ export class TaskDefinitionComponent implements AfterViewInit {
     this.dueDate = MomentFromTimestamp.back(value);
   }
 
-  /**
-   * Handles situations when we return to the "Task Definition" page from the later stages and it's
-   * initially marked as completed.
-   */
-  private onInputChange(): void {
-    this.setNotCompleted();
-  }
-
-  private next(): void {
-    this.wizard.updateTaskDetails(this.description, this.priority, this.dueDate)
-      .then(() => {
-        this.informOnDraftCreation();
-        this.setCompleted();
-        this.stepper.next();
-      })
-      .catch(err => {
-        this.reportError(err);
-      });
-  }
-
-  /**
-   * Cancel draft creation.
-   */
-  private cancel(): void {
-    this.wizard.cancelTaskCreation().then(() => this.backFromWizard());
-  }
-
-  private informOnDraftCreation(): void {
-    console.log('Draft created');
-  }
-
-  private reportError(err): void {
-    console.log(`Error when setting task details: ${err}`);
-  }
-
-  private setCompleted(): void {
-    this.stepper.selected.completed = true;
-  }
-
-  private setNotCompleted(): void {
-    this.stepper.selected.completed = false;
-  }
-
-  /**
-   * Checking current path is not working as {@link Location} wrapper does not go back itself after
-   * calling `back()`.
-   */
-  private backFromWizard(): void {
-    this.location.back();
-    if (this.isRedirect) {
-      this.location.back();
-    }
+  protected doStep(): Promise<void> {
+    return this.wizard.updateTaskDetails(this.description, this.priority, this.dueDate);
   }
 }

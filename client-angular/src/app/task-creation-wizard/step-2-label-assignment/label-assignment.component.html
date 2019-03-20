@@ -23,7 +23,7 @@
 </p>
 <p>
     <mat-selection-list>
-        <mat-list-option *ngFor="let label of available" (click)="switchSelected(label)"
+        <mat-list-option *ngFor="let label of available" (click)="switchSelectedStatus(label)"
                          [style.background-color]="label.getColor() | labelColorView">
             {{label.getTitle()}}
         </mat-list-option>
@@ -43,7 +43,7 @@
 </p>
 
 
-<a (click)="back()" mat-button color='primary'>Previous</a>
+<a (click)="previous()" mat-button color='primary'>Previous</a>
 <a (click)="next()" mat-button color='primary'>Next</a>
 <a (click)="cancel()" mat-button color='primary'>Cancel</a>
 <app-error-viewport></app-error-viewport>

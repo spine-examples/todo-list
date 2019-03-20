@@ -63,18 +63,18 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   @ViewChild(ConfirmationComponent)
   confirmation: ConfirmationComponent;
 
-  private readonly wizardInit: Promise<void>;
+  private readonly initWizard: Promise<void>;
 
   constructor(private readonly wizard: TaskCreationWizard,
               private readonly changeDetector: ChangeDetectorRef,
               private readonly location: Location,
               route: ActivatedRoute) {
     const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
-    this.wizardInit = wizard.init(taskCreationId);
+    this.initWizard = wizard.init(taskCreationId);
   }
 
   ngAfterViewInit(): void {
-    this.wizardInit
+    this.initWizard
       .then(() => {
         this.ensureLocation();
         this.moveToCurrentStep();

@@ -19,50 +19,23 @@
  */
 
 import {Location} from '@angular/common';
-import {Component, Input} from '@angular/core';
-import {MatStepper} from '@angular/material';
+import {Component} from '@angular/core';
 
 import {TaskCreationWizard} from '../service/task-creation-wizard.service';
+import {WizardStep} from '../wizard-step';
 
 @Component({
   selector: 'app-confirmation',
   templateUrl: './confirmation.component.html',
   styleUrls: ['./confirmation.component.css']
 })
-export class ConfirmationComponent {
+export class ConfirmationComponent extends WizardStep {
 
-  @Input()
-  private readonly stepper: MatStepper;
-
-  isRedirect = false;
-
-  constructor(private readonly wizard: TaskCreationWizard,
-              private readonly location: Location) {
+  constructor(wizard: TaskCreationWizard, location: Location) {
+    super(location, wizard);
   }
 
-  back() {
-    this.stepper.previous();
-  }
-
-  finish() {
-    this.wizard.completeTaskCreation().then(() => this.backFromWizard());
-  }
-
-  /**
-   * Task will be saved as draft.
-   */
-  cancel() {
-    this.wizard.cancelTaskCreation().then(() => this.backFromWizard());
-  }
-
-  /**
-   * Checking current path is not working as {@link Location} wrapper does not go back itself after
-   * calling `back()`.
-   */
-  private backFromWizard(): void {
-    this.location.back();
-    if (this.isRedirect) {
-      this.location.back();
-    }
+  protected doStep(): Promise<void> {
+    return this.wizard.completeTaskCreation();
   }
 }

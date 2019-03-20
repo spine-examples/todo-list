@@ -19,11 +19,11 @@
  */
 
 import {Location} from '@angular/common';
-import {AfterViewInit, Component, Input} from '@angular/core';
-import {MatStepper} from '@angular/material';
+import {Component} from '@angular/core';
 
 import {LabelService} from '../../labels/label.service';
 import {TaskCreationWizard} from '../service/task-creation-wizard.service';
+import {WizardStep} from '../wizard-step';
 
 import {LabelId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskLabel} from 'generated/main/js/todolist/model_pb';
@@ -34,34 +34,27 @@ import {LabelItem} from 'generated/main/js/todolist/q/projections_pb';
   templateUrl: './label-assignment.component.html',
   styleUrls: ['./label-assignment.component.css']
 })
-export class LabelAssignmentComponent implements AfterViewInit {
-
-  @Input()
-  private readonly stepper: MatStepper;
-
-  isRedirect = false;
+export class LabelAssignmentComponent extends WizardStep {
 
   available: TaskLabel[];
   selected: TaskLabel[];
 
   private readonly loadAllLabels: Promise<TaskLabel[]>;
 
-  constructor(private readonly wizard: TaskCreationWizard,
-              private readonly location: Location,
-              labelService: LabelService) {
+  constructor(wizard: TaskCreationWizard, location: Location, labelService: LabelService) {
+    super(location, wizard);
     this.loadAllLabels = labelService.fetchAllLabels();
   }
 
-  ngAfterViewInit(): void {
+  protected initModel(): void {
     this.loadAllLabels.then(labels => {
       this.available = labels;
       this.available.sort(LabelService.sortLabels);
     });
-    this.setNotCompleted();
   }
 
-  switchSelected(label: TaskLabel): void {
-    this.setNotCompleted();
+  switchSelectedStatus(label: TaskLabel): void {
+    this.onInputChange();
     if (this.selected.includes(label)) {
       const index = this.selected.indexOf(label);
       this.selected.splice(index, 1);
@@ -71,52 +64,10 @@ export class LabelAssignmentComponent implements AfterViewInit {
     this.selected.sort(LabelService.sortLabels);
   }
 
-  back(): void {
-    this.stepper.previous();
-  }
-
-  next(): void {
-    let promise;
+  protected doStep(): Promise<void> {
     if (this.selected.length > 0) {
-      promise = this.wizard.addLabels(this.selected);
-    } else {
-      promise = this.wizard.skipLabelAssignment();
+      return this.wizard.addLabels(this.selected);
     }
-    promise
-      .then(() => {
-        this.setCompleted();
-        this.stepper.next();
-      })
-      .catch(err => this.reportError(err));
-  }
-
-  /**
-   * Task will be saved as draft.
-   */
-  cancel(): void {
-    this.wizard.cancelTaskCreation().then(() => this.backFromWizard());
-  }
-
-  private setCompleted(): void {
-    this.stepper.selected.completed = true;
-  }
-
-  private setNotCompleted(): void {
-    this.stepper.selected.completed = false;
-  }
-
-  private reportError(err): void {
-    console.log(`Error when setting task details: ${err}`);
-  }
-
-  /**
-   * Checking current path is not working as {@link Location} wrapper does not go back itself after
-   * calling `back()`.
-   */
-  private backFromWizard(): void {
-    this.location.back();
-    if (this.isRedirect) {
-      this.location.back();
-    }
+    return this.wizard.skipLabelAssignment();
   }
 }
