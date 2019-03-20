@@ -22,6 +22,7 @@ import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 
+import {MatIconModule} from '@angular/material';
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatButtonModule} from '@angular/material/button';
 import {MatChipsModule} from '@angular/material/chips';
@@ -68,6 +69,7 @@ import {LabelsModule} from '../labels/labels.module';
     MatButtonModule,
     MatChipsModule,
     MatDatepickerModule,
+    MatIconModule,
     MatInputModule,
     MatFormFieldModule,
     MatListModule,
