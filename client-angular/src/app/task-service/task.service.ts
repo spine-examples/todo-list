@@ -28,6 +28,7 @@ import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {CompleteTask, CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
 import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskStatus} from 'generated/main/js/todolist/attributes_pb';
 
 /**
  * A service which performs operations on To-Do List tasks.
@@ -112,7 +113,9 @@ export class TaskService {
   subscribeToActive(reflectInto: TaskItem[]): Promise<() => void> {
     const refreshTasks = {
       next: (view: MyListView): void => {
-        const taskItems = view.getMyList().getItemsList();
+        view.getMyList().getItemsList().forEach(item => console.log(item.getStatus()));
+        const taskItems = view.getMyList().getItemsList()
+          .filter(task => task.getStatus() === TaskStatus.OPEN);
         // Refresh the array.
         reflectInto.length = 0;
         reflectInto.push(...taskItems);

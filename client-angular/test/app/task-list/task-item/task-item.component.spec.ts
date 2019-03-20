@@ -27,17 +27,22 @@ import {TaskItemComponent} from '../../../../src/app/task-list/task-item/task-it
 import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, task} from '../../given/tasks';
 
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskService} from '../../../../src/app/task-service/task.service';
+import {mockSpineWebClient} from '../../given/mock-spine-web-client';
+import {Client} from 'spine-web';
 
 describe('TaskItemComponent', () => {
   const taskItem = task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
 
+  const mockClient = mockSpineWebClient();
   let component: TaskItemComponent;
   let fixture: ComponentFixture<TaskItemComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TaskItemComponent, TestHostComponent],
-      imports: [RouterTestingModule.withRoutes([]), MatIconModule]
+      imports: [RouterTestingModule.withRoutes([]), MatIconModule],
+      providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
   }));

@@ -61,7 +61,6 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log(this.formBuilder);
     this.taskService.subscribeToActive(this.tasks)
       .then(unsubscribe => this.unsubscribe = unsubscribe);
   }
