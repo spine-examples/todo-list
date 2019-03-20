@@ -20,8 +20,6 @@
 
 import {Injectable} from '@angular/core';
 import {Client, Type} from 'spine-web';
-
-import {LabelsModule} from './labels.module';
 import {UuidGenerator} from '../uuid-generator/uuid-generator';
 
 import {LabelColor, TaskPriority} from 'generated/main/js/todolist/attributes_pb';
