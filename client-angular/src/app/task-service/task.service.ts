@@ -26,7 +26,7 @@ import {TaskServiceModule} from './task-service.module';
 
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
-import {CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
+import {CompleteTask, CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
 import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 
 /**
@@ -61,6 +61,19 @@ export class TaskService {
   /** Visible for testing. */
   static logCmdErr(err) {
     console.log('Error when sending command to the server: %s', err);
+  }
+
+  /**
+   * Completes a task with the specified ID.
+   *
+   * @param taskId ID of the task to complete
+   */
+  completeTask(taskId: string): void {
+    const cmd = new CompleteTask();
+    const id = new TaskId();
+    id.setValue(taskId);
+    cmd.setId(id);
+    this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
   }
 
   /**
