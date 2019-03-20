@@ -126,7 +126,9 @@ export class TaskCreationWizardComponent implements AfterViewInit {
       this.reportFatalError(`There is no wizard step for stage ${currentStage}`);
       return;
     }
+    // "Completing" the current step manually is required before moving to the selected index.
     this.stepper.selected.completed = true;
     this.stepper.selectedIndex = index;
+    this.stepper.selected.completed = false;
   }
 }
