@@ -40,15 +40,22 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
 
   /** Visible for testing. */
   readonly tasks: TaskItem[] = [];
-  private activeTasksForms: FormGroup;
+  private createBasicTaskForms: FormGroup;
 
   constructor(private readonly taskService: TaskService, private formBuilder: FormBuilder) {
-    this.activeTasksForms = formBuilder.group({
-      descriptionFormControl: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
+    this.createBasicTaskForms = formBuilder.group({
+      taskDescription: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
     });
   }
 
-  createBasicTask(taskDescription: string): void {
+  /**
+   * Sends a command to create a basic task, i.e. a task without label, due date, and with a
+   * `Normal` priority.
+   *
+   * See `commands.proto#CreateBasicTask` in the `model` module.
+   * @param taskDescription desired description of the task.
+   */
+  private createBasicTask(taskDescription: string): void {
     this.taskService.createBasicTask(taskDescription);
   }
 
