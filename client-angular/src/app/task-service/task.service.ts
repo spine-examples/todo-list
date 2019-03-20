@@ -26,7 +26,7 @@ import {TaskServiceModule} from './task-service.module';
 
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
-import {CompleteTask, CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
+import {CompleteTask, CreateBasicTask, DeleteTask} from 'generated/main/js/todolist/c/commands_pb';
 import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskStatus} from 'generated/main/js/todolist/attributes_pb';
 
@@ -65,7 +65,20 @@ export class TaskService {
   }
 
   /**
-   * Completes a task with the specified ID.
+   * Deletes the task with the specified ID.
+   *
+   * @param taskId ID of the task to delete.
+   */
+  deleteTask(taskId: string): void {
+    const cmd = new DeleteTask();
+    const id = new TaskId();
+    id.setValue(taskId);
+    cmd.setId(id);
+    this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
+  }
+
+  /**
+   * Completes the task with the specified ID, changing its status respectively.
    *
    * @param taskId ID of the task to complete
    */
@@ -94,8 +107,6 @@ export class TaskService {
     this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
   }
 
-  // TODO:2019-03-12:dmytro.kuzmin: Actually filter by active, will require extending `TaskItem`
-  // todo projection.
   /**
    * Subscribes to the active tasks and reflects them to a given array.
    *

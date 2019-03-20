@@ -65,15 +65,15 @@ describe('TaskItemComponent', () => {
   });
 
   it('should allow to complete task', () => {
-    window.alert = jasmine.createSpy('alert');
+    const completeTaskMethod = spyOn(component.taskService, 'completeTask');
     component.completeTask();
-    expect(window.alert).toHaveBeenCalledWith(`Completing task with ID: ${HOUSE_TASK_1_ID}`);
+    expect(completeTaskMethod).toHaveBeenCalledWith(HOUSE_TASK_1_ID);
   });
 
   it('should allow to delete task', () => {
-    window.alert = jasmine.createSpy('alert');
+    const completeTaskMethod = spyOn(component.taskService, 'deleteTask');
     component.deleteTask();
-    expect(window.alert).toHaveBeenCalledWith(`Deleting task with ID: ${HOUSE_TASK_1_ID}`);
+    expect(completeTaskMethod).toHaveBeenCalledWith(HOUSE_TASK_1_ID);
   });
 
   it('should receive task item injected by the host component', () => {

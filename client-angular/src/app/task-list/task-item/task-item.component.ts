@@ -34,19 +34,29 @@ import {TaskService} from '../../task-service/task.service';
 })
 export class TaskItemComponent {
 
-  constructor(private readonly taskService: TaskService) {
+  /** Visible for tests. */
+  readonly taskService: TaskService;
+
+  constructor(readonly service: TaskService) {
+    this.taskService = service;
   }
 
   @Input()
   task: TaskItem;
 
+  /**
+   * Marks this task as `Complete`, changing its status respectively.
+   */
   completeTask(): void {
     const id: string = this.task.getId().getValue();
     this.taskService.completeTask(id);
-    alert(`Completing task with ID: ${this.task.getId()}`);
   }
 
+  /**
+   * Deletes this task from the list.
+   */
   deleteTask(): void {
-    alert(`Deleting task with ID: ${this.task.getId()}`);
+    const id: string = this.task.getId().getValue();
+    this.taskService.deleteTask(id);
   }
 }
