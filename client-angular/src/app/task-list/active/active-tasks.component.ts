@@ -55,8 +55,10 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
    *
    * See `commands.proto#CreateBasicTask` in the `model` module.
    * @param taskDescription desired description of the task.
+   *
+   * Is visible for testing.
    */
-  private createBasicTask(taskDescription: string): void {
+  createBasicTask(taskDescription: string): void {
     this.taskService.createBasicTask(taskDescription);
   }
 

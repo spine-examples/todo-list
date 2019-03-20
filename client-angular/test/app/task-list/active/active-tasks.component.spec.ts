@@ -75,6 +75,11 @@ describe('ActiveTasksComponent', () => {
     tick(); // Wait for the fake subscription fetch.
   }));
 
+  it('should allow basic task creation', () => {
+    component.createBasicTask('Some basic task');
+    expect(mockClient.sendCommand).toHaveBeenCalledTimes(1);
+  });
+
   it('should create', () => {
     expect(component).toBeTruthy();
   });
