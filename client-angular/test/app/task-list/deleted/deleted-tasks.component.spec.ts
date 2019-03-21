@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {MatListModule} from '@angular/material/list';
 import {RouterModule} from '@angular/router';
 
@@ -26,7 +26,8 @@ import {Client} from 'spine-web';
 import {DeletedTasksComponent} from '../../../../src/app/task-list/deleted/deleted-tasks.component';
 import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
 import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient} from '../../given/mock-spine-web-client';
+import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
+import {houseTasks} from '../../given/tasks';
 
 describe('DeletedTasksComponent', () => {
 
@@ -35,7 +36,6 @@ describe('DeletedTasksComponent', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy();
 
-
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DeletedTasksComponent, TaskDisplayComponent],
@@ -43,11 +43,21 @@ describe('DeletedTasksComponent', () => {
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
+    mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+      [houseTasks()], [], [], unsubscribe
+    ));
+
+    fixture = TestBed.createComponent(DeletedTasksComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    tick(); // Wait for the fake subscription fetch.
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DeletedTasksComponent);
     component = fixture.componentInstance;
+
     fixture.detectChanges();
   });
 
