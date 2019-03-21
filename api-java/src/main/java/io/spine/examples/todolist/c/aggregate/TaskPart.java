@@ -88,7 +88,6 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejection
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotReopenTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotRestoreDeletedTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.TaskCreationRejections.throwCannotCreateDraft;
-import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateDescription;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDescription;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDueDate;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskPriority;
@@ -134,19 +133,7 @@ public class TaskPart extends AggregatePart<TaskId,
         if (!isValid) {
             throwCannotUpdateTaskDescription(cmd);
         }
-
         StringChange descriptionChange = cmd.getDescriptionChange();
-        String actualDescription = state().getDescription()
-                                          .getValue();
-        String expectedDescription = descriptionChange.getPreviousValue();
-        boolean isEquals = actualDescription.equals(expectedDescription);
-
-        if (!isEquals) {
-            ValueMismatch mismatch = unexpectedValue(expectedDescription, actualDescription,
-                                                     descriptionChange.getNewValue());
-            throwCannotUpdateDescription(cmd, mismatch);
-        }
-
         TaskId taskId = cmd.getId();
         TaskDescriptionUpdated taskDescriptionUpdated = TaskDescriptionUpdated
                 .newBuilder()
@@ -198,18 +185,6 @@ public class TaskPart extends AggregatePart<TaskId,
         }
 
         PriorityChange priorityChange = cmd.getPriorityChange();
-        TaskPriority actualPriority = state.getPriority();
-        TaskPriority expectedPriority = priorityChange.getPreviousValue();
-
-        boolean isEquals = actualPriority == expectedPriority;
-
-        if (!isEquals) {
-            TaskPriority newPriority = priorityChange.getNewValue();
-            ValueMismatch mismatch =
-                    valueMismatch(expectedPriority, actualPriority, newPriority, getVersion());
-            throwCannotUpdateTaskPriority(cmd, mismatch);
-        }
-
         TaskId taskId = cmd.getId();
         TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated
                 .newBuilder()
