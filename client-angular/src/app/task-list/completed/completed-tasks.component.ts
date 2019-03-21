@@ -18,10 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../task-service/task.service';
-import {TaskSubsetComponent} from '../../task-subset.component';
 
 /**
  * A component which displays completed tasks.
@@ -31,13 +30,23 @@ import {TaskSubsetComponent} from '../../task-subset.component';
   templateUrl: './completed-tasks.component.html',
   styleUrls: ['./completed-tasks.component.css']
 })
-export class CompletedTasksComponent extends TaskSubsetComponent {
+export class CompletedTasksComponent implements OnInit, OnDestroy {
 
-  constructor(taskService: TaskService) {
-    super(taskService);
+  private unsubscribe: () => void;
+
+  tasks: TaskItem[] = [];
+
+  constructor(readonly taskService: TaskService) {
   }
 
-  specifyTask(task: TaskItem): boolean {
-    return task.getStatus() === TaskStatus.COMPLETED;
+  ngOnDestroy(): void {
+    this.taskService.subscribeToCompleted(this.tasks)
+      .then(unsubscribe => this.unsubscribe = unsubscribe);
+  }
+
+  ngOnInit(): void {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   }
 }

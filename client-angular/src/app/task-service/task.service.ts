@@ -167,4 +167,8 @@ export class TaskService {
   subscribeToActive(reflectInto: TaskItem[]): Promise<() => void> {
     return this.subscribeToMatching(reflectInto, task => task.getStatus() === TaskStatus.OPEN);
   }
+
+  subscribeToCompleted(reflectInto: TaskItem[]): Promise<() => void> {
+    return this.subscribeToMatching(reflectInto, task => task.getStatus() === TaskStatus.COMPLETED);
+  }
 }
