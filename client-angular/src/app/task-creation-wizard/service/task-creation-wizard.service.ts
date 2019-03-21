@@ -94,15 +94,15 @@ export class TaskCreationWizard {
   }
 
   private restore(taskCreationId: TaskCreationId): Promise<void> {
-    return this.restoreProcessDetails(taskCreationId)
+    this._id = taskCreationId;
+    return this.restoreProcessDetails()
       .then(() => this.restoreTaskDetails())
       .then(() => this.restoreTaskLabels());
   }
 
-  private restoreProcessDetails(taskCreationId: TaskCreationId): Promise<void> {
+  private restoreProcessDetails(): Promise<void> {
     return this.fetchProcessDetails()
       .then(taskCreation => {
-        this._id = taskCreationId;
         this._taskId = taskCreation.getTaskId();
         this._stage = taskCreation.getStage();
       });
@@ -139,7 +139,7 @@ export class TaskCreationWizard {
           resolve(processDetails);
         }
       };
-      this.spineWebClient.fetchById(TaskCreation, this._id, dataCallback, reject);
+      this.spineWebClient.fetchById(Type.forClass(TaskCreation), this._id, dataCallback, reject);
     });
   }
 

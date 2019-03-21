@@ -80,7 +80,7 @@ export class TaskService {
           resolve(task);
         }
       };
-      this.spineWebClient.fetchById(Task, id, dataCallback, reject);
+      this.spineWebClient.fetchById(Type.forClass(Task), id, dataCallback, reject);
     });
   }
 
