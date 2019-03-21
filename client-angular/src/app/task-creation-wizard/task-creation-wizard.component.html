@@ -24,11 +24,13 @@
 <mat-horizontal-stepper linear #stepper>
     <mat-step>
         <ng-template matStepLabel>Task definition</ng-template>
-        <app-task-definition [stepper]="stepper"></app-task-definition>
+        <app-task-definition [stepper]="stepper">
+        </app-task-definition>
     </mat-step>
     <mat-step>
         <ng-template matStepLabel>Label assignment</ng-template>
-        <app-label-assignment [stepper]="stepper"></app-label-assignment>
+        <app-label-assignment [stepper]="stepper">
+        </app-label-assignment>
     </mat-step>
     <mat-step>
         <ng-template matStepLabel>Confirmation</ng-template>

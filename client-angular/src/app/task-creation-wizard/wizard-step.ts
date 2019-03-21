@@ -18,23 +18,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {AfterViewInit, Input} from '@angular/core';
+import {AfterViewInit, Input, ViewChild} from '@angular/core';
 import {MatStepper} from '@angular/material';
+import {Router} from '@angular/router';
 
 import {TaskCreationWizard} from './service/task-creation-wizard.service';
-import {Router} from '@angular/router';
+import {ErrorViewport} from '../common-components/error-viewport/error-viewport.component';
 
 export abstract class WizardStep implements AfterViewInit {
 
   @Input()
   stepper: MatStepper;
 
+  @ViewChild(ErrorViewport)
+  errorViewport: ErrorViewport;
+
   protected constructor(private readonly router: Router,
                         protected readonly wizard: TaskCreationWizard) {
-  }
-
-  private static reportError(err): void {
-    console.log(`Error when setting task details: ${err}`);
   }
 
   ngAfterViewInit(): void {
@@ -79,7 +79,7 @@ export abstract class WizardStep implements AfterViewInit {
         this.stepper.next();
       })
       .catch(err => {
-        WizardStep.reportError(err);
+        this.reportError(err);
       });
   }
 
@@ -98,5 +98,9 @@ export abstract class WizardStep implements AfterViewInit {
 
   private goToActiveTasks(): void {
     this.router.navigate(['/task-list/active']);
+  }
+
+  private reportError(err): void {
+    this.errorViewport.text = err;
   }
 }
