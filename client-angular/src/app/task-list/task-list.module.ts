@@ -35,7 +35,8 @@ import {DraftsComponent} from './drafts/drafts.component';
 import {TaskListRoutingModule} from './task-list.routes';
 import {TaskServiceModule} from '../task-service/task-service.module';
 import {TaskItemComponent} from './task-item/task-item.component';
-import {TaskDisplayComponent} from "../task-display/task-display.component";
+import {TaskDisplayComponent} from '../task-display/task-display.component';
+import {DeleteButtonComponent} from '../delete-button/delete-button.component';
 
 /**
  * The module which displays the task list.
@@ -48,7 +49,8 @@ import {TaskDisplayComponent} from "../task-display/task-display.component";
     ActiveTasksComponent,
     CompletedTasksComponent,
     DeletedTasksComponent,
-    DraftsComponent
+    DraftsComponent,
+    DeleteButtonComponent
   ],
   imports: [
     TaskListRoutingModule,
