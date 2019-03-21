@@ -63,12 +63,15 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   @ViewChild(ConfirmationComponent)
   confirmation: ConfirmationComponent;
 
+  private isLoading: boolean;
+
   private readonly initWizard: Promise<void>;
 
   constructor(private readonly wizard: TaskCreationWizard,
               private readonly changeDetector: ChangeDetectorRef,
               private readonly location: Location,
               route: ActivatedRoute) {
+    this.isLoading = true;
     const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
     this.initWizard = wizard.init(taskCreationId);
   }
@@ -85,6 +88,8 @@ export class TaskCreationWizardComponent implements AfterViewInit {
         this.labelAssignment.selected = this.wizard.taskLabels;
 
         this.changeDetector.detectChanges();
+
+        this.isLoading = false;
       })
       .catch(err => this.reportFatalError(err));
   }

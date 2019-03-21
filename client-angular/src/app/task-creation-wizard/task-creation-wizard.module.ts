@@ -30,6 +30,7 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatInputModule} from '@angular/material/input';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatListModule} from '@angular/material/list';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSelectModule} from '@angular/material/select';
 import {MatStepperModule} from '@angular/material/stepper';
 
@@ -75,6 +76,7 @@ import {LabelsModule} from '../labels/labels.module';
     MatInputModule,
     MatFormFieldModule,
     MatListModule,
+    MatProgressBarModule,
     MatSelectModule,
     MatStepperModule
   ]
