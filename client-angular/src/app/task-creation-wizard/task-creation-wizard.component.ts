@@ -107,8 +107,8 @@ export class TaskCreationWizardComponent implements AfterViewInit {
    * To create a new task, user can just navigate to '/wizard'. A task creation process will then
    * be started and assigned a new ID.
    *
-   * This method changes current location, so the user sees the "correct" URL with a task creation
-   * ID param.
+   * This method changes the current location, so the user sees the "correct" URL with a task
+   * creation ID param.
    */
   private ensureLocation(): void {
     const idString = this.wizard.id.getValue();
