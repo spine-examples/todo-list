@@ -154,17 +154,6 @@ public class TaskPart extends AggregatePart<TaskId,
         }
 
         TimestampChange change = cmd.getDueDateChange();
-        Timestamp actualDueDate = state.getDueDate();
-        Timestamp expectedDueDate = change.getPreviousValue();
-
-        boolean isEquals = compare(actualDueDate, expectedDueDate) == 0;
-
-        if (!isEquals) {
-            Timestamp newDueDate = change.getNewValue();
-            ValueMismatch mismatch = unexpectedValue(expectedDueDate, actualDueDate, newDueDate);
-            throwCannotUpdateTaskDueDate(cmd, mismatch);
-        }
-
         TaskId taskId = cmd.getId();
         TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated
                 .newBuilder()
