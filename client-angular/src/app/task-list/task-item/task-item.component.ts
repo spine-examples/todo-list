@@ -20,7 +20,6 @@
 
 import {Component, Input} from '@angular/core';
 
-import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../task-service/task.service';
 

@@ -17,29 +17,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-import {Component, OnInit} from '@angular/core';
-import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskService} from '../../task-service/task.service';
-import {TaskSubsetComponent} from '../../task-subset.component';
+import {OnDestroy, OnInit} from '@angular/core';
+import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskService} from './task-service/task.service';
 
 /**
- * A component which displays completed tasks.
+ * A component responsible for displaying and handling a subset of all tasks, such as `active` or
+ * `deleted`.
  */
-@Component({
-  selector: 'app-completed-tasks',
-  templateUrl: './completed-tasks.component.html'
-})
-export class CompletedTasksComponent extends TaskSubsetComponent {
+export abstract class TaskSubsetComponent implements OnInit, OnDestroy {
 
-  /** Visible for testing. */
-  readonly tasks: TaskItem[] = [];
+  private unsubscribe: () => void;
 
-  constructor(taskService: TaskService) {
-    super(taskService);
+  tasks: TaskItem[] = [];
+
+  abstract specifyTask(task: TaskItem): boolean;
+
+  protected constructor(protected readonly taskService: TaskService) {
   }
 
-  specifyTask(task: TaskItem): boolean {
-    return task.getStatus() === TaskStatus.COMPLETED;
+  ngOnInit(): void {
+    this.taskService.subscribeToMatching(this.tasks, this.specifyTask)
+      .then(unsubscribe => this.unsubscribe = unsubscribe);
+  }
+
+  ngOnDestroy(): void {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   }
 }
