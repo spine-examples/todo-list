@@ -33,14 +33,15 @@ import {MatListModule} from '@angular/material/list';
 import {MatSelectModule} from '@angular/material/select';
 import {MatStepperModule} from '@angular/material/stepper';
 
-import {TaskCreationWizardRoutingModule} from './task-creation-wizard.routes';
-import {TodoListComponentsModule} from '../common-components/todo-list-components.module';
-import {TodoListPipesModule} from '../pipes/todo-list-pipes.module';
 import {TaskDefinitionComponent} from './step-1-task-definition/task-definition.component';
 import {LabelAssignmentComponent} from './step-2-label-assignment/label-assignment.component';
 import {TaskCreationWizardComponent} from './task-creation-wizard.component';
 import {ConfirmationComponent} from './step-3-confirmation/confirmation.component';
+import {TaskCreationWizardRoutingModule} from './task-creation-wizard.routes';
+import {TodoListComponentsModule} from '../common-components/todo-list-components.module';
 import {SpineClientProvider} from '../spine-client-provider/spine-client-provider.module';
+import {TodoListPipesModule} from '../pipes/todo-list-pipes.module';
+import {TaskServiceModule} from '../task-service/task-service.module';
 import {LabelsModule} from '../labels/labels.module';
 
 /**
@@ -63,6 +64,7 @@ import {LabelsModule} from '../labels/labels.module';
     TodoListComponentsModule,
     SpineClientProvider,
     TodoListPipesModule,
+    TaskServiceModule,
     LabelsModule,
 
     MatMomentDateModule,

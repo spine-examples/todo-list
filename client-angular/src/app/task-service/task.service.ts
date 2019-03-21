@@ -25,6 +25,7 @@ import {TaskServiceModule} from './task-service.module';
 import {UuidGenerator} from '../uuid-generator/uuid-generator';
 
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
+import {Task} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
 import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
@@ -68,6 +69,19 @@ export class TaskService {
     cmd.setDescription(taskDescription);
 
     this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
+  }
+
+  fetchById(id: TaskId): Promise<Task> {
+    return new Promise<Task>((resolve, reject) => {
+      const dataCallback = task => {
+        if (!task) {
+          reject(`No task found for ID: ${id}`);
+        } else {
+          resolve(task);
+        }
+      };
+      this.spineWebClient.fetchById(Task, id, dataCallback, reject);
+    });
   }
 
   // TODO:2019-03-12:dmytro.kuzmin: Actually filter by active, will require extending `TaskItem`

@@ -39,6 +39,7 @@ import {
   SkipLabels,
   StartTaskCreation
 } from 'generated/main/js/todolist/c/commands_pb';
+import {TaskService} from "../../task-service/task.service";
 
 /**
  * A service which executes commands specific to the Task Creation Wizard process.
@@ -60,6 +61,7 @@ export class TaskCreationWizard {
   private _taskLabels: TaskLabel[];
 
   constructor(private readonly spineWebClient: Client,
+              private readonly taskService: TaskService,
               private readonly labelService: LabelService) {
   }
 
@@ -92,13 +94,13 @@ export class TaskCreationWizard {
   }
 
   private restore(taskCreationId: TaskCreationId): Promise<void> {
-    return this.fetchProcessDetails(taskCreationId)
-      .then(() => this.fetchTaskDetails())
-      .then(() => this.fetchTaskLabels());
+    return this.restoreProcessDetails(taskCreationId)
+      .then(() => this.restoreTaskDetails())
+      .then(() => this.restoreTaskLabels());
   }
 
-  private fetchProcessDetails(taskCreationId: TaskCreationId): Promise<void> {
-    return this.fetchNonNull<TaskCreation>(TaskCreation, taskCreationId)
+  private restoreProcessDetails(taskCreationId: TaskCreationId): Promise<void> {
+    return this.fetchProcessDetails()
       .then(taskCreation => {
         this._id = taskCreationId;
         this._taskId = taskCreation.getTaskId();
@@ -106,8 +108,8 @@ export class TaskCreationWizard {
       });
   }
 
-  private fetchTaskDetails(): Promise<void> {
-    return this.fetchNonNull<Task>(Task, this._taskId)
+  private restoreTaskDetails(): Promise<void> {
+    return this.taskService.fetchById(this._taskId)
       .then(task => {
         if (task.getDescription()) {
           this._taskDescription = task.getDescription();
@@ -121,23 +123,23 @@ export class TaskCreationWizard {
       });
   }
 
-  private fetchTaskLabels(): Promise<void> {
+  private restoreTaskLabels(): Promise<void> {
     return this.labelService.fetchTaskLabels(this._taskId)
       .then(labels => {
         this._taskLabels = labels;
       });
   }
 
-  private fetchNonNull<T>(type: new() => T, id: Message): Promise<T> {
-    return new Promise<T>((resolve, reject) => {
-      const dataCallback = taskCreation => {
-        if (!taskCreation) {
-          reject(`No entity found for ID: ${id}`);
+  private fetchProcessDetails(): Promise<TaskCreation> {
+    return new Promise<TaskCreation>((resolve, reject) => {
+      const dataCallback = processDetails => {
+        if (!processDetails) {
+          reject(`No task creation process found for ID: ${this._id}`);
         } else {
-          resolve(taskCreation);
+          resolve(processDetails);
         }
       };
-      this.spineWebClient.fetchById(Type.forClass(type), id, dataCallback, reject);
+      this.spineWebClient.fetchById(TaskCreation, this._id, dataCallback, reject);
     });
   }
 

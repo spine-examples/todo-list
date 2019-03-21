@@ -72,6 +72,12 @@ export class LabelService {
       });
   }
 
+  fetchLabelDetails(labelId: LabelId): Promise<TaskLabel> {
+    return new Promise<TaskLabel>((resolve, reject) =>
+      this.spineWebClient.fetchById(Type.forClass(TaskLabel), labelId, resolve, reject)
+    );
+  }
+
   /**
    * If `TaskLabels` instance is not found, it just means there is no assigned labels history, and
    * not an error.
@@ -79,12 +85,6 @@ export class LabelService {
   private fetchTaskLabelsInstance(taskId: TaskId): Promise<TaskLabels> {
     return new Promise<TaskLabels>((resolve, reject) =>
       this.spineWebClient.fetchById(Type.forClass(TaskLabels), taskId, resolve, reject)
-    );
-  }
-
-  private fetchLabelDetails(labelId: LabelId): Promise<TaskLabel> {
-    return new Promise<TaskLabel>((resolve, reject) =>
-      this.spineWebClient.fetchById(Type.forClass(TaskLabel), labelId, resolve, reject)
     );
   }
 }
