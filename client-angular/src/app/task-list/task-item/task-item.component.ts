@@ -22,7 +22,6 @@ import {Component, Input} from '@angular/core';
 
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../task-service/task.service';
-import {TaskDisplayComponent} from "../../task-display/task-display.component";
 
 /**
  * The view of a single task in the list.
@@ -32,10 +31,9 @@ import {TaskDisplayComponent} from "../../task-display/task-display.component";
   templateUrl: './task-item.component.html',
   styleUrls: ['./task-item.component.css']
 })
-export class TaskItemComponent extends TaskDisplayComponent {
+export class TaskItemComponent {
 
-  constructor(service: TaskService) {
-    super(service);
+  constructor(readonly taskService: TaskService) {
   }
 
   @Input()

@@ -18,26 +18,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-// TODO:2019-03-21:serhii.lekariev: move to tests
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {RouterTestingModule} from '@angular/router/testing';
+import {Client} from 'spine-web';
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { TaskDisplayComponent } from './task-display.component';
+import {TaskDisplayComponent} from '../../../src/app/task-display/task-display.component';
+import {TaskService} from '../../../src/app/task-service/task.service';
+import {mockSpineWebClient} from '../given/mock-spine-web-client';
+import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, houseTasks, task} from '../given/tasks';
 
 describe('TaskDisplayComponent', () => {
+
+  const mockClient = mockSpineWebClient();
   let component: TaskDisplayComponent;
   let fixture: ComponentFixture<TaskDisplayComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TaskDisplayComponent ]
+      declarations: [TaskDisplayComponent],
+      imports: [RouterTestingModule.withRoutes([])],
+      providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
+
+    const taskItem = task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
     fixture = TestBed.createComponent(TaskDisplayComponent);
     component = fixture.componentInstance;
+    component.task = taskItem;
     fixture.detectChanges();
   });
 
