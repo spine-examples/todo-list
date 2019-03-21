@@ -18,42 +18,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, Input} from '@angular/core';
+// TODO:2019-03-21:serhii.lekariev: move to tests
 
-import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskService} from '../../task-service/task.service';
-import {TaskDisplayComponent} from "../../task-display/task-display.component";
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-/**
- * The view of a single task in the list.
- */
-@Component({
-  selector: 'app-task-item',
-  templateUrl: './task-item.component.html',
-  styleUrls: ['./task-item.component.css']
-})
-export class TaskItemComponent extends TaskDisplayComponent {
+import { TaskDisplayComponent } from './task-display.component';
 
-  constructor(service: TaskService) {
-    super(service);
-  }
+describe('TaskDisplayComponent', () => {
+  let component: TaskDisplayComponent;
+  let fixture: ComponentFixture<TaskDisplayComponent>;
 
-  @Input()
-  task: TaskItem;
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [ TaskDisplayComponent ]
+    })
+    .compileComponents();
+  }));
 
-  /**
-   * Marks this task as `Complete`, changing its status respectively.
-   */
-  completeTask(): void {
-    const id: string = this.task.getId().getValue();
-    this.taskService.completeTask(id);
-  }
+  beforeEach(() => {
+    fixture = TestBed.createComponent(TaskDisplayComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
 
-  /**
-   * Deletes this task from the list.
-   */
-  deleteTask(): void {
-    const id: string = this.task.getId().getValue();
-    this.taskService.deleteTask(id);
-  }
-}
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

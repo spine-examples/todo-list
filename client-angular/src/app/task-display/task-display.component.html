@@ -17,11 +17,5 @@
   ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
-<button mat-icon-button (click)="deleteTask(); $event.stopPropagation();">
-    <mat-icon>delete</mat-icon>
-</button>
-<button mat-icon-button (click)="completeTask(); $event.stopPropagation();">
-    <mat-icon>done</mat-icon>
-</button>
-<app-task-display [(task)]="task">
-</app-task-display>
+
+<a class="task-description" routerLink="/details/{{task.getId()}}">{{task.getDescription()}}</a>
