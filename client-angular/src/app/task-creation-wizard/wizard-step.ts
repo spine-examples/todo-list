@@ -46,26 +46,8 @@ export abstract class WizardStep implements AfterViewInit {
     // NO-OP by default.
   }
 
-  /**
-   * Handles situations when we return to the step from the later stages and it's initially marked
-   * as completed.
-   *
-   * Should be called in all descendant methods that change the inputs of the `TaskCreationWizard`.
-   */
-  protected onInputChange(): void {
-    this.setNotCompleted();
-  }
-
-  private setCompleted(): void {
-    this.stepper.selected.completed = true;
-  }
-
-  private setNotCompleted(): void {
-    this.stepper.selected.completed = false;
-  }
-
   /*
-  * Navigation methods all of which are optional for the component.
+  * Navigation methods which can be used by child components as necessary.
   */
 
   protected previous(): void {
@@ -95,6 +77,24 @@ export abstract class WizardStep implements AfterViewInit {
   }
 
   protected abstract doStep(): Promise<void>;
+
+  /**
+   * Handles situations when we return to the step from the later stages and it's initially marked
+   * as completed.
+   *
+   * Should be called in all descendant methods that change the inputs of the `TaskCreationWizard`.
+   */
+  protected onInputChange(): void {
+    this.setNotCompleted();
+  }
+
+  private setCompleted(): void {
+    this.stepper.selected.completed = true;
+  }
+
+  private setNotCompleted(): void {
+    this.stepper.selected.completed = false;
+  }
 
   private goToActiveTasks(): void {
     this.router.navigate(['/task-list/active']);
