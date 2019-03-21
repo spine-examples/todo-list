@@ -21,6 +21,5 @@
 <mat-nav-list class="tasks">
     <a class="list-item" mat-list-item *ngFor="let task of tasks">
         <app-task-display class="task-item" [task]="task"></app-task-display>
-        <app-delete-button [taskToDelete]="task.getId().getValue()"></app-delete-button>
     </a>
 </mat-nav-list>

@@ -33,9 +33,6 @@ import {TaskSubsetComponent} from '../../task-subset.component';
 })
 export class CompletedTasksComponent extends TaskSubsetComponent {
 
-  /** Visible for testing. */
-  readonly tasks: TaskItem[] = [];
-
   constructor(taskService: TaskService) {
     super(taskService);
   }
