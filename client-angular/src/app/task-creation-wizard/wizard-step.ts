@@ -1,9 +1,3 @@
-import {Location} from '@angular/common';
-import {AfterViewInit, Input} from '@angular/core';
-import {MatStepper} from '@angular/material';
-
-import {TaskCreationWizard} from './service/task-creation-wizard.service';
-
 /*
  * Copyright 2019, TeamDev. All rights reserved.
  *
@@ -24,14 +18,18 @@ import {TaskCreationWizard} from './service/task-creation-wizard.service';
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {AfterViewInit, Input} from '@angular/core';
+import {MatStepper} from '@angular/material';
+
+import {TaskCreationWizard} from './service/task-creation-wizard.service';
+import {Router} from '@angular/router';
+
 export abstract class WizardStep implements AfterViewInit {
 
   @Input()
   stepper: MatStepper;
 
-  isRedirect = false;
-
-  protected constructor(private readonly location: Location,
+  protected constructor(private readonly router: Router,
                         protected readonly wizard: TaskCreationWizard) {
   }
 
@@ -89,23 +87,16 @@ export abstract class WizardStep implements AfterViewInit {
    * Cancel draft creation.
    */
   protected cancel(): void {
-    this.wizard.cancelTaskCreation().then(() => this.backFromWizard());
+    this.wizard.cancelTaskCreation().then(() => this.goToActiveTasks());
   }
 
   protected finish() {
-    this.doStep().then(() => this.backFromWizard());
+    this.doStep().then(() => this.goToActiveTasks());
   }
 
   protected abstract doStep(): Promise<void>;
 
-  /**
-   * Checking current path is not working as {@link Location} wrapper does not go back itself after
-   * calling `back()`.
-   */
-  private backFromWizard(): void {
-    this.location.back();
-    if (this.isRedirect) {
-      this.location.back();
-    }
+  private goToActiveTasks(): void {
+    this.router.navigate(['/task-list/active']);
   }
 }

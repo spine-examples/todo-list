@@ -18,8 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
 import {Component} from '@angular/core';
+import {Router} from '@angular/router';
 
 import {TaskCreationWizard} from '../service/task-creation-wizard.service';
 import {WizardStep} from '../wizard-step';
@@ -31,8 +31,8 @@ import {WizardStep} from '../wizard-step';
 })
 export class ConfirmationComponent extends WizardStep {
 
-  constructor(wizard: TaskCreationWizard, location: Location) {
-    super(location, wizard);
+  constructor(router: Router, wizard: TaskCreationWizard) {
+    super(router, wizard);
   }
 
   protected doStep(): Promise<void> {

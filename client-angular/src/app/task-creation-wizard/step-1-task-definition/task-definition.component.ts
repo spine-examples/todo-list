@@ -18,8 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
 import {Component} from '@angular/core';
+import {Router} from '@angular/router';
 import {Moment} from 'moment';
 
 import {TaskCreationWizard} from '../service/task-creation-wizard.service';
@@ -53,8 +53,8 @@ export class TaskDefinitionComponent extends WizardStep {
   priority: TaskPriority;
   dueDate: Timestamp;
 
-  constructor(wizard: TaskCreationWizard, location: Location) {
-    super(location, wizard);
+  constructor(router: Router, wizard: TaskCreationWizard) {
+    super(router, wizard);
   }
 
   /**

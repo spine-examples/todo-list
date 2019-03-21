@@ -18,8 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
 import {Component} from '@angular/core';
+import {Router} from '@angular/router';
 
 import {LabelService} from '../../labels/label.service';
 import {TaskCreationWizard} from '../service/task-creation-wizard.service';
@@ -41,8 +41,8 @@ export class LabelAssignmentComponent extends WizardStep {
 
   private readonly loadAllLabels: Promise<TaskLabel[]>;
 
-  constructor(wizard: TaskCreationWizard, location: Location, labelService: LabelService) {
-    super(location, wizard);
+  constructor(router: Router, wizard: TaskCreationWizard, labelService: LabelService) {
+    super(router, wizard);
     this.loadAllLabels = labelService.fetchAllLabels();
   }
 
