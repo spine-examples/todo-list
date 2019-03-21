@@ -19,16 +19,26 @@
  */
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {RouterModule} from '@angular/router';
+import {MatListModule} from '@angular/material/list';
 
+import {Client} from 'spine-web';
 import {CompletedTasksComponent} from '../../../../src/app/task-list/completed/completed-tasks.component';
+import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
+import {TaskService} from '../../../../src/app/task-service/task.service';
+import {mockSpineWebClient} from '../../given/mock-spine-web-client';
 
 describe('CompletedTasksComponent', () => {
-  let component: CompletedTasksComponent;
+
+  const mockClient = mockSpineWebClient();
   let fixture: ComponentFixture<CompletedTasksComponent>;
+  let component: CompletedTasksComponent;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [CompletedTasksComponent]
+      declarations: [CompletedTasksComponent, TaskDisplayComponent],
+      imports: [MatListModule, RouterModule],
+      providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
   }));
