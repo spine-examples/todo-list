@@ -170,7 +170,7 @@ export class TaskCreationWizard {
    *
    * @see addLabelsReal
    */
-  addLabelsFake(labels: TaskLabel[]): Promise<void> {
+  addLabels(labels: TaskLabel[]): Promise<void> {
     return this.skipLabelAssignment().then(() => {
       this._taskLabels = labels;
     });
@@ -179,13 +179,14 @@ export class TaskCreationWizard {
   /**
    * Adds labels to the created task.
    *
-   * This method is a back-up method for when the bug with aggregate parts overriding one another
-   * is fixed and the real method assigning process can be used.
+   * This method is a back-up method for when the issue
+   * ('https://github.com/SpineEventEngine/core-java/issues/996') with aggregate parts overriding
+   * one another is fixed and the real method assigning process can be used.
    *
    * For now, the {@linkplain addLabels stub method} is used.
    */
   // noinspection JSUnusedGlobalSymbols See doc.
-  addLabels(labels: TaskLabel[]): Promise<void> {
+  addLabelsReal(labels: TaskLabel[]): Promise<void> {
     const cmd = new AddLabels();
     cmd.setId(this._id);
     const labelIds = labels.map(label => label.getId());
