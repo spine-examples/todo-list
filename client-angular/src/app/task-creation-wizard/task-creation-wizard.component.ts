@@ -76,6 +76,13 @@ export class TaskCreationWizardComponent implements AfterViewInit {
     this.initWizard = wizard.init(taskCreationId);
   }
 
+  /**
+   * Reports an error which cannot really be recovered for the wizard.
+   */
+  private static reportFatalError(err): void {
+    throw new Error(err);
+  }
+
   ngAfterViewInit(): void {
     this.initWizard
       .then(() => {
@@ -91,16 +98,7 @@ export class TaskCreationWizardComponent implements AfterViewInit {
 
         this.isLoading = false;
       })
-      .catch(err => this.reportFatalError(err));
-  }
-
-  /**
-   * Fatality.
-   *
-   * todo show in special window as getting this is real for the user.
-   */
-  private reportFatalError(err): void {
-    throw new Error(err);
+      .catch(err => TaskCreationWizardComponent.reportFatalError(err));
   }
 
   /**
@@ -130,7 +128,7 @@ export class TaskCreationWizardComponent implements AfterViewInit {
     const currentStage = this.wizard.stage;
     const index = TaskCreationWizardComponent.STEPS.get(currentStage);
     if (index === undefined) {
-      this.reportFatalError(`There is no wizard step for stage ${currentStage}`);
+      TaskCreationWizardComponent.reportFatalError(`There is no wizard step for stage ${currentStage}`);
       return;
     }
     for (let i = 0; i < index; i++) {
