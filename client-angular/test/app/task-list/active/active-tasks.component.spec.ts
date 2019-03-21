@@ -40,6 +40,7 @@ import {
 } from '../../given/tasks';
 
 import {MyListView, TaskItem, TaskListView} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
 
 describe('ActiveTasksComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -51,7 +52,7 @@ describe('ActiveTasksComponent', () => {
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ActiveTasksComponent, TaskItemComponent],
+      declarations: [ActiveTasksComponent, TaskItemComponent, TaskDisplayComponent],
       imports: [
         RouterTestingModule.withRoutes([]),
         ReactiveFormsModule,
