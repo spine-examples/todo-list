@@ -24,6 +24,7 @@ import {Client, Type} from 'spine-web';
 import {StringValue} from '../../pipes/string-value/string-value.pipe';
 import {UuidGenerator} from '../../uuid-generator/uuid-generator';
 import {LabelService} from '../../labels/label.service';
+import {TaskService} from '../../task-service/task.service';
 
 import {Message} from 'google-protobuf';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
@@ -39,7 +40,6 @@ import {
   SkipLabels,
   StartTaskCreation
 } from 'generated/main/js/todolist/c/commands_pb';
-import {TaskService} from "../../task-service/task.service";
 
 /**
  * A service which executes commands specific to the Task Creation Wizard process.
@@ -170,7 +170,7 @@ export class TaskCreationWizard {
    *
    * @see addLabelsReal
    */
-  addLabels(labels: TaskLabel[]): Promise<void> {
+  addLabelsFake(labels: TaskLabel[]): Promise<void> {
     return this.skipLabelAssignment().then(() => {
       this._taskLabels = labels;
     });
@@ -185,7 +185,7 @@ export class TaskCreationWizard {
    * For now, the {@linkplain addLabels stub method} is used.
    */
   // noinspection JSUnusedGlobalSymbols See doc.
-  addLabelsReal(labels: TaskLabel[]): Promise<void> {
+  addLabels(labels: TaskLabel[]): Promise<void> {
     const cmd = new AddLabels();
     cmd.setId(this._id);
     const labelIds = labels.map(label => label.getId());
@@ -194,7 +194,6 @@ export class TaskCreationWizard {
     const addLabels = new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
-
     return addLabels.then(() => {
       this._taskLabels = labels;
     });
