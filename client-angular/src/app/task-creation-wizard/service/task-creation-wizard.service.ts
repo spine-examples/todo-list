@@ -145,6 +145,12 @@ export class TaskCreationWizard {
 
   updateTaskDetails(description: TaskDescription, priority?: TaskPriority, dueDate?: Timestamp)
     : Promise<void> {
+    console.log('Updating task details');
+    console.log(description);
+    console.log(priority);
+    console.log(dueDate);
+    console.log('Id');
+    console.log(this._id);
     const cmd = new SetTaskDetails();
     cmd.setId(this._id);
     cmd.setDescription(description);
@@ -161,6 +167,7 @@ export class TaskCreationWizard {
       this._taskDescription = description;
       this._taskPriority = priority;
       this._taskDueDate = dueDate;
+      this._stage = TaskCreation.Stage.LABEL_ASSIGNMENT;
     });
   }
 
@@ -173,6 +180,7 @@ export class TaskCreationWizard {
   addLabels(labels: TaskLabel[]): Promise<void> {
     return this.skipLabelAssignment().then(() => {
       this._taskLabels = labels;
+      this._stage = TaskCreation.Stage.CONFIRMATION;
     });
   }
 

@@ -19,7 +19,7 @@
  */
 
 import {Location} from '@angular/common';
-import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
 import {MatHorizontalStepper} from '@angular/material';
 import {ActivatedRoute} from '@angular/router';
 
@@ -27,6 +27,7 @@ import {TaskCreationWizard} from './service/task-creation-wizard.service';
 import {TaskDefinitionComponent} from './step-1-task-definition/task-definition.component';
 import {LabelAssignmentComponent} from './step-2-label-assignment/label-assignment.component';
 import {ConfirmationComponent} from './step-3-confirmation/confirmation.component';
+import {TaskCreationWizardCache} from './wizard-cache/task-creation-wizard-cache.service';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
@@ -43,7 +44,17 @@ import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/co
     TaskCreationWizard
   ]
 })
-export class TaskCreationWizardComponent implements AfterViewInit {
+export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
+
+  constructor(private wizard: TaskCreationWizard,
+              private readonly wizardCache: TaskCreationWizardCache,
+              private readonly changeDetector: ChangeDetectorRef,
+              private readonly location: Location,
+              route: ActivatedRoute) {
+    this.isLoading = true;
+    const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
+    this.initWizard = this.doInitWizard(taskCreationId);
+  }
 
   private static readonly STEPS: Map<TaskCreation.Stage, number> = new Map([
     [TaskCreation.Stage.TASK_DEFINITION, 0],
@@ -67,20 +78,22 @@ export class TaskCreationWizardComponent implements AfterViewInit {
 
   private readonly initWizard: Promise<void>;
 
-  constructor(private readonly wizard: TaskCreationWizard,
-              private readonly changeDetector: ChangeDetectorRef,
-              private readonly location: Location,
-              route: ActivatedRoute) {
-    this.isLoading = true;
-    const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
-    this.initWizard = wizard.init(taskCreationId);
-  }
-
   /**
    * Reports an error which cannot really be recovered for the wizard.
    */
   private static reportFatalError(err): void {
     throw new Error(err);
+  }
+
+  private doInitWizard(taskCreationId): Promise<void> {
+    if (this.wizardCache.contains(taskCreationId)) {
+      console.log('Hitting wizard cache');
+      return Promise.resolve(this.wizardCache.get(taskCreationId))
+        .then(wizard => {
+          this.wizard = wizard;
+        });
+    }
+    return this.wizard.init(taskCreationId);
   }
 
   ngAfterViewInit(): void {
@@ -99,6 +112,11 @@ export class TaskCreationWizardComponent implements AfterViewInit {
         this.isLoading = false;
       })
       .catch(err => TaskCreationWizardComponent.reportFatalError(err));
+  }
+
+  ngOnDestroy(): void {
+    console.log('wizard component on destroy');
+    this.wizardCache.store(this.wizard.id.getValue(), this.wizard);
   }
 
   /**
