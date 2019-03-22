@@ -44,6 +44,7 @@ import java.util.List;
 
 import static io.spine.base.Time.getCurrentTime;
 import static io.spine.examples.todolist.TaskPriority.HIGH;
+import static io.spine.examples.todolist.TaskStatus.COMPLETED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.deleteTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
@@ -53,7 +54,7 @@ import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.updateT
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.removeLabelFromTaskInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("OverlyCoupledClass")
@@ -92,7 +93,7 @@ class ToDoListTest extends AbstractIntegrationTest {
         assertEquals(1, taskItems.size());
 
         TaskItem taskItem = taskItems.get(0);
-        assertTrue(taskItem.getCompleted());
+        assertEquals(COMPLETED, taskItem.getStatus());
     }
 
     @Test
@@ -133,7 +134,7 @@ class ToDoListTest extends AbstractIntegrationTest {
 
         TaskItem taskItem = tasks.get(0);
 
-        assertFalse(taskItem.getCompleted());
+        assertNotSame(COMPLETED, taskItem.getStatus());
 
         assertTrue(labeledTasks.isEmpty());
     }

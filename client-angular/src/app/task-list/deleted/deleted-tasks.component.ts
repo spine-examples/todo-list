@@ -19,6 +19,10 @@
  */
 
 import {Component} from '@angular/core';
+import {TaskSubsetComponent} from '../../task-subset.component';
+
+import {TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskService} from '../../task-service/task.service';
 
 /**
  * A component displaying deleted tasks view.
@@ -27,7 +31,13 @@ import {Component} from '@angular/core';
   selector: 'app-deleted-tasks',
   templateUrl: './deleted-tasks.component.html'
 })
-export class DeletedTasksComponent {
+export class DeletedTasksComponent extends TaskSubsetComponent {
 
-  constructor() { }
+  constructor(taskService: TaskService) {
+    super(taskService);
+  }
+
+  specifyTask(task): boolean {
+    return task.getStatus() === TaskStatus.DELETED;
+  }
 }

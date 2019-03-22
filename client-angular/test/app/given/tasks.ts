@@ -20,7 +20,8 @@
 
 import {TaskId, TaskListId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
-import {TaskItem, TaskListView, MyListView} from 'generated/main/js/todolist/q/projections_pb';
+import {MyListView, TaskItem, TaskListView} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskStatus} from 'generated/main/js/todolist/attributes_pb';
 
 export const HOUSE_TASK_1_ID = 'task-1';
 export const HOUSE_TASK_1_DESC = 'Wash the dishes';
@@ -44,10 +45,12 @@ export function houseTasks(): MyListView {
   taskListId.setValue('task-list-ID');
 
   const taskListView = new TaskListView();
-  taskListView.setItemsList([
+  const tasks = [
     task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC),
     task(HOUSE_TASK_2_ID, HOUSE_TASK_2_DESC)
-  ]);
+  ];
+  tasks.forEach(taskview => taskview.setStatus(TaskStatus.OPEN));
+  taskListView.setItemsList(tasks);
   const result = new MyListView();
   result.setId(taskListId);
   result.setMyList(taskListView);

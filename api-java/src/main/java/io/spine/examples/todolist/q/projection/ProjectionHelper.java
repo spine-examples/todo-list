@@ -40,6 +40,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static io.spine.examples.todolist.TaskStatus.COMPLETED;
+import static io.spine.examples.todolist.TaskStatus.OPEN;
+
 /**
  * Class provides methods to manipulate and handle views.
  */
@@ -171,7 +174,7 @@ final class ProjectionHelper {
     static List<TaskItem> updateTaskItemList(List<TaskItem> tasks, TaskReopened event) {
         TaskId targetTaskId = event.getTaskId();
 
-        TaskTransformation updateFn = builder -> builder.setCompleted(false);
+        TaskTransformation updateFn = builder -> builder.setStatus(OPEN);
         return transformWithUpdate(tasks, targetTaskId, updateFn);
     }
 
@@ -187,7 +190,7 @@ final class ProjectionHelper {
     static List<TaskItem> updateTaskItemList(List<TaskItem> tasks, TaskCompleted event) {
         TaskId targetTaskId = event.getTaskId();
 
-        TaskTransformation updateFn = builder -> builder.setCompleted(true);
+        TaskTransformation updateFn = builder -> builder.setStatus(COMPLETED);
         return transformWithUpdate(tasks, targetTaskId, updateFn);
     }
 

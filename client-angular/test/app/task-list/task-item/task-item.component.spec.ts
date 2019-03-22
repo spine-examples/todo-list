@@ -27,17 +27,23 @@ import {TaskItemComponent} from '../../../../src/app/task-list/task-item/task-it
 import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, task} from '../../given/tasks';
 
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskService} from '../../../../src/app/task-service/task.service';
+import {mockSpineWebClient} from '../../given/mock-spine-web-client';
+import {Client} from 'spine-web';
+import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
 
 describe('TaskItemComponent', () => {
   const taskItem = task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
 
+  const mockClient = mockSpineWebClient();
   let component: TaskItemComponent;
   let fixture: ComponentFixture<TaskItemComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TaskItemComponent, TestHostComponent],
-      imports: [RouterTestingModule.withRoutes([]), MatIconModule]
+      declarations: [TaskItemComponent, TestHostComponent, TaskDisplayComponent],
+      imports: [RouterTestingModule.withRoutes([]), MatIconModule],
+      providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
   }));
@@ -60,15 +66,15 @@ describe('TaskItemComponent', () => {
   });
 
   it('should allow to complete task', () => {
-    window.alert = jasmine.createSpy('alert');
+    const completeTaskMethod = spyOn(component.taskService, 'completeTask');
     component.completeTask();
-    expect(window.alert).toHaveBeenCalledWith(`Completing task with ID: ${HOUSE_TASK_1_ID}`);
+    expect(completeTaskMethod).toHaveBeenCalledWith(HOUSE_TASK_1_ID);
   });
 
   it('should allow to delete task', () => {
-    window.alert = jasmine.createSpy('alert');
+    const completeTaskMethod = spyOn(component.taskService, 'deleteTask');
     component.deleteTask();
-    expect(window.alert).toHaveBeenCalledWith(`Deleting task with ID: ${HOUSE_TASK_1_ID}`);
+    expect(completeTaskMethod).toHaveBeenCalledWith(HOUSE_TASK_1_ID);
   });
 
   it('should receive task item injected by the host component', () => {

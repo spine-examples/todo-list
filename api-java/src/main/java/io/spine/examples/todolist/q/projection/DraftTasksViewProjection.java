@@ -81,7 +81,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
                 .setId(event.getId())
                 .setDescription(taskDetails.getDescription())
                 .setPriority(taskDetails.getPriority())
-                .setCompleted(taskDetails.getCompleted())
+                .setStatus(taskDetails.getStatus())
                 .build();
         List<TaskItem> views = new ArrayList<>(builder().getDraftTasks()
                                                         .getItemsList());

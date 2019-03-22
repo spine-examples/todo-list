@@ -17,6 +17,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-button {
-  float: right;
+
+import {Component, Input} from '@angular/core';
+
+import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskService} from '../task-service/task.service';
+
+
+@Component({
+  selector: 'app-task-display',
+  templateUrl: './task-display.component.html',
+  styleUrls: ['./task-display.component.css']
+})
+export class TaskDisplayComponent {
+
+  /** Visible for tests. */
+  readonly taskService: TaskService;
+
+  constructor(readonly service: TaskService) {
+    this.taskService = service;
+  }
+
+  @Input()
+  task: TaskItem;
 }

@@ -27,8 +27,9 @@ import {UuidGenerator} from '../uuid-generator/uuid-generator';
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {Task} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
-import {CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
+import {CompleteTask, CreateBasicTask, DeleteTask} from 'generated/main/js/todolist/c/commands_pb';
 import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskStatus} from 'generated/main/js/todolist/attributes_pb';
 
 /**
  * A service which performs operations on To-Do List tasks.
@@ -52,6 +53,32 @@ export class TaskService {
   /** Visible for testing. */
   static logCmdErr(err) {
     console.log('Error when sending command to the server: %s', err);
+  }
+
+  /**
+   * Deletes the task with the specified ID.
+   *
+   * @param taskId ID of the task to delete.
+   */
+  deleteTask(taskId: string): void {
+    const cmd = new DeleteTask();
+    const id = new TaskId();
+    id.setValue(taskId);
+    cmd.setId(id);
+    this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
+  }
+
+  /**
+   * Completes the task with the specified ID, changing its status respectively.
+   *
+   * @param taskId ID of the task to complete
+   */
+  completeTask(taskId: string): void {
+    const cmd = new CompleteTask();
+    const id = new TaskId();
+    id.setValue(taskId);
+    cmd.setId(id);
+    this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
   }
 
   /**
@@ -87,23 +114,23 @@ export class TaskService {
   // TODO:2019-03-12:dmytro.kuzmin: Actually filter by active, will require extending `TaskItem`
   // todo projection.
   /**
-   * Subscribes to the active tasks and reflects them to a given array.
-   *
-   * Active tasks are those which are not in draft state, completed, or deleted.
+   * Subscribes to the tasks that match the given predicate and reflects them to a given array.
    *
    * The tasks are retrieved from the `MyListView` projection, which is an application-wide
-   * singleton storing active and completed task items.
+   * singleton storing task items.
    *
    * Subscription can be cancelled via the method return value, which is a `Promise` resolving to
    * the `unsubscribe` function.
    *
    * @param reflectInto the array which will receive subscription updates
+   * @param predicate predicate that returned task items must match
    * @returns a `Promise` which resolves to an `unsubscribe` function
    */
-  subscribeToActive(reflectInto: TaskItem[]): Promise<() => void> {
+  subscribeToMatching(reflectInto: TaskItem[], predicate: (TaskItem) => boolean): Promise<() => void> {
     const refreshTasks = {
       next: (view: MyListView): void => {
-        const taskItems = view.getMyList().getItemsList();
+        const taskItems = view.getMyList().getItemsList()
+          .filter(predicate);
         // Refresh the array.
         reflectInto.length = 0;
         reflectInto.push(...taskItems);
@@ -126,5 +153,27 @@ export class TaskService {
           reject(err);
         })
     );
+  }
+
+  /**
+   * Subscribes to the active tasks and reflects them to a given array.
+   *
+   * Active tasks are those which are not in draft state, completed, or deleted.
+   *
+   * The tasks are retrieved from the `MyListView` projection, which is an application-wide
+   * singleton storing active and completed task items.
+   *
+   * Subscription can be cancelled via the method return value, which is a `Promise` resolving to
+   * the `unsubscribe` function.
+   *
+   * @param reflectInto the array which will receive subscription updates
+   * @returns a `Promise` which resolves to an `unsubscribe` function
+   */
+  subscribeToActive(reflectInto: TaskItem[]): Promise<() => void> {
+    return this.subscribeToMatching(reflectInto, task => task.getStatus() === TaskStatus.OPEN);
+  }
+
+  subscribeToCompleted(reflectInto: TaskItem[]): Promise<() => void> {
+    return this.subscribeToMatching(reflectInto, task => task.getStatus() === TaskStatus.COMPLETED);
   }
 }

@@ -1,0 +1,9 @@
+::ng-deep app-task-display {
+  display: flex;
+  flex-grow: 1;
+}
+
+.task-description {
+  display: inline-block;
+  width: 100%;
+}

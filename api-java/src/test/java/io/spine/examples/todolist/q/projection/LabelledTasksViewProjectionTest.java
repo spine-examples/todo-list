@@ -48,6 +48,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.base.Identifier.newUuid;
+import static io.spine.examples.todolist.TaskStatus.COMPLETED;
 import static io.spine.examples.todolist.testdata.TestBoundedContextFactory.boundedContextInstance;
 import static io.spine.examples.todolist.testdata.TestEventBusFactory.newEventBusBuilder;
 import static io.spine.examples.todolist.testdata.TestEventEnricherFactory.LABEL_TITLE;
@@ -69,8 +70,8 @@ import static io.spine.examples.todolist.testdata.TestTaskLabelsEventFactory.lab
 import static io.spine.examples.todolist.testdata.TestTaskLabelsEventFactory.labelRemovedFromTaskInstance;
 import static io.spine.server.storage.StorageFactorySwitch.newInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class LabelledTasksViewProjectionTest extends ProjectionTest {
@@ -421,7 +422,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             assertEquals(1, actualListSize);
 
             TaskItem taskView = listView.getItems(0);
-            assertTrue(taskView.getCompleted());
+            assertEquals(COMPLETED, taskView.getStatus());
         }
 
         @Test
@@ -442,7 +443,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             assertEquals(1, actualListSize);
 
             TaskItem taskView = listView.getItems(0);
-            assertTrue(taskView.getCompleted());
+            assertEquals(COMPLETED, taskView.getStatus());
         }
     }
 
@@ -472,7 +473,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             assertEquals(1, actualListSize);
 
             TaskItem taskView = listView.getItems(0);
-            assertFalse(taskView.getCompleted());
+            assertNotSame(COMPLETED, taskView.getStatus());
         }
 
         @Test
@@ -497,7 +498,7 @@ class LabelledTasksViewProjectionTest extends ProjectionTest {
             assertEquals(1, actualListSize);
 
             TaskItem taskView = listView.getItems(0);
-            assertTrue(taskView.getCompleted());
+            assertEquals(COMPLETED, taskView.getStatus());
         }
     }
 

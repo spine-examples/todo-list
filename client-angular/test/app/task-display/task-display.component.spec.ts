@@ -19,33 +19,35 @@
  */
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {RouterModule} from '@angular/router';
-import {MatListModule} from '@angular/material/list';
-
+import {RouterTestingModule} from '@angular/router/testing';
 import {Client} from 'spine-web';
-import {CompletedTasksComponent} from '../../../../src/app/task-list/completed/completed-tasks.component';
-import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
-import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient} from '../../given/mock-spine-web-client';
 
-describe('CompletedTasksComponent', () => {
+import {TaskDisplayComponent} from '../../../src/app/task-display/task-display.component';
+import {TaskService} from '../../../src/app/task-service/task.service';
+import {mockSpineWebClient} from '../given/mock-spine-web-client';
+import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, houseTasks, task} from '../given/tasks';
+
+describe('TaskDisplayComponent', () => {
 
   const mockClient = mockSpineWebClient();
-  let fixture: ComponentFixture<CompletedTasksComponent>;
-  let component: CompletedTasksComponent;
+  let component: TaskDisplayComponent;
+  let fixture: ComponentFixture<TaskDisplayComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [CompletedTasksComponent, TaskDisplayComponent],
-      imports: [MatListModule, RouterModule],
+      declarations: [TaskDisplayComponent],
+      imports: [RouterTestingModule.withRoutes([])],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CompletedTasksComponent);
+
+    const taskItem = task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
+    fixture = TestBed.createComponent(TaskDisplayComponent);
     component = fixture.componentInstance;
+    component.task = taskItem;
     fixture.detectChanges();
   });
 

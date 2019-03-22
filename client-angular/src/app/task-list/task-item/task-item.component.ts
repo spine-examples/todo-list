@@ -20,8 +20,8 @@
 
 import {Component, Input} from '@angular/core';
 
-import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskService} from '../../task-service/task.service';
 
 /**
  * The view of a single task in the list.
@@ -33,14 +33,25 @@ import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 })
 export class TaskItemComponent {
 
+  constructor(readonly taskService: TaskService) {
+  }
+
   @Input()
   task: TaskItem;
 
+  /**
+   * Marks this task as `Complete`, changing its status respectively.
+   */
   completeTask(): void {
-    alert(`Completing task with ID: ${this.task.getId()}`);
+    const id: string = this.task.getId().getValue();
+    this.taskService.completeTask(id);
   }
 
+  /**
+   * Deletes this task from the list.
+   */
   deleteTask(): void {
-    alert(`Deleting task with ID: ${this.task.getId()}`);
+    const id: string = this.task.getId().getValue();
+    this.taskService.deleteTask(id);
   }
 }
