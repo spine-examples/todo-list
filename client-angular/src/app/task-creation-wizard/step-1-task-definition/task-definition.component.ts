@@ -33,8 +33,7 @@ import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 
 @Component({
   selector: 'app-task-definition',
-  templateUrl: './task-definition.component.html',
-  styleUrls: ['./task-definition.component.css']
+  templateUrl: './task-definition.component.html'
 })
 export class TaskDefinitionComponent extends WizardStep {
 

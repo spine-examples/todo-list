@@ -77,7 +77,7 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   }
 
   /**
-   * Reports an error which cannot really be recovered for the wizard.
+   * Reports an error which cannot really be recovered.
    */
   private static reportFatalError(err): void {
     throw new Error(err);
@@ -86,7 +86,7 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.initWizard
       .then(() => {
-        this.ensureLocation();
+        this.ensureRouteHasId();
         this.moveToCurrentStep();
 
         this.taskDefinition.initFromWizard();
@@ -107,7 +107,7 @@ export class TaskCreationWizardComponent implements AfterViewInit {
    * This method changes the current location, so the user sees the "correct" URL with a task
    * creation ID param.
    */
-  private ensureLocation(): void {
+  private ensureRouteHasId(): void {
     const idString = this.wizard.id.getValue();
     const urlWithId = `/wizard/${idString}`;
     const alreadyWithId = this.location.isCurrentPathEqualTo(urlWithId);
@@ -125,7 +125,9 @@ export class TaskCreationWizardComponent implements AfterViewInit {
     const currentStage = this.wizard.stage;
     const index = TaskCreationWizardComponent.STEPS.get(currentStage);
     if (index === undefined) {
-      TaskCreationWizardComponent.reportFatalError(`There is no wizard step for stage ${currentStage}`);
+      TaskCreationWizardComponent.reportFatalError(
+        `There is no wizard step for stage ${currentStage}`
+      );
       return;
     }
     this.completeVisitedSteps(index);

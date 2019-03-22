@@ -59,7 +59,7 @@ export abstract class WizardStep implements AfterViewInit {
   }
 
   /*
-  * Navigation methods which can be used by child components as necessary.
+  * Navigation methods which can be used by the child components as necessary.
   */
 
   protected previous(): void {
