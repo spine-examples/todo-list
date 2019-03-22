@@ -23,7 +23,7 @@ import {Moment, unix} from 'moment';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 
 /**
- * Obtains JS `Moment` from the passed `Timestamp` and vice versa.
+ * Obtains Moment.js `Moment` from the passed `Timestamp` and vice versa.
  *
  * Usage:
  *   timestamp | momentFromTimestamp
