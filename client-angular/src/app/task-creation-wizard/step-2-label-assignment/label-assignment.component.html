@@ -22,9 +22,8 @@
     Available labels:
 </p>
 <p>
-    <mat-progress-bar mode="buffer" *ngIf="!labelsFetched"></mat-progress-bar>
-    <mat-list *ngIf="labelsFetched">
-        <mat-list-item *ngFor="let label of available" (click)="switchSelectedStatus(label.getId())"
+    <mat-list>
+        <mat-list-item *ngFor="let label of available" (click)="switchSelectedStatus(label)"
                          [style.background-color]="label.getColor() | labelColorView">
             {{label.getTitle()}}
         </mat-list-item>
@@ -35,11 +34,10 @@
 </p>
 <p class="mat-h2">
     Selected:
-    <mat-chip-list *ngIf="available">
-        <mat-chip *ngFor="let labelId of selectedIds"
-                  (removed)="switchSelectedStatus(labelId)"
-                  [style.background-color]="getFromAvailable(labelId).getColor() | labelColorView">
-            {{getFromAvailable(labelId).getTitle()}}
+    <mat-chip-list>
+        <mat-chip *ngFor="let label of selected" (removed)="switchSelectedStatus(label)"
+                  [style.background-color]="label.getColor() | labelColorView">
+            {{label.getTitle()}}
             <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip>
     </mat-chip-list>
