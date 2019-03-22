@@ -40,7 +40,7 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
   private unsubscribe: () => void;
 
   /** Visible for testing. */
-  readonly tasks: TaskItem[] = [];
+  tasks: TaskItem[] = [];
   private createBasicTaskForms: FormGroup;
 
   constructor(private readonly taskService: TaskService, private formBuilder: FormBuilder) {
@@ -63,8 +63,8 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.taskService.subscribeToActive(this.tasks)
-      .then(unsubscribe => this.unsubscribe = unsubscribe);
+    this.tasks = this.taskService.tasks;
+    this.unsubscribe = this.taskService.unsubscribe;
   }
 
   ngOnDestroy(): void {
