@@ -21,7 +21,7 @@
 <app-page-header text="New Task"></app-page-header>
 
 <mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
-<mat-horizontal-stepper linear #stepper>
+<mat-horizontal-stepper linear #stepper [hidden]="isLoading">
     <mat-step>
         <ng-template matStepLabel>Task definition</ng-template>
         <app-task-definition [stepper]="stepper">
