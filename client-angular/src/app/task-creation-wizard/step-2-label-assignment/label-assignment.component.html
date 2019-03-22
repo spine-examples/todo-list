@@ -23,22 +23,24 @@
 </p>
 <p>
     <mat-progress-bar mode="buffer" *ngIf="!labelsFetched"></mat-progress-bar>
-    <mat-selection-list *ngIf="labelsFetched">
-        <mat-list-option *ngFor="let label of available" (click)="switchSelectedStatus(label)"
+    <mat-list *ngIf="labelsFetched">
+        <mat-list-item *ngFor="let label of available" (click)="switchSelectedStatus(label.getId())"
                          [style.background-color]="label.getColor() | labelColorView">
             {{label.getTitle()}}
-        </mat-list-option>
-    </mat-selection-list>
+        </mat-list-item>
+    </mat-list>
 </p>
 <p>
     <a routerLink="/labels" mat-stroked-button color="primary">Edit labels</a>
 </p>
 <p class="mat-h2">
     Selected:
-    <mat-chip-list>
-        <mat-chip *ngFor="let label of selected"
-                  [style.background-color]="label.getColor() | labelColorView">
-            {{label.getTitle()}}
+    <mat-chip-list *ngIf="available">
+        <mat-chip *ngFor="let labelId of selectedIds"
+                  (removed)="switchSelectedStatus(labelId)"
+                  [style.background-color]="getFromAvailable(labelId).getColor() | labelColorView">
+            {{getFromAvailable(labelId).getTitle()}}
+            <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip>
     </mat-chip-list>
 </p>

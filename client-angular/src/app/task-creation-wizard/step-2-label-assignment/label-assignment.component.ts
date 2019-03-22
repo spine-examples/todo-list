@@ -35,9 +35,9 @@ import {LabelView} from 'generated/main/js/todolist/q/projections_pb';
 })
 export class LabelAssignmentComponent extends WizardStep {
 
-  // noinspection JSMismatchedCollectionQueryUpdate Queried as a part of NG model.
+  // noinspection JSMismatchedCollectionQueryUpdate Used as a part of NG model.
   private available: LabelView[];
-  private selected: LabelView[];
+  private selectedIds: LabelId[];
 
   private labelsFetched: boolean;
 
@@ -52,38 +52,43 @@ export class LabelAssignmentComponent extends WizardStep {
   protected initOwnModel(): void {
     this.loadAllLabels.then(labels => {
       this.available = labels;
-      this.available.sort(LabelService.sortLabels);
       this.labelsFetched = true;
     });
   }
 
   initFromWizard() {
-    this.selected = this.wizard.taskLabels;
+    this.selectedIds = this.wizard.taskLabels;
   }
 
-  switchSelectedStatus(label: LabelView): void {
+  getFromAvailable(id: LabelId): LabelView {
+    return this.available.find(label => label.getId().getValue() === id.getValue());
+  }
+
+  switchSelectedStatus(labelId: LabelId): void {
     this.onInputChange();
-    this.available.forEach(value => {
-      if (this.selected.includes(value)) {
-        console.log('includes');
-        console.log(value);
-      } else {
-        console.log('does not include');
-        console.log(value);
-      }
-    });
-    if (this.selected.includes(label)) {
-      const index = this.selected.indexOf(label);
-      this.selected.splice(index, 1);
+    if (this.isSelected(labelId)) {
+      this.removeFromSelected(labelId);
     } else {
-      this.selected.push(label);
+      this.selectedIds.push(labelId);
     }
-    this.selected.sort(LabelService.sortLabels);
+  }
+
+  private isSelected(labelId: LabelId): boolean {
+    return !!this.selectedIds.find(id => id.getValue() === labelId.getValue());
+  }
+
+  private removeFromSelected(labelId: LabelId): void {
+    const index = this.selectedIds
+      .map(id => id.getValue())
+      .indexOf(labelId.getValue());
+    if (!isNaN(index)) {
+      this.selectedIds.splice(index, 1);
+    }
   }
 
   protected doStep(): Promise<void> {
-    if (this.selected.length > 0) {
-      return this.wizard.addLabels(this.selected);
+    if (this.selectedIds.length > 0) {
+      return this.wizard.addLabels(this.selectedIds);
     }
     return this.wizard.skipLabelAssignment();
   }

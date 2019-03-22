@@ -32,7 +32,6 @@ import {LabelColor, TaskPriority} from 'generated/main/js/todolist/attributes_pb
 import {LabelId, TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {Task, TaskCreation} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
-import {LabelView} from 'generated/main/js/todolist/q/projections_pb';
 import {
   AddLabels,
   CancelTaskCreation,
@@ -59,7 +58,7 @@ export class TaskCreationWizard {
   private _taskDescription: TaskDescription;
   private _taskPriority: TaskPriority;
   private _taskDueDate: Timestamp;
-  private _taskLabels: LabelView[];
+  private _taskLabels: LabelId[];
 
   constructor(private readonly spineWebClient: Client,
               private readonly taskService: TaskService,
@@ -103,8 +102,7 @@ export class TaskCreationWizard {
   private restore(taskCreationId: TaskCreationId): Promise<void> {
     this._id = taskCreationId;
     return this.restoreProcessDetails()
-      .then(() => this.restoreTaskDetails())
-      .then(labelIds => this.restoreTaskLabels(labelIds));
+      .then(() => this.restoreTaskDetails());
   }
 
   private restoreProcessDetails(): Promise<void> {
@@ -115,7 +113,7 @@ export class TaskCreationWizard {
       });
   }
 
-  private restoreTaskDetails(): Promise<LabelId[]> {
+  private restoreTaskDetails(): Promise<void> {
     return this.taskService.fetchById(this._taskId)
       .then(task => {
         if (task.getDescription()) {
@@ -127,15 +125,8 @@ export class TaskCreationWizard {
         if (task.getDueDate()) {
           this._taskDueDate = task.getDueDate();
         }
-        return task.getLabelIdsList() ? task.getLabelIdsList().getIdsList() : [];
+        this._taskLabels = task.getLabelIdsList() ? task.getLabelIdsList().getIdsList() : [];
       });
-  }
-
-  private restoreTaskLabels(labelIds: LabelId[]): Promise<void> {
-    const details = labelIds.map(id => this.labelService.fetchLabelDetails(id));
-    return Promise.all(details).then(labels => {
-      this._taskLabels = labels;
-    });
   }
 
   private fetchProcessDetails(): Promise<TaskCreation> {
@@ -177,17 +168,16 @@ export class TaskCreationWizard {
    * Adds labels to the created task.
    */
   // noinspection JSUnusedGlobalSymbols See doc.
-  addLabels(labels: LabelView[]): Promise<void> {
+  addLabels(labelIds: LabelId[]): Promise<void> {
     const cmd = new AddLabels();
     cmd.setId(this._id);
-    const labelIds = labels.map(label => label.getId());
     cmd.setExistingLabelsList(labelIds);
 
     const addLabels = new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
     return addLabels.then(() => {
-      this._taskLabels = labels;
+      this._taskLabels = labelIds;
       this._stage = TaskCreation.Stage.CONFIRMATION;
     });
   }
@@ -236,7 +226,7 @@ export class TaskCreationWizard {
     return this._taskDueDate;
   }
 
-  get taskLabels(): LabelView[] {
+  get taskLabels(): LabelId[] {
     return this._taskLabels;
   }
 }

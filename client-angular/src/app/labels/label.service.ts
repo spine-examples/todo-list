@@ -38,10 +38,6 @@ export class LabelService {
   constructor(private readonly spineWebClient: Client) {
   }
 
-  static sortLabels(a: LabelView, b: LabelView): number {
-    return a.getTitle().localeCompare(b.getTitle());
-  }
-
   /**
    * Temporary test-only method.
    */
@@ -60,6 +56,7 @@ export class LabelService {
     return this.spineWebClient.fetchAll({ofType: Type.forClass(LabelView)}).atOnce();
   }
 
+  // noinspection JSUnusedGlobalSymbols Unused for now.
   fetchLabelDetails(labelId: LabelId): Promise<LabelView> {
     return new Promise<LabelView>((resolve, reject) =>
       this.spineWebClient.fetchById(Type.forClass(LabelView), labelId, resolve, reject)

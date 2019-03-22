@@ -26,9 +26,6 @@
 <p *ngIf="wizard.taskDueDate" class="mat-h3">
     with a due date: <i>'{{wizard.taskDueDate | momentFromTimestamp}}'</i>
 </p>
-<p *ngIf="wizard.taskLabels && wizard.taskLabels.length > 0" class="mat-h3">
-    labelled as: <span *ngFor="let label of wizard.taskLabels"><i>{{label.getTitle()}} </i></span>
-</p>
 <app-error-viewport></app-error-viewport>
 <a (click)="previous()" mat-button color='primary'>Previous</a>
 <a (click)="finish()" mat-button color='primary'>Finish</a>
