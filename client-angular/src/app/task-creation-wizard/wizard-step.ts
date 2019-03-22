@@ -55,6 +55,7 @@ export abstract class WizardStep implements AfterViewInit {
   }
 
   protected next(): void {
+    this.clearError();
     this.doStep()
       .then(() => {
         this.setCompleted();
@@ -102,5 +103,9 @@ export abstract class WizardStep implements AfterViewInit {
 
   private reportError(err): void {
     this.errorViewport.text = err;
+  }
+
+  private clearError(): void {
+    this.errorViewport.text = '';
   }
 }
