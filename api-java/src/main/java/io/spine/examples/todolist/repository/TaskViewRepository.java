@@ -18,27 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
-import {Component} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+package io.spine.examples.todolist.repository;
+
+import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.q.projection.TaskView;
+import io.spine.examples.todolist.q.projection.TaskViewProjection;
+import io.spine.server.projection.ProjectionRepository;
 
 /**
- * Component responsible for displaying a single task.
+ * Repository for the {@link TaskViewProjection}.
  */
-@Component({
-  selector: 'app-task-details',
-  templateUrl: './task-details.component.html'
-})
-export class TaskDetailsComponent {
-
-  /** Visible for testing. */
-  readonly taskId;
-
-  constructor(private readonly location: Location, route: ActivatedRoute) {
-    this.taskId = route.snapshot.paramMap.get('id');
-  }
-
-  back(): void {
-    this.location.back();
-  }
+public class TaskViewRepository
+        extends ProjectionRepository<TaskId, TaskViewProjection, TaskView> {
 }

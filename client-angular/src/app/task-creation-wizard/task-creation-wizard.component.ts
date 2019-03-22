@@ -31,7 +31,7 @@ import {ConfirmationComponent} from './step-3-confirmation/confirmation.componen
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 import {TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {TaskCreation, TaskLabel} from 'generated/main/js/todolist/model_pb';
+import {TaskCreation} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/commands_pb';
 

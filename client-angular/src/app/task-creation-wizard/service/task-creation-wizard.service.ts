@@ -30,8 +30,9 @@ import {Message} from 'google-protobuf';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {LabelColor, TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 import {LabelId, TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {Task, TaskCreation, TaskLabel, TaskLabels} from 'generated/main/js/todolist/model_pb';
+import {Task, TaskCreation} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
+import {LabelView} from 'generated/main/js/todolist/q/projections_pb';
 import {
   AddLabels,
   CancelTaskCreation,
@@ -58,7 +59,7 @@ export class TaskCreationWizard {
   private _taskDescription: TaskDescription;
   private _taskPriority: TaskPriority;
   private _taskDueDate: Timestamp;
-  private _taskLabels: TaskLabel[];
+  private _taskLabels: LabelView[];
 
   constructor(private readonly spineWebClient: Client,
               private readonly taskService: TaskService,
@@ -96,14 +97,14 @@ export class TaskCreationWizard {
   /**
    * ...
    *
-   * This method does process manager and aggregate entities querying but it's OK as the use case
-   * scenario of it is really rare.
+   * This method queries process manager directly but it's OK as the use case
+   * scenario for this is really rare.
    */
   private restore(taskCreationId: TaskCreationId): Promise<void> {
     this._id = taskCreationId;
     return this.restoreProcessDetails()
       .then(() => this.restoreTaskDetails())
-      .then(() => this.restoreTaskLabels());
+      .then(labelIds => this.restoreTaskLabels(labelIds));
   }
 
   private restoreProcessDetails(): Promise<void> {
@@ -114,7 +115,7 @@ export class TaskCreationWizard {
       });
   }
 
-  private restoreTaskDetails(): Promise<void> {
+  private restoreTaskDetails(): Promise<LabelId[]> {
     return this.taskService.fetchById(this._taskId)
       .then(task => {
         if (task.getDescription()) {
@@ -126,14 +127,15 @@ export class TaskCreationWizard {
         if (task.getDueDate()) {
           this._taskDueDate = task.getDueDate();
         }
+        return task.getLabelIdsList() ? task.getLabelIdsList().getIdsList() : [];
       });
   }
 
-  private restoreTaskLabels(): Promise<void> {
-    return this.labelService.fetchTaskLabels(this._taskId)
-      .then(labels => {
-        this._taskLabels = labels;
-      });
+  private restoreTaskLabels(labelIds: LabelId[]): Promise<void> {
+    const details = labelIds.map(id => this.labelService.fetchLabelDetails(id));
+    return Promise.all(details).then(labels => {
+      this._taskLabels = labels;
+    });
   }
 
   private fetchProcessDetails(): Promise<TaskCreation> {
@@ -172,29 +174,10 @@ export class TaskCreationWizard {
   }
 
   /**
-   * The stub method currently used because of the issue with `Task` and `TaskLabels` aggregate
-   * parts.
-   *
-   * @see addLabelsReal
-   */
-  addLabels(labels: TaskLabel[]): Promise<void> {
-    return this.skipLabelAssignment().then(() => {
-      this._taskLabels = labels;
-      this._stage = TaskCreation.Stage.CONFIRMATION;
-    });
-  }
-
-  /**
    * Adds labels to the created task.
-   *
-   * This method is a back-up method for when the issue
-   * ('https://github.com/SpineEventEngine/core-java/issues/996') with aggregate parts overriding
-   * one another is fixed and the real method assigning labels can be used.
-   *
-   * For now, the {@linkplain addLabels stub method} is used.
    */
   // noinspection JSUnusedGlobalSymbols See doc.
-  addLabelsReal(labels: TaskLabel[]): Promise<void> {
+  addLabels(labels: LabelView[]): Promise<void> {
     const cmd = new AddLabels();
     cmd.setId(this._id);
     const labelIds = labels.map(label => label.getId());
@@ -253,7 +236,7 @@ export class TaskCreationWizard {
     return this._taskDueDate;
   }
 
-  get taskLabels(): TaskLabel[] {
+  get taskLabels(): LabelView[] {
     return this._taskLabels;
   }
 }

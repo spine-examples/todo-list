@@ -25,10 +25,9 @@ import {TaskServiceModule} from './task-service.module';
 import {UuidGenerator} from '../uuid-generator/uuid-generator';
 
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {Task} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {CompleteTask, CreateBasicTask, DeleteTask} from 'generated/main/js/todolist/c/commands_pb';
-import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {MyListView, TaskItem, TaskView} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskStatus} from 'generated/main/js/todolist/attributes_pb';
 
 /**
@@ -98,16 +97,16 @@ export class TaskService {
     this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
   }
 
-  fetchById(id: TaskId): Promise<Task> {
-    return new Promise<Task>((resolve, reject) => {
+  fetchById(id: TaskId): Promise<TaskView> {
+    return new Promise<TaskView>((resolve, reject) => {
       const dataCallback = task => {
         if (!task) {
-          reject(`No task found for ID: ${id}`);
+          reject(`No task view found for ID: ${id}`);
         } else {
           resolve(task);
         }
       };
-      this.spineWebClient.fetchById(Type.forClass(Task), id, dataCallback, reject);
+      this.spineWebClient.fetchById(Type.forClass(TaskView), id, dataCallback, reject);
     });
   }
 

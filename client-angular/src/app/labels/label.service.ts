@@ -23,8 +23,8 @@ import {Client, Type} from 'spine-web';
 import {UuidGenerator} from '../uuid-generator/uuid-generator';
 
 import {LabelId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {TaskLabel, TaskLabels} from 'generated/main/js/todolist/model_pb';
 import {CreateBasicLabel} from 'generated/main/js/todolist/c/commands_pb';
+import {LabelView} from 'generated/main/js/todolist/q/projections_pb';
 
 /**
  * A service which operates with task labels.
@@ -38,7 +38,7 @@ export class LabelService {
   constructor(private readonly spineWebClient: Client) {
   }
 
-  static sortLabels(a: TaskLabel, b: TaskLabel): number {
+  static sortLabels(a: LabelView, b: LabelView): number {
     return a.getTitle().localeCompare(b.getTitle());
   }
 
@@ -56,35 +56,13 @@ export class LabelService {
     );
   }
 
-  fetchAllLabels(): Promise<TaskLabel[]> {
-    return this.spineWebClient.fetchAll({ofType: Type.forClass(TaskLabel)}).atOnce();
+  fetchAllLabels(): Promise<LabelView[]> {
+    return this.spineWebClient.fetchAll({ofType: Type.forClass(LabelView)}).atOnce();
   }
 
-  fetchTaskLabels(taskId: TaskId): Promise<TaskLabel[]> {
-    return this.fetchTaskLabelsInstance(taskId)
-      .then(labels => {
-        if (!labels) {
-          return Promise.resolve([]);
-        }
-        const ids = labels.getLabelIdsList().getIdsList();
-        const details = ids.map(id => this.fetchLabelDetails(id));
-        return Promise.all(details);
-      });
-  }
-
-  fetchLabelDetails(labelId: LabelId): Promise<TaskLabel> {
-    return new Promise<TaskLabel>((resolve, reject) =>
-      this.spineWebClient.fetchById(Type.forClass(TaskLabel), labelId, resolve, reject)
-    );
-  }
-
-  /**
-   * If `TaskLabels` instance is not found, it just means there is no assigned labels history, and
-   * not an error.
-   */
-  private fetchTaskLabelsInstance(taskId: TaskId): Promise<TaskLabels> {
-    return new Promise<TaskLabels>((resolve, reject) =>
-      this.spineWebClient.fetchById(Type.forClass(TaskLabels), taskId, resolve, reject)
+  fetchLabelDetails(labelId: LabelId): Promise<LabelView> {
+    return new Promise<LabelView>((resolve, reject) =>
+      this.spineWebClient.fetchById(Type.forClass(LabelView), labelId, resolve, reject)
     );
   }
 }

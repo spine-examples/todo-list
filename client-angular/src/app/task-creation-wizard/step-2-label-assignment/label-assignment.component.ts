@@ -26,8 +26,7 @@ import {TaskCreationWizard} from '../service/task-creation-wizard.service';
 import {WizardStep} from '../wizard-step';
 
 import {LabelId} from 'generated/main/js/todolist/identifiers_pb';
-import {TaskLabel} from 'generated/main/js/todolist/model_pb';
-import {LabelItem} from 'generated/main/js/todolist/q/projections_pb';
+import {LabelView} from 'generated/main/js/todolist/q/projections_pb';
 
 @Component({
   selector: 'app-label-assignment',
@@ -37,12 +36,12 @@ import {LabelItem} from 'generated/main/js/todolist/q/projections_pb';
 export class LabelAssignmentComponent extends WizardStep {
 
   // noinspection JSMismatchedCollectionQueryUpdate Queried as a part of NG model.
-  private available: TaskLabel[];
-  private selected: TaskLabel[];
+  private available: LabelView[];
+  private selected: LabelView[];
 
   private labelsFetched: boolean;
 
-  private readonly loadAllLabels: Promise<TaskLabel[]>;
+  private readonly loadAllLabels: Promise<LabelView[]>;
 
   constructor(router: Router, wizard: TaskCreationWizard, labelService: LabelService) {
     super(router, wizard);
@@ -62,8 +61,17 @@ export class LabelAssignmentComponent extends WizardStep {
     this.selected = this.wizard.taskLabels;
   }
 
-  switchSelectedStatus(label: TaskLabel): void {
+  switchSelectedStatus(label: LabelView): void {
     this.onInputChange();
+    this.available.forEach(value => {
+      if (this.selected.includes(value)) {
+        console.log('includes');
+        console.log(value);
+      } else {
+        console.log('does not include');
+        console.log(value);
+      }
+    });
     if (this.selected.includes(label)) {
       const index = this.selected.indexOf(label);
       this.selected.splice(index, 1);
