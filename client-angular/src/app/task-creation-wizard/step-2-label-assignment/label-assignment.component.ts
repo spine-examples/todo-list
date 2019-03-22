@@ -39,10 +39,13 @@ export class LabelAssignmentComponent extends WizardStep {
   available: TaskLabel[];
   selected: TaskLabel[];
 
+  private labelsFetched: boolean;
+
   private readonly loadAllLabels: Promise<TaskLabel[]>;
 
   constructor(router: Router, wizard: TaskCreationWizard, labelService: LabelService) {
     super(router, wizard);
+    this.labelsFetched = false;
     this.loadAllLabels = labelService.fetchAllLabels();
   }
 
@@ -50,6 +53,7 @@ export class LabelAssignmentComponent extends WizardStep {
     this.loadAllLabels.then(labels => {
       this.available = labels;
       this.available.sort(LabelService.sortLabels);
+      this.labelsFetched = true;
     });
   }
 

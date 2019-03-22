@@ -22,7 +22,8 @@
     Available labels:
 </p>
 <p>
-    <mat-selection-list>
+    <mat-progress-bar mode="buffer" *ngIf="!labelsFetched"></mat-progress-bar>
+    <mat-selection-list *ngIf="labelsFetched">
         <mat-list-option *ngFor="let label of available" (click)="switchSelectedStatus(label)"
                          [style.background-color]="label.getColor() | labelColorView">
             {{label.getTitle()}}
