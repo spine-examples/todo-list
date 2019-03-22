@@ -19,9 +19,11 @@
  */
 
 import {Component, OnDestroy, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from '../../task-service/task.service';
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 
 /**
  * A component displaying active tasks, i.e. those which are not completed, deleted, or in draft
@@ -29,7 +31,9 @@ import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
  */
 @Component({
   selector: 'app-active-tasks',
-  templateUrl: './active-tasks.component.html'
+  templateUrl: './active-tasks.component.html',
+  styleUrls: ['./active-tasks.component.css'],
+
 })
 export class ActiveTasksComponent implements OnInit, OnDestroy {
 
@@ -37,8 +41,25 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
 
   /** Visible for testing. */
   readonly tasks: TaskItem[] = [];
+  private createBasicTaskForms: FormGroup;
 
-  constructor(private readonly taskService: TaskService) {
+  constructor(private readonly taskService: TaskService, private formBuilder: FormBuilder) {
+    this.createBasicTaskForms = formBuilder.group({
+      taskDescription: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
+    });
+  }
+
+  /**
+   * Sends a command to create a basic task, i.e. a task without label, due date, and with a
+   * `Normal` priority.
+   *
+   * See `commands.proto#CreateBasicTask` in the `model` module.
+   * @param taskDescription desired description of the task.
+   *
+   * Is visible for testing.
+   */
+  createBasicTask(taskDescription: string): void {
+    this.taskService.createBasicTask(taskDescription);
   }
 
   ngOnInit(): void {

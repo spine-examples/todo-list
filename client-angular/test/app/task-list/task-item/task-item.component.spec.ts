@@ -21,6 +21,7 @@
 import {Component, ViewChild} from '@angular/core';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
+import {MatIconModule} from '@angular/material/icon';
 
 import {TaskItemComponent} from '../../../../src/app/task-list/task-item/task-item.component';
 import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, task} from '../../given/tasks';
@@ -36,7 +37,7 @@ describe('TaskItemComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TaskItemComponent, TestHostComponent],
-      imports: [RouterTestingModule.withRoutes([])]
+      imports: [RouterTestingModule.withRoutes([]), MatIconModule]
     })
       .compileComponents();
   }));

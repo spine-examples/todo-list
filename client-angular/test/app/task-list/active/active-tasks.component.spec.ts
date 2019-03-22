@@ -20,7 +20,11 @@
 
 import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-
+import {ReactiveFormsModule} from '@angular/forms';
+import {MatInputModule} from '@angular/material';
+import {MatListModule} from '@angular/material/list';
+import {MatIconModule} from '@angular/material/icon';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {Client, Type} from 'spine-web';
 
 import {ActiveTasksComponent} from '../../../../src/app/task-list/active/active-tasks.component';
@@ -48,7 +52,14 @@ describe('ActiveTasksComponent', () => {
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ActiveTasksComponent, TaskItemComponent],
-      imports: [RouterTestingModule.withRoutes([])],
+      imports: [
+        RouterTestingModule.withRoutes([]),
+        ReactiveFormsModule,
+        MatInputModule,
+        MatListModule,
+        MatIconModule,
+        BrowserAnimationsModule
+      ],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
@@ -63,6 +74,11 @@ describe('ActiveTasksComponent', () => {
 
     tick(); // Wait for the fake subscription fetch.
   }));
+
+  it('should allow basic task creation', () => {
+    component.createBasicTask('Some basic task');
+    expect(mockClient.sendCommand).toHaveBeenCalledTimes(1);
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();

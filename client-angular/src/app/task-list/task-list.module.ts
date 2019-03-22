@@ -21,7 +21,10 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatButtonModule} from '@angular/material';
+import {ReactiveFormsModule} from '@angular/forms';
+import {MatInputModule} from '@angular/material';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
 
 import {TaskListComponent} from './task-list.component';
@@ -50,8 +53,17 @@ import {TaskItemComponent} from './task-item/task-item.component';
     CommonModule,
     TaskServiceModule,
     MatSidenavModule,
+    MatListModule,
+    MatInputModule,
+    ReactiveFormsModule,
     MatButtonModule,
-    MatListModule
+    MatIconModule
+  ],
+  exports: [
+    MatInputModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatIconModule
   ]
 })
 export class TaskListModule {
