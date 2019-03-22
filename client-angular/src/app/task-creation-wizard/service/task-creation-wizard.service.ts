@@ -189,7 +189,7 @@ export class TaskCreationWizard {
    *
    * This method is a back-up method for when the issue
    * ('https://github.com/SpineEventEngine/core-java/issues/996') with aggregate parts overriding
-   * one another is fixed and the real method assigning process can be used.
+   * one another is fixed and the real method assigning labels can be used.
    *
    * For now, the {@linkplain addLabels stub method} is used.
    */
