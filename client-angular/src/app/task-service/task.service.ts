@@ -44,7 +44,7 @@ export class TaskService {
    * @param spineWebClient a client for accessing Spine backend
    */
   constructor(private readonly spineWebClient: Client) {
-    this.subscribeToActive()
+    this.subscribeToTasks()
       .then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
   }
 
@@ -110,8 +110,10 @@ export class TaskService {
    * singleton storing active and completed task items.
    *
    * @returns a `Promise` which resolves to an `unsubscribe` function
+   *
+   * Is visible for testing.
    */
-  private subscribeToActive(): Promise<() => void> {
+  subscribeToTasks(): Promise<() => void> {
     const refreshTasks = {
       next: (view: MyListView): void => {
         const taskItems = view.getMyList().getItemsList();

@@ -37,7 +37,7 @@ import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 })
 export class ActiveTasksComponent implements OnInit, OnDestroy {
 
-  private unsubscribe: () => void;
+  unsubscribe: () => void;
 
   /** Visible for testing. */
   tasks: TaskItem[] = [];
