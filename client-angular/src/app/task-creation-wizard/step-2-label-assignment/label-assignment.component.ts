@@ -36,8 +36,8 @@ import {LabelItem} from 'generated/main/js/todolist/q/projections_pb';
 })
 export class LabelAssignmentComponent extends WizardStep {
 
-  available: TaskLabel[];
-  selected: TaskLabel[];
+  private available: TaskLabel[];
+  private selected: TaskLabel[];
 
   private labelsFetched: boolean;
 
@@ -49,12 +49,16 @@ export class LabelAssignmentComponent extends WizardStep {
     this.loadAllLabels = labelService.fetchAllLabels();
   }
 
-  protected initModel(): void {
+  protected initOwnModel(): void {
     this.loadAllLabels.then(labels => {
       this.available = labels;
       this.available.sort(LabelService.sortLabels);
       this.labelsFetched = true;
     });
+  }
+
+  initFromWizard() {
+    this.selected = this.wizard.taskLabels;
   }
 
   switchSelectedStatus(label: TaskLabel): void {

@@ -49,12 +49,18 @@ export class TaskDefinitionComponent extends WizardStep {
    */
   private readonly today: Date = new Date();
 
-  description: TaskDescription;
-  priority: TaskPriority;
-  dueDate: Timestamp;
+  private description: TaskDescription;
+  private priority: TaskPriority;
+  private dueDate: Timestamp;
 
   constructor(router: Router, wizard: TaskCreationWizard) {
     super(router, wizard);
+  }
+
+  initFromWizard() {
+    this.description = this.wizard.taskDescription;
+    this.priority = this.wizard.taskPriority;
+    this.dueDate = this.wizard.taskDueDate;
   }
 
   /**

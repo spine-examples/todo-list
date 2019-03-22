@@ -38,10 +38,23 @@ export abstract class WizardStep implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.initModel();
+    this.initOwnModel();
   }
 
-  protected initModel(): void {
+  /**
+   * Inits the own model, not related to the wizard data (like the list of available labels).
+   */
+  protected initOwnModel(): void {
+    // NO-OP by default.
+  }
+
+  /**
+   * Inits the model entries which represent data from the wizard (like task definition, priority,
+   * etc.).
+   *
+   * Must be called from the outside when we are sure the wizard data has been fetched.
+   */
+  initFromWizard() {
     // NO-OP by default.
   }
 
