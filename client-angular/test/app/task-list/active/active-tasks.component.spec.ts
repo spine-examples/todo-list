@@ -25,6 +25,7 @@ import {MatInputModule} from '@angular/material';
 import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {By} from '@angular/platform-browser';
 import {Client, Type} from 'spine-web';
 
 import {ActiveTasksComponent} from '../../../../src/app/task-list/active/active-tasks.component';
@@ -76,8 +77,15 @@ describe('ActiveTasksComponent', () => {
   }));
 
   it('should allow basic task creation', () => {
+    const method = spyOn(component, 'createBasicTask');
+    const input = fixture.debugElement.query(By.css('.task-description-textarea')).nativeElement;
+    input.value = 'Some basic task text';
+    const keyPressed = new KeyboardEvent('keypress', {
+      key: 'Enter'
+    });
+    input.dispatchEvent(keyPressed);
     component.createBasicTask('Some basic task');
-    expect(mockClient.sendCommand).toHaveBeenCalledTimes(1);
+    expect(method).toHaveBeenCalledTimes(1);
   });
 
   it('should create', () => {
