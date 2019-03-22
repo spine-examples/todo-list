@@ -54,9 +54,7 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
     public void taskCreated(TaskCreated event) {
         TaskDetails taskDetails = event.getDetails();
         builder().setId(event.getId())
-                 .setDescription(taskDetails.getDescription())
-                 .setPriority(taskDetails.getPriority())
-                 .setDueDate(taskDetails.getDueDate());
+                 .setDescription(taskDetails.getDescription());
     }
 
     @Subscribe
@@ -87,10 +85,7 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
     @Subscribe
     public void draftCreated(TaskDraftCreated event) {
         TaskDetails taskDetails = event.getDetails();
-        builder().setId(event.getId())
-                 .setDescription(taskDetails.getDescription())
-                 .setPriority(taskDetails.getPriority())
-                 .setDueDate(taskDetails.getDueDate());
+        builder().setId(event.getId());
     }
 
     @Subscribe
