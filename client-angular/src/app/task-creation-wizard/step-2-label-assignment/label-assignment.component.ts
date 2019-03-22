@@ -36,6 +36,7 @@ import {LabelItem} from 'generated/main/js/todolist/q/projections_pb';
 })
 export class LabelAssignmentComponent extends WizardStep {
 
+  // noinspection JSMismatchedCollectionQueryUpdate Queried as a part of NG model.
   private available: TaskLabel[];
   private selected: TaskLabel[];
 

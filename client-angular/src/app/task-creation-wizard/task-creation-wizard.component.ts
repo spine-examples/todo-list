@@ -45,15 +45,6 @@ import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/co
 })
 export class TaskCreationWizardComponent implements AfterViewInit {
 
-  constructor(private wizard: TaskCreationWizard,
-              private readonly changeDetector: ChangeDetectorRef,
-              private readonly location: Location,
-              route: ActivatedRoute) {
-    this.isLoading = true;
-    const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
-    this.initWizard = wizard.init(taskCreationId);
-  }
-
   private static readonly STEPS: Map<TaskCreation.Stage, number> = new Map([
     [TaskCreation.Stage.TASK_DEFINITION, 0],
     [TaskCreation.Stage.LABEL_ASSIGNMENT, 1],
@@ -61,20 +52,29 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   ]);
 
   @ViewChild(MatHorizontalStepper)
-  stepper: MatHorizontalStepper;
+  private readonly stepper: MatHorizontalStepper;
 
   @ViewChild(TaskDefinitionComponent)
-  taskDefinition: TaskDefinitionComponent;
+  private readonly taskDefinition: TaskDefinitionComponent;
 
   @ViewChild(LabelAssignmentComponent)
-  labelAssignment: LabelAssignmentComponent;
+  private readonly labelAssignment: LabelAssignmentComponent;
 
   @ViewChild(ConfirmationComponent)
-  confirmation: ConfirmationComponent;
+  private readonly confirmation: ConfirmationComponent;
 
   private isLoading: boolean;
 
   private readonly initWizard: Promise<void>;
+
+  constructor(private readonly wizard: TaskCreationWizard,
+              private readonly changeDetector: ChangeDetectorRef,
+              private readonly location: Location,
+              route: ActivatedRoute) {
+    this.isLoading = true;
+    const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
+    this.initWizard = wizard.init(taskCreationId);
+  }
 
   /**
    * Reports an error which cannot really be recovered for the wizard.

@@ -28,10 +28,10 @@ import {ErrorViewport} from '../common-components/error-viewport/error-viewport.
 export abstract class WizardStep implements AfterViewInit {
 
   @Input()
-  stepper: MatStepper;
+  private readonly stepper: MatStepper;
 
   @ViewChild(ErrorViewport)
-  errorViewport: ErrorViewport;
+  private readonly errorViewport: ErrorViewport;
 
   protected constructor(private readonly router: Router,
                         protected readonly wizard: TaskCreationWizard) {
@@ -49,8 +49,8 @@ export abstract class WizardStep implements AfterViewInit {
   }
 
   /**
-   * Inits the model entries which represent data from the wizard (like task definition, priority,
-   * etc.).
+   * Inits the model entries which represent the data from the wizard (like task definition,
+   * priority, etc.).
    *
    * Must be called from the outside when we are sure the wizard data has been fetched.
    */
@@ -104,6 +104,7 @@ export abstract class WizardStep implements AfterViewInit {
   }
 
   private goToActiveTasks(): void {
+    // noinspection JSIgnoredPromiseFromCall No navigation result handling necessary.
     this.router.navigate(['/task-list/active']);
   }
 
