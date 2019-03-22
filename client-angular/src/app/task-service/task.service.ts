@@ -111,8 +111,6 @@ export class TaskService {
     });
   }
 
-  // TODO:2019-03-12:dmytro.kuzmin: Actually filter by active, will require extending `TaskItem`
-  // todo projection.
   /**
    * Subscribes to the tasks that match the given predicate and reflects them to a given array.
    *

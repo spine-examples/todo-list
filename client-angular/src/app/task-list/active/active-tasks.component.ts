@@ -60,6 +60,6 @@ export class ActiveTasksComponent extends TaskSubsetComponent {
   }
 
   specifyTask(task): boolean {
-    return task.getStatus() === TaskStatus.OPEN;
+    return task.getStatus() === TaskStatus.OPEN || task.getStatus() === TaskStatus.FINALIZED;
   }
 }
