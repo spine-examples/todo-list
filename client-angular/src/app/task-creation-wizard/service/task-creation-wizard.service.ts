@@ -93,6 +93,12 @@ export class TaskCreationWizard {
     );
   }
 
+  /**
+   * ...
+   *
+   * This method does process manager and aggregate entities querying but it's OK as the use case
+   * scenario of it is really rare.
+   */
   private restore(taskCreationId: TaskCreationId): Promise<void> {
     this._id = taskCreationId;
     return this.restoreProcessDetails()
