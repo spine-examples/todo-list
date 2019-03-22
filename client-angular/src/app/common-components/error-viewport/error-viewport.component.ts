@@ -6,5 +6,5 @@ import {Component} from '@angular/core';
   styleUrls: ['./error-viewport.component.css']
 })
 export class ErrorViewport {
-  text = '';
+  text: string;
 }
