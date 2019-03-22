@@ -38,7 +38,6 @@ export abstract class WizardStep implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.setNotCompleted();
     this.initModel();
   }
 
@@ -79,12 +78,6 @@ export abstract class WizardStep implements AfterViewInit {
 
   protected abstract doStep(): Promise<void>;
 
-  /**
-   * Handles situations when we return to the step from the later stages and it's initially marked
-   * as completed.
-   *
-   * Should be called in all descendant methods that change the inputs of the `TaskCreationWizard`.
-   */
   protected onInputChange(): void {
     this.setNotCompleted();
   }

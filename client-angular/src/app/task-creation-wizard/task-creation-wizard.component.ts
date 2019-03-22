@@ -19,7 +19,7 @@
  */
 
 import {Location} from '@angular/common';
-import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 import {MatHorizontalStepper} from '@angular/material';
 import {ActivatedRoute} from '@angular/router';
 
@@ -131,9 +131,13 @@ export class TaskCreationWizardComponent implements AfterViewInit {
       TaskCreationWizardComponent.reportFatalError(`There is no wizard step for stage ${currentStage}`);
       return;
     }
-    for (let i = 0; i < index; i++) {
-      this.stepper.steps.toArray()[i].completed = true;
-    }
+    this.completeVisitedSteps(index);
     this.stepper.selectedIndex = index;
+  }
+
+  private completeVisitedSteps(index) {
+    for (let i = 0; i < this.stepper.steps.length; i++) {
+      this.stepper.steps.toArray()[i].completed = i < index;
+    }
   }
 }
