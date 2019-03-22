@@ -27,7 +27,6 @@ import {TaskCreationWizard} from './service/task-creation-wizard.service';
 import {TaskDefinitionComponent} from './step-1-task-definition/task-definition.component';
 import {LabelAssignmentComponent} from './step-2-label-assignment/label-assignment.component';
 import {ConfirmationComponent} from './step-3-confirmation/confirmation.component';
-import {TaskCreationWizardCache} from './wizard-cache/task-creation-wizard-cache.service';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
@@ -44,16 +43,15 @@ import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/co
     TaskCreationWizard
   ]
 })
-export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
+export class TaskCreationWizardComponent implements AfterViewInit {
 
   constructor(private wizard: TaskCreationWizard,
-              private readonly wizardCache: TaskCreationWizardCache,
               private readonly changeDetector: ChangeDetectorRef,
               private readonly location: Location,
               route: ActivatedRoute) {
     this.isLoading = true;
     const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
-    this.initWizard = this.doInitWizard(taskCreationId);
+    this.initWizard = wizard.init(taskCreationId);
   }
 
   private static readonly STEPS: Map<TaskCreation.Stage, number> = new Map([
@@ -85,17 +83,6 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
     throw new Error(err);
   }
 
-  private doInitWizard(taskCreationId): Promise<void> {
-    if (this.wizardCache.contains(taskCreationId)) {
-      console.log('Hitting wizard cache');
-      return Promise.resolve(this.wizardCache.get(taskCreationId))
-        .then(wizard => {
-          this.wizard = wizard;
-        });
-    }
-    return this.wizard.init(taskCreationId);
-  }
-
   ngAfterViewInit(): void {
     this.initWizard
       .then(() => {
@@ -112,11 +99,6 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
         this.isLoading = false;
       })
       .catch(err => TaskCreationWizardComponent.reportFatalError(err));
-  }
-
-  ngOnDestroy(): void {
-    console.log('wizard component on destroy');
-    this.wizardCache.store(this.wizard.id.getValue(), this.wizard);
   }
 
   /**

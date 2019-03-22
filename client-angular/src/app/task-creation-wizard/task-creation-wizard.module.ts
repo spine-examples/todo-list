@@ -44,7 +44,6 @@ import {SpineClientProvider} from '../spine-client-provider/spine-client-provide
 import {TodoListPipesModule} from '../pipes/todo-list-pipes.module';
 import {TaskServiceModule} from '../task-service/task-service.module';
 import {LabelsModule} from '../labels/labels.module';
-import {TaskCreationWizardCache} from "./wizard-cache/task-creation-wizard-cache.service";
 
 /**
  * The module which provides a wizard for step-by-step task creation.
@@ -80,9 +79,6 @@ import {TaskCreationWizardCache} from "./wizard-cache/task-creation-wizard-cache
     MatProgressBarModule,
     MatSelectModule,
     MatStepperModule
-  ],
-  providers: [
-    TaskCreationWizardCache
   ]
 })
 export class TaskCreationWizardModule {
