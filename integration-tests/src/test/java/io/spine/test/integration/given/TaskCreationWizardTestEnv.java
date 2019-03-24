@@ -21,7 +21,10 @@
 package io.spine.test.integration.given;
 
 import com.google.protobuf.Timestamp;
+import io.spine.change.TimestampChange;
+import io.spine.examples.todolist.DescriptionChange;
 import io.spine.examples.todolist.LabelId;
+import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.Task;
 import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskDescription;
@@ -31,8 +34,8 @@ import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.CancelTaskCreation;
 import io.spine.examples.todolist.c.commands.CompleteTaskCreation;
 import io.spine.examples.todolist.c.commands.CreateBasicLabel;
-import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
+import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
 import io.spine.examples.todolist.client.TodoClient;
 
 import java.util.Optional;
@@ -87,12 +90,24 @@ public class TaskCreationWizardTestEnv {
                 .newBuilder()
                 .setValue(description)
                 .build();
-        SetTaskDetails setDescription = SetTaskDetails
+        DescriptionChange descriptionChange = DescriptionChange
+                .newBuilder()
+                .setNewValue(descValue)
+                .build();
+        PriorityChange priorityChange = PriorityChange
+                .newBuilder()
+                .setNewValue(priority)
+                .build();
+        TimestampChange dueDateChange = TimestampChange
+                .newBuilder()
+                .setNewValue(dueDate)
+                .build();
+        UpdateTaskDetails setDescription = UpdateTaskDetails
                 .newBuilder()
                 .setId(pid)
-                .setDescription(descValue)
-                .setPriority(priority)
-                .setDueDate(dueDate)
+                .setDescriptionChange(descriptionChange)
+                .setPriorityChange(priorityChange)
+                .setDueDateChange(dueDateChange)
                 .build();
         client.postCommand(setDescription);
     }

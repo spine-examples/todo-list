@@ -72,7 +72,7 @@ message UpdateTaskDescription {
     TaskId id = 1;
 
     // The change of the task description.
-    change.StringChange description_change = 2 [(valid) = true];
+    DescriptionChange description_change = 2 [(valid) = true];
 
     // Reserved for future extension.
     reserved 3 to 10;
@@ -290,30 +290,32 @@ message StartTaskCreation {
     TaskId task_id = 2 [(required) = true, (valid) = true];
 }
 
-// Set the basic task data to the task being created.
+// Update the basic details of the created task.
 //
-message SetTaskDetails {
+message UpdateTaskDetails {
 
     // The ID of the task creation process.
     TaskCreationId id = 1 [(required) = true, (valid) = true];
 
-    // The description to set to the task.
+    // The task description change.
     //
-    // This field is required.
+    // This field is required for the initial task definition but becomes optional for the
+    // further updates.
     //
-    TaskDescription description = 2 [(required) = true, (valid) = true];
+    DescriptionChange description_change = 2 [(valid) = true];
 
-    // The priority to set to the task.
+    // The priority change for the task.
     //
-    // This field is optional. If not set, `NORMAL` is used by default.
+    // This field is optional. If the task priority is not set during the creation process, the
+    // default `NORMAL` is used.
     //
-    TaskPriority priority = 3;
+    PriorityChange priority_change = 3;
 
-    // The due date to be set to the task.
+    // The due date change.
     //
-    // This fiend is optional. If not set, the created task will not have a due date.
+    // This fiend is optional. If the due date is not set, the task won't have any.
     //
-    google.protobuf.Timestamp due_date = 4;
+    change.TimestampChange due_date_change = 4;
 }
 
 // Add labels to the task being created.

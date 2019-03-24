@@ -59,12 +59,8 @@ public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBu
 
     @Subscribe
     public void taskDescriptionUpdated(TaskDescriptionUpdated event) {
-        String newDescriptionValue = event.getDescriptionChange()
-                                          .getNewValue();
-        TaskDescription newDescription = TaskDescription
-                .newBuilder()
-                .setValue(newDescriptionValue)
-                .build();
+        TaskDescription newDescription = event.getDescriptionChange()
+                                              .getNewValue();
         builder().setDescription(newDescription);
     }
 

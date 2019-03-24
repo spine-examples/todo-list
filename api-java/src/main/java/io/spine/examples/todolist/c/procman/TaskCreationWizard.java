@@ -30,6 +30,8 @@ import io.spine.examples.todolist.TaskCreation;
 import io.spine.examples.todolist.TaskCreation.Stage;
 import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskCreationVBuilder;
+import io.spine.examples.todolist.TaskDetailsUpdateRejected;
+import io.spine.examples.todolist.TaskDetailsUpdateRejectedVBuilder;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.CancelTaskCreation;
@@ -38,11 +40,12 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.CreateDraftVBuilder;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraftVBuilder;
-import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.SkipLabels;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
+import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
 import io.spine.examples.todolist.c.rejection.CannotAddLabels;
 import io.spine.examples.todolist.c.rejection.CannotMoveToStage;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDetails;
 import io.spine.server.command.Assign;
 import io.spine.server.command.Command;
 import io.spine.server.model.Nothing;
@@ -61,6 +64,7 @@ import static io.spine.examples.todolist.TaskCreation.Stage.LABEL_ASSIGNMENT;
 import static io.spine.examples.todolist.TaskCreation.Stage.TASK_DEFINITION;
 import static io.spine.examples.todolist.TaskCreation.Stage.TCS_UNKNOWN;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAddLabelsToTask;
+import static io.spine.validate.Validate.isDefault;
 
 /**
  * A process manager supervising the task creation process.
@@ -98,10 +102,11 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRej
  *     }
  * </pre>
  */
-@SuppressWarnings("unused") // Command handler methods invoked via reflection.
+@SuppressWarnings({"unused" /* Command handler methods invoked via reflection. */,
+        "OverlyCoupledClass" /* OK for process manager entity. */})
 public class TaskCreationWizard extends ProcessManager<TaskCreationId,
-                                                       TaskCreation,
-                                                       TaskCreationVBuilder> {
+        TaskCreation,
+        TaskCreationVBuilder> {
 
     /**
      * The possible process stage transitions.
@@ -127,9 +132,14 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     }
 
     @Command
-    Collection<? extends CommandMessage> handle(SetTaskDetails command, CommandContext context)
-            throws CannotMoveToStage {
-        return transit(LABEL_ASSIGNMENT, () -> commands().setTaskDetails(command));
+    Collection<? extends CommandMessage> handle(UpdateTaskDetails command, CommandContext context)
+            throws CannotMoveToStage, CannotUpdateTaskDetails {
+        boolean isTaskDefinition = builder().getStage() == TASK_DEFINITION;
+        if (isTaskDefinition && isDefault(command.getDescriptionChange())) {
+            throwCannotUpdateTaskDetails(command);
+        }
+        return transit(LABEL_ASSIGNMENT,
+                       () -> commands().updateTaskDetails(command));
     }
 
     @Command
@@ -283,6 +293,25 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         return result;
     }
 
+    private static void throwCannotUpdateTaskDetails(UpdateTaskDetails command)
+            throws CannotUpdateTaskDetails {
+        TaskDetailsUpdateRejected details = TaskDetailsUpdateRejectedVBuilder
+                .newBuilder()
+                .setId(command.getId())
+                .setNewDescription(command.getDescriptionChange()
+                                          .getNewValue())
+                .setNewPriority(command.getPriorityChange()
+                                       .getNewValue())
+                .setNewDueDate(command.getDueDateChange()
+                                      .getNewValue())
+                .build();
+        CannotUpdateTaskDetails rejection = CannotUpdateTaskDetails
+                .newBuilder()
+                .setRejectionDetails(details)
+                .build();
+        throw rejection;
+    }
+
     /**
      * Returns a transition matrix of the {@code TaskCreationWizard}.
      *
@@ -290,11 +319,11 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      * stages and modify the content before setting the process to {@code COMPLETED}.
      *
      * @implNote The stage we are transitioning to is the <i>next</i> stage to the action we just
-     *          performed. So if we are transitioning to {@code LABEL_ASSIGNMENT} it means that we
-     *          just modified the task definition via the {@link SetTaskDetails} command. Hence the
-     *          transitions like {@code LABEL_ASSIGNMENT -> LABEL_ASSIGNMENT},
-     *          {@code CONFIRMATION -> CONFIRMATION}, they enable us to go back and do the same
-     *          modification multiple times in a row.
+     *         performed. So if we are transitioning to {@code LABEL_ASSIGNMENT} it means that we
+     *         just modified the task definition via the {@link UpdateTaskDetails} command. Hence
+     *         the transitions like {@code LABEL_ASSIGNMENT -> LABEL_ASSIGNMENT},
+     *         {@code CONFIRMATION -> CONFIRMATION}, they enable us to go back and do the same
+     *         modification multiple times in a row.
      */
     private static Multimap<Stage, Stage> transitionMatrix() {
         Multimap<Stage, Stage> result = HashMultimap.create();

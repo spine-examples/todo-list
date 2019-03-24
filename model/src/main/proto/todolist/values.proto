@@ -32,6 +32,7 @@ option java_generate_equals_and_hash = true;
 
 import "google/protobuf/timestamp.proto";
 
+import "spine/change/change.proto";
 import "spine/change/value_mismatch.proto";
 
 import "todolist/identifiers.proto";
@@ -114,6 +115,22 @@ message TaskDueDateUpdateRejected {
 
     // A mismatching due date value.
     change.ValueMismatch due_date_mismatch = 2;
+}
+
+// DTO for rejected update task details command details.
+message TaskDetailsUpdateRejected {
+
+    // The task creation process ID.
+    TaskCreationId id = 1 [(required) = true, (valid) = true];
+
+    // The requested new task description.
+    TaskDescription new_description = 2;
+
+    // The requested new task priority.
+    TaskPriority new_priority = 3;
+
+    // The requested new task due date.
+    google.protobuf.Timestamp new_due_date = 4;
 }
 
 // DTO for the label details mismatch.

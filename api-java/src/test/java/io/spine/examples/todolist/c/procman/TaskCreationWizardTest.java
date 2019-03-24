@@ -26,19 +26,16 @@ import com.google.common.collect.ImmutableSet;
 import com.google.protobuf.Timestamp;
 import io.spine.base.CommandMessage;
 import io.spine.base.Time;
-import io.spine.change.StringChange;
-import io.spine.change.StringChangeVBuilder;
 import io.spine.change.TimestampChange;
-import io.spine.change.TimestampChangeVBuilder;
 import io.spine.client.ActorRequestFactory;
 import io.spine.core.Command;
+import io.spine.examples.todolist.DescriptionChange;
 import io.spine.examples.todolist.LabelColor;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelDetailsVBuilder;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdVBuilder;
 import io.spine.examples.todolist.PriorityChange;
-import io.spine.examples.todolist.PriorityChangeVBuilder;
 import io.spine.examples.todolist.TaskCreation;
 import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskCreationIdVBuilder;
@@ -58,8 +55,6 @@ import io.spine.examples.todolist.c.commands.CreateBasicLabel;
 import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraftVBuilder;
-import io.spine.examples.todolist.c.commands.SetTaskDetails;
-import io.spine.examples.todolist.c.commands.SetTaskDetailsVBuilder;
 import io.spine.examples.todolist.c.commands.SkipLabels;
 import io.spine.examples.todolist.c.commands.SkipLabelsVBuilder;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
@@ -67,12 +62,15 @@ import io.spine.examples.todolist.c.commands.StartTaskCreationVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetails;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescriptionVBuilder;
+import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
+import io.spine.examples.todolist.c.commands.UpdateTaskDetailsVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDate;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDateVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriority;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriorityVBuilder;
 import io.spine.examples.todolist.c.rejection.CannotAddLabels;
 import io.spine.examples.todolist.c.rejection.CannotMoveToStage;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDetails;
 import io.spine.server.BoundedContext;
 import io.spine.server.commandbus.CommandBus;
 import io.spine.server.commandbus.CommandDispatcher;
@@ -147,8 +145,8 @@ class TaskCreationWizardTest {
     }
 
     @Nested
-    @DisplayName("SetTaskDetails command should")
-    class SetTaskDetailsTest extends CommandTest {
+    @DisplayName("UpdateTaskDetails command should")
+    class UpdateTaskDetailsTest extends CommandTest {
 
         @BeforeEach
         @Override
@@ -165,30 +163,30 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setValue(descriptionValue)
                     .build();
+            DescriptionChange descriptionChange = DescriptionChange
+                    .newBuilder()
+                    .setNewValue(description)
+                    .build();
             TaskPriority priority = TaskPriority.HIGH;
+            PriorityChange priorityChange = PriorityChange
+                    .newBuilder()
+                    .setNewValue(priority)
+                    .build();
             Timestamp dueDate = Time.getCurrentTime();
-            SetTaskDetails cmd = SetTaskDetailsVBuilder
+            TimestampChange dueDateChange = TimestampChange
+                    .newBuilder()
+                    .setNewValue(dueDate)
+                    .build();
+            UpdateTaskDetails cmd = UpdateTaskDetailsVBuilder
                     .newBuilder()
                     .setId(getId())
-                    .setDescription(description)
-                    .setPriority(priority)
-                    .setDueDate(dueDate)
+                    .setDescriptionChange(descriptionChange)
+                    .setPriorityChange(priorityChange)
+                    .setDueDateChange(dueDateChange)
                     .build();
 
             dispatch(cmd);
 
-            StringChange descriptionChange = StringChangeVBuilder
-                    .newBuilder()
-                    .setNewValue(descriptionValue)
-                    .build();
-            PriorityChange priorityChange = PriorityChangeVBuilder
-                    .newBuilder()
-                    .setNewValue(priority)
-                    .build();
-            TimestampChange dueDateChange = TimestampChangeVBuilder
-                    .newBuilder()
-                    .setNewValue(dueDate)
-                    .build();
             ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
 
             assertThat(producedCommands, containsInAnyOrder(
@@ -204,6 +202,69 @@ class TaskCreationWizardTest {
                                              .setId(getTaskId())
                                              .setDueDateChange(dueDateChange)
                                              .build()));
+            assertEquals(LABEL_ASSIGNMENT, getStage());
+        }
+
+        @Test
+        @DisplayName("throw CannotUpdateTaskDetails if description is not specified")
+        void throwOnDescNotSet() {
+            TaskPriority priority = TaskPriority.HIGH;
+            PriorityChange priorityChange = PriorityChange
+                    .newBuilder()
+                    .setNewValue(priority)
+                    .build();
+            UpdateTaskDetails cmd = UpdateTaskDetailsVBuilder
+                    .newBuilder()
+                    .setId(getId())
+                    .setPriorityChange(priorityChange)
+                    .build();
+            Throwable t = assertThrows(Throwable.class, () -> dispatch(cmd));
+            assertThat(Throwables.getRootCause(t), instanceOf(CannotUpdateTaskDetails.class));
+            assertEquals(TASK_DEFINITION, getStage());
+        }
+
+        @Test
+        @DisplayName("allow omitting task description change on further updates")
+        void allowOmitDescInFurtherUpdates() {
+            String descriptionValue = "Task for test";
+            TaskDescription description = TaskDescriptionVBuilder
+                    .newBuilder()
+                    .setValue(descriptionValue)
+                    .build();
+            DescriptionChange descriptionChange = DescriptionChange
+                    .newBuilder()
+                    .setNewValue(description)
+                    .build();
+            UpdateTaskDetails cmd1 = UpdateTaskDetailsVBuilder
+                    .newBuilder()
+                    .setId(getId())
+                    .setDescriptionChange(descriptionChange)
+                    .build();
+            dispatch(cmd1);
+
+            TaskPriority priority = TaskPriority.HIGH;
+            PriorityChange priorityChange = PriorityChange
+                    .newBuilder()
+                    .setNewValue(priority)
+                    .build();
+            UpdateTaskDetails cmd2 = UpdateTaskDetailsVBuilder
+                    .newBuilder()
+                    .setId(getId())
+                    .setPriorityChange(priorityChange)
+                    .build();
+            dispatch(cmd2);
+            ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
+
+            assertThat(producedCommands, containsInAnyOrder(
+                    UpdateTaskDescriptionVBuilder.newBuilder()
+                                                 .setId(getTaskId())
+                                                 .setDescriptionChange(descriptionChange)
+                                                 .build(),
+                    UpdateTaskPriorityVBuilder.newBuilder()
+                                              .setId(getTaskId())
+                                              .setPriorityChange(priorityChange)
+                                              .build()
+            ));
             assertEquals(LABEL_ASSIGNMENT, getStage());
         }
     }
@@ -426,10 +487,14 @@ class TaskCreationWizardTest {
                     .newBuilder()
                     .setValue("task for test")
                     .build();
-            SetTaskDetails cmd = SetTaskDetailsVBuilder
+            DescriptionChange descriptionChange = DescriptionChange
+                    .newBuilder()
+                    .setNewValue(description)
+                    .build();
+            UpdateTaskDetails cmd = UpdateTaskDetailsVBuilder
                     .newBuilder()
                     .setId(getId())
-                    .setDescription(description)
+                    .setDescriptionChange(descriptionChange)
                     .build();
             dispatch(cmd);
             clearReceivedCommands();

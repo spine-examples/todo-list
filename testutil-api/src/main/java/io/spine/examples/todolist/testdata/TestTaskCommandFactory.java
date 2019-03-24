@@ -21,10 +21,9 @@
 package io.spine.examples.todolist.testdata;
 
 import com.google.protobuf.Timestamp;
-import io.spine.change.StringChange;
-import io.spine.change.StringChangeVBuilder;
 import io.spine.change.TimestampChange;
 import io.spine.change.TimestampChangeVBuilder;
+import io.spine.examples.todolist.DescriptionChangeVBuilder;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdVBuilder;
 import io.spine.examples.todolist.PriorityChange;
@@ -152,15 +151,24 @@ public class TestTaskCommandFactory {
     public static UpdateTaskDescription updateTaskDescriptionInstance(TaskId id,
                                                                       String previousDescription,
                                                                       String newDescription) {
-        StringChange change = StringChangeVBuilder
+        TaskDescription newValue = TaskDescriptionVBuilder
                 .newBuilder()
-                .setPreviousValue(previousDescription)
-                .setNewValue(newDescription)
+                .setValue(newDescription)
                 .build();
+        DescriptionChangeVBuilder change = DescriptionChangeVBuilder
+                .newBuilder()
+                .setNewValue(newValue);
+        if (!previousDescription.isEmpty()) {
+            TaskDescription previousValue = TaskDescriptionVBuilder
+                    .newBuilder()
+                    .setValue(previousDescription)
+                    .build();
+            change.setPreviousValue(previousValue);
+        }
         UpdateTaskDescription result = UpdateTaskDescriptionVBuilder
                 .newBuilder()
                 .setId(id)
-                .setDescriptionChange(change)
+                .setDescriptionChange(change.build())
                 .build();
         return result;
     }

@@ -28,7 +28,9 @@ import {TaskService} from '../../task-service/task.service';
 
 import {Message} from 'google-protobuf';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
+import {TimestampChange} from 'spine-web/proto/spine/change/change_pb';
 import {LabelColor, TaskPriority} from 'generated/main/js/todolist/attributes_pb';
+import {DescriptionChange, PriorityChange} from 'generated/main/js/todolist/changes_pb';
 import {LabelId, TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {Task, TaskCreation} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
@@ -36,9 +38,9 @@ import {
   AddLabels,
   CancelTaskCreation,
   CompleteTaskCreation,
-  SetTaskDetails,
   SkipLabels,
-  StartTaskCreation
+  StartTaskCreation,
+  UpdateTaskDetails
 } from 'generated/main/js/todolist/c/commands_pb';
 
 /**
@@ -74,84 +76,36 @@ export class TaskCreationWizard {
     }
   }
 
-  private start(): Promise<void> {
-    const taskCreationId = UuidGenerator.newId(TaskCreationId);
-    const taskId = UuidGenerator.newId(TaskId);
-    const cmd = new StartTaskCreation();
-    cmd.setId(taskCreationId);
-    cmd.setTaskId(taskId);
-
-    const startProcess = resolve => {
-      this._id = taskCreationId;
-      this._taskId = taskId;
-      this._stage = TaskCreation.Stage.TASK_DEFINITION;
-      this._taskLabels = [];
-      resolve();
-    };
-    return new Promise<TaskCreationId>((resolve, reject) =>
-      this.spineWebClient.sendCommand(cmd, startProcess(resolve), reject, reject)
-    );
-  }
-
-  /**
-   * ...
-   *
-   * This method queries process manager directly but it's OK as the use case
-   * scenario for this is really rare.
-   */
-  private restore(taskCreationId: TaskCreationId): Promise<void> {
-    this._id = taskCreationId;
-    return this.restoreProcessDetails()
-      .then(() => this.restoreTaskDetails());
-  }
-
-  private restoreProcessDetails(): Promise<void> {
-    return this.fetchProcessDetails()
-      .then(taskCreation => {
-        this._taskId = taskCreation.getTaskId();
-        this._stage = taskCreation.getStage();
-      });
-  }
-
-  private restoreTaskDetails(): Promise<void> {
-    return this.taskService.fetchById(this._taskId)
-      .then(task => {
-        if (task.getDescription()) {
-          this._taskDescription = task.getDescription();
-        }
-        if (task.getPriority()) {
-          this._taskPriority = task.getPriority();
-        }
-        if (task.getDueDate()) {
-          this._taskDueDate = task.getDueDate();
-        }
-        this._taskLabels = task.getLabelIdsList() ? task.getLabelIdsList().getIdsList() : [];
-      });
-  }
-
-  private fetchProcessDetails(): Promise<TaskCreation> {
-    return new Promise<TaskCreation>((resolve, reject) => {
-      const dataCallback = processDetails => {
-        if (!processDetails) {
-          reject(`No task creation process found for ID: ${this._id}`);
-        } else {
-          resolve(processDetails);
-        }
-      };
-      this.spineWebClient.fetchById(Type.forClass(TaskCreation), this._id, dataCallback, reject);
-    });
-  }
-
   updateTaskDetails(description: TaskDescription, priority?: TaskPriority, dueDate?: Timestamp)
     : Promise<void> {
-    const cmd = new SetTaskDetails();
-    cmd.setId(this._id);
-    cmd.setDescription(description);
-    if (priority) {
-      cmd.setPriority(priority);
+    if (!description) {
+      return Promise.reject('Description value must be set.');
     }
-    if (dueDate) {
-      cmd.setDueDate(dueDate);
+    const cmd = new UpdateTaskDetails();
+    cmd.setId(this._id);
+    if (description !== this._taskDescription) {
+      const descriptionChange = new DescriptionChange();
+      descriptionChange.setNewValue(description);
+      if (this._taskDescription) {
+        descriptionChange.setPreviousValue(this._taskDescription);
+      }
+      cmd.setDescriptionChange(descriptionChange);
+    }
+    if (priority && priority !== this._taskPriority) {
+      const priorityChange = new PriorityChange();
+      priorityChange.setNewValue(priority);
+      if (this._taskPriority) {
+        priorityChange.setPreviousValue(this._taskPriority);
+      }
+      cmd.setPriorityChange(priorityChange);
+    }
+    if (dueDate && dueDate !== this._taskDueDate) {
+      const dueDateChange = new TimestampChange();
+      dueDateChange.setNewValue(dueDate);
+      if (this._taskDueDate) {
+        dueDateChange.setPreviousValue(this._taskDueDate);
+      }
+      cmd.setDueDateChange(dueDateChange);
     }
     const updateTask = new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
@@ -228,5 +182,73 @@ export class TaskCreationWizard {
 
   get taskLabels(): LabelId[] {
     return this._taskLabels;
+  }
+
+  private start(): Promise<void> {
+    const taskCreationId = UuidGenerator.newId(TaskCreationId);
+    const taskId = UuidGenerator.newId(TaskId);
+    const cmd = new StartTaskCreation();
+    cmd.setId(taskCreationId);
+    cmd.setTaskId(taskId);
+
+    const startProcess = resolve => {
+      this._id = taskCreationId;
+      this._taskId = taskId;
+      this._stage = TaskCreation.Stage.TASK_DEFINITION;
+      this._taskLabels = [];
+      resolve();
+    };
+    return new Promise<TaskCreationId>((resolve, reject) =>
+      this.spineWebClient.sendCommand(cmd, startProcess(resolve), reject, reject)
+    );
+  }
+
+  /**
+   * ...
+   *
+   * This method queries process manager directly but it's OK as the use case
+   * scenario for this is really rare.
+   */
+  private restore(taskCreationId: TaskCreationId): Promise<void> {
+    this._id = taskCreationId;
+    return this.restoreProcessDetails()
+      .then(() => this.restoreTaskDetails());
+  }
+
+  private restoreProcessDetails(): Promise<void> {
+    return this.fetchProcessDetails()
+      .then(taskCreation => {
+        this._taskId = taskCreation.getTaskId();
+        this._stage = taskCreation.getStage();
+      });
+  }
+
+  private restoreTaskDetails(): Promise<void> {
+    return this.taskService.fetchById(this._taskId)
+      .then(task => {
+        if (task.getDescription()) {
+          this._taskDescription = task.getDescription();
+        }
+        if (task.getPriority()) {
+          this._taskPriority = task.getPriority();
+        }
+        if (task.getDueDate()) {
+          this._taskDueDate = task.getDueDate();
+        }
+        this._taskLabels = task.getLabelIdsList() ? task.getLabelIdsList().getIdsList() : [];
+      });
+  }
+
+  private fetchProcessDetails(): Promise<TaskCreation> {
+    return new Promise<TaskCreation>((resolve, reject) => {
+      const dataCallback = processDetails => {
+        if (!processDetails) {
+          reject(`No task creation process found for ID: ${this._id}`);
+        } else {
+          resolve(processDetails);
+        }
+      };
+      this.spineWebClient.fetchById(Type.forClass(TaskCreation), this._id, dataCallback, reject);
+    });
   }
 }

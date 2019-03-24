@@ -22,9 +22,10 @@ package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
-import io.spine.change.StringChange;
+import com.google.protobuf.util.Timestamps;
 import io.spine.change.TimestampChange;
 import io.spine.change.ValueMismatch;
+import io.spine.examples.todolist.DescriptionChange;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.Task;
@@ -72,7 +73,6 @@ import io.spine.server.command.Assign;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.protobuf.util.Timestamps.compare;
 import static io.spine.base.Time.getCurrentTime;
 import static io.spine.examples.todolist.c.aggregate.MismatchHelper.valueMismatch;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.ensureCompleted;
@@ -88,6 +88,7 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejection
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotReopenTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.ChangeStatusRejections.throwCannotRestoreDeletedTask;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.TaskCreationRejections.throwCannotCreateDraft;
+import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateDescription;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDescription;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskDueDate;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskPartRejections.UpdateRejections.throwCannotUpdateTaskPriority;
@@ -134,7 +135,17 @@ public class TaskPart extends AggregatePart<TaskId,
         if (!isValid) {
             throwCannotUpdateTaskDescription(cmd);
         }
-        StringChange descriptionChange = cmd.getDescriptionChange();
+        DescriptionChange descriptionChange = cmd.getDescriptionChange();
+        TaskDescription actualDescription = state().getDescription();
+        TaskDescription expectedDescription = descriptionChange.getPreviousValue();
+        boolean isEquals = actualDescription.equals(expectedDescription);
+
+        if (!isEquals) {
+            ValueMismatch mismatch = unexpectedValue(expectedDescription.getValue(),
+                                                     actualDescription.getValue(),
+                                                     descriptionChange.getNewValue().getValue());
+            throwCannotUpdateDescription(cmd, mismatch);
+        }
         TaskId taskId = cmd.getId();
         TaskDescriptionUpdated taskDescriptionUpdated = TaskDescriptionUpdated
                 .newBuilder()
@@ -155,6 +166,16 @@ public class TaskPart extends AggregatePart<TaskId,
         }
 
         TimestampChange change = cmd.getDueDateChange();
+        Timestamp actualDueDate = state.getDueDate();
+        Timestamp expectedDueDate = change.getPreviousValue();
+
+        boolean isEquals = Timestamps.compare(actualDueDate, expectedDueDate) == 0;
+
+        if (!isEquals) {
+            Timestamp newDueDate = change.getNewValue();
+            ValueMismatch mismatch = unexpectedValue(expectedDueDate, actualDueDate, newDueDate);
+            throwCannotUpdateTaskDueDate(cmd, mismatch);
+        }
         TaskId taskId = cmd.getId();
         TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated
                 .newBuilder()
@@ -173,8 +194,18 @@ public class TaskPart extends AggregatePart<TaskId,
         if (!isValid) {
             throwCannotUpdateTaskPriority(cmd);
         }
-
         PriorityChange priorityChange = cmd.getPriorityChange();
+        TaskPriority actualPriority = state.getPriority();
+        TaskPriority expectedPriority = priorityChange.getPreviousValue();
+
+        boolean isEquals = actualPriority == expectedPriority;
+
+        if (!isEquals) {
+            TaskPriority newPriority = priorityChange.getNewValue();
+            ValueMismatch mismatch =
+                    valueMismatch(expectedPriority, actualPriority, newPriority, getVersion());
+            throwCannotUpdateTaskPriority(cmd, mismatch);
+        }
         TaskId taskId = cmd.getId();
         TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated
                 .newBuilder()
@@ -321,12 +352,8 @@ public class TaskPart extends AggregatePart<TaskId,
 
     @Apply
     void taskDescriptionUpdated(TaskDescriptionUpdated event) {
-        String newDescriptionValue = event.getDescriptionChange()
-                                          .getNewValue();
-        TaskDescription newDescription = TaskDescription
-                .newBuilder()
-                .setValue(newDescriptionValue)
-                .build();
+        TaskDescription newDescription = event.getDescriptionChange()
+                                                   .getNewValue();
         builder().setDescription(newDescription);
     }
 
