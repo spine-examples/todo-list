@@ -102,6 +102,7 @@ import static io.spine.server.type.CommandClass.from;
 import static io.spine.util.Exceptions.illegalStateWithCauseOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -266,6 +267,59 @@ class TaskCreationWizardTest {
                                               .build()
             ));
             assertEquals(LABEL_ASSIGNMENT, getStage());
+        }
+
+        @Test
+        @DisplayName("mofify task data even when on later stages")
+        void modifyPreviousData() {
+            String descriptionValue = "Description 1";
+            TaskDescription description = TaskDescriptionVBuilder
+                    .newBuilder()
+                    .setValue(descriptionValue)
+                    .build();
+            DescriptionChange descriptionChange = DescriptionChange
+                    .newBuilder()
+                    .setNewValue(description)
+                    .build();
+            UpdateTaskDetails cmd1 = UpdateTaskDetailsVBuilder
+                    .newBuilder()
+                    .setId(getId())
+                    .setDescriptionChange(descriptionChange)
+                    .build();
+            dispatch(cmd1);
+
+            SkipLabels cmd2 = SkipLabelsVBuilder
+                    .newBuilder()
+                    .setId(getId())
+                    .build();
+            dispatch(cmd2);
+            assertEquals(CONFIRMATION, getStage());
+
+            String newDescriptionValue = "Description 2";
+            TaskDescription newDescription = TaskDescriptionVBuilder
+                    .newBuilder()
+                    .setValue(newDescriptionValue)
+                    .build();
+            DescriptionChange newDescriptionChange = DescriptionChange
+                    .newBuilder()
+                    .setNewValue(newDescription)
+                    .build();
+            UpdateTaskDetails newUpdate = UpdateTaskDetailsVBuilder
+                    .newBuilder()
+                    .setId(getId())
+                    .setDescriptionChange(newDescriptionChange)
+                    .build();
+            dispatch(newUpdate);
+
+            ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
+
+            assertThat(producedCommands, hasItem(
+                    UpdateTaskDescriptionVBuilder.newBuilder()
+                                                 .setId(getTaskId())
+                                                 .setDescriptionChange(newDescriptionChange)
+                                                 .build()
+            ));
+            assertEquals(CONFIRMATION, getStage());
         }
     }
 

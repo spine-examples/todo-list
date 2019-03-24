@@ -20,8 +20,6 @@
 
 package io.spine.examples.todolist.c.procman;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
 import io.spine.base.CommandMessage;
 import io.spine.core.CommandContext;
 import io.spine.examples.todolist.LabelDetails;
@@ -62,7 +60,6 @@ import static io.spine.examples.todolist.TaskCreation.Stage.COMPLETED;
 import static io.spine.examples.todolist.TaskCreation.Stage.CONFIRMATION;
 import static io.spine.examples.todolist.TaskCreation.Stage.LABEL_ASSIGNMENT;
 import static io.spine.examples.todolist.TaskCreation.Stage.TASK_DEFINITION;
-import static io.spine.examples.todolist.TaskCreation.Stage.TCS_UNKNOWN;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAddLabelsToTask;
 import static io.spine.validate.Validate.isDefault;
 
@@ -74,14 +71,16 @@ import static io.spine.validate.Validate.isDefault;
  *     <li><b>Task Definition</b> - the task building is started: the task is being defined by its
  *         primary fields. The process moves to this stage once the empty task draft is created.
  *     <li><b>Label Assignment</b> - the labels are being created and assigned to the supervised
- *         task. The process moves to this stage after the primary task data is set and then can
- *         return to it at any times. This stage may be skipped via the {@link SkipLabels} command.
+ *         task. The process moves to this stage after the primary task data is set. This stage may
+ *         be skipped via the {@link SkipLabels} command.
  *     <li><b>Confirmation</b> - all the data is set to the label and the user may check if the data
  *         is correct.
  *     <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
  *         i.e. no stages may follow this stage. At this stage the supervised task is finalized and
  *         the current instance of {@code TaskCreationWizard} is
- *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived}.
+ *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived} It is
+ *         required that the process is in the <b>Confirmation</b> stage before moving to this
+ *         stage.
  *     <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.
  *         The user may return to the supervised task (which persists as a draft) and finalize it
  *         manually. This is a terminal stage. This instance of {@code TaskCreationWizard}
@@ -93,25 +92,26 @@ import static io.spine.validate.Validate.isDefault;
  * stage, i.e. the task creation would be canceled. All the intermediate states of the supervised
  * entities are valid, so no additional clean up is required on cancellation.
  *
+ * <p>All other stages are sequential and cannot be skipped.
+ *
  * <p>The possible stage transitions may be depicted as follows:
  * <pre>
  *     {@code
- *     --> Task Definition <--> Label Assignment <-->  Confirmation -->  Completed.
- *                        \                     \                  \
- *                         --------------------------------------------> Canceled.
+ *     --> Task Definition --> Label Assignment -->  Confirmation -->  Completed.
+ *                       \                    \                \
+ *                        --------------------------------------------> Canceled.
  *     }
  * </pre>
+ *
+ * <p>The data from the already visited stages can be re-submitted at any point of time until the
+ * process is terminated. This allows moving back and forth in the wizard, performing multiple data
+ * modifications.
  */
 @SuppressWarnings({"unused" /* Command handler methods invoked via reflection. */,
         "OverlyCoupledClass" /* OK for process manager entity. */})
 public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         TaskCreation,
         TaskCreationVBuilder> {
-
-    /**
-     * The possible process stage transitions.
-     */
-    private static final Multimap<Stage, Stage> TRANSITION_MATRIX = transitionMatrix();
 
     protected TaskCreationWizard(TaskCreationId id) {
         super(id);
@@ -190,8 +190,11 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * Transits the process to the specified state by handling a command with the given command
-     * handler.
+     * Tries to transit the process to the specified state by handling a command with the given
+     * command handler.
+     *
+     * <p>If the requested stage is preceding to the current state, the actual transition won't
+     * happen, but the action will still be performed.
      *
      * @param requestedStage
      *         the stage to transit to
@@ -208,7 +211,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
             throws CannotMoveToStage {
         checkCanMoveTo(requestedStage);
         R result = commandHandler.get();
-        moveToStage(requestedStage);
+        moveIfSubsequent(requestedStage);
         return result;
     }
 
@@ -220,13 +223,18 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * Sets the current stage to the given value.
+     * Moves to the requested stage if it's subsequent to the current stage.
      *
      * @param stage
      *         the requested stage
      */
-    private void moveToStage(Stage stage) {
-        builder().setStage(stage);
+    private void moveIfSubsequent(Stage stage) {
+        int currentStageNumber = builder().getStage()
+                                          .getNumber();
+        int requestedStageNumber = stage.getNumber();
+        if (currentStageNumber < requestedStageNumber) {
+            builder().setStage(stage);
+        }
     }
 
     /**
@@ -239,9 +247,14 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      */
     private void checkCanMoveTo(Stage pendingStage) throws CannotMoveToStage {
         Stage currentStage = builder().getStage();
-        boolean canMove = TRANSITION_MATRIX.get(currentStage)
-                                           .contains(pendingStage);
-        if (!canMove) {
+        int pendingStageNumber = pendingStage.getNumber();
+        int currentStageNumber = currentStage.getNumber();
+        boolean movingForward = pendingStageNumber > currentStageNumber;
+        if ((pendingStage == CANCELED || !movingForward) && !isTerminated()) {
+            return;
+        }
+        int expectedStageNumber = currentStageNumber + 1;
+        if (expectedStageNumber != pendingStageNumber) {
             CannotMoveToStage rejection = CannotMoveToStage
                     .newBuilder()
                     .setProcessId(id())
@@ -310,37 +323,5 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
                 .setRejectionDetails(details)
                 .build();
         throw rejection;
-    }
-
-    /**
-     * Returns a transition matrix of the {@code TaskCreationWizard}.
-     *
-     * <p>The matrix is done with the idea that the user can freely move between non-terminal task
-     * stages and modify the content before setting the process to {@code COMPLETED}.
-     *
-     * @implNote The stage we are transitioning to is the <i>next</i> stage to the action we just
-     *         performed. So if we are transitioning to {@code LABEL_ASSIGNMENT} it means that we
-     *         just modified the task definition via the {@link UpdateTaskDetails} command. Hence
-     *         the transitions like {@code LABEL_ASSIGNMENT -> LABEL_ASSIGNMENT},
-     *         {@code CONFIRMATION -> CONFIRMATION}, they enable us to go back and do the same
-     *         modification multiple times in a row.
-     */
-    private static Multimap<Stage, Stage> transitionMatrix() {
-        Multimap<Stage, Stage> result = HashMultimap.create();
-        result.put(TCS_UNKNOWN, TASK_DEFINITION);
-
-        result.put(TASK_DEFINITION, LABEL_ASSIGNMENT);
-        result.put(TASK_DEFINITION, CANCELED);
-
-        result.put(LABEL_ASSIGNMENT, LABEL_ASSIGNMENT);
-        result.put(LABEL_ASSIGNMENT, CONFIRMATION);
-        result.put(LABEL_ASSIGNMENT, COMPLETED);
-        result.put(LABEL_ASSIGNMENT, CANCELED);
-
-        result.put(CONFIRMATION, LABEL_ASSIGNMENT);
-        result.put(CONFIRMATION, CONFIRMATION);
-        result.put(CONFIRMATION, COMPLETED);
-        result.put(CONFIRMATION, CANCELED);
-        return result;
     }
 }
