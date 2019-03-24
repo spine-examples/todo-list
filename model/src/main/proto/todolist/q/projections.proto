@@ -133,6 +133,7 @@ message TaskItem {
 // The details of a single task.
 //
 message TaskView {
+    option (entity).kind = PROJECTION;
 
     // Task identifier.
     TaskId id = 1;
@@ -153,6 +154,7 @@ message TaskView {
 // A single label view.
 //
 message LabelView {
+    option (entity).kind = PROJECTION;
 
     // The ID of the label.
     LabelId id = 1;
