@@ -110,20 +110,18 @@ subprojects {
     targetCompatibility = JavaVersion.VERSION_1_8
 
     dependencies {
-        compile deps.build.slf4j
-
-        errorprone deps.build.errorProneCore
-        errorproneJavac deps.build.errorProneJavac
-
+        implementation "io.spine:spine-base:$spineBaseVersion"
+        implementation "io.spine:spine-client:$spineVersion"
+        implementation deps.build.protobuf
         implementation deps.test.slf4j
         implementation deps.build.jsr305Annotations
         implementation deps.build.guava
         implementation "com.google.code.gson:gson:$gsonVersion"
-        implementation deps.build.protobuf
-        implementation "io.spine:spine-base:$spineBaseVersion"
-        implementation "io.spine:spine-client:$spineVersion"
 
-        annotationProcessor "io.spine.tools:spine-model-assembler:$spineVersion"
+        compile deps.build.slf4j
+
+        errorprone deps.build.errorProneCore
+        errorproneJavac deps.build.errorProneJavac
 
         testImplementation deps.test.junit5Api
         testImplementation deps.test.junit5Runner
