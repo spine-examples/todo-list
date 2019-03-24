@@ -23,7 +23,6 @@ import {Client, Type} from 'spine-web';
 
 import {StringValue} from '../../pipes/string-value/string-value.pipe';
 import {UuidGenerator} from '../../uuid-generator/uuid-generator';
-import {LabelService} from '../../labels/label.service';
 import {TaskService} from '../../task-service/task.service';
 
 import {Message} from 'google-protobuf';
@@ -63,8 +62,7 @@ export class TaskCreationWizard {
   private _taskLabels: LabelId[];
 
   constructor(private readonly spineWebClient: Client,
-              private readonly taskService: TaskService,
-              private readonly labelService: LabelService) {
+              private readonly taskService: TaskService) {
   }
 
   init(taskCreationId: string): Promise<void> {
