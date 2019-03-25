@@ -66,7 +66,7 @@ export class LabelService {
             resolve(label);
           }
         };
-        // noinspection JSIgnoredPromiseFromCall IDEA bug.
+        // noinspection JSIgnoredPromiseFromCall Method wrongly resolved by IDEA.
         this.spineWebClient.fetchById(Type.forClass(LabelView), labelId, dataCallback, reject);
       }
     );

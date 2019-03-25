@@ -66,7 +66,7 @@ describe('LabelService', () => {
       .catch(err => expect(err).toEqual(errorMessage));
   });
 
-  it('should fetch a single label details', () => {
+  it('should fetch a single label details by ID', () => {
     const theLabel = label1();
     mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(theLabel));
 

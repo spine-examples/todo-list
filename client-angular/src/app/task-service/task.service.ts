@@ -125,7 +125,7 @@ export class TaskService {
           resolve(task);
         }
       };
-      // noinspection JSIgnoredPromiseFromCall IDEA bug.
+      // noinspection JSIgnoredPromiseFromCall Method wrongly resolved by IDEA.
       this.spineWebClient.fetchById(Type.forClass(TaskView), id, dataCallback, reject);
     });
   }
