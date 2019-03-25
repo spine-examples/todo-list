@@ -19,16 +19,29 @@
  */
 
 import {Message} from 'google-protobuf';
-import * as uuid from 'uuid';
+import * as uuid from 'uuid/v4';
 
 /**
  * A generator of UUID values.
  */
 export class UuidGenerator {
 
+  /** Visible for testing. */
+  static readonly ERROR_MESSAGE = 'Expected a valid UUID-value Protobuf type';
+
+  constructor() {
+    throw new Error('UuidGenerator should not be instantiated');
+  }
+
   static newId<T extends Message>(type: new() => T): T {
+    if (!type) {
+      throw new Error(UuidGenerator.ERROR_MESSAGE);
+    }
     const result: T = new type();
-    const value = uuid.v4();
+    if (!result.setValue) {
+      throw new Error(UuidGenerator.ERROR_MESSAGE);
+    }
+    const value = uuid();
     result.setValue(value);
     return result;
   }

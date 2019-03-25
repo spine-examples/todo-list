@@ -18,17 +18,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { TestBed } from '@angular/core/testing';
+import {UuidGenerator} from '../../../src/app/uuid-generator/uuid-generator';
 
-import { UuidGenerator } from '../../../src/app/uuid-generator/uuid-generator';
+import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
+import {TaskDetails} from 'generated/main/js/todolist/values_pb';
 
 describe('UuidGenerator', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    providers: [UuidGenerator]
-  }));
 
-  it('should be created', () => {
-    const service: UuidGenerator = TestBed.get(UuidGenerator);
-    expect(service).toBeTruthy();
+  it('should throw error on instantiation', () => {
+    expect(() => new UuidGenerator()).toThrowError();
+  });
+
+  it('should generate a UUID-value with a given type', () => {
+    const id1 = UuidGenerator.newId<TaskId>(TaskId);
+    const id2 = UuidGenerator.newId<TaskId>(TaskId);
+    expect(id1).toBeTruthy();
+    expect(id2).toBeTruthy();
+    expect(id1).not.toEqual(id2);
+  });
+
+  it('should throw an error when a specified type is undefined', () => {
+    expect(() => UuidGenerator.newId(undefined))
+      .toThrowError(UuidGenerator.ERROR_MESSAGE);
+  });
+
+  it('should throw an error when a specified type is not a UUID-value Proto type', () => {
+    expect(() => UuidGenerator.newId<TaskDetails>(TaskDetails))
+      .toThrowError(UuidGenerator.ERROR_MESSAGE);
   });
 });
