@@ -37,8 +37,6 @@ import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 })
 export class ActiveTasksComponent implements OnInit, OnDestroy {
 
-  private unsubscribe: () => void;
-
   /** Visible for testing. */
   tasks: TaskItem[] = [];
   private createBasicTaskForms: FormGroup;
@@ -62,14 +60,9 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.tasks = this.taskService.tasks;
-    this.unsubscribe = this.taskService.unsubscribe;
   }
 
   ngOnDestroy(): void {
-    // TODO:2019-03-12:dmytro.kuzmin: Handle the cases of component being destroyed before the
-    // todo subscription process is finished.
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
+    this.taskService.unsubscribe();
   }
 }

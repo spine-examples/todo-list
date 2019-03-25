@@ -136,7 +136,6 @@ export class TaskService {
    * Subscription can be cancelled via the method return value, which is a `Promise` resolving to
    * the `unsubscribe` function.
    *
-   * @param reflectInto the array which will receive subscription updates
    * @returns a `Promise` which resolves to an `unsubscribe` function
    */
   subscribeToTasks(): Promise<() => void> {

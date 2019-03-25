@@ -32,21 +32,16 @@ import {TaskService} from '../../task-service/task.service';
 })
 export class CompletedTasksComponent implements OnInit, OnDestroy {
 
-  private unsubscribe: () => void;
-
   tasks: TaskItem[] = [];
 
   constructor(readonly taskService: TaskService) {
   }
 
-  ngOnDestroy(): void {
-    this.taskService.subscribeToCompleted(this.tasks)
-      .then(unsubscribe => this.unsubscribe = unsubscribe);
+  ngOnInit(): void {
+    this.tasks = this.taskService.tasks.filter(task => task.getStatus() === TaskStatus.COMPLETED);
   }
 
-  ngOnInit(): void {
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
+  ngOnDestroy(): void {
+    this.taskService.unsubscribe();
   }
 }
