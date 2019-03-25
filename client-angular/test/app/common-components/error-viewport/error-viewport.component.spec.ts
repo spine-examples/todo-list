@@ -23,8 +23,8 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {ErrorViewport} from '../../../../src/app/common-components/error-viewport/error-viewport.component';
 
 describe('ErrorViewport', () => {
-  let component: ErrorViewport;
   let fixture: ComponentFixture<ErrorViewport>;
+  let component: ErrorViewport;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -41,5 +41,13 @@ describe('ErrorViewport', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should contain the specified text in a separate paragraph', () => {
+    const text = 'some generic text';
+    component.text = text;
+    fixture.detectChanges();
+    const element = fixture.nativeElement.querySelector('p');
+    expect(element.textContent).toContain(text);
   });
 });

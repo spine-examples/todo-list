@@ -26,6 +26,7 @@ import {Component, Input} from '@angular/core';
 })
 export class PageHeader {
 
+  /** Visible for testing. */
   @Input()
-  private readonly text;
+  text: string;
 }

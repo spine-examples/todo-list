@@ -18,13 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MatDividerModule} from '@angular/material/divider';
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {PageHeader} from '../../../../src/app/common-components/page-header/page-header.component';
 
 describe('PageHeader', () => {
+  let fixture: ComponentFixture<PageHeader>;
   let component: PageHeader;
 
   beforeEach(async(() => {
@@ -39,12 +40,26 @@ describe('PageHeader', () => {
   }));
 
   beforeEach(() => {
-    const fixture = TestBed.createComponent(PageHeader);
+    fixture = TestBed.createComponent(PageHeader);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should contain the specified text in a separate paragraph', () => {
+    const text = 'the text';
+    component.text = text;
+    fixture.detectChanges();
+    const elements = fixture.nativeElement.querySelectorAll('p');
+    elements.forEach(
+      element => {
+        if (element.classList.contains('mat-headline')) {
+          expect(element.textContent).toContain(text);
+        }
+      }
+    );
   });
 });
