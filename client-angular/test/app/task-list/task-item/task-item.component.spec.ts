@@ -28,7 +28,7 @@ import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, task} from '../../given/tasks';
 
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient} from '../../given/mock-spine-web-client';
+import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {Client} from 'spine-web';
 import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
 
@@ -38,6 +38,10 @@ describe('TaskItemComponent', () => {
   const mockClient = mockSpineWebClient();
   let component: TaskItemComponent;
   let fixture: ComponentFixture<TaskItemComponent>;
+
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [], [], [], jasmine.createSpy('unsubscribe')
+  ));
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

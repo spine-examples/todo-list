@@ -45,9 +45,14 @@ import {TaskDisplayComponent} from '../../../../src/app/task-display/task-displa
 
 describe('ActiveTasksComponent', () => {
   const mockClient = mockSpineWebClient();
+  const unsubscribe = jasmine.createSpy('unsubscribe');
 
   let component: ActiveTasksComponent;
   let fixture: ComponentFixture<ActiveTasksComponent>;
+
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [houseTasks()], [], [], unsubscribe
+  ));
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
@@ -64,17 +69,10 @@ describe('ActiveTasksComponent', () => {
     })
       .compileComponents();
 
-    mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-      [houseTasks()], [], [], jasmine.createSpy('unsubscribe')
-    ));
-
     fixture = TestBed.createComponent(ActiveTasksComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
-
     tick(); // Wait for the fake subscription fetch.
-
-    component.unsubscribe = jasmine.createSpy('unsubscribe');
+    fixture.detectChanges();
   }));
 
   it('should allow basic task creation', () => {
@@ -101,7 +99,7 @@ describe('ActiveTasksComponent', () => {
 
   it('should call `unsubscribe` method on destroy', () => {
     component.ngOnDestroy();
-    expect(component.unsubscribe).toHaveBeenCalled();
+    expect(unsubscribe).toHaveBeenCalled();
   });
 
   it('should create `app-task-item` for each of the received tasks', () => {

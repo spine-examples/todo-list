@@ -26,13 +26,18 @@ import {Client} from 'spine-web';
 import {CompletedTasksComponent} from '../../../../src/app/task-list/completed/completed-tasks.component';
 import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
 import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient} from '../../given/mock-spine-web-client';
+import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 
 describe('CompletedTasksComponent', () => {
 
   const mockClient = mockSpineWebClient();
   let fixture: ComponentFixture<CompletedTasksComponent>;
   let component: CompletedTasksComponent;
+  const unsubscribe = jasmine.createSpy('unsubscribe');
+
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [], [], [], unsubscribe
+  ));
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -41,13 +46,11 @@ describe('CompletedTasksComponent', () => {
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
-  }));
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(CompletedTasksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
