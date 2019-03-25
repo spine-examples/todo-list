@@ -26,43 +26,43 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {TaskDetailsComponent} from '../../../src/app/task-details/task-details.component';
 
 describe('TaskDetailsComponent', () => {
-  // let component: TaskDetailsComponent;
-  //
-  // const ID = 'test-task-ID';
-  // const activateRoute = {snapshot: {paramMap: convertToParamMap({id: ID})}};
-  //
-  // beforeEach(async(() => {
-  //   TestBed.configureTestingModule({
-  //     declarations: [TaskDetailsComponent],
-  //     imports: [RouterTestingModule.withRoutes([])],
-  //     providers: [{provide: ActivatedRoute, useValue: activateRoute}]
-  //   })
-  //     .compileComponents();
-  // }));
-  //
-  // beforeEach(() => {
-  //   const fixture = TestBed.createComponent(TaskDetailsComponent);
-  //   component = fixture.componentInstance;
-  //   fixture.detectChanges();
-  // });
-  //
-  // it('should create', () => {
-  //   expect(component).toBeTruthy();
-  // });
-  //
-  // it('should receive task ID from route', () => {
-  //   expect(component.taskId).toBe(ID);
-  // });
-  //
-  // it('should navigate back', () => {
-  //   const location: Location = TestBed.get(Location);
-  //   const initialPath = '/task-list/tasks/active';
-  //   location.go(initialPath);
-  //
-  //   const nextPath = 'labels';
-  //   location.go(nextPath);
-  //   component.back();
-  //
-  //   expect(location.path()).toBe(initialPath);
-  // });
+  let component: TaskDetailsComponent;
+
+  const ID = 'test-task-ID';
+  const activateRoute = {snapshot: {paramMap: convertToParamMap({id: ID})}};
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [TaskDetailsComponent],
+      imports: [RouterTestingModule.withRoutes([])],
+      providers: [{provide: ActivatedRoute, useValue: activateRoute}]
+    })
+      .compileComponents();
+  }));
+
+  beforeEach(() => {
+    const fixture = TestBed.createComponent(TaskDetailsComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+  it('should receive task ID from route', () => {
+    expect(component.taskId).toBe(ID);
+  });
+
+  it('should navigate back', () => {
+    const location: Location = TestBed.get(Location);
+    const initialPath = '/task-list/tasks/active';
+    location.go(initialPath);
+
+    const nextPath = 'labels';
+    location.go(nextPath);
+    component.back();
+
+    expect(location.path()).toBe(initialPath);
+  });
 });
