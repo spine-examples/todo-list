@@ -24,7 +24,7 @@ import {Client} from 'spine-web';
 
 import {TaskDisplayComponent} from '../../../src/app/task-display/task-display.component';
 import {TaskService} from '../../../src/app/task-service/task.service';
-import {mockSpineWebClient} from '../given/mock-spine-web-client';
+import {mockSpineWebClient, subscriptionDataOf} from '../given/mock-spine-web-client';
 import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, houseTasks, task} from '../given/tasks';
 
 describe('TaskDisplayComponent', () => {
@@ -32,6 +32,10 @@ describe('TaskDisplayComponent', () => {
   const mockClient = mockSpineWebClient();
   let component: TaskDisplayComponent;
   let fixture: ComponentFixture<TaskDisplayComponent>;
+
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [], [], [], jasmine.createSpy()
+  ));
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -43,7 +47,6 @@ describe('TaskDisplayComponent', () => {
   }));
 
   beforeEach(() => {
-
     const taskItem = task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
     fixture = TestBed.createComponent(TaskDisplayComponent);
     component = fixture.componentInstance;

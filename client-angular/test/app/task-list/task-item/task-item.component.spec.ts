@@ -22,13 +22,14 @@ import {Component, ViewChild} from '@angular/core';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {MatIconModule} from '@angular/material/icon';
+import {By} from '@angular/platform-browser';
 
 import {TaskItemComponent} from '../../../../src/app/task-list/task-item/task-item.component';
 import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, task} from '../../given/tasks';
 
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient} from '../../given/mock-spine-web-client';
+import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {Client} from 'spine-web';
 import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
 
@@ -38,6 +39,10 @@ describe('TaskItemComponent', () => {
   const mockClient = mockSpineWebClient();
   let component: TaskItemComponent;
   let fixture: ComponentFixture<TaskItemComponent>;
+
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [], [], [], jasmine.createSpy('unsubscribe')
+  ));
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -67,13 +72,15 @@ describe('TaskItemComponent', () => {
 
   it('should allow to complete task', () => {
     const completeTaskMethod = spyOn(component.taskService, 'completeTask');
-    component.completeTask();
+    const completeButton = fixture.debugElement.query(By.css('.complete-task-button')).nativeElement;
+    completeButton.click();
     expect(completeTaskMethod).toHaveBeenCalledWith(HOUSE_TASK_1_ID);
   });
 
   it('should allow to delete task', () => {
     const completeTaskMethod = spyOn(component.taskService, 'deleteTask');
-    component.deleteTask();
+    const deleteButton = fixture.debugElement.query(By.css('.delete-task-button')).nativeElement;
+    deleteButton.click();
     expect(completeTaskMethod).toHaveBeenCalledWith(HOUSE_TASK_1_ID);
   });
 

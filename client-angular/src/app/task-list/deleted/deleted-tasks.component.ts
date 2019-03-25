@@ -18,10 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
-import {TaskSubsetComponent} from '../../task-subset.component';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 
-import {TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../task-service/task.service';
 
 /**
@@ -31,13 +30,18 @@ import {TaskService} from '../../task-service/task.service';
   selector: 'app-deleted-tasks',
   templateUrl: './deleted-tasks.component.html'
 })
-export class DeletedTasksComponent extends TaskSubsetComponent {
+export class DeletedTasksComponent implements OnInit, OnDestroy {
 
-  constructor(taskService: TaskService) {
-    super(taskService);
+  private tasks: TaskItem[];
+
+  constructor(private readonly taskService: TaskService) {
   }
 
-  specifyTask(task): boolean {
-    return task.getStatus() === TaskStatus.DELETED;
+  ngOnDestroy(): void {
+    this.taskService.unsubscribe();
+  }
+
+  ngOnInit(): void {
+    this.tasks = this.taskService.tasks.filter(task => task.getStatus() === TaskStatus.DELETED);
   }
 }

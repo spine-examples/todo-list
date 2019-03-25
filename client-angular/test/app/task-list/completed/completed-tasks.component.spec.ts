@@ -34,8 +34,11 @@ describe('CompletedTasksComponent', () => {
   const mockClient = mockSpineWebClient();
   let fixture: ComponentFixture<CompletedTasksComponent>;
   let component: CompletedTasksComponent;
+  const unsubscribe = jasmine.createSpy('unsubscribe');
 
-  const unsubscribe = jasmine.createSpy();
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [], [], [], unsubscribe
+  ));
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
@@ -45,15 +48,9 @@ describe('CompletedTasksComponent', () => {
     })
       .compileComponents();
 
-    mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-      [houseTasks()], [], [], unsubscribe
-    ));
-
     fixture = TestBed.createComponent(CompletedTasksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-
-    tick(); // Wait for the fake subscription fetch.
   }));
 
   it('should create', () => {

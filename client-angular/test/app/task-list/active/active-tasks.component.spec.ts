@@ -25,6 +25,7 @@ import {MatInputModule} from '@angular/material';
 import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {By} from '@angular/platform-browser';
 import {Client, Type} from 'spine-web';
 
 import {ActiveTasksComponent} from '../../../../src/app/task-list/active/active-tasks.component';
@@ -44,11 +45,14 @@ import {TaskDisplayComponent} from '../../../../src/app/task-display/task-displa
 
 describe('ActiveTasksComponent', () => {
   const mockClient = mockSpineWebClient();
+  const unsubscribe = jasmine.createSpy('unsubscribe');
 
   let component: ActiveTasksComponent;
   let fixture: ComponentFixture<ActiveTasksComponent>;
 
-  const unsubscribe = jasmine.createSpy();
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [houseTasks()], [], [], unsubscribe
+  ));
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
@@ -65,20 +69,21 @@ describe('ActiveTasksComponent', () => {
     })
       .compileComponents();
 
-    mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-      [houseTasks()], [], [], unsubscribe
-    ));
-
     fixture = TestBed.createComponent(ActiveTasksComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
-
     tick(); // Wait for the fake subscription fetch.
+    fixture.detectChanges();
   }));
 
   it('should allow basic task creation', () => {
-    component.createBasicTask('Some basic task');
-    expect(mockClient.sendCommand).toHaveBeenCalledTimes(1);
+    const method = spyOn<any>(component, 'createBasicTask');
+    const input = fixture.debugElement.query(By.css('.task-description-textarea')).nativeElement;
+    input.value = 'Some basic task text';
+    const keyPressed = new KeyboardEvent('keydown', {
+      key: 'Enter'
+    });
+    input.dispatchEvent(keyPressed);
+    expect(method).toHaveBeenCalledTimes(1);
   });
 
   it('should create', () => {

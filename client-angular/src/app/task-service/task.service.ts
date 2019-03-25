@@ -38,10 +38,29 @@ import {TaskStatus} from 'generated/main/js/todolist/attributes_pb';
 })
 export class TaskService {
 
+  private readonly _tasks: TaskItem[] = [];
+  private _unsubscribe: () => void;
+
   /**
    * @param spineWebClient a client for accessing Spine backend
    */
   constructor(private readonly spineWebClient: Client) {
+    this.subscribeToTasks()
+      .then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
+  }
+
+  /**
+   * Obtains a current view of tasks.
+   */
+  get tasks(): TaskItem {
+    return this._tasks;
+  }
+
+  /**
+   * Obtains a function to unsubscribe from changes to the view of the task list.
+   */
+  get unsubscribe(): () => void {
+    return this._unsubscribe;
   }
 
   /** Visible for testing. */
@@ -112,26 +131,25 @@ export class TaskService {
   }
 
   /**
-   * Subscribes to the tasks that match the given predicate and reflects them to a given array.
+   * Subscribes to the active tasks and reflects them to a given array.
+   *
+   * Active tasks are those which are not in draft state, completed, or deleted.
    *
    * The tasks are retrieved from the `MyListView` projection, which is an application-wide
-   * singleton storing task items.
+   * singleton storing active and completed task items.
    *
    * Subscription can be cancelled via the method return value, which is a `Promise` resolving to
    * the `unsubscribe` function.
    *
-   * @param reflectInto the array which will receive subscription updates
-   * @param predicate predicate that returned task items must match
    * @returns a `Promise` which resolves to an `unsubscribe` function
    */
-  subscribeToMatching(reflectInto: TaskItem[], predicate: (TaskItem) => boolean): Promise<() => void> {
+  subscribeToTasks(): Promise<() => void> {
     const refreshTasks = {
       next: (view: MyListView): void => {
-        const taskItems = view.getMyList().getItemsList()
-          .filter(predicate);
+        const taskItems = view.getMyList().getItemsList();
         // Refresh the array.
-        reflectInto.length = 0;
-        reflectInto.push(...taskItems);
+        this.tasks.length = 0;
+        this.tasks.push(...taskItems);
       }
     };
     const type = Type.forClass(MyListView);
@@ -151,27 +169,5 @@ export class TaskService {
           reject(err);
         })
     );
-  }
-
-  /**
-   * Subscribes to the active tasks and reflects them to a given array.
-   *
-   * Active tasks are those which are not in draft state, completed, or deleted.
-   *
-   * The tasks are retrieved from the `MyListView` projection, which is an application-wide
-   * singleton storing active and completed task items.
-   *
-   * Subscription can be cancelled via the method return value, which is a `Promise` resolving to
-   * the `unsubscribe` function.
-   *
-   * @param reflectInto the array which will receive subscription updates
-   * @returns a `Promise` which resolves to an `unsubscribe` function
-   */
-  subscribeToActive(reflectInto: TaskItem[]): Promise<() => void> {
-    return this.subscribeToMatching(reflectInto, task => task.getStatus() === TaskStatus.OPEN);
-  }
-
-  subscribeToCompleted(reflectInto: TaskItem[]): Promise<() => void> {
-    return this.subscribeToMatching(reflectInto, task => task.getStatus() === TaskStatus.COMPLETED);
   }
 }
