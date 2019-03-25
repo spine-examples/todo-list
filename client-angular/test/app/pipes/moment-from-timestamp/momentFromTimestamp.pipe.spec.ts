@@ -18,11 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { MomentFromTimestampPipe } from '../../../../src/app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
+import { MomentFromTimestamp } from '../../../../src/app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
 
-describe('MomentFromTimestampPipe', () => {
-  it('create an instance', () => {
-    const pipe = new MomentFromTimestampPipe();
+describe('MomentFromTimestamp', () => {
+  it('should create', () => {
+    const pipe = new MomentFromTimestamp();
     expect(pipe).toBeTruthy();
   });
 });

@@ -18,12 +18,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {CommonModule} from '@angular/common';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-import {ReactiveFormsModule} from '@angular/forms';
+import {FormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
+import {
+  MatChipsModule,
+  MatIconModule,
+  MatListModule,
+  MatProgressBarModule
+} from '@angular/material';
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {MatButtonModule} from '@angular/material/button';
 import {MatDatepickerModule} from '@angular/material/datepicker';
@@ -40,6 +45,8 @@ import {TaskCreationWizardRoutingModule} from '../../../src/app/task-creation-wi
 import {TaskServiceModule} from '../../../src/app/task-service/task-service.module';
 import {TodoListComponentsModule} from '../../../src/app/common-components/todo-list-components.module';
 import {TodoListPipesModule} from '../../../src/app/pipes/todo-list-pipes.module';
+import {SpineClientProvider} from '../../../src/app/spine-client-provider/spine-client-provider.module';
+import {LabelsModule} from '../../../src/app/labels/labels.module';
 
 describe('TaskCreationWizardComponent', () => {
   let component: TaskCreationWizardComponent;
@@ -54,21 +61,26 @@ describe('TaskCreationWizardComponent', () => {
         ConfirmationComponent
       ],
       imports: [
-        CommonModule,
-        ReactiveFormsModule,
-        RouterTestingModule.withRoutes([]),
+        FormsModule,
         NoopAnimationsModule,
+        RouterTestingModule.withRoutes([]),
 
         TaskCreationWizardRoutingModule,
         TodoListComponentsModule,
+        SpineClientProvider,
         TodoListPipesModule,
         TaskServiceModule,
+        LabelsModule,
 
         MatMomentDateModule,
         MatButtonModule,
+        MatChipsModule,
         MatDatepickerModule,
+        MatIconModule,
         MatInputModule,
         MatFormFieldModule,
+        MatListModule,
+        MatProgressBarModule,
         MatSelectModule,
         MatStepperModule
       ]

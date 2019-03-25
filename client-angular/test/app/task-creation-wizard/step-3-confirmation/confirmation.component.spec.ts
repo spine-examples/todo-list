@@ -18,27 +18,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {CommonModule} from '@angular/common';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {ReactiveFormsModule} from '@angular/forms';
 import {RouterTestingModule} from '@angular/router/testing';
 
-import {MatMomentDateModule} from '@angular/material-moment-adapter';
-import {MatButtonModule} from '@angular/material/button';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatSelectModule} from '@angular/material/select';
-import {MatStepperModule} from '@angular/material/stepper';
-
-import {TaskCreationWizardComponent} from '../../../../src/app/task-creation-wizard/task-creation-wizard.component';
-import {TaskDefinitionComponent} from '../../../../src/app/task-creation-wizard/step-1-task-definition/task-definition.component';
-import {LabelAssignmentComponent} from '../../../../src/app/task-creation-wizard/step-2-label-assignment/label-assignment.component';
+import {Client} from 'spine-web';
 import {ConfirmationComponent} from '../../../../src/app/task-creation-wizard/step-3-confirmation/confirmation.component';
-import {TaskCreationWizardRoutingModule} from '../../../../src/app/task-creation-wizard/task-creation-wizard.routes';
-import {TaskServiceModule} from '../../../../src/app/task-service/task-service.module';
 import {TodoListComponentsModule} from '../../../../src/app/common-components/todo-list-components.module';
 import {TodoListPipesModule} from '../../../../src/app/pipes/todo-list-pipes.module';
+import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
+import {TaskService} from '../../../../src/app/task-service/task.service';
+import {mockSpineWebClient} from '../../given/mock-spine-web-client';
 
 describe('ConfirmationComponent', () => {
   let component: ConfirmationComponent;
@@ -47,28 +36,18 @@ describe('ConfirmationComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        TaskCreationWizardComponent,
-        TaskDefinitionComponent,
-        LabelAssignmentComponent,
         ConfirmationComponent
       ],
       imports: [
-        CommonModule,
-        ReactiveFormsModule,
         RouterTestingModule.withRoutes([]),
 
-        TaskCreationWizardRoutingModule,
         TodoListComponentsModule,
-        TodoListPipesModule,
-        TaskServiceModule,
-
-        MatMomentDateModule,
-        MatButtonModule,
-        MatDatepickerModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatStepperModule
+        TodoListPipesModule
+      ],
+      providers: [
+        TaskCreationWizard,
+        TaskService,
+        {provide: Client, useValue: mockSpineWebClient()}
       ]
     })
       .compileComponents();

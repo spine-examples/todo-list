@@ -20,8 +20,8 @@
 
 import {TaskPriorityName} from '../../../../src/app/pipes/task-priority-name/task-priority-name.pipe';
 
-describe('PriorityDisplayNamePipe', () => {
-  it('create an instance', () => {
+describe('TaskPriorityName', () => {
+  it('should create', () => {
     const pipe = new TaskPriorityName();
     expect(pipe).toBeTruthy();
   });

@@ -18,11 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { LabelColorPipe } from '../../../../src/app/pipes/label-color-view/label-color-view.pipe';
+import { LabelColorView } from '../../../../src/app/pipes/label-color-view/label-color-view.pipe';
 
-describe('LabelColorPipe', () => {
-  it('create an instance', () => {
-    const pipe = new LabelColorPipe();
+describe('LabelColorView', () => {
+  it('should create', () => {
+    const pipe = new LabelColorView();
     expect(pipe).toBeTruthy();
   });
 });

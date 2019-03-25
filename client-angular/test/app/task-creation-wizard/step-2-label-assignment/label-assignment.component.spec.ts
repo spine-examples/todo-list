@@ -18,71 +18,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {CommonModule} from '@angular/common';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {ReactiveFormsModule} from '@angular/forms';
-import {NoopAnimationsModule} from '@angular/platform-browser/animations';
-
-
-import {MatMomentDateModule} from '@angular/material-moment-adapter';
-import {MatButtonModule} from '@angular/material/button';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatSelectModule} from '@angular/material/select';
-import {MatStepperModule} from '@angular/material/stepper';
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {Client} from 'spine-web';
 
-import {TaskCreationWizardComponent} from '../../../../src/app/task-creation-wizard/task-creation-wizard.component';
-import {TaskDefinitionComponent} from '../../../../src/app/task-creation-wizard/step-1-task-definition/task-definition.component';
+import {MatChipsModule, MatIconModule, MatListModule} from '@angular/material';
 import {LabelAssignmentComponent} from '../../../../src/app/task-creation-wizard/step-2-label-assignment/label-assignment.component';
-import {ConfirmationComponent} from '../../../../src/app/task-creation-wizard/step-3-confirmation/confirmation.component';
-import {TaskCreationWizardRoutingModule} from '../../../../src/app/task-creation-wizard/task-creation-wizard.routes';
-import {TaskServiceModule} from '../../../../src/app/task-service/task-service.module';
 import {TodoListComponentsModule} from '../../../../src/app/common-components/todo-list-components.module';
 import {TodoListPipesModule} from '../../../../src/app/pipes/todo-list-pipes.module';
 import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
 import {TaskService} from '../../../../src/app/task-service/task.service';
 import {mockSpineWebClient} from '../../given/mock-spine-web-client';
-import {mockStepper} from '../given/mock-stepper';
+import {LabelService} from '../../../../src/app/labels/label.service';
 
-
-describe('TaskDefinitionComponent', () => {
-  let component: TaskDefinitionComponent;
-  let fixture: ComponentFixture<TaskDefinitionComponent>;
+describe('LabelAssignmentComponent', () => {
+  let component: LabelAssignmentComponent;
+  let fixture: ComponentFixture<LabelAssignmentComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [
-        TaskCreationWizardComponent,
-        TaskDefinitionComponent,
-        LabelAssignmentComponent,
-        ConfirmationComponent
+        LabelAssignmentComponent
       ],
       imports: [
-        CommonModule,
-        ReactiveFormsModule,
         RouterTestingModule.withRoutes([]),
-        NoopAnimationsModule,
 
-        TaskCreationWizardRoutingModule,
         TodoListComponentsModule,
         TodoListPipesModule,
-        TaskServiceModule,
 
-        MatMomentDateModule,
-        MatButtonModule,
-        MatDatepickerModule,
-        MatInputModule,
-        MatFormFieldModule,
-        MatSelectModule,
-        MatStepperModule
+        MatChipsModule,
+        MatIconModule,
+        MatListModule
       ],
       providers: [
         TaskCreationWizard,
         TaskService,
+        LabelService,
         {provide: Client, useValue: mockSpineWebClient()}
       ]
     })
@@ -90,9 +62,8 @@ describe('TaskDefinitionComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TaskDefinitionComponent);
+    fixture = TestBed.createComponent(LabelAssignmentComponent);
     component = fixture.componentInstance;
-    component.stepper = mockStepper();
     fixture.detectChanges();
   });
 

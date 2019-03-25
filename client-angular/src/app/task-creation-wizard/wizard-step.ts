@@ -27,8 +27,9 @@ import {ErrorViewport} from '../common-components/error-viewport/error-viewport.
 
 export abstract class WizardStep implements AfterViewInit {
 
+  /** Visible for testing. */
   @Input()
-  private readonly stepper: MatStepper;
+  stepper: MatStepper;
 
   @ViewChild(ErrorViewport)
   private readonly errorViewport: ErrorViewport;

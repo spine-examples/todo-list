@@ -21,7 +21,7 @@
 import { StringValue } from '../../../../src/app/pipes/string-value/string-value.pipe';
 
 describe('StringValue', () => {
-  it('create an instance', () => {
+  it('should create', () => {
     const pipe = new StringValue();
     expect(pipe).toBeTruthy();
   });
