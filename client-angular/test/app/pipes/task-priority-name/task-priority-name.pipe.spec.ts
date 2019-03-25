@@ -20,9 +20,23 @@
 
 import {TaskPriorityName} from '../../../../src/app/pipes/task-priority-name/task-priority-name.pipe';
 
+import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
+
 describe('TaskPriorityName', () => {
+  const pipe = new TaskPriorityName();
+
   it('should create', () => {
-    const pipe = new TaskPriorityName();
     expect(pipe).toBeTruthy();
+  });
+
+  it('should convert a `TaskPriority` to its display name', () => {
+    const transform = pipe.transform(TaskPriority.HIGH);
+    expect(transform).toEqual('High');
+  });
+
+  it('should produce an error when given an unknown `TaskPriority`', () => {
+    expect(() => pipe.transform(TaskPriority.TC_UNDEFINED)).toThrowError(
+      `Task priority ${TaskPriority.TC_UNDEFINED} is unknown`
+    );
   });
 });

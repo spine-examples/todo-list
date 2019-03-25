@@ -18,11 +18,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { MomentFromTimestamp } from '../../../../src/app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
+import * as moment from 'moment';
+
+import {MomentFromTimestamp} from '../../../../src/app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
+
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 
 describe('MomentFromTimestamp', () => {
+
+  const pipe = new MomentFromTimestamp();
+
   it('should create', () => {
-    const pipe = new MomentFromTimestamp();
     expect(pipe).toBeTruthy();
+  });
+
+  it('should convert Protobuf `Timestamp` into the Moment.js `Moment`', () => {
+    const date = new Date();
+    const timestamp = Timestamp.fromDate(date);
+    const transform = pipe.transform(timestamp);
+    expect(transform.toDate()).toEqual(date);
+  });
+
+  it('should return `undefined` if converting `undefined` `Timestamp`', () => {
+    const transform = pipe.transform(undefined);
+    expect(transform).toBeUndefined();
+  });
+
+  it('should convert Moment.js `Moment` to Protobuf `Timestamp`', () => {
+    const date = new Date();
+    const theMoment = moment(date);
+    const timestamp = MomentFromTimestamp.back(theMoment);
+    expect(timestamp.toDate()).toEqual(date);
+  });
+
+  it('should return `undefined` when converting `undefined` `Moment`', () => {
+    const transform = MomentFromTimestamp.back(undefined);
+    expect(transform).toBeUndefined();
   });
 });

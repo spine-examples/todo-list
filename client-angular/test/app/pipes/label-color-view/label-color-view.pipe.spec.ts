@@ -18,11 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { LabelColorView } from '../../../../src/app/pipes/label-color-view/label-color-view.pipe';
+import {LabelColorView} from '../../../../src/app/pipes/label-color-view/label-color-view.pipe';
+
+import {LabelColor} from 'generated/main/js/todolist/attributes_pb';
 
 describe('LabelColorView', () => {
+
+  const pipe = new LabelColorView();
+
   it('should create', () => {
-    const pipe = new LabelColorView();
     expect(pipe).toBeTruthy();
+  });
+
+  it('should convert `LabelColor` to its string representation', () => {
+    const transform = pipe.transform(LabelColor.RED);
+    expect(transform).toEqual('#ff0000');
+  });
+
+  it('should throw an error on unknown label color', () => {
+    expect(() => pipe.transform(LabelColor.LC_UNDEFINED)).toThrowError(
+      `There is no known string representation for color ${LabelColor.LC_UNDEFINED}`
+    );
   });
 });

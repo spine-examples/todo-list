@@ -18,11 +18,53 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { StringValue } from '../../../../src/app/pipes/string-value/string-value.pipe';
+import {StringValue} from '../../../../src/app/pipes/string-value/string-value.pipe';
+
+import {LabelDetails, TaskDescription} from 'generated/main/js/todolist/values_pb';
 
 describe('StringValue', () => {
+
+  const pipe = new StringValue();
+
   it('should create', () => {
-    const pipe = new StringValue();
     expect(pipe).toBeTruthy();
+  });
+
+  it('should convert suitable Proto message to its string value', () => {
+    const stringValue = 'the task description';
+    const taskDescription = new TaskDescription();
+    taskDescription.setValue(stringValue);
+    const transform = pipe.transform(taskDescription);
+    expect(transform).toEqual(stringValue);
+  });
+
+  it('should always return `undefined` when given `undefined` Proto message', () => {
+    const transform = pipe.transform(undefined);
+    expect(transform).toBeUndefined();
+  });
+
+  it('should produce an error when given a non-`stringValue` Proto type', () => {
+    const labelDetails = new LabelDetails();
+    expect(() => pipe.transform(labelDetails)).toThrowError(
+      `${StringValue.ERROR_MESSAGE}${labelDetails}`
+    );
+  });
+
+  it('should convert a string value to a specified Proto type', () => {
+    const stringValue = 'some task description';
+    const message = StringValue.back<TaskDescription>(stringValue, TaskDescription);
+    expect(message.getValue()).toEqual(stringValue);
+  });
+
+  it('should always return `undefined` when given an `undefined` string value', () => {
+    const transform = StringValue.back(undefined, TaskDescription);
+    expect(transform).toBeUndefined();
+  });
+
+  it('should produce an error when conversion to a non-`stringValue` type is requested', () => {
+    const stringValue = 'some string value';
+    expect(() => StringValue.back<LabelDetails>(stringValue, LabelDetails)).toThrowError(
+      `${StringValue.ERROR_MESSAGE}${LabelDetails}`
+    );
   });
 });

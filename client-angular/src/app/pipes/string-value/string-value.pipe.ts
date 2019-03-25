@@ -26,10 +26,21 @@ import {Message} from 'google-protobuf';
 })
 export class StringValue implements PipeTransform {
 
-  private static readonly ERROR_MESSAGE =
-    'Expected Proto Message containing a single `string` field named `value`, received: ';
+  /** Visible for testing. */
+  static readonly ERROR_MESSAGE =
+    'Expected Proto Message type which contains a single `string` field named `value`, received: ';
 
+  /**
+   * ...
+   *
+   * Returns `undefined` on `undefined` inputs (rather than producing an `Error`) for convenience
+   * as in To-Do List `undefined` is often a valid value for NG model entries (e.g. task can have
+   * undefined due date).
+   */
   static back<T extends Message>(value: string, type: new() => T): T {
+    if (!value) {
+      return undefined;
+    }
     const result = new type();
     if (!result.setValue) {
       throw new Error(`${StringValue.ERROR_MESSAGE}${type}`);
@@ -38,6 +49,13 @@ export class StringValue implements PipeTransform {
     return result;
   }
 
+  /**
+   * ...
+   *
+   * Returns `undefined` on `undefined` inputs (rather than producing an `Error`) for convenience
+   * as in To-Do List `undefined` is often a valid value for NG model entries (e.g. task can have
+   * undefined due date).
+   */
   transform(value: any): string {
     if (!value) {
       return undefined;

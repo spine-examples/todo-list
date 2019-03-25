@@ -39,8 +39,7 @@ export class TaskPriorityName implements PipeTransform {
   private static readonly NAMES: Map<TaskPriority, string> = new Map([
     [TaskPriority.HIGH, 'High'],
     [TaskPriority.NORMAL, 'Normal'],
-    [TaskPriority.LOW, 'Low'],
-    [TaskPriority.TP_UNDEFINED, 'Undefined']
+    [TaskPriority.LOW, 'Low']
   ]);
 
   transform(value: TaskPriority): string {

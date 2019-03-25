@@ -19,7 +19,8 @@
  */
 
 import {Pipe, PipeTransform} from '@angular/core';
-import {Moment, unix} from 'moment';
+import * as moment from 'moment';
+import {Moment} from 'moment';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 
 /**
@@ -33,16 +34,33 @@ import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 })
 export class MomentFromTimestamp implements PipeTransform {
 
+  /**
+   * ...
+   *
+   * Returns `undefined` on `undefined` inputs (rather than producing an `Error`) for convenience
+   * as in To-Do List `undefined` is often a valid value for NG model entries (e.g. task can have
+   * undefined due date).
+   */
   static back(value: Moment): Timestamp {
+    if (!value) {
+      return undefined;
+    }
     const date = value.toDate();
     return Timestamp.fromDate(date);
   }
 
+  /**
+   * ...
+   *
+   * Returns `undefined` on `undefined` inputs (rather than producing an `Error`) for convenience
+   * as in To-Do List `undefined` is often a valid value for NG model entries (e.g. task can have
+   * undefined due date).
+   */
   transform(value: Timestamp): Moment {
     if (!value) {
       return undefined;
     }
-    const unixSeconds = value.getSeconds();
-    return unix(unixSeconds);
+    const date = value.toDate();
+    return moment(date);
   }
 }

@@ -46,6 +46,7 @@ describe('LabelService', () => {
     mockClient.fetchAll.and.returnValue(fetch);
     const theLabels = [label1(), label2()];
     fetch.atOnce.and.returnValue(Promise.resolve(theLabels));
+
     service.fetchAllLabels()
       .then(labels => {
         expect(labels.length).toEqual(2);
@@ -59,6 +60,7 @@ describe('LabelService', () => {
     mockClient.fetchAll.and.returnValue(fetch);
     const errorMessage = 'Labels lookup rejected';
     fetch.atOnce.and.returnValue(Promise.reject(errorMessage));
+
     service.fetchAllLabels()
       .then(() => fail('Labels fetch should have been rejected'))
       .catch(err => expect(err).toEqual(errorMessage));
@@ -67,6 +69,7 @@ describe('LabelService', () => {
   it('should fetch a single label details', () => {
     const theLabel = label1();
     mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(theLabel));
+
     service.fetchLabelDetails(theLabel.getId())
       .then(label => expect(label).toEqual(theLabel))
       .catch(err =>
@@ -77,6 +80,7 @@ describe('LabelService', () => {
   it('should propagate errors from Spine Web Client on `fetchLabelDetails`', () => {
     const errorMessage = 'Label details lookup rejected';
     mockClient.fetchById.and.callFake((cls, id, resolve, reject) => reject(errorMessage));
+
     service.fetchLabelDetails(label1().getId())
       .then(() => fail('Label details lookup should have been rejected'))
       .catch(err => expect(err).toEqual(errorMessage));
@@ -85,6 +89,7 @@ describe('LabelService', () => {
   it('should produce an error when no matching label is found during lookup', () => {
     mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(null));
     const labelId = label1().getId();
+
     service.fetchLabelDetails(labelId)
       .then(() => fail('Label details lookup should have been rejected'))
       .catch(err => expect(err).toEqual(`No label view found for ID: ${labelId}`));
