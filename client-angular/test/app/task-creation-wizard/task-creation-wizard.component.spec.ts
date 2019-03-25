@@ -45,7 +45,6 @@ import {TaskCreationWizardRoutingModule} from '../../../src/app/task-creation-wi
 import {TaskServiceModule} from '../../../src/app/task-service/task-service.module';
 import {TodoListComponentsModule} from '../../../src/app/common-components/todo-list-components.module';
 import {TodoListPipesModule} from '../../../src/app/pipes/todo-list-pipes.module';
-import {SpineClientProvider} from '../../../src/app/spine-client-provider/spine-client-provider.module';
 import {LabelsModule} from '../../../src/app/labels/labels.module';
 
 describe('TaskCreationWizardComponent', () => {
@@ -67,7 +66,6 @@ describe('TaskCreationWizardComponent', () => {
 
         TaskCreationWizardRoutingModule,
         TodoListComponentsModule,
-        SpineClientProvider,
         TodoListPipesModule,
         TaskServiceModule,
         LabelsModule,
