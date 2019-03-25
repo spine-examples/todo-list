@@ -30,8 +30,8 @@ describe('UuidGenerator', () => {
   });
 
   it('should generate a UUID-value with a given type', () => {
-    const id1 = UuidGenerator.newId<TaskId>(TaskId);
-    const id2 = UuidGenerator.newId<TaskId>(TaskId);
+    const id1 = UuidGenerator.newId(TaskId);
+    const id2 = UuidGenerator.newId(TaskId);
     expect(id1).toBeTruthy();
     expect(id2).toBeTruthy();
     expect(id1).not.toEqual(id2);
@@ -43,7 +43,7 @@ describe('UuidGenerator', () => {
   });
 
   it('should throw an error when a specified type is not a UUID-value Proto type', () => {
-    expect(() => UuidGenerator.newId<TaskDetails>(TaskDetails))
+    expect(() => UuidGenerator.newId(TaskDetails))
       .toThrowError(UuidGenerator.ERROR_MESSAGE);
   });
 });
