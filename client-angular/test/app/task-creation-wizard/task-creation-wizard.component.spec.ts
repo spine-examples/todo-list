@@ -23,6 +23,8 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {FormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
+import {Client} from 'spine-web';
+
 import {
   MatChipsModule,
   MatIconModule,
@@ -46,8 +48,23 @@ import {TaskServiceModule} from '../../../src/app/task-service/task-service.modu
 import {TodoListComponentsModule} from '../../../src/app/common-components/todo-list-components.module';
 import {TodoListPipesModule} from '../../../src/app/pipes/todo-list-pipes.module';
 import {LabelsModule} from '../../../src/app/labels/labels.module';
+import {TaskCreationWizard} from '../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
+import {TaskService} from '../../../src/app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from '../given/mock-spine-web-client';
+import {houseTasks} from '../given/tasks';
+import {LabelService} from '../../../src/app/labels/label.service';
 
 describe('TaskCreationWizardComponent', () => {
+  const mockClient = mockSpineWebClient();
+  const unsubscribe = jasmine.createSpy('unsubscribe');
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [houseTasks()], [], [], unsubscribe
+  ));
+
+  const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);
+  mockClient.fetchAll.and.returnValue(fetch);
+  fetch.atOnce.and.returnValue(Promise.resolve());
+
   let component: TaskCreationWizardComponent;
   let fixture: ComponentFixture<TaskCreationWizardComponent>;
 
@@ -81,6 +98,12 @@ describe('TaskCreationWizardComponent', () => {
         MatProgressBarModule,
         MatSelectModule,
         MatStepperModule
+      ],
+      providers: [
+        TaskCreationWizard,
+        TaskService,
+        LabelService,
+        {provide: Client, useValue: mockClient}
       ]
     })
       .compileComponents();
