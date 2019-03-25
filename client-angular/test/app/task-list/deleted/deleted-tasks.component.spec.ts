@@ -36,6 +36,10 @@ describe('DeletedTasksComponent', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy();
 
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [houseTasks()], [], [], unsubscribe
+  ));
+
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       declarations: [DeletedTasksComponent, TaskDisplayComponent],
@@ -43,9 +47,6 @@ describe('DeletedTasksComponent', () => {
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
-    mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-      [houseTasks()], [], [], unsubscribe
-    ));
 
     fixture = TestBed.createComponent(DeletedTasksComponent);
     component = fixture.componentInstance;

@@ -37,6 +37,10 @@ import {MyListView} from 'generated/main/js/todolist/q/projections_pb';
 describe('TaskService', () => {
   const mockClient = mockSpineWebClient();
 
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [], [], [], jasmine.createSpy()
+  ));
+
   let service: TaskService;
 
   beforeEach(() => {
