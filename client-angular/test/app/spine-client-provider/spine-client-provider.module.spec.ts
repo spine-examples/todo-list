@@ -25,20 +25,20 @@ import {Client} from 'spine-web';
 import {SpineClientProvider} from '../../../src/app/spine-client-provider/spine-client-provider.module';
 
 describe('SpineClientProvider', () => {
-  //
-  // it('should provide Spine Web Client dependency for importing modules', () => {
-  //   TestBed.configureTestingModule({
-  //     imports: [SpineClientProvider],
-  //     providers: [ServiceWithClientDependency]
-  //   });
-  //   const service = TestBed.get(ServiceWithClientDependency);
-  //   expect(service.spineWebClient).toBeTruthy();
-  // });
-  //
-  // @Injectable()
-  // class ServiceWithClientDependency {
-  //   // noinspection JSUnusedLocalSymbols Needed for the fact of dependency injection.
-  //   constructor(readonly spineWebClient: Client) {
-  //   }
-  // }
+
+  it('should provide Spine Web Client dependency for importing modules', () => {
+    TestBed.configureTestingModule({
+      imports: [SpineClientProvider],
+      providers: [ServiceWithClientDependency]
+    });
+    const service = TestBed.get(ServiceWithClientDependency);
+    expect(service.spineWebClient).toBeTruthy();
+  });
+
+  @Injectable()
+  class ServiceWithClientDependency {
+    // noinspection JSUnusedLocalSymbols Needed for the fact of dependency injection.
+    constructor(readonly spineWebClient: Client) {
+    }
+  }
 });
