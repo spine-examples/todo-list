@@ -58,8 +58,17 @@ export class LabelService {
 
   // noinspection JSUnusedGlobalSymbols Unused for now.
   fetchLabelDetails(labelId: LabelId): Promise<LabelView> {
-    return new Promise<LabelView>((resolve, reject) =>
-      this.spineWebClient.fetchById(Type.forClass(LabelView), labelId, resolve, reject)
+    return new Promise<LabelView>((resolve, reject) => {
+        const dataCallback = label => {
+          if (!label) {
+            reject(`No label view found for ID: ${labelId}`);
+          } else {
+            resolve(label);
+          }
+        };
+        // noinspection JSIgnoredPromiseFromCall IDEA bug.
+        this.spineWebClient.fetchById(Type.forClass(LabelView), labelId, dataCallback, reject);
+      }
     );
   }
 }

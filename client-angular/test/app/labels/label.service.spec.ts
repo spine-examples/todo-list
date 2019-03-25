@@ -75,10 +75,18 @@ describe('LabelService', () => {
   });
 
   it('should propagate errors from Spine Web Client on `fetchLabelDetails`', () => {
-    const errorMessage = 'Non-existent label ID';
+    const errorMessage = 'Label details lookup rejected';
     mockClient.fetchById.and.callFake((cls, id, resolve, reject) => reject(errorMessage));
     service.fetchLabelDetails(label1().getId())
       .then(() => fail('Label details lookup should have been rejected'))
       .catch(err => expect(err).toEqual(errorMessage));
+  });
+
+  it('should produce an error when no matching label is found during lookup', () => {
+    mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(null));
+    const labelId = label1().getId();
+    service.fetchLabelDetails(labelId)
+      .then(() => fail('Label details lookup should have been rejected'))
+      .catch(err => expect(err).toEqual(`No label view found for ID: ${labelId}`));
   });
 });
