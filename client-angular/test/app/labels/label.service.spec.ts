@@ -23,14 +23,62 @@ import {Client} from 'spine-web';
 
 import {LabelService} from '../../../src/app/labels/label.service';
 import {mockSpineWebClient} from '../given/mock-spine-web-client';
+import {label1, label2} from '../given/labels';
 
 describe('LabelService', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    providers: [LabelService, {provide: Client, useValue: mockSpineWebClient()}]
-  }));
+  const mockClient = mockSpineWebClient();
+  let service: LabelService;
+
+  beforeEach(() => {
+      TestBed.configureTestingModule({
+        providers: [LabelService, {provide: Client, useValue: mockClient}]
+      });
+      service = TestBed.get(LabelService);
+    }
+  );
 
   it('should be created', () => {
-    const service: LabelService = TestBed.get(LabelService);
     expect(service).toBeTruthy();
+  });
+
+  it('should fetch all labels', () => {
+    const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);
+    mockClient.fetchAll.and.returnValue(fetch);
+    const theLabels = [label1(), label2()];
+    fetch.atOnce.and.returnValue(Promise.resolve(theLabels));
+    service.fetchAllLabels()
+      .then(labels => {
+        expect(labels.length).toEqual(2);
+        expect(labels[0]).toEqual(theLabels[0]);
+        expect(labels[1]).toEqual(theLabels[1]);
+      });
+  });
+
+  it('should propagate errors from Spine Web Client on `fetchAllLabels`', () => {
+    const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);
+    mockClient.fetchAll.and.returnValue(fetch);
+    const errorMessage = 'Labels lookup rejected';
+    fetch.atOnce.and.returnValue(Promise.reject(errorMessage));
+    service.fetchAllLabels()
+      .then(() => fail('Labels fetch should have been rejected'))
+      .catch(err => expect(err).toEqual(errorMessage));
+  });
+
+  it('should fetch a single label details', () => {
+    const theLabel = label1();
+    mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(theLabel));
+    service.fetchLabelDetails(theLabel.getId())
+      .then(label => expect(label).toEqual(theLabel))
+      .catch(err =>
+        fail(`Label details should have been resolved, actually rejected with an error: ${err}`)
+      );
+  });
+
+  it('should propagate errors from Spine Web Client on `fetchLabelDetails`', () => {
+    const errorMessage = 'Non-existent label ID';
+    mockClient.fetchById.and.callFake((cls, id, resolve, reject) => reject(errorMessage));
+    service.fetchLabelDetails(label1().getId())
+      .then(() => fail('Label details lookup should have been rejected'))
+      .catch(err => expect(err).toEqual(errorMessage));
   });
 });

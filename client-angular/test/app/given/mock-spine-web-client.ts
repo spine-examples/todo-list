@@ -52,12 +52,8 @@ export function subscriptionDataOf<T>(added: T[],
 }
 
 export function mockSpineWebClient() {
-  const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);
-  const client = jasmine.createSpyObj<Client>(
+  return jasmine.createSpyObj<Client>(
     'Client',
-    ['sendCommand', 'subscribeToEntities', 'fetchAll']
+    ['sendCommand', 'subscribeToEntities', 'fetchAll', 'fetchById']
   );
-  client.fetchAll.and.returnValue(fetch);
-  fetch.atOnce.and.returnValue(Promise.resolve());
-  return client;
 }

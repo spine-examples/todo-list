@@ -33,6 +33,8 @@ import {mockSpineWebClient} from '../../given/mock-spine-web-client';
 import {LabelService} from '../../../../src/app/labels/label.service';
 
 describe('LabelAssignmentComponent', () => {
+  const mockClient = mockSpineWebClient();
+
   let component: LabelAssignmentComponent;
   let fixture: ComponentFixture<LabelAssignmentComponent>;
 
@@ -55,13 +57,17 @@ describe('LabelAssignmentComponent', () => {
         TaskCreationWizard,
         TaskService,
         LabelService,
-        {provide: Client, useValue: mockSpineWebClient()}
+        {provide: Client, useValue: mockClient}
       ]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
+    const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);
+    mockClient.fetchAll.and.returnValue(fetch);
+    fetch.atOnce.and.returnValue(Promise.resolve());
+
     fixture = TestBed.createComponent(LabelAssignmentComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
