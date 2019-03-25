@@ -49,52 +49,52 @@ import {SpineClientProvider} from '../../../src/app/spine-client-provider/spine-
 import {LabelsModule} from '../../../src/app/labels/labels.module';
 
 describe('TaskCreationWizardComponent', () => {
-  // let component: TaskCreationWizardComponent;
-  // let fixture: ComponentFixture<TaskCreationWizardComponent>;
-  //
-  // beforeEach(async(() => {
-  //   TestBed.configureTestingModule({
-  //     declarations: [
-  //       TaskCreationWizardComponent,
-  //       TaskDefinitionComponent,
-  //       LabelAssignmentComponent,
-  //       ConfirmationComponent
-  //     ],
-  //     imports: [
-  //       FormsModule,
-  //       NoopAnimationsModule,
-  //       RouterTestingModule.withRoutes([]),
-  //
-  //       TaskCreationWizardRoutingModule,
-  //       TodoListComponentsModule,
-  //       SpineClientProvider,
-  //       TodoListPipesModule,
-  //       TaskServiceModule,
-  //       LabelsModule,
-  //
-  //       MatMomentDateModule,
-  //       MatButtonModule,
-  //       MatChipsModule,
-  //       MatDatepickerModule,
-  //       MatIconModule,
-  //       MatInputModule,
-  //       MatFormFieldModule,
-  //       MatListModule,
-  //       MatProgressBarModule,
-  //       MatSelectModule,
-  //       MatStepperModule
-  //     ]
-  //   })
-  //     .compileComponents();
-  // }));
-  //
-  // beforeEach(() => {
-  //   fixture = TestBed.createComponent(TaskCreationWizardComponent);
-  //   component = fixture.componentInstance;
-  //   fixture.detectChanges();
-  // });
-  //
-  // it('should create', () => {
-  //   expect(component).toBeTruthy();
-  // });
+  let component: TaskCreationWizardComponent;
+  let fixture: ComponentFixture<TaskCreationWizardComponent>;
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [
+        TaskCreationWizardComponent,
+        TaskDefinitionComponent,
+        LabelAssignmentComponent,
+        ConfirmationComponent
+      ],
+      imports: [
+        FormsModule,
+        NoopAnimationsModule,
+        RouterTestingModule.withRoutes([]),
+
+        TaskCreationWizardRoutingModule,
+        TodoListComponentsModule,
+        SpineClientProvider,
+        TodoListPipesModule,
+        TaskServiceModule,
+        LabelsModule,
+
+        MatMomentDateModule,
+        MatButtonModule,
+        MatChipsModule,
+        MatDatepickerModule,
+        MatIconModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatListModule,
+        MatProgressBarModule,
+        MatSelectModule,
+        MatStepperModule
+      ]
+    })
+      .compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(TaskCreationWizardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
 });
