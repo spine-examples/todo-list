@@ -31,7 +31,7 @@ import {TimestampChange} from 'spine-web/proto/spine/change/change_pb';
 import {LabelColor, TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 import {DescriptionChange, PriorityChange} from 'generated/main/js/todolist/changes_pb';
 import {LabelId, TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {Task, TaskCreation} from 'generated/main/js/todolist/model_pb';
+import {TaskCreation} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {
   AddLabels,
@@ -65,7 +65,7 @@ export class TaskCreationWizard {
               private readonly taskService: TaskService) {
   }
 
-  init(taskCreationId: string): Promise<void> {
+  init(taskCreationId?: string): Promise<void> {
     if (taskCreationId) {
       const processId = StringValue.back(taskCreationId, TaskCreationId);
       return this.restore(processId);
@@ -160,6 +160,10 @@ export class TaskCreationWizard {
 
   get id(): TaskCreationId {
     return this._id;
+  }
+
+  get taskId(): TaskId {
+    return this._taskId;
   }
 
   get stage(): TaskCreation.Stage {

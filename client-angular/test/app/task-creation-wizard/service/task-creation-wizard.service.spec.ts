@@ -27,23 +27,67 @@ import {TaskService} from '../../../../src/app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {houseTasks} from '../../given/tasks';
 
+import {TaskCreationId} from 'generated/main/js/todolist/identifiers_pb';
+import {TaskCreation} from 'generated/main/js/todolist/model_pb';
+import {
+  AddLabels,
+  CancelTaskCreation,
+  CompleteTaskCreation,
+  SkipLabels,
+  StartTaskCreation,
+  UpdateTaskDetails
+} from 'generated/main/js/todolist/c/commands_pb';
+
 describe('TaskCreationWizard', () => {
-  // const mockClient = mockSpineWebClient();
-  // const unsubscribe = jasmine.createSpy('unsubscribe');
-  // mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-  //   [houseTasks()], [], [], unsubscribe
-  // ));
-  //
-  // beforeEach(() => TestBed.configureTestingModule({
-  //   providers: [
-  //     TaskCreationWizard,
-  //     TaskService,
-  //     {provide: Client, useValue: mockClient}
-  //   ]
-  // }));
-  //
-  // it('should be created', () => {
-  //   const service: TaskCreationWizard = TestBed.get(TaskCreationWizard);
-  //   expect(service).toBeTruthy();
-  // });
+  const mockClient = mockSpineWebClient();
+  const unsubscribe = jasmine.createSpy('unsubscribe');
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [houseTasks()], [], [], unsubscribe
+  ));
+
+  let wizard: TaskCreationWizard;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        TaskCreationWizard,
+        TaskService,
+        {provide: Client, useValue: mockClient}
+      ]
+    });
+    wizard = TestBed.get(TaskCreationWizard);
+  });
+
+  it('should be created', () => {
+    expect(wizard).toBeTruthy();
+  });
+
+  it('should initialize the process from scratch', () => {
+    mockClient.sendCommand.and.callFake((command, resolveCallback) => resolveCallback());
+    wizard.init()
+      .then(() => {
+        const calls = mockClient.sendCommand.calls;
+        expect(calls.count()).toEqual(1);
+        const callArgs = calls.argsFor(0);
+        const command = callArgs[0];
+        expect(wizard.id).toEqual(command.getId());
+        expect(wizard.taskId).toEqual(command.getTaskId());
+        expect(wizard.stage).toEqual(TaskCreation.Stage.TASK_DEFINITION);
+      })
+      .catch(err =>
+        fail(`'StartTaskCreation' command rejected: ${err}`)
+      );
+  });
+
+  it('should restore existing creation process by ID', () => {
+    const id = new TaskCreationId();
+    id.setValue('task-creation-ID');
+    wizard.init(id)
+      .then()
+      .catch();
+  });
+
+  it('should propagate `init` errors as Promise rejection', () => {
+
+  });
 });
