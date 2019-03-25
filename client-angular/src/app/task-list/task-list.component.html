@@ -21,17 +21,20 @@
 <mat-sidenav-container class="task-list-container">
     <mat-sidenav mode="side" opened class="task-list-sidenav">
         <mat-nav-list>
-            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['active'] } }]" [routerLinkActive]="['active']">Active</a>
-            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['drafts'] } }]" [routerLinkActive]="['active']">Drafts</a>
-            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['completed'] } }]" [routerLinkActive]="['active']">Completed</a>
-            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['deleted'] } }]" [routerLinkActive]="['active']"> Deleted</a>
+            <a mat-list-item routerLink="/wizard"
+               [routerLinkActive]="['active']">New task</a>
+            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['active'] } }]"
+               [routerLinkActive]="['active']">Active</a>
+            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['drafts'] } }]"
+               [routerLinkActive]="['active']">Drafts</a>
+            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['completed'] } }]"
+               [routerLinkActive]="['active']">Completed</a>
+            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['deleted'] } }]"
+               [routerLinkActive]="['active']"> Deleted</a>
             <a mat-list-item routerLink="/labels" class="labelLink">Labels</a>
         </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content class="task-list-content">
         <router-outlet name="tasks"></router-outlet>
-        <button routerLink="/wizard">Add new task</button>
-        <!-- TODO:2019-02-05:dmytro.kuzmin: Remove when the normal task creation is ready.-->
-        <button (click)="createBasicTask()">Create basic task just for test</button>
     </mat-sidenav-content>
 </mat-sidenav-container>

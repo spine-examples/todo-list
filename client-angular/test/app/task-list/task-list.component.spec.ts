@@ -58,9 +58,4 @@ describe('TaskListComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
-  it('should allow creation of basic test task', () => {
-    component.createBasicTask();
-    expect(mockClient.sendCommand).toHaveBeenCalledTimes(1);
-  });
 });

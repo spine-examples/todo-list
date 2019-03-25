@@ -34,16 +34,4 @@ import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
   styleUrls: ['./task-list.component.css']
 })
 export class TaskListComponent {
-
-  constructor(private readonly taskService: TaskService) {
-  }
-
-  /**
-   * Creates a simple task with random ID and fixed description.
-   *
-   * This is a temporary testing method.
-   */
-  createBasicTask(): void {
-    this.taskService.createBasicTask('Random task');
-  }
 }

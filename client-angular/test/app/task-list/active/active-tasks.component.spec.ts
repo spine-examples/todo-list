@@ -20,7 +20,12 @@
 
 import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-
+import {ReactiveFormsModule} from '@angular/forms';
+import {MatInputModule} from '@angular/material';
+import {MatListModule} from '@angular/material/list';
+import {MatIconModule} from '@angular/material/icon';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {By} from '@angular/platform-browser';
 import {Client, Type} from 'spine-web';
 
 import {ActiveTasksComponent} from '../../../../src/app/task-list/active/active-tasks.component';
@@ -43,18 +48,23 @@ describe('ActiveTasksComponent', () => {
   let component: ActiveTasksComponent;
   let fixture: ComponentFixture<ActiveTasksComponent>;
 
-  const unsubscribe = jasmine.createSpy();
-
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ActiveTasksComponent, TaskItemComponent],
-      imports: [RouterTestingModule.withRoutes([])],
+      imports: [
+        RouterTestingModule.withRoutes([]),
+        ReactiveFormsModule,
+        MatInputModule,
+        MatListModule,
+        MatIconModule,
+        BrowserAnimationsModule
+      ],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
 
     mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-      [houseTasks()], [], [], unsubscribe
+      [houseTasks()], [], [], jasmine.createSpy('unsubscribe')
     ));
 
     fixture = TestBed.createComponent(ActiveTasksComponent);
@@ -62,7 +72,20 @@ describe('ActiveTasksComponent', () => {
     fixture.detectChanges();
 
     tick(); // Wait for the fake subscription fetch.
+
+    component.unsubscribe = jasmine.createSpy('unsubscribe');
   }));
+
+  it('should allow basic task creation', () => {
+    const method = spyOn<any>(component, 'createBasicTask');
+    const input = fixture.debugElement.query(By.css('.task-description-textarea')).nativeElement;
+    input.value = 'Some basic task text';
+    const keyPressed = new KeyboardEvent('keydown', {
+      key: 'Enter'
+    });
+    input.dispatchEvent(keyPressed);
+    expect(method).toHaveBeenCalledTimes(1);
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -77,7 +100,7 @@ describe('ActiveTasksComponent', () => {
 
   it('should call `unsubscribe` method on destroy', () => {
     component.ngOnDestroy();
-    expect(unsubscribe).toHaveBeenCalled();
+    expect(component.unsubscribe).toHaveBeenCalled();
   });
 
   it('should create `app-task-item` for each of the received tasks', () => {

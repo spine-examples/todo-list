@@ -18,10 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.task-list-container {
-  height: 100vh;
+.task-item {
+  width: 100%;
 }
 
-.task-list-content {
-  padding: 25px 0 0 50px;
+.full-width {
+  width: 97.5%;
 }

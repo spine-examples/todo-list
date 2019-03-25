@@ -73,30 +73,28 @@ describe('TaskService', () => {
   });
 
   it('should subscribe to active tasks', () => {
-    const unsubscribe = () => {
-    };
+    const unsubscribe = jasmine.createSpy();
     mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
       [houseTasks()], [], [], unsubscribe
     ));
-    const taskItems = [];
-    service.subscribeToActive(taskItems)
+    service.subscribeToTasks()
       .then(receivedUnsubscribeFunc => {
           expect(receivedUnsubscribeFunc).toBe(unsubscribe);
-          expect(taskItems.length).toBe(2);
-          expect(taskItems[0].getId().getValue()).toBe(HOUSE_TASK_1_ID);
-          expect(taskItems[0].getDescription().getValue()).toBe(HOUSE_TASK_1_DESC);
-          expect(taskItems[1].getId().getValue()).toBe(HOUSE_TASK_2_ID);
-          expect(taskItems[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
+          expect(service.tasks.length).toBe(2);
+          expect(service.tasks[0].getId().getValue()).toBe(HOUSE_TASK_1_ID);
+          expect(service.tasks[0].getDescription().getValue()).toBe(HOUSE_TASK_1_DESC);
+          expect(service.tasks[1].getId().getValue()).toBe(HOUSE_TASK_2_ID);
+          expect(service.tasks[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
         }
       ).catch(() => fail('Subscription promise should have been resolved'));
   });
 
   it('should log and then rethrow error if subscription fails', () => {
     const errorMessage = 'Subscription failed';
+    const consoleError = jasmine.createSpy('console');
     mockClient.subscribeToEntities.and.returnValue(Promise.reject(errorMessage));
     console.log = jasmine.createSpy('log');
-    const taskItems = [];
-    service.subscribeToActive(taskItems)
+    service.subscribeToTasks()
       .then(() => fail('Subscription promise should have failed'))
       .catch(err => {
         expect(console.log).toHaveBeenCalledWith(
