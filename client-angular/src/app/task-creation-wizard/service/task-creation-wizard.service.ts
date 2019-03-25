@@ -193,15 +193,16 @@ export class TaskCreationWizard {
     cmd.setId(taskCreationId);
     cmd.setTaskId(taskId);
 
-    const startProcess = resolve => {
-      this._id = taskCreationId;
-      this._taskId = taskId;
-      this._stage = TaskCreation.Stage.TASK_DEFINITION;
-      this._taskLabels = [];
-      resolve();
-    };
-    return new Promise<TaskCreationId>((resolve, reject) =>
-      this.spineWebClient.sendCommand(cmd, startProcess(resolve), reject, reject)
+    return new Promise<TaskCreationId>((resolve, reject) => {
+        const startProcess = () => {
+          this._id = taskCreationId;
+          this._taskId = taskId;
+          this._stage = TaskCreation.Stage.TASK_DEFINITION;
+          this._taskLabels = [];
+          resolve();
+        };
+        this.spineWebClient.sendCommand(cmd, startProcess, reject, reject);
+      }
     );
   }
 
@@ -225,6 +226,19 @@ export class TaskCreationWizard {
       });
   }
 
+  private fetchProcessDetails(): Promise<TaskCreation> {
+    return new Promise<TaskCreation>((resolve, reject) => {
+      const dataCallback = processDetails => {
+        if (!processDetails) {
+          reject(`No task creation process found for ID: ${this._id}`);
+        } else {
+          resolve(processDetails);
+        }
+      };
+      this.spineWebClient.fetchById(Type.forClass(TaskCreation), this._id, dataCallback, reject);
+    });
+  }
+
   private restoreTaskDetails(): Promise<void> {
     return this.taskService.fetchById(this._taskId)
       .then(task => {
@@ -239,18 +253,5 @@ export class TaskCreationWizard {
         }
         this._taskLabels = task.getLabelIdsList() ? task.getLabelIdsList().getIdsList() : [];
       });
-  }
-
-  private fetchProcessDetails(): Promise<TaskCreation> {
-    return new Promise<TaskCreation>((resolve, reject) => {
-      const dataCallback = processDetails => {
-        if (!processDetails) {
-          reject(`No task creation process found for ID: ${this._id}`);
-        } else {
-          resolve(processDetails);
-        }
-      };
-      this.spineWebClient.fetchById(Type.forClass(TaskCreation), this._id, dataCallback, reject);
-    });
   }
 }

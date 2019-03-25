@@ -25,9 +25,11 @@ import {Client} from 'spine-web';
 import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
 import {TaskService} from '../../../../src/app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
-import {houseTasks} from '../../given/tasks';
+import {houseTask1, houseTasks} from '../../given/tasks';
 
-import {TaskCreationId} from 'generated/main/js/todolist/identifiers_pb';
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
+import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
+import {TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskCreation} from 'generated/main/js/todolist/model_pb';
 import {
   AddLabels,
@@ -37,6 +39,7 @@ import {
   StartTaskCreation,
   UpdateTaskDetails
 } from 'generated/main/js/todolist/c/commands_pb';
+import {TaskView} from 'generated/main/js/todolist/q/projections_pb';
 
 describe('TaskCreationWizard', () => {
   const mockClient = mockSpineWebClient();
@@ -80,14 +83,63 @@ describe('TaskCreationWizard', () => {
   });
 
   it('should restore existing creation process by ID', () => {
-    const id = new TaskCreationId();
-    id.setValue('task-creation-ID');
-    wizard.init(id)
-      .then()
-      .catch();
+    const creationIdValue = 'task-creation-ID';
+    const taskCreationId = new TaskCreationId();
+    taskCreationId.setValue(creationIdValue);
+    const stage = TaskCreation.Stage.LABEL_ASSIGNMENT;
+    const task = houseTask1();
+    task.setPriority(TaskPriority.HIGH);
+    const dueDate = Timestamp.fromDate(new Date());
+    task.setDueDate(dueDate);
+
+    const provideMockData = (type, id, resolveCallback) => {
+      if (type.class() === TaskCreation) {
+        const taskCreation = new TaskCreation();
+        taskCreation.setId(taskCreationId);
+        taskCreation.setStage(stage);
+        taskCreation.setTaskId(task.getId());
+        resolveCallback(taskCreation);
+      } else if (type.class() === TaskView) {
+        resolveCallback(task);
+      }
+    };
+    mockClient.fetchById.and.callFake(provideMockData);
+    wizard.init(creationIdValue)
+      .then(() => {
+        expect(wizard.id).toEqual(taskCreationId);
+        expect(wizard.taskId).toEqual(task.getId());
+        expect(wizard.stage).toEqual(stage);
+        expect(wizard.taskDescription).toEqual(task.getDescription());
+        expect(wizard.taskPriority).toEqual(task.getPriority());
+        expect(wizard.taskDueDate).toEqual(task.getDueDate());
+        expect(wizard.taskLabels).toEqual([]);
+      })
+      .catch(err =>
+        fail(`Task restoration failed: ${err}`)
+      );
+  });
+
+  it('should produce an error if nothing is found by the specified ID', () => {
+    mockClient.fetchById.and.callFake((type, id, resolve) => resolve(null));
+    const theId = 'some-ID';
+    wizard.init(theId)
+      .then(() => {
+        fail('Task restoration should have been rejected');
+      })
+      .catch(err =>
+        expect(err).toEqual(`No task creation process found for ID: ${theId}`)
+      );
   });
 
   it('should propagate `init` errors as Promise rejection', () => {
-
+    const errorMessage = 'Could not start the task creation process';
+    mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
+    wizard.init()
+      .then(() => {
+        fail('Task restoration should have been rejected');
+      })
+      .catch(err =>
+        expect(err).toEqual(errorMessage)
+      );
   });
 });
