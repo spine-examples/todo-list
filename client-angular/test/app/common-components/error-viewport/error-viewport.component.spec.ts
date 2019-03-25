@@ -43,11 +43,14 @@ describe('ErrorViewport', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should contain the specified text in a separate paragraph', () => {
+  it('should contain a single paragraph with a specified text', () => {
     const text = 'some generic text';
     component.text = text;
     fixture.detectChanges();
-    const element = fixture.nativeElement.querySelector('p');
+    const elements = fixture.nativeElement.querySelectorAll('p');
+    expect(elements.length).toEqual(1);
+
+    const element = elements[0];
     expect(element.textContent).toContain(text);
   });
 });
