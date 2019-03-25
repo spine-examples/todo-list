@@ -34,11 +34,17 @@ import {TodoListComponentsModule} from '../../../../src/app/common-components/to
 import {TodoListPipesModule} from '../../../../src/app/pipes/todo-list-pipes.module';
 import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
 import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient} from '../../given/mock-spine-web-client';
+import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {mockStepper} from '../given/mock-stepper';
-
+import {houseTasks} from '../../given/tasks';
 
 describe('TaskDefinitionComponent', () => {
+  const mockClient = mockSpineWebClient();
+  const unsubscribe = jasmine.createSpy('unsubscribe');
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [houseTasks()], [], [], unsubscribe
+  ));
+
   let component: TaskDefinitionComponent;
   let fixture: ComponentFixture<TaskDefinitionComponent>;
 
@@ -64,7 +70,7 @@ describe('TaskDefinitionComponent', () => {
       providers: [
         TaskCreationWizard,
         TaskService,
-        {provide: Client, useValue: mockSpineWebClient()}
+        {provide: Client, useValue: mockClient}
       ]
     })
       .compileComponents();

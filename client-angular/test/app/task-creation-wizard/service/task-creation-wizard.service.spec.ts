@@ -24,14 +24,21 @@ import {Client} from 'spine-web';
 
 import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
 import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient} from '../../given/mock-spine-web-client';
+import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
+import {houseTasks} from '../../given/tasks';
 
 describe('TaskCreationWizard', () => {
+  const mockClient = mockSpineWebClient();
+  const unsubscribe = jasmine.createSpy('unsubscribe');
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [houseTasks()], [], [], unsubscribe
+  ));
+
   beforeEach(() => TestBed.configureTestingModule({
     providers: [
       TaskCreationWizard,
       TaskService,
-      {provide: Client, useValue: mockSpineWebClient()}
+      {provide: Client, useValue: mockClient}
     ]
   }));
 

@@ -29,11 +29,16 @@ import {TodoListComponentsModule} from '../../../../src/app/common-components/to
 import {TodoListPipesModule} from '../../../../src/app/pipes/todo-list-pipes.module';
 import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
 import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient} from '../../given/mock-spine-web-client';
+import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {LabelService} from '../../../../src/app/labels/label.service';
+import {houseTasks} from '../../given/tasks';
 
 describe('LabelAssignmentComponent', () => {
   const mockClient = mockSpineWebClient();
+  const unsubscribe = jasmine.createSpy('unsubscribe');
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [houseTasks()], [], [], unsubscribe
+  ));
 
   let component: LabelAssignmentComponent;
   let fixture: ComponentFixture<LabelAssignmentComponent>;

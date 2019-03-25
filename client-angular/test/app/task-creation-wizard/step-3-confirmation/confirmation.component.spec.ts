@@ -27,9 +27,16 @@ import {TodoListComponentsModule} from '../../../../src/app/common-components/to
 import {TodoListPipesModule} from '../../../../src/app/pipes/todo-list-pipes.module';
 import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
 import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient} from '../../given/mock-spine-web-client';
+import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
+import {houseTasks} from '../../given/tasks';
 
 describe('ConfirmationComponent', () => {
+  const mockClient = mockSpineWebClient();
+  const unsubscribe = jasmine.createSpy('unsubscribe');
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [houseTasks()], [], [], unsubscribe
+  ));
+
   let component: ConfirmationComponent;
   let fixture: ComponentFixture<ConfirmationComponent>;
 
@@ -47,7 +54,7 @@ describe('ConfirmationComponent', () => {
       providers: [
         TaskCreationWizard,
         TaskService,
-        {provide: Client, useValue: mockSpineWebClient()}
+        {provide: Client, useValue: mockClient}
       ]
     })
       .compileComponents();
