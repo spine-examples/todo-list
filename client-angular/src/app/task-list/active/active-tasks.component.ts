@@ -18,13 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from '../../task-service/task.service';
-import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
-import {TaskSubsetComponent} from '../../task-subset.component';
 
 /**
  * A component displaying active tasks, i.e. those which are not completed, deleted, or in draft
@@ -34,13 +33,17 @@ import {TaskSubsetComponent} from '../../task-subset.component';
   selector: 'app-active-tasks',
   templateUrl: './active-tasks.component.html',
   styleUrls: ['./active-tasks.component.css'],
-})
-export class ActiveTasksComponent extends TaskSubsetComponent {
 
+})
+export class ActiveTasksComponent implements OnInit, OnDestroy {
+
+  private unsubscribe: () => void;
+
+  /** Visible for testing. */
+  tasks: TaskItem[] = [];
   private createBasicTaskForms: FormGroup;
 
-  constructor(taskService: TaskService, private formBuilder: FormBuilder) {
-    super(taskService);
+  constructor(private readonly taskService: TaskService, private formBuilder: FormBuilder) {
     this.createBasicTaskForms = formBuilder.group({
       taskDescription: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
     });
@@ -57,7 +60,16 @@ export class ActiveTasksComponent extends TaskSubsetComponent {
     this.taskService.createBasicTask(taskDescription);
   }
 
-  specifyTask(task): boolean {
-    return task.getStatus() === TaskStatus.OPEN;
+  ngOnInit(): void {
+    this.tasks = this.taskService.tasks;
+    this.unsubscribe = this.taskService.unsubscribe;
+  }
+
+  ngOnDestroy(): void {
+    // TODO:2019-03-12:dmytro.kuzmin: Handle the cases of component being destroyed before the
+    // todo subscription process is finished.
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   }
 }
