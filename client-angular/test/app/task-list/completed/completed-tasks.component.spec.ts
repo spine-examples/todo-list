@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {RouterModule} from '@angular/router';
 import {MatListModule} from '@angular/material/list';
 
@@ -26,7 +26,8 @@ import {Client} from 'spine-web';
 import {CompletedTasksComponent} from '../../../../src/app/task-list/completed/completed-tasks.component';
 import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
 import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient} from '../../given/mock-spine-web-client';
+import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
+import {houseTasks} from '../../given/tasks';
 
 describe('CompletedTasksComponent', () => {
 
@@ -34,20 +35,26 @@ describe('CompletedTasksComponent', () => {
   let fixture: ComponentFixture<CompletedTasksComponent>;
   let component: CompletedTasksComponent;
 
-  beforeEach(async(() => {
+  const unsubscribe = jasmine.createSpy();
+
+  beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CompletedTasksComponent, TaskDisplayComponent],
       imports: [MatListModule, RouterModule],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
-  }));
 
-  beforeEach(() => {
+    mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+      [houseTasks()], [], [], unsubscribe
+    ));
+
     fixture = TestBed.createComponent(CompletedTasksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
+
+    tick(); // Wait for the fake subscription fetch.
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
