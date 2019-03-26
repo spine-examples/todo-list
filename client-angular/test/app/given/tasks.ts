@@ -18,6 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {tomorrow} from './dates';
+
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskId, TaskListId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
@@ -82,7 +84,8 @@ function taskView(id: string, description: string): TaskView {
   taskDescription.setValue(description);
   result.setDescription(taskDescription);
   result.setPriority(TaskPriority.HIGH);
-  const dueDate = Timestamp.fromDate(new Date());
-  result.setDueDate(dueDate);
+
+  // noinspection TypeScriptValidateJSTypes Wrong IDEA type lookup.
+  result.setDueDate(tomorrow());
   return result;
 }

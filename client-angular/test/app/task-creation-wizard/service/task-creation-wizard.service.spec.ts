@@ -28,6 +28,7 @@ import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web
 import {houseTask, houseTasks} from '../../given/tasks';
 import {label1, label2} from '../../given/labels';
 import {initMockProcess, taskCreationProcess} from '../../given/task-creation-process';
+import {tomorrow, yesterday} from '../../given/dates';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
@@ -63,9 +64,7 @@ describe('TaskCreationWizard', () => {
     }
 
     static newDueDate(): Timestamp {
-      const date = new Date();
-      date.setHours(date.getHours() + 10);
-      return Timestamp.fromDate(date);
+      return tomorrow();
     }
   }
 
@@ -225,12 +224,11 @@ describe('TaskCreationWizard', () => {
     initializeWizard();
     tick();
 
-    const dueDate = new Date();
-    dueDate.setHours(dueDate.getHours() - 10);
+    const dueDate = yesterday();
     wizard.updateTaskDetails(Given.newDescription(), Given.newPriority(), dueDate)
       .then(() => fail('Details update should have failed'))
       .catch(err => expect(err).toEqual(
-        `Task due date before current time is not allowed, specified date: ${dueDate}`
+        `Task due date before current time is not allowed, specified date: ${dueDate.toDate()}`
       ));
   }));
 

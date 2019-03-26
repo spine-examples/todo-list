@@ -39,6 +39,8 @@ import {mockStepper} from '../given/mock-stepper';
 import {houseTasks} from '../../given/tasks';
 import {initMockProcess, taskCreationProcess} from '../../given/task-creation-process';
 import {WizardStep} from '../../../../src/app/task-creation-wizard/wizard-step';
+import {tomorrowMoment} from '../../given/dates';
+import {MomentFromTimestamp} from '../../../../src/app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
@@ -119,7 +121,7 @@ describe('TaskDefinitionComponent', () => {
 
   it('should set due date to a given value and become non-completed', () => {
     component.stepper.selected.completed = true;
-    component.setDueDate(Timestamp.fromDate(new Date()));
+    component.setDueDate(tomorrowMoment());
     expect(component.stepper.selected.completed).toBeFalsy();
   });
 
@@ -128,7 +130,7 @@ describe('TaskDefinitionComponent', () => {
     component.setDescription(newDescription);
     const newPriority = TaskPriority.LOW;
     component.setPriority(newPriority);
-    const newDueDate = Timestamp.fromDate(new Date());
+    const newDueDate = tomorrowMoment();
     component.setDueDate(newDueDate);
 
     mockClient.sendCommand.and.callFake((command, resolve) => {
@@ -142,10 +144,11 @@ describe('TaskDefinitionComponent', () => {
       expect(command.getPriorityChange().getNewValue())
         .toEqual(newPriority);
 
+      const dueDateForCheck = MomentFromTimestamp.back(newDueDate);
       expect(command.getDueDateChange().getPreviousValue())
         .toEqual(component.wizard.taskDueDate);
       expect(command.getDueDateChange().getNewValue())
-        .toEqual(newDueDate);
+        .toEqual(dueDateForCheck);
 
       resolve();
     });
