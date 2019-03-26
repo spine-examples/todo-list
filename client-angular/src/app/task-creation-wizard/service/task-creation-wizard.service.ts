@@ -101,7 +101,7 @@ export class TaskCreationWizard {
     }
     if (dueDate && dueDate.toDate() < new Date()) {
       return Promise.reject(
-        `Task due date before current time is not allowed, specified date: ${dueDate.toDate()}`
+        `Task due date is allowed starting from tomorrow, specified date: ${dueDate.toDate()}`
       );
     }
     const cmd = this.prepareUpdateCommand(description, priority, dueDate);

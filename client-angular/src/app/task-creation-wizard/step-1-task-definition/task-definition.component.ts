@@ -53,9 +53,11 @@ export class TaskDefinitionComponent extends WizardStep {
     [TaskPriority.HIGH, TaskPriority.NORMAL, TaskPriority.LOW];
 
   /**
-   * Due date for tasks is allowed to be set starting from today.
+   * Due date for tasks is allowed to be set starting from tomorrow.
+   *
+   * As due date receives default '00:00' time, it's the closes date that is allowed.
    */
-  private readonly today: Date = new Date();
+  private readonly tomorrow: Date = TaskDefinitionComponent.tomorrow();
 
   /** Visible for testing. */
   description: TaskDescription;
@@ -68,6 +70,12 @@ export class TaskDefinitionComponent extends WizardStep {
 
   constructor(router: Router, wizard: TaskCreationWizard) {
     super(router, wizard);
+  }
+
+  private static tomorrow(): Date {
+    const result = new Date();
+    result.setDate(result.getDate() + 1);
+    return result;
   }
 
   /**
