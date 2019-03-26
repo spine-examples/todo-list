@@ -56,3 +56,9 @@ export function houseTasks(): MyListView {
   result.setMyList(taskListView);
   return result;
 }
+
+export function completedTasks(): MyListView {
+  const tasks = houseTasks();
+  tasks.getMyList().getItemsList().forEach(item => item.setStatus(TaskStatus.COMPLETED));
+  return tasks;
+}

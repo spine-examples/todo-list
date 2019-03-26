@@ -38,7 +38,9 @@ export class CompletedTasksComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.tasks = this.taskService.tasks.getValue().filter(task => task.getStatus() === TaskStatus.COMPLETED);
+    this.taskService.tasks.subscribe((taskItems: TaskItem[]) => {
+      this.tasks = taskItems.filter(task => task.getStatus() === TaskStatus.COMPLETED);
+    });
   }
 
   ngOnDestroy(): void {

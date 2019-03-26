@@ -21,12 +21,14 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterModule} from '@angular/router';
 import {MatListModule} from '@angular/material/list';
+import {By} from '@angular/platform-browser';
 
 import {Client} from 'spine-web';
 import {CompletedTasksComponent} from '../../../../src/app/task-list/completed/completed-tasks.component';
-import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
 import {TaskService} from '../../../../src/app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
+import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
+import {completedTasks} from '../../given/tasks';
 
 describe('CompletedTasksComponent', () => {
 
@@ -36,7 +38,7 @@ describe('CompletedTasksComponent', () => {
   const unsubscribe = jasmine.createSpy('unsubscribe');
 
   mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [], [], [], unsubscribe
+    [completedTasks()], [], [], unsubscribe
   ));
 
   beforeEach(async(() => {
@@ -54,5 +56,10 @@ describe('CompletedTasksComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should contain completed tasks', () => {
+    const tasks = fixture.debugElement.queryAll(By.css('.list-item'));
+    expect(tasks.length).toBe(2);
   });
 });
