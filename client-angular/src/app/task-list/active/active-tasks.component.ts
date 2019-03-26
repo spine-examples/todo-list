@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from '../../task-service/task.service';
@@ -35,7 +35,7 @@ import {TaskDescription} from 'generated/main/js/todolist/values_pb';
   styleUrls: ['./active-tasks.component.css'],
 
 })
-export class ActiveTasksComponent implements OnInit, OnDestroy {
+export class ActiveTasksComponent implements OnInit {
 
   /** Visible for testing. */
   tasks: TaskItem[] = [];
@@ -62,9 +62,5 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
     this.taskService.tasks.asObservable().subscribe((items: TaskItem[]) => {
       this.tasks = items.filter((task: TaskItem) => task.getStatus() === TaskStatus.OPEN);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.taskService.unsubscribe();
   }
 }

@@ -97,11 +97,6 @@ describe('ActiveTasksComponent', () => {
     expect(component.tasks[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
   });
 
-  it('should call `unsubscribe` method on destroy', () => {
-    component.ngOnDestroy();
-    expect(unsubscribe).toHaveBeenCalled();
-  });
-
   it('should create `app-task-item` for each of the received tasks', () => {
     fixture.detectChanges();
     const elements = fixture.nativeElement.getElementsByTagName('app-task-item');

@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Injectable} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {Client, Type} from 'spine-web';
 import * as uuid from 'uuid';
 import {BehaviorSubject} from 'rxjs';
@@ -36,7 +36,7 @@ import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb'
 @Injectable({
   providedIn: TaskServiceModule,
 })
-export class TaskService {
+export class TaskService implements OnDestroy {
 
   private _tasks: BehaviorSubject<TaskItem[]>;
   private _unsubscribe: () => void;
@@ -56,13 +56,6 @@ export class TaskService {
         .then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
     }
     return this._tasks;
-  }
-
-  /**
-   * Obtains a function to unsubscribe from changes to the view of the task list.
-   */
-  get unsubscribe(): () => void {
-    return this._unsubscribe;
   }
 
   /**
@@ -129,7 +122,8 @@ export class TaskService {
   }
 
   /**
-   * Subscribes to the active tasks and reflects them to a given array.
+   * Subscribes to the active tasks and reflects them to the array stored in this instance of the
+   * task service.
    *
    * Active tasks are those which are not in draft state, completed, or deleted.
    *
@@ -165,5 +159,9 @@ export class TaskService {
           reject(err);
         })
     );
+  }
+
+  ngOnDestroy(): void {
+    this._unsubscribe();
   }
 }

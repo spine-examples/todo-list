@@ -30,15 +30,11 @@ import {TaskService} from '../../task-service/task.service';
   selector: 'app-deleted-tasks',
   templateUrl: './deleted-tasks.component.html'
 })
-export class DeletedTasksComponent implements OnInit, OnDestroy {
+export class DeletedTasksComponent implements OnInit {
 
   private tasks: TaskItem[];
 
   constructor(private readonly taskService: TaskService) {
-  }
-
-  ngOnDestroy(): void {
-    this.taskService.unsubscribe();
   }
 
   ngOnInit(): void {

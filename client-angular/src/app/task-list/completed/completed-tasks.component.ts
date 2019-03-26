@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../task-service/task.service';
 
@@ -30,7 +30,7 @@ import {TaskService} from '../../task-service/task.service';
   templateUrl: './completed-tasks.component.html',
   styleUrls: ['./completed-tasks.component.css']
 })
-export class CompletedTasksComponent implements OnInit, OnDestroy {
+export class CompletedTasksComponent implements OnInit {
 
   private tasks: TaskItem[] = [];
 
@@ -41,9 +41,5 @@ export class CompletedTasksComponent implements OnInit, OnDestroy {
     this.taskService.tasks.subscribe((taskItems: TaskItem[]) => {
       this.tasks = taskItems.filter(task => task.getStatus() === TaskStatus.COMPLETED);
     });
-  }
-
-  ngOnDestroy(): void {
-    this.taskService.unsubscribe();
   }
 }
