@@ -66,6 +66,8 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.taskService.unsubscribe();
+    if (this.taskService.unsubscribe) {
+      this.taskService.unsubscribe();
+    }
   }
 }
