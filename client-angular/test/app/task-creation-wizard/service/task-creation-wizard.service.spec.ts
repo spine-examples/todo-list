@@ -228,7 +228,7 @@ describe('TaskCreationWizard', () => {
     wizard.updateTaskDetails(Given.newDescription(), Given.newPriority(), dueDate)
       .then(() => fail('Details update should have failed'))
       .catch(err => expect(err).toEqual(
-        `Task due date before current time is not allowed, specified date: ${dueDate.toDate()}`
+        `Task due date is allowed starting from tomorrow, specified date: ${dueDate.toDate()}`
       ));
   }));
 
