@@ -24,6 +24,9 @@ import {Router} from '@angular/router';
 import {TaskCreationWizard} from '../service/task-creation-wizard.service';
 import {WizardStep} from '../wizard-step';
 
+/**
+ * A component which represents the third step of the Task Creation Wizard - the confirmation.
+ */
 @Component({
   selector: 'app-confirmation',
   templateUrl: './confirmation.component.html'
@@ -34,6 +37,9 @@ export class ConfirmationComponent extends WizardStep {
     super(router, wizard);
   }
 
+  /**
+   * @inheritDoc
+   */
   protected doStep(): Promise<void> {
     return this.wizard.completeTaskCreation();
   }

@@ -31,6 +31,9 @@ import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 
+/**
+ * A component which represents the first step of the Task Creation Wizard - a task definition.
+ */
 @Component({
   selector: 'app-task-definition',
   templateUrl: './task-definition.component.html'
@@ -61,6 +64,9 @@ export class TaskDefinitionComponent extends WizardStep {
     super(router, wizard);
   }
 
+  /**
+   * @inheritDoc
+   */
   initFromWizard() {
     this.description = this.wizard.taskDescription;
     this.priority = this.wizard.taskPriority;
@@ -68,24 +74,38 @@ export class TaskDefinitionComponent extends WizardStep {
   }
 
   /**
-   * This method is not a property as publicly available setter for {@link description} field is
-   * also required and should accept `TaskDescription`.
+   * Handles the task description change done on the UI.
+   *
+   * Visible for testing.
    */
   setDescription(value: string): void {
-    this.onInputChange();
+    this.onUserInput();
     this.description = StringValue.back(value, TaskDescription);
   }
 
+  /**
+   * Handles the task priority change done on the UI.
+   *
+   * Visible for testing.
+   */
   setPriority(value: TaskPriority): void {
-    this.onInputChange();
+    this.onUserInput();
     this.priority = value;
   }
 
+  /**
+   * Handles the due date change done on the UI.
+   *
+   * Visible for testing.
+   */
   setDueDate(value: Moment): void {
-    this.onInputChange();
+    this.onUserInput();
     this.dueDate = MomentFromTimestamp.back(value);
   }
 
+  /**
+   * @inheritDoc
+   */
   protected doStep(): Promise<void> {
     return this.wizard.updateTaskDetails(this.description, this.priority, this.dueDate);
   }

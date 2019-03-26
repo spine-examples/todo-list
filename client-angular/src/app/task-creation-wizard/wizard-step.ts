@@ -25,66 +25,86 @@ import {Router} from '@angular/router';
 import {TaskCreationWizard} from './service/task-creation-wizard.service';
 import {ErrorViewport} from '../common-components/error-viewport/error-viewport.component';
 
+/**
+ * A common base for components that represent Task Creation Wizard steps.
+ */
 export abstract class WizardStep implements AfterViewInit {
 
-  /** Visible for testing. */
+  /**
+   * URL to return to after leaving the wizard page.
+   *
+   * Visible for testing.
+   */
   static readonly RETURN_TO = '/task-list/active';
 
-  /** Visible for testing. */
+  /**
+   * A reference to the Angular Material Stepper which handles the wizard UI.
+   *
+   * Visible for testing.
+   */
   @Input()
   stepper: MatStepper;
 
-  /** Visible for testing. */
+  /**
+   * A viewport for displaying error messages.
+   *
+   * Visible for testing.
+   */
   @ViewChild(ErrorViewport)
   errorViewport: ErrorViewport;
 
   /* Fields are visible for testing. */
-  protected constructor(readonly router: Router,
-                        readonly wizard: TaskCreationWizard) {
+  protected constructor(readonly router: Router, readonly wizard: TaskCreationWizard) {
   }
 
+  /**
+   * Reports an error which cannot really be recovered in the scope of a current page.
+   */
   private static reportFatalError(err) {
     throw new Error(err);
   }
 
+  /**
+   * @inheritDoc
+   */
   ngAfterViewInit(): void {
     this.initOwnModel();
   }
 
   /**
-   * Inits the own model, not related to the wizard data (like the list of available labels).
+   * Inits the component's own model, i.e. data which does not depend on a Task Creation Wizard
+   * state.
    */
   protected initOwnModel(): void {
     // NO-OP by default.
   }
 
   /**
-   * Inits the model entries which represent the data from the wizard (like task definition,
-   * priority, etc.).
+   * Inits the model entries with the data from Task Creation Wizard.
    *
-   * Must be called from the outside when we are sure the wizard data has been fetched.
+   * This method must be called from the outside when we are sure the wizard data has been fetched.
    */
-  initFromWizard() {
+  initFromWizard(): void {
     // NO-OP by default.
   }
 
   /*
-  * Navigation methods which can be used by the child components as necessary.
+  * Navigation methods that can be used by the child components as necessary.
   */
 
   /**
-   * ...
+   * Navigates to the previous wizard step.
    *
-   * Is visible for testing.
+   * Visible for testing.
    */
   previous(): void {
     this.stepper.previous();
   }
 
   /**
-   * ...
+   * Executes an action of the current step and navigates to the next.
    *
-   * Is visible for testing.
+   * Visible for testing.
    */
   next(): void {
     this.clearError();
@@ -98,57 +118,79 @@ export abstract class WizardStep implements AfterViewInit {
       });
   }
 
+  /**
+   * Finalizes the current step execution and sends the appropriate command to the server.
+   */
   protected abstract doStep(): Promise<void>;
 
   /**
-   * Cancel draft creation.
+   * Cancels the task creation and navigates away from the wizard.
    *
-   * Is visible for testing.
+   * Visible for testing.
    */
   cancel(): void {
     this.wizard.cancelTaskCreation()
-      .then(() => this.goToActiveTasks())
+      .then(() => this.quitWizard())
       .catch(err => {
-        this.goToActiveTasks();
+        this.quitWizard();
         WizardStep.reportFatalError(err);
       });
   }
 
   /**
-   * ...
+   * Completes the task creation and navigates away from the wizard.
    *
-   * Is visible for testing.
+   * Visible for testing.
    */
   finish() {
     this.doStep()
-      .then(() => this.goToActiveTasks())
+      .then(() => this.quitWizard())
       .catch(err => {
-        this.goToActiveTasks();
+        this.quitWizard();
         WizardStep.reportFatalError(err);
       });
   }
 
+  /**
+   * Reports an error which can be recovered and thus can be shown to the user (like an invalid
+   * task description).
+   */
   protected reportError(err): void {
     this.errorViewport.text = err;
   }
 
+  /**
+   * Clears the error viewport.
+   */
   private clearError(): void {
     this.errorViewport.text = '';
   }
 
-  protected onInputChange(): void {
+  /**
+   * The method which should be called by descendants when the user inputs any data on the UI.
+   */
+  protected onUserInput(): void {
     this.setNotCompleted();
   }
 
+  /**
+   * Sets the current {@link stepper} step to completed.
+   */
   private setCompleted(): void {
     this.stepper.selected.completed = true;
   }
 
+  /**
+   * Sets the current {@link stepper} step to not completed.
+   */
   private setNotCompleted(): void {
     this.stepper.selected.completed = false;
   }
 
-  private goToActiveTasks(): void {
+  /**
+   * Navigates away from the wizard.
+   */
+  private quitWizard(): void {
     // noinspection JSIgnoredPromiseFromCall No navigation result handling necessary.
     this.router.navigate([WizardStep.RETURN_TO]);
   }

@@ -47,6 +47,8 @@ import {
  *
  * The service is stateful and is re-instantiated every time the user navigates to the wizard.
  *
+ * All the fields are kept up-to-date with the changes on the server side.
+ *
  * The service is not injected in-place ("`providedIn(...)`") to avoid circular dependency.
  */
 @Injectable()
@@ -65,6 +67,15 @@ export class TaskCreationWizard {
               private readonly taskService: TaskService) {
   }
 
+  /**
+   * Inits the wizard for the given task creation process ID.
+   *
+   * If the ID is not specified, wizard starts "from scratch", creating a new task draft on
+   * the server side.
+   *
+   * If the ID is specified, the wizard attempts to load an existing task creation process and
+   * fetch its data as well as the task draft data.
+   */
   init(taskCreationId?: string): Promise<void> {
     if (taskCreationId) {
       const processId = StringValue.back(taskCreationId, TaskCreationId);
@@ -74,6 +85,15 @@ export class TaskCreationWizard {
     }
   }
 
+  /**
+   * Sends a command to update the task details.
+   *
+   * The description field is required and checked separately, throwing an error if it's not
+   * specified.
+   *
+   * This is a temporary decision as our `spine-web` client does not support notifying
+   * on rejections.
+   */
   updateTaskDetails(description: TaskDescription, priority?: TaskPriority, dueDate?: Timestamp)
     : Promise<void> {
     if (!description) {
@@ -97,9 +117,14 @@ export class TaskCreationWizard {
   }
 
   /**
-   * Adds labels to the created task.
+   * Adds labels to the task draft.
+   *
+   * Empty label list is not allowed, the {@link skipLabelAssignment} method should be used for
+   * such cases instead.
+   *
+   * Checking this "by hand" is, again, a temporary solution, until `spine-web` properly supports
+   * rejections.
    */
-  // noinspection JSUnusedGlobalSymbols See doc.
   addLabels(labelIds: LabelId[]): Promise<void> {
     if (labelIds.length === 0) {
       return Promise.reject(
@@ -119,6 +144,9 @@ export class TaskCreationWizard {
     });
   }
 
+  /**
+   * Skips the label assignment stage and proceeds to `TaskCreation.Stage.CONFIRMATION`.
+   */
   skipLabelAssignment(): Promise<void> {
     const cmd = new SkipLabels();
     cmd.setId(this._id);
@@ -128,6 +156,9 @@ export class TaskCreationWizard {
     return skipLabels.then(() => this._stage = TaskCreation.Stage.CONFIRMATION);
   }
 
+  /**
+   * Completes the task creation, setting the draft status to `TaskStatus.FINALIZED`.
+   */
   completeTaskCreation(): Promise<void> {
     const cmd = new CompleteTaskCreation();
     cmd.setId(this._id);
@@ -137,6 +168,9 @@ export class TaskCreationWizard {
     return completeProcess.then(() => this._stage = TaskCreation.Stage.COMPLETED);
   }
 
+  /**
+   * Cancels the task creation, setting its status to `TaskStatus.CANCELED`.
+   */
   cancelTaskCreation(): Promise<void> {
     const cmd = new CancelTaskCreation();
     cmd.setId(this._id);
@@ -146,6 +180,10 @@ export class TaskCreationWizard {
     return cancelProcess.then(() => this._stage = TaskCreation.Stage.CANCELED);
   }
 
+  /**
+   * Starts the task creation process "from scracth", creating a new process manager instance and a
+   * new task draft on the server side.
+   */
   private start(): Promise<void> {
     const taskCreationId = UuidGenerator.newId(TaskCreationId);
     const taskId = UuidGenerator.newId(TaskId);
@@ -166,10 +204,10 @@ export class TaskCreationWizard {
   }
 
   /**
-   * ...
+   * Restores the existing task creation process by ID.
    *
    * This method queries process manager directly but it's OK as the use case
-   * scenario for this is really rare.
+   * scenario for `restore` is really rare.
    */
   private restore(taskCreationId: TaskCreationId): Promise<void> {
     this._id = taskCreationId;
@@ -214,9 +252,13 @@ export class TaskCreationWizard {
       });
   }
 
+  /**
+   * Prepares an `UpdateTaskDetails` command from the given NG model entries.
+   */
   private prepareUpdateCommand(description, priority, dueDate) {
     const cmd = new UpdateTaskDetails();
     cmd.setId(this._id);
+
     if (description !== this._taskDescription) {
       const descriptionChange = new DescriptionChange();
       descriptionChange.setNewValue(description);

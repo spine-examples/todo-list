@@ -28,6 +28,9 @@ import {WizardStep} from '../wizard-step';
 import {LabelId} from 'generated/main/js/todolist/identifiers_pb';
 import {LabelView} from 'generated/main/js/todolist/q/projections_pb';
 
+/**
+ * A component which represents the second step of the Task Creation Wizard - a label assignment.
+ */
 @Component({
   selector: 'app-label-assignment',
   templateUrl: './label-assignment.component.html',
@@ -35,25 +38,37 @@ import {LabelView} from 'generated/main/js/todolist/q/projections_pb';
 })
 export class LabelAssignmentComponent extends WizardStep {
 
-  /** Visible for testing. */
+  /**
+   * The list of all available labels.
+   *
+   * Visible for testing.
+   */
   available: LabelView[];
 
   /**
-   * Is always a subset of available.
+   * The list of labels selected for the current task.
+   *
+   * For comparison brevity, is always a subset of entities from {@link available}.
    *
    * Visible for testing.
    */
   selected: LabelView[];
 
-  private readonly loadAllLabels: Promise<LabelView[]>;
+  /**
+   * A promise to load the available labels list.
+   */
+  private readonly loadAvailableLabels: Promise<LabelView[]>;
 
   constructor(router: Router, wizard: TaskCreationWizard, labelService: LabelService) {
     super(router, wizard);
-    this.loadAllLabels = labelService.fetchAllLabels();
+    this.loadAvailableLabels = labelService.fetchAllLabels();
   }
 
+  /**
+   * @inheritDoc
+   */
   protected initOwnModel(): void {
-    this.loadAllLabels
+    this.loadAvailableLabels
       .then(labels => {
         this.available = labels;
       })
@@ -62,8 +77,11 @@ export class LabelAssignmentComponent extends WizardStep {
       });
   }
 
+  /**
+   * @inheritDoc
+   */
   initFromWizard(): void {
-    this.loadAllLabels
+    this.loadAvailableLabels
       .then(labels => {
         const findMatch = id => labels.find(label => label.getId().getValue() === id.getValue());
         this.selected = this.wizard.taskLabels.map(findMatch);
@@ -73,8 +91,13 @@ export class LabelAssignmentComponent extends WizardStep {
       });
   }
 
+  /**
+   * Switches 'selected'/'not-selected' status for the label.
+   *
+   * Visible for testing.
+   */
   switchSelectedStatus(label: LabelView): void {
-    this.onInputChange();
+    this.onUserInput();
     if (this.selected.includes(label)) {
       const index = this.selected.indexOf(label);
       this.selected.splice(index, 1);
@@ -83,6 +106,9 @@ export class LabelAssignmentComponent extends WizardStep {
     }
   }
 
+  /**
+   * @inheritDoc
+   */
   protected doStep(): Promise<void> {
     if (this.selected.length > 0) {
       return this.wizard.addLabels(this.selected.map(label => label.getId()));

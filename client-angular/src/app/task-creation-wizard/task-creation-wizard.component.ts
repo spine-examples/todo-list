@@ -35,6 +35,22 @@ import {TaskCreation} from 'generated/main/js/todolist/model_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/commands_pb';
 
+/**
+ * The main component of the Task Creation Wizard.
+ *
+ * Aggregates wizard steps into {@link MatStepper} and does the common initialization.
+ *
+ * User can navigate to this component by either `/wizard` or `/wizard/:some-existing-ID` route.
+ *
+ * In the first scenario the Task Creation wizard will be initialized from scratch and a new task
+ * draft will be created.
+ *
+ * In the second scenario, the wizard will try to fetch an existing `TaskCreation` process instance
+ * from the server and load its data.
+ *
+ * The first scenario is a "main" scenario of the wizard usage and the second one allows to return
+ * to the wizard after the user navigated somewhere else.
+ */
 @Component({
   selector: 'app-task-creation-wizard',
   templateUrl: './task-creation-wizard.component.html',
@@ -45,13 +61,20 @@ import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/co
 })
 export class TaskCreationWizardComponent implements AfterViewInit {
 
+  /**
+   * The task creation stages with a corresponding {@link stepper} page indices.
+   */
   private static readonly STEPS: Map<TaskCreation.Stage, number> = new Map([
     [TaskCreation.Stage.TASK_DEFINITION, 0],
     [TaskCreation.Stage.LABEL_ASSIGNMENT, 1],
     [TaskCreation.Stage.CONFIRMATION, 2]
   ]);
 
-  /** Visible for testing. */
+  /**
+   * A reference to the Angular Material Stepper which controls the wizard UI.
+   *
+   * Visible for testing.
+   */
   @ViewChild(MatStepper)
   stepper: MatStepper;
 
@@ -67,8 +90,15 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   @ViewChild(ConfirmationComponent)
   confirmation: ConfirmationComponent;
 
+  /**
+   * Is `true` while the wizard is fetching its data from the server, then becomes `false`.
+   */
   private isLoading: boolean;
 
+  /**
+   * A promise to initialize the injected {@link TaskCreationWizard} either "from scratch" or with
+   * the data from server.
+   */
   private readonly initWizard: Promise<void>;
 
   constructor(private readonly wizard: TaskCreationWizard,
@@ -81,12 +111,18 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   }
 
   /**
-   * Reports an error which cannot really be recovered.
+   * Reports an error which cannot really be recovered in the scope of a current page.
    */
   private static reportFatalError(err): void {
     throw new Error(err);
   }
 
+  /**
+   * @inheritDoc
+   *
+   * Initializes this component and the child components with the data from
+   * {@link TaskCreationWizard}.
+   */
   ngAfterViewInit(): void {
     this.initWizard
       .then(() => {
@@ -103,13 +139,13 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   }
 
   /**
-   * Re-navigates from '/wizard' to '/wizard:*taskCreationId*'.
+   * Ensures the current route is '/wizard/*current-task-creation-ID*'.
    *
    * To create a new task, user can just navigate to '/wizard'. A task creation process will then
    * be started and assigned a new ID.
    *
    * This method changes the current location, so the user sees the "correct" URL with a task
-   * creation ID param.
+   * creation ID part.
    */
   private ensureRouteHasId(): void {
     const idString = this.wizard.id.getValue();
@@ -123,7 +159,7 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   /**
    * Selects the appropriate step in {@link stepper} according to the current wizard stage.
    *
-   * Completes all the preceding steps (they still can be returned to).
+   * Marks all the preceding {@link stepper} steps as completed (they still can be returned to).
    */
   private moveToCurrentStep(): void {
     const currentStage = this.wizard.stage;
@@ -138,6 +174,9 @@ export class TaskCreationWizardComponent implements AfterViewInit {
     this.stepper.selectedIndex = index;
   }
 
+  /**
+   * Completes all {@link stepper} steps prior to the `index`.
+   */
   private completeVisitedSteps(index) {
     for (let i = 0; i < this.stepper.steps.length; i++) {
       this.stepper.steps.toArray()[i].completed = i < index;
