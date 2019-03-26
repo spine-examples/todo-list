@@ -23,14 +23,14 @@ import {houseTask} from './tasks';
 import {TaskCreationId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskCreation} from 'generated/main/js/todolist/model_pb';
 
-export function taskCreationProcess(): TaskCreation {
+export function taskCreationProcess(stage?: TaskCreation.Stage): TaskCreation {
   const creationIdValue = 'task-creation-ID';
   const taskCreationId = new TaskCreationId();
   taskCreationId.setValue(creationIdValue);
-  const stage = TaskCreation.Stage.LABEL_ASSIGNMENT;
+  const creationStage = stage !== undefined ? stage : TaskCreation.Stage.LABEL_ASSIGNMENT;
   const taskCreation = new TaskCreation();
   taskCreation.setId(taskCreationId);
-  taskCreation.setStage(stage);
+  taskCreation.setStage(creationStage);
   taskCreation.setTaskId(houseTask().getId());
   return taskCreation;
 }

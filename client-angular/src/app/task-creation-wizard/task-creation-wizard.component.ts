@@ -20,7 +20,7 @@
 
 import {Location} from '@angular/common';
 import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
-import {MatHorizontalStepper} from '@angular/material';
+import {MatStepper} from '@angular/material';
 import {ActivatedRoute} from '@angular/router';
 
 import {TaskCreationWizard} from './service/task-creation-wizard.service';
@@ -51,17 +51,21 @@ export class TaskCreationWizardComponent implements AfterViewInit {
     [TaskCreation.Stage.CONFIRMATION, 2]
   ]);
 
-  @ViewChild(MatHorizontalStepper)
-  private readonly stepper: MatHorizontalStepper;
+  /** Visible for testing. */
+  @ViewChild(MatStepper)
+  stepper: MatStepper;
 
+  /** Visible for testing. */
   @ViewChild(TaskDefinitionComponent)
-  private readonly taskDefinition: TaskDefinitionComponent;
+  taskDefinition: TaskDefinitionComponent;
 
+  /** Visible for testing. */
   @ViewChild(LabelAssignmentComponent)
-  private readonly labelAssignment: LabelAssignmentComponent;
+  labelAssignment: LabelAssignmentComponent;
 
+  /** Visible for testing. */
   @ViewChild(ConfirmationComponent)
-  private readonly confirmation: ConfirmationComponent;
+  confirmation: ConfirmationComponent;
 
   private isLoading: boolean;
 

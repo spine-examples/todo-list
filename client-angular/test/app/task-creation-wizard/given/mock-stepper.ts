@@ -24,5 +24,11 @@ import {MatStepper} from '@angular/material';
 export function mockStepper(): jasmine.SpyObj<MatStepper> {
   const mock = jasmine.createSpyObj<MatStepper>('MatStepper', ['next']);
   mock.selected = jasmine.createSpyObj<CdkStep>('CdkStep', ['select']);
+  mock.selected.completed = false;
+  // @ts-ignore Needed to re-assign readonly value for test.
+  mock.steps = jasmine.createSpyObj<QueryList<CdkStep>>('Steps', ['toArray']);
+  // @ts-ignore
+  mock.steps.toArray.and.returnValue([mock.selected]);
+  mock.selectedIndex = 0;
   return mock;
 }

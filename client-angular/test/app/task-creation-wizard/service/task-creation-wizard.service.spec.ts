@@ -52,10 +52,7 @@ describe('TaskCreationWizard', () => {
      * Initializes wizard with some basic task data.
      */
     static initializedWizard(stage?: TaskCreation.Stage): Promise<void> {
-      const creationProcess = taskCreationProcess();
-      if (stage) {
-        creationProcess.setStage(stage);
-      }
+      const creationProcess = taskCreationProcess(stage);
       const task = Given.task();
       const provideMockData = (type, id, resolveCallback) => {
         if (type.class() === TaskCreation) {

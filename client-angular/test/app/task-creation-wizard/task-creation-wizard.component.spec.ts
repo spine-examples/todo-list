@@ -18,10 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ChangeDetectorRef} from '@angular/core';
+import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
+import {Location} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
+import {ActivatedRoute, ActivatedRouteSnapshot, convertToParamMap} from '@angular/router';
 
 import {Client} from 'spine-web';
 
@@ -51,8 +54,13 @@ import {LabelsModule} from '../../../src/app/labels/labels.module';
 import {TaskCreationWizard} from '../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
 import {TaskService} from '../../../src/app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from '../given/mock-spine-web-client';
-import {houseTasks} from '../given/tasks';
+import {houseTask, houseTasks} from '../given/tasks';
 import {LabelService} from '../../../src/app/labels/label.service';
+import {taskCreationProcess} from '../given/task-creation-process';
+
+import {TaskCreation} from 'generated/main/js/todolist/model_pb';
+import {TaskView} from 'generated/main/js/todolist/q/projections_pb';
+import {mockStepper} from './given/mock-stepper';
 
 describe('TaskCreationWizardComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -65,8 +73,36 @@ describe('TaskCreationWizardComponent', () => {
   mockClient.fetchAll.and.returnValue(fetch);
   fetch.atOnce.and.returnValue(Promise.resolve());
 
+  const activatedRoute = {
+    snapshot: {
+      paramMap: convertToParamMap({taskCreationId: houseTask().getId().getValue()})
+    }
+  };
+
   let component: TaskCreationWizardComponent;
   let fixture: ComponentFixture<TaskCreationWizardComponent>;
+
+  function initChildElements(wizardComponent: TaskCreationWizardComponent) {
+    wizardComponent.stepper = mockStepper();
+    wizardComponent.taskDefinition = jasmine.createSpyObj<TaskDefinitionComponent>(
+      'TaskDefinitionComponent', ['initFromWizard']
+    );
+    wizardComponent.labelAssignment = jasmine.createSpyObj<LabelAssignmentComponent>(
+      'LabelAssignmentComponent', ['initFromWizard']
+    );
+  }
+
+  function initMockProcess(stage?: TaskCreation.Stage) {
+    const creationProcess = taskCreationProcess(stage);
+    const task = houseTask();
+    return (type, id, resolveCallback) => {
+      if (type.class() === TaskCreation) {
+        resolveCallback(creationProcess);
+      } else if (type.class() === TaskView) {
+        resolveCallback(task);
+      }
+    };
+  }
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -103,19 +139,93 @@ describe('TaskCreationWizardComponent', () => {
         TaskCreationWizard,
         TaskService,
         LabelService,
-        {provide: Client, useValue: mockClient}
+        {provide: Client, useValue: mockClient},
+        {provide: ActivatedRoute, useValue: activatedRoute}
       ]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TaskCreationWizardComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    mockClient.fetchById.and.callFake(initMockProcess());
+    mockClient.sendCommand.and.callFake((command, resolve) => resolve());
   });
 
   it('should create', () => {
+    fixture = TestBed.createComponent(TaskCreationWizardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
     expect(component).toBeTruthy();
   });
+
+  it('should re-navigate to URL with process ID if started from `/wizard` URL', fakeAsync(() => {
+
+    // Create a component by hand to use the other activated route.
+    const wizard = new TaskCreationWizard(mockClient, new TaskService(mockClient));
+    const changeDetector =
+      jasmine.createSpyObj<ChangeDetectorRef>('ChangeDetector', ['detectChanges']);
+    const location =
+      jasmine.createSpyObj<Location>('Location', ['isCurrentPathEqualTo', 'go']);
+    const activated = new ActivatedRoute();
+    activated.snapshot = new ActivatedRouteSnapshot();
+
+    const theComponent =
+      new TaskCreationWizardComponent(wizard, changeDetector, location, activated);
+    initChildElements(theComponent);
+    theComponent.ngAfterViewInit();
+    tick();
+    const wizardId = wizard.id.getValue();
+    expect(wizardId).toBeTruthy();
+    expect(location.go).toHaveBeenCalledWith(`/wizard/${wizardId}`);
+  }));
+
+  it('should throw an Error when wizard initialization fails', fakeAsync(() => {
+    mockClient.fetchById.and.callFake((command, resolve, reject) => reject());
+
+    fixture = TestBed.createComponent(TaskCreationWizardComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+    expect(() => {
+      component.ngAfterViewInit();
+      tick();
+    }).toThrowError();
+  }));
+
+  it('should select the step in stepper according to the creation process stage', fakeAsync(() => {
+    fixture = TestBed.createComponent(TaskCreationWizardComponent);
+    component = fixture.componentInstance;
+    initChildElements(component);
+    fixture.detectChanges();
+
+    component.ngAfterViewInit();
+    tick();
+    const labelAssignmentPageIndex = 1;
+    expect(component.stepper.selectedIndex).toEqual(labelAssignmentPageIndex);
+  }));
+
+  it('should throw an Error when trying to navigate to unknown stage', fakeAsync(() => {
+    mockClient.fetchById.and.callFake(initMockProcess(TaskCreation.Stage.TCS_UNKNOWN));
+
+    fixture = TestBed.createComponent(TaskCreationWizardComponent);
+    component = fixture.componentInstance;
+    initChildElements(component);
+    fixture.detectChanges();
+
+    expect(() => {
+      component.ngAfterViewInit();
+      tick();
+    }).toThrowError();
+  }));
+
+  it('should execute child components initialization', fakeAsync(() => {
+    fixture = TestBed.createComponent(TaskCreationWizardComponent);
+    component = fixture.componentInstance;
+    initChildElements(component);
+    fixture.detectChanges();
+
+    component.ngAfterViewInit();
+    tick();
+    expect(component.taskDefinition.initFromWizard).toHaveBeenCalled();
+    expect(component.labelAssignment.initFromWizard).toHaveBeenCalled();
+  }));
 });
