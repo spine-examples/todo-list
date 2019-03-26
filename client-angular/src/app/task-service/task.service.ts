@@ -20,6 +20,8 @@
 
 import {Injectable} from '@angular/core';
 import {Client, Type} from 'spine-web';
+import * as uuid from 'uuid';
+import {BehaviorSubject} from 'rxjs';
 
 import {TaskServiceModule} from './task-service.module';
 import {UuidGenerator} from '../uuid-generator/uuid-generator';
@@ -38,7 +40,7 @@ import {TaskStatus} from 'generated/main/js/todolist/attributes_pb';
 })
 export class TaskService {
 
-  private readonly _tasks: TaskItem[] = [];
+  private readonly _tasks: BehaviorSubject<TaskItem[]> = new BehaviorSubject<TaskItem[]>([]);
   private _unsubscribe: () => void;
 
   /**
@@ -52,7 +54,7 @@ export class TaskService {
   /**
    * Obtains a current view of tasks.
    */
-  get tasks(): TaskItem {
+  get tasks(): BehaviorSubject<TaskItem[]> {
     return this._tasks;
   }
 
@@ -151,10 +153,8 @@ export class TaskService {
   subscribeToTasks(): Promise<() => void> {
     const refreshTasks = {
       next: (view: MyListView): void => {
-        const taskItems = view.getMyList().getItemsList();
-        // Refresh the array.
-        this.tasks.length = 0;
-        this.tasks.push(...taskItems);
+        const taskItems: TaskItem[] = view.getMyList().getItemsList();
+        this._tasks.next(taskItems);
       }
     };
     const type = Type.forClass(MyListView);

@@ -35,15 +35,10 @@ export const HOUSE_TASK_1_DESC = 'Wash the dishes';
 export const HOUSE_TASK_2_ID = 'task-2';
 export const HOUSE_TASK_2_DESC = 'Clean the house';
 
-export function taskItem(id: TaskId, description: TaskDescription): TaskItem {
-  const result = new TaskItem();
-  const taskId = new TaskId();
-  taskId.setValue(id);
-  result.setId(taskId);
-  const taskDescription = new TaskDescription();
-  taskDescription.setValue(description);
-  result.setDescription(taskDescription);
-  return result;
+export function completedTasks(): MyListView {
+  const tasks = houseTasks();
+  tasks.getMyList().getItemsList().forEach(item => item.setStatus(TaskStatus.COMPLETED));
+  return tasks;
 }
 
 export function houseTasks(): MyListView {
@@ -60,6 +55,17 @@ export function houseTasks(): MyListView {
   const result = new MyListView();
   result.setId(taskListId);
   result.setMyList(taskListView);
+  return result;
+}
+
+export function taskItem(id: TaskId, description: TaskDescription): TaskItem {
+  const result = new TaskItem();
+  const taskId = new TaskId();
+  taskId.setValue(id);
+  result.setId(taskId);
+  const taskDescription = new TaskDescription();
+  taskDescription.setValue(description);
+  result.setDescription(taskDescription);
   return result;
 }
 
