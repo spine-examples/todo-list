@@ -96,6 +96,8 @@ export class TaskCreationWizardComponent implements AfterViewInit {
 
   /**
    * Is `true` while the wizard is fetching its data from the server, then becomes `false`.
+   *
+   * Used or UI element manipulations.
    */
   private isLoading: boolean;
 
