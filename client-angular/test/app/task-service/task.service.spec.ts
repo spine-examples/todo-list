@@ -28,7 +28,7 @@ import {
   HOUSE_TASK_1_ID,
   HOUSE_TASK_2_DESC,
   HOUSE_TASK_2_ID,
-  houseTask1,
+  houseTask,
   houseTasks
 } from '../given/tasks';
 
@@ -112,7 +112,7 @@ describe('TaskService', () => {
   });
 
   it('should fetch a single task view by ID', () => {
-    const theTask = houseTask1();
+    const theTask = houseTask();
     mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(theTask));
 
     service.fetchById(theTask.getId())
@@ -126,14 +126,14 @@ describe('TaskService', () => {
     const errorMessage = 'Task details lookup rejected';
     mockClient.fetchById.and.callFake((cls, id, resolve, reject) => reject(errorMessage));
 
-    service.fetchById(houseTask1().getId())
+    service.fetchById(houseTask().getId())
       .then(() => fail('Task details lookup should have been rejected'))
       .catch(err => expect(err).toEqual(errorMessage));
   });
 
   it('should produce an error when no matching task is found during lookup', () => {
     mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(null));
-    const taskId = houseTask1().getId();
+    const taskId = houseTask().getId();
 
     service.fetchById(taskId)
       .then(() => fail('Task details lookup should have been rejected'))

@@ -28,7 +28,7 @@ import {TaskService} from '../../task-service/task.service';
 import {Message} from 'google-protobuf';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TimestampChange} from 'spine-web/proto/spine/change/change_pb';
-import {LabelColor, TaskPriority} from 'generated/main/js/todolist/attributes_pb';
+import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 import {DescriptionChange, PriorityChange} from 'generated/main/js/todolist/changes_pb';
 import {LabelId, TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskCreation} from 'generated/main/js/todolist/model_pb';
@@ -79,32 +79,12 @@ export class TaskCreationWizard {
     if (!description) {
       return Promise.reject('Description value must be set.');
     }
-    const cmd = new UpdateTaskDetails();
-    cmd.setId(this._id);
-    if (description !== this._taskDescription) {
-      const descriptionChange = new DescriptionChange();
-      descriptionChange.setNewValue(description);
-      if (this._taskDescription) {
-        descriptionChange.setPreviousValue(this._taskDescription);
-      }
-      cmd.setDescriptionChange(descriptionChange);
+    if (dueDate && dueDate < new Date()) {
+      return Promise.reject(
+        `Task due date before current time is not allowed, specified date: ${dueDate}`
+      );
     }
-    if (priority && priority !== this._taskPriority) {
-      const priorityChange = new PriorityChange();
-      priorityChange.setNewValue(priority);
-      if (this._taskPriority) {
-        priorityChange.setPreviousValue(this._taskPriority);
-      }
-      cmd.setPriorityChange(priorityChange);
-    }
-    if (dueDate && dueDate !== this._taskDueDate) {
-      const dueDateChange = new TimestampChange();
-      dueDateChange.setNewValue(dueDate);
-      if (this._taskDueDate) {
-        dueDateChange.setPreviousValue(this._taskDueDate);
-      }
-      cmd.setDueDateChange(dueDateChange);
-    }
+    const cmd = this.prepareUpdateCommand(description, priority, dueDate);
     const updateTask = new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
@@ -156,34 +136,6 @@ export class TaskCreationWizard {
     return new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
-  }
-
-  get id(): TaskCreationId {
-    return this._id;
-  }
-
-  get taskId(): TaskId {
-    return this._taskId;
-  }
-
-  get stage(): TaskCreation.Stage {
-    return this._stage;
-  }
-
-  get taskDescription(): TaskDescription {
-    return this._taskDescription;
-  }
-
-  get taskPriority(): TaskPriority {
-    return this._taskPriority;
-  }
-
-  get taskDueDate(): Timestamp {
-    return this._taskDueDate;
-  }
-
-  get taskLabels(): LabelId[] {
-    return this._taskLabels;
   }
 
   private start(): Promise<void> {
@@ -253,5 +205,78 @@ export class TaskCreationWizard {
         }
         this._taskLabels = task.getLabelIdsList() ? task.getLabelIdsList().getIdsList() : [];
       });
+  }
+
+  private prepareUpdateCommand(description, priority, dueDate) {
+    const cmd = new UpdateTaskDetails();
+    cmd.setId(this._id);
+    if (description !== this._taskDescription) {
+      const descriptionChange = new DescriptionChange();
+      descriptionChange.setNewValue(description);
+      if (this._taskDescription) {
+        descriptionChange.setPreviousValue(this._taskDescription);
+      }
+      cmd.setDescriptionChange(descriptionChange);
+    }
+    if (priority !== this._taskPriority) {
+      const priorityChange = new PriorityChange();
+      priorityChange.setNewValue(priority);
+      if (this._taskPriority) {
+        priorityChange.setPreviousValue(this._taskPriority);
+      }
+      cmd.setPriorityChange(priorityChange);
+    }
+    if (dueDate !== this._taskDueDate) {
+      const dueDateChange = new TimestampChange();
+      dueDateChange.setNewValue(dueDate);
+      if (this._taskDueDate) {
+        dueDateChange.setPreviousValue(this._taskDueDate);
+      }
+      cmd.setDueDateChange(dueDateChange);
+    }
+    return cmd;
+  }
+
+  get id(): TaskCreationId {
+    return this._id;
+  }
+
+  get taskId(): TaskId {
+    return this._taskId;
+  }
+
+  get stage(): TaskCreation.Stage {
+    return this._stage;
+  }
+
+  get taskDescription(): TaskDescription {
+    return this._taskDescription;
+  }
+
+  /** For tests only. */
+  set taskDescription(value: TaskDescription) {
+    this._taskDescription = value;
+  }
+
+  get taskPriority(): TaskPriority {
+    return this._taskPriority;
+  }
+
+  /** For tests only. */
+  set taskPriority(value: TaskPriority) {
+    this._taskPriority = value;
+  }
+
+  get taskDueDate(): Timestamp {
+    return this._taskDueDate;
+  }
+
+  /** For tests only. */
+  set taskDueDate(value: Timestamp) {
+    this._taskDueDate = value;
+  }
+
+  get taskLabels(): LabelId[] {
+    return this._taskLabels;
   }
 }

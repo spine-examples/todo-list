@@ -18,6 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskId, TaskListId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {
@@ -26,7 +27,7 @@ import {
   TaskListView,
   TaskView
 } from 'generated/main/js/todolist/q/projections_pb';
-import {TaskStatus} from 'generated/main/js/todolist/attributes_pb';
+import {TaskPriority, TaskStatus} from 'generated/main/js/todolist/attributes_pb';
 
 export const HOUSE_TASK_1_ID = 'task-1';
 export const HOUSE_TASK_1_DESC = 'Wash the dishes';
@@ -62,12 +63,8 @@ export function houseTasks(): MyListView {
   return result;
 }
 
-export function houseTask1(): TaskView {
+export function houseTask(): TaskView {
   return taskView(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
-}
-
-export function houseTask2(): TaskView {
-  return taskView(HOUSE_TASK_2_ID, HOUSE_TASK_2_DESC);
 }
 
 function taskView(id: string, description: string): TaskView {
@@ -78,5 +75,8 @@ function taskView(id: string, description: string): TaskView {
   const taskDescription = new TaskDescription();
   taskDescription.setValue(description);
   result.setDescription(taskDescription);
+  result.setPriority(TaskPriority.HIGH);
+  const dueDate = Timestamp.fromDate(new Date());
+  result.setDueDate(dueDate);
   return result;
 }
