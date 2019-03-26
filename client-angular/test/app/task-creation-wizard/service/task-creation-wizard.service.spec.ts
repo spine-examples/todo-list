@@ -27,6 +27,7 @@ import {TaskService} from '../../../../src/app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {houseTask, houseTasks} from '../../given/tasks';
 import {label1, label2} from '../../given/labels';
+import {taskCreationProcess} from '../../given/task-creation-process';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
@@ -50,8 +51,11 @@ describe('TaskCreationWizard', () => {
     /**
      * Initializes wizard with some basic task data.
      */
-    static initializedWizard(): Promise<void> {
-      const creationProcess = Given.taskCreationProcess();
+    static initializedWizard(stage?: TaskCreation.Stage): Promise<void> {
+      const creationProcess = taskCreationProcess();
+      if (stage) {
+        creationProcess.setStage(stage);
+      }
       const task = Given.task();
       const provideMockData = (type, id, resolveCallback) => {
         if (type.class() === TaskCreation) {
@@ -62,18 +66,6 @@ describe('TaskCreationWizard', () => {
       };
       mockClient.fetchById.and.callFake(provideMockData);
       return wizard.init(creationProcess.getId().getValue());
-    }
-
-    static taskCreationProcess(): TaskCreation {
-      const creationIdValue = 'task-creation-ID';
-      const taskCreationId = new TaskCreationId();
-      taskCreationId.setValue(creationIdValue);
-      const stage = TaskCreation.Stage.LABEL_ASSIGNMENT;
-      const taskCreation = new TaskCreation();
-      taskCreation.setId(taskCreationId);
-      taskCreation.setStage(stage);
-      taskCreation.setTaskId(Given.task().getId());
-      return taskCreation;
     }
 
     static task(): TaskView {
@@ -138,7 +130,7 @@ describe('TaskCreationWizard', () => {
   });
 
   it('should restore existing creation process by ID', () => {
-    const creationProcess = Given.taskCreationProcess();
+    const creationProcess = taskCreationProcess();
     const task = Given.task();
     Given.initializedWizard()
       .then(() => {
@@ -275,78 +267,114 @@ describe('TaskCreationWizard', () => {
   });
 
   it('should add labels to the task', () => {
-    mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
-    const labels = [label1().getId(), label2().getId()];
-    wizard.addLabels(labels)
+    Given.initializedWizard()
       .then(() => {
-        expect(wizard.taskLabels).toEqual(labels);
-        expect(wizard.stage).toEqual(TaskCreation.Stage.CONFIRMATION);
+        mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
+        const labels = [label1().getId(), label2().getId()];
+        wizard.addLabels(labels)
+          .then(() => {
+            expect(wizard.taskLabels).toEqual(labels);
+            expect(wizard.stage).toEqual(TaskCreation.Stage.CONFIRMATION);
+          })
+          .catch(err => fail(`Adding task labels failed: ${err}`));
       })
-      .catch(err => fail(`Adding task labels failed: ${err}`));
+      .catch(err => fail(`Wizard init failed: ${err}`));
   });
 
   it('should produce an error when given empty labels array', () => {
-    wizard.addLabels([])
-      .then(() => fail('Adding task labels should have failed'))
-      .catch(err => expect(err).toEqual(
-        'Empty label array is not allowed in `AddLabels` command, use `SkipLabels` instead'
-      ));
+    Given.initializedWizard()
+      .then(() => {
+        wizard.addLabels([])
+          .then(() => fail('Adding task labels should have failed'))
+          .catch(err => expect(err).toEqual(
+            'Empty label array is not allowed in `AddLabels` command, use `SkipLabels` instead'
+          ));
+      })
+      .catch(err => fail(`Wizard init failed: ${err}`));
   });
 
   it('should forward errors on adding labels as Promise rejection', () => {
-    const errorMessage = 'Adding labels failed';
-    mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
-    const labels = [label1().getId(), label2().getId()];
-    wizard.addLabels(labels)
-      .then(() => fail('Adding task labels should have failed'))
-      .catch(err => expect(err).toEqual(errorMessage));
+    Given.initializedWizard()
+      .then(() => {
+        const errorMessage = 'Adding labels failed';
+        mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
+        const labels = [label1().getId(), label2().getId()];
+        wizard.addLabels(labels)
+          .then(() => fail('Adding task labels should have failed'))
+          .catch(err => expect(err).toEqual(errorMessage));
+      })
+      .catch(err => fail(`Wizard init failed: ${err}`));
   });
 
   it('should skip label assignment', () => {
-    mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
-    wizard.skipLabelAssignment()
+    Given.initializedWizard()
       .then(() => {
-        expect(wizard.stage).toEqual(TaskCreation.Stage.CONFIRMATION);
+        mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
+        wizard.skipLabelAssignment()
+          .then(() => {
+            expect(wizard.stage).toEqual(TaskCreation.Stage.CONFIRMATION);
+          })
+          .catch(err => fail(`Skipping label assignment failed: ${err}`));
       })
-      .catch(err => fail(`Skipping label assignment failed: ${err}`));
+      .catch(err => fail(`Wizard init failed: ${err}`));
   });
 
   it('should forward errors on skipping label assignment as Promise rejection', () => {
-    const errorMessage = 'Skipping label assignment failed';
-    mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
-    wizard.skipLabelAssignment()
-      .then(() => fail('Skipping label assignment should have failed'))
-      .catch(err => expect(err).toEqual(errorMessage));
+    Given.initializedWizard()
+      .then(() => {
+        const errorMessage = 'Skipping label assignment failed';
+        mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
+        wizard.skipLabelAssignment()
+          .then(() => fail('Skipping label assignment should have failed'))
+          .catch(err => expect(err).toEqual(errorMessage));
+      })
+      .catch(err => fail(`Wizard init failed: ${err}`));
   });
 
   it('should complete task creation', () => {
-    mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
-    wizard.completeTaskCreation()
-      .then(() => expect(wizard.stage).toEqual(TaskCreation.Stage.COMPLETED))
-      .catch(err => fail(`Completing task creation failed: ${err}`));
+    Given.initializedWizard(TaskCreation.Stage.CONFIRMATION)
+      .then(() => {
+        mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
+        wizard.completeTaskCreation()
+          .then(() => expect(wizard.stage).toEqual(TaskCreation.Stage.COMPLETED))
+          .catch(err => fail(`Completing task creation failed: ${err}`));
+      })
+      .catch(err => fail(`Wizard init failed: ${err}`));
   });
 
   it('should forward errors on completing task creation as Promise rejection', () => {
-    const errorMessage = 'Completing task creation failed';
-    mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
-    wizard.completeTaskCreation()
-      .then(() => fail('Completing task creation should have failed'))
-      .catch(err => expect(err).toEqual(errorMessage));
+    Given.initializedWizard(TaskCreation.Stage.CONFIRMATION)
+      .then(() => {
+        const errorMessage = 'Completing task creation failed';
+        mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
+        wizard.completeTaskCreation()
+          .then(() => fail('Completing task creation should have failed'))
+          .catch(err => expect(err).toEqual(errorMessage));
+      })
+      .catch(err => fail(`Wizard init failed: ${err}`));
   });
 
   it('should cancel task creation', () => {
-    mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
-    wizard.cancelTaskCreation()
-      .then(() => expect(wizard.stage).toEqual(TaskCreation.Stage.CANCELED))
-      .catch(err => fail(`Canceling task creation failed: ${err}`));
+    Given.initializedWizard(TaskCreation.Stage.CONFIRMATION)
+      .then(() => {
+        mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
+        wizard.cancelTaskCreation()
+          .then(() => expect(wizard.stage).toEqual(TaskCreation.Stage.CANCELED))
+          .catch(err => fail(`Canceling task creation failed: ${err}`));
+      })
+      .catch(err => fail(`Wizard init failed: ${err}`));
   });
 
   it('should forward errors on canceling task creation as Promise rejection', () => {
-    const errorMessage = 'Canceling task creation failed';
-    mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
-    wizard.cancelTaskCreation()
-      .then(() => fail('Canceling task creation should have failed'))
-      .catch(err => expect(err).toEqual(errorMessage));
+    Given.initializedWizard(TaskCreation.Stage.CONFIRMATION)
+      .then(() => {
+        const errorMessage = 'Canceling task creation failed';
+        mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
+        wizard.cancelTaskCreation()
+          .then(() => fail('Canceling task creation should have failed'))
+          .catch(err => expect(err).toEqual(errorMessage));
+      })
+      .catch(err => fail(`Wizard init failed: ${err}`));
   });
 
   function updateDetailsAndCheck(newDescription: TaskDescription,
