@@ -24,6 +24,8 @@ import {Message} from 'google-protobuf';
 /**
  * Converts `StringValue`-like Proto messages to their string representation.
  *
+ * `StringValue`-like Proto message is the one containing a single `string` field named `value`.
+ *
  * Usage:
  *   taskDescription | stringValue
  *
