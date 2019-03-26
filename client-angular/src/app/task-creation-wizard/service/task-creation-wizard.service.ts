@@ -101,6 +101,11 @@ export class TaskCreationWizard {
    */
   // noinspection JSUnusedGlobalSymbols See doc.
   addLabels(labelIds: LabelId[]): Promise<void> {
+    if (labelIds.length === 0) {
+      return Promise.reject(
+        'Empty label array is not allowed in `AddLabels` command, use `SkipLabels` instead'
+      );
+    }
     const cmd = new AddLabels();
     cmd.setId(this._id);
     cmd.setExistingLabelsList(labelIds);
@@ -117,25 +122,28 @@ export class TaskCreationWizard {
   skipLabelAssignment(): Promise<void> {
     const cmd = new SkipLabels();
     cmd.setId(this._id);
-    return new Promise<void>((resolve, reject) =>
+    const skipLabels = new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
+    return skipLabels.then(() => this._stage = TaskCreation.Stage.CONFIRMATION);
   }
 
   completeTaskCreation(): Promise<void> {
     const cmd = new CompleteTaskCreation();
     cmd.setId(this._id);
-    return new Promise<void>((resolve, reject) =>
+    const completeProcess = new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
+    return completeProcess.then(() => this._stage = TaskCreation.Stage.COMPLETED);
   }
 
   cancelTaskCreation(): Promise<void> {
     const cmd = new CancelTaskCreation();
     cmd.setId(this._id);
-    return new Promise<void>((resolve, reject) =>
+    const cancelProcess = new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
+    return cancelProcess.then(() => this._stage = TaskCreation.Stage.CANCELED);
   }
 
   private start(): Promise<void> {
@@ -144,7 +152,6 @@ export class TaskCreationWizard {
     const cmd = new StartTaskCreation();
     cmd.setId(taskCreationId);
     cmd.setTaskId(taskId);
-
     return new Promise<TaskCreationId>((resolve, reject) => {
         const startProcess = () => {
           this._id = taskCreationId;
