@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {Client} from 'spine-web';
@@ -29,6 +29,11 @@ import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/servi
 import {TaskService} from '../../../../src/app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {houseTasks} from '../../given/tasks';
+import {WizardStep} from '../../../../src/app/task-creation-wizard/wizard-step';
+import {initMockProcess, taskCreationProcess} from '../../given/task-creation-process';
+import {mockStepper} from '../given/mock-stepper';
+import {TaskPriorityName} from '../../../../src/app/pipes/task-priority-name/task-priority-name.pipe';
+import {MomentFromTimestamp} from '../../../../src/app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
 
 describe('ConfirmationComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -40,13 +45,16 @@ describe('ConfirmationComponent', () => {
   let component: ConfirmationComponent;
   let fixture: ComponentFixture<ConfirmationComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         ConfirmationComponent
       ],
       imports: [
-        RouterTestingModule.withRoutes([]),
+        RouterTestingModule.withRoutes([
+          // Same component for convenience.
+          {path: 'task-list/active', component: ConfirmationComponent}
+        ]),
 
         TodoListComponentsModule,
         TodoListPipesModule
@@ -58,15 +66,70 @@ describe('ConfirmationComponent', () => {
       ]
     })
       .compileComponents();
-  }));
 
-  beforeEach(() => {
+    mockClient.fetchById.and.callFake(initMockProcess());
     fixture = TestBed.createComponent(ConfirmationComponent);
     component = fixture.componentInstance;
+    component.wizard.init(taskCreationProcess().getId().getValue());
+    tick();
+    component.stepper = mockStepper();
+    component.initFromWizard();
+
     fixture.detectChanges();
-  });
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should display information about the task in component body', () => {
+    const text = fixture.nativeElement.textContent;
+    const descriptionText = component.wizard.taskDescription.getValue();
+    expect(text).toContain(descriptionText);
+
+    const priorityPipe = new TaskPriorityName();
+    const priorityText = priorityPipe.transform(component.wizard.taskPriority);
+    expect(text).toContain(priorityText);
+
+    const dueDatePipe = new MomentFromTimestamp();
+    const dueDateText = dueDatePipe.transform(component.wizard.taskDueDate).toString();
+    expect(text).toContain(dueDateText);
+  });
+
+  it('should complete task creation', fakeAsync(() => {
+    mockClient.sendCommand.and.callFake((command, resolve) => resolve());
+    component.finish();
+    tick();
+    expect(component.router.url).toEqual(WizardStep.RETURN_TO);
+  }));
+
+  it('should throw an exception if process completion fails', fakeAsync(() => {
+    const errorMessage = 'Completing task creation failed';
+    mockClient.sendCommand.and.callFake((command, resolve, reject) => reject(errorMessage));
+    expect(() => {
+      component.finish();
+      tick();
+    }).toThrowError();
+    expect(component.router.url).toEqual(WizardStep.RETURN_TO);
+  }));
+
+  it('should navigate to previous step', () => {
+    component.previous();
+    expect(component.stepper.previous).toHaveBeenCalledTimes(1);
+  });
+
+  it('should cancel task creation', fakeAsync(() => {
+    mockClient.sendCommand.and.callFake((command, resolve) => resolve());
+    component.cancel();
+    tick();
+    expect(component.router.url).toEqual(WizardStep.RETURN_TO);
+  }));
+
+  it('throw Error if canceling task creation failed', fakeAsync(() => {
+    mockClient.sendCommand.and.callFake((command, resolve, reject) => reject());
+    expect(() => {
+      component.cancel();
+      tick();
+    }).toThrowError();
+  }));
 });
