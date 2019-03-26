@@ -73,6 +73,22 @@ protobuf {
     }
 }
 
+buildJs {
+    outputs.dir "$projectDir/dist"
+
+    doLast {
+        npm 'run', 'build'
+    }
+}
+
+testJs {
+    doLast {
+        npm 'run', 'test', '--', '--no-watch', '--no-progress', '--browsers=ChromeHeadlessCI', '--code-coverage'
+    }
+
+    dependsOn buildJs
+}
+
 compileProtoToJs {
     outputs.files compiledProto
 }

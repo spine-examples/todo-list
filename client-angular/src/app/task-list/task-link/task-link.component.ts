@@ -31,9 +31,6 @@ import {TaskService} from '../../task-service/task.service';
 })
 export class TaskLinkComponent {
 
-  constructor(readonly service: TaskService) {
-  }
-
   @Input()
   task: TaskItem;
 }
