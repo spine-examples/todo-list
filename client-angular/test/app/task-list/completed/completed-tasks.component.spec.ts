@@ -22,6 +22,7 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterModule} from '@angular/router';
 import {MatListModule} from '@angular/material/list';
 import {By} from '@angular/platform-browser';
+import {RouterTestingModule} from '@angular/router/testing';
 
 import {Client} from 'spine-web';
 import {CompletedTasksComponent} from '../../../../src/app/task-list/completed/completed-tasks.component';
@@ -44,7 +45,7 @@ describe('CompletedTasksComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [CompletedTasksComponent, TaskDisplayComponent],
-      imports: [MatListModule, RouterModule],
+      imports: [MatListModule, RouterModule, RouterTestingModule],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
@@ -58,12 +59,13 @@ describe('CompletedTasksComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should contain completed tasks', () => {
-    // The timeout allows the page to fully render before checking the DOM for presense of the
+  it('should contain completed tasks', async(() => {
+    // The timeout allows the page to fully render before checking the DOM for presence of the
     // necessary element.
-    setTimeout(() => {
+    fixture.whenStable().then(() => {
+      fixture.detectChanges();
       const tasks = fixture.debugElement.queryAll(By.css('.list-item'));
       expect(tasks.length).toBe(2);
-    }, 100);
-  });
+    });
+  }));
 });
