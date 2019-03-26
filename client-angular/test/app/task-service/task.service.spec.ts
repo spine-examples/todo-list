@@ -32,7 +32,7 @@ import {
 } from '../given/tasks';
 
 import {CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
-import {MyListView} from 'generated/main/js/todolist/q/projections_pb';
+import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 
 describe('TaskService', () => {
   const mockClient = mockSpineWebClient();
@@ -83,12 +83,13 @@ describe('TaskService', () => {
     ));
     service.subscribeToTasks()
       .then(receivedUnsubscribeFunc => {
+          const servicesTask: TaskItem[] = service.tasks.getValue();
           expect(receivedUnsubscribeFunc).toBe(unsubscribe);
-          expect(service.tasks.length).toBe(2);
-          expect(service.tasks[0].getId().getValue()).toBe(HOUSE_TASK_1_ID);
-          expect(service.tasks[0].getDescription().getValue()).toBe(HOUSE_TASK_1_DESC);
-          expect(service.tasks[1].getId().getValue()).toBe(HOUSE_TASK_2_ID);
-          expect(service.tasks[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
+          expect(servicesTask.length).toBe(2);
+          expect(servicesTask[0].getId().getValue()).toBe(HOUSE_TASK_1_ID);
+          expect(servicesTask[0].getDescription().getValue()).toBe(HOUSE_TASK_1_DESC);
+          expect(servicesTask[1].getId().getValue()).toBe(HOUSE_TASK_2_ID);
+          expect(servicesTask[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
         }
       ).catch(() => fail('Subscription promise should have been resolved'));
   });
