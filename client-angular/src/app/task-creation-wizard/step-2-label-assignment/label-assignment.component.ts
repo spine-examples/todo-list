@@ -30,6 +30,13 @@ import {LabelView} from 'generated/main/js/todolist/q/projections_pb';
 
 /**
  * A component which represents the second step of the Task Creation Wizard - a label assignment.
+ *
+ * The "aim" of this step is to send either `AddLabels` (in case the user assigned labels to the
+ * task) or `SkipLabels` (in case no labels were assigned) to the server.
+ *
+ * The wizard will then proceed to the confirmation.
+ *
+ * It will still be possible to return to this step and modified the labels assigned to the task.
  */
 @Component({
   selector: 'app-label-assignment',

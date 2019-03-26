@@ -43,13 +43,17 @@ import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/co
  * User can navigate to this component by either `/wizard` or `/wizard/:some-existing-ID` route.
  *
  * In the first scenario the Task Creation wizard will be initialized from scratch and a new task
- * draft will be created.
- *
- * In the second scenario, the wizard will try to fetch an existing `TaskCreation` process instance
- * from the server and load its data.
+ * draft will be created. In the second scenario, the wizard will try to fetch an existing
+ * `TaskCreation` process instance from the server and load its data.
  *
  * The first scenario is a "main" scenario of the wizard usage and the second one allows to return
  * to the wizard after the user navigated somewhere else.
+ *
+ * The steps in the wizard are sequential but returning back and modifying already completed step
+ * is allowed at any point of time.
+ *
+ * The step navigation is done in such way that user cannot leave the current step until the
+ * correct data is specified in all required inputs.
  */
 @Component({
   selector: 'app-task-creation-wizard',

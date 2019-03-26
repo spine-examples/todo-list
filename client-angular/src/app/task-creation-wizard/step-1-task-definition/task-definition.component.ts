@@ -33,6 +33,12 @@ import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 
 /**
  * A component which represents the first step of the Task Creation Wizard - a task definition.
+ *
+ * The "aim" of this step is to send an `UpdateTaskDetails` command with the new task properties
+ * specified by the user.
+ *
+ * It is possible to return to this step at any stage of the task creation in the future, but it
+ * must be completed at least one time before proceeding to the next step.
  */
 @Component({
   selector: 'app-task-definition',

@@ -26,6 +26,15 @@ import {WizardStep} from '../wizard-step';
 
 /**
  * A component which represents the third step of the Task Creation Wizard - the confirmation.
+ *
+ * This is the final step of a wizard and it allows user to either complete or cancel the task
+ * creation (or to navigate back and further modify data).
+ *
+ * Depending on the chosen action, the corresponding command will be sent to the server and the
+ * client will navigate away from the wizard.
+ *
+ * In case of successful task creation, it should appear on `/task-list/active` page in the list of
+ * active tasks.
  */
 @Component({
   selector: 'app-confirmation',
