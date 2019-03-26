@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TestBed} from '@angular/core/testing';
+import {fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {Client} from 'spine-web';
 
@@ -48,14 +48,6 @@ describe('TaskCreationWizard', () => {
 
   class Given {
 
-    /**
-     * Initializes wizard with some basic task data.
-     */
-    static initializedWizard(stage?: TaskCreation.Stage): Promise<void> {
-      mockClient.fetchById.and.callFake(initMockProcess(stage));
-      return wizard.init(taskCreationProcess(stage).getId().getValue());
-    }
-
     static task(): TaskView {
       return houseTask();
     }
@@ -75,6 +67,27 @@ describe('TaskCreationWizard', () => {
       date.setHours(date.getHours() + 10);
       return Timestamp.fromDate(date);
     }
+  }
+
+  /**
+   * Starts the wizard from scratch.
+   *
+   * The wizard stage after initialization is `TASK_DENITION`.
+   */
+  function startWizardFromScratch(): void {
+    mockClient.sendCommand.and.callFake((command, resolveCallback) => resolveCallback());
+    // noinspection JSIgnoredPromiseFromCall The promise is resolved via `fakeAsync()`.
+    wizard.init();
+  }
+
+  /**
+   * Initializes wizard with some basic task data and given stage (or default `LABEL_ASSIGNMENT`
+   * stage).
+   */
+  function initializeWizard(stage?: TaskCreation.Stage): void {
+    mockClient.fetchById.and.callFake(initMockProcess(stage));
+    // noinspection JSIgnoredPromiseFromCall The promise is resolved via `fakeAsync()`.
+    wizard.init(taskCreationProcess(stage).getId().getValue());
   }
 
   const mockClient = mockSpineWebClient();
@@ -100,40 +113,33 @@ describe('TaskCreationWizard', () => {
     expect(wizard).toBeTruthy();
   });
 
-  it('should initialize the process from scratch', () => {
-    mockClient.sendCommand.and.callFake((command, resolveCallback) => resolveCallback());
-    wizard.init()
-      .then(() => {
-        const calls = mockClient.sendCommand.calls;
-        expect(calls.count()).toEqual(1);
-        const callArgs = calls.argsFor(0);
-        const command = callArgs[0];
-        expect(wizard.id).toEqual(command.getId());
-        expect(wizard.taskId).toEqual(command.getTaskId());
-        expect(wizard.stage).toEqual(TaskCreation.Stage.TASK_DEFINITION);
-      })
-      .catch(err =>
-        fail(`'StartTaskCreation' command rejected: ${err}`)
-      );
-  });
+  it('should initialize the process from scratch', fakeAsync(() => {
+    startWizardFromScratch();
+    tick();
 
-  it('should restore existing creation process by ID', () => {
+    const calls = mockClient.sendCommand.calls;
+    expect(calls.count()).toEqual(1);
+    const callArgs = calls.argsFor(0);
+    const command = callArgs[0];
+    expect(wizard.id).toEqual(command.getId());
+    expect(wizard.taskId).toEqual(command.getTaskId());
+    expect(wizard.stage).toEqual(TaskCreation.Stage.TASK_DEFINITION);
+  }));
+
+  it('should restore existing creation process by ID', fakeAsync(() => {
+    initializeWizard();
+    tick();
+
     const creationProcess = taskCreationProcess();
     const task = Given.task();
-    Given.initializedWizard()
-      .then(() => {
-        expect(wizard.id).toEqual(creationProcess.getId());
-        expect(wizard.taskId).toEqual(task.getId());
-        expect(wizard.stage).toEqual(creationProcess.getStage());
-        expect(wizard.taskDescription).toEqual(task.getDescription());
-        expect(wizard.taskPriority).toEqual(task.getPriority());
-        expect(wizard.taskDueDate).toEqual(task.getDueDate());
-        expect(wizard.taskLabels).toEqual([]);
-      })
-      .catch(err =>
-        fail(`Task restoration failed: ${err}`)
-      );
-  });
+    expect(wizard.id).toEqual(creationProcess.getId());
+    expect(wizard.taskId).toEqual(task.getId());
+    expect(wizard.stage).toEqual(creationProcess.getStage());
+    expect(wizard.taskDescription).toEqual(task.getDescription());
+    expect(wizard.taskPriority).toEqual(task.getPriority());
+    expect(wizard.taskDueDate).toEqual(task.getDueDate());
+    expect(wizard.taskLabels).toEqual([]);
+  }));
 
   it('should produce an error if nothing is found by the specified ID', () => {
     mockClient.fetchById.and.callFake((type, id, resolve) => resolve(null));
@@ -159,238 +165,207 @@ describe('TaskCreationWizard', () => {
       );
   });
 
-  it('should update task details', () => {
-    Given.initializedWizard()
-      .then(() => {
-        updateDetailsAndCheck(Given.newDescription(), Given.newPriority(), Given.newDueDate());
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should update task details', fakeAsync(() => {
+    initializeWizard();
+    tick();
+    updateDetailsAndCheck(Given.newDescription(), Given.newPriority(), Given.newDueDate());
+  }));
 
-  it('should not set previous description value if it is undefined', () => {
-    Given.initializedWizard()
-      .then(() => {
-        wizard.taskDescription = undefined;
-        updateDetailsAndCheck(Given.newDescription(), Given.newPriority(), Given.newDueDate());
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should not set previous description value if it is undefined', fakeAsync(() => {
+    initializeWizard();
+    tick();
+    wizard.taskDescription = undefined;
+    updateDetailsAndCheck(Given.newDescription(), Given.newPriority(), Given.newDueDate());
+  }));
 
-  it('should produce an error when new description is undefined', () => {
-    Given.initializedWizard()
-      .then(() => {
-        wizard.updateTaskDetails(undefined, Given.newPriority(), Given.newDueDate())
-          .then(() => fail('Details update should have failed'))
-          .catch(err => expect(err).toEqual('Description value must be set.'));
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should produce an error when new description is undefined', fakeAsync(() => {
+    initializeWizard();
+    tick();
+    wizard.updateTaskDetails(undefined, Given.newPriority(), Given.newDueDate())
+      .then(() => fail('Details update should have failed'))
+      .catch(err => expect(err).toEqual('Description value must be set.'));
+  }));
 
-  it('should ignore description change if specified description is same as previous one', () => {
-    Given.initializedWizard()
-      .then(() => {
-        updateDetailsAndCheck(wizard.taskDescription, Given.newPriority(), Given.newDueDate());
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should ignore description change if specified description is same as previous one',
+    fakeAsync(() => {
+      initializeWizard();
+      tick();
+      updateDetailsAndCheck(wizard.taskDescription, Given.newPriority(), Given.newDueDate());
+    }));
 
-  it('should not set previous priority value if it is undefined', () => {
-    Given.initializedWizard()
-      .then(() => {
-        wizard.taskPriority = undefined;
-        updateDetailsAndCheck(Given.newDescription(), Given.newPriority(), Given.newDueDate());
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should not set previous priority value if it is undefined', fakeAsync(() => {
+    initializeWizard();
+    tick();
+    wizard.taskPriority = undefined;
+    updateDetailsAndCheck(Given.newDescription(), Given.newPriority(), Given.newDueDate());
+  }));
 
-  it('should ignore priority change if specified priority is same as previous one', () => {
-    Given.initializedWizard()
-      .then(() => {
-        updateDetailsAndCheck(Given.newDescription(), wizard.taskPriority, Given.newDueDate());
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should ignore priority change if specified priority is same as previous one',
+    fakeAsync(() => {
+      initializeWizard();
+      tick();
+      updateDetailsAndCheck(Given.newDescription(), wizard.taskPriority, Given.newDueDate());
+    }));
 
-  it('should not set previous due date value if it is undefined', () => {
-    Given.initializedWizard()
-      .then(() => {
-        wizard.taskDueDate = undefined;
-        updateDetailsAndCheck(Given.newDescription(), Given.newPriority(), Given.newDueDate());
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should not set previous due date value if it is undefined', fakeAsync(() => {
+    initializeWizard();
+    tick();
+    wizard.taskDueDate = undefined;
+    updateDetailsAndCheck(Given.newDescription(), Given.newPriority(), Given.newDueDate());
+  }));
 
-  it('should ignore due date change if specified due date is same as previous one', () => {
-    Given.initializedWizard()
-      .then(() => {
-        updateDetailsAndCheck(Given.newDescription(), Given.newPriority(), wizard.taskDueDate);
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should ignore due date change if specified due date is same as previous one',
+    fakeAsync(() => {
+      initializeWizard();
+      tick();
+      updateDetailsAndCheck(Given.newDescription(), Given.newPriority(), wizard.taskDueDate);
+    }));
 
-  it('should produce an error if task due date is before current time', () => {
-    Given.initializedWizard()
-      .then(() => {
-        const dueDate = new Date();
-        dueDate.setHours(dueDate.getHours() - 10);
-        wizard.updateTaskDetails(Given.newDescription(), Given.newPriority(), dueDate)
-          .then(() => fail('Details update should have failed'))
-          .catch(err => expect(err).toEqual(
-            `Task due date before current time is not allowed, specified date: ${dueDate}`
-          ));
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should produce an error if task due date is before current time', fakeAsync(() => {
+    initializeWizard();
+    tick();
 
-  it('should forward errors during task details update as Promise rejection', () => {
-    Given.initializedWizard()
-      .then(() => {
-        const errorMessage = 'Updating task details failed';
-        mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
-        wizard.updateTaskDetails(Given.newDescription(), Given.newPriority(), Given.newDueDate())
-          .then(() => fail('Details update should have failed'))
-          .catch(err => expect(err).toEqual(errorMessage));
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+    const dueDate = new Date();
+    dueDate.setHours(dueDate.getHours() - 10);
+    wizard.updateTaskDetails(Given.newDescription(), Given.newPriority(), dueDate)
+      .then(() => fail('Details update should have failed'))
+      .catch(err => expect(err).toEqual(
+        `Task due date before current time is not allowed, specified date: ${dueDate}`
+      ));
+  }));
 
-  it('should add labels to the task', () => {
-    Given.initializedWizard()
-      .then(() => {
-        mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
-        const labels = [label1().getId(), label2().getId()];
-        wizard.addLabels(labels)
-          .then(() => {
-            expect(wizard.taskLabels).toEqual(labels);
-            expect(wizard.stage).toEqual(TaskCreation.Stage.CONFIRMATION);
-          })
-          .catch(err => fail(`Adding task labels failed: ${err}`));
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should forward errors during task details update as Promise rejection', fakeAsync(() => {
+    initializeWizard();
+    tick();
 
-  it('should produce an error when given empty labels array', () => {
-    Given.initializedWizard()
-      .then(() => {
-        wizard.addLabels([])
-          .then(() => fail('Adding task labels should have failed'))
-          .catch(err => expect(err).toEqual(
-            'Empty label array is not allowed in `AddLabels` command, use `SkipLabels` instead'
-          ));
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+    const errorMessage = 'Updating task details failed';
+    mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
+    wizard.updateTaskDetails(Given.newDescription(), Given.newPriority(), Given.newDueDate())
+      .then(() => fail('Details update should have failed'))
+      .catch(err => expect(err).toEqual(errorMessage));
+  }));
 
-  it('should forward errors on adding labels as Promise rejection', () => {
-    Given.initializedWizard()
-      .then(() => {
-        const errorMessage = 'Adding labels failed';
-        mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
-        const labels = [label1().getId(), label2().getId()];
-        wizard.addLabels(labels)
-          .then(() => fail('Adding task labels should have failed'))
-          .catch(err => expect(err).toEqual(errorMessage));
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should add labels to the task', fakeAsync(() => {
+    initializeWizard();
+    tick();
 
-  it('should skip label assignment', () => {
-    Given.initializedWizard()
+    mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
+    const labels = [label1().getId(), label2().getId()];
+    wizard.addLabels(labels)
       .then(() => {
-        mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
-        wizard.skipLabelAssignment()
-          .then(() => {
-            expect(wizard.stage).toEqual(TaskCreation.Stage.CONFIRMATION);
-          })
-          .catch(err => fail(`Skipping label assignment failed: ${err}`));
+        expect(wizard.taskLabels).toEqual(labels);
+        expect(wizard.stage).toEqual(TaskCreation.Stage.CONFIRMATION);
       })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+      .catch(err => fail(`Adding task labels failed: ${err}`));
+  }));
 
-  it('should forward errors on skipping label assignment as Promise rejection', () => {
-    Given.initializedWizard()
-      .then(() => {
-        const errorMessage = 'Skipping label assignment failed';
-        mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
-        wizard.skipLabelAssignment()
-          .then(() => fail('Skipping label assignment should have failed'))
-          .catch(err => expect(err).toEqual(errorMessage));
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should produce an error when given empty labels array', fakeAsync(() => {
+    initializeWizard();
+    tick();
+    wizard.addLabels([])
+      .then(() => fail('Adding task labels should have failed'))
+      .catch(err => expect(err).toEqual(
+        'Empty label array is not allowed in `AddLabels` command, use `SkipLabels` instead'
+      ));
+  }));
 
-  it('should complete task creation', () => {
-    Given.initializedWizard(TaskCreation.Stage.CONFIRMATION)
-      .then(() => {
-        mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
-        wizard.completeTaskCreation()
-          .then(() => expect(wizard.stage).toEqual(TaskCreation.Stage.COMPLETED))
-          .catch(err => fail(`Completing task creation failed: ${err}`));
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should forward errors on adding labels as Promise rejection', fakeAsync(() => {
+    initializeWizard();
+    tick();
+    const errorMessage = 'Adding labels failed';
+    mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
+    const labels = [label1().getId(), label2().getId()];
+    wizard.addLabels(labels)
+      .then(() => fail('Adding task labels should have failed'))
+      .catch(err => expect(err).toEqual(errorMessage));
+  }));
 
-  it('should forward errors on completing task creation as Promise rejection', () => {
-    Given.initializedWizard(TaskCreation.Stage.CONFIRMATION)
-      .then(() => {
-        const errorMessage = 'Completing task creation failed';
-        mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
-        wizard.completeTaskCreation()
-          .then(() => fail('Completing task creation should have failed'))
-          .catch(err => expect(err).toEqual(errorMessage));
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should skip label assignment', fakeAsync(() => {
+    initializeWizard();
+    tick();
 
-  it('should cancel task creation', () => {
-    Given.initializedWizard(TaskCreation.Stage.CONFIRMATION)
+    mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
+    wizard.skipLabelAssignment()
       .then(() => {
-        mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
-        wizard.cancelTaskCreation()
-          .then(() => expect(wizard.stage).toEqual(TaskCreation.Stage.CANCELED))
-          .catch(err => fail(`Canceling task creation failed: ${err}`));
+        expect(wizard.stage).toEqual(TaskCreation.Stage.CONFIRMATION);
       })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+      .catch(err => fail(`Skipping label assignment failed: ${err}`));
+  }));
 
-  it('should forward errors on canceling task creation as Promise rejection', () => {
-    Given.initializedWizard(TaskCreation.Stage.CONFIRMATION)
-      .then(() => {
-        const errorMessage = 'Canceling task creation failed';
-        mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
-        wizard.cancelTaskCreation()
-          .then(() => fail('Canceling task creation should have failed'))
-          .catch(err => expect(err).toEqual(errorMessage));
-      })
-      .catch(err => fail(`Wizard init failed: ${err}`));
-  });
+  it('should forward errors on skipping label assignment as Promise rejection', fakeAsync(() => {
+    initializeWizard();
+    tick();
+
+    const errorMessage = 'Skipping label assignment failed';
+    mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
+    wizard.skipLabelAssignment()
+      .then(() => fail('Skipping label assignment should have failed'))
+      .catch(err => expect(err).toEqual(errorMessage));
+  }));
+
+  it('should complete task creation', fakeAsync(() => {
+    initializeWizard(TaskCreation.Stage.CONFIRMATION);
+    tick();
+
+    mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
+    wizard.completeTaskCreation()
+      .then(() => expect(wizard.stage).toEqual(TaskCreation.Stage.COMPLETED))
+      .catch(err => fail(`Completing task creation failed: ${err}`));
+  }));
+
+  it('should forward errors on completing task creation as Promise rejection', fakeAsync(() => {
+    initializeWizard(TaskCreation.Stage.CONFIRMATION);
+    tick();
+
+    const errorMessage = 'Completing task creation failed';
+    mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
+    wizard.completeTaskCreation()
+      .then(() => fail('Completing task creation should have failed'))
+      .catch(err => expect(err).toEqual(errorMessage));
+  }));
+
+  it('should cancel task creation', fakeAsync(() => {
+    initializeWizard(TaskCreation.Stage.CONFIRMATION);
+    tick();
+
+    mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
+    wizard.cancelTaskCreation()
+      .then(() => expect(wizard.stage).toEqual(TaskCreation.Stage.CANCELED))
+      .catch(err => fail(`Canceling task creation failed: ${err}`));
+  }));
+
+  it('should forward errors on canceling task creation as Promise rejection', fakeAsync(() => {
+    initializeWizard(TaskCreation.Stage.CONFIRMATION);
+    tick();
+
+    const errorMessage = 'Canceling task creation failed';
+    mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
+    wizard.cancelTaskCreation()
+      .then(() => fail('Canceling task creation should have failed'))
+      .catch(err => expect(err).toEqual(errorMessage));
+  }));
 
   function updateDetailsAndCheck(newDescription: TaskDescription,
                                  newPriority: TaskPriority,
                                  newDueDate: Timestamp) {
-    mockClient.sendCommand.and.callFake((cmd, resolve) => resolve());
-
-    const oldDescription = wizard.taskDescription;
-    const oldPriority = wizard.taskPriority;
-    const oldDueDate = wizard.taskDueDate;
+    mockClient.sendCommand.and.callFake((cmd, resolve) => {
+      if (newDescription === wizard.taskDescription) {
+        expect(cmd.getDescriptionChange()).toBeUndefined();
+      }
+      if (newPriority === wizard.taskPriority) {
+        expect(cmd.getPriorityChange()).toBeUndefined();
+      }
+      if (newDueDate === wizard.taskDueDate) {
+        expect(cmd.getDueDateChange()).toBeUndefined();
+      }
+      resolve();
+    });
 
     wizard.updateTaskDetails(newDescription, newPriority, newDueDate)
       .then(() => {
-        if (newDescription) {
-          expect(wizard.taskDescription).toEqual(newDescription);
-        } else {
-          expect(wizard.taskDescription).toEqual(oldDescription);
-        }
-        if (newPriority) {
-          expect(wizard.taskPriority).toEqual(newPriority);
-        } else {
-          expect(wizard.taskPriority).toEqual(oldPriority);
-        }
-        if (newDueDate) {
-          expect(wizard.taskDueDate).toEqual(newDueDate);
-        } else {
-          expect(wizard.taskDueDate).toEqual(oldDueDate);
-        }
+        expect(wizard.taskDescription).toEqual(newDescription);
+        expect(wizard.taskPriority).toEqual(newPriority);
+        expect(wizard.taskDueDate).toEqual(newDueDate);
       })
       .catch(err => fail(`Updating task details failed: ${err}`));
   }
