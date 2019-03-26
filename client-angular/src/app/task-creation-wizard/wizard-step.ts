@@ -28,6 +28,9 @@ import {ErrorViewport} from '../common-components/error-viewport/error-viewport.
 export abstract class WizardStep implements AfterViewInit {
 
   /** Visible for testing. */
+  static readonly RETURN_TO = '/task-list/active';
+
+  /** Visible for testing. */
   @Input()
   stepper: MatStepper;
 
@@ -35,8 +38,8 @@ export abstract class WizardStep implements AfterViewInit {
   @ViewChild(ErrorViewport)
   errorViewport: ErrorViewport;
 
-  protected constructor(private readonly router: Router,
-                        /* Visible for testing. */
+  /* Fields are visible for testing. */
+  protected constructor(readonly router: Router,
                         readonly wizard: TaskCreationWizard) {
   }
 
@@ -69,11 +72,21 @@ export abstract class WizardStep implements AfterViewInit {
   * Navigation methods which can be used by the child components as necessary.
   */
 
-  protected previous(): void {
+  /**
+   * ...
+   *
+   * Is visible for testing.
+   */
+  previous(): void {
     this.stepper.previous();
   }
 
-  protected next(): void {
+  /**
+   * ...
+   *
+   * Is visible for testing.
+   */
+  next(): void {
     this.clearError();
     this.doStep()
       .then(() => {
@@ -99,7 +112,12 @@ export abstract class WizardStep implements AfterViewInit {
       });
   }
 
-  protected finish() {
+  /**
+   * ...
+   *
+   * Is visible for testing.
+   */
+  finish() {
     this.doStep()
       .then(() => this.goToActiveTasks())
       .catch(err => {
@@ -124,7 +142,7 @@ export abstract class WizardStep implements AfterViewInit {
 
   private goToActiveTasks(): void {
     // noinspection JSIgnoredPromiseFromCall No navigation result handling necessary.
-    this.router.navigate(['/task-list/active']);
+    this.router.navigate([WizardStep.RETURN_TO]);
   }
 
   private reportError(err): void {

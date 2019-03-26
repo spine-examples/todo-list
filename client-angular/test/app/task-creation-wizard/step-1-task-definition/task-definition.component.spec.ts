@@ -38,6 +38,7 @@ import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web
 import {mockStepper} from '../given/mock-stepper';
 import {houseTasks} from '../../given/tasks';
 import {initMockProcess, taskCreationProcess} from '../../given/task-creation-process';
+import {WizardStep} from '../../../../src/app/task-creation-wizard/wizard-step';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
@@ -88,6 +89,8 @@ describe('TaskDefinitionComponent', () => {
     component.wizard.init(taskCreationProcess().getId().getValue());
     tick();
     component.stepper = mockStepper();
+    component.initFromWizard();
+
     fixture.detectChanges();
   }));
 
@@ -96,7 +99,6 @@ describe('TaskDefinitionComponent', () => {
   });
 
   it('should receive initial task data from wizard', () => {
-    component.initFromWizard();
     expect(component.description).toEqual(component.wizard.taskDescription);
     expect(component.priority).toEqual(component.wizard.taskPriority);
     expect(component.dueDate).toEqual(component.wizard.taskDueDate);
@@ -125,21 +127,61 @@ describe('TaskDefinitionComponent', () => {
     component.cancel();
     tick();
     expect(component.wizard.stage).toEqual(TaskCreation.Stage.CANCELED);
+    expect(component.router.url).toEqual(WizardStep.RETURN_TO);
   }));
 
-  it('throw Error if canceling task creation failed', () => {
+  it('throw Error if canceling task creation failed', fakeAsync(() => {
     mockClient.sendCommand.and.callFake((command, resolve, reject) => reject());
     expect(() => {
       component.cancel();
       tick();
     }).toThrowError();
-  });
+  }));
 
-  it('should update task details and navigate next', () => {
+  it('should update task details and navigate next', fakeAsync(() => {
+    const newDescription = 'The new description';
+    component.setDescription(newDescription);
+    const newPriority = TaskPriority.LOW;
+    component.setPriority(newPriority);
+    const newDueDate = Timestamp.fromDate(new Date());
+    component.setDueDate(newDueDate);
 
-  });
+    mockClient.sendCommand.and.callFake((command, resolve) => {
+      expect(command.getDescriptionChange().getPreviousValue())
+        .toEqual(component.wizard.taskDescription);
+      expect(command.getDescriptionChange().getNewValue().getValue())
+        .toEqual(newDescription);
 
-  it('should forward wizard errors to error viewport', () => {
+      expect(command.getPriorityChange().getPreviousValue())
+        .toEqual(component.wizard.taskPriority);
+      expect(command.getPriorityChange().getNewValue())
+        .toEqual(newPriority);
 
-  });
+      expect(command.getDueDateChange().getPreviousValue())
+        .toEqual(component.wizard.taskDueDate);
+      expect(command.getDueDateChange().getNewValue())
+        .toEqual(newDueDate);
+
+      resolve();
+    });
+    component.next();
+    tick();
+    expect(component.stepper.next).toHaveBeenCalledTimes(1);
+  }));
+
+  it('should forward wizard errors to error viewport', fakeAsync(() => {
+    const errorMessage = 'Update task details failed';
+    mockClient.sendCommand.and.callFake((command, resolve, reject) => reject(errorMessage));
+    component.next();
+    tick();
+    expect(component.errorViewport.text).toEqual(errorMessage);
+  }));
+
+  it('should clear error viewport when navigating to next step', fakeAsync(() => {
+    mockClient.sendCommand.and.callFake((command, resolve) => resolve());
+    component.errorViewport.text = 'Some error message';
+    component.next();
+    tick();
+    expect(component.errorViewport.text).toEqual('');
+  }));
 });
