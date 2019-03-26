@@ -116,6 +116,11 @@ export class TaskService {
     this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
   }
 
+  /**
+   * Fetches a single task details.
+   *
+   * If nothing is found by the specified ID, the promise is rejected.
+   */
   fetchById(id: TaskId): Promise<TaskView> {
     return new Promise<TaskView>((resolve, reject) => {
       const dataCallback = task => {
