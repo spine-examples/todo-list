@@ -69,6 +69,14 @@ describe('TaskCreationWizard', () => {
     }
   }
 
+  const mockClient = mockSpineWebClient();
+  const unsubscribe = jasmine.createSpy('unsubscribe');
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [houseTasks()], [], [], unsubscribe
+  ));
+
+  let wizard: TaskCreationWizard;
+
   /**
    * Starts the wizard from scratch.
    *
@@ -89,14 +97,6 @@ describe('TaskCreationWizard', () => {
     // noinspection JSIgnoredPromiseFromCall The promise is resolved via `fakeAsync()`.
     wizard.init(taskCreationProcess(stage).getId().getValue());
   }
-
-  const mockClient = mockSpineWebClient();
-  const unsubscribe = jasmine.createSpy('unsubscribe');
-  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [houseTasks()], [], [], unsubscribe
-  ));
-
-  let wizard: TaskCreationWizard;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -141,7 +141,7 @@ describe('TaskCreationWizard', () => {
     expect(wizard.taskLabels).toEqual([]);
   }));
 
-  it('should produce an error if nothing is found by the specified ID', () => {
+  it('should produce an error if nothing is found by the specified ID', fakeAsync(() => {
     mockClient.fetchById.and.callFake((type, id, resolve) => resolve(null));
     const theId = 'some-ID';
     wizard.init(theId)
@@ -151,9 +151,9 @@ describe('TaskCreationWizard', () => {
       .catch(err =>
         expect(err).toEqual(`No task creation process found for ID: ${theId}`)
       );
-  });
+  }));
 
-  it('should propagate `init` errors as Promise rejection', () => {
+  it('should propagate `init` errors as Promise rejection', fakeAsync(() => {
     const errorMessage = 'Could not start the task creation process';
     mockClient.sendCommand.and.callFake((cmd, resolve, reject) => reject(errorMessage));
     wizard.init()
@@ -163,7 +163,7 @@ describe('TaskCreationWizard', () => {
       .catch(err =>
         expect(err).toEqual(errorMessage)
       );
-  });
+  }));
 
   it('should update task details', fakeAsync(() => {
     initializeWizard();

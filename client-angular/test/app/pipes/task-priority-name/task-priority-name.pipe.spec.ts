@@ -23,6 +23,7 @@ import {TaskPriorityName} from '../../../../src/app/pipes/task-priority-name/tas
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
 
 describe('TaskPriorityName', () => {
+
   const pipe = new TaskPriorityName();
 
   it('should create', () => {

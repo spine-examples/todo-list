@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
 
 import {ErrorViewport} from '../../../../src/app/common-components/error-viewport/error-viewport.component';
 
@@ -26,7 +26,7 @@ describe('ErrorViewport', () => {
   let fixture: ComponentFixture<ErrorViewport>;
   let component: ErrorViewport;
 
-  beforeEach(async(() => {
+  beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ErrorViewport]
     })

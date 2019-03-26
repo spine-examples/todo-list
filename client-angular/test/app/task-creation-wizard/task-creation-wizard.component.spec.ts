@@ -150,7 +150,7 @@ describe('TaskCreationWizardComponent', () => {
 
   it('should re-navigate to URL with process ID if started from `/wizard` URL', fakeAsync(() => {
 
-    // Create a component by hand to use the other activated route.
+    // Create a component by hand to use a different activated route.
     const wizard = new TaskCreationWizard(mockClient, new TaskService(mockClient));
     const changeDetector =
       jasmine.createSpyObj<ChangeDetectorRef>('ChangeDetector', ['detectChanges']);

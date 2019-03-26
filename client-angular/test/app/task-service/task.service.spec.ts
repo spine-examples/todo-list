@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TestBed} from '@angular/core/testing';
+import {fakeAsync, TestBed} from '@angular/core/testing';
 import {Client} from 'spine-web';
 
 import {TaskService} from '../../../src/app/task-service/task.service';
@@ -77,7 +77,7 @@ describe('TaskService', () => {
     );
   });
 
-  it('should subscribe to active tasks', () => {
+  it('should subscribe to active tasks', fakeAsync(() => {
     const unsubscribe = jasmine.createSpy();
     mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
       [houseTasks()], [], [], unsubscribe
@@ -92,9 +92,9 @@ describe('TaskService', () => {
           expect(service.tasks[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
         }
       ).catch(() => fail('Subscription promise should have been resolved'));
-  });
+  }));
 
-  it('should log and then rethrow error if subscription fails', () => {
+  it('should log and then rethrow error if subscription fails', fakeAsync(() => {
     const errorMessage = 'Subscription failed';
     mockClient.subscribeToEntities.and.returnValue(Promise.reject(errorMessage));
     console.log = jasmine.createSpy('log');
@@ -109,9 +109,9 @@ describe('TaskService', () => {
     mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
       [], [], [], jasmine.createSpy()
     ));
-  });
+  }));
 
-  it('should fetch a single task view by ID', () => {
+  it('should fetch a single task view by ID', fakeAsync(() => {
     const theTask = houseTask();
     mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(theTask));
 
@@ -120,23 +120,23 @@ describe('TaskService', () => {
       .catch(err =>
         fail(`Task details should have been resolved, actually rejected with an error: ${err}`)
       );
-  });
+  }));
 
-  it('should propagate errors from Spine Web Client on `fetchById`', () => {
+  it('should propagate errors from Spine Web Client on `fetchById`', fakeAsync(() => {
     const errorMessage = 'Task details lookup rejected';
     mockClient.fetchById.and.callFake((cls, id, resolve, reject) => reject(errorMessage));
 
     service.fetchById(houseTask().getId())
       .then(() => fail('Task details lookup should have been rejected'))
       .catch(err => expect(err).toEqual(errorMessage));
-  });
+  }));
 
-  it('should produce an error when no matching task is found during lookup', () => {
+  it('should produce an error when no matching task is found during lookup', fakeAsync(() => {
     mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(null));
     const taskId = houseTask().getId();
 
     service.fetchById(taskId)
       .then(() => fail('Task details lookup should have been rejected'))
       .catch(err => expect(err).toEqual(`No task view found for ID: ${taskId}`));
-  });
+  }));
 });
