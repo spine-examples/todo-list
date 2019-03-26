@@ -34,17 +34,17 @@ import {DeletedTasksComponent} from './deleted/deleted-tasks.component';
 import {DraftsComponent} from './drafts/drafts.component';
 import {TaskListRoutingModule} from './task-list.routes';
 import {TaskServiceModule} from '../task-service/task-service.module';
-import {TaskItemComponent} from './task-item/task-item.component';
-import {TaskDisplayComponent} from '../task-display/task-display.component';
+import {ActiveTaskItemComponent} from './active/active-task-item/active-task-item.component';
+import {TaskLinkComponent} from './task-link/task-link.component';
 
 /**
  * The module which displays the task list.
  */
 @NgModule({
   declarations: [
-    TaskDisplayComponent,
+    TaskLinkComponent,
     TaskListComponent,
-    TaskItemComponent,
+    ActiveTaskItemComponent,
     ActiveTasksComponent,
     CompletedTasksComponent,
     DeletedTasksComponent,

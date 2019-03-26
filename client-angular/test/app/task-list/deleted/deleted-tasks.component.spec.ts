@@ -24,7 +24,7 @@ import {RouterModule} from '@angular/router';
 
 import {Client} from 'spine-web';
 import {DeletedTasksComponent} from '../../../../src/app/task-list/deleted/deleted-tasks.component';
-import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
+import {TaskLinkComponent} from '../../../../src/app/task-list/task-link/task-link.component';
 import {TaskService} from '../../../../src/app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {houseTasks} from '../../given/tasks';
@@ -42,7 +42,7 @@ describe('DeletedTasksComponent', () => {
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [DeletedTasksComponent, TaskDisplayComponent],
+      declarations: [DeletedTasksComponent, TaskLinkComponent],
       imports: [MatListModule, RouterModule],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })

@@ -23,35 +23,17 @@ import {Component, Input} from '@angular/core';
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../task-service/task.service';
 
-/**
- * The view of a single task in the list.
- */
-@Component({
-  selector: 'app-task-item',
-  templateUrl: './task-item.component.html',
-  styleUrls: ['./task-item.component.css']
-})
-export class TaskItemComponent {
 
-  constructor(readonly taskService: TaskService) {
+@Component({
+  selector: 'app-task-display',
+  templateUrl: './task-link.component.html',
+  styleUrls: ['./task-link.component.css']
+})
+export class TaskLinkComponent {
+
+  constructor(readonly service: TaskService) {
   }
 
   @Input()
   task: TaskItem;
-
-  /**
-   * Marks this task as `Complete`, changing its status respectively.
-   */
-  completeTask(): void {
-    const id: string = this.task.getId().getValue();
-    this.taskService.completeTask(id);
-  }
-
-  /**
-   * Deletes this task from the list.
-   */
-  deleteTask(): void {
-    const id: string = this.task.getId().getValue();
-    this.taskService.deleteTask(id);
-  }
 }
