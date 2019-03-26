@@ -42,7 +42,8 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
   tasks: TaskItem[] = [];
   private createBasicTaskForms: FormGroup;
 
-  private taskSubscription: Subscription;
+  /** Visible for testing. */
+  taskSubscription: Subscription;
 
   constructor(private readonly taskService: TaskService, private formBuilder: FormBuilder) {
     this.createBasicTaskForms = formBuilder.group({
