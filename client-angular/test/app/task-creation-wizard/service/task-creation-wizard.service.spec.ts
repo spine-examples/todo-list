@@ -48,7 +48,6 @@ import {TaskView} from 'generated/main/js/todolist/q/projections_pb';
 describe('TaskCreationWizard', () => {
 
   class Given {
-
     static task(): TaskView {
       return houseTask();
     }

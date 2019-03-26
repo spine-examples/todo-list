@@ -100,7 +100,7 @@ describe('ConfirmationComponent', () => {
     mockClient.sendCommand.and.callFake((command, resolve) => resolve());
     component.finish();
     tick();
-    expect(component.router.url).toEqual(WizardStep.RETURN_TO);
+    expect(component.router.url).toEqual(WizardStep.QUIT_TO);
   }));
 
   it('should throw an exception if process completion fails', fakeAsync(() => {
@@ -110,7 +110,7 @@ describe('ConfirmationComponent', () => {
       component.finish();
       tick();
     }).toThrowError();
-    expect(component.router.url).toEqual(WizardStep.RETURN_TO);
+    expect(component.router.url).toEqual(WizardStep.QUIT_TO);
   }));
 
   it('should navigate to previous step', () => {
@@ -122,7 +122,7 @@ describe('ConfirmationComponent', () => {
     mockClient.sendCommand.and.callFake((command, resolve) => resolve());
     component.cancel();
     tick();
-    expect(component.router.url).toEqual(WizardStep.RETURN_TO);
+    expect(component.router.url).toEqual(WizardStep.QUIT_TO);
   }));
 
   it('throw Error if canceling task creation failed', fakeAsync(() => {

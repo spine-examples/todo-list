@@ -27,7 +27,7 @@ export function mockStepper(): jasmine.SpyObj<MatStepper> {
   mock.selected.completed = false;
   // @ts-ignore Needed to re-assign readonly value for test.
   mock.steps = jasmine.createSpyObj<QueryList<CdkStep>>('Steps', ['toArray']);
-  // @ts-ignore
+  // @ts-ignore Non-applicable type resolution.
   mock.steps.toArray.and.returnValue([mock.selected]);
   mock.selectedIndex = 0;
   return mock;

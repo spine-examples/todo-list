@@ -40,13 +40,14 @@ import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/co
  *
  * Aggregates wizard steps into {@link MatStepper} and does the common initialization.
  *
- * User can navigate to this component by either `/wizard` or `/wizard/:some-existing-ID` route.
+ * User can navigate to this component by visiting either `/wizard` or
+ * `/wizard/*creation-process-ID*` route.
  *
- * In the first scenario the Task Creation wizard will be initialized from scratch and a new task
+ * In the first scenario the Task Creation Wizard will be initialized from scratch and a new task
  * draft will be created. In the second scenario, the wizard will try to fetch an existing
  * `TaskCreation` process instance from the server and load its data.
  *
- * The first scenario is a "main" scenario of the wizard usage and the second one allows to return
+ * The first scenario is a "main" scenario of the wizard usage while the second one allows to return
  * to the wizard after the user navigated somewhere else.
  *
  * The steps in the wizard are sequential but returning back and modifying already completed step
@@ -97,13 +98,13 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   /**
    * Is `true` while the wizard is fetching its data from the server, then becomes `false`.
    *
-   * Used or UI element manipulations.
+   * Used for manipulations with UI elements.
    */
   private isLoading: boolean;
 
   /**
    * A promise to initialize the injected {@link TaskCreationWizard} either "from scratch" or with
-   * the data from server.
+   * the data from the pre-loaded process.
    */
   private readonly initWizard: Promise<void>;
 
@@ -145,7 +146,7 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   }
 
   /**
-   * Ensures the current route is '/wizard/*current-task-creation-ID*'.
+   * Ensures the current route is '/wizard/*current-creation-process-ID*'.
    *
    * To create a new task, user can just navigate to '/wizard'. A task creation process will then
    * be started and assigned a new ID.

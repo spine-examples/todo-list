@@ -55,7 +55,7 @@ export class TaskDefinitionComponent extends WizardStep {
   /**
    * Due date for tasks is allowed to be set starting from tomorrow.
    *
-   * As due date receives default '00:00' time, it's the closes date that is allowed.
+   * As the due date receives default '00:00' time, it's the closest value that is reasonable.
    */
   private readonly tomorrow: Date = TaskDefinitionComponent.tomorrow();
 

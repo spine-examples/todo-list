@@ -35,7 +35,7 @@ export abstract class WizardStep implements AfterViewInit {
    *
    * Visible for testing.
    */
-  static readonly RETURN_TO = '/task-list/active';
+  static readonly QUIT_TO = '/task-list/active';
 
   /**
    * A reference to the Angular Material Stepper which handles the wizard UI.
@@ -89,7 +89,7 @@ export abstract class WizardStep implements AfterViewInit {
   }
 
   /*
-  * Navigation methods that can be used by the child components as necessary.
+  * Navigation methods that can be used by the descendants as necessary.
   */
 
   /**
@@ -192,6 +192,6 @@ export abstract class WizardStep implements AfterViewInit {
    */
   private quitWizard(): void {
     // noinspection JSIgnoredPromiseFromCall No navigation result handling necessary.
-    this.router.navigate([WizardStep.RETURN_TO]);
+    this.router.navigate([WizardStep.QUIT_TO]);
   }
 }

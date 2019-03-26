@@ -29,9 +29,9 @@ import io.spine.examples.todolist.c.events.LabelDetailsUpdated;
 import io.spine.server.projection.Projection;
 
 /**
- * A projection that mirrors a state of a single label.
+ * A projection which mirrors the state of a single label.
  */
-@SuppressWarnings("unused") // OK for projection.
+@SuppressWarnings("unused") // Methods used reflectively by Spine.
 public class LabelViewProjection extends Projection<LabelId, LabelView, LabelViewVBuilder> {
 
     public LabelViewProjection(LabelId id) {

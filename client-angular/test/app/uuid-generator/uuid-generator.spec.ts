@@ -29,12 +29,19 @@ describe('UuidGenerator', () => {
     expect(() => new UuidGenerator()).toThrowError();
   });
 
-  it('should generate a UUID-value with a given type', () => {
+  it('should generate a UUID-value of a given type', () => {
     const id1 = UuidGenerator.newId(TaskId);
     const id2 = UuidGenerator.newId(TaskId);
     expect(id1).toBeTruthy();
     expect(id2).toBeTruthy();
     expect(id1).not.toEqual(id2);
+  });
+
+  it('should create a UUID-value from the given `string` value', () => {
+    const id = 'the-ID';
+    const created = UuidGenerator.newIdWithValue<TaskId>(id, TaskId);
+    expect(created).toBeTruthy();
+    expect(created.getValue()).toEqual(id);
   });
 
   it('should throw an error when a specified type is undefined', () => {

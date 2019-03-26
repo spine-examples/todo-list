@@ -20,8 +20,6 @@
 
 import {Injectable} from '@angular/core';
 import {Client, Type} from 'spine-web';
-
-import {StringValue} from '../../pipes/string-value/string-value.pipe';
 import {UuidGenerator} from '../../uuid-generator/uuid-generator';
 import {TaskService} from '../../task-service/task.service';
 
@@ -78,7 +76,7 @@ export class TaskCreationWizard {
    */
   init(taskCreationId?: string): Promise<void> {
     if (taskCreationId) {
-      const processId = StringValue.back(taskCreationId, TaskCreationId);
+      const processId = UuidGenerator.newIdWithValue(taskCreationId, TaskCreationId);
       return this.restore(processId);
     } else {
       return this.start();
@@ -163,7 +161,7 @@ export class TaskCreationWizard {
   }
 
   /**
-   * Completes the task creation, setting the draft status to `TaskStatus.FINALIZED`.
+   * Completes the task creation, setting the draft status to `FINALIZED`.
    */
   completeTaskCreation(): Promise<void> {
     const cmd = new CompleteTaskCreation();
@@ -175,7 +173,7 @@ export class TaskCreationWizard {
   }
 
   /**
-   * Cancels the task creation, setting its status to `TaskStatus.CANCELED`.
+   * Cancels the task creation, setting its status to `CANCELED`.
    */
   cancelTaskCreation(): Promise<void> {
     const cmd = new CancelTaskCreation();
@@ -213,7 +211,7 @@ export class TaskCreationWizard {
    * Restores the existing task creation process by ID.
    *
    * This method queries process manager directly but it's OK as the use case
-   * scenario for `restore` is really rare.
+   * scenario for it is really rare.
    */
   private restore(taskCreationId: TaskCreationId): Promise<void> {
     this._id = taskCreationId;

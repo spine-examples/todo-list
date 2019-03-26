@@ -62,7 +62,7 @@ export class LabelService {
   /**
    * Fetches the details of a single label.
    *
-   * In case nothing is found, the promise is rejected.
+   * In case nothing is found by the specified ID, the promise is rejected.
    */
   fetchLabelDetails(labelId: LabelId): Promise<LabelView> {
     return new Promise<LabelView>((resolve, reject) => {

@@ -32,15 +32,33 @@ export class UuidGenerator {
   static readonly ERROR_MESSAGE = 'Expected a valid UUID-value Protobuf type';
 
   constructor() {
-    throw new Error('UuidGenerator should not be instantiated');
+    throw new Error('`UuidGenerator` should not be instantiated');
   }
 
   /**
-   * Generates a new UUID value of the specfied type.
+   * Generates a new UUID value of the specified type.
    *
    * If the type does not match the UUID value pattern, an error is thrown.
    */
   static newId<T extends Message>(type: new() => T): T {
+    const result = this.emptyMessageOfType(type);
+    const value = uuid();
+    result.setValue(value);
+    return result;
+  }
+
+  /**
+   * Creates a 'UUID-value' message of the specified type with a given value.
+   *
+   * If the type does not match the 'UUID-value' pattern, an error is thrown.
+   */
+  static newIdWithValue<T extends Message>(value: string, type: new() => T): T {
+    const result = this.emptyMessageOfType(type);
+    result.setValue(value);
+    return result;
+  }
+
+  private static emptyMessageOfType<T extends Message>(type: new() => T): T {
     if (!type) {
       throw new Error(UuidGenerator.ERROR_MESSAGE);
     }
@@ -48,8 +66,6 @@ export class UuidGenerator {
     if (!result.setValue) {
       throw new Error(UuidGenerator.ERROR_MESSAGE);
     }
-    const value = uuid();
-    result.setValue(value);
     return result;
   }
 }

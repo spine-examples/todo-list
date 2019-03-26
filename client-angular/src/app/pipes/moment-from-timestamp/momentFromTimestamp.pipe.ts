@@ -27,10 +27,10 @@ import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
  * Obtains Moment.js `Moment` from the passed `Timestamp` and vice versa.
  *
  * Usage:
- *   timestamp | momentFromTimestamp
+ *   timestamp | moment
  */
 @Pipe({
-  name: 'momentFromTimestamp'
+  name: 'moment'
 })
 export class MomentFromTimestamp implements PipeTransform {
 

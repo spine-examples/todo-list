@@ -41,9 +41,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * A projection that mirrors a state of a single task.
+ * A projection which mirrors the state of a single task.
  */
-@SuppressWarnings({"unused", "Duplicates"}) // OK for projection.
+@SuppressWarnings({"unused", "Duplicates"}) // OK for this projection.
 public class TaskViewProjection extends Projection<TaskId, TaskView, TaskViewVBuilder> {
 
     public TaskViewProjection(TaskId id) {

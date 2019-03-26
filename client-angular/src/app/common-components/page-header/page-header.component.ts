@@ -29,7 +29,7 @@ import {Component, Input} from '@angular/core';
 })
 export class PageHeader {
 
-  /** Visible for testing. */
+  /** Visible and non-`readonly` for testing. */
   @Input()
   text: string;
 }

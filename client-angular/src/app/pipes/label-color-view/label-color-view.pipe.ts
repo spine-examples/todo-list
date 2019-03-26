@@ -45,7 +45,7 @@ export class LabelColorView implements PipeTransform {
   ]);
 
   /**
-   * Does `LabelColor`-to-string transformation.
+   * Does `LabelColor`-to-`string` transformation.
    *
    * In case unknown `LabelColor` is specified, throws an error.
    */

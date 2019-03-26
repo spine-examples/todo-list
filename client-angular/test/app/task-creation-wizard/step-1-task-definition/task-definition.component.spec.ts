@@ -178,7 +178,7 @@ describe('TaskDefinitionComponent', () => {
     mockClient.sendCommand.and.callFake((command, resolve) => resolve());
     component.cancel();
     tick();
-    expect(component.router.url).toEqual(WizardStep.RETURN_TO);
+    expect(component.router.url).toEqual(WizardStep.QUIT_TO);
   }));
 
   it('throw Error if canceling task creation failed', fakeAsync(() => {

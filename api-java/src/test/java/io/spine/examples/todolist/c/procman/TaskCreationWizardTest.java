@@ -312,7 +312,6 @@ class TaskCreationWizardTest {
             dispatch(newUpdate);
 
             ArrayDeque<CommandMessage> producedCommands = memoizingHandler().received;
-
             assertThat(producedCommands, hasItem(
                     UpdateTaskDescriptionVBuilder.newBuilder()
                                                  .setId(getTaskId())
