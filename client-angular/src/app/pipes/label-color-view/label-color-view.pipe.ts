@@ -23,10 +23,11 @@ import {Pipe, PipeTransform} from '@angular/core';
 import {LabelColor} from 'generated/main/js/todolist/attributes_pb';
 
 /**
- * Obtains the string value of the `LabelColor`.
+ * Obtains the string value of the `LabelColor` for proper display in the HTML page.
  *
  * Usage:
  *   label.getColor() | labelColorView
+ *
  * Example:
  *   {{ LabelColor.RED | labelColorView }}
  *   resolves to: '#ff0000'
@@ -43,6 +44,11 @@ export class LabelColorView implements PipeTransform {
     [LabelColor.GRAY, '#808080']
   ]);
 
+  /**
+   * Does `LabelColor`-to-string transformation.
+   *
+   * In case unknown `LabelColor` is specified, throws an error.
+   */
   transform(value: LabelColor): string {
     const color = LabelColorView.COLORS.get(value);
     if (!color) {

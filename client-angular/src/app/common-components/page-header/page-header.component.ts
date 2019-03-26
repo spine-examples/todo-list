@@ -20,6 +20,9 @@
 
 import {Component, Input} from '@angular/core';
 
+/**
+ * A static page header with a predefined text.
+ */
 @Component({
   selector: 'app-page-header',
   templateUrl: './page-header.component.html'

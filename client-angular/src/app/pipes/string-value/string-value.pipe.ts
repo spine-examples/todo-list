@@ -21,6 +21,17 @@
 import {Pipe, PipeTransform} from '@angular/core';
 import {Message} from 'google-protobuf';
 
+/**
+ * Converts `StringValue`-like Proto messages to their string representation.
+ *
+ * Usage:
+ *   taskDescription | stringValue
+ *
+ * Example:
+ *   // Proto message creation simplified for brevity.
+ *   {{ new TaskDescription('The task description') | stringValue }}
+ *   resolves to: 'The task description'
+ */
 @Pipe({
   name: 'stringValue'
 })
@@ -31,7 +42,9 @@ export class StringValue implements PipeTransform {
     'Expected Proto Message type which contains a single `string` field named `value`, received: ';
 
   /**
-   * ...
+   * Creates a `StringValue`-like message from the given string.
+   *
+   * If message type is not `StringValue`-like, throws an error.
    *
    * Returns `undefined` on `undefined` inputs (rather than producing an `Error`) for convenience
    * as in To-Do List `undefined` is often a valid value for NG model entries (e.g. task can have
@@ -50,7 +63,9 @@ export class StringValue implements PipeTransform {
   }
 
   /**
-   * ...
+   * Does the transformation.
+   *
+   * If value represents message of not `StringValue`-like type, throws an error.
    *
    * Returns `undefined` on `undefined` inputs (rather than producing an `Error`) for convenience
    * as in To-Do List `undefined` is often a valid value for NG model entries (e.g. task can have

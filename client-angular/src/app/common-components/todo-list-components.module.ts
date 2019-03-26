@@ -24,6 +24,9 @@ import {MatDividerModule} from '@angular/material/divider';
 import {ErrorViewport} from './error-viewport/error-viewport.component';
 import {PageHeader} from './page-header/page-header.component';
 
+/**
+ * The module which provides common layout elements of the To-Do List application.
+ */
 @NgModule({
   declarations: [
     ErrorViewport,

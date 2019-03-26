@@ -39,7 +39,7 @@ export class LabelService {
   }
 
   /**
-   * Temporary test-only method.
+   * Temporary method for smoke tests.
    */
   createBasicLabel(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
@@ -52,11 +52,18 @@ export class LabelService {
     );
   }
 
+  /**
+   * Fetches a list of labels available in the application.
+   */
   fetchAllLabels(): Promise<LabelView[]> {
     return this.spineWebClient.fetchAll({ofType: Type.forClass(LabelView)}).atOnce();
   }
 
-  // noinspection JSUnusedGlobalSymbols Unused for now.
+  /**
+   * Fetches the details of a single label.
+   *
+   * In case nothing is found, the promise is rejected.
+   */
   fetchLabelDetails(labelId: LabelId): Promise<LabelView> {
     return new Promise<LabelView>((resolve, reject) => {
         const dataCallback = label => {

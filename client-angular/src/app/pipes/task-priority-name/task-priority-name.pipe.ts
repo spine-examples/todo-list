@@ -27,6 +27,7 @@ import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
  *
  * Usage:
  *   task.getPriority() | taskPriorityName
+ *
  * Example:
  *   {{ TaskPriority.HIGH | taskPriorityName }}
  *   formats to: 'High'
@@ -42,7 +43,20 @@ export class TaskPriorityName implements PipeTransform {
     [TaskPriority.LOW, 'Low']
   ]);
 
+  /**
+   * Does the transformation.
+   *
+   * If the given `TaskPriority` value is not undefined, but is unknown to this pipe, an error is
+   * thrown.
+   *
+   * On `undefined` inputs, returns `undefined` - for convenience as in To-Do List application
+   * `undefined` is often a valid value for NG model entries (e.g. task can have currently
+   * undefined priority).
+   */
   transform(value: TaskPriority): string {
+    if (!value) {
+      return undefined;
+    }
     const displayName = TaskPriorityName.NAMES.get(value);
     if (!displayName) {
       throw new Error(`Task priority ${value} is unknown`);

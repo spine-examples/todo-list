@@ -35,7 +35,7 @@ import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 export class MomentFromTimestamp implements PipeTransform {
 
   /**
-   * ...
+   * Performs the backwards transformation, obtaining the `Timestamp` from the given `Moment`.
    *
    * Returns `undefined` on `undefined` inputs (rather than producing an `Error`) for convenience
    * as in To-Do List `undefined` is often a valid value for NG model entries (e.g. task can have
@@ -50,7 +50,7 @@ export class MomentFromTimestamp implements PipeTransform {
   }
 
   /**
-   * ...
+   * Performs the transformation.
    *
    * Returns `undefined` on `undefined` inputs (rather than producing an `Error`) for convenience
    * as in To-Do List `undefined` is often a valid value for NG model entries (e.g. task can have
