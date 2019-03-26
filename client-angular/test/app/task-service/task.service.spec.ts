@@ -96,7 +96,6 @@ describe('TaskService', () => {
 
   it('should log and then rethrow error if subscription fails', () => {
     const errorMessage = 'Subscription failed';
-    const consoleError = jasmine.createSpy('console');
     mockClient.subscribeToEntities.and.returnValue(Promise.reject(errorMessage));
     console.log = jasmine.createSpy('log');
     service.subscribeToTasks()

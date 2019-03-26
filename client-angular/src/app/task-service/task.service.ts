@@ -38,21 +38,23 @@ import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb'
 })
 export class TaskService {
 
-  private readonly _tasks: BehaviorSubject<TaskItem[]> = new BehaviorSubject<TaskItem[]>([]);
+  private _tasks: BehaviorSubject<TaskItem[]>;
   private _unsubscribe: () => void;
 
   /**
    * @param spineWebClient a client for accessing Spine backend
    */
   constructor(private readonly spineWebClient: Client) {
-    this.subscribeToTasks()
-      .then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
   }
 
   /**
    * Obtains a current view of tasks.
    */
   get tasks(): BehaviorSubject<TaskItem[]> {
+    if (!this._tasks) {
+      this.subscribeToTasks()
+        .then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
+    }
     return this._tasks;
   }
 
