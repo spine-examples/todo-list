@@ -20,7 +20,6 @@
 
 import {Injectable} from '@angular/core';
 import {Client, Type} from 'spine-web';
-import * as uuid from 'uuid';
 import {BehaviorSubject} from 'rxjs';
 
 import {TaskServiceModule} from './task-service.module';

@@ -24,6 +24,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {TaskService} from '../../task-service/task.service';
 import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
+import {Subscription} from 'rxjs';
 
 /**
  * A component displaying active tasks, i.e. those which are not completed, deleted, or in draft
@@ -40,6 +41,8 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
   /** Visible for testing. */
   tasks: TaskItem[] = [];
   private createBasicTaskForms: FormGroup;
+
+  private taskSubscription: Subscription;
 
   constructor(private readonly taskService: TaskService, private formBuilder: FormBuilder) {
     this.createBasicTaskForms = formBuilder.group({
@@ -59,15 +62,15 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.taskService.tasks.asObservable().subscribe((items: TaskItem[]) => {
+    this.taskSubscription = this.taskService.tasks.asObservable().subscribe((items: TaskItem[]) => {
       this.tasks = items.filter((task: TaskItem) =>
         task.getStatus() === TaskStatus.OPEN || task.getStatus() === TaskStatus.FINALIZED);
     });
   }
 
   ngOnDestroy(): void {
-    if (this.taskService.unsubscribe) {
-      this.taskService.unsubscribe();
+    if (this.taskSubscription) {
+      this.taskSubscription.unsubscribe();
     }
   }
 }
