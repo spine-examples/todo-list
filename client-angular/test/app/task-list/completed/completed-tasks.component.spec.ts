@@ -53,19 +53,18 @@ describe('CompletedTasksComponent', () => {
     fixture = TestBed.createComponent(CompletedTasksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    tick();
   }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should contain completed tasks', async(() => {
-    // The timeout allows the page to fully render before checking the DOM for presence of the
-    // necessary element.
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      const tasks = fixture.debugElement.queryAll(By.css('.list-item'));
-      expect(tasks.length).toBe(2);
-    });
+  it('should contain completed tasks', fakeAsync(() => {
+    component.ngOnInit();
+    tick();
+    fixture.detectChanges();
+    const tasks = fixture.debugElement.queryAll(By.css('.list-item'));
+    expect(tasks.length).toBe(2);
   }));
 });
