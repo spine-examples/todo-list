@@ -160,6 +160,7 @@ describe('TaskDefinitionComponent', () => {
   it('should forward wizard errors to error viewport', fakeAsync(() => {
     const errorMessage = 'Update task details failed';
     mockClient.sendCommand.and.callFake((command, resolve, reject) => reject(errorMessage));
+    component.setDescription('The new description');
     component.next();
     tick();
     expect(component.errorViewport.text).toEqual(errorMessage);

@@ -105,6 +105,12 @@ export class TaskCreationWizard {
       );
     }
     const cmd = this.prepareUpdateCommand(description, priority, dueDate);
+
+    const sendCommand =
+      !!cmd.getDescriptionChange() || !!cmd.getPriorityChange() || !!cmd.getDueDateChange();
+    if (!sendCommand) {
+      return Promise.resolve();
+    }
     const updateTask = new Promise<void>((resolve, reject) =>
       this.spineWebClient.sendCommand(cmd, resolve, reject, reject)
     );
@@ -259,12 +265,14 @@ export class TaskCreationWizard {
     const cmd = new UpdateTaskDetails();
     cmd.setId(this._id);
 
-    const descriptionChange = new DescriptionChange();
-    descriptionChange.setNewValue(description);
-    if (this._taskDescription) {
-      descriptionChange.setPreviousValue(this._taskDescription);
+    if (description !== this._taskDescription) {
+      const descriptionChange = new DescriptionChange();
+      descriptionChange.setNewValue(description);
+      if (this._taskDescription) {
+        descriptionChange.setPreviousValue(this._taskDescription);
+      }
+      cmd.setDescriptionChange(descriptionChange);
     }
-    cmd.setDescriptionChange(descriptionChange);
 
     if (priority !== this._taskPriority) {
       const priorityChange = new PriorityChange();
