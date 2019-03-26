@@ -60,7 +60,8 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.taskService.tasks.asObservable().subscribe((items: TaskItem[]) => {
-      this.tasks = items.filter((task: TaskItem) => task.getStatus() === TaskStatus.OPEN);
+      this.tasks = items.filter((task: TaskItem) =>
+        task.getStatus() === TaskStatus.OPEN || task.getStatus() === TaskStatus.FINALIZED);
     });
   }
 
