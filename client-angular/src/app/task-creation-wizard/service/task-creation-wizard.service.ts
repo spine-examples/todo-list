@@ -236,6 +236,7 @@ export class TaskCreationWizard {
           resolve(processDetails);
         }
       };
+      // noinspection JSIgnoredPromiseFromCall Method wrongly resolved by IDEA.
       this.spineWebClient.fetchById(Type.forClass(TaskCreation), this._id, dataCallback, reject);
     });
   }
