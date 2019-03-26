@@ -83,7 +83,7 @@ buildJs {
 
 testJs {
     doLast {
-        npm 'run', 'test', '--', '--no-watch', '--no-progress', '--browsers=ChromeHeadlessCI', '--code-coverage'
+        npm 'run', 'test'
     }
 
     dependsOn buildJs
