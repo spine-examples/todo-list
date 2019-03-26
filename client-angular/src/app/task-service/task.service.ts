@@ -52,6 +52,7 @@ export class TaskService implements OnDestroy {
    */
   get tasks(): BehaviorSubject<TaskItem[]> {
     if (!this._tasks) {
+      this._tasks = new BehaviorSubject<TaskItem[]>([]);
       this.subscribeToTasks()
         .then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
     }
