@@ -59,7 +59,11 @@ describe('CompletedTasksComponent', () => {
   });
 
   it('should contain completed tasks', () => {
-    const tasks = fixture.debugElement.queryAll(By.css('.list-item'));
-    expect(tasks.length).toBe(2);
+    // The timeout allows the page to fully render before checking the DOM for presense of the
+    // necessary element.
+    setTimeout(() => {
+      const tasks = fixture.debugElement.queryAll(By.css('.list-item'));
+      expect(tasks.length).toBe(2);
+    }, 100);
   });
 });
