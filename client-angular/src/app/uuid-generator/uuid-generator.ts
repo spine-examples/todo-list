@@ -23,6 +23,8 @@ import * as uuid from 'uuid/v4';
 
 /**
  * A generator of UUID values.
+ *
+ * The UUID value is a Proto message with a single `string` field named `value`.
  */
 export class UuidGenerator {
 
@@ -33,6 +35,11 @@ export class UuidGenerator {
     throw new Error('UuidGenerator should not be instantiated');
   }
 
+  /**
+   * Generates a new UUID value of the specfied type.
+   *
+   * If the type does not match the UUID value pattern, an error is thrown.
+   */
   static newId<T extends Message>(type: new() => T): T {
     if (!type) {
       throw new Error(UuidGenerator.ERROR_MESSAGE);
