@@ -99,9 +99,9 @@ export class TaskCreationWizard {
     if (!description) {
       return Promise.reject('Description value must be set.');
     }
-    if (dueDate && dueDate < new Date()) {
+    if (dueDate && dueDate.toDate() < new Date()) {
       return Promise.reject(
-        `Task due date before current time is not allowed, specified date: ${dueDate}`
+        `Task due date before current time is not allowed, specified date: ${dueDate.toDate()}`
       );
     }
     const cmd = this.prepareUpdateCommand(description, priority, dueDate);
