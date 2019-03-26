@@ -22,7 +22,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from '../../task-service/task.service';
-import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 
 /**
@@ -59,7 +59,9 @@ export class ActiveTasksComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.tasks = this.taskService.tasks;
+    this.taskService.tasks.asObservable().subscribe((items: TaskItem[]) => {
+      this.tasks = items.filter((task: TaskItem) => task.getStatus() === TaskStatus.OPEN);
+    });
   }
 
   ngOnDestroy(): void {
