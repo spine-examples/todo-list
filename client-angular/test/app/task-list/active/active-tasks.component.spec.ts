@@ -30,7 +30,7 @@ import {Client, Type} from 'spine-web';
 
 import {ActiveTasksComponent} from '../../../../src/app/task-list/active/active-tasks.component';
 import {TaskService} from '../../../../src/app/task-service/task.service';
-import {TaskItemComponent} from '../../../../src/app/task-list/task-item/task-item.component';
+import {ActiveTaskItemComponent} from '../../../../src/app/task-list/active/active-task-item/active-task-item.component';
 import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {
   HOUSE_TASK_1_DESC,
@@ -41,7 +41,7 @@ import {
 } from '../../given/tasks';
 
 import {MyListView, TaskItem, TaskListView} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
+import {TaskLinkComponent} from '../../../../src/app/task-list/task-link/task-link.component';
 
 describe('ActiveTasksComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -56,7 +56,7 @@ describe('ActiveTasksComponent', () => {
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ActiveTasksComponent, TaskItemComponent, TaskDisplayComponent],
+      declarations: [ActiveTasksComponent, ActiveTaskItemComponent, TaskLinkComponent],
       imports: [
         RouterTestingModule.withRoutes([]),
         ReactiveFormsModule,

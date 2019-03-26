@@ -22,16 +22,16 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Client} from 'spine-web';
 
-import {TaskDisplayComponent} from '../../../src/app/task-display/task-display.component';
-import {TaskService} from '../../../src/app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from '../given/mock-spine-web-client';
-import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, houseTasks, task} from '../given/tasks';
+import {TaskLinkComponent} from '../../../../src/app/task-list/task-link/task-link.component';
+import {TaskService} from '../../../../src/app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
+import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, houseTasks, task} from '../../given/tasks';
 
-describe('TaskDisplayComponent', () => {
+describe('TaskLinkComponent', () => {
 
   const mockClient = mockSpineWebClient();
-  let component: TaskDisplayComponent;
-  let fixture: ComponentFixture<TaskDisplayComponent>;
+  let component: TaskLinkComponent;
+  let fixture: ComponentFixture<TaskLinkComponent>;
 
   mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
     [], [], [], jasmine.createSpy()
@@ -39,7 +39,7 @@ describe('TaskDisplayComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TaskDisplayComponent],
+      declarations: [TaskLinkComponent],
       imports: [RouterTestingModule.withRoutes([])],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
@@ -48,7 +48,7 @@ describe('TaskDisplayComponent', () => {
 
   beforeEach(() => {
     const taskItem = task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
-    fixture = TestBed.createComponent(TaskDisplayComponent);
+    fixture = TestBed.createComponent(TaskLinkComponent);
     component = fixture.componentInstance;
     component.task = taskItem;
     fixture.detectChanges();

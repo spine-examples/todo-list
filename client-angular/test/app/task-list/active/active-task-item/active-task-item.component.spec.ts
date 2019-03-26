@@ -24,21 +24,21 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {MatIconModule} from '@angular/material/icon';
 import {By} from '@angular/platform-browser';
 
-import {TaskItemComponent} from '../../../../src/app/task-list/task-item/task-item.component';
-import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, task} from '../../given/tasks';
+import {ActiveTaskItemComponent} from '../../../../../src/app/task-list/active/active-task-item/active-task-item.component';
+import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, task} from '../../../given/tasks';
 
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
+import {TaskService} from '../../../../../src/app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from '../../../given/mock-spine-web-client';
 import {Client} from 'spine-web';
-import {TaskDisplayComponent} from '../../../../src/app/task-display/task-display.component';
+import {TaskLinkComponent} from '../../../../../src/app/task-list/task-link/task-link.component';
 
-describe('TaskItemComponent', () => {
+describe('ActiveTaskItemComponent', () => {
   const taskItem = task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
 
   const mockClient = mockSpineWebClient();
-  let component: TaskItemComponent;
-  let fixture: ComponentFixture<TaskItemComponent>;
+  let component: ActiveTaskItemComponent;
+  let fixture: ComponentFixture<ActiveTaskItemComponent>;
 
   mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
     [], [], [], jasmine.createSpy('unsubscribe')
@@ -46,7 +46,7 @@ describe('TaskItemComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TaskItemComponent, TestHostComponent, TaskDisplayComponent],
+      declarations: [ActiveTaskItemComponent, TestHostComponent, TaskLinkComponent],
       imports: [RouterTestingModule.withRoutes([]), MatIconModule],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
@@ -54,7 +54,7 @@ describe('TaskItemComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TaskItemComponent);
+    fixture = TestBed.createComponent(ActiveTaskItemComponent);
     component = fixture.componentInstance;
     component.task = taskItem;
     fixture.detectChanges();
@@ -98,8 +98,8 @@ describe('TaskItemComponent', () => {
   })
   class TestHostComponent {
 
-    @ViewChild(TaskItemComponent)
-    private taskItemComponent: TaskItemComponent;
+    @ViewChild(ActiveTaskItemComponent)
+    private taskItemComponent: ActiveTaskItemComponent;
 
     private readonly task: TaskItem = taskItem;
 
