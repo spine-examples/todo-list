@@ -110,8 +110,8 @@ import static io.spine.validate.Validate.isDefault;
 @SuppressWarnings({"unused" /* Command handler methods invoked via reflection. */,
         "OverlyCoupledClass" /* OK for process manager entity. */})
 public class TaskCreationWizard extends ProcessManager<TaskCreationId,
-        TaskCreation,
-        TaskCreationVBuilder> {
+                                                       TaskCreation,
+                                                       TaskCreationVBuilder> {
 
     protected TaskCreationWizard(TaskCreationId id) {
         super(id);
@@ -190,7 +190,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * Tries to transit the process to the specified state by handling a command with the given
+     * Tries to transit the process to the specified stage by handling a command with the given
      * command handler.
      *
      * <p>If the requested stage is preceding to the current state, the actual transition won't

@@ -353,7 +353,7 @@ public class TaskPart extends AggregatePart<TaskId,
     @Apply
     void taskDescriptionUpdated(TaskDescriptionUpdated event) {
         TaskDescription newDescription = event.getDescriptionChange()
-                                                   .getNewValue();
+                                              .getNewValue();
         builder().setDescription(newDescription);
     }
 
