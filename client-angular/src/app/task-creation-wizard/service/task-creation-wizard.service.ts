@@ -259,14 +259,13 @@ export class TaskCreationWizard {
     const cmd = new UpdateTaskDetails();
     cmd.setId(this._id);
 
-    if (description !== this._taskDescription) {
-      const descriptionChange = new DescriptionChange();
-      descriptionChange.setNewValue(description);
-      if (this._taskDescription) {
-        descriptionChange.setPreviousValue(this._taskDescription);
-      }
-      cmd.setDescriptionChange(descriptionChange);
+    const descriptionChange = new DescriptionChange();
+    descriptionChange.setNewValue(description);
+    if (this._taskDescription) {
+      descriptionChange.setPreviousValue(this._taskDescription);
     }
+    cmd.setDescriptionChange(descriptionChange);
+
     if (priority !== this._taskPriority) {
       const priorityChange = new PriorityChange();
       priorityChange.setNewValue(priority);

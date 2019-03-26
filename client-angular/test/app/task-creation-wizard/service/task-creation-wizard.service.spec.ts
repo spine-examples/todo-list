@@ -185,7 +185,7 @@ describe('TaskCreationWizard', () => {
       .catch(err => expect(err).toEqual('Description value must be set.'));
   }));
 
-  it('should ignore description change if specified description is same as previous one',
+  it('should include description change even if specified description is the same as previous one',
     fakeAsync(() => {
       initializeWizard();
       tick();
@@ -347,9 +347,6 @@ describe('TaskCreationWizard', () => {
                                  newPriority: TaskPriority,
                                  newDueDate: Timestamp) {
     mockClient.sendCommand.and.callFake((cmd, resolve) => {
-      if (newDescription === wizard.taskDescription) {
-        expect(cmd.getDescriptionChange()).toBeUndefined();
-      }
       if (newPriority === wizard.taskPriority) {
         expect(cmd.getPriorityChange()).toBeUndefined();
       }
