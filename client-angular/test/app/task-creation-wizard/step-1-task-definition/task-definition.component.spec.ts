@@ -63,6 +63,7 @@ describe('TaskDefinitionComponent', () => {
         NoopAnimationsModule,
         FormsModule,
         RouterTestingModule.withRoutes([
+          // Same component for convenience.
           {path: 'task-list/active', component: TaskDefinitionComponent}
         ]),
 
@@ -122,23 +123,7 @@ describe('TaskDefinitionComponent', () => {
     expect(component.stepper.selected.completed).toBeFalsy();
   });
 
-  it('should cancel task creation', fakeAsync(() => {
-    mockClient.sendCommand.and.callFake((command, resolve) => resolve());
-    component.cancel();
-    tick();
-    expect(component.wizard.stage).toEqual(TaskCreation.Stage.CANCELED);
-    expect(component.router.url).toEqual(WizardStep.RETURN_TO);
-  }));
-
-  it('throw Error if canceling task creation failed', fakeAsync(() => {
-    mockClient.sendCommand.and.callFake((command, resolve, reject) => reject());
-    expect(() => {
-      component.cancel();
-      tick();
-    }).toThrowError();
-  }));
-
-  it('should update task details and navigate next', fakeAsync(() => {
+  it('should update task details and navigate to next step', fakeAsync(() => {
     const newDescription = 'The new description';
     component.setDescription(newDescription);
     const newPriority = TaskPriority.LOW;
@@ -183,5 +168,20 @@ describe('TaskDefinitionComponent', () => {
     component.next();
     tick();
     expect(component.errorViewport.text).toEqual('');
+  }));
+
+  it('should cancel task creation', fakeAsync(() => {
+    mockClient.sendCommand.and.callFake((command, resolve) => resolve());
+    component.cancel();
+    tick();
+    expect(component.router.url).toEqual(WizardStep.RETURN_TO);
+  }));
+
+  it('throw Error if canceling task creation failed', fakeAsync(() => {
+    mockClient.sendCommand.and.callFake((command, resolve, reject) => reject());
+    expect(() => {
+      component.cancel();
+      tick();
+    }).toThrowError();
   }));
 });

@@ -22,7 +22,7 @@ import {CdkStep} from '@angular/cdk/stepper';
 import {MatStepper} from '@angular/material';
 
 export function mockStepper(): jasmine.SpyObj<MatStepper> {
-  const mock = jasmine.createSpyObj<MatStepper>('MatStepper', ['next']);
+  const mock = jasmine.createSpyObj<MatStepper>('MatStepper', ['previous', 'next']);
   mock.selected = jasmine.createSpyObj<CdkStep>('CdkStep', ['select']);
   mock.selected.completed = false;
   // @ts-ignore Needed to re-assign readonly value for test.

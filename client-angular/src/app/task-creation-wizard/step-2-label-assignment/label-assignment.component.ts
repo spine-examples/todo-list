@@ -35,14 +35,15 @@ import {LabelView} from 'generated/main/js/todolist/q/projections_pb';
 })
 export class LabelAssignmentComponent extends WizardStep {
 
-  // noinspection JSMismatchedCollectionQueryUpdate Used as a part of NG model.
-  private available: LabelView[];
+  /** Visible for testing. */
+  available: LabelView[];
 
-  // noinspection JSMismatchedCollectionQueryUpdate Used as a part of NG model.
   /**
    * Is always a subset of available.
+   *
+   * Visible for testing.
    */
-  private selected: LabelView[];
+  selected: LabelView[];
 
   private readonly loadAllLabels: Promise<LabelView[]>;
 
@@ -52,16 +53,24 @@ export class LabelAssignmentComponent extends WizardStep {
   }
 
   protected initOwnModel(): void {
-    this.loadAllLabels.then(labels => {
-      this.available = labels;
-    });
+    this.loadAllLabels
+      .then(labels => {
+        this.available = labels;
+      })
+      .catch(err => {
+        this.reportError(`Error when loading available labels: ${err}`);
+      });
   }
 
-  initFromWizard() {
-    this.loadAllLabels.then(labels => {
-      const findMatch = id => labels.find(label => label.getId().getValue() === id.getValue());
-      this.selected = this.wizard.taskLabels.map(findMatch);
-    });
+  initFromWizard(): void {
+    this.loadAllLabels
+      .then(labels => {
+        const findMatch = id => labels.find(label => label.getId().getValue() === id.getValue());
+        this.selected = this.wizard.taskLabels.map(findMatch);
+      })
+      .catch(err => {
+        this.reportError(`Error when loading available labels: ${err}`);
+      });
   }
 
   switchSelectedStatus(label: LabelView): void {

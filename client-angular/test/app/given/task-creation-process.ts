@@ -22,18 +22,23 @@ import {houseTask} from './tasks';
 
 import {TaskCreationId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskCreation} from 'generated/main/js/todolist/model_pb';
-import {TaskView} from 'generated/main/js/todolist/q/projections_pb';
+import {LabelIdsList} from 'generated/main/js/todolist/values_pb';
+import {LabelView, TaskView} from 'generated/main/js/todolist/q/projections_pb';
 
 export function initMockProcess(stage?: TaskCreation.Stage): (type, id, resolve) => void {
   const creationProcess = taskCreationProcess(stage);
   const task = houseTask();
-  return (type, id, resolve) => {
-    if (type.class() === TaskCreation) {
-      resolve(creationProcess);
-    } else if (type.class() === TaskView) {
-      resolve(task);
-    }
-  };
+  return resolveWithProcess(creationProcess, task);
+}
+
+export function initMockProcessWithLabels(labels: LabelView[]) {
+  const creationProcess = taskCreationProcess(TaskCreation.Stage.LABEL_ASSIGNMENT);
+  const task = houseTask();
+
+  const labelIdsList = new LabelIdsList();
+  labelIdsList.setIdsList(labels.map(label => label.getId()));
+  task.setLabelIdsList(labelIdsList);
+  return resolveWithProcess(creationProcess, task);
 }
 
 export function taskCreationProcess(stage?: TaskCreation.Stage): TaskCreation {
@@ -46,4 +51,14 @@ export function taskCreationProcess(stage?: TaskCreation.Stage): TaskCreation {
   taskCreation.setStage(creationStage);
   taskCreation.setTaskId(houseTask().getId());
   return taskCreation;
+}
+
+function resolveWithProcess(creationProcess, task) {
+  return (type, id, resolve) => {
+    if (type.class() === TaskCreation) {
+      resolve(creationProcess);
+    } else if (type.class() === TaskView) {
+      resolve(task);
+    }
+  };
 }

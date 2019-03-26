@@ -98,6 +98,8 @@ export abstract class WizardStep implements AfterViewInit {
       });
   }
 
+  protected abstract doStep(): Promise<void>;
+
   /**
    * Cancel draft creation.
    *
@@ -126,7 +128,13 @@ export abstract class WizardStep implements AfterViewInit {
       });
   }
 
-  protected abstract doStep(): Promise<void>;
+  protected reportError(err): void {
+    this.errorViewport.text = err;
+  }
+
+  private clearError(): void {
+    this.errorViewport.text = '';
+  }
 
   protected onInputChange(): void {
     this.setNotCompleted();
@@ -143,13 +151,5 @@ export abstract class WizardStep implements AfterViewInit {
   private goToActiveTasks(): void {
     // noinspection JSIgnoredPromiseFromCall No navigation result handling necessary.
     this.router.navigate([WizardStep.RETURN_TO]);
-  }
-
-  private reportError(err): void {
-    this.errorViewport.text = err;
-  }
-
-  private clearError(): void {
-    this.errorViewport.text = '';
   }
 }
