@@ -22,6 +22,19 @@ import {houseTask} from './tasks';
 
 import {TaskCreationId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskCreation} from 'generated/main/js/todolist/model_pb';
+import {TaskView} from 'generated/main/js/todolist/q/projections_pb';
+
+export function initMockProcess(stage?: TaskCreation.Stage): (type, id, resolve) => void {
+  const creationProcess = taskCreationProcess(stage);
+  const task = houseTask();
+  return (type, id, resolve) => {
+    if (type.class() === TaskCreation) {
+      resolve(creationProcess);
+    } else if (type.class() === TaskView) {
+      resolve(task);
+    }
+  };
+}
 
 export function taskCreationProcess(stage?: TaskCreation.Stage): TaskCreation {
   const creationIdValue = 'task-creation-ID';

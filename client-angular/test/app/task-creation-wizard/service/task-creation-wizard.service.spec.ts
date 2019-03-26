@@ -27,7 +27,7 @@ import {TaskService} from '../../../../src/app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {houseTask, houseTasks} from '../../given/tasks';
 import {label1, label2} from '../../given/labels';
-import {taskCreationProcess} from '../../given/task-creation-process';
+import {initMockProcess, taskCreationProcess} from '../../given/task-creation-process';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
@@ -52,17 +52,8 @@ describe('TaskCreationWizard', () => {
      * Initializes wizard with some basic task data.
      */
     static initializedWizard(stage?: TaskCreation.Stage): Promise<void> {
-      const creationProcess = taskCreationProcess(stage);
-      const task = Given.task();
-      const provideMockData = (type, id, resolveCallback) => {
-        if (type.class() === TaskCreation) {
-          resolveCallback(creationProcess);
-        } else if (type.class() === TaskView) {
-          resolveCallback(task);
-        }
-      };
-      mockClient.fetchById.and.callFake(provideMockData);
-      return wizard.init(creationProcess.getId().getValue());
+      mockClient.fetchById.and.callFake(initMockProcess(stage));
+      return wizard.init(taskCreationProcess(stage).getId().getValue());
     }
 
     static task(): TaskView {

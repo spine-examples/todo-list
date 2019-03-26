@@ -31,11 +31,17 @@ export abstract class WizardStep implements AfterViewInit {
   @Input()
   stepper: MatStepper;
 
+  /** Visible for testing. */
   @ViewChild(ErrorViewport)
-  private readonly errorViewport: ErrorViewport;
+  errorViewport: ErrorViewport;
 
   protected constructor(private readonly router: Router,
-                        protected readonly wizard: TaskCreationWizard) {
+                        /* Visible for testing. */
+                        readonly wizard: TaskCreationWizard) {
+  }
+
+  private static reportFatalError(err) {
+    throw new Error(err);
   }
 
   ngAfterViewInit(): void {
@@ -81,13 +87,25 @@ export abstract class WizardStep implements AfterViewInit {
 
   /**
    * Cancel draft creation.
+   *
+   * Is visible for testing.
    */
-  protected cancel(): void {
-    this.wizard.cancelTaskCreation().then(() => this.goToActiveTasks());
+  cancel(): void {
+    this.wizard.cancelTaskCreation()
+      .then(() => this.goToActiveTasks())
+      .catch(err => {
+        this.goToActiveTasks();
+        WizardStep.reportFatalError(err);
+      });
   }
 
   protected finish() {
-    this.doStep().then(() => this.goToActiveTasks());
+    this.doStep()
+      .then(() => this.goToActiveTasks())
+      .catch(err => {
+        this.goToActiveTasks();
+        WizardStep.reportFatalError(err);
+      });
   }
 
   protected abstract doStep(): Promise<void>;

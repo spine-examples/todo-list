@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {FormsModule} from '@angular/forms';
 import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 import {MatMomentDateModule} from '@angular/material-moment-adapter';
@@ -37,6 +37,11 @@ import {TaskService} from '../../../../src/app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {mockStepper} from '../given/mock-stepper';
 import {houseTasks} from '../../given/tasks';
+import {initMockProcess, taskCreationProcess} from '../../given/task-creation-process';
+
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
+import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
+import {TaskCreation} from 'generated/main/js/todolist/model_pb';
 
 describe('TaskDefinitionComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -48,7 +53,7 @@ describe('TaskDefinitionComponent', () => {
   let component: TaskDefinitionComponent;
   let fixture: ComponentFixture<TaskDefinitionComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         TaskDefinitionComponent
@@ -56,7 +61,9 @@ describe('TaskDefinitionComponent', () => {
       imports: [
         NoopAnimationsModule,
         FormsModule,
-        RouterTestingModule.withRoutes([]),
+        RouterTestingModule.withRoutes([
+          {path: 'task-list/active', component: TaskDefinitionComponent}
+        ]),
 
         TodoListComponentsModule,
         TodoListPipesModule,
@@ -74,16 +81,65 @@ describe('TaskDefinitionComponent', () => {
       ]
     })
       .compileComponents();
-  }));
 
-  beforeEach(() => {
+    mockClient.fetchById.and.callFake(initMockProcess());
     fixture = TestBed.createComponent(TaskDefinitionComponent);
     component = fixture.componentInstance;
+    component.wizard.init(taskCreationProcess().getId().getValue());
+    tick();
     component.stepper = mockStepper();
     fixture.detectChanges();
-  });
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should receive initial task data from wizard', () => {
+    component.initFromWizard();
+    expect(component.description).toEqual(component.wizard.taskDescription);
+    expect(component.priority).toEqual(component.wizard.taskPriority);
+    expect(component.dueDate).toEqual(component.wizard.taskDueDate);
+  });
+
+  it('should set description to a given value and become non-completed', () => {
+    component.stepper.selected.completed = true;
+    component.setDescription('New description');
+    expect(component.stepper.selected.completed).toBeFalsy();
+  });
+
+  it('should set priority to a given value and become non-completed', () => {
+    component.stepper.selected.completed = true;
+    component.setPriority(TaskPriority.LOW);
+    expect(component.stepper.selected.completed).toBeFalsy();
+  });
+
+  it('should set due date to a given value and become non-completed', () => {
+    component.stepper.selected.completed = true;
+    component.setDueDate(Timestamp.fromDate(new Date()));
+    expect(component.stepper.selected.completed).toBeFalsy();
+  });
+
+  it('should cancel task creation', fakeAsync(() => {
+    mockClient.sendCommand.and.callFake((command, resolve) => resolve());
+    component.cancel();
+    tick();
+    expect(component.wizard.stage).toEqual(TaskCreation.Stage.CANCELED);
+  }));
+
+  it('throw Error if canceling task creation failed', () => {
+    mockClient.sendCommand.and.callFake((command, resolve, reject) => reject());
+    expect(() => {
+      component.cancel();
+      tick();
+    }).toThrowError();
+  });
+
+  it('should update task details and navigate next', () => {
+
+  });
+
+  it('should forward wizard errors to error viewport', () => {
+
   });
 });

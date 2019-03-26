@@ -54,9 +54,9 @@ import {LabelsModule} from '../../../src/app/labels/labels.module';
 import {TaskCreationWizard} from '../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
 import {TaskService} from '../../../src/app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from '../given/mock-spine-web-client';
-import {houseTask, houseTasks} from '../given/tasks';
+import {houseTasks} from '../given/tasks';
 import {LabelService} from '../../../src/app/labels/label.service';
-import {taskCreationProcess} from '../given/task-creation-process';
+import {initMockProcess, taskCreationProcess} from '../given/task-creation-process';
 
 import {TaskCreation} from 'generated/main/js/todolist/model_pb';
 import {TaskView} from 'generated/main/js/todolist/q/projections_pb';
@@ -73,9 +73,11 @@ describe('TaskCreationWizardComponent', () => {
   mockClient.fetchAll.and.returnValue(fetch);
   fetch.atOnce.and.returnValue(Promise.resolve());
 
+  // It's actually not important which ID we have in route as initialization is done via mocks.
+  // It's only important for it to be defined.
   const activatedRoute = {
     snapshot: {
-      paramMap: convertToParamMap({taskCreationId: houseTask().getId().getValue()})
+      paramMap: convertToParamMap({taskCreationId: taskCreationProcess().getId().getValue()})
     }
   };
 
@@ -90,18 +92,6 @@ describe('TaskCreationWizardComponent', () => {
     wizardComponent.labelAssignment = jasmine.createSpyObj<LabelAssignmentComponent>(
       'LabelAssignmentComponent', ['initFromWizard']
     );
-  }
-
-  function initMockProcess(stage?: TaskCreation.Stage) {
-    const creationProcess = taskCreationProcess(stage);
-    const task = houseTask();
-    return (type, id, resolveCallback) => {
-      if (type.class() === TaskCreation) {
-        resolveCallback(creationProcess);
-      } else if (type.class() === TaskView) {
-        resolveCallback(task);
-      }
-    };
   }
 
   beforeEach(async(() => {
