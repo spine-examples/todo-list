@@ -73,22 +73,6 @@ protobuf {
     }
 }
 
-buildJs {
-    outputs.dir "$projectDir/dist"
-
-    doLast {
-        npm 'run', 'build'
-    }
-}
-
-testJs {
-    doLast {
-        npm 'run', 'test'
-    }
-
-    dependsOn buildJs
-}
-
 compileProtoToJs {
     outputs.files compiledProto
 }

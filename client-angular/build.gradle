@@ -31,3 +31,19 @@ task ngTest {
     //noinspection GroovyAssignabilityCheck
     check.dependsOn ngTest
 }
+
+buildJs {
+    outputs.dir "$projectDir/dist"
+
+    doLast {
+        npm 'run', 'build'
+    }
+}
+
+testJs {
+    doLast {
+        npm 'run', 'test'
+    }
+
+    dependsOn buildJs
+}
