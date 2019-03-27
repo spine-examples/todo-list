@@ -18,12 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from '../../task-service/task.service';
 import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
+import {TaskListCategoryComponent} from '../task-list-category/task-list-category.component';
 
 /**
  * A component displaying active tasks, i.e. those which are not completed, deleted, or in draft
@@ -32,16 +33,14 @@ import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 @Component({
   selector: 'app-active-tasks',
   templateUrl: './active-tasks.component.html',
-  styleUrls: ['./active-tasks.component.css'],
-
+  styleUrls: ['./active-tasks.component.css']
 })
-export class ActiveTasksComponent implements OnInit {
+export class ActiveTasksComponent extends TaskListCategoryComponent {
 
-  /** Visible for testing. */
-  tasks: TaskItem[] = [];
   private createBasicTaskForms: FormGroup;
 
-  constructor(private readonly taskService: TaskService, private formBuilder: FormBuilder) {
+  constructor(taskService: TaskService, private formBuilder: FormBuilder) {
+    super(taskService, (task: TaskItem) => task.getStatus() === TaskStatus.OPEN);
     this.createBasicTaskForms = formBuilder.group({
       taskDescription: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
     });
@@ -56,11 +55,5 @@ export class ActiveTasksComponent implements OnInit {
    */
   private createBasicTask(taskDescription: string): void {
     this.taskService.createBasicTask(taskDescription);
-  }
-
-  ngOnInit(): void {
-    this.taskService.tasks$.subscribe((items: TaskItem[]) => {
-      this.tasks = items.filter((task: TaskItem) => task.getStatus() === TaskStatus.OPEN);
-    });
   }
 }

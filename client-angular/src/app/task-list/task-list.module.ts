@@ -36,6 +36,7 @@ import {TaskListRoutingModule} from './task-list.routes';
 import {TaskServiceModule} from '../task-service/task-service.module';
 import {ActiveTaskItemComponent} from './active/active-task-item/active-task-item.component';
 import {TaskLinkComponent} from './task-link/task-link.component';
+import {TaskListCategoryComponent} from './task-list-category/task-list-category.component';
 
 /**
  * The module which displays the task list.
@@ -48,7 +49,8 @@ import {TaskLinkComponent} from './task-link/task-link.component';
     ActiveTasksComponent,
     CompletedTasksComponent,
     DeletedTasksComponent,
-    DraftsComponent
+    DraftsComponent,
+    TaskListCategoryComponent
   ],
   imports: [
     TaskListRoutingModule,
