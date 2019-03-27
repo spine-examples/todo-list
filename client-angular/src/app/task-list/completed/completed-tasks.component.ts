@@ -18,16 +18,22 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskService} from '../../task-service/task.service';
+import {TaskListCategoryComponent} from '../task-list-category/task-list-category.component';
 
 /**
  * A component which displays completed tasks.
  */
 @Component({
   selector: 'app-completed-tasks',
-  templateUrl: './completed-tasks.component.html'
+  templateUrl: './completed-tasks.component.html',
+  styleUrls: ['./completed-tasks.component.css']
 })
-export class CompletedTasksComponent {
+export class CompletedTasksComponent extends TaskListCategoryComponent {
 
-  constructor() { }
+  constructor(taskService: TaskService) {
+    super(taskService, (task: TaskItem) => task.getStatus() === TaskStatus.COMPLETED);
+  }
 }

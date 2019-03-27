@@ -119,6 +119,7 @@ public class TaskPart extends AggregatePart<TaskId,
         TaskId taskId = cmd.getId();
         TaskDetails.Builder taskDetails = TaskDetails
                 .newBuilder()
+                .setStatus(TaskStatus.OPEN)
                 .setDescription(cmd.getDescription());
         TaskCreated result = TaskCreated
                 .newBuilder()

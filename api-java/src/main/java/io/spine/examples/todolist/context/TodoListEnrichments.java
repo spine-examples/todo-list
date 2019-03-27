@@ -101,6 +101,7 @@ public final class TodoListEnrichments {
                     .newBuilder()
                     .setDescription(state.getDescription())
                     .setPriority(state.getPriority())
+                    .setStatus(state.getTaskStatus())
                     .build();
             return details;
         };
