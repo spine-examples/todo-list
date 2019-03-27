@@ -74,14 +74,14 @@ describe('ActiveTaskItemComponent', () => {
     const completeTaskMethod = spyOn(component.taskService, 'completeTask');
     const completeButton = fixture.debugElement.query(By.css('.complete-task-button')).nativeElement;
     completeButton.click();
-    expect(completeTaskMethod).toHaveBeenCalledWith(HOUSE_TASK_1_ID);
+    expect(completeTaskMethod).toHaveBeenCalledTimes(1);
   });
 
   it('should allow to delete task', () => {
     const completeTaskMethod = spyOn(component.taskService, 'deleteTask');
     const deleteButton = fixture.debugElement.query(By.css('.delete-task-button')).nativeElement;
     deleteButton.click();
-    expect(completeTaskMethod).toHaveBeenCalledWith(HOUSE_TASK_1_ID);
+    expect(completeTaskMethod).toHaveBeenCalledTimes(1);
   });
 
   it('should receive task item injected by the host component', () => {
@@ -94,7 +94,7 @@ describe('ActiveTaskItemComponent', () => {
   @Component({
     selector: `host-component`,
     template: `
-      <app-task-item [task]="task"></app-task-item>`
+      <app-active-task-item [task]="task"></app-active-task-item>`
   })
   class TestHostComponent {
 
