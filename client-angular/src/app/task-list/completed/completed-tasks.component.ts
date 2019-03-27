@@ -38,7 +38,7 @@ export class CompletedTasksComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.taskService.tasks.subscribe((taskItems: TaskItem[]) => {
+    this.taskService.tasks$.subscribe((taskItems: TaskItem[]) => {
       this.tasks = taskItems.filter(task => task.getStatus() === TaskStatus.COMPLETED);
     });
   }

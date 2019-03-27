@@ -21,7 +21,7 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import {Client, Type} from 'spine-web';
 import * as uuid from 'uuid';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 import {TaskServiceModule} from './task-service.module';
 
@@ -38,25 +38,13 @@ import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb'
 })
 export class TaskService implements OnDestroy {
 
-  private _tasks: BehaviorSubject<TaskItem[]>;
+  private _tasks$: BehaviorSubject<TaskItem[]>;
   private _unsubscribe: () => void;
 
   /**
    * @param spineWebClient a client for accessing Spine backend
    */
   constructor(private readonly spineWebClient: Client) {
-  }
-
-  /**
-   * Obtains a current view of tasks.
-   */
-  get tasks(): BehaviorSubject<TaskItem[]> {
-    if (!this._tasks) {
-      this._tasks = new BehaviorSubject<TaskItem[]>([]);
-      this.subscribeToTasks()
-        .then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
-    }
-    return this._tasks;
   }
 
   /**
@@ -77,6 +65,33 @@ export class TaskService implements OnDestroy {
   /** Visible for testing. */
   static logCmdErr(err) {
     console.log('Error when sending command to the server: %s', err);
+  }
+
+  /**
+   * Obtains an `Observable` of tasks all tasks in the list.
+   */
+  get tasks$(): Observable<TaskItem[]> {
+    this.assureTasksInitialized();
+    return this._tasks$.asObservable();
+  }
+
+  /**
+   * Obtains the current value of the task list.
+   */
+  get tasks(): TaskItem[] {
+    this.assureTasksInitialized();
+    return this._tasks$.getValue();
+  }
+
+  /**
+   * Makes sure that array of tasks is initialized.
+   */
+  private assureTasksInitialized() {
+    if (!this._tasks$) {
+      this._tasks$ = new BehaviorSubject<TaskItem[]>([]);
+      this.subscribeToTasks()
+        .then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
+    }
   }
 
   /**
@@ -136,11 +151,11 @@ export class TaskService implements OnDestroy {
    *
    * @returns a `Promise` which resolves to an `unsubscribe` function
    */
-  subscribeToTasks(): Promise<() => void> {
+  private subscribeToTasks(): Promise<() => void> {
     const refreshTasks = {
       next: (view: MyListView): void => {
         const taskItems: TaskItem[] = view.getMyList().getItemsList();
-        this._tasks.next(taskItems);
+        this._tasks$.next(taskItems);
       }
     };
     const type = Type.forClass(MyListView);

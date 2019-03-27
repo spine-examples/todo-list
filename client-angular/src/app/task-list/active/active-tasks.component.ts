@@ -59,7 +59,7 @@ export class ActiveTasksComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.taskService.tasks.asObservable().subscribe((items: TaskItem[]) => {
+    this.taskService.tasks$.subscribe((items: TaskItem[]) => {
       this.tasks = items.filter((task: TaskItem) => task.getStatus() === TaskStatus.OPEN);
     });
   }

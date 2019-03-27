@@ -38,6 +38,6 @@ export class DeletedTasksComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.tasks = this.taskService.tasks.getValue().filter(task => task.getStatus() === TaskStatus.DELETED);
+    this.tasks = this.taskService.tasks.filter(task => task.getStatus() === TaskStatus.DELETED);
   }
 }
