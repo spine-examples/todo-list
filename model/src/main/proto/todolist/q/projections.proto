@@ -106,6 +106,7 @@ message TaskListView {
 
 // A task that has been deleted as a result of a `TaskDeleted` event.
 message DeletedTask {
+    option (entity).kind = PROJECTION;
 
     // Identifier of the deleted task.
     TaskId id = 1;

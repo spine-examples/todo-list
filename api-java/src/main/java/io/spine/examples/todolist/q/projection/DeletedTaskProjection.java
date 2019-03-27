@@ -50,7 +50,7 @@ public class DeletedTaskProjection extends Projection<TaskId, DeletedTask, Delet
     }
 
     @Subscribe
-    void on(TaskDeleted deleted, EventContext context) {
+    public void on(TaskDeleted deleted, EventContext context) {
         TaskId id = deleted.getTaskId();
         TaskEnrichment enrichment = EnrichmentHelper.getEnrichment(TaskEnrichment.class, context);
         TaskDescription description = enrichment.getTask()
@@ -60,7 +60,7 @@ public class DeletedTaskProjection extends Projection<TaskId, DeletedTask, Delet
     }
 
     @Subscribe
-    void on(DeletedTaskRestored taskRestored) {
+    public void on(DeletedTaskRestored taskRestored) {
         setDeleted(true);
     }
 }

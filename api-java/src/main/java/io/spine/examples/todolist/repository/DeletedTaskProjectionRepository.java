@@ -20,7 +20,10 @@
 
 package io.spine.examples.todolist.repository;
 
+import com.google.common.collect.ImmutableSet;
 import io.spine.examples.todolist.TaskId;
+import io.spine.examples.todolist.c.events.DeletedTaskRestored;
+import io.spine.examples.todolist.c.events.TaskDeleted;
 import io.spine.examples.todolist.q.projection.DeletedTask;
 import io.spine.examples.todolist.q.projection.DeletedTaskProjection;
 import io.spine.server.projection.ProjectionRepository;
@@ -31,4 +34,16 @@ import io.spine.server.projection.ProjectionRepository;
 public class DeletedTaskProjectionRepository extends ProjectionRepository<TaskId,
                                                                           DeletedTaskProjection,
                                                                           DeletedTask> {
+
+    public DeletedTaskProjectionRepository() {
+        super();
+        rerouteEvents();
+    }
+
+    private void rerouteEvents() {
+        eventRouting().route(TaskDeleted.class,
+                             (message, context) -> ImmutableSet.of(message.getTaskId()));
+        eventRouting().route(DeletedTaskRestored.class,
+                             (message, context) -> ImmutableSet.of(message.getTaskId()));
+    }
 }
