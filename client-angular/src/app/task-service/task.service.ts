@@ -99,11 +99,9 @@ export class TaskService implements OnDestroy {
    *
    * @param taskId ID of the task to delete.
    */
-  deleteTask(taskId: string): void {
+  deleteTask(taskId: TaskId): void {
     const cmd = new DeleteTask();
-    const id = new TaskId();
-    id.setValue(taskId);
-    cmd.setId(id);
+    cmd.setId(taskId);
     this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
   }
 
@@ -112,11 +110,9 @@ export class TaskService implements OnDestroy {
    *
    * @param taskId ID of the task to complete
    */
-  completeTask(taskId: string): void {
+  completeTask(taskId: TaskId): void {
     const cmd = new CompleteTask();
-    const id = new TaskId();
-    id.setValue(taskId);
-    cmd.setId(id);
+    cmd.setId(taskId);
     this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
   }
 

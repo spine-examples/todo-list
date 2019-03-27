@@ -97,9 +97,9 @@ describe('ActiveTasksComponent', () => {
     expect(component.tasks[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
   });
 
-  it('should create `app-task-item` for each of the received tasks', () => {
+  it('should create `app-active-task-item` for each of the received tasks', () => {
     fixture.detectChanges();
-    const elements = fixture.nativeElement.getElementsByTagName('app-task-item');
+    const elements = fixture.nativeElement.getElementsByTagName('app-active-task-item');
 
     expect(elements.length).toBe(2);
     expect(elements[0].textContent).toContain(HOUSE_TASK_1_DESC);

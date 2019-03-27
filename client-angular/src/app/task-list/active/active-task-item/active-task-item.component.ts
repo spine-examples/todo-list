@@ -24,10 +24,10 @@ import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../../task-service/task.service';
 
 /**
- * The view of a single task in the list.
+ * The view of a single `Active` task in the list.
  */
 @Component({
-  selector: 'app-task-item',
+  selector: 'app-active-task-item',
   templateUrl: './active-task-item.component.html',
   styleUrls: ['./active-task-item.component.css']
 })
@@ -43,15 +43,13 @@ export class ActiveTaskItemComponent {
    * Marks this task as `Complete`, changing its status respectively.
    */
   completeTask(): void {
-    const id: string = this.task.getId().getValue();
-    this.taskService.completeTask(id);
+    this.taskService.completeTask(this.task.getId());
   }
 
   /**
    * Deletes this task from the list.
    */
   deleteTask(): void {
-    const id: string = this.task.getId().getValue();
-    this.taskService.deleteTask(id);
+    this.taskService.deleteTask(this.task.getId());
   }
 }

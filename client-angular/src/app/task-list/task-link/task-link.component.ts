@@ -24,7 +24,7 @@ import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 
 
 @Component({
-  selector: 'app-task-display',
+  selector: 'app-task-link',
   templateUrl: './task-link.component.html',
   styleUrls: ['./task-link.component.css']
 })

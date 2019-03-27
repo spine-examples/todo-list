@@ -1,4 +1,4 @@
-::ng-deep app-task-display {
+::ng-deep app-task-link {
   display: flex;
   flex-grow: 1;
 }
