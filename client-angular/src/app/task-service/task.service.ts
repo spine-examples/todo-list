@@ -174,6 +174,8 @@ export class TaskService implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._unsubscribe();
+    if (this._unsubscribe) {
+      this._unsubscribe();
+    }
   }
 }
