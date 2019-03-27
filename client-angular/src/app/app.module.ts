@@ -25,7 +25,6 @@ import {MatToolbarModule} from '@angular/material';
 
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
-import { TaskLinkComponent } from './task-list/task-link/task-link.component';
 
 /**
  * The main application module.
