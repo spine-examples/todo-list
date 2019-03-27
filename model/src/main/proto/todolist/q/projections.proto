@@ -104,6 +104,16 @@ message TaskListView {
     repeated TaskItem items = 1;
 }
 
+// A task that has been deleted as a result of a `TaskDeleted` event.
+message DeletedTask {
+
+    // Identifier of the deleted task.
+    TaskId id = 1;
+
+    // Description of the deleted task.
+    TaskDescription description = 2;
+}
+
 // Item of a task list view.
 //
 message TaskItem {
