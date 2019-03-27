@@ -22,6 +22,7 @@ package io.spine.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.core.BoundedContextNames;
+import io.spine.examples.todolist.repository.DeletedTaskProjectionRepository;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
@@ -85,6 +86,7 @@ public final class BoundedContexts {
         MyListViewRepository myListViewRepo = new MyListViewRepository();
         LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
         DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
+        DeletedTaskProjectionRepository deletedTasksRepo = new DeletedTaskProjectionRepository();
 
         TaskCreationWizardRepository taskCreationRepo = new TaskCreationWizardRepository();
 
@@ -101,6 +103,7 @@ public final class BoundedContexts {
         boundedContext.register(tasksViewRepo);
         boundedContext.register(draftTasksViewRepo);
         boundedContext.register(taskCreationRepo);
+        boundedContext.register(deletedTasksRepo);
 
         return boundedContext;
     }
