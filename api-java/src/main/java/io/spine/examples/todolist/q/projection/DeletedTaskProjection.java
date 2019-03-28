@@ -54,6 +54,7 @@ public class DeletedTaskProjection extends Projection<TaskId, DeletedTask, Delet
 
     @Subscribe
     void on(TaskDeleted deleted, EventContext context) {
+        setDeleted(false);
         TaskId id = deleted.getTaskId();
         DeletedTaskVBuilder builder = builder();
         builder.setId(id);

@@ -85,4 +85,21 @@ class DeletedTaskProjectionTest extends ProjectionTest {
                           .orElseThrow(DeletedTaskProjectionTest::projectionNotFound);
         assertTrue(projection.isDeleted());
     }
+
+    @Test
+    @DisplayName("receive a `TaskDeleted` event and restore itself after being deleted")
+    void deleteThenRestoreThenDelete() {
+        taskGotDeleted();
+        taskGotRestored();
+        taskGotDeleted();
+        DeletedTaskProjection projection =
+                repository.find(taskId)
+                          .orElseThrow(DeletedTaskProjectionTest::projectionNotFound);
+        assertFalse(projection.isDeleted());
+    }
+
+    private static IllegalStateException projectionNotFound() {
+        return newIllegalStateException(
+                "Projection could not be found in its repository");
+    }
 }
