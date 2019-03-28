@@ -70,26 +70,26 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
      * @throws IllegalArgumentException
      *         if the ID is not of one of the supported types
      */
-    public LabelledTasksViewProjection(LabelId id) {
+    LabelledTasksViewProjection(LabelId id) {
         super(id);
     }
 
     @Subscribe
-    public void on(LabelAssignedToTask event, EventContext context) {
+    void on(LabelAssignedToTask event, EventContext context) {
         LabelId labelId = event.getLabelId();
         TaskId taskId = event.getTaskId();
         addTaskItemAndUpdateLabelDetails(labelId, taskId, context);
     }
 
     @Subscribe
-    public void on(LabelledTaskRestored event, EventContext context) {
+    void on(LabelledTaskRestored event, EventContext context) {
         LabelId labelId = event.getLabelId();
         TaskId taskId = event.getTaskId();
         addTaskItemAndUpdateLabelDetails(labelId, taskId, context);
     }
 
     @Subscribe
-    public void on(LabelRemovedFromTask event) {
+    void on(LabelRemovedFromTask event) {
         LabelId labelId = event.getLabelId();
         boolean isEquals = builder().getId()
                                     .equals(labelId);
@@ -102,7 +102,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(TaskDeleted event) {
+    void on(TaskDeleted event) {
         List<TaskItem> views = new ArrayList<>(builder().getLabelledTasks()
                                                         .getItemsList());
         TaskListView updatedView = removeViewsByTaskId(views, event.getTaskId());
@@ -110,7 +110,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(TaskDescriptionUpdated event) {
+    void on(TaskDescriptionUpdated event) {
         List<TaskItem> views = builder().getLabelledTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -118,7 +118,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(TaskPriorityUpdated event) {
+    void on(TaskPriorityUpdated event) {
         List<TaskItem> views = builder().getLabelledTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -126,7 +126,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(TaskDueDateUpdated event) {
+    void on(TaskDueDateUpdated event) {
         List<TaskItem> views = builder().getLabelledTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -134,7 +134,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(TaskCompleted event) {
+    void on(TaskCompleted event) {
         List<TaskItem> views = builder().getLabelledTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -142,7 +142,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(TaskReopened event) {
+    void on(TaskReopened event) {
         List<TaskItem> views = builder().getLabelledTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -150,7 +150,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(LabelDetailsUpdated event) {
+    void on(LabelDetailsUpdated event) {
         List<TaskItem> views = builder().getLabelledTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);

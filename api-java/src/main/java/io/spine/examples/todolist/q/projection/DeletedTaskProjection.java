@@ -45,12 +45,12 @@ public class DeletedTaskProjection extends Projection<TaskId, DeletedTask, Delet
      * @throws IllegalArgumentException
      *         if the ID is not of one of the supported types
      */
-    protected DeletedTaskProjection(TaskId id) {
+    private DeletedTaskProjection(TaskId id) {
         super(id);
     }
 
     @Subscribe
-    public void on(TaskDeleted deleted, EventContext context) {
+    void on(TaskDeleted deleted, EventContext context) {
         TaskId id = deleted.getTaskId();
         DeletedTaskVBuilder thisBuilder = builder();
         thisBuilder.setId(id);
@@ -63,7 +63,7 @@ public class DeletedTaskProjection extends Projection<TaskId, DeletedTask, Delet
     }
 
     @Subscribe
-    public void on(DeletedTaskRestored taskRestored) {
+    void on(DeletedTaskRestored taskRestored) {
         setDeleted(true);
     }
 

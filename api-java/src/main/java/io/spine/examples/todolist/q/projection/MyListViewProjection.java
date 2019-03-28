@@ -76,12 +76,12 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
      * @throws IllegalArgumentException
      *         if the ID is not of one of the supported types
      */
-    public MyListViewProjection(TaskListId id) {
+    private MyListViewProjection(TaskListId id) {
         super(id);
     }
 
     @Subscribe
-    public void on(TaskCreated event) {
+    void on(TaskCreated event) {
         TaskDetails taskDetails = event.getDetails();
         TaskItem taskView = TaskItem
                 .newBuilder()
@@ -94,7 +94,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     }
 
     @Subscribe
-    public void on(TaskDeleted event) {
+    void on(TaskDeleted event) {
         List<TaskItem> views = new ArrayList<>(builder().getMyList()
                                                         .getItemsList());
         TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
@@ -103,7 +103,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     }
 
     @Subscribe
-    public void on(TaskDescriptionUpdated event) {
+    void on(TaskDescriptionUpdated event) {
         List<TaskItem> views = builder().getMyList()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -111,7 +111,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     }
 
     @Subscribe
-    public void on(TaskPriorityUpdated event) {
+    void on(TaskPriorityUpdated event) {
         List<TaskItem> views = builder().getMyList()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -119,7 +119,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     }
 
     @Subscribe
-    public void on(TaskDueDateUpdated event) {
+    void on(TaskDueDateUpdated event) {
         List<TaskItem> views = builder().getMyList()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -127,7 +127,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     }
 
     @Subscribe
-    public void on(TaskCompleted event) {
+    void on(TaskCompleted event) {
         List<TaskItem> views = builder().getMyList()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -135,7 +135,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     }
 
     @Subscribe
-    public void on(TaskReopened event) {
+    void on(TaskReopened event) {
         List<TaskItem> views = builder().getMyList()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -143,7 +143,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     }
 
     @Subscribe
-    public void on(LabelAssignedToTask event) {
+    void on(LabelAssignedToTask event) {
         List<TaskItem> views = builder().getMyList()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -151,7 +151,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     }
 
     @Subscribe
-    public void on(LabelRemovedFromTask event) {
+    void on(LabelRemovedFromTask event) {
         List<TaskItem> views = builder().getMyList()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -159,7 +159,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     }
 
     @Subscribe
-    public void on(LabelDetailsUpdated event) {
+    void on(LabelDetailsUpdated event) {
         List<TaskItem> views = builder().getMyList()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -167,7 +167,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     }
 
     @Subscribe
-    public void on(TaskDraftFinalized event, EventContext context) {
+    void on(TaskDraftFinalized event, EventContext context) {
         TaskId taskId = event.getTaskId();
 
         Task task = context.find(TaskEnrichment.class)
