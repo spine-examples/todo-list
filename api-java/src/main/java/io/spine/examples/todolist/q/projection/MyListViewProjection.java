@@ -43,10 +43,10 @@ import io.spine.server.projection.Projection;
 import java.util.ArrayList;
 import java.util.List;
 
-import static io.spine.examples.todolist.EnrichmentHelper.getEnrichment;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskListView;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskItemList;
+import static java.lang.String.format;
 
 /**
  * A projection state of the finalized tasks.
@@ -169,8 +169,12 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     @Subscribe
     public void on(TaskDraftFinalized event, EventContext context) {
         TaskId taskId = event.getTaskId();
-        TaskEnrichment enrichment = getEnrichment(TaskEnrichment.class, context);
-        Task task = enrichment.getTask();
+
+        Task task = context.find(TaskEnrichment.class)
+                           .map(TaskEnrichment::getTask)
+                           .orElseThrow(() -> new IllegalStateException(
+                                   format("Could not obtain task enrichment from event context %s.",
+                                          context)));
         TaskItem view = TaskItem
                 .newBuilder()
                 .setId(taskId)

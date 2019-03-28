@@ -42,13 +42,14 @@ import io.spine.server.projection.Projection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static io.spine.examples.todolist.EnrichmentHelper.getEnrichment;
 import static io.spine.examples.todolist.q.projection.LabelColorView.valueOf;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskListView;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByLabelId;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskItemList;
+import static java.lang.String.format;
 
 /**
  * A projection state of the created tasks marked with a certain label.
@@ -163,17 +164,20 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
                  .setLabelledTasks(taskListView);
     }
 
-    private void addTaskItemAndUpdateLabelDetails(LabelId labelId, TaskId taskId,
+    private void addTaskItemAndUpdateLabelDetails(LabelId labelId,
+                                                  TaskId taskId,
                                                   EventContext context) {
-        DetailsEnrichment enrichment = getEnrichment(DetailsEnrichment.class, context);
-        TaskDetails taskDetails = enrichment.getTaskDetails();
-
-        TaskItem taskView = viewFor(taskDetails, labelId, taskId);
-        LabelDetails labelDetails = enrichment.getLabelDetails();
-
         builder().setId(labelId);
-        addTaskItem(taskView);
-        updateLabelDetails(labelDetails);
+        Optional<DetailsEnrichment> details = context.find(DetailsEnrichment.class);
+        if(!details.isPresent()){
+            String msg = "Could not get details enrichment from context %s.";
+            throw new IllegalStateException(format(msg, context));
+        }
+        details.map(DetailsEnrichment::getTaskDetails)
+               .map(taskDetails -> viewFor(taskDetails, labelId, taskId))
+               .ifPresent(this::addTaskItem);
+        details.map(DetailsEnrichment::getLabelDetails)
+               .ifPresent(this::updateLabelDetails);
     }
 
     private static TaskItem viewFor(TaskDetails taskDetails, LabelId labelId, TaskId taskId) {
