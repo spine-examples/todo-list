@@ -104,7 +104,12 @@ message TaskListView {
     repeated TaskItem items = 1;
 }
 
-// A task that has been deleted as a result of a `TaskDeleted` event.
+// A deleted task.
+//
+// Tasks can be deleted with a result of `DeleteTask` command.
+//
+// Deleted tasks can be restored with a `RestoreDeletedTask` command.
+//
 message DeletedTask {
     option (entity).kind = PROJECTION;
 
