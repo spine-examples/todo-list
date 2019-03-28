@@ -65,10 +65,11 @@ message LabelsListEnrichment {
     LabelIdsList label_ids_list = 1 [(by) = "task_id"];
 }
 
-// Task enrichment for the TaskDratfFinalized event.
+// Task enrichment for the TaskDraftFinalized and TaskDeleted events.
 //
 message TaskEnrichment {
-    option (enrichment_for) = "spine.examples.todolist.TaskDraftFinalized";
+    option (enrichment_for) = "spine.examples.todolist.TaskDraftFinalized,"
+                              "spine.examples.todolist.TaskDeleted";
 
     // A task.
     Task task = 1 [(by) = "task_id"];

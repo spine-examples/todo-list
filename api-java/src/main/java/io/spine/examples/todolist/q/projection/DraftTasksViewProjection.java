@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.q.projection;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.core.Subscribe;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskListId;
@@ -69,12 +70,13 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
      * @throws IllegalArgumentException
      *         if the ID is not of one of the supported types
      */
-    public DraftTasksViewProjection(TaskListId id) {
+    @VisibleForTesting
+    DraftTasksViewProjection(TaskListId id) {
         super(id);
     }
 
     @Subscribe
-    public void on(TaskDraftCreated event) {
+    void on(TaskDraftCreated event) {
         TaskDetails taskDetails = event.getDetails();
         TaskItem taskView = TaskItem
                 .newBuilder()
@@ -94,7 +96,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
     }
 
     @Subscribe
-    public void on(TaskDraftFinalized event) {
+    void on(TaskDraftFinalized event) {
         List<TaskItem> views = new ArrayList<>(builder().getDraftTasks()
                                                         .getItemsList());
         TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
@@ -102,7 +104,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
     }
 
     @Subscribe
-    public void on(TaskDeleted event) {
+    void on(TaskDeleted event) {
         List<TaskItem> views = new ArrayList<>(builder().getDraftTasks()
                                                         .getItemsList());
         TaskListView taskListView = removeViewsByTaskId(views, event.getTaskId());
@@ -110,7 +112,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
     }
 
     @Subscribe
-    public void on(TaskDescriptionUpdated event) {
+    void on(TaskDescriptionUpdated event) {
         List<TaskItem> views = builder().getDraftTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -118,7 +120,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
     }
 
     @Subscribe
-    public void on(TaskPriorityUpdated event) {
+    void on(TaskPriorityUpdated event) {
         List<TaskItem> views = builder().getDraftTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -126,7 +128,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
     }
 
     @Subscribe
-    public void on(TaskDueDateUpdated event) {
+    void on(TaskDueDateUpdated event) {
         List<TaskItem> views = builder().getDraftTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -134,7 +136,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
     }
 
     @Subscribe
-    public void on(LabelAssignedToTask event) {
+    void on(LabelAssignedToTask event) {
         List<TaskItem> views = builder().getDraftTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -142,7 +144,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
     }
 
     @Subscribe
-    public void on(LabelRemovedFromTask event) {
+    void on(LabelRemovedFromTask event) {
         List<TaskItem> views = builder().getDraftTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -150,19 +152,19 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
     }
 
     @Subscribe
-    public void on(LabelDetailsUpdated event) {
+    void on(LabelDetailsUpdated event) {
         List<TaskItem> views = builder().getDraftTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
         updateDraftTasks(updatedList);
     }
 
-    private void updateDraftTasks(List<TaskItem> updatedList) {
+    void updateDraftTasks(List<TaskItem> updatedList) {
         TaskListView taskListView = newTaskListView(updatedList);
         setDraftTasks(taskListView);
     }
 
-    private void setDraftTasks(TaskListView taskListView) {
+    void setDraftTasks(TaskListView taskListView) {
         builder().setId(id())
                  .setDraftTasks(taskListView);
     }
