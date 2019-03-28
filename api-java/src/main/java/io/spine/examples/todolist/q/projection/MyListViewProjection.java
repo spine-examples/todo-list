@@ -88,7 +88,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
                 .setId(event.getId())
                 .setDescription(taskDetails.getDescription())
                 .setPriority(taskDetails.getPriority())
-                .setCompleted(taskDetails.getCompleted())
+                .setStatus(taskDetails.getStatus())
                 .build();
         addTaskItem(taskView);
     }

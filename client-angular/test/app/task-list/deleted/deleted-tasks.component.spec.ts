@@ -18,24 +18,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {MatListModule} from '@angular/material/list';
+import {RouterModule} from '@angular/router';
 
+import {Client} from 'spine-web';
 import {DeletedTasksComponent} from '../../../../src/app/task-list/deleted/deleted-tasks.component';
+import {TaskLinkComponent} from '../../../../src/app/task-list/task-link/task-link.component';
+import {TaskService} from '../../../../src/app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
+import {houseTasks} from '../../given/tasks';
 
 describe('DeletedTasksComponent', () => {
+
   let component: DeletedTasksComponent;
   let fixture: ComponentFixture<DeletedTasksComponent>;
+  const mockClient = mockSpineWebClient();
+  const unsubscribe = jasmine.createSpy();
 
-  beforeEach(async(() => {
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [houseTasks()], [], [], unsubscribe
+  ));
+
+  beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [DeletedTasksComponent]
+      declarations: [DeletedTasksComponent, TaskLinkComponent],
+      imports: [MatListModule, RouterModule],
+      providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
+
+    fixture = TestBed.createComponent(DeletedTasksComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+
+    tick(); // Wait for the fake subscription fetch.
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DeletedTasksComponent);
     component = fixture.componentInstance;
+
     fixture.detectChanges();
   });
 

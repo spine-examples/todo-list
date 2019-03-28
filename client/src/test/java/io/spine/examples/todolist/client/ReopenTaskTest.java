@@ -36,12 +36,12 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.spine.examples.todolist.TaskStatus.COMPLETED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.reopenTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 @DisplayName("After execution of ReopenTask command")
 class ReopenTaskTest extends TodoClientTest {
@@ -63,14 +63,14 @@ class ReopenTaskTest extends TodoClientTest {
         @DisplayName("contain the task view with uncompleted task")
         void containViewWithUncompletedTask() {
             TaskItem view = obtainViewWhenHandledCommandReopenTask(true);
-            assertFalse(view.getCompleted());
+            assertNotSame(COMPLETED, view.getStatus());
         }
 
         @Test
         @DisplayName("contain the task view with completed task when command has wrong ID")
         void containViewWithCompletedTask() {
             TaskItem view = obtainViewWhenHandledCommandReopenTask(false);
-            assertTrue(view.getCompleted());
+            assertEquals(COMPLETED, view.getStatus());
         }
 
         private TaskItem obtainViewWhenHandledCommandReopenTask(boolean isCorrectId) {
@@ -106,14 +106,14 @@ class ReopenTaskTest extends TodoClientTest {
         @DisplayName("contain the task view with uncompleted task")
         void containViewWithUncompletedTask() {
             TaskItem view = obtainTaskItemWhenHandledReopenTask(true);
-            assertFalse(view.getCompleted());
+            assertNotSame(COMPLETED, view.getStatus());
         }
 
         @Test
         @DisplayName("contain the task view with completed task when command has wrong ID")
         void containViewWithCompletedTask() {
             TaskItem view = obtainTaskItemWhenHandledReopenTask(false);
-            assertTrue(view.getCompleted());
+            assertEquals(COMPLETED, view.getStatus());
         }
 
         private TaskItem obtainTaskItemWhenHandledReopenTask(boolean isCorrectId) {
