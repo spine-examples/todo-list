@@ -29,7 +29,7 @@ import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
 import io.spine.examples.todolist.c.events.DeletedTaskRestored;
 import io.spine.examples.todolist.c.events.TaskDeleted;
 import io.spine.server.projection.Projection;
-import io.spine.util.Exceptions.newIllegalStateException
+import io.spine.util.Exceptions.newIllegalStateException;
 
 /**
  * A task that has been deleted.
