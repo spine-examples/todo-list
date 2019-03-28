@@ -70,9 +70,10 @@ class DeletedTaskProjectionTest extends ProjectionTest {
     @DisplayName("receive `TaskDeleted` event and set a respective ID")
     void receiveDelete() {
         taskGotDeleted();
-        boolean projectionCreated = repository.find(taskId)
-                                              .isPresent();
-        assertTrue(projectionCreated);
+        DeletedTaskProjection projection = findProjection();
+        boolean correctId = projection.id()
+                                      .equals(taskId);
+        assertTrue(correctId);
     }
 
     @Test
@@ -80,9 +81,7 @@ class DeletedTaskProjectionTest extends ProjectionTest {
     void receiveRestored() {
         taskGotDeleted();
         taskGotRestored();
-        DeletedTaskProjection projection =
-                repository.find(taskId)
-                          .orElseThrow(DeletedTaskProjectionTest::projectionNotFound);
+        DeletedTaskProjection projection = findProjection();
         assertTrue(projection.isDeleted());
     }
 
@@ -92,10 +91,13 @@ class DeletedTaskProjectionTest extends ProjectionTest {
         taskGotDeleted();
         taskGotRestored();
         taskGotDeleted();
-        DeletedTaskProjection projection =
-                repository.find(taskId)
-                          .orElseThrow(DeletedTaskProjectionTest::projectionNotFound);
+        DeletedTaskProjection projection = findProjection();
         assertFalse(projection.isDeleted());
+    }
+
+    private DeletedTaskProjection findProjection() {
+        return repository.find(taskId)
+                         .orElseThrow(DeletedTaskProjectionTest::projectionNotFound);
     }
 
     private static IllegalStateException projectionNotFound() {

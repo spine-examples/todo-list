@@ -41,10 +41,10 @@ import io.spine.examples.todolist.q.projection.LabelledTasksViewProjection;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.route.EventRoute;
 import io.spine.server.route.EventRouting;
+import io.spine.util.Exceptions.newIllegalStateException;
 
 import java.util.Set;
 
-import static java.lang.String.format;
 import static java.util.Collections.singleton;
 
 /**
@@ -100,7 +100,7 @@ public class LabelledTasksViewRepository
     }
 
     private static IllegalStateException labelIdSetNotFound(EventContext context) {
-        return new IllegalStateException(
-                format("Could not get label ID set from context %s.", context));
+        return newIllegalStateException(
+                "Could not get label ID set from context %s.", context);
     }
 }

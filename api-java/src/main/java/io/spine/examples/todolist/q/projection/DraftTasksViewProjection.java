@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.q.projection;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.core.Subscribe;
 import io.spine.examples.todolist.TaskDetails;
 import io.spine.examples.todolist.TaskListId;
@@ -69,6 +70,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
      * @throws IllegalArgumentException
      *         if the ID is not of one of the supported types
      */
+    @VisibleForTesting
     DraftTasksViewProjection(TaskListId id) {
         super(id);
     }

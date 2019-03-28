@@ -21,7 +21,6 @@
 package io.spine.examples.todolist.q.projection;
 
 import com.google.common.annotations.VisibleForTesting;
-import static io.spine.util.Exceptions.newIllegalStateException;
 import io.spine.core.EventContext;
 import io.spine.core.Subscribe;
 import io.spine.examples.todolist.Task;
@@ -48,7 +47,7 @@ import java.util.List;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskListView;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskItemList;
-import static java.lang.String.format;
+import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
  * A projection state of the finalized tasks.
@@ -175,8 +174,8 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
         Task task = context.find(TaskEnrichment.class)
                            .map(TaskEnrichment::getTask)
                            .orElseThrow(() -> newIllegalStateException(
-                                   format("Could not obtain task enrichment from event context %s.",
-                                          context)));
+                                   "Could not obtain task enrichment from event context %s.",
+                                   context));
 
         TaskItem view = TaskItem
                 .newBuilder()
