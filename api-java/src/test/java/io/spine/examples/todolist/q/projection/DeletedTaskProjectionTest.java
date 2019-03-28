@@ -38,15 +38,17 @@ public class DeletedTaskProjectionTest extends ProjectionTest {
 
     private SingleTenantBlackBoxContext boundedContext;
     private DeletedTaskProjectionRepository repository;
+    private TaskId taskId;
 
     @BeforeEach
     void setUp() {
+        taskId = newTaskId();
         repository = new DeletedTaskProjectionRepository();
         boundedContext = BlackBoxBoundedContext.singleTenant(eventEnricherInstance())
                                                .with(repository);
     }
 
-    private void taskGotDeleted(TaskId taskId) {
+    private void taskGotDeleted() {
         TaskDeleted taskDeleted = TaskDeleted
                 .newBuilder()
                 .setTaskId(taskId)
@@ -54,7 +56,7 @@ public class DeletedTaskProjectionTest extends ProjectionTest {
         boundedContext.receivesEvent(taskDeleted);
     }
 
-    private void taskGotRestored(TaskId taskId) {
+    private void taskGotRestored() {
         DeletedTaskRestored restored = DeletedTaskRestored
                 .newBuilder()
                 .setTaskId(taskId)
@@ -65,9 +67,8 @@ public class DeletedTaskProjectionTest extends ProjectionTest {
     @Test
     @DisplayName("receive `TaskDeleted` event and set a respective ID")
     void receiveAndGetId() {
-        TaskId taskToDelete = newTaskId();
-        taskGotDeleted(taskToDelete);
-        boolean projectionCreated = repository.find(taskToDelete)
+        taskGotDeleted();
+        boolean projectionCreated = repository.find(taskId)
                                               .isPresent();
         assertTrue(projectionCreated);
     }
@@ -75,11 +76,10 @@ public class DeletedTaskProjectionTest extends ProjectionTest {
     @Test
     @DisplayName("receive a `DeletedTaskRestored` event and get deleted")
     void receiveRestored() {
-        TaskId taskToDeleteAndRestore = newTaskId();
-        taskGotDeleted(taskToDeleteAndRestore);
-        taskGotRestored(taskToDeleteAndRestore);
+        taskGotDeleted();
+        taskGotRestored();
         DeletedTaskProjection projection =
-                repository.find(taskToDeleteAndRestore)
+                repository.find(taskId)
                           .orElseThrow(() -> new IllegalStateException(
                                   "Projection could not be found in its repository"));
         assertTrue(projection.isDeleted());

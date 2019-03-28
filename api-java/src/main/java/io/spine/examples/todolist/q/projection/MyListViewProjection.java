@@ -76,7 +76,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
      * @throws IllegalArgumentException
      *         if the ID is not of one of the supported types
      */
-    private MyListViewProjection(TaskListId id) {
+    MyListViewProjection(TaskListId id) {
         super(id);
     }
 
@@ -169,7 +169,6 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
     @Subscribe
     void on(TaskDraftFinalized event, EventContext context) {
         TaskId taskId = event.getTaskId();
-
         Task task = context.find(TaskEnrichment.class)
                            .map(TaskEnrichment::getTask)
                            .orElseThrow(() -> new IllegalStateException(

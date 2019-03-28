@@ -69,7 +69,7 @@ public class DraftTasksViewProjection extends Projection<TaskListId,
      * @throws IllegalArgumentException
      *         if the ID is not of one of the supported types
      */
-    private DraftTasksViewProjection(TaskListId id) {
+    DraftTasksViewProjection(TaskListId id) {
         super(id);
     }
 

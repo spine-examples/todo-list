@@ -35,8 +35,9 @@ public class DeletedTaskProjectionRepository extends ProjectionRepository<TaskId
                                                                           DeletedTaskProjection,
                                                                           DeletedTask> {
 
-    public DeletedTaskProjectionRepository() {
-        super();
+    @Override
+    public void onRegistered() {
+        super.onRegistered();
         rerouteEvents();
     }
 
