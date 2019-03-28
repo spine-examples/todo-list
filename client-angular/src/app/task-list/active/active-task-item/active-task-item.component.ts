@@ -18,22 +18,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 
-import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskService} from '../../task-service/task.service';
-import {TaskListCategoryComponent} from '../task-list-category/task-list-category.component';
+import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskService} from '../../../task-service/task.service';
 
 /**
- * A component displaying deleted tasks view.
+ * The view of a single `Active` task in the list.
  */
 @Component({
-  selector: 'app-deleted-tasks',
-  templateUrl: './deleted-tasks.component.html'
+  selector: 'app-active-task-item',
+  templateUrl: './active-task-item.component.html',
+  styleUrls: ['./active-task-item.component.css']
 })
-export class DeletedTasksComponent extends TaskListCategoryComponent {
+export class ActiveTaskItemComponent {
 
-  constructor(taskService: TaskService) {
-    super(taskService, (task: TaskItem) => task.getStatus() === TaskStatus.DELETED);
+  constructor(readonly taskService: TaskService) {
+  }
+
+  @Input()
+  task: TaskItem;
+
+  /**
+   * Marks this task as `Complete`, changing its status respectively.
+   */
+  completeTask(): void {
+    this.taskService.completeTask(this.task.getId());
+  }
+
+  /**
+   * Deletes this task from the list.
+   */
+  deleteTask(): void {
+    this.taskService.deleteTask(this.task.getId());
   }
 }

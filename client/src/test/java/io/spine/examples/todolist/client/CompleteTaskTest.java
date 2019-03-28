@@ -35,11 +35,11 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static io.spine.examples.todolist.TaskStatus.COMPLETED;
 import static io.spine.examples.todolist.testdata.TestTaskCommandFactory.completeTaskInstance;
 import static io.spine.examples.todolist.testdata.TestTaskLabelsCommandFactory.assignLabelToTaskInstance;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 @DisplayName("After execution of CompleteTask command")
 class CompleteTaskTest extends TodoClientTest {
@@ -61,7 +61,7 @@ class CompleteTaskTest extends TodoClientTest {
         @DisplayName("contain task view marked as completed")
         void obtainLabelledViewWithCompletedTask() {
             TaskItem view = obtainViewWhenHandledCommandCompleteTask(true);
-            assertTrue(view.getCompleted());
+            assertEquals(COMPLETED, view.getStatus());
         }
 
         @Test
@@ -69,7 +69,7 @@ class CompleteTaskTest extends TodoClientTest {
                 "when command has wrong task ID")
         void obtainLabelledViewWithUncompletedTask() {
             TaskItem view = obtainViewWhenHandledCommandCompleteTask(false);
-            assertFalse(view.getCompleted());
+            assertNotSame(COMPLETED, view.getStatus());
         }
 
         private TaskItem obtainViewWhenHandledCommandCompleteTask(boolean isCorrectId) {
@@ -111,14 +111,14 @@ class CompleteTaskTest extends TodoClientTest {
         @DisplayName("contain task view marked as completed")
         void obtainMyListViewWithCompletedTask() {
             TaskItem view = obtainTaskItemWhenHandledCompleteTask(true);
-            assertTrue(view.getCompleted());
+            assertEquals(COMPLETED, view.getStatus());
         }
 
         @Test
         @DisplayName("task view which does not marked as completed when command has wrong task ID")
         void obtainMyListViewWithoutCompletedTask() {
             TaskItem view = obtainTaskItemWhenHandledCompleteTask(false);
-            assertFalse(view.getCompleted());
+            assertNotSame(COMPLETED, view.getStatus());
         }
 
         private TaskItem obtainTaskItemWhenHandledCompleteTask(boolean isCorrectId) {

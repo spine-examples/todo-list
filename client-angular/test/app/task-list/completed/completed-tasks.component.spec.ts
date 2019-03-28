@@ -19,27 +19,53 @@
  */
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {RouterModule} from '@angular/router';
+import {MatListModule} from '@angular/material/list';
+import {By} from '@angular/platform-browser';
+import {RouterTestingModule} from '@angular/router/testing';
 
+import {Client} from 'spine-web';
 import {CompletedTasksComponent} from '../../../../src/app/task-list/completed/completed-tasks.component';
+import {TaskService} from '../../../../src/app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
+import {TaskLinkComponent} from '../../../../src/app/task-list/task-link/task-link.component';
+import {completedTasks} from '../../given/tasks';
 
 describe('CompletedTasksComponent', () => {
-  let component: CompletedTasksComponent;
+
+  const mockClient = mockSpineWebClient();
   let fixture: ComponentFixture<CompletedTasksComponent>;
+  let component: CompletedTasksComponent;
+  const unsubscribe = jasmine.createSpy('unsubscribe');
+
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [completedTasks()], [], [], unsubscribe
+  ));
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [CompletedTasksComponent]
+      declarations: [CompletedTasksComponent, TaskLinkComponent],
+      imports: [MatListModule, RouterModule, RouterTestingModule],
+      providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
-  }));
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(CompletedTasksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should contain completed tasks', async(() => {
+    // The timeout allows the page to fully render before checking the DOM for presence of the
+    // necessary element.
+    fixture.whenStable().then(() => {
+      fixture.detectChanges();
+      const tasks = fixture.debugElement.queryAll(By.css('.list-item'));
+      expect(tasks.length).toBe(2);
+    });
+  }));
 });

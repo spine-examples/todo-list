@@ -1,0 +1,10 @@
+::ng-deep app-task-link {
+  display: flex;
+  flex-grow: 1;
+}
+
+.task-description {
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+}

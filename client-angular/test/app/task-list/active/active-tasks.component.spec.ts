@@ -30,7 +30,7 @@ import {Client, Type} from 'spine-web';
 
 import {ActiveTasksComponent} from '../../../../src/app/task-list/active/active-tasks.component';
 import {TaskService} from '../../../../src/app/task-service/task.service';
-import {TaskItemComponent} from '../../../../src/app/task-list/task-item/task-item.component';
+import {ActiveTaskItemComponent} from '../../../../src/app/task-list/active/active-task-item/active-task-item.component';
 import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {
   HOUSE_TASK_1_DESC,
@@ -41,16 +41,22 @@ import {
 } from '../../given/tasks';
 
 import {MyListView, TaskItem, TaskListView} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskLinkComponent} from '../../../../src/app/task-list/task-link/task-link.component';
 
 describe('ActiveTasksComponent', () => {
   const mockClient = mockSpineWebClient();
+  const unsubscribe = jasmine.createSpy('unsubscribe');
 
   let component: ActiveTasksComponent;
   let fixture: ComponentFixture<ActiveTasksComponent>;
 
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [houseTasks()], [], [], unsubscribe
+  ));
+
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ActiveTasksComponent, TaskItemComponent],
+      declarations: [ActiveTasksComponent, ActiveTaskItemComponent, TaskLinkComponent],
       imports: [
         RouterTestingModule.withRoutes([]),
         ReactiveFormsModule,
@@ -63,17 +69,10 @@ describe('ActiveTasksComponent', () => {
     })
       .compileComponents();
 
-    mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-      [houseTasks()], [], [], jasmine.createSpy('unsubscribe')
-    ));
-
     fixture = TestBed.createComponent(ActiveTasksComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
-
     tick(); // Wait for the fake subscription fetch.
-
-    component.unsubscribe = jasmine.createSpy('unsubscribe');
+    fixture.detectChanges();
   }));
 
   it('should allow basic task creation', () => {
@@ -98,14 +97,9 @@ describe('ActiveTasksComponent', () => {
     expect(component.tasks[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
   });
 
-  it('should call `unsubscribe` method on destroy', () => {
-    component.ngOnDestroy();
-    expect(component.unsubscribe).toHaveBeenCalled();
-  });
-
-  it('should create `app-task-item` for each of the received tasks', () => {
+  it('should create `app-active-task-item` for each of the received tasks', () => {
     fixture.detectChanges();
-    const elements = fixture.nativeElement.getElementsByTagName('app-task-item');
+    const elements = fixture.nativeElement.getElementsByTagName('app-active-task-item');
 
     expect(elements.length).toBe(2);
     expect(elements[0].textContent).toContain(HOUSE_TASK_1_DESC);
