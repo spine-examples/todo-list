@@ -60,8 +60,8 @@ import static io.spine.util.Exceptions.newIllegalStateException;
  */
 @SuppressWarnings("OverlyCoupledClass")
 public class LabelledTasksViewProjection extends Projection<LabelId,
-        LabelledTasksView,
-        LabelledTasksViewVBuilder> {
+                                                            LabelledTasksView,
+                                                            LabelledTasksViewVBuilder> {
 
     /**
      * Creates a new instance.
