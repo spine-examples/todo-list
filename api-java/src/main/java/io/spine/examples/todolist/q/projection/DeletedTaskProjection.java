@@ -29,9 +29,12 @@ import io.spine.examples.todolist.c.enrichments.TaskEnrichment;
 import io.spine.examples.todolist.c.events.DeletedTaskRestored;
 import io.spine.examples.todolist.c.events.TaskDeleted;
 import io.spine.server.projection.Projection;
+import io.spine.util.Exceptions.newIllegalStateException
 
 /**
- * A task that has been as a result of a {@code TaskDeleted} event.
+ * A task that has been deleted.
+ *
+ * <p>Tasks can be deleted with a {@code DeleteTask} command.
  *
  * <p>Deleted task can be restored with a {@code RestoreDeletedTask} command.
  */
@@ -52,14 +55,14 @@ public class DeletedTaskProjection extends Projection<TaskId, DeletedTask, Delet
     @Subscribe
     void on(TaskDeleted deleted, EventContext context) {
         TaskId id = deleted.getTaskId();
-        DeletedTaskVBuilder thisBuilder = builder();
-        thisBuilder.setId(id);
+        DeletedTaskVBuilder builder = builder();
+        builder.setId(id);
         TaskDescription description =
                 context.find(TaskEnrichment.class)
                        .map(TaskEnrichment::getTask)
                        .map(Task::getDescription)
                        .orElseThrow(DeletedTaskProjection::couldNotObtainEnrichment);
-        thisBuilder.setDescription(description);
+        builder.setDescription(description);
     }
 
     @Subscribe
@@ -68,7 +71,7 @@ public class DeletedTaskProjection extends Projection<TaskId, DeletedTask, Delet
     }
 
     private static IllegalStateException couldNotObtainEnrichment() {
-        return new IllegalStateException(
+        return newIllegalStateException(
                 "Could not obtain task enrichment from the context of `TaskDeleted` event.");
     }
 }

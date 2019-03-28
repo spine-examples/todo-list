@@ -20,6 +20,8 @@
 
 package io.spine.examples.todolist.q.projection;
 
+import com.google.common.annotations.VisibleForTesting;
+import static io.spine.util.Exceptions.newIllegalStateException;
 import io.spine.core.EventContext;
 import io.spine.core.Subscribe;
 import io.spine.examples.todolist.Task;
@@ -76,6 +78,7 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
      * @throws IllegalArgumentException
      *         if the ID is not of one of the supported types
      */
+    @VisibleForTesting
     MyListViewProjection(TaskListId id) {
         super(id);
     }
@@ -171,9 +174,10 @@ public class MyListViewProjection extends Projection<TaskListId, MyListView, MyL
         TaskId taskId = event.getTaskId();
         Task task = context.find(TaskEnrichment.class)
                            .map(TaskEnrichment::getTask)
-                           .orElseThrow(() -> new IllegalStateException(
+                           .orElseThrow(() -> newIllegalStateException(
                                    format("Could not obtain task enrichment from event context %s.",
                                           context)));
+
         TaskItem view = TaskItem
                 .newBuilder()
                 .setId(taskId)

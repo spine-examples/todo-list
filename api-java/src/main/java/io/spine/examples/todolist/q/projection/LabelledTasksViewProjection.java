@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.q.projection;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.core.EventContext;
 import io.spine.core.Subscribe;
 import io.spine.examples.todolist.LabelColor;
@@ -39,6 +40,7 @@ import io.spine.examples.todolist.c.events.TaskDueDateUpdated;
 import io.spine.examples.todolist.c.events.TaskPriorityUpdated;
 import io.spine.examples.todolist.c.events.TaskReopened;
 import io.spine.server.projection.Projection;
+import io.spine.util.Exceptions.newIllegalStateException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +51,6 @@ import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskLi
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByLabelId;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskItemList;
-import static java.lang.String.format;
 
 /**
  * A projection state of the created tasks marked with a certain label.
@@ -70,6 +71,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
      * @throws IllegalArgumentException
      *         if the ID is not of one of the supported types
      */
+    @VisibleForTesting
     LabelledTasksViewProjection(LabelId id) {
         super(id);
     }
@@ -103,6 +105,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
 
     @Subscribe
     void on(TaskDeleted event) {
+        setDeleted(false);
         List<TaskItem> views = new ArrayList<>(builder().getLabelledTasks()
                                                         .getItemsList());
         TaskListView updatedView = removeViewsByTaskId(views, event.getTaskId());
@@ -169,9 +172,9 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
                                                   EventContext context) {
         builder().setId(labelId);
         Optional<DetailsEnrichment> details = context.find(DetailsEnrichment.class);
-        if(!details.isPresent()){
+        if (!details.isPresent()) {
             String msg = "Could not get details enrichment from context %s.";
-            throw new IllegalStateException(format(msg, context));
+            throw newIllegalStateException(msg, context);
         }
         details.map(DetailsEnrichment::getTaskDetails)
                .map(taskDetails -> viewFor(taskDetails, labelId, taskId))

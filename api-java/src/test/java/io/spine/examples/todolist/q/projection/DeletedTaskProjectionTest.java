@@ -31,10 +31,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static io.spine.examples.todolist.testdata.TestEventEnricherFactory.eventEnricherInstance;
+import static io.spine.util.Exceptions.newIllegalStateException;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DisplayName("Deleted task projection should")
-public class DeletedTaskProjectionTest extends ProjectionTest {
+class DeletedTaskProjectionTest extends ProjectionTest {
 
     private SingleTenantBlackBoxContext boundedContext;
     private DeletedTaskProjectionRepository repository;
@@ -66,7 +68,7 @@ public class DeletedTaskProjectionTest extends ProjectionTest {
 
     @Test
     @DisplayName("receive `TaskDeleted` event and set a respective ID")
-    void receiveAndGetId() {
+    void receiveDelete() {
         taskGotDeleted();
         boolean projectionCreated = repository.find(taskId)
                                               .isPresent();
@@ -80,8 +82,7 @@ public class DeletedTaskProjectionTest extends ProjectionTest {
         taskGotRestored();
         DeletedTaskProjection projection =
                 repository.find(taskId)
-                          .orElseThrow(() -> new IllegalStateException(
-                                  "Projection could not be found in its repository"));
+                          .orElseThrow(DeletedTaskProjectionTest::projectionNotFound);
         assertTrue(projection.isDeleted());
     }
 }
