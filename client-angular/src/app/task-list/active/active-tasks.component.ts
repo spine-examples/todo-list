@@ -23,7 +23,6 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from '../../task-service/task.service';
 import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {TaskListCategoryComponent} from '../task-list-category/task-list-category.component';
 
 /**

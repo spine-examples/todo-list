@@ -33,7 +33,6 @@ import {
 } from '../given/tasks';
 
 import {CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
-import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 
 describe('TaskService', () => {
   const mockClient = mockSpineWebClient();
@@ -84,20 +83,6 @@ describe('TaskService', () => {
       expect(fetchedTasks[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
     });
   });
-
-  it('should log and then rethrow error if subscription fails', fakeAsync(() => {
-    const errorMessage = 'Subscription failed';
-    mockClient.subscribeToEntities.and.returnValue(Promise.reject(errorMessage));
-    console.log = jasmine.createSpy('log');
-    service.tasks$.toPromise()
-      .then(() => fail('Subscription promise should have failed'))
-      .catch(err => {
-        expect(console.log).toHaveBeenCalledWith(
-          'Cannot subscribe to entities of type (`%s`): %s', MyListView.typeUrl(), errorMessage
-        );
-        expect(err).toBe(errorMessage);
-      });
-  }));
 
   it('should fetch a single task view by ID', fakeAsync(() => {
     const theTask = houseTask();
