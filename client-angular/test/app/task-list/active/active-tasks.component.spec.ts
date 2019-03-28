@@ -27,7 +27,6 @@ import {MatIconModule} from '@angular/material/icon';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {By} from '@angular/platform-browser';
 import {Client, Type} from 'spine-web';
-import {Subscription} from 'rxjs';
 
 import {ActiveTasksComponent} from '../../../../src/app/task-list/active/active-tasks.component';
 import {TaskService} from '../../../../src/app/task-service/task.service';
@@ -98,16 +97,9 @@ describe('ActiveTasksComponent', () => {
     expect(component.tasks[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
   });
 
-  it('should unsubscribe from tasks `Observable` on destroy', () => {
-    component.taskSubscription =
-      jasmine.createSpyObj<Subscription>('Subscription', ['unsubscribe']);
-    component.ngOnDestroy();
-    expect(component.taskSubscription.unsubscribe).toHaveBeenCalled();
-  });
-
-  it('should create `app-task-item` for each of the received tasks', () => {
+  it('should create `app-active-task-item` for each of the received tasks', () => {
     fixture.detectChanges();
-    const elements = fixture.nativeElement.getElementsByTagName('app-task-item');
+    const elements = fixture.nativeElement.getElementsByTagName('app-active-task-item');
 
     expect(elements.length).toBe(2);
     expect(elements[0].textContent).toContain(HOUSE_TASK_1_DESC);

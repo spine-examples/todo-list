@@ -18,10 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 
 import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../task-service/task.service';
+import {TaskListCategoryComponent} from '../task-list-category/task-list-category.component';
 
 /**
  * A component displaying deleted tasks view.
@@ -30,18 +31,9 @@ import {TaskService} from '../../task-service/task.service';
   selector: 'app-deleted-tasks',
   templateUrl: './deleted-tasks.component.html'
 })
-export class DeletedTasksComponent implements OnInit, OnDestroy {
+export class DeletedTasksComponent extends TaskListCategoryComponent {
 
-  private tasks: TaskItem[];
-
-  constructor(private readonly taskService: TaskService) {
-  }
-
-  ngOnDestroy(): void {
-    this.taskService.unsubscribe();
-  }
-
-  ngOnInit(): void {
-    this.tasks = this.taskService.tasks.getValue().filter(task => task.getStatus() === TaskStatus.DELETED);
+  constructor(taskService: TaskService) {
+    super(taskService, (task: TaskItem) => task.getStatus() === TaskStatus.DELETED);
   }
 }

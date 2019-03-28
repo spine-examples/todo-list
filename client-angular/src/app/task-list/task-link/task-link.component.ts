@@ -21,18 +21,14 @@
 import {Component, Input} from '@angular/core';
 
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskService} from '../../task-service/task.service';
 
 
 @Component({
-  selector: 'app-task-display',
+  selector: 'app-task-link',
   templateUrl: './task-link.component.html',
   styleUrls: ['./task-link.component.css']
 })
 export class TaskLinkComponent {
-
-  constructor(readonly service: TaskService) {
-  }
 
   @Input()
   task: TaskItem;

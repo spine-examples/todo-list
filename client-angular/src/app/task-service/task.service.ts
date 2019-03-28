@@ -18,9 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Injectable} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {Client, Type} from 'spine-web';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 import {TaskServiceModule} from './task-service.module';
 import {UuidGenerator} from '../uuid-generator/uuid-generator';
@@ -37,31 +37,15 @@ import {TaskStatus} from 'generated/main/js/todolist/attributes_pb';
 @Injectable({
   providedIn: TaskServiceModule,
 })
-export class TaskService {
+export class TaskService implements OnDestroy {
 
-  private readonly _tasks: BehaviorSubject<TaskItem[]> = new BehaviorSubject<TaskItem[]>([]);
+  private _tasks$: BehaviorSubject<TaskItem[]>;
   private _unsubscribe: () => void;
 
   /**
    * @param spineWebClient a client for accessing Spine backend
    */
   constructor(private readonly spineWebClient: Client) {
-    this.subscribeToTasks()
-      .then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
-  }
-
-  /**
-   * Obtains a current view of tasks.
-   */
-  get tasks(): BehaviorSubject<TaskItem[]> {
-    return this._tasks;
-  }
-
-  /**
-   * Obtains a function to unsubscribe from changes to the view of the task list.
-   */
-  get unsubscribe(): () => void {
-    return this._unsubscribe;
   }
 
   /** Visible for testing. */
@@ -75,15 +59,40 @@ export class TaskService {
   }
 
   /**
+   * Obtains an `Observable` of tasks all tasks in the list.
+   */
+  get tasks$(): Observable<TaskItem[]> {
+    this.assureTasksInitialized();
+    return this._tasks$.asObservable();
+  }
+
+  /**
+   * Obtains the current value of the task list.
+   */
+  get tasks(): TaskItem[] {
+    this.assureTasksInitialized();
+    return this._tasks$.getValue();
+  }
+
+  /**
+   * Makes sure that array of tasks is initialized.
+   */
+  private assureTasksInitialized() {
+    if (!this._tasks$) {
+      this._tasks$ = new BehaviorSubject<TaskItem[]>([]);
+      this.subscribeToTasks()
+        .then((unsubscribeFn) => this._unsubscribe = unsubscribeFn);
+    }
+  }
+
+  /**
    * Deletes the task with the specified ID.
    *
    * @param taskId ID of the task to delete.
    */
-  deleteTask(taskId: string): void {
+  deleteTask(taskId: TaskId): void {
     const cmd = new DeleteTask();
-    const id = new TaskId();
-    id.setValue(taskId);
-    cmd.setId(id);
+    cmd.setId(taskId);
     this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
   }
 
@@ -92,11 +101,9 @@ export class TaskService {
    *
    * @param taskId ID of the task to complete
    */
-  completeTask(taskId: string): void {
+  completeTask(taskId: TaskId): void {
     const cmd = new CompleteTask();
-    const id = new TaskId();
-    id.setValue(taskId);
-    cmd.setId(id);
+    cmd.setId(taskId);
     this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
   }
 
@@ -137,7 +144,8 @@ export class TaskService {
   }
 
   /**
-   * Subscribes to the active tasks and reflects them to a given array.
+   * Subscribes to the active tasks and reflects them to the array stored in this instance of the
+   * task service.
    *
    * Active tasks are those which are not in draft state, completed, or deleted.
    *
@@ -149,11 +157,11 @@ export class TaskService {
    *
    * @returns a `Promise` which resolves to an `unsubscribe` function
    */
-  subscribeToTasks(): Promise<() => void> {
+  private subscribeToTasks(): Promise<() => void> {
     const refreshTasks = {
       next: (view: MyListView): void => {
         const taskItems: TaskItem[] = view.getMyList().getItemsList();
-        this._tasks.next(taskItems);
+        this._tasks$.next(taskItems);
       }
     };
     const type = Type.forClass(MyListView);
@@ -173,5 +181,11 @@ export class TaskService {
           reject(err);
         })
     );
+  }
+
+  ngOnDestroy(): void {
+    if (this._unsubscribe) {
+      this._unsubscribe();
+    }
   }
 }
