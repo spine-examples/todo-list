@@ -41,10 +41,10 @@ import io.spine.examples.todolist.q.projection.LabelledTasksViewProjection;
 import io.spine.server.projection.ProjectionRepository;
 import io.spine.server.route.EventRoute;
 import io.spine.server.route.EventRouting;
-import io.spine.util.Exceptions.newIllegalStateException;
 
 import java.util.Set;
 
+import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.util.Collections.singleton;
 
 /**
