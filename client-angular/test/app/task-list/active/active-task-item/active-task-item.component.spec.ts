@@ -21,28 +21,40 @@
 import {Component, ViewChild} from '@angular/core';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
+import {MatIconModule} from '@angular/material/icon';
+import {By} from '@angular/platform-browser';
 
-import {TaskItemComponent} from '../../../../src/app/task-list/task-item/task-item.component';
-import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, task} from '../../given/tasks';
+import {ActiveTaskItemComponent} from '../../../../../src/app/task-list/active/active-task-item/active-task-item.component';
+import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, task} from '../../../given/tasks';
 
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskService} from '../../../../../src/app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from '../../../given/mock-spine-web-client';
+import {Client} from 'spine-web';
+import {TaskLinkComponent} from '../../../../../src/app/task-list/task-link/task-link.component';
 
-describe('TaskItemComponent', () => {
+describe('ActiveTaskItemComponent', () => {
   const taskItem = task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
 
-  let component: TaskItemComponent;
-  let fixture: ComponentFixture<TaskItemComponent>;
+  const mockClient = mockSpineWebClient();
+  let component: ActiveTaskItemComponent;
+  let fixture: ComponentFixture<ActiveTaskItemComponent>;
+
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [], [], [], jasmine.createSpy('unsubscribe')
+  ));
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TaskItemComponent, TestHostComponent],
-      imports: [RouterTestingModule.withRoutes([])]
+      declarations: [ActiveTaskItemComponent, TestHostComponent, TaskLinkComponent],
+      imports: [RouterTestingModule.withRoutes([]), MatIconModule],
+      providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TaskItemComponent);
+    fixture = TestBed.createComponent(ActiveTaskItemComponent);
     component = fixture.componentInstance;
     component.task = taskItem;
     fixture.detectChanges();
@@ -59,15 +71,17 @@ describe('TaskItemComponent', () => {
   });
 
   it('should allow to complete task', () => {
-    window.alert = jasmine.createSpy('alert');
-    component.completeTask();
-    expect(window.alert).toHaveBeenCalledWith(`Completing task with ID: ${HOUSE_TASK_1_ID}`);
+    const completeTaskMethod = spyOn(component.taskService, 'completeTask');
+    const completeButton = fixture.debugElement.query(By.css('.complete-task-button')).nativeElement;
+    completeButton.click();
+    expect(completeTaskMethod).toHaveBeenCalledTimes(1);
   });
 
   it('should allow to delete task', () => {
-    window.alert = jasmine.createSpy('alert');
-    component.deleteTask();
-    expect(window.alert).toHaveBeenCalledWith(`Deleting task with ID: ${HOUSE_TASK_1_ID}`);
+    const completeTaskMethod = spyOn(component.taskService, 'deleteTask');
+    const deleteButton = fixture.debugElement.query(By.css('.delete-task-button')).nativeElement;
+    deleteButton.click();
+    expect(completeTaskMethod).toHaveBeenCalledTimes(1);
   });
 
   it('should receive task item injected by the host component', () => {
@@ -80,12 +94,12 @@ describe('TaskItemComponent', () => {
   @Component({
     selector: `host-component`,
     template: `
-      <app-task-item [task]="task"></app-task-item>`
+      <app-active-task-item [task]="task"></app-active-task-item>`
   })
   class TestHostComponent {
 
-    @ViewChild(TaskItemComponent)
-    private taskItemComponent: TaskItemComponent;
+    @ViewChild(ActiveTaskItemComponent)
+    private taskItemComponent: ActiveTaskItemComponent;
 
     private readonly task: TaskItem = taskItem;
 

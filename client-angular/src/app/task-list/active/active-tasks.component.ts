@@ -18,10 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from '../../task-service/task.service';
-import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskDescription} from 'generated/main/js/todolist/values_pb';
+import {TaskListCategoryComponent} from '../task-list-category/task-list-category.component';
 
 /**
  * A component displaying active tasks, i.e. those which are not completed, deleted, or in draft
@@ -29,28 +32,28 @@ import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
  */
 @Component({
   selector: 'app-active-tasks',
-  templateUrl: './active-tasks.component.html'
+  templateUrl: './active-tasks.component.html',
+  styleUrls: ['./active-tasks.component.css']
 })
-export class ActiveTasksComponent implements OnInit, OnDestroy {
+export class ActiveTasksComponent extends TaskListCategoryComponent {
 
-  private unsubscribe: () => void;
+  private createBasicTaskForms: FormGroup;
 
-  /** Visible for testing. */
-  readonly tasks: TaskItem[] = [];
-
-  constructor(private readonly taskService: TaskService) {
+  constructor(taskService: TaskService, private formBuilder: FormBuilder) {
+    super(taskService, (task: TaskItem) => task.getStatus() === TaskStatus.OPEN);
+    this.createBasicTaskForms = formBuilder.group({
+      taskDescription: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
+    });
   }
 
-  ngOnInit(): void {
-    this.taskService.subscribeToActive(this.tasks)
-      .then(unsubscribe => this.unsubscribe = unsubscribe);
-  }
-
-  ngOnDestroy(): void {
-    // TODO:2019-03-12:dmytro.kuzmin: Handle the cases of component being destroyed before the
-    // todo subscription process is finished.
-    if (this.unsubscribe) {
-      this.unsubscribe();
-    }
+  /**
+   * Sends a command to create a basic task, i.e. a task without label, due date, and with a
+   * `Normal` priority.
+   *
+   * See `commands.proto#CreateBasicTask` in the `model` module.
+   * @param taskDescription desired description of the task.
+   */
+  private createBasicTask(taskDescription: string): void {
+    this.taskService.createBasicTask(taskDescription);
   }
 }

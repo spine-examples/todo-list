@@ -22,6 +22,10 @@ import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
+import {MatInputModule} from '@angular/material';
+import {ReactiveFormsModule} from '@angular/forms';
+import {MatButtonModule} from '@angular/material/button';
+import {MatIconModule} from '@angular/material/icon';
 
 import {TaskListComponent} from './task-list.component';
 import {ActiveTasksComponent} from './active/active-tasks.component';
@@ -30,26 +34,40 @@ import {DeletedTasksComponent} from './deleted/deleted-tasks.component';
 import {DraftsComponent} from './drafts/drafts.component';
 import {TaskListRoutingModule} from './task-list.routes';
 import {TaskServiceModule} from '../task-service/task-service.module';
-import {TaskItemComponent} from './task-item/task-item.component';
+import {ActiveTaskItemComponent} from './active/active-task-item/active-task-item.component';
+import {TaskLinkComponent} from './task-link/task-link.component';
+import {TaskListCategoryComponent} from './task-list-category/task-list-category.component';
 
 /**
  * The module which displays the task list.
  */
 @NgModule({
   declarations: [
+    TaskLinkComponent,
     TaskListComponent,
-    TaskItemComponent,
+    ActiveTaskItemComponent,
     ActiveTasksComponent,
     CompletedTasksComponent,
     DeletedTasksComponent,
-    DraftsComponent
+    DraftsComponent,
+    TaskListCategoryComponent
   ],
   imports: [
     TaskListRoutingModule,
     CommonModule,
     TaskServiceModule,
     MatSidenavModule,
-    MatListModule
+    MatListModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatIconModule
+  ],
+  exports: [
+    MatInputModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatIconModule
   ]
 })
 export class TaskListModule {

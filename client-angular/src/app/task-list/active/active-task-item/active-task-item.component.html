@@ -18,6 +18,12 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<a routerLink="/details/{{task.getId()}}">{{task.getDescription()}}</a>
-<button (click)="completeTask()">Complete</button>
-<button (click)="deleteTask()">X</button>
+<button mat-icon-button class="delete-task-button"
+        (click)="deleteTask(); $event.stopPropagation();">
+    <mat-icon>delete</mat-icon>
+</button>
+<button mat-icon-button class="complete-task-button"
+        (click)="completeTask(); $event.stopPropagation();">
+    <mat-icon>done</mat-icon>
+</button>
+<app-task-link [(task)]="task"></app-task-link>

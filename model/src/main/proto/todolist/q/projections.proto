@@ -126,9 +126,5 @@ message TaskItem {
     // The due date for the task.
     google.protobuf.Timestamp due_date = 6;
 
-    // Reserved for future extension.
-    reserved 7 to 20;
-
-    // Whether the task is completed.
-    bool completed = 21;
+    TaskStatus status = 7;
 }

@@ -20,12 +20,17 @@
 
 import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
-
+import {ReactiveFormsModule} from '@angular/forms';
+import {MatInputModule} from '@angular/material';
+import {MatListModule} from '@angular/material/list';
+import {MatIconModule} from '@angular/material/icon';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {By} from '@angular/platform-browser';
 import {Client, Type} from 'spine-web';
 
 import {ActiveTasksComponent} from '../../../../src/app/task-list/active/active-tasks.component';
 import {TaskService} from '../../../../src/app/task-service/task.service';
-import {TaskItemComponent} from '../../../../src/app/task-list/task-item/task-item.component';
+import {ActiveTaskItemComponent} from '../../../../src/app/task-list/active/active-task-item/active-task-item.component';
 import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
 import {
   HOUSE_TASK_1_DESC,
@@ -36,33 +41,50 @@ import {
 } from '../../given/tasks';
 
 import {MyListView, TaskItem, TaskListView} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskLinkComponent} from '../../../../src/app/task-list/task-link/task-link.component';
 
 describe('ActiveTasksComponent', () => {
   const mockClient = mockSpineWebClient();
+  const unsubscribe = jasmine.createSpy('unsubscribe');
 
   let component: ActiveTasksComponent;
   let fixture: ComponentFixture<ActiveTasksComponent>;
 
-  const unsubscribe = jasmine.createSpy();
+  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
+    [houseTasks()], [], [], unsubscribe
+  ));
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ActiveTasksComponent, TaskItemComponent],
-      imports: [RouterTestingModule.withRoutes([])],
+      declarations: [ActiveTasksComponent, ActiveTaskItemComponent, TaskLinkComponent],
+      imports: [
+        RouterTestingModule.withRoutes([]),
+        ReactiveFormsModule,
+        MatInputModule,
+        MatListModule,
+        MatIconModule,
+        BrowserAnimationsModule
+      ],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();
 
-    mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-      [houseTasks()], [], [], unsubscribe
-    ));
-
     fixture = TestBed.createComponent(ActiveTasksComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
-
     tick(); // Wait for the fake subscription fetch.
+    fixture.detectChanges();
   }));
+
+  it('should allow basic task creation', () => {
+    const method = spyOn<any>(component, 'createBasicTask');
+    const input = fixture.debugElement.query(By.css('.task-description-textarea')).nativeElement;
+    input.value = 'Some basic task text';
+    const keyPressed = new KeyboardEvent('keydown', {
+      key: 'Enter'
+    });
+    input.dispatchEvent(keyPressed);
+    expect(method).toHaveBeenCalledTimes(1);
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -75,14 +97,9 @@ describe('ActiveTasksComponent', () => {
     expect(component.tasks[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
   });
 
-  it('should call `unsubscribe` method on destroy', () => {
-    component.ngOnDestroy();
-    expect(unsubscribe).toHaveBeenCalled();
-  });
-
-  it('should create `app-task-item` for each of the received tasks', () => {
+  it('should create `app-active-task-item` for each of the received tasks', () => {
     fixture.detectChanges();
-    const elements = fixture.nativeElement.getElementsByTagName('app-task-item');
+    const elements = fixture.nativeElement.getElementsByTagName('app-active-task-item');
 
     expect(elements.length).toBe(2);
     expect(elements[0].textContent).toContain(HOUSE_TASK_1_DESC);

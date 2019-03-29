@@ -18,10 +18,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.task-list-container {
-  height: 100vh;
-}
+import {Component, Input} from '@angular/core';
 
-.task-list-content {
-  padding: 25px 0 0 50px;
+import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskService} from '../../../task-service/task.service';
+
+/**
+ * The view of a single `Active` task in the list.
+ */
+@Component({
+  selector: 'app-active-task-item',
+  templateUrl: './active-task-item.component.html',
+  styleUrls: ['./active-task-item.component.css']
+})
+export class ActiveTaskItemComponent {
+
+  constructor(readonly taskService: TaskService) {
+  }
+
+  @Input()
+  task: TaskItem;
+
+  /**
+   * Marks this task as `Complete`, changing its status respectively.
+   */
+  completeTask(): void {
+    this.taskService.completeTask(this.task.getId());
+  }
+
+  /**
+   * Deletes this task from the list.
+   */
+  deleteTask(): void {
+    this.taskService.deleteTask(this.task.getId());
+  }
 }

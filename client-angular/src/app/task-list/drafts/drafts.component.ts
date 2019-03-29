@@ -29,5 +29,6 @@ import {Component} from '@angular/core';
 })
 export class DraftsComponent {
 
-  constructor() { }
+  constructor() {
+  }
 }

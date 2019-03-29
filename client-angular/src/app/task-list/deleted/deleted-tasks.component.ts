@@ -20,6 +20,10 @@
 
 import {Component} from '@angular/core';
 
+import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskService} from '../../task-service/task.service';
+import {TaskListCategoryComponent} from '../task-list-category/task-list-category.component';
+
 /**
  * A component displaying deleted tasks view.
  */
@@ -27,7 +31,9 @@ import {Component} from '@angular/core';
   selector: 'app-deleted-tasks',
   templateUrl: './deleted-tasks.component.html'
 })
-export class DeletedTasksComponent {
+export class DeletedTasksComponent extends TaskListCategoryComponent {
 
-  constructor() { }
+  constructor(taskService: TaskService) {
+    super(taskService, (task: TaskItem) => task.getStatus() === TaskStatus.DELETED);
+  }
 }
