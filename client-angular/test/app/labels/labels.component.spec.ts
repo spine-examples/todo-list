@@ -22,7 +22,11 @@ import {Location} from '@angular/common';
 import {async, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
-import {LabelsComponent} from 'app/labels/labels.component';
+import {Client} from 'spine-web';
+
+import {LabelsComponent} from '../../../src/app/labels/labels.component';
+import {LabelService} from '../../../src/app/labels/label.service';
+import {mockSpineWebClient} from '../given/mock-spine-web-client';
 
 describe('LabelsComponent', () => {
   let component: LabelsComponent;
@@ -30,7 +34,8 @@ describe('LabelsComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [LabelsComponent],
-      imports: [RouterTestingModule.withRoutes([])]
+      imports: [RouterTestingModule.withRoutes([])],
+      providers: [LabelService, {provide: Client, useValue: mockSpineWebClient()}]
     })
       .compileComponents();
   }));

@@ -21,11 +21,11 @@
 import {CommonModule} from '@angular/common';
 import {NgModule} from '@angular/core';
 import {MatSidenavModule} from '@angular/material/sidenav';
-import {MatListModule} from '@angular/material/list';
-import {MatInputModule} from '@angular/material';
 import {ReactiveFormsModule} from '@angular/forms';
+import {MatInputModule} from '@angular/material';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
+import {MatListModule} from '@angular/material/list';
 
 import {TaskListComponent} from 'app/task-list/task-list.component';
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';

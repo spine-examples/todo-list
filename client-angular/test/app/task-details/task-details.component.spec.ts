@@ -29,13 +29,13 @@ describe('TaskDetailsComponent', () => {
   let component: TaskDetailsComponent;
 
   const ID = 'test-task-ID';
-  const activateRoute = {snapshot: {paramMap: convertToParamMap({id: ID})}};
+  const activatedRoute = {snapshot: {paramMap: convertToParamMap({id: ID})}};
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TaskDetailsComponent],
       imports: [RouterTestingModule.withRoutes([])],
-      providers: [{provide: ActivatedRoute, useValue: activateRoute}]
+      providers: [{provide: ActivatedRoute, useValue: activatedRoute}]
     })
       .compileComponents();
   }));

@@ -20,21 +20,21 @@
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {Page404Component} from 'app/page-404/page-404.component';
+import {Page404} from '../../../src/app/page-404/page-404.component';
 
-describe('Page404Component', () => {
-  let component: Page404Component;
-  let fixture: ComponentFixture<Page404Component>;
+describe('Page404', () => {
+  let component: Page404;
+  let fixture: ComponentFixture<Page404>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [Page404Component]
+      declarations: [Page404]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(Page404Component);
+    fixture = TestBed.createComponent(Page404);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

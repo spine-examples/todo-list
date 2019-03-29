@@ -20,16 +20,18 @@
 
 import {NgModule} from '@angular/core';
 
-import {LabelsComponent} from 'app/labels/labels.component';
-import {LabelsRoutingModule} from 'app/labels/labels.routes';
-import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provider.module';
+import {LabelsComponent} from './labels.component';
+import {LabelsRoutingModule} from './labels.routes';
+import {LabelService} from './label.service';
+import {SpineClientProvider} from '../spine-client-provider/spine-client-provider.module';
 
 /**
  * The module responsible for displaying and managing the task labels.
  */
 @NgModule({
   declarations: [LabelsComponent],
-  imports: [LabelsRoutingModule, SpineClientProvider]
+  imports: [LabelsRoutingModule, SpineClientProvider],
+  providers: [LabelService]
 })
 export class LabelsModule {
 }

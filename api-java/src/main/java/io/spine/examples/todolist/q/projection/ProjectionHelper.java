@@ -247,12 +247,8 @@ final class ProjectionHelper {
         TaskId targetTaskId = event.getTaskId();
 
         TaskTransformation updateFn = builder -> {
-            String newDescriptionValue = event.getDescriptionChange()
-                                              .getNewValue();
-            TaskDescription newDescription = TaskDescription
-                    .newBuilder()
-                    .setValue(newDescriptionValue)
-                    .build();
+            TaskDescription newDescription = event.getDescriptionChange()
+                                                  .getNewValue();
             return builder.setDescription(newDescription);
         };
         return transformWithUpdate(tasks, targetTaskId, updateFn);

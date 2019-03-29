@@ -22,13 +22,16 @@ package io.spine.examples.todolist.context;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.spine.core.BoundedContextNames;
+import io.spine.examples.todolist.repository.DeletedTaskProjectionRepository;
 import io.spine.examples.todolist.repository.DraftTasksViewRepository;
 import io.spine.examples.todolist.repository.LabelAggregateRepository;
+import io.spine.examples.todolist.repository.LabelViewRepository;
 import io.spine.examples.todolist.repository.LabelledTasksViewRepository;
 import io.spine.examples.todolist.repository.MyListViewRepository;
 import io.spine.examples.todolist.repository.TaskCreationWizardRepository;
 import io.spine.examples.todolist.repository.TaskLabelsRepository;
 import io.spine.examples.todolist.repository.TaskRepository;
+import io.spine.examples.todolist.repository.TaskViewRepository;
 import io.spine.server.BoundedContext;
 import io.spine.server.enrich.Enricher;
 import io.spine.server.event.EventBus;
@@ -85,6 +88,9 @@ public final class BoundedContexts {
         MyListViewRepository myListViewRepo = new MyListViewRepository();
         LabelledTasksViewRepository tasksViewRepo = new LabelledTasksViewRepository();
         DraftTasksViewRepository draftTasksViewRepo = new DraftTasksViewRepository();
+        DeletedTaskProjectionRepository deletedTasksRepo = new DeletedTaskProjectionRepository();
+        TaskViewRepository taskViewRepository = new TaskViewRepository();
+        LabelViewRepository labelViewRepository = new LabelViewRepository();
 
         TaskCreationWizardRepository taskCreationRepo = new TaskCreationWizardRepository();
 
@@ -100,7 +106,10 @@ public final class BoundedContexts {
         boundedContext.register(myListViewRepo);
         boundedContext.register(tasksViewRepo);
         boundedContext.register(draftTasksViewRepo);
+        boundedContext.register(taskViewRepository);
+        boundedContext.register(labelViewRepository);
         boundedContext.register(taskCreationRepo);
+        boundedContext.register(deletedTasksRepo);
 
         return boundedContext;
     }

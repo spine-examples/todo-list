@@ -22,10 +22,10 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Client} from 'spine-web';
 
-import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
-import {TaskService} from 'app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
-import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, task} from 'test/given/tasks';
+import {TaskLinkComponent} from '../../../../src/app/task-list/task-link/task-link.component';
+import {TaskService} from '../../../../src/app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
+import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, houseTasks, taskItem} from '../../given/tasks';
 
 describe('TaskLinkComponent', () => {
 
@@ -47,10 +47,10 @@ describe('TaskLinkComponent', () => {
   }));
 
   beforeEach(() => {
-    const taskItem = task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
+    const theTaskItem = taskItem(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
     fixture = TestBed.createComponent(TaskLinkComponent);
     component = fixture.componentInstance;
-    component.task = taskItem;
+    component.task = theTaskItem;
     fixture.detectChanges();
   });
 

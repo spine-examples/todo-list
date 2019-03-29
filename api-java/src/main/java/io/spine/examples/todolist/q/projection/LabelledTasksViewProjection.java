@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.q.projection;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.spine.core.EventContext;
 import io.spine.core.Subscribe;
 import io.spine.examples.todolist.LabelColor;
@@ -42,13 +43,14 @@ import io.spine.server.projection.Projection;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static io.spine.examples.todolist.EnrichmentHelper.getEnrichment;
 import static io.spine.examples.todolist.q.projection.LabelColorView.valueOf;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.newTaskListView;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByLabelId;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.removeViewsByTaskId;
 import static io.spine.examples.todolist.q.projection.ProjectionHelper.updateTaskItemList;
+import static io.spine.util.Exceptions.newIllegalStateException;
 
 /**
  * A projection state of the created tasks marked with a certain label.
@@ -69,26 +71,27 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
      * @throws IllegalArgumentException
      *         if the ID is not of one of the supported types
      */
-    public LabelledTasksViewProjection(LabelId id) {
+    @VisibleForTesting
+    LabelledTasksViewProjection(LabelId id) {
         super(id);
     }
 
     @Subscribe
-    public void on(LabelAssignedToTask event, EventContext context) {
+    void on(LabelAssignedToTask event, EventContext context) {
         LabelId labelId = event.getLabelId();
         TaskId taskId = event.getTaskId();
         addTaskItemAndUpdateLabelDetails(labelId, taskId, context);
     }
 
     @Subscribe
-    public void on(LabelledTaskRestored event, EventContext context) {
+    void on(LabelledTaskRestored event, EventContext context) {
         LabelId labelId = event.getLabelId();
         TaskId taskId = event.getTaskId();
         addTaskItemAndUpdateLabelDetails(labelId, taskId, context);
     }
 
     @Subscribe
-    public void on(LabelRemovedFromTask event) {
+    void on(LabelRemovedFromTask event) {
         LabelId labelId = event.getLabelId();
         boolean isEquals = builder().getId()
                                     .equals(labelId);
@@ -101,7 +104,8 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(TaskDeleted event) {
+    void on(TaskDeleted event) {
+        setDeleted(false);
         List<TaskItem> views = new ArrayList<>(builder().getLabelledTasks()
                                                         .getItemsList());
         TaskListView updatedView = removeViewsByTaskId(views, event.getTaskId());
@@ -109,7 +113,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(TaskDescriptionUpdated event) {
+    void on(TaskDescriptionUpdated event) {
         List<TaskItem> views = builder().getLabelledTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -117,7 +121,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(TaskPriorityUpdated event) {
+    void on(TaskPriorityUpdated event) {
         List<TaskItem> views = builder().getLabelledTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -125,7 +129,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(TaskDueDateUpdated event) {
+    void on(TaskDueDateUpdated event) {
         List<TaskItem> views = builder().getLabelledTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -133,7 +137,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(TaskCompleted event) {
+    void on(TaskCompleted event) {
         List<TaskItem> views = builder().getLabelledTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -141,7 +145,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(TaskReopened event) {
+    void on(TaskReopened event) {
         List<TaskItem> views = builder().getLabelledTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -149,7 +153,7 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
     }
 
     @Subscribe
-    public void on(LabelDetailsUpdated event) {
+    void on(LabelDetailsUpdated event) {
         List<TaskItem> views = builder().getLabelledTasks()
                                         .getItemsList();
         List<TaskItem> updatedList = updateTaskItemList(views, event);
@@ -163,17 +167,20 @@ public class LabelledTasksViewProjection extends Projection<LabelId,
                  .setLabelledTasks(taskListView);
     }
 
-    private void addTaskItemAndUpdateLabelDetails(LabelId labelId, TaskId taskId,
+    private void addTaskItemAndUpdateLabelDetails(LabelId labelId,
+                                                  TaskId taskId,
                                                   EventContext context) {
-        DetailsEnrichment enrichment = getEnrichment(DetailsEnrichment.class, context);
-        TaskDetails taskDetails = enrichment.getTaskDetails();
-
-        TaskItem taskView = viewFor(taskDetails, labelId, taskId);
-        LabelDetails labelDetails = enrichment.getLabelDetails();
-
         builder().setId(labelId);
-        addTaskItem(taskView);
-        updateLabelDetails(labelDetails);
+        Optional<DetailsEnrichment> details = context.find(DetailsEnrichment.class);
+        if (!details.isPresent()) {
+            String msg = "Could not get details enrichment from context %s.";
+            throw newIllegalStateException(msg, context);
+        }
+        details.map(DetailsEnrichment::getTaskDetails)
+               .map(taskDetails -> viewFor(taskDetails, labelId, taskId))
+               .ifPresent(this::addTaskItem);
+        details.map(DetailsEnrichment::getLabelDetails)
+               .ifPresent(this::updateLabelDetails);
     }
 
     private static TaskItem viewFor(TaskDetails taskDetails, LabelId labelId, TaskId taskId) {

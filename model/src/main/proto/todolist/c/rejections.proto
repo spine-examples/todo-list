@@ -61,6 +61,15 @@ message CannotUpdateTaskDueDate {
     TaskDueDateUpdateRejected rejection_details = 1;
 }
 
+// The rejection to update a task details.
+//
+// It is thrown when the requested detail update is incomplete or contains invalid fields.
+message CannotUpdateTaskDetails {
+
+    // Details of the rejection.
+    TaskDetailsUpdateRejected rejection_details = 1;
+}
+
 // The rejection to update a label details.
 //
 // It is thrown if an attempt is made to update the label when

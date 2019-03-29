@@ -26,7 +26,6 @@ import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provid
  * A module which provides the {@link TaskService}.
  */
 @NgModule({
-  declarations: [],
   imports: [SpineClientProvider]
 })
 export class TaskServiceModule {

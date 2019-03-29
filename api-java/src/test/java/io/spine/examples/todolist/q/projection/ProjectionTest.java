@@ -22,6 +22,7 @@ package io.spine.examples.todolist.q.projection;
 
 import io.spine.base.EventMessage;
 import io.spine.core.Event;
+import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.TaskListId;
 import io.spine.examples.todolist.testdata.TestEventEnricherFactory;
 import io.spine.server.enrich.Enricher;
@@ -51,5 +52,12 @@ abstract class ProjectionTest {
         return TaskListId.newBuilder()
                          .setValue(newUuid())
                          .build();
+    }
+
+    TaskId newTaskId(){
+        return TaskId
+                .newBuilder()
+                .setValue(newUuid())
+                .build();
     }
 }

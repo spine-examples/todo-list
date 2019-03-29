@@ -22,9 +22,10 @@ package io.spine.examples.todolist.c.aggregate;
 
 import com.google.protobuf.Message;
 import com.google.protobuf.Timestamp;
-import io.spine.change.StringChange;
+import com.google.protobuf.util.Timestamps;
 import io.spine.change.TimestampChange;
 import io.spine.change.ValueMismatch;
+import io.spine.examples.todolist.DescriptionChange;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.PriorityChange;
 import io.spine.examples.todolist.Task;
@@ -72,7 +73,6 @@ import io.spine.server.command.Assign;
 import java.util.List;
 
 import static com.google.common.collect.Lists.newLinkedList;
-import static com.google.protobuf.util.Timestamps.compare;
 import static io.spine.base.Time.getCurrentTime;
 import static io.spine.examples.todolist.c.aggregate.MismatchHelper.valueMismatch;
 import static io.spine.examples.todolist.c.aggregate.TaskFlowValidator.ensureCompleted;
@@ -135,19 +135,17 @@ public class TaskPart extends AggregatePart<TaskId,
         if (!isValid) {
             throwCannotUpdateTaskDescription(cmd);
         }
-
-        StringChange descriptionChange = cmd.getDescriptionChange();
-        String actualDescription = state().getDescription()
-                                          .getValue();
-        String expectedDescription = descriptionChange.getPreviousValue();
+        DescriptionChange descriptionChange = cmd.getDescriptionChange();
+        TaskDescription actualDescription = state().getDescription();
+        TaskDescription expectedDescription = descriptionChange.getPreviousValue();
         boolean isEquals = actualDescription.equals(expectedDescription);
 
         if (!isEquals) {
-            ValueMismatch mismatch = unexpectedValue(expectedDescription, actualDescription,
-                                                     descriptionChange.getNewValue());
+            ValueMismatch mismatch = unexpectedValue(expectedDescription.getValue(),
+                                                     actualDescription.getValue(),
+                                                     descriptionChange.getNewValue().getValue());
             throwCannotUpdateDescription(cmd, mismatch);
         }
-
         TaskId taskId = cmd.getId();
         TaskDescriptionUpdated taskDescriptionUpdated = TaskDescriptionUpdated
                 .newBuilder()
@@ -171,14 +169,13 @@ public class TaskPart extends AggregatePart<TaskId,
         Timestamp actualDueDate = state.getDueDate();
         Timestamp expectedDueDate = change.getPreviousValue();
 
-        boolean isEquals = compare(actualDueDate, expectedDueDate) == 0;
+        boolean isEquals = Timestamps.compare(actualDueDate, expectedDueDate) == 0;
 
         if (!isEquals) {
             Timestamp newDueDate = change.getNewValue();
             ValueMismatch mismatch = unexpectedValue(expectedDueDate, actualDueDate, newDueDate);
             throwCannotUpdateTaskDueDate(cmd, mismatch);
         }
-
         TaskId taskId = cmd.getId();
         TaskDueDateUpdated taskDueDateUpdated = TaskDueDateUpdated
                 .newBuilder()
@@ -197,7 +194,6 @@ public class TaskPart extends AggregatePart<TaskId,
         if (!isValid) {
             throwCannotUpdateTaskPriority(cmd);
         }
-
         PriorityChange priorityChange = cmd.getPriorityChange();
         TaskPriority actualPriority = state.getPriority();
         TaskPriority expectedPriority = priorityChange.getPreviousValue();
@@ -210,7 +206,6 @@ public class TaskPart extends AggregatePart<TaskId,
                     valueMismatch(expectedPriority, actualPriority, newPriority, getVersion());
             throwCannotUpdateTaskPriority(cmd, mismatch);
         }
-
         TaskId taskId = cmd.getId();
         TaskPriorityUpdated taskPriorityUpdated = TaskPriorityUpdated
                 .newBuilder()
@@ -357,12 +352,8 @@ public class TaskPart extends AggregatePart<TaskId,
 
     @Apply
     void taskDescriptionUpdated(TaskDescriptionUpdated event) {
-        String newDescriptionValue = event.getDescriptionChange()
-                                          .getNewValue();
-        TaskDescription newDescription = TaskDescription
-                .newBuilder()
-                .setValue(newDescriptionValue)
-                .build();
+        TaskDescription newDescription = event.getDescriptionChange()
+                                              .getNewValue();
         builder().setDescription(newDescription);
     }
 

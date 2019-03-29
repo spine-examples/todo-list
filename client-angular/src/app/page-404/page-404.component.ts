@@ -28,5 +28,5 @@ import {Component} from '@angular/core';
   templateUrl: './page-404.component.html',
   styleUrls: ['./page-404.component.css']
 })
-export class Page404Component {
+export class Page404 {
 }

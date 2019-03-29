@@ -19,23 +19,174 @@
  */
 
 import {Location} from '@angular/common';
-import {Component} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {MatStepper} from '@angular/material';
+import {ActivatedRoute} from '@angular/router';
+
+import {TaskCreationWizard} from './service/task-creation-wizard.service';
+import {TaskDefinitionComponent} from './step-1-task-definition/task-definition.component';
+import {LabelAssignmentComponent} from './step-2-label-assignment/label-assignment.component';
+import {ConfirmationComponent} from './step-3-confirmation/confirmation.component';
+
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
+import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
+import {TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
+import {TaskCreation} from 'generated/main/js/todolist/model_pb';
+import {TaskDescription} from 'generated/main/js/todolist/values_pb';
+import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/commands_pb';
 
 /**
- * A component storing task creation wizard page.
+ * The main component of the Task Creation Wizard.
  *
- * As it's currently not implemented, there is only a single page in wizard.
+ * Aggregates wizard steps into {@link MatStepper} and does the common initialization.
+ *
+ * User can navigate to this component by visiting either `/wizard` or
+ * `/wizard/*creation-process-ID*` route.
+ *
+ * In the first scenario the Task Creation Wizard will be initialized from scratch and a new task
+ * draft will be created. In the second scenario, the wizard will try to fetch an existing
+ * `TaskCreation` process instance from the server and load its data.
+ *
+ * The first scenario is a "main" scenario of the wizard usage while the second one allows to return
+ * to the wizard after the user navigated somewhere else.
+ *
+ * The steps in the wizard are sequential but returning back and modifying already completed step
+ * is allowed at any point of time.
+ *
+ * The step navigation is done in such way that user cannot leave the current step until the
+ * correct data is specified in all required inputs.
  */
 @Component({
   selector: 'app-task-creation-wizard',
-  templateUrl: './task-creation-wizard.component.html'
+  templateUrl: './task-creation-wizard.component.html',
+  styleUrls: ['./task-creation-wizard.component.css'],
+  providers: [
+    TaskCreationWizard
+  ]
 })
-export class TaskCreationWizardComponent {
+export class TaskCreationWizardComponent implements AfterViewInit {
 
-  constructor(private readonly location: Location) {
+  /**
+   * The task creation stages with a corresponding {@link stepper} page indices.
+   */
+  private static readonly STEPS: Map<TaskCreation.Stage, number> = new Map([
+    [TaskCreation.Stage.TASK_DEFINITION, 0],
+    [TaskCreation.Stage.LABEL_ASSIGNMENT, 1],
+    [TaskCreation.Stage.CONFIRMATION, 2]
+  ]);
+
+  /**
+   * A reference to the Angular Material Stepper which controls the wizard UI.
+   *
+   * Visible for testing.
+   */
+  @ViewChild(MatStepper)
+  stepper: MatStepper;
+
+  /** Visible for testing. */
+  @ViewChild(TaskDefinitionComponent)
+  taskDefinition: TaskDefinitionComponent;
+
+  /** Visible for testing. */
+  @ViewChild(LabelAssignmentComponent)
+  labelAssignment: LabelAssignmentComponent;
+
+  /** Visible for testing. */
+  @ViewChild(ConfirmationComponent)
+  confirmation: ConfirmationComponent;
+
+  /**
+   * Is `true` while the wizard is fetching its data from the server, then becomes `false`.
+   *
+   * Used for manipulations with UI elements.
+   */
+  private isLoading: boolean;
+
+  /**
+   * A promise to initialize the injected {@link TaskCreationWizard} either "from scratch" or with
+   * the data from the pre-loaded process.
+   */
+  private readonly initWizard: Promise<void>;
+
+  constructor(private readonly wizard: TaskCreationWizard,
+              private readonly changeDetector: ChangeDetectorRef,
+              private readonly location: Location,
+              route: ActivatedRoute) {
+    this.isLoading = true;
+    const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
+    this.initWizard = wizard.init(taskCreationId);
   }
 
-  back(): void {
-    this.location.back();
+  /**
+   * Reports an error which cannot really be recovered in the scope of a current page.
+   */
+  private static reportFatalError(err): void {
+    throw new Error(err);
+  }
+
+  /**
+   * @inheritDoc
+   *
+   * Initializes this component and the child components with the data from
+   * {@link TaskCreationWizard}.
+   */
+  ngAfterViewInit(): void {
+    this.initWizard
+      .then(() => {
+        this.ensureRouteHasId();
+        this.moveToCurrentStep();
+
+        this.taskDefinition.initFromWizard();
+        this.labelAssignment.initFromWizard();
+        this.changeDetector.detectChanges();
+
+        this.isLoading = false;
+      })
+      .catch(err => TaskCreationWizardComponent.reportFatalError(err));
+  }
+
+  /**
+   * Ensures the current route is '/wizard/*current-creation-process-ID*'.
+   *
+   * To create a new task, user can just navigate to '/wizard'. A task creation process will then
+   * be started and assigned a new ID.
+   *
+   * This method changes the current location, so the user sees the "correct" URL with a task
+   * creation ID part.
+   */
+  private ensureRouteHasId(): void {
+    const idString = this.wizard.id.getValue();
+    const urlWithId = `/wizard/${idString}`;
+    const alreadyWithId = this.location.isCurrentPathEqualTo(urlWithId);
+    if (!alreadyWithId) {
+      this.location.go(urlWithId);
+    }
+  }
+
+  /**
+   * Selects the appropriate step in {@link stepper} according to the current wizard stage.
+   *
+   * Marks all the preceding {@link stepper} steps as completed (they still can be returned to).
+   */
+  private moveToCurrentStep(): void {
+    const currentStage = this.wizard.stage;
+    const index = TaskCreationWizardComponent.STEPS.get(currentStage);
+    if (index === undefined) {
+      TaskCreationWizardComponent.reportFatalError(
+        `There is no wizard step for stage ${currentStage}`
+      );
+      return;
+    }
+    this.completeVisitedSteps(index);
+    this.stepper.selectedIndex = index;
+  }
+
+  /**
+   * Completes all {@link stepper} steps prior to the `index`.
+   */
+  private completeVisitedSteps(index) {
+    for (let i = 0; i < this.stepper.steps.length; i++) {
+      this.stepper.steps.toArray()[i].completed = i < index;
+    }
   }
 }

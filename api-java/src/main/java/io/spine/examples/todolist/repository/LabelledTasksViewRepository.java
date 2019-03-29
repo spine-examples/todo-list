@@ -20,6 +20,7 @@
 
 package io.spine.examples.todolist.repository;
 
+import com.google.common.collect.ImmutableSet;
 import io.spine.base.EventMessage;
 import io.spine.core.EventContext;
 import io.spine.examples.todolist.LabelId;
@@ -43,8 +44,7 @@ import io.spine.server.route.EventRouting;
 
 import java.util.Set;
 
-import static com.google.common.collect.Sets.newHashSet;
-import static io.spine.examples.todolist.EnrichmentHelper.getEnrichment;
+import static io.spine.util.Exceptions.newIllegalStateException;
 import static java.util.Collections.singleton;
 
 /**
@@ -90,9 +90,17 @@ public class LabelledTasksViewRepository
     }
 
     private static Set<LabelId> getLabelIdsSet(EventContext context) {
-        LabelsListEnrichment enrichment = getEnrichment(LabelsListEnrichment.class, context);
-        LabelIdsList labelsList = enrichment.getLabelIdsList();
-        Set<LabelId> result = newHashSet(labelsList.getIdsList());
+        ImmutableSet<LabelId> result =
+                context.find(LabelsListEnrichment.class)
+                       .map(LabelsListEnrichment::getLabelIdsList)
+                       .map(LabelIdsList::getIdsList)
+                       .map(ImmutableSet::copyOf)
+                       .orElseThrow(() -> labelIdSetNotFound(context));
         return result;
+    }
+
+    private static IllegalStateException labelIdSetNotFound(EventContext context) {
+        return newIllegalStateException(
+                "Could not get label ID set from context %s.", context);
     }
 }

@@ -52,5 +52,8 @@ export function subscriptionDataOf<T>(added: T[],
 }
 
 export function mockSpineWebClient() {
-  return jasmine.createSpyObj<Client>('Client', ['sendCommand', 'subscribeToEntities']);
+  return jasmine.createSpyObj<Client>(
+    'Client',
+    ['sendCommand', 'subscribeToEntities', 'fetchAll', 'fetchById']
+  );
 }
