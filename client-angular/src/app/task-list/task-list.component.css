@@ -25,3 +25,26 @@
 .task-list-content {
   padding: 25px 0 0 50px;
 }
+
+.task-list-sidenav {
+  width: 15%;
+}
+
+.task-list-sidenav a {
+  font-size: 10px;
+}
+
+a.mat-list-item {
+  height: 25px;
+}
+
+a.mat-list-item:hover {
+  border-radius: 15%/100%;
+}
+
+mat-icon {
+  position: relative;
+  font-size: 15px;
+  width: 30%;
+  height: 70%;
+}
