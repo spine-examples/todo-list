@@ -23,7 +23,8 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {Client} from 'spine-web';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatIconModule} from '@angular/material/icon';
 
 import {TaskListComponent} from 'app/task-list/task-list.component';
 import {TaskService} from 'app/task-service/task.service';
@@ -45,7 +46,8 @@ describe('TaskListComponent', () => {
         RouterTestingModule.withRoutes([]),
         MatSidenavModule,
         MatListModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        MatIconModule
       ],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
