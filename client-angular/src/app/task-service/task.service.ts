@@ -23,12 +23,12 @@ import {Client, Type} from 'spine-web';
 import * as uuid from 'uuid';
 import {BehaviorSubject, Observable} from 'rxjs';
 
-import {TaskServiceModule} from './task-service.module';
+import {TaskServiceModule} from 'app/task-service/task-service.module';
 
-import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {TaskDescription} from 'generated/main/js/todolist/values_pb';
-import {CompleteTask, CreateBasicTask, DeleteTask} from 'generated/main/js/todolist/c/commands_pb';
-import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskId} from 'proto/todolist/identifiers_pb';
+import {TaskDescription} from 'proto/todolist/values_pb';
+import {CompleteTask, CreateBasicTask, DeleteTask} from 'proto/todolist/c/commands_pb';
+import {MyListView, TaskItem} from 'proto/todolist/q/projections_pb';
 
 /**
  * A service which performs operations on To-Do List tasks.

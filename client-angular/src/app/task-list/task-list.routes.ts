@@ -21,12 +21,12 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
-import {TaskListComponent} from './task-list.component';
+import {TaskListComponent} from 'app/task-list/task-list.component';
 
-import {ActiveTasksComponent} from './active/active-tasks.component';
-import {CompletedTasksComponent} from './completed/completed-tasks.component';
-import {DeletedTasksComponent} from './deleted/deleted-tasks.component';
-import {DraftsComponent} from './drafts/drafts.component';
+import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
+import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
+import {DeletedTasksComponent} from 'app/task-list/deleted/deleted-tasks.component';
+import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
 
 const routes: Routes = [
   {

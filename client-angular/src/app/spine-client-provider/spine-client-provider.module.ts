@@ -24,10 +24,10 @@ import {AngularFireDatabase, AngularFireDatabaseModule} from '@angular/fire/data
 import {ActorProvider, Client, init} from 'spine-web';
 import {UserId} from 'spine-web/proto/spine/core/user_id_pb';
 
-import {environment} from '../../environments/environment';
+import {environment} from 'environments/environment';
 
 import * as spineWebTypes from 'spine-web/proto/index';
-import * as todoListTypes from 'generated/main/js/index';
+import * as todoListTypes from 'proto/index';
 
 /**
  * Creates a {@link Client} instance based on the environment config.

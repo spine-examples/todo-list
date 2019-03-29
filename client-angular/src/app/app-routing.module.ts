@@ -31,22 +31,22 @@ const routes: Routes = [
   // todo everything statically into the main module.
   {
     path: 'task-list',
-    loadChildren: './task-list/task-list.module#TaskListModule'
+    loadChildren: 'app/task-list/task-list.module#TaskListModule'
   },
 
   {
     path: 'details',
-    loadChildren: './task-details/task-details.module#TaskDetailsModule'
+    loadChildren: 'app/task-details/task-details.module#TaskDetailsModule'
   },
 
   {
     path: 'labels',
-    loadChildren: './labels/labels.module#LabelsModule'
+    loadChildren: 'app/labels/labels.module#LabelsModule'
   },
 
   {
     path: 'wizard',
-    loadChildren: './task-creation-wizard/task-creation-wizard.module#TaskCreationWizardModule'
+    loadChildren: 'app/task-creation-wizard/task-creation-wizard.module#TaskCreationWizardModule'
   },
 
   {

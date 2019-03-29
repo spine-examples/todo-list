@@ -20,8 +20,8 @@
 
 import {NgModule} from '@angular/core';
 
-import {TaskDetailsComponent} from './task-details.component';
-import {TaskDetailsRoutingModule} from './task-details.routes';
+import {TaskDetailsComponent} from 'app/task-details/task-details.component';
+import {TaskDetailsRoutingModule} from 'app/task-details/task-details.routes';
 
 /**
  * The module which displays the details of a single task.

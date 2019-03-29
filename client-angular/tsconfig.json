@@ -17,6 +17,9 @@
       ],
       "proto/*": [
         "../generated/main/js/*"
+      ],
+      "environments/*": [
+        "environments/*"
       ]
     },
     "typeRoots": [

@@ -21,10 +21,10 @@
 import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
-import {TaskService} from '../../task-service/task.service';
-import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskDescription} from 'generated/main/js/todolist/values_pb';
-import {TaskListCategoryComponent} from '../task-list-category/task-list-category.component';
+import {TaskService} from 'app/task-service/task.service';
+import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
+import {TaskDescription} from 'proto/todolist/values_pb';
+import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-list-category.component';
 
 /**
  * A component displaying active tasks, i.e. those which are not completed, deleted, or in draft

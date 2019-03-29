@@ -23,8 +23,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule} from '@angular/core';
 import {MatToolbarModule} from '@angular/material';
 
-import {AppRoutingModule} from './app-routing.module';
-import {AppComponent} from './app.component';
+import {AppRoutingModule} from 'app/app-routing.module';
+import {AppComponent} from 'app/app.component';
 
 /**
  * The main application module.

@@ -20,8 +20,8 @@
 
 import {NgModule} from '@angular/core';
 
-import {TaskCreationWizardComponent} from './task-creation-wizard.component';
-import {TaskCreationWizardRoutingModule} from './task-creation-wizard.routes';
+import {TaskCreationWizardComponent} from 'app/task-creation-wizard/task-creation-wizard.component';
+import {TaskCreationWizardRoutingModule} from 'app/task-creation-wizard/task-creation-wizard.routes';
 
 /**
  * The module which declares task creation wizard components.

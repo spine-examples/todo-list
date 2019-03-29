@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {TaskService} from '../../task-service/task.service';
+import {TaskService} from 'app/task-service/task.service';
 
-import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
 
 /**
  * A component that represents a subset of all tasks, such as `Active` or `Deleted`.

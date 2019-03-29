@@ -21,7 +21,7 @@
 import {Injectable} from '@angular/core';
 import {Client} from 'spine-web';
 
-import {LabelsModule} from './labels.module';
+import {LabelsModule} from 'app/labels/labels.module';
 
 /**
  * A service which operates with task labels.

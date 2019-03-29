@@ -21,7 +21,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
-import {TaskCreationWizardComponent} from './task-creation-wizard.component';
+import {TaskCreationWizardComponent} from 'app/task-creation-wizard/task-creation-wizard.component';
 
 const routes: Routes = [
   {

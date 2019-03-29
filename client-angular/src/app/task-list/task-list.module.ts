@@ -27,16 +27,16 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 
-import {TaskListComponent} from './task-list.component';
-import {ActiveTasksComponent} from './active/active-tasks.component';
-import {CompletedTasksComponent} from './completed/completed-tasks.component';
-import {DeletedTasksComponent} from './deleted/deleted-tasks.component';
-import {DraftsComponent} from './drafts/drafts.component';
-import {TaskListRoutingModule} from './task-list.routes';
-import {TaskServiceModule} from '../task-service/task-service.module';
-import {ActiveTaskItemComponent} from './active/active-task-item/active-task-item.component';
-import {TaskLinkComponent} from './task-link/task-link.component';
-import {TaskListCategoryComponent} from './task-list-category/task-list-category.component';
+import {TaskListComponent} from 'app/task-list/task-list.component';
+import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
+import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
+import {DeletedTasksComponent} from 'app/task-list/deleted/deleted-tasks.component';
+import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
+import {TaskListRoutingModule} from 'app/task-list/task-list.routes';
+import {TaskServiceModule} from 'app/task-service/task-service.module';
+import {ActiveTaskItemComponent} from 'app/task-list/active/active-task-item/active-task-item.component';
+import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
+import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-list-category.component';
 
 /**
  * The module which displays the task list.

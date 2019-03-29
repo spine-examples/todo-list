@@ -20,9 +20,9 @@
 
 import {Component} from '@angular/core';
 
-import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskService} from '../../task-service/task.service';
-import {TaskListCategoryComponent} from '../task-list-category/task-list-category.component';
+import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
+import {TaskService} from 'app/task-service/task.service';
+import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-list-category.component';
 
 /**
  * A component displaying deleted tasks view.
