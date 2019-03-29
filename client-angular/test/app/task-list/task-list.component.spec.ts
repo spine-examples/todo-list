@@ -25,9 +25,9 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatListModule} from '@angular/material/list';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import {TaskListComponent} from '../../../src/app/task-list/task-list.component';
-import {TaskService} from '../../../src/app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from '../given/mock-spine-web-client';
+import {TaskListComponent} from 'app/task-list/task-list.component';
+import {TaskService} from 'app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
 
 describe('TaskListComponent', () => {
   const mockClient = mockSpineWebClient();

@@ -18,10 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TaskId, TaskListId} from 'generated/main/js/todolist/identifiers_pb';
-import {TaskDescription} from 'generated/main/js/todolist/values_pb';
-import {MyListView, TaskItem, TaskListView} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskStatus} from 'generated/main/js/todolist/attributes_pb';
+import {TaskId, TaskListId} from 'proto/todolist/identifiers_pb';
+import {TaskDescription} from 'proto/todolist/values_pb';
+import {MyListView, TaskItem, TaskListView} from 'proto/todolist/q/projections_pb';
+import {TaskStatus} from 'proto/todolist/attributes_pb';
 
 export const HOUSE_TASK_1_ID = 'task-1';
 export const HOUSE_TASK_1_DESC = 'Wash the dishes';

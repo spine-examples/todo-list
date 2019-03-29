@@ -20,6 +20,9 @@
       ],
       "environments/*": [
         "environments/*"
+      ],
+      "test/*": [
+        "../test/app/*"
       ]
     },
     "typeRoots": [

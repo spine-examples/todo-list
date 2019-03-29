@@ -28,20 +28,20 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {By} from '@angular/platform-browser';
 import {Client, Type} from 'spine-web';
 
-import {ActiveTasksComponent} from '../../../../src/app/task-list/active/active-tasks.component';
-import {TaskService} from '../../../../src/app/task-service/task.service';
-import {ActiveTaskItemComponent} from '../../../../src/app/task-list/active/active-task-item/active-task-item.component';
-import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
+import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
+import {TaskService} from 'app/task-service/task.service';
+import {ActiveTaskItemComponent} from 'app/task-list/active/active-task-item/active-task-item.component';
+import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {
   HOUSE_TASK_1_DESC,
   HOUSE_TASK_1_ID,
   HOUSE_TASK_2_DESC,
   HOUSE_TASK_2_ID,
   houseTasks
-} from '../../given/tasks';
+} from 'test/given/tasks';
 
-import {MyListView, TaskItem, TaskListView} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskLinkComponent} from '../../../../src/app/task-list/task-link/task-link.component';
+import {MyListView, TaskItem, TaskListView} from 'proto/todolist/q/projections_pb';
+import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
 
 describe('ActiveTasksComponent', () => {
   const mockClient = mockSpineWebClient();

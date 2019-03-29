@@ -22,7 +22,7 @@ import {Location} from '@angular/common';
 import {async, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 
-import {LabelsComponent} from '../../../src/app/labels/labels.component';
+import {LabelsComponent} from 'app/labels/labels.component';
 
 describe('LabelsComponent', () => {
   let component: LabelsComponent;

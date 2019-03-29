@@ -20,7 +20,7 @@
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {Page404Component} from '../../../src/app/page-404/page-404.component';
+import {Page404Component} from 'app/page-404/page-404.component';
 
 describe('Page404Component', () => {
   let component: Page404Component;

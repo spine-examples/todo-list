@@ -21,18 +21,18 @@
 import {TestBed} from '@angular/core/testing';
 import {Client} from 'spine-web';
 
-import {TaskService} from '../../../src/app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from '../given/mock-spine-web-client';
+import {TaskService} from 'app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {
   HOUSE_TASK_1_DESC,
   HOUSE_TASK_1_ID,
   HOUSE_TASK_2_DESC,
   HOUSE_TASK_2_ID,
   houseTasks
-} from '../given/tasks';
+} from 'test/given/tasks';
 
-import {CreateBasicTask} from 'generated/main/js/todolist/c/commands_pb';
-import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {CreateBasicTask} from 'proto/todolist/c/commands_pb';
+import {MyListView, TaskItem} from 'proto/todolist/q/projections_pb';
 
 describe('TaskService', () => {
   const mockClient = mockSpineWebClient();

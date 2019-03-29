@@ -21,8 +21,8 @@
 import {TestBed} from '@angular/core/testing';
 import {Client} from 'spine-web';
 
-import {LabelService} from '../../../src/app/labels/label.service';
-import {mockSpineWebClient} from '../given/mock-spine-web-client';
+import {LabelService} from 'app/labels/label.service';
+import {mockSpineWebClient} from 'test/given/mock-spine-web-client';
 
 describe('LabelService', () => {
   beforeEach(() => TestBed.configureTestingModule({

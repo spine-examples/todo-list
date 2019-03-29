@@ -25,11 +25,11 @@ import {By} from '@angular/platform-browser';
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {Client} from 'spine-web';
-import {CompletedTasksComponent} from '../../../../src/app/task-list/completed/completed-tasks.component';
-import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
-import {TaskLinkComponent} from '../../../../src/app/task-list/task-link/task-link.component';
-import {completedTasks} from '../../given/tasks';
+import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
+import {TaskService} from 'app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
+import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
+import {completedTasks} from 'test/given/tasks';
 
 describe('CompletedTasksComponent', () => {
 

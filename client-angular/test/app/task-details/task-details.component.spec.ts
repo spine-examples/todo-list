@@ -23,7 +23,7 @@ import {async, TestBed} from '@angular/core/testing';
 import {ActivatedRoute, convertToParamMap} from '@angular/router';
 import {RouterTestingModule} from '@angular/router/testing';
 
-import {TaskDetailsComponent} from '../../../src/app/task-details/task-details.component';
+import {TaskDetailsComponent} from 'app/task-details/task-details.component';
 
 describe('TaskDetailsComponent', () => {
   let component: TaskDetailsComponent;
