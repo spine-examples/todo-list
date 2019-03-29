@@ -20,7 +20,7 @@
 
 import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
 
-import {ErrorViewport} from '../../../../src/app/common-components/error-viewport/error-viewport.component';
+import {ErrorViewport} from 'app/common-components/error-viewport/error-viewport.component';
 
 describe('ErrorViewport', () => {
   let fixture: ComponentFixture<ErrorViewport>;

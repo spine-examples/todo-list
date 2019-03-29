@@ -22,14 +22,14 @@ import {Injectable, OnDestroy} from '@angular/core';
 import {Client, Type} from 'spine-web';
 import {BehaviorSubject, Observable} from 'rxjs';
 
-import {TaskServiceModule} from './task-service.module';
-import {UuidGenerator} from '../uuid-generator/uuid-generator';
+import {TaskServiceModule} from 'app/task-service/task-service.module';
+import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 
-import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {TaskDescription} from 'generated/main/js/todolist/values_pb';
-import {CompleteTask, CreateBasicTask, DeleteTask} from 'generated/main/js/todolist/c/commands_pb';
-import {MyListView, TaskItem, TaskView} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskStatus} from 'generated/main/js/todolist/attributes_pb';
+import {TaskId} from 'proto/todolist/identifiers_pb';
+import {TaskDescription} from 'proto/todolist/values_pb';
+import {CompleteTask, CreateBasicTask, DeleteTask} from 'proto/todolist/c/commands_pb';
+import {MyListView, TaskItem, TaskView} from 'proto/todolist/q/projections_pb';
+import {TaskStatus} from 'proto/todolist/attributes_pb';
 
 /**
  * A service which performs operations on To-Do List tasks.

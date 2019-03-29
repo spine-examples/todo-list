@@ -21,7 +21,7 @@
 import {Location} from '@angular/common';
 import {Component} from '@angular/core';
 
-import {LabelService} from './label.service';
+import {LabelService} from 'app/labels/label.service';
 
 /**
  * The component which displays the label list as well as provides the basic navigation to

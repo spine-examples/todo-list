@@ -20,17 +20,17 @@
 
 import {Injectable} from '@angular/core';
 import {Client, Type} from 'spine-web';
-import {UuidGenerator} from '../../uuid-generator/uuid-generator';
-import {TaskService} from '../../task-service/task.service';
+import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
+import {TaskService} from 'app/task-service/task.service';
 
 import {Message} from 'google-protobuf';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TimestampChange} from 'spine-web/proto/spine/change/change_pb';
-import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
-import {DescriptionChange, PriorityChange} from 'generated/main/js/todolist/changes_pb';
-import {LabelId, TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {TaskCreation} from 'generated/main/js/todolist/model_pb';
-import {TaskDescription} from 'generated/main/js/todolist/values_pb';
+import {TaskPriority} from 'proto/todolist/attributes_pb';
+import {DescriptionChange, PriorityChange} from 'proto/todolist/changes_pb';
+import {LabelId, TaskCreationId, TaskId} from 'proto/todolist/identifiers_pb';
+import {TaskCreation} from 'proto/todolist/model_pb';
+import {TaskDescription} from 'proto/todolist/values_pb';
 import {
   AddLabels,
   CancelTaskCreation,
@@ -38,7 +38,7 @@ import {
   SkipLabels,
   StartTaskCreation,
   UpdateTaskDetails
-} from 'generated/main/js/todolist/c/commands_pb';
+} from 'proto/todolist/c/commands_pb';
 
 /**
  * A service which executes commands specific to the Task Creation Wizard process.

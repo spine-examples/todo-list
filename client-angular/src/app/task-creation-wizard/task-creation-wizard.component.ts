@@ -23,17 +23,17 @@ import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/c
 import {MatStepper} from '@angular/material';
 import {ActivatedRoute} from '@angular/router';
 
-import {TaskCreationWizard} from './service/task-creation-wizard.service';
-import {TaskDefinitionComponent} from './step-1-task-definition/task-definition.component';
-import {LabelAssignmentComponent} from './step-2-label-assignment/label-assignment.component';
-import {ConfirmationComponent} from './step-3-confirmation/confirmation.component';
+import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
+import {TaskDefinitionComponent} from 'app/task-creation-wizard/step-1-task-definition/task-definition.component';
+import {LabelAssignmentComponent} from 'app/task-creation-wizard/step-2-label-assignment/label-assignment.component';
+import {ConfirmationComponent} from 'app/task-creation-wizard/step-3-confirmation/confirmation.component';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
-import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
-import {TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {TaskCreation} from 'generated/main/js/todolist/model_pb';
-import {TaskDescription} from 'generated/main/js/todolist/values_pb';
-import {SetTaskDetails, StartTaskCreation} from 'generated/main/js/todolist/c/commands_pb';
+import {TaskPriority} from 'proto/todolist/attributes_pb';
+import {TaskCreationId, TaskId} from 'proto/todolist/identifiers_pb';
+import {TaskCreation} from 'proto/todolist/model_pb';
+import {TaskDescription} from 'proto/todolist/values_pb';
+import {SetTaskDetails, StartTaskCreation} from 'proto/todolist/c/commands_pb';
 
 /**
  * The main component of the Task Creation Wizard.

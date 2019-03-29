@@ -18,9 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {StringValue} from '../../../../src/app/pipes/string-value/string-value.pipe';
+import {StringValue} from 'app/pipes/string-value/string-value.pipe';
 
-import {LabelDetails, TaskDescription} from 'generated/main/js/todolist/values_pb';
+import {LabelDetails, TaskDescription} from 'proto/todolist/values_pb';
 
 describe('StringValue', () => {
 

@@ -20,11 +20,11 @@
 
 import {Injectable} from '@angular/core';
 import {Client, Type} from 'spine-web';
-import {UuidGenerator} from '../uuid-generator/uuid-generator';
+import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 
-import {LabelId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {CreateBasicLabel} from 'generated/main/js/todolist/c/commands_pb';
-import {LabelView} from 'generated/main/js/todolist/q/projections_pb';
+import {LabelId, TaskId} from 'proto/todolist/identifiers_pb';
+import {CreateBasicLabel} from 'proto/todolist/c/commands_pb';
+import {LabelView} from 'proto/todolist/q/projections_pb';
 
 /**
  * A service which operates with task labels.

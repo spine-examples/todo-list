@@ -21,8 +21,8 @@
 import {NgModule} from '@angular/core';
 import {MatDividerModule} from '@angular/material/divider';
 
-import {ErrorViewport} from './error-viewport/error-viewport.component';
-import {PageHeader} from './page-header/page-header.component';
+import {ErrorViewport} from 'app/common-components/error-viewport/error-viewport.component';
+import {PageHeader} from 'app/common-components/page-header/page-header.component';
 
 /**
  * The module which provides common layout elements of the application.

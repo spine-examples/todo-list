@@ -20,10 +20,10 @@
 
 import {houseTask} from './tasks';
 
-import {TaskCreationId} from 'generated/main/js/todolist/identifiers_pb';
-import {TaskCreation} from 'generated/main/js/todolist/model_pb';
-import {LabelIdsList} from 'generated/main/js/todolist/values_pb';
-import {LabelView, TaskView} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskCreationId} from 'proto/todolist/identifiers_pb';
+import {TaskCreation} from 'proto/todolist/model_pb';
+import {LabelIdsList} from 'proto/todolist/values_pb';
+import {LabelView, TaskView} from 'proto/todolist/q/projections_pb';
 
 export function initMockProcess(stage?: TaskCreation.Stage): (type, id, resolve) => void {
   const creationProcess = taskCreationProcess(stage);

@@ -20,10 +20,10 @@
 
 import {NgModule} from '@angular/core';
 
-import {LabelColorView} from './label-color-view/label-color-view.pipe';
-import {MomentFromTimestamp} from './moment-from-timestamp/momentFromTimestamp.pipe';
-import {StringValue} from './string-value/string-value.pipe';
-import {TaskPriorityName} from './task-priority-name/task-priority-name.pipe';
+import {LabelColorView} from 'app/pipes/label-color-view/label-color-view.pipe';
+import {MomentFromTimestamp} from 'app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
+import {StringValue} from 'app/pipes/string-value/string-value.pipe';
+import {TaskPriorityName} from 'app/pipes/task-priority-name/task-priority-name.pipe';
 
 /**
  * A module that provides To-Do List pipes for common conversions and transformations in the

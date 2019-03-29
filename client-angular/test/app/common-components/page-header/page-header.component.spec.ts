@@ -22,7 +22,7 @@ import {ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
 import {MatDividerModule} from '@angular/material/divider';
 import {RouterTestingModule} from '@angular/router/testing';
 
-import {PageHeader} from '../../../../src/app/common-components/page-header/page-header.component';
+import {PageHeader} from 'app/common-components/page-header/page-header.component';
 
 describe('PageHeader', () => {
   let fixture: ComponentFixture<PageHeader>;

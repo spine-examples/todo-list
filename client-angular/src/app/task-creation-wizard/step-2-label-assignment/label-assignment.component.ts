@@ -21,12 +21,12 @@
 import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 
-import {LabelService} from '../../labels/label.service';
-import {TaskCreationWizard} from '../service/task-creation-wizard.service';
-import {WizardStep} from '../wizard-step';
+import {LabelService} from 'app/labels/label.service';
+import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
+import {WizardStep} from 'app/task-creation-wizard/wizard-step';
 
-import {LabelId} from 'generated/main/js/todolist/identifiers_pb';
-import {LabelView} from 'generated/main/js/todolist/q/projections_pb';
+import {LabelId} from 'proto/todolist/identifiers_pb';
+import {LabelView} from 'proto/todolist/q/projections_pb';
 
 /**
  * A component which represents the second step of the Task Creation Wizard - a label assignment.

@@ -20,7 +20,7 @@
 
 import * as moment from 'moment';
 
-import {MomentFromTimestamp} from '../../../../src/app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
+import {MomentFromTimestamp} from 'app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 

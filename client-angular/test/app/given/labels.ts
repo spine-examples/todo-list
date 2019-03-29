@@ -18,9 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {LabelId} from 'generated/main/js/todolist/identifiers_pb';
-import {LabelView} from 'generated/main/js/todolist/q/projections_pb';
-import {LabelColor} from 'generated/main/js/todolist/attributes_pb';
+import {LabelId} from 'proto/todolist/identifiers_pb';
+import {LabelView} from 'proto/todolist/q/projections_pb';
+import {LabelColor} from 'proto/todolist/attributes_pb';
 
 const LABEL_1_ID = 'label-1';
 const LABEL_1_TITLE = 'Very important';
