@@ -1,7 +1,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
@@ -11,6 +11,14 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "es5",
+    "paths": {
+      "app/*": [
+        "app/*"
+      ],
+      "proto/*": [
+        "../generated/main/js/*"
+      ]
+    },
     "typeRoots": [
       "node_modules/@types"
     ],
