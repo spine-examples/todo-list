@@ -60,7 +60,7 @@ import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-pro
 
 import {TaskCreation} from 'proto/todolist/model_pb';
 import {TaskView} from 'proto/todolist/q/projections_pb';
-import {mockStepper} from './given/mock-stepper';
+import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
 
 describe('TaskCreationWizardComponent', () => {
   const mockClient = mockSpineWebClient();

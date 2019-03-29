@@ -22,18 +22,18 @@ import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing'
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {Client} from 'spine-web';
-import {ConfirmationComponent} from '../../../../src/app/task-creation-wizard/step-3-confirmation/confirmation.component';
-import {TodoListComponentsModule} from '../../../../src/app/common-components/todo-list-components.module';
-import {TodoListPipesModule} from '../../../../src/app/pipes/todo-list-pipes.module';
-import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
-import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
-import {houseTasks} from '../../given/tasks';
-import {WizardStep} from '../../../../src/app/task-creation-wizard/wizard-step';
-import {initMockProcess, taskCreationProcess} from '../../given/task-creation-process';
-import {mockStepper} from '../given/mock-stepper';
-import {TaskPriorityName} from '../../../../src/app/pipes/task-priority-name/task-priority-name.pipe';
-import {MomentFromTimestamp} from '../../../../src/app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
+import {ConfirmationComponent} from 'app/task-creation-wizard/step-3-confirmation/confirmation.component';
+import {TodoListComponentsModule} from 'app/common-components/todo-list-components.module';
+import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
+import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
+import {TaskService} from 'app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
+import {houseTasks} from 'test/given/tasks';
+import {WizardStep} from 'app/task-creation-wizard/wizard-step';
+import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-process';
+import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
+import {TaskPriorityName} from 'app/pipes/task-priority-name/task-priority-name.pipe';
+import {MomentFromTimestamp} from 'app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
 
 describe('ConfirmationComponent', () => {
   const mockClient = mockSpineWebClient();

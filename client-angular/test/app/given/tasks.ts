@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {tomorrow} from './dates';
+import {tomorrow} from 'test/given/dates';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskId, TaskListId} from 'proto/todolist/identifiers_pb';

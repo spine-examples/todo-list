@@ -51,7 +51,7 @@ const routes: Routes = [
 
   {
     path: '**',
-    loadChildren: './page-404/page-404.module#Page404Module'
+    loadChildren: 'app/page-404/page-404.module#Page404Module'
   }
 ];
 
