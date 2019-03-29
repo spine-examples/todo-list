@@ -25,3 +25,15 @@
 .full-width {
   width: 97.5%;
 }
+
+.add-quick-task-form {
+  font-size: 12px;
+}
+
+.tasks {
+  width: 60%;
+}
+
+.change-name {
+  left: 25%;
+}

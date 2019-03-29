@@ -26,3 +26,7 @@ button {
   display: inline-block;
   width: 100%;
 }
+
+.task-action-icon {
+  font-size: 17px;
+}
