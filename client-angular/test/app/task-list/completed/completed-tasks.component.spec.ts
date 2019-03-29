@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {RouterModule} from '@angular/router';
 import {MatListModule} from '@angular/material/list';
 import {By} from '@angular/platform-browser';
@@ -42,7 +42,7 @@ describe('CompletedTasksComponent', () => {
     [completedTasks()], [], [], unsubscribe
   ));
 
-  beforeEach(async(() => {
+  beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       declarations: [CompletedTasksComponent, TaskLinkComponent],
       imports: [MatListModule, RouterModule, RouterTestingModule],
@@ -53,19 +53,18 @@ describe('CompletedTasksComponent', () => {
     fixture = TestBed.createComponent(CompletedTasksComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    tick();
   }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should contain completed tasks', async(() => {
-    // The timeout allows the page to fully render before checking the DOM for presence of the
-    // necessary element.
-    fixture.whenStable().then(() => {
-      fixture.detectChanges();
-      const tasks = fixture.debugElement.queryAll(By.css('.list-item'));
-      expect(tasks.length).toBe(2);
-    });
+  it('should contain completed tasks', fakeAsync(() => {
+    component.ngOnInit();
+    tick();
+    fixture.detectChanges();
+    const tasks = fixture.debugElement.queryAll(By.css('.list-item'));
+    expect(tasks.length).toBe(2);
   }));
 });

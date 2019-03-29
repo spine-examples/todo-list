@@ -22,30 +22,24 @@ package io.spine.examples.todolist.c.procman;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.protobuf.Timestamp;
 import io.spine.base.CommandMessage;
-import io.spine.change.StringChange;
-import io.spine.change.StringChangeVBuilder;
 import io.spine.change.TimestampChange;
-import io.spine.change.TimestampChangeVBuilder;
+import io.spine.examples.todolist.DescriptionChange;
 import io.spine.examples.todolist.LabelDetails;
 import io.spine.examples.todolist.LabelDetailsChange;
 import io.spine.examples.todolist.LabelDetailsChangeVBuilder;
 import io.spine.examples.todolist.LabelId;
 import io.spine.examples.todolist.LabelIdVBuilder;
 import io.spine.examples.todolist.PriorityChange;
-import io.spine.examples.todolist.PriorityChangeVBuilder;
-import io.spine.examples.todolist.TaskDescription;
 import io.spine.examples.todolist.TaskId;
-import io.spine.examples.todolist.TaskPriority;
 import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.AssignLabelToTask;
 import io.spine.examples.todolist.c.commands.AssignLabelToTaskVBuilder;
 import io.spine.examples.todolist.c.commands.CreateBasicLabelVBuilder;
-import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.UpdateLabelDetailsVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescription;
 import io.spine.examples.todolist.c.commands.UpdateTaskDescriptionVBuilder;
+import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
 import io.spine.examples.todolist.c.commands.UpdateTaskDueDateVBuilder;
 import io.spine.examples.todolist.c.commands.UpdateTaskPriorityVBuilder;
 
@@ -55,7 +49,6 @@ import java.util.stream.Stream;
 import static com.google.common.base.Preconditions.checkArgument;
 import static io.spine.base.Identifier.newUuid;
 import static io.spine.examples.todolist.LabelColor.GRAY;
-import static io.spine.examples.todolist.TaskPriority.TP_UNDEFINED;
 import static io.spine.validate.Validate.isNotDefault;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -88,100 +81,80 @@ final class WizardCommands {
     /**
      * Creates commands setting the task details to the target task
      *
-     * <p>This method is guaranteed to generate at least one command. Effectively, each non-default
-     * field of the {@code SetTaskDetails} command causes a command to be generated.
+     * <p>Each non-default field of the {@code UpdateTaskDetails} command causes a command to be
+     * generated.
      *
      * @param src
      *         the source command
      * @return new commands generated from the given {@code src} command
      */
-    Collection<? extends CommandMessage> setTaskDetails(SetTaskDetails src) {
+     Collection<? extends CommandMessage> updateTaskDetails(UpdateTaskDetails src) {
         ImmutableSet.Builder<CommandMessage> commands = ImmutableSet.builder();
-        TaskDescription description = src.getDescription();
-        CommandMessage updateDescription = updateTaskDescription(description);
-        commands.add(updateDescription);
-        TaskPriority priority = src.getPriority();
-        if (enumIsNotDefault(priority)) {
-            CommandMessage updatePriority = updateTaskPriority(priority);
+        DescriptionChange descriptionChange = src.getDescriptionChange();
+        if (isNotDefault(descriptionChange)) {
+            CommandMessage updateDescription = updateTaskDescription(descriptionChange);
+            commands.add(updateDescription);
+        }
+        PriorityChange priorityChange = src.getPriorityChange();
+        if (isNotDefault(priorityChange)) {
+            CommandMessage updatePriority = updateTaskPriority(priorityChange);
             commands.add(updatePriority);
         }
-        Timestamp dueDate = src.getDueDate();
-        if (isNotDefault(dueDate)) {
-            CommandMessage updateDueDate = updateTaskDueDate(dueDate);
+        TimestampChange dueDateChange = src.getDueDateChange();
+        if (isNotDefault(dueDateChange)) {
+            CommandMessage updateDueDate = updateTaskDueDate(dueDateChange);
             commands.add(updateDueDate);
         }
         return commands.build();
     }
 
     /**
-     * Creates a command setting the description of the target task to the given value.
+     * Creates a command updating the description of the target task.
      *
-     * <p>This method creates a command which initializes the task description, i.e. the task
-     * doesn't have a description yet.
-     *
-     * @param description
-     *         the description to set to the target task
+     * @param descriptionChange
+     *         the description change for the target task
      * @return the command to the target task
      */
-    private CommandMessage updateTaskDescription(TaskDescription description) {
-        checkArgument(isNotDefault(description));
-        StringChange change = StringChangeVBuilder
-                .newBuilder()
-                .setNewValue(description.getValue())
-                .build();
+    private CommandMessage updateTaskDescription(DescriptionChange descriptionChange) {
+        checkArgument(isNotDefault(descriptionChange));
         UpdateTaskDescription updateCommand = UpdateTaskDescriptionVBuilder
                 .newBuilder()
                 .setId(taskId)
-                .setDescriptionChange(change)
+                .setDescriptionChange(descriptionChange)
                 .build();
         return updateCommand;
     }
 
     /**
-     * Creates a command setting the priority of the target task to the given value.
+     * Creates a command updating the task priority.
      *
-     * <p>This method creates a command which initializes the task priority, i.e. the task priority
-     * is not set yet.
-     *
-     * @param priority
-     *         the priority to set to the target task
+     * @param priorityChange
+     *         the priority change for the target task
      * @return the command to the target task
      */
-    private CommandMessage updateTaskPriority(TaskPriority priority) {
-        checkArgument(enumIsNotDefault(priority));
-        PriorityChange change = PriorityChangeVBuilder
-                .newBuilder()
-                .setNewValue(priority)
-                .setPreviousValue(TP_UNDEFINED)
-                .build();
+    private CommandMessage updateTaskPriority(PriorityChange priorityChange) {
+        checkArgument(isNotDefault(priorityChange));
         CommandMessage updateCommand = UpdateTaskPriorityVBuilder
                 .newBuilder()
                 .setId(taskId)
-                .setPriorityChange(change)
+                .setPriorityChange(priorityChange)
                 .build();
         return updateCommand;
     }
 
     /**
-     * Creates a command setting the due date of the target task to the given value.
+     * Creates a command updating the task due date.
      *
-     * <p>This method creates a command which initializes the task due date, i.e. the task due date
-     * is not set yet.
-     *
-     * @param dueDate
+     * @param dueDateChange
      *         the priority to set to the target task
      * @return the command to the target task
      */
-    private CommandMessage updateTaskDueDate(Timestamp dueDate) {
-        checkArgument(isNotDefault(dueDate));
-        TimestampChange change = TimestampChangeVBuilder
-                .newBuilder()
-                .setNewValue(dueDate)
-                .build();
+    private CommandMessage updateTaskDueDate(TimestampChange dueDateChange) {
+        checkArgument(isNotDefault(dueDateChange));
         CommandMessage updateCommand = UpdateTaskDueDateVBuilder
                 .newBuilder()
                 .setId(taskId)
-                .setDueDateChange(change)
+                .setDueDateChange(dueDateChange)
                 .build();
         return updateCommand;
     }
@@ -306,18 +279,5 @@ final class WizardCommands {
                                         .setId(taskId)
                                         .setLabelId(labelId)
                                         .build();
-    }
-
-    /**
-     * Checks if the given value is not default.
-     *
-     * <p>A Protobuf enum value is considered non-default if its number is greater than zero.
-     *
-     * @param priority
-     *         the value to check
-     * @return {@code true} if the value is not default, {@code false} otherwise
-     */
-    private static boolean enumIsNotDefault(TaskPriority priority) {
-        return priority.getNumber() > 0;
     }
 }

@@ -142,5 +142,42 @@ message TaskItem {
     // The due date for the task.
     google.protobuf.Timestamp due_date = 6;
 
+    // The task status.
     TaskStatus status = 7;
+}
+
+// The details of a single task.
+//
+message TaskView {
+    option (entity).kind = PROJECTION;
+
+    // Task identifier.
+    TaskId id = 1;
+
+    // Task description.
+    TaskDescription description = 2;
+
+    // Task priority.
+    TaskPriority priority = 3;
+
+    // The due date for the task.
+    google.protobuf.Timestamp due_date = 4;
+
+    // The IDs of the labels assigned to the task.
+    LabelIdsList label_ids_list = 5;
+}
+
+// A single label view.
+//
+message LabelView {
+    option (entity).kind = PROJECTION;
+
+    // The ID of the label.
+    LabelId id = 1;
+
+    // The label title.
+    string title = 2;
+
+    // The label color.
+    LabelColor color = 3;
 }

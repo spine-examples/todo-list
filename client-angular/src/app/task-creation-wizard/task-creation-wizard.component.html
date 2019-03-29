@@ -18,7 +18,22 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<p>
-  Task Creation Wizard started!
-</p>
-<button (click)="back()">Back</button>
+<app-page-header text="New Task"></app-page-header>
+
+<mat-progress-bar mode="buffer" *ngIf="isLoading"></mat-progress-bar>
+<mat-horizontal-stepper linear #stepper [hidden]="isLoading">
+    <mat-step>
+        <ng-template matStepLabel>Task definition</ng-template>
+        <app-task-definition [stepper]="stepper">
+        </app-task-definition>
+    </mat-step>
+    <mat-step>
+        <ng-template matStepLabel>Label assignment</ng-template>
+        <app-label-assignment [stepper]="stepper">
+        </app-label-assignment>
+    </mat-step>
+    <mat-step>
+        <ng-template matStepLabel>Confirmation</ng-template>
+        <app-confirmation [stepper]="stepper"></app-confirmation>
+    </mat-step>
+</mat-horizontal-stepper>

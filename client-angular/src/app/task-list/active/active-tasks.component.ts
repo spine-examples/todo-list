@@ -23,7 +23,6 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from '../../task-service/task.service';
 import {TaskItem, TaskStatus} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {TaskListCategoryComponent} from '../task-list-category/task-list-category.component';
 
 /**
@@ -40,7 +39,8 @@ export class ActiveTasksComponent extends TaskListCategoryComponent {
   private createBasicTaskForms: FormGroup;
 
   constructor(taskService: TaskService, private formBuilder: FormBuilder) {
-    super(taskService, (task: TaskItem) => task.getStatus() === TaskStatus.OPEN);
+    super(taskService, (task: TaskItem) =>
+      task.getStatus() === TaskStatus.OPEN || task.getStatus() === TaskStatus.FINALIZED);
     this.createBasicTaskForms = formBuilder.group({
       taskDescription: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
     });

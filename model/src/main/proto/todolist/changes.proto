@@ -34,6 +34,16 @@ option java_generate_equals_and_hash = true;
 import "todolist/attributes.proto";
 import "todolist/values.proto";
 
+// Definition of a change in a task description field.
+message DescriptionChange {
+
+    // The previous task description.
+    TaskDescription previous_value = 1;
+
+    // The new task description.
+    TaskDescription new_value = 2 [(valid) = true];
+}
+
 // Definition of a change in a task priority field.
 message PriorityChange {
 

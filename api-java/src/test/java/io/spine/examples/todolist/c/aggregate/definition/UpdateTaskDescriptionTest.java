@@ -82,7 +82,8 @@ class UpdateTaskDescriptionTest extends TaskCommandTest<UpdateTaskDescription> {
 
         assertEquals(entityId(), taskDescriptionUpdated.getTaskId());
         String newDescription = taskDescriptionUpdated.getDescriptionChange()
-                                                      .getNewValue();
+                                                      .getNewValue()
+                                                      .getValue();
         assertEquals(DESCRIPTION, newDescription);
     }
 

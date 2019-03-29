@@ -28,6 +28,8 @@ import io.spine.examples.todolist.TaskCreation;
 import io.spine.examples.todolist.TaskCreation.Stage;
 import io.spine.examples.todolist.TaskCreationId;
 import io.spine.examples.todolist.TaskCreationVBuilder;
+import io.spine.examples.todolist.TaskDetailsUpdateRejected;
+import io.spine.examples.todolist.TaskDetailsUpdateRejectedVBuilder;
 import io.spine.examples.todolist.TaskId;
 import io.spine.examples.todolist.c.commands.AddLabels;
 import io.spine.examples.todolist.c.commands.CancelTaskCreation;
@@ -36,11 +38,12 @@ import io.spine.examples.todolist.c.commands.CreateDraft;
 import io.spine.examples.todolist.c.commands.CreateDraftVBuilder;
 import io.spine.examples.todolist.c.commands.FinalizeDraft;
 import io.spine.examples.todolist.c.commands.FinalizeDraftVBuilder;
-import io.spine.examples.todolist.c.commands.SetTaskDetails;
 import io.spine.examples.todolist.c.commands.SkipLabels;
 import io.spine.examples.todolist.c.commands.StartTaskCreation;
+import io.spine.examples.todolist.c.commands.UpdateTaskDetails;
 import io.spine.examples.todolist.c.rejection.CannotAddLabels;
 import io.spine.examples.todolist.c.rejection.CannotMoveToStage;
+import io.spine.examples.todolist.c.rejection.CannotUpdateTaskDetails;
 import io.spine.server.command.Assign;
 import io.spine.server.command.Command;
 import io.spine.server.model.Nothing;
@@ -58,6 +61,7 @@ import static io.spine.examples.todolist.TaskCreation.Stage.CONFIRMATION;
 import static io.spine.examples.todolist.TaskCreation.Stage.LABEL_ASSIGNMENT;
 import static io.spine.examples.todolist.TaskCreation.Stage.TASK_DEFINITION;
 import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRejections.throwCannotAddLabelsToTask;
+import static io.spine.validate.Validate.isDefault;
 
 /**
  * A process manager supervising the task creation process.
@@ -74,7 +78,7 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRej
  *     <li><b>Completed</b> - the task creation process is completed. This is a terminal stage,
  *         i.e. no stages may follow this stage. At this stage the supervised task is finalized and
  *         the current instance of {@code TaskCreationWizard} is
- *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived}. It is
+ *         {@linkplain io.spine.server.entity.EntityWithLifecycle#isArchived() archived} It is
  *         required that the process is in the <b>Confirmation</b> stage before moving to this
  *         stage.
  *     <li><b>Canceled</b> - the task creation is canceled. No entities are deleted on this stage.
@@ -94,12 +98,17 @@ import static io.spine.examples.todolist.c.aggregate.rejection.TaskLabelsPartRej
  * <pre>
  *     {@code
  *     --> Task Definition --> Label Assignment -->  Confirmation -->  Completed.
- *                       \                    \                 \
+ *                       \                    \                \
  *                        --------------------------------------------> Canceled.
  *     }
  * </pre>
+ *
+ * <p>The data from the already visited stages can be re-submitted at any point of time until the
+ * process is terminated. This allows moving back and forth in the wizard, performing multiple data
+ * modifications.
  */
-@SuppressWarnings("unused") // Command handler methods invoked via reflection.
+@SuppressWarnings({"unused" /* Command handler methods invoked via reflection. */,
+        "OverlyCoupledClass" /* OK for process manager entity. */})
 public class TaskCreationWizard extends ProcessManager<TaskCreationId,
                                                        TaskCreation,
                                                        TaskCreationVBuilder> {
@@ -123,9 +132,14 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     }
 
     @Command
-    Collection<? extends CommandMessage> handle(SetTaskDetails command, CommandContext context)
-            throws CannotMoveToStage {
-        return transit(LABEL_ASSIGNMENT, () -> commands().setTaskDetails(command));
+    Collection<? extends CommandMessage> handle(UpdateTaskDetails command, CommandContext context)
+            throws CannotMoveToStage, CannotUpdateTaskDetails {
+        boolean isTaskDefinition = builder().getStage() == TASK_DEFINITION;
+        if (isTaskDefinition && isDefault(command.getDescriptionChange())) {
+            throwCannotUpdateTaskDetails(command);
+        }
+        return transit(LABEL_ASSIGNMENT,
+                       () -> commands().updateTaskDetails(command));
     }
 
     @Command
@@ -176,8 +190,11 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * Transits the process to the specified state by handling a command with the given command
-     * handler.
+     * Tries to transit the process to the specified stage by handling a command with the given
+     * command handler.
+     *
+     * <p>If the requested stage is preceding to the current state, the actual transition won't
+     * happen, but the action will still be performed.
      *
      * @param requestedStage
      *         the stage to transit to
@@ -194,7 +211,7 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
             throws CannotMoveToStage {
         checkCanMoveTo(requestedStage);
         R result = commandHandler.get();
-        moveToStage(requestedStage);
+        moveIfSubsequent(requestedStage);
         return result;
     }
 
@@ -206,13 +223,18 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
     }
 
     /**
-     * Sets the current stage to the given value.
+     * Moves to the requested stage if it's subsequent to the current stage.
      *
      * @param stage
      *         the requested stage
      */
-    private void moveToStage(Stage stage) {
-        builder().setStage(stage);
+    private void moveIfSubsequent(Stage stage) {
+        int currentStageNumber = builder().getStage()
+                                          .getNumber();
+        int requestedStageNumber = stage.getNumber();
+        if (currentStageNumber < requestedStageNumber) {
+            builder().setStage(stage);
+        }
     }
 
     /**
@@ -224,13 +246,15 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
      *         if the transition from current to specified stage is illegal
      */
     private void checkCanMoveTo(Stage pendingStage) throws CannotMoveToStage {
-        if (pendingStage == CANCELED && !isTerminated()) {
+        Stage currentStage = builder().getStage();
+        int pendingStageNumber = pendingStage.getNumber();
+        int currentStageNumber = currentStage.getNumber();
+        boolean movingForward = pendingStageNumber > currentStageNumber;
+        if ((pendingStage == CANCELED || !movingForward) && !isTerminated()) {
             return;
         }
-        Stage currentStage = builder().getStage();
-        int expectedStageNumber = currentStage.getNumber() + 1;
-        int actualStageNumber = pendingStage.getNumber();
-        if (expectedStageNumber != actualStageNumber) {
+        int expectedStageNumber = currentStageNumber + 1;
+        if (expectedStageNumber != pendingStageNumber) {
             CannotMoveToStage rejection = CannotMoveToStage
                     .newBuilder()
                     .setProcessId(id())
@@ -280,5 +304,24 @@ public class TaskCreationWizard extends ProcessManager<TaskCreationId,
         TaskId taskId = taskId();
         WizardCommands result = WizardCommands.create(taskId);
         return result;
+    }
+
+    private static void throwCannotUpdateTaskDetails(UpdateTaskDetails command)
+            throws CannotUpdateTaskDetails {
+        TaskDetailsUpdateRejected details = TaskDetailsUpdateRejectedVBuilder
+                .newBuilder()
+                .setId(command.getId())
+                .setNewDescription(command.getDescriptionChange()
+                                          .getNewValue())
+                .setNewPriority(command.getPriorityChange()
+                                       .getNewValue())
+                .setNewDueDate(command.getDueDateChange()
+                                      .getNewValue())
+                .build();
+        CannotUpdateTaskDetails rejection = CannotUpdateTaskDetails
+                .newBuilder()
+                .setRejectionDetails(details)
+                .build();
+        throw rejection;
     }
 }

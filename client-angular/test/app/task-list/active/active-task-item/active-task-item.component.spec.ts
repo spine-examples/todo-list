@@ -25,7 +25,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {By} from '@angular/platform-browser';
 
 import {ActiveTaskItemComponent} from '../../../../../src/app/task-list/active/active-task-item/active-task-item.component';
-import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, task} from '../../../given/tasks';
+import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, taskItem} from '../../../given/tasks';
 
 import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
 import {TaskService} from '../../../../../src/app/task-service/task.service';
@@ -34,7 +34,7 @@ import {Client} from 'spine-web';
 import {TaskLinkComponent} from '../../../../../src/app/task-list/task-link/task-link.component';
 
 describe('ActiveTaskItemComponent', () => {
-  const taskItem = task(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
+  const theTaskItem = taskItem(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
 
   const mockClient = mockSpineWebClient();
   let component: ActiveTaskItemComponent;
@@ -56,7 +56,7 @@ describe('ActiveTaskItemComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ActiveTaskItemComponent);
     component = fixture.componentInstance;
-    component.task = taskItem;
+    component.task = theTaskItem;
     fixture.detectChanges();
   });
 
@@ -88,7 +88,7 @@ describe('ActiveTaskItemComponent', () => {
     const testHostFixture = TestBed.createComponent(TestHostComponent);
     testHostFixture.detectChanges();
     const testHostComponent = testHostFixture.componentInstance;
-    expect(testHostComponent.childTask).toBe(taskItem);
+    expect(testHostComponent.childTask).toBe(theTaskItem);
   });
 
   @Component({
@@ -101,7 +101,7 @@ describe('ActiveTaskItemComponent', () => {
     @ViewChild(ActiveTaskItemComponent)
     private taskItemComponent: ActiveTaskItemComponent;
 
-    private readonly task: TaskItem = taskItem;
+    private readonly task: TaskItem = theTaskItem;
 
     get childTask() {
       return this.taskItemComponent.task;

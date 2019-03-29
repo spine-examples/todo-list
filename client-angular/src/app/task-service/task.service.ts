@@ -20,15 +20,16 @@
 
 import {Injectable, OnDestroy} from '@angular/core';
 import {Client, Type} from 'spine-web';
-import * as uuid from 'uuid';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 import {TaskServiceModule} from './task-service.module';
+import {UuidGenerator} from '../uuid-generator/uuid-generator';
 
 import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
 import {TaskDescription} from 'generated/main/js/todolist/values_pb';
 import {CompleteTask, CreateBasicTask, DeleteTask} from 'generated/main/js/todolist/c/commands_pb';
-import {MyListView, TaskItem} from 'generated/main/js/todolist/q/projections_pb';
+import {MyListView, TaskItem, TaskView} from 'generated/main/js/todolist/q/projections_pb';
+import {TaskStatus} from 'generated/main/js/todolist/attributes_pb';
 
 /**
  * A service which performs operations on To-Do List tasks.
@@ -45,16 +46,6 @@ export class TaskService implements OnDestroy {
    * @param spineWebClient a client for accessing Spine backend
    */
   constructor(private readonly spineWebClient: Client) {
-  }
-
-  /**
-   * Generates a new {@link TaskId}.
-   */
-  private static newId(): TaskId {
-    const id = new TaskId();
-    const value = uuid.v4();
-    id.setValue(value);
-    return id;
   }
 
   /** Visible for testing. */
@@ -123,7 +114,7 @@ export class TaskService implements OnDestroy {
    */
   createBasicTask(description: string): void {
     const cmd = new CreateBasicTask();
-    const id = TaskService.newId();
+    const id = UuidGenerator.newId(TaskId);
     cmd.setId(id);
 
     const taskDescription = new TaskDescription();
@@ -131,6 +122,25 @@ export class TaskService implements OnDestroy {
     cmd.setDescription(taskDescription);
 
     this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
+  }
+
+  /**
+   * Fetches a single task details.
+   *
+   * If nothing is found by the specified ID, the promise is rejected.
+   */
+  fetchById(id: TaskId): Promise<TaskView> {
+    return new Promise<TaskView>((resolve, reject) => {
+      const dataCallback = task => {
+        if (!task) {
+          reject(`No task view found for ID: ${id}`);
+        } else {
+          resolve(task);
+        }
+      };
+      // noinspection JSIgnoredPromiseFromCall Method wrongly resolved by IDEA.
+      this.spineWebClient.fetchById(Type.forClass(TaskView), id, dataCallback, reject);
+    });
   }
 
   /**

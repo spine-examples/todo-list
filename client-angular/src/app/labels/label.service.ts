@@ -19,21 +19,63 @@
  */
 
 import {Injectable} from '@angular/core';
-import {Client} from 'spine-web';
+import {Client, Type} from 'spine-web';
+import {UuidGenerator} from '../uuid-generator/uuid-generator';
 
-import {LabelsModule} from './labels.module';
+import {LabelId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
+import {CreateBasicLabel} from 'generated/main/js/todolist/c/commands_pb';
+import {LabelView} from 'generated/main/js/todolist/q/projections_pb';
 
 /**
  * A service which operates with task labels.
  */
-@Injectable({
-  providedIn: LabelsModule
-})
+@Injectable()
 export class LabelService {
 
   /**
    * @param spineWebClient a client for accessing Spine backend
    */
   constructor(private readonly spineWebClient: Client) {
+  }
+
+  /**
+   * Temporary method for smoke tests.
+   */
+  createBasicLabel(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+        const cmd = new CreateBasicLabel();
+        const id = UuidGenerator.newId(LabelId);
+        cmd.setLabelId(id);
+        cmd.setLabelTitle('TestLabel');
+        this.spineWebClient.sendCommand(cmd, resolve, reject, reject);
+      }
+    );
+  }
+
+  /**
+   * Fetches a list of labels available in the application.
+   */
+  fetchAllLabels(): Promise<LabelView[]> {
+    return this.spineWebClient.fetchAll({ofType: Type.forClass(LabelView)}).atOnce();
+  }
+
+  /**
+   * Fetches the details of a single label.
+   *
+   * In case nothing is found by the specified ID, the promise is rejected.
+   */
+  fetchLabelDetails(labelId: LabelId): Promise<LabelView> {
+    return new Promise<LabelView>((resolve, reject) => {
+        const dataCallback = label => {
+          if (!label) {
+            reject(`No label view found for ID: ${labelId}`);
+          } else {
+            resolve(label);
+          }
+        };
+        // noinspection JSIgnoredPromiseFromCall Method wrongly resolved by IDEA.
+        this.spineWebClient.fetchById(Type.forClass(LabelView), labelId, dataCallback, reject);
+      }
+    );
   }
 }

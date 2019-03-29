@@ -47,7 +47,6 @@ function clientFactory(angularFire: AngularFireDatabase): Client {
  * A provider of the {@linkplain Client Spine Web Client} for the application.
  */
 @NgModule({
-  declarations: [],
   imports: [
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireDatabaseModule

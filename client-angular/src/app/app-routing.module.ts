@@ -24,7 +24,7 @@ import {RouterModule, Routes} from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/task-list/tasks/(tasks:active)',
+    redirectTo: '/task-list/active',
     pathMatch: 'full'
   },
   // TODO:2019-03-12:dmytro.kuzmin: Think about getting rid of lazy loading and importing

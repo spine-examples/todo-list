@@ -23,18 +23,14 @@
         <mat-nav-list>
             <a mat-list-item routerLink="/wizard"
                [routerLinkActive]="['active']">New task</a>
-            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['active'] } }]"
-               [routerLinkActive]="['active']">Active</a>
-            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['drafts'] } }]"
-               [routerLinkActive]="['active']">Drafts</a>
-            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['completed'] } }]"
-               [routerLinkActive]="['active']">Completed</a>
-            <a mat-list-item [routerLink]="[{ outlets: { tasks: ['deleted'] } }]"
-               [routerLinkActive]="['active']"> Deleted</a>
+            <a mat-list-item routerLink="active" [routerLinkActive]="['active']">Active</a>
+            <a mat-list-item routerLink="drafts" [routerLinkActive]="['active']">Drafts</a>
+            <a mat-list-item routerLink="completed" [routerLinkActive]="['active']">Completed</a>
+            <a mat-list-item routerLink="deleted" [routerLinkActive]="['active']"> Deleted</a>
             <a mat-list-item routerLink="/labels" class="labelLink">Labels</a>
         </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content class="task-list-content">
-        <router-outlet name="tasks"></router-outlet>
+        <router-outlet></router-outlet>
     </mat-sidenav-content>
 </mat-sidenav-container>
