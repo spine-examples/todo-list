@@ -20,7 +20,7 @@
 
 import {Pipe, PipeTransform} from '@angular/core';
 
-import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
+import {TaskPriority} from 'proto/todolist/attributes_pb';
 
 /**
  * Converts task priority to its display name.

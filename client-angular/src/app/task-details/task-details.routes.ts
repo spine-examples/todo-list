@@ -21,7 +21,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
-import {TaskDetailsComponent} from './task-details.component';
+import {TaskDetailsComponent} from 'app/task-details/task-details.component';
 
 const routes: Routes = [
   {

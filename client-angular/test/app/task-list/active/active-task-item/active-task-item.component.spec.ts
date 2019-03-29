@@ -24,14 +24,14 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {MatIconModule} from '@angular/material/icon';
 import {By} from '@angular/platform-browser';
 
-import {ActiveTaskItemComponent} from '../../../../../src/app/task-list/active/active-task-item/active-task-item.component';
-import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, taskItem} from '../../../given/tasks';
+import {ActiveTaskItemComponent} from 'app/task-list/active/active-task-item/active-task-item.component';
+import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, taskItem} from 'test/given/tasks';
 
-import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskService} from '../../../../../src/app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from '../../../given/mock-spine-web-client';
+import {TaskItem} from 'proto/todolist/q/projections_pb';
+import {TaskService} from 'app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {Client} from 'spine-web';
-import {TaskLinkComponent} from '../../../../../src/app/task-list/task-link/task-link.component';
+import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
 
 describe('ActiveTaskItemComponent', () => {
   const theTaskItem = taskItem(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);

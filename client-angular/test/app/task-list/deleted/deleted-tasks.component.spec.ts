@@ -23,11 +23,11 @@ import {MatListModule} from '@angular/material/list';
 import {RouterModule} from '@angular/router';
 
 import {Client} from 'spine-web';
-import {DeletedTasksComponent} from '../../../../src/app/task-list/deleted/deleted-tasks.component';
-import {TaskLinkComponent} from '../../../../src/app/task-list/task-link/task-link.component';
-import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
-import {houseTasks} from '../../given/tasks';
+import {DeletedTasksComponent} from 'app/task-list/deleted/deleted-tasks.component';
+import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
+import {TaskService} from 'app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
+import {houseTasks} from 'test/given/tasks';
 
 describe('DeletedTasksComponent', () => {
 

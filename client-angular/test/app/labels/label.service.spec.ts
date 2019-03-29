@@ -21,9 +21,9 @@
 import {fakeAsync, TestBed} from '@angular/core/testing';
 import {Client} from 'spine-web';
 
-import {LabelService} from '../../../src/app/labels/label.service';
-import {mockSpineWebClient} from '../given/mock-spine-web-client';
-import {label1, label2} from '../given/labels';
+import {LabelService} from 'app/labels/label.service';
+import {mockSpineWebClient} from 'test/given/mock-spine-web-client';
+import {label1, label2} from 'test/given/labels';
 
 describe('LabelService', () => {
   const mockClient = mockSpineWebClient();

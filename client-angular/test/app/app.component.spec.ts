@@ -23,8 +23,8 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {Client} from 'spine-web';
 import {MatToolbarModule} from '@angular/material/toolbar';
 
-import {AppComponent} from '../../src/app/app.component';
-import {mockSpineWebClient} from './given/mock-spine-web-client';
+import {AppComponent} from 'app/app.component';
+import {mockSpineWebClient} from 'test/given/mock-spine-web-client';
 
 describe('AppComponent', () => {
   beforeEach(async(() => {

@@ -18,9 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TaskPriorityName} from '../../../../src/app/pipes/task-priority-name/task-priority-name.pipe';
+import {TaskPriorityName} from 'app/pipes/task-priority-name/task-priority-name.pipe';
 
-import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
+import {TaskPriority} from 'proto/todolist/attributes_pb';
 
 describe('TaskPriorityName', () => {
 

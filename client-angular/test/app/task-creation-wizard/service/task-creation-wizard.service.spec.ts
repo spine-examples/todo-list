@@ -22,19 +22,19 @@ import {fakeAsync, TestBed, tick} from '@angular/core/testing';
 
 import {Client} from 'spine-web';
 
-import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
-import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
-import {houseTask, houseTasks} from '../../given/tasks';
-import {label1, label2} from '../../given/labels';
-import {initMockProcess, taskCreationProcess} from '../../given/task-creation-process';
-import {tomorrow, yesterday} from '../../given/dates';
+import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
+import {TaskService} from 'app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
+import {houseTask, houseTasks} from 'test/given/tasks';
+import {label1, label2} from 'test/given/labels';
+import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-process';
+import {tomorrow, yesterday} from 'test/given/dates';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
-import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
-import {LabelId, TaskCreationId, TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {TaskCreation} from 'generated/main/js/todolist/model_pb';
-import {TaskDescription} from 'generated/main/js/todolist/values_pb';
+import {TaskPriority} from 'proto/todolist/attributes_pb';
+import {LabelId, TaskCreationId, TaskId} from 'proto/todolist/identifiers_pb';
+import {TaskCreation} from 'proto/todolist/model_pb';
+import {TaskDescription} from 'proto/todolist/values_pb';
 import {
   AddLabels,
   CancelTaskCreation,
@@ -42,8 +42,8 @@ import {
   SkipLabels,
   StartTaskCreation,
   UpdateTaskDetails
-} from 'generated/main/js/todolist/c/commands_pb';
-import {TaskView} from 'generated/main/js/todolist/q/projections_pb';
+} from 'proto/todolist/c/commands_pb';
+import {TaskView} from 'proto/todolist/q/projections_pb';
 
 describe('TaskCreationWizard', () => {
 

@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {commonEnvironment} from './environment.common';
+import {commonEnvironment} from 'environments/environment.common';
 
 /**
  * The environment configuration for the production.

@@ -22,14 +22,14 @@ import {Component} from '@angular/core';
 import {Router} from '@angular/router';
 import {Moment} from 'moment';
 
-import {TaskCreationWizard} from '../service/task-creation-wizard.service';
-import {StringValue} from '../../pipes/string-value/string-value.pipe';
-import {MomentFromTimestamp} from '../../pipes/moment-from-timestamp/momentFromTimestamp.pipe';
-import {WizardStep} from '../wizard-step';
+import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
+import {StringValue} from 'app/pipes/string-value/string-value.pipe';
+import {MomentFromTimestamp} from 'app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
+import {WizardStep} from 'app/task-creation-wizard/wizard-step';
 
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
-import {TaskPriority} from 'generated/main/js/todolist/attributes_pb';
-import {TaskDescription} from 'generated/main/js/todolist/values_pb';
+import {TaskPriority} from 'proto/todolist/attributes_pb';
+import {TaskDescription} from 'proto/todolist/values_pb';
 
 /**
  * A component which represents the first step of the Task Creation Wizard - a task definition.

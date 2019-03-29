@@ -20,7 +20,7 @@
 
 import {NgModule} from '@angular/core';
 
-import {SpineClientProvider} from '../spine-client-provider/spine-client-provider.module';
+import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provider.module';
 
 /**
  * A module which provides the {@link TaskService}.

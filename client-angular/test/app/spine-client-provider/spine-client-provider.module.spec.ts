@@ -22,7 +22,7 @@ import {Injectable} from '@angular/core';
 import {TestBed} from '@angular/core/testing';
 import {Client} from 'spine-web';
 
-import {SpineClientProvider} from '../../../src/app/spine-client-provider/spine-client-provider.module';
+import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provider.module';
 
 describe('SpineClientProvider', () => {
 

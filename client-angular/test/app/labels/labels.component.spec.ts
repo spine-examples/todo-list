@@ -24,9 +24,9 @@ import {RouterTestingModule} from '@angular/router/testing';
 
 import {Client} from 'spine-web';
 
-import {LabelsComponent} from '../../../src/app/labels/labels.component';
-import {LabelService} from '../../../src/app/labels/label.service';
-import {mockSpineWebClient} from '../given/mock-spine-web-client';
+import {LabelsComponent} from 'app/labels/labels.component';
+import {LabelService} from 'app/labels/label.service';
+import {mockSpineWebClient} from 'test/given/mock-spine-web-client';
 
 describe('LabelsComponent', () => {
   let component: LabelsComponent;

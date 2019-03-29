@@ -20,7 +20,7 @@
 
 import {Pipe, PipeTransform} from '@angular/core';
 
-import {LabelColor} from 'generated/main/js/todolist/attributes_pb';
+import {LabelColor} from 'proto/todolist/attributes_pb';
 
 /**
  * Obtains the string value of the `LabelColor` for proper display in the HTML page.

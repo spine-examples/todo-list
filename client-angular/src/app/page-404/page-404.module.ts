@@ -20,8 +20,8 @@
 
 import {NgModule} from '@angular/core';
 
-import {Page404} from './page-404.component';
-import {Page404RoutingModule} from './page-404.routes';
+import {Page404} from 'app/page-404/page-404.component';
+import {Page404RoutingModule} from 'app/page-404/page-404.routes';
 
 /**
  * A module which provides "404 Not Found" page.

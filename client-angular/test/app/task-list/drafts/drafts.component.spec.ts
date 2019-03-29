@@ -20,7 +20,7 @@
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import {DraftsComponent} from '../../../../src/app/task-list/drafts/drafts.component';
+import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
 
 describe('DraftsComponent', () => {
   let component: DraftsComponent;

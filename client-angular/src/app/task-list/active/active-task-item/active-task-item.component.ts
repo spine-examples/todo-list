@@ -20,8 +20,8 @@
 
 import {Component, Input} from '@angular/core';
 
-import {TaskItem} from 'generated/main/js/todolist/q/projections_pb';
-import {TaskService} from '../../../task-service/task.service';
+import {TaskItem} from 'proto/todolist/q/projections_pb';
+import {TaskService} from 'app/task-service/task.service';
 
 /**
  * The view of a single `Active` task in the list.

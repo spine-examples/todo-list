@@ -24,18 +24,18 @@ import {RouterTestingModule} from '@angular/router/testing';
 import {Client} from 'spine-web';
 
 import {MatChipsModule, MatIconModule, MatListModule} from '@angular/material';
-import {LabelAssignmentComponent} from '../../../../src/app/task-creation-wizard/step-2-label-assignment/label-assignment.component';
-import {TodoListComponentsModule} from '../../../../src/app/common-components/todo-list-components.module';
-import {TodoListPipesModule} from '../../../../src/app/pipes/todo-list-pipes.module';
-import {TaskCreationWizard} from '../../../../src/app/task-creation-wizard/service/task-creation-wizard.service';
-import {TaskService} from '../../../../src/app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from '../../given/mock-spine-web-client';
-import {LabelService} from '../../../../src/app/labels/label.service';
-import {houseTasks} from '../../given/tasks';
-import {initMockProcessWithLabels, taskCreationProcess} from '../../given/task-creation-process';
-import {mockStepper} from '../given/mock-stepper';
-import {label1, label2} from '../../given/labels';
-import {WizardStep} from '../../../../src/app/task-creation-wizard/wizard-step';
+import {LabelAssignmentComponent} from 'app/task-creation-wizard/step-2-label-assignment/label-assignment.component';
+import {TodoListComponentsModule} from 'app/common-components/todo-list-components.module';
+import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
+import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
+import {TaskService} from 'app/task-service/task.service';
+import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
+import {LabelService} from 'app/labels/label.service';
+import {houseTasks} from 'test/given/tasks';
+import {initMockProcessWithLabels, taskCreationProcess} from 'test/given/task-creation-process';
+import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
+import {label1, label2} from 'test/given/labels';
+import {WizardStep} from 'app/task-creation-wizard/wizard-step';
 
 describe('LabelAssignmentComponent', () => {
   const mockClient = mockSpineWebClient();

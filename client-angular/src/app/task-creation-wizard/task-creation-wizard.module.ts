@@ -34,16 +34,16 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatSelectModule} from '@angular/material/select';
 import {MatStepperModule} from '@angular/material/stepper';
 
-import {TaskDefinitionComponent} from './step-1-task-definition/task-definition.component';
-import {LabelAssignmentComponent} from './step-2-label-assignment/label-assignment.component';
-import {TaskCreationWizardComponent} from './task-creation-wizard.component';
-import {ConfirmationComponent} from './step-3-confirmation/confirmation.component';
-import {TaskCreationWizardRoutingModule} from './task-creation-wizard.routes';
-import {TodoListComponentsModule} from '../common-components/todo-list-components.module';
-import {SpineClientProvider} from '../spine-client-provider/spine-client-provider.module';
-import {TodoListPipesModule} from '../pipes/todo-list-pipes.module';
-import {TaskServiceModule} from '../task-service/task-service.module';
-import {LabelsModule} from '../labels/labels.module';
+import {TaskDefinitionComponent} from 'app/task-creation-wizard/step-1-task-definition/task-definition.component';
+import {LabelAssignmentComponent} from 'app/task-creation-wizard/step-2-label-assignment/label-assignment.component';
+import {TaskCreationWizardComponent} from 'app/task-creation-wizard/task-creation-wizard.component';
+import {ConfirmationComponent} from 'app/task-creation-wizard/step-3-confirmation/confirmation.component';
+import {TaskCreationWizardRoutingModule} from 'app/task-creation-wizard/task-creation-wizard.routes';
+import {TodoListComponentsModule} from 'app/common-components/todo-list-components.module';
+import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provider.module';
+import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
+import {TaskServiceModule} from 'app/task-service/task-service.module';
+import {LabelsModule} from 'app/labels/labels.module';
 
 /**
  * The module which provides a wizard for step-by-step task creation.

@@ -18,10 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {UuidGenerator} from '../../../src/app/uuid-generator/uuid-generator';
+import {UuidGenerator} from 'app/uuid-generator/uuid-generator';
 
-import {TaskId} from 'generated/main/js/todolist/identifiers_pb';
-import {TaskDetails} from 'generated/main/js/todolist/values_pb';
+import {TaskId} from 'proto/todolist/identifiers_pb';
+import {TaskDetails} from 'proto/todolist/values_pb';
 
 describe('UuidGenerator', () => {
 

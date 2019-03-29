@@ -21,7 +21,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
-import {LabelsComponent} from './labels.component';
+import {LabelsComponent} from 'app/labels/labels.component';
 
 const routes: Routes = [
   {

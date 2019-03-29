@@ -22,8 +22,8 @@ import {AfterViewInit, Input, ViewChild} from '@angular/core';
 import {MatStepper} from '@angular/material';
 import {Router} from '@angular/router';
 
-import {TaskCreationWizard} from './service/task-creation-wizard.service';
-import {ErrorViewport} from '../common-components/error-viewport/error-viewport.component';
+import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
+import {ErrorViewport} from 'app/common-components/error-viewport/error-viewport.component';
 
 /**
  * A common base for components that represent Task Creation Wizard steps.

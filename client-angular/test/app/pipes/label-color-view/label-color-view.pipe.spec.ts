@@ -18,9 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {LabelColorView} from '../../../../src/app/pipes/label-color-view/label-color-view.pipe';
+import {LabelColorView} from 'app/pipes/label-color-view/label-color-view.pipe';
 
-import {LabelColor} from 'generated/main/js/todolist/attributes_pb';
+import {LabelColor} from 'proto/todolist/attributes_pb';
 
 describe('LabelColorView', () => {
 
