@@ -19,7 +19,6 @@
  */
 
 import {Component, Input} from '@angular/core';
-
 import {TaskItem} from 'proto/todolist/q/projections_pb';
 import {TaskService} from 'app/task-service/task.service';
 

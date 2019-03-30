@@ -26,7 +26,6 @@ import {MatInputModule} from '@angular/material';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
-
 import {TaskListComponent} from 'app/task-list/task-list.component';
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
 import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
@@ -37,6 +36,7 @@ import {TaskServiceModule} from 'app/task-service/task-service.module';
 import {ActiveTaskItemComponent} from 'app/task-list/active/active-task-item/active-task-item.component';
 import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
 import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-list-category.component';
+import {MatCardModule} from '@angular/material/card';
 
 /**
  * The module which displays the task list.
@@ -61,13 +61,15 @@ import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-l
     MatInputModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatCardModule
   ],
   exports: [
     MatInputModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatCardModule
   ]
 })
 export class TaskListModule {

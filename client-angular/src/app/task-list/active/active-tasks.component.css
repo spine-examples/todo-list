@@ -22,18 +22,18 @@
   width: 100%;
 }
 
-.full-width {
-  width: 80%;
-}
-
 .add-quick-task-form {
-  font-size: 12px;
+  font-size: 16px;
 }
 
-.tasks {
-  width: 60%;
+.single-task {
+  width: 600px;
 }
 
-.change-name {
-  left: 25%;
+.task-description-input {
+  width: 600px;
+}
+
+.form-field {
+  width: 600px;
 }

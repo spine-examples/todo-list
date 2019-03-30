@@ -23,9 +23,9 @@
 }
 
 .task-list-content {
-  padding: 25px 0 0 50px;
   width: 60%;
-  left: 10%;
+  left: 48px;
+  top: 12px;
 }
 
 .task-list-sidenav {
