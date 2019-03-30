@@ -77,7 +77,7 @@ describe('ActiveTasksComponent', () => {
 
   it('should allow basic task creation', () => {
     const method = spyOn<any>(component, 'createBasicTask');
-    const input = fixture.debugElement.query(By.css('.task-description-textarea')).nativeElement;
+    const input = fixture.debugElement.query(By.css('.task-description-input')).nativeElement;
     input.value = 'Some basic task text';
     const keyPressed = new KeyboardEvent('keydown', {
       key: 'Enter'
