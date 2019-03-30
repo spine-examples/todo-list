@@ -20,7 +20,7 @@
 
 <mat-sidenav-container class="task-list-container">
     <mat-sidenav mode="side" opened class="task-list-sidenav">
-        <mat-nav-list>
+        <mat-nav-list class="navigation-list">
             <a mat-list-item routerLink="/wizard"
                [routerLinkActive]="['active']"><mat-icon>add</mat-icon>New task</a>
             <a mat-list-item routerLink="active" [routerLinkActive]="['active']"><mat-icon>turned_in_not</mat-icon>Active</a>
@@ -31,6 +31,5 @@
         </mat-nav-list>
     </mat-sidenav>
     <mat-sidenav-content class="task-list-content">
-        <router-outlet></router-outlet>
-    </mat-sidenav-content>
+        <router-outlet></router-outlet></mat-sidenav-content>
 </mat-sidenav-container>
