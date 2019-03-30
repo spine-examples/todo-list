@@ -27,11 +27,13 @@
 }
 
 .task-list-sidenav {
-  width: 15%;
+  width: 256px;
 }
 
 .task-list-sidenav a {
-  font-size: 10px;
+  font-size: 15px;
+  padding-top: 8px;
+  padding-bottom: 8px;
 }
 
 a.mat-list-item {
@@ -39,12 +41,16 @@ a.mat-list-item {
 }
 
 a.mat-list-item:hover {
-  border-radius: 15%/100%;
+  border-radius: 5px;
 }
 
 mat-icon {
   position: relative;
-  font-size: 15px;
-  width: 30%;
-  height: 70%;
+  font-size: 25px;
+  margin-right: 18px;
+  padding: 0;
+}
+
+.navigation-list {
+  padding-top: 8px;
 }
