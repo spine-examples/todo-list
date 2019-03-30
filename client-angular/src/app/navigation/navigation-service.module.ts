@@ -19,34 +19,14 @@
  */
 
 import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
 
-import {TaskListComponent} from 'app/task-list/task-list.component';
-
-import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
-import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
-import {DeletedTasksComponent} from 'app/task-list/deleted/deleted-tasks.component';
-import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
-
-const routes: Routes = [
-  {
-    path: '',
-    component: TaskListComponent,
-    children: [
-      {path: 'active', component: ActiveTasksComponent},
-      {path: 'completed', component: CompletedTasksComponent},
-      {path: 'deleted', component: DeletedTasksComponent},
-      {path: 'drafts', component: DraftsComponent}
-    ]
-  }
-];
+import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provider.module';
 
 /**
- * The routing configuration of the {@link TaskListModule}.
+ * A module which provides the {@link NavigationService}.
  */
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  imports: []
 })
-export class TaskListRoutingModule {
+export class NavigationServiceModule {
 }

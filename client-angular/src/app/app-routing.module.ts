@@ -20,18 +20,26 @@
 
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
+import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
+import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
+import {DeletedTasksComponent} from 'app/task-list/deleted/deleted-tasks.component';
+import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
 
 const routes: Routes = [
   {
-    path: '',
-    redirectTo: '/task-list/active',
+    path: 'active',
+    component: ActiveTasksComponent,
     pathMatch: 'full'
   },
   // TODO:2019-03-12:dmytro.kuzmin: Think about getting rid of lazy loading and importing
   // todo everything statically into the main module.
   {
     path: 'task-list',
-    loadChildren: 'app/task-list/task-list.module#TaskListModule'
+    children: [
+      {path: 'completed', component: CompletedTasksComponent},
+      {path: 'deleted', component: DeletedTasksComponent},
+      {path: 'drafts', component: DraftsComponent}
+    ]
   },
 
   {

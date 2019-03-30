@@ -18,6 +18,11 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 <mat-toolbar color="primary">To-do list</mat-toolbar>
-<div class="page-root">
-    <router-outlet></router-outlet>
-</div>
+<mat-sidenav-container class="task-list-container">
+    <mat-sidenav mode="side" opened class="task-list-sidenav">
+    <app-navigation></app-navigation>
+    </mat-sidenav>
+    <mat-sidenav-content class="page-content">
+        <router-outlet></router-outlet>
+    </mat-sidenav-content>
+</mat-sidenav-container>
