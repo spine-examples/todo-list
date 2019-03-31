@@ -18,15 +18,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
-
-/**
- * The main application component displayed in `index.html`.
- */
-@Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
-})
-export class AppComponent {
+.toolbar {
+  height: 64px;
+}
+.task-list-container {
+  height: calc(100vh - 64px);
 }
