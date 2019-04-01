@@ -32,19 +32,16 @@ import {LayoutService} from 'app/layout/layout.service';
 export class AppComponent implements OnInit {
 
   private showNav: boolean;
-  private currentLocation: string;
+  private toolbarLabel: string;
 
   constructor(private readonly navService: LayoutService, private readonly changeDetector: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
-    this.navService.showNav$.subscribe(show => {
-      this.showNav = show;
-      this.changeDetector.detectChanges();
-    });
-    this.navService.currentLabel$.subscribe(location => {
-      this.currentLocation = location;
-      this.changeDetector.detectChanges();
+    this.navService.config$.subscribe(config => {
+      console.log(config);
+      this.showNav = config.showNavigation;
+      this.toolbarLabel = config.toolbarLabel;
     });
   }
 }

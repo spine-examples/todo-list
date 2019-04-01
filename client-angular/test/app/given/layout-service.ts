@@ -25,5 +25,5 @@ import {LayoutService} from 'app/layout/layout.service';
  */
 export function mockLayoutService() {
   return jasmine.createSpyObj<LayoutService>('LayoutService',
-    ['showNav$', 'currentLabel$', 'updateLocation', 'updateShowNav', 'defaultLayout']);
+    ['config$', 'updateToolbar', 'updateShowNav', 'defaultLayout']);
 }

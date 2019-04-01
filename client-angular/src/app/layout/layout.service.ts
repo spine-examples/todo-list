@@ -23,6 +23,17 @@ import {LayoutServiceModule} from 'app/layout/layout-service.module';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 /**
+ * Configuration of the layout.
+ *
+ * Defines whether the label value on the toolbar as well as whether a navbar
+ * is supposed to be shown.
+ */
+export interface LayoutConfig {
+  toolbarLabel: string;
+  showNavigation: boolean;
+}
+
+/**
  * A service responsible for the layout of the application.
  *
  * Allows to adjust the way the sidenav and the toolbar are displayed.
@@ -32,35 +43,36 @@ import {BehaviorSubject, Observable} from 'rxjs';
 })
 export class LayoutService {
 
-  private static readonly DEFAULT_LABEL: string = 'To-do list';
-  private static readonly DEFAULT_SHOW_NAV: boolean = true;
+  private _currentConfig$: BehaviorSubject<LayoutConfig>;
 
-  private _currentLabel$: BehaviorSubject<string>;
-  private _showNavigation$: BehaviorSubject<boolean>;
+  private static readonly DEFAULT_LAYOUT_CONFIG: () => LayoutConfig = () => {
+    return {
+      toolbarLabel: 'To-do list',
+      showNavigation: true
+    };
+  };
 
   constructor() {
-    this._currentLabel$ = new BehaviorSubject<string>('To-do list');
-    this._showNavigation$ = new BehaviorSubject<boolean>(true);
+    this._currentConfig$ = new BehaviorSubject<LayoutConfig>(LayoutService.DEFAULT_LAYOUT_CONFIG());
   }
 
-  /** Obtains whether the sidenav is currently being shown. */
-  get showNav$(): Observable<boolean> {
-    return this._showNavigation$.asObservable();
-  }
-
-  /** Obtains the value the label on the toolbar. */
-  get currentLabel$(): Observable<string> {
-    return this._currentLabel$.asObservable();
+  /** Obtains an observable that represents the current layout config. */
+  get config$(): Observable<LayoutConfig> {
+    return this._currentConfig$.asObservable();
   }
 
   /** Updates the label on the toolbar with the specified value. */
-  public updateLocation(newLocation: string) {
-    this._currentLabel$.next(newLocation);
+  public updateToolbar(toolbarValue: string) {
+    const result = Object.assign(this._currentConfig$.getValue(),
+      {toolbarLabel: toolbarValue});
+    this._currentConfig$.next(result);
   }
 
   /** Updates whether the toolbar is supposed to be showed. */
   public updateShowNav(shouldShowNav: boolean) {
-    this._showNavigation$.next(shouldShowNav);
+    const result = Object.assign(this._currentConfig$.getValue(),
+      {showNavigation: shouldShowNav});
+    this._currentConfig$.next(result);
   }
 
   /**
@@ -68,7 +80,6 @@ export class LayoutService {
    * `To-do list`.
    */
   public defaultLayout(): void {
-    this._currentLabel$.next(LayoutService.DEFAULT_LABEL);
-    this._showNavigation$.next(LayoutService.DEFAULT_SHOW_NAV);
+    this._currentConfig$.next(LayoutService.DEFAULT_LAYOUT_CONFIG());
   }
 }

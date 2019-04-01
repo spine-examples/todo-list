@@ -18,9 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {MatIconModule} from '@angular/material/icon';
+import {MatListModule} from '@angular/material/list';
+import {RouterTestingModule} from '@angular/router/testing';
 
-import { NavigationComponent } from '../../../src/app/navigation/navigation.component';
+import {NavigationComponent} from 'app/layout/navigation/navigation.component';
+import {LayoutService} from 'app/layout/layout.service';
+import {mockLayoutService} from 'test/given/layout-service';
 
 describe('NavigationComponent', () => {
   let component: NavigationComponent;
@@ -28,9 +33,11 @@ describe('NavigationComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ NavigationComponent ]
+      imports: [RouterTestingModule.withRoutes([]), MatIconModule, MatListModule],
+      declarations: [NavigationComponent],
+      providers: [{provide: LayoutService, useValue: mockLayoutService()}]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

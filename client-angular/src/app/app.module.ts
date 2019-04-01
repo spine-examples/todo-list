@@ -29,7 +29,7 @@ import {RouterModule} from '@angular/router';
 
 import {AppRoutingModule} from 'app/app-routing.module';
 import {AppComponent} from 'app/app.component';
-import {NavigationComponent} from 'app/navigation/navigation.component';
+import {NavigationComponent} from 'app/layout/navigation/navigation.component';
 import {TaskListModule} from 'app/task-list/task-list.module';
 import {LayoutServiceModule} from 'app/layout/layout-service.module';
 

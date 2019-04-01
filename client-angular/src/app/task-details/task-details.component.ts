@@ -43,7 +43,7 @@ export class TaskDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.layoutService.updateShowNav(false);
-    this.layoutService.updateLocation('Details');
+    this.layoutService.updateToolbar('Details');
   }
 
   back(): void {
