@@ -36,6 +36,8 @@ import {initMockProcessWithLabels, taskCreationProcess} from 'test/given/task-cr
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
 import {label1, label2} from 'test/given/labels';
 import {WizardStep} from 'app/task-creation-wizard/wizard-step';
+import {LayoutService} from "app/layout/layout.service";
+import {mockLayoutService} from "test/given/layout-service";
 
 describe('LabelAssignmentComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -76,7 +78,8 @@ describe('LabelAssignmentComponent', () => {
         TaskCreationWizard,
         TaskService,
         LabelService,
-        {provide: Client, useValue: mockClient}
+        {provide: Client, useValue: mockClient},
+        {provide: LayoutService, useValue: mockLayoutService()}
       ]
     })
       .compileComponents();
@@ -194,7 +197,9 @@ describe('LabelAssignmentComponent', () => {
     mockClient.sendCommand.and.callFake((command, resolve) => resolve());
     component.cancel();
     tick();
-    expect(component.router.url).toEqual(WizardStep.QUIT_TO);
+    const url = component.router.url;
+    const stillContainsWizard: boolean = url.includes('wizard');
+    expect(stillContainsWizard).toBe(false);
   }));
 
   it('throw Error if canceling task creation failed', fakeAsync(() => {

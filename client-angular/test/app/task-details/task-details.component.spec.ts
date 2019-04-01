@@ -24,6 +24,8 @@ import {ActivatedRoute, convertToParamMap} from '@angular/router';
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {TaskDetailsComponent} from 'app/task-details/task-details.component';
+import {LayoutService} from "app/layout/layout.service";
+import {mockLayoutService} from "test/given/layout-service";
 
 describe('TaskDetailsComponent', () => {
   let component: TaskDetailsComponent;
@@ -35,7 +37,10 @@ describe('TaskDetailsComponent', () => {
     TestBed.configureTestingModule({
       declarations: [TaskDetailsComponent],
       imports: [RouterTestingModule.withRoutes([])],
-      providers: [{provide: ActivatedRoute, useValue: activatedRoute}]
+      providers: [
+        {provide: ActivatedRoute, useValue: activatedRoute},
+        {provide: LayoutService, useValue: mockLayoutService()}
+      ]
     })
       .compileComponents();
   }));

@@ -27,14 +27,16 @@ import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
 
 const routes: Routes = [
   {
-    path: 'active',
-    component: ActiveTasksComponent,
+    path: '',
+    redirectTo: 'active',
+    pathMatch: 'full'
   },
   // TODO:2019-03-12:dmytro.kuzmin: Think about getting rid of lazy loading and importing
   // todo everything statically into the main module.
   {
     path: '',
     children: [
+      {path: 'active', component: ActiveTasksComponent},
       {path: 'completed', component: CompletedTasksComponent},
       {path: 'deleted', component: DeletedTasksComponent},
       {path: 'drafts', component: DraftsComponent}

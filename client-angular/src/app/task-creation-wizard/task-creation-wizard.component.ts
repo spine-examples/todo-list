@@ -142,8 +142,8 @@ export class TaskCreationWizardComponent implements AfterViewInit {
         this.labelAssignment.initFromWizard();
 
         this.isLoading = false;
-        this.navService.changeShowNav(false);
-        this.navService.changeLocation('Wizard');
+        this.navService.updateShowNav(false);
+        this.navService.updateLocation('Wizard');
         this.changeDetector.detectChanges();
       })
       .catch(err => TaskCreationWizardComponent.reportFatalError(err));

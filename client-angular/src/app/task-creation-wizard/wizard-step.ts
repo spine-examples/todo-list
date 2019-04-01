@@ -36,7 +36,7 @@ export abstract class WizardStep implements AfterViewInit {
    *
    * Visible for testing.
    */
-  static readonly QUIT_TO = 'active';
+  static readonly QUIT_TO = '';
 
   /**
    * A reference to the Angular Material Stepper which handles the wizard UI.

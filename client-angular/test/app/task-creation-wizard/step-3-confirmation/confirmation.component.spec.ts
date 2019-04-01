@@ -34,6 +34,8 @@ import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-pro
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
 import {TaskPriorityName} from 'app/pipes/task-priority-name/task-priority-name.pipe';
 import {MomentFromTimestamp} from 'app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
+import {LayoutService} from "app/layout/layout.service";
+import {mockLayoutService} from "test/given/layout-service";
 
 describe('ConfirmationComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -62,7 +64,8 @@ describe('ConfirmationComponent', () => {
       providers: [
         TaskCreationWizard,
         TaskService,
-        {provide: Client, useValue: mockClient}
+        {provide: Client, useValue: mockClient},
+        {provide: LayoutService, useValue: mockLayoutService()}
       ]
     })
       .compileComponents();
@@ -100,7 +103,9 @@ describe('ConfirmationComponent', () => {
     mockClient.sendCommand.and.callFake((command, resolve) => resolve());
     component.finish();
     tick();
-    expect(component.router.url).toEqual(WizardStep.QUIT_TO);
+    const url = component.router.url;
+    const stillContainsWizard: boolean = url.includes('wizard');
+    expect(stillContainsWizard).toBe(false);
   }));
 
   it('should throw an exception if process completion fails', fakeAsync(() => {
@@ -110,7 +115,9 @@ describe('ConfirmationComponent', () => {
       component.finish();
       tick();
     }).toThrowError();
-    expect(component.router.url).toEqual(WizardStep.QUIT_TO);
+    const url = component.router.url;
+    const stillContainsWizard: boolean = url.includes('wizard');
+    expect(stillContainsWizard).toBe(false);
   }));
 
   it('should navigate to previous step', () => {
@@ -122,7 +129,9 @@ describe('ConfirmationComponent', () => {
     mockClient.sendCommand.and.callFake((command, resolve) => resolve());
     component.cancel();
     tick();
-    expect(component.router.url).toEqual(WizardStep.QUIT_TO);
+    const url = component.router.url;
+    const stillContainsWizard: boolean = url.includes('wizard');
+    expect(stillContainsWizard).toBe(false);
   }));
 
   it('throw Error if canceling task creation failed', fakeAsync(() => {

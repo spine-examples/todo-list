@@ -28,7 +28,7 @@ import {MatListModule} from '@angular/material/list';
 
 import {AppComponent} from 'app/app.component';
 import {LayoutService} from 'app/layout/layout.service';
-import {mockNavigationService} from 'test/given/navigation-service';
+import {mockLayoutService} from 'test/given/layout-service';
 import {NavigationComponent} from 'app/navigation/navigation.component';
 
 describe('AppComponent', () => {
@@ -46,7 +46,7 @@ describe('AppComponent', () => {
         NavigationComponent
       ],
       providers: [
-        {provide: LayoutService, useValue: mockNavigationService()}
+        {provide: LayoutService, useValue: mockLayoutService()}
       ]
     }).compileComponents();
   }));

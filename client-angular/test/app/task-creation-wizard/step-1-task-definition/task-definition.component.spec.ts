@@ -45,6 +45,8 @@ import {MomentFromTimestamp} from 'app/pipes/moment-from-timestamp/momentFromTim
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'proto/todolist/attributes_pb';
 import {TaskCreation} from 'proto/todolist/model_pb';
+import {LayoutService} from "app/layout/layout.service";
+import {mockLayoutService} from "test/given/layout-service";
 
 describe('TaskDefinitionComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -66,7 +68,7 @@ describe('TaskDefinitionComponent', () => {
         FormsModule,
         RouterTestingModule.withRoutes([
           // Same component for convenience.
-          {path: 'task-list/active', component: TaskDefinitionComponent}
+          {path: 'active', component: TaskDefinitionComponent}
         ]),
 
         TodoListComponentsModule,
@@ -81,7 +83,8 @@ describe('TaskDefinitionComponent', () => {
       providers: [
         TaskCreationWizard,
         TaskService,
-        {provide: Client, useValue: mockClient}
+        {provide: Client, useValue: mockClient},
+        {provide: LayoutService, useValue: mockLayoutService()}
       ]
     })
       .compileComponents();
@@ -178,7 +181,9 @@ describe('TaskDefinitionComponent', () => {
     mockClient.sendCommand.and.callFake((command, resolve) => resolve());
     component.cancel();
     tick();
-    expect(component.router.url).toEqual(WizardStep.QUIT_TO);
+    const url = component.router.url;
+    const stillContainsWizard: boolean = url.includes('wizard');
+    expect(stillContainsWizard).toBe(false);
   }));
 
   it('throw Error if canceling task creation failed', fakeAsync(() => {

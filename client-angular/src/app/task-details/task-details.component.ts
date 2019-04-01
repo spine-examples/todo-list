@@ -42,8 +42,8 @@ export class TaskDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.layoutService.changeShowNav(false);
-    this.layoutService.changeLocation('Details');
+    this.layoutService.updateShowNav(false);
+    this.layoutService.updateLocation('Details');
   }
 
   back(): void {

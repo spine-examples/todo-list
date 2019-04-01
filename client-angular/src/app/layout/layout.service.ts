@@ -47,11 +47,11 @@ export class LayoutService {
     return this._currentLabel$.asObservable();
   }
 
-  public changeLocation(newLocation: string) {
+  public updateLocation(newLocation: string) {
     this._currentLabel$.next(newLocation);
   }
 
-  public changeShowNav(shouldShowNav: boolean) {
+  public updateShowNav(shouldShowNav: boolean) {
     this._showNavigation$.next(shouldShowNav);
   }
 

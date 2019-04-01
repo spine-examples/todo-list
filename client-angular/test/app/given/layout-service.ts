@@ -23,7 +23,7 @@ import {LayoutService} from 'app/layout/layout.service';
 /**
  * Obtains a mock `LayoutService`.
  */
-export function mockNavigationService() {
+export function mockLayoutService() {
   return jasmine.createSpyObj<LayoutService>('LayoutService',
-    ['showNav$', 'currentLabel$', 'changeLocation', 'showNav', 'hideNav']);
+    ['showNav$', 'currentLabel$', 'updateLocation', 'updateShowNav', 'defaultLayout']);
 }

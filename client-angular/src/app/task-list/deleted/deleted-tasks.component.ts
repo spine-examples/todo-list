@@ -34,7 +34,7 @@ import {LayoutService} from 'app/layout/layout.service';
 })
 export class DeletedTasksComponent extends TaskListCategoryComponent {
 
-  constructor(taskService: TaskService, navService: LayoutService) {
+  constructor(taskService: TaskService) {
     super(
       taskService,
       (task: TaskItem) => task.getStatus() === TaskStatus.DELETED,

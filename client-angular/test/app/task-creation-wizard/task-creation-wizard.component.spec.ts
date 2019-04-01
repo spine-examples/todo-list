@@ -61,7 +61,8 @@ import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-pro
 import {TaskCreation} from 'proto/todolist/model_pb';
 import {TaskView} from 'proto/todolist/q/projections_pb';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
-import {mockNavigationService} from 'test/given/navigation-service';
+import {mockLayoutService} from 'test/given/layout-service';
+import {LayoutService} from "app/layout/layout.service";
 
 describe('TaskCreationWizardComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -69,7 +70,7 @@ describe('TaskCreationWizardComponent', () => {
   mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
     [houseTasks()], [], [], unsubscribe
   ));
-  const mockNavService = mockNavigationService();
+  const mockNavService = mockLayoutService();
   const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);
   mockClient.fetchAll.and.returnValue(fetch);
   fetch.atOnce.and.returnValue(Promise.resolve());
@@ -131,7 +132,8 @@ describe('TaskCreationWizardComponent', () => {
         TaskService,
         LabelService,
         {provide: Client, useValue: mockClient},
-        {provide: ActivatedRoute, useValue: activatedRoute}
+        {provide: ActivatedRoute, useValue: activatedRoute},
+        {provide: LayoutService, useValue: mockLayoutService()}
       ]
     })
       .compileComponents();
