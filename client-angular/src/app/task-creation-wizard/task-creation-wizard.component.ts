@@ -34,7 +34,7 @@ import {TaskCreationId, TaskId} from 'proto/todolist/identifiers_pb';
 import {TaskCreation} from 'proto/todolist/model_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
 import {SetTaskDetails, StartTaskCreation} from 'proto/todolist/c/commands_pb';
-import {NavigationService} from 'app/navigation/navigation.service';
+import {LayoutService} from 'app/layout/layout.service';
 
 /**
  * The main component of the Task Creation Wizard.
@@ -113,7 +113,7 @@ export class TaskCreationWizardComponent implements AfterViewInit {
               private readonly changeDetector: ChangeDetectorRef,
               private readonly location: Location,
               route: ActivatedRoute,
-              private readonly navService: NavigationService) {
+              private readonly navService: LayoutService) {
     this.isLoading = true;
     const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
     this.initWizard = wizard.init(taskCreationId);
@@ -142,7 +142,7 @@ export class TaskCreationWizardComponent implements AfterViewInit {
         this.labelAssignment.initFromWizard();
 
         this.isLoading = false;
-        this.navService.hideNav();
+        this.navService.changeShowNav(false);
         this.navService.changeLocation('Wizard');
         this.changeDetector.detectChanges();
       })

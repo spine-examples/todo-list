@@ -18,40 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
-import {Component, OnInit} from '@angular/core';
+import {NgModule} from '@angular/core';
 
-import {LabelService} from 'app/labels/label.service';
-import {LayoutService} from 'app/layout/layout.service';
+import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provider.module';
 
 /**
- * The component which displays the label list as well as provides the basic navigation to
- * add/modify labels.
+ * A module which provides the {@link LayoutService}.
  */
-@Component({
-  selector: 'app-labels',
-  templateUrl: './labels.component.html'
+@NgModule({
+  imports: []
 })
-export class LabelsComponent implements OnInit {
-
-  constructor(private readonly location: Location,
-              private readonly labelService: LabelService,
-              private readonly navService: LayoutService) {
-  }
-
-  back(): void {
-    this.location.back();
-  }
-
-  addLabel(): void {
-    console.log('To be honest I cannot add a new label');
-  }
-
-  createBasicLabel() {
-    this.labelService.createBasicLabel();
-  }
-
-  ngOnInit(): void {
-    this.navService.changeLocation('Labels');
-  }
+export class LayoutServiceModule {
 }

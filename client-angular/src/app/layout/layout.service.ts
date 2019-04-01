@@ -19,20 +19,23 @@
  */
 
 import {Injectable} from '@angular/core';
-import {NavigationServiceModule} from 'app/navigation/navigation-service.module';
+import {LayoutServiceModule} from 'app/layout/layout-service.module';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 @Injectable({
-  providedIn: NavigationServiceModule
+  providedIn: LayoutServiceModule
 })
-export class NavigationService {
+export class LayoutService {
 
-  private _currentLocation$: BehaviorSubject<string>;
+  private static readonly DEFAULT_LABEL: string = 'To-do list';
+  private static readonly DEFAULT_SHOW_NAV: boolean = true;
+
+  private _currentLabel$: BehaviorSubject<string>;
   private _showNavigation$: BehaviorSubject<boolean>;
 
   constructor() {
     // TODO:2019-04-01:serhii.lekariev: not supposed to be hardcoded
-    this._currentLocation$ = new BehaviorSubject<string>('To-do list');
+    this._currentLabel$ = new BehaviorSubject<string>('To-do list');
     this._showNavigation$ = new BehaviorSubject<boolean>(true);
   }
 
@@ -40,19 +43,20 @@ export class NavigationService {
     return this._showNavigation$.asObservable();
   }
 
-  get currentLocation$(): Observable<string> {
-    return this._currentLocation$.asObservable();
+  get currentLabel$(): Observable<string> {
+    return this._currentLabel$.asObservable();
   }
 
   public changeLocation(newLocation: string) {
-    this._currentLocation$.next(newLocation);
+    this._currentLabel$.next(newLocation);
   }
 
-  public showNav(): void {
-    this._showNavigation$.next(true);
+  public changeShowNav(shouldShowNav: boolean) {
+    this._showNavigation$.next(shouldShowNav);
   }
 
-  public hideNav() {
-    this._showNavigation$.next(false);
+  public defaultLayout(): void {
+    this._currentLabel$.next(LayoutService.DEFAULT_LABEL);
+    this._showNavigation$.next(LayoutService.DEFAULT_SHOW_NAV);
   }
 }

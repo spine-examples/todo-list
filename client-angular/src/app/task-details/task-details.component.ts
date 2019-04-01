@@ -19,8 +19,9 @@
  */
 
 import {Location} from '@angular/common';
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
+import {LayoutService} from 'app/layout/layout.service';
 
 /**
  * Component responsible for displaying a single task.
@@ -29,13 +30,20 @@ import {ActivatedRoute} from '@angular/router';
   selector: 'app-task-details',
   templateUrl: './task-details.component.html'
 })
-export class TaskDetailsComponent {
+export class TaskDetailsComponent implements OnInit {
 
   /** Visible for testing. */
   readonly taskId;
 
-  constructor(private readonly location: Location, route: ActivatedRoute) {
+  constructor(private readonly location: Location,
+              route: ActivatedRoute,
+              private readonly layoutService: LayoutService) {
     this.taskId = route.snapshot.paramMap.get('id');
+  }
+
+  ngOnInit() {
+    this.layoutService.changeShowNav(false);
+    this.layoutService.changeLocation('Details');
   }
 
   back(): void {

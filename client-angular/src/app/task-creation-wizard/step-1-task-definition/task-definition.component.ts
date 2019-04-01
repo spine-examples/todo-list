@@ -30,6 +30,7 @@ import {WizardStep} from 'app/task-creation-wizard/wizard-step';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'proto/todolist/attributes_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
+import {LayoutService} from "app/layout/layout.service";
 
 /**
  * A component which represents the first step of the Task Creation Wizard - a task definition.
@@ -68,8 +69,8 @@ export class TaskDefinitionComponent extends WizardStep {
   /** Visible for testing. */
   dueDate: Timestamp;
 
-  constructor(router: Router, wizard: TaskCreationWizard) {
-    super(router, wizard);
+  constructor(router: Router, wizard: TaskCreationWizard, layoutService: LayoutService) {
+    super(router, wizard, layoutService);
   }
 
   private static tomorrow(): Date {

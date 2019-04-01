@@ -31,7 +31,7 @@ import {AppRoutingModule} from 'app/app-routing.module';
 import {AppComponent} from 'app/app.component';
 import {NavigationComponent} from 'app/navigation/navigation.component';
 import {TaskListModule} from 'app/task-list/task-list.module';
-import {NavigationServiceModule} from 'app/navigation/navigation-service.module';
+import {LayoutServiceModule} from 'app/layout/layout-service.module';
 
 /**
  * The main application module.
@@ -50,7 +50,7 @@ import {NavigationServiceModule} from 'app/navigation/navigation-service.module'
     MatIconModule,
     MatListModule,
     MatSidenavModule,
-    NavigationServiceModule,
+    LayoutServiceModule,
     RouterModule
   ],
   exports: [

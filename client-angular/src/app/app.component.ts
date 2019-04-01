@@ -19,7 +19,7 @@
  */
 
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {NavigationService} from 'app/navigation/navigation.service';
+import {LayoutService} from 'app/layout/layout.service';
 
 /**
  * The main application component displayed in `index.html`.
@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
   private showNav: boolean;
   private currentLocation: string;
 
-  constructor(private readonly navService: NavigationService, private readonly changeDetector: ChangeDetectorRef) {
+  constructor(private readonly navService: LayoutService, private readonly changeDetector: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
@@ -42,7 +42,7 @@ export class AppComponent implements OnInit {
       this.showNav = show;
       this.changeDetector.detectChanges();
     });
-    this.navService.currentLocation$.subscribe(location => {
+    this.navService.currentLabel$.subscribe(location => {
       this.currentLocation = location;
       this.changeDetector.detectChanges();
     });

@@ -18,8 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, OnInit} from '@angular/core';
-import {NavigationService} from 'app/navigation/navigation.service';
+import {Component} from '@angular/core';
 
 /**
  * A component which displays draft tasks view.
@@ -28,12 +27,5 @@ import {NavigationService} from 'app/navigation/navigation.service';
   selector: 'app-drafts',
   templateUrl: './drafts.component.html'
 })
-export class DraftsComponent implements OnInit {
-
-  constructor(private readonly navService: NavigationService) {
-  }
-
-  ngOnInit(): void {
-    this.navService.changeLocation('Drafts');
-  }
+export class DraftsComponent {
 }

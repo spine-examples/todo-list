@@ -27,6 +27,7 @@ import {WizardStep} from 'app/task-creation-wizard/wizard-step';
 
 import {LabelId} from 'proto/todolist/identifiers_pb';
 import {LabelView} from 'proto/todolist/q/projections_pb';
+import {LayoutService} from "app/layout/layout.service";
 
 /**
  * A component which represents the second step of the Task Creation Wizard - a label assignment.
@@ -66,8 +67,11 @@ export class LabelAssignmentComponent extends WizardStep {
    */
   private readonly loadAvailableLabels: Promise<LabelView[]>;
 
-  constructor(router: Router, wizard: TaskCreationWizard, labelService: LabelService) {
-    super(router, wizard);
+  constructor(router: Router,
+              wizard: TaskCreationWizard,
+              labelService: LabelService,
+              layoutService: LayoutService) {
+    super(router, wizard, layoutService);
     this.loadAvailableLabels = labelService.fetchAllLabels();
   }
 

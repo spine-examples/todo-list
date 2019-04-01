@@ -24,6 +24,7 @@ import {Router} from '@angular/router';
 
 import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
 import {ErrorViewport} from 'app/common-components/error-viewport/error-viewport.component';
+import {LayoutService} from "app/layout/layout.service";
 
 /**
  * A common base for components that represent Task Creation Wizard steps.
@@ -54,7 +55,10 @@ export abstract class WizardStep implements AfterViewInit {
   errorViewport: ErrorViewport;
 
   /* Fields are visible for testing. */
-  protected constructor(readonly router: Router, readonly wizard: TaskCreationWizard) {
+  protected constructor(
+    readonly router: Router,
+    readonly wizard: TaskCreationWizard,
+    private readonly layoutService: LayoutService) {
   }
 
   /**
@@ -129,6 +133,7 @@ export abstract class WizardStep implements AfterViewInit {
    * Visible for testing.
    */
   cancel(): void {
+    this.layoutService.defaultLayout();
     this.wizard.cancelTaskCreation()
       .then(() => this.quitWizard())
       .catch(err => {
