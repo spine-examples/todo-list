@@ -117,6 +117,8 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
     this.isLoading = true;
     const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
     this.initWizard = wizard.init(taskCreationId);
+    this.navService.updateToolbar('Wizard');
+    this.navService.updateShowNav(false);
   }
 
   /**
@@ -140,8 +142,6 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
 
         this.taskDefinition.initFromWizard();
         this.labelAssignment.initFromWizard();
-        this.navService.updateToolbar('Wizard');
-        this.navService.updateShowNav(false);
 
         this.isLoading = false;
         this.changeDetector.detectChanges();

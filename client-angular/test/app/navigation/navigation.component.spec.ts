@@ -23,7 +23,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
 import {RouterTestingModule} from '@angular/router/testing';
 
-import {NavigationComponent} from 'app/layout/navigation/navigation.component';
+import {NavigationComponent} from 'app/layout/layout.module';
 import {LayoutService} from 'app/layout/layout.service';
 import {mockLayoutService} from 'test/given/layout-service';
 

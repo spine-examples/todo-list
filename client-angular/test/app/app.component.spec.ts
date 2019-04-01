@@ -18,19 +18,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {async, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Client} from 'spine-web';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatSidenavModule} from '@angular/material/sidenav';
 import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
-import {of} from 'rxjs';
 
 import {AppComponent} from 'app/app.component';
 import {LayoutService} from 'app/layout/layout.service';
 import {mockLayoutService} from 'test/given/layout-service';
-import {NavigationComponent} from 'app/layout/navigation/navigation.component';
+import {NavigationComponent} from 'app/layout/layout.module';
 
 describe('AppComponent', () => {
   const layoutService = mockLayoutService();

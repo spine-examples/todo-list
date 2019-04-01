@@ -19,7 +19,6 @@
  */
 
 import {TestBed} from '@angular/core/testing';
-
 import {LayoutService} from 'app/layout/layout.service';
 
 describe('LayoutService', () => {

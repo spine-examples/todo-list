@@ -19,7 +19,7 @@
  */
 
 import {Location} from '@angular/common';
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {LayoutService} from 'app/layout/layout.service';
 
@@ -30,7 +30,7 @@ import {LayoutService} from 'app/layout/layout.service';
   selector: 'app-task-details',
   templateUrl: './task-details.component.html'
 })
-export class TaskDetailsComponent implements OnInit {
+export class TaskDetailsComponent implements OnInit, OnDestroy {
 
   /** Visible for testing. */
   readonly taskId;
@@ -44,6 +44,10 @@ export class TaskDetailsComponent implements OnInit {
   ngOnInit() {
     this.layoutService.updateShowNav(false);
     this.layoutService.updateToolbar('Details');
+  }
+
+  ngOnDestroy() {
+    this.layoutService.defaultLayout();
   }
 
   back(): void {
