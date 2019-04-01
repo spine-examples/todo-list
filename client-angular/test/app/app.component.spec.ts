@@ -32,6 +32,7 @@ import {mockLayoutService} from 'test/given/layout-service';
 import {NavigationComponent} from 'app/navigation/navigation.component';
 
 describe('AppComponent', () => {
+  const layoutService = mockLayoutService();
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -46,7 +47,7 @@ describe('AppComponent', () => {
         NavigationComponent
       ],
       providers: [
-        {provide: LayoutService, useValue: mockLayoutService()}
+        {provide: LayoutService, useValue: layoutService}
       ]
     }).compileComponents();
   }));

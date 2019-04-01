@@ -62,7 +62,7 @@ import {TaskCreation} from 'proto/todolist/model_pb';
 import {TaskView} from 'proto/todolist/q/projections_pb';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
 import {mockLayoutService} from 'test/given/layout-service';
-import {LayoutService} from "app/layout/layout.service";
+import {LayoutService} from 'app/layout/layout.service';
 
 describe('TaskCreationWizardComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -70,7 +70,7 @@ describe('TaskCreationWizardComponent', () => {
   mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
     [houseTasks()], [], [], unsubscribe
   ));
-  const mockNavService = mockLayoutService();
+  const layoutService = mockLayoutService();
   const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);
   mockClient.fetchAll.and.returnValue(fetch);
   fetch.atOnce.and.returnValue(Promise.resolve());
@@ -133,7 +133,7 @@ describe('TaskCreationWizardComponent', () => {
         LabelService,
         {provide: Client, useValue: mockClient},
         {provide: ActivatedRoute, useValue: activatedRoute},
-        {provide: LayoutService, useValue: mockLayoutService()}
+        {provide: LayoutService, useValue: layoutService}
       ]
     })
       .compileComponents();
@@ -163,7 +163,7 @@ describe('TaskCreationWizardComponent', () => {
     activated.snapshot = new ActivatedRouteSnapshot();
 
     const theComponent =
-      new TaskCreationWizardComponent(wizard, changeDetector, location, activated, mockNavService);
+      new TaskCreationWizardComponent(wizard, changeDetector, location, activated, layoutService);
     initChildElements(theComponent);
     theComponent.ngAfterViewInit();
     tick();
@@ -208,6 +208,12 @@ describe('TaskCreationWizardComponent', () => {
       component.ngAfterViewInit();
       tick();
     }).toThrowError();
+  }));
+
+  it('should change the label on the toolbar', fakeAsync(() => {
+    TestBed.createComponent(TaskCreationWizardComponent);
+    tick();
+    expect(layoutService.updateLocation).toHaveBeenCalledWith('Wizard');
   }));
 
   it('should execute child components initialization', fakeAsync(() => {
