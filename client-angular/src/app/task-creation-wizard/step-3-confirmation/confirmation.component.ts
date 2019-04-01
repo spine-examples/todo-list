@@ -23,7 +23,6 @@ import {Router} from '@angular/router';
 
 import {TaskCreationWizard} from 'app/task-creation-wizard/service/task-creation-wizard.service';
 import {WizardStep} from 'app/task-creation-wizard/wizard-step';
-import {LayoutService} from "app/layout/layout.service";
 
 /**
  * A component which represents the third step of the Task Creation Wizard - the confirmation.

@@ -27,7 +27,6 @@ import {WizardStep} from 'app/task-creation-wizard/wizard-step';
 
 import {LabelId} from 'proto/todolist/identifiers_pb';
 import {LabelView} from 'proto/todolist/q/projections_pb';
-import {LayoutService} from "app/layout/layout.service";
 
 /**
  * A component which represents the second step of the Task Creation Wizard - a label assignment.

@@ -20,9 +20,12 @@
 
 import {TestBed} from '@angular/core/testing';
 import {LayoutService} from 'app/layout/layout.service';
+import {LayoutModule} from 'app/layout/layout.module';
 
 describe('LayoutService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+  beforeEach(() => TestBed.configureTestingModule({
+    imports: [LayoutModule]
+  }));
 
   it('should be created', () => {
     const service: LayoutService = TestBed.get(LayoutService);

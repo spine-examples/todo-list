@@ -24,8 +24,8 @@ import {ActivatedRoute, convertToParamMap} from '@angular/router';
 import {RouterTestingModule} from '@angular/router/testing';
 
 import {TaskDetailsComponent} from 'app/task-details/task-details.component';
-import {LayoutService} from "app/layout/layout.service";
-import {mockLayoutService} from "test/given/layout-service";
+import {LayoutService} from 'app/layout/layout.service';
+import {mockLayoutService} from 'test/given/layout-service';
 
 describe('TaskDetailsComponent', () => {
   let component: TaskDetailsComponent;

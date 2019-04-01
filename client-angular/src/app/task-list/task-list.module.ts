@@ -34,8 +34,7 @@ import {TaskServiceModule} from 'app/task-service/task-service.module';
 import {ActiveTaskItemComponent} from 'app/task-list/active/active-task-item/active-task-item.component';
 import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
 import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-list-category.component';
-import {AppRoutingModule} from 'app/app-routing.module';
-import {TaskListRoutingModule} from "app/task-list/task-list-routes";
+import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
 
 /**
  * The module which displays the task list.

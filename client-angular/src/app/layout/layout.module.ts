@@ -18,19 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
-
-import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provider.module';
+import {Component, NgModule} from '@angular/core';
 
 /**
  * A module which provides the {@link LayoutService}.
  */
-@NgModule({
-})
+@NgModule({})
 export class LayoutModule {
 }
-
-import {Component} from '@angular/core';
 
 /**
  * A component responsible for displaying navigation bar on the left of the page.

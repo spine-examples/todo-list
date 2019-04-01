@@ -23,7 +23,6 @@ import {Component} from '@angular/core';
 import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
 import {TaskService} from 'app/task-service/task.service';
 import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-list-category.component';
-import {LayoutService} from 'app/layout/layout.service';
 
 /**
  * A component displaying deleted tasks view.

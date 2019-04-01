@@ -34,7 +34,7 @@ export class AppComponent implements OnInit {
   private showNav: boolean;
   private toolbarLabel: string;
 
-  constructor(private readonly navService: LayoutService, private readonly changeDetector: ChangeDetectorRef) {
+  constructor(private readonly navService: LayoutService) {
   }
 
   ngOnInit(): void {

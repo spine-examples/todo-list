@@ -30,7 +30,6 @@ import {WizardStep} from 'app/task-creation-wizard/wizard-step';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskPriority} from 'proto/todolist/attributes_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
-import {LayoutService} from "app/layout/layout.service";
 
 /**
  * A component which represents the first step of the Task Creation Wizard - a task definition.
