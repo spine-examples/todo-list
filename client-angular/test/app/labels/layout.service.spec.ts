@@ -18,15 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
+import {TestBed} from '@angular/core/testing';
 
-import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provider.module';
+import {LayoutService} from 'app/layout/layout.service';
 
-/**
- * A module which provides the {@link LayoutService}.
- */
-@NgModule({
-  imports: []
-})
-export class LayoutServiceModule {
-}
+describe('LayoutService', () => {
+  beforeEach(() => TestBed.configureTestingModule({}));
+
+  it('should be created', () => {
+    const service: LayoutService = TestBed.get(LayoutService);
+    expect(service).toBeTruthy();
+  });
+});

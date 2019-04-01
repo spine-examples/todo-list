@@ -29,9 +29,9 @@ import {RouterModule} from '@angular/router';
 
 import {AppRoutingModule} from 'app/app-routing.module';
 import {AppComponent} from 'app/app.component';
-import {NavigationComponent} from 'app/layout/navigation/navigation.component';
+import {NavigationComponent} from 'app/layout/layout.module';
 import {TaskListModule} from 'app/task-list/task-list.module';
-import {LayoutServiceModule} from 'app/layout/layout-service.module';
+import {LayoutModule} from 'app/layout/layout.module';
 import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
 
 /**
@@ -52,7 +52,7 @@ import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
     MatIconModule,
     MatListModule,
     MatSidenavModule,
-    LayoutServiceModule,
+    LayoutModule,
     RouterModule
   ],
   bootstrap: [AppComponent]

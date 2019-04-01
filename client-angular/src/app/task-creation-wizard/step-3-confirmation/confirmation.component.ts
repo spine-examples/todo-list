@@ -43,8 +43,8 @@ import {LayoutService} from "app/layout/layout.service";
 })
 export class ConfirmationComponent extends WizardStep {
 
-  constructor(router: Router, wizard: TaskCreationWizard, layoutService: LayoutService) {
-    super(router, wizard, layoutService);
+  constructor(router: Router, wizard: TaskCreationWizard) {
+    super(router, wizard);
   }
 
   /**

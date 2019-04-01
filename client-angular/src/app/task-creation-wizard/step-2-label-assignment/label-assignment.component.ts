@@ -67,11 +67,8 @@ export class LabelAssignmentComponent extends WizardStep {
    */
   private readonly loadAvailableLabels: Promise<LabelView[]>;
 
-  constructor(router: Router,
-              wizard: TaskCreationWizard,
-              labelService: LabelService,
-              layoutService: LayoutService) {
-    super(router, wizard, layoutService);
+  constructor(router: Router, wizard: TaskCreationWizard, labelService: LabelService) {
+    super(router, wizard);
     this.loadAvailableLabels = labelService.fetchAllLabels();
   }
 

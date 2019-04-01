@@ -18,15 +18,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TestBed} from '@angular/core/testing';
+import {NgModule} from '@angular/core';
 
-import {LayoutService} from './layout.service';
+import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provider.module';
 
-describe('LayoutService', () => {
-  beforeEach(() => TestBed.configureTestingModule({}));
+/**
+ * A module which provides the {@link LayoutService}.
+ */
+@NgModule({
+})
+export class LayoutModule {
+}
 
-  it('should be created', () => {
-    const service: LayoutService = TestBed.get(LayoutService);
-    expect(service).toBeTruthy();
-  });
-});
+import {Component} from '@angular/core';
+
+/**
+ * A component responsible for displaying navigation bar on the left of the page.
+ */
+@Component({
+  selector: 'app-navigation',
+  templateUrl: './navigation/navigation.component.html',
+  styleUrls: ['./navigation/navigation.component.css']
+})
+export class NavigationComponent {
+}

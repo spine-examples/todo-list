@@ -69,8 +69,8 @@ export class TaskDefinitionComponent extends WizardStep {
   /** Visible for testing. */
   dueDate: Timestamp;
 
-  constructor(router: Router, wizard: TaskCreationWizard, layoutService: LayoutService) {
-    super(router, wizard, layoutService);
+  constructor(router: Router, wizard: TaskCreationWizard) {
+    super(router, wizard);
   }
 
   private static tomorrow(): Date {

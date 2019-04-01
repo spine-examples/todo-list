@@ -19,7 +19,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {LayoutServiceModule} from 'app/layout/layout-service.module';
+import {LayoutModule} from 'app/layout/layout.module';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 /**
@@ -39,21 +39,19 @@ export interface LayoutConfig {
  * Allows to adjust the way the sidenav and the toolbar are displayed.
  */
 @Injectable({
-  providedIn: LayoutServiceModule
+  providedIn: LayoutModule
 })
 export class LayoutService {
 
-  private _currentConfig$: BehaviorSubject<LayoutConfig>;
-
-  private static readonly DEFAULT_LAYOUT_CONFIG: () => LayoutConfig = () => {
-    return {
-      toolbarLabel: 'To-do list',
-      showNavigation: true
-    };
+  private static readonly DEFAULT_LAYOUT_CONFIG: LayoutConfig = {
+    toolbarLabel: 'To-do list',
+    showNavigation: true
   };
 
+  private _currentConfig$: BehaviorSubject<LayoutConfig>;
+
   constructor() {
-    this._currentConfig$ = new BehaviorSubject<LayoutConfig>(LayoutService.DEFAULT_LAYOUT_CONFIG());
+    this._currentConfig$ = new BehaviorSubject<LayoutConfig>(LayoutService.DEFAULT_LAYOUT_CONFIG);
   }
 
   /** Obtains an observable that represents the current layout config. */
@@ -63,15 +61,13 @@ export class LayoutService {
 
   /** Updates the label on the toolbar with the specified value. */
   public updateToolbar(toolbarValue: string) {
-    const result = Object.assign(this._currentConfig$.getValue(),
-      {toolbarLabel: toolbarValue});
+    const result = {...this._currentConfig$.getValue(), ...{toolbarLabel: toolbarValue}};
     this._currentConfig$.next(result);
   }
 
   /** Updates whether the toolbar is supposed to be showed. */
   public updateShowNav(shouldShowNav: boolean) {
-    const result = Object.assign(this._currentConfig$.getValue(),
-      {showNavigation: shouldShowNav});
+    const result = {...this._currentConfig$.getValue(), ...{showNavigation: shouldShowNav}};
     this._currentConfig$.next(result);
   }
 
@@ -80,6 +76,6 @@ export class LayoutService {
    * `To-do list`.
    */
   public defaultLayout(): void {
-    this._currentConfig$.next(LayoutService.DEFAULT_LAYOUT_CONFIG());
+    this._currentConfig$.next(LayoutService.DEFAULT_LAYOUT_CONFIG);
   }
 }

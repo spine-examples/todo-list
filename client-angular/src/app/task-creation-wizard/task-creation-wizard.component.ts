@@ -195,7 +195,6 @@ export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log("defaulting");
     this.navService.defaultLayout();
   }
 }
