@@ -22,6 +22,11 @@ import {Injectable} from '@angular/core';
 import {LayoutServiceModule} from 'app/layout/layout-service.module';
 import {BehaviorSubject, Observable} from 'rxjs';
 
+/**
+ * A service responsible for the layout of the application.
+ *
+ * Allows to adjust the way the sidenav and the toolbar are displayed.
+ */
 @Injectable({
   providedIn: LayoutServiceModule
 })
@@ -34,27 +39,34 @@ export class LayoutService {
   private _showNavigation$: BehaviorSubject<boolean>;
 
   constructor() {
-    // TODO:2019-04-01:serhii.lekariev: not supposed to be hardcoded
     this._currentLabel$ = new BehaviorSubject<string>('To-do list');
     this._showNavigation$ = new BehaviorSubject<boolean>(true);
   }
 
+  /** Obtains whether the sidenav is currently being shown. */
   get showNav$(): Observable<boolean> {
     return this._showNavigation$.asObservable();
   }
 
+  /** Obtains the value the label on the toolbar. */
   get currentLabel$(): Observable<string> {
     return this._currentLabel$.asObservable();
   }
 
+  /** Updates the label on the toolbar with the specified value. */
   public updateLocation(newLocation: string) {
     this._currentLabel$.next(newLocation);
   }
 
+  /** Updates whether the toolbar is supposed to be showed. */
   public updateShowNav(shouldShowNav: boolean) {
     this._showNavigation$.next(shouldShowNav);
   }
 
+  /**
+   * Sets the layout values to their defaults, i.e. a visible navbar and a label value of
+   * `To-do list`.
+   */
   public defaultLayout(): void {
     this._currentLabel$.next(LayoutService.DEFAULT_LABEL);
     this._showNavigation$.next(LayoutService.DEFAULT_SHOW_NAV);
