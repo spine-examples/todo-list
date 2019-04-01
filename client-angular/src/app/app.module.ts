@@ -32,6 +32,7 @@ import {AppComponent} from 'app/app.component';
 import {NavigationComponent} from 'app/layout/navigation/navigation.component';
 import {TaskListModule} from 'app/task-list/task-list.module';
 import {LayoutServiceModule} from 'app/layout/layout-service.module';
+import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
 
 /**
  * The main application module.
@@ -42,6 +43,7 @@ import {LayoutServiceModule} from 'app/layout/layout-service.module';
     NavigationComponent
   ],
   imports: [
+    TaskListRoutingModule,
     TaskListModule,
     BrowserModule,
     BrowserAnimationsModule,
@@ -52,9 +54,6 @@ import {LayoutServiceModule} from 'app/layout/layout-service.module';
     MatSidenavModule,
     LayoutServiceModule,
     RouterModule
-  ],
-  exports: [
-    AppRoutingModule
   ],
   bootstrap: [AppComponent]
 })

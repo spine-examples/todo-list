@@ -21,50 +21,29 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
+import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
+import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
+import {DeletedTasksComponent} from 'app/task-list/deleted/deleted-tasks.component';
+import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
+
 const routes: Routes = [
   {
-    path: '',
-    redirectTo: '/tasks/active',
-    pathMatch: 'full'
-  },
-  // TODO:2019-03-12:dmytro.kuzmin: Think about getting rid of lazy loading and importing
-  // todo everything statically into the main module.
-  {
     path: 'tasks',
-    loadChildren: 'app/task-list/task-list.module#TaskListModule'
-  },
-
-  {
-    path: 'details',
-    loadChildren: 'app/task-details/task-details.module#TaskDetailsModule'
-  },
-
-  {
-    path: 'labels',
-    loadChildren: 'app/labels/labels.module#LabelsModule'
-  },
-
-  {
-    path: 'wizard',
-    loadChildren: 'app/task-creation-wizard/task-creation-wizard.module#TaskCreationWizardModule'
-  },
-
-  {
-    path: '**',
-    loadChildren: 'app/page-404/page-404.module#Page404Module'
+    children: [
+      {path: 'active', component: ActiveTasksComponent},
+      {path: 'completed', component: CompletedTasksComponent},
+      {path: 'deleted', component: DeletedTasksComponent},
+      {path: 'drafts', component: DraftsComponent}
+    ]
   }
 ];
 
 /**
- * The module which describes the navigation routes of the application.
- *
- * All child modules are loaded dynamically (thus lazily).
+ * The routing configuration of the {@link TaskListModule}.
  */
 @NgModule({
-  imports: [
-    RouterModule.forRoot(routes)
-  ],
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {
+export class TaskListRoutingModule {
 }

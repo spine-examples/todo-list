@@ -1,9 +1,9 @@
 <mat-nav-list class="navigation-list">
    <a mat-list-item routerLink="/wizard"
       [routerLinkActive]="['active']"><mat-icon>add</mat-icon>New task</a>
-   <a mat-list-item routerLink="active" [routerLinkActive]="['active']"><mat-icon>turned_in_not</mat-icon>Active</a>
-   <a mat-list-item routerLink="drafts" [routerLinkActive]="['active']"><mat-icon>insert_drive_file</mat-icon>Drafts</a>
-   <a mat-list-item routerLink="completed" [routerLinkActive]="['active']"><mat-icon>done</mat-icon>Completed</a>
-   <a mat-list-item routerLink="deleted" [routerLinkActive]="['active']"><mat-icon>delete_outline</mat-icon>Deleted</a>
+   <a mat-list-item routerLink="tasks/active" [routerLinkActive]="['active']"><mat-icon>turned_in_not</mat-icon>Active</a>
+   <a mat-list-item routerLink="tasks/drafts" [routerLinkActive]="['active']"><mat-icon>insert_drive_file</mat-icon>Drafts</a>
+   <a mat-list-item routerLink="tasks/completed" [routerLinkActive]="['active']"><mat-icon>done</mat-icon>Completed</a>
+   <a mat-list-item routerLink="tasks/deleted" [routerLinkActive]="['active']"><mat-icon>delete_outline</mat-icon>Deleted</a>
    <a mat-list-item routerLink="/labels" class="labelLink"><mat-icon>label_important</mat-icon>Labels</a>
 </mat-nav-list>
