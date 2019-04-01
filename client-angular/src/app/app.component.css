@@ -18,9 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.toolbar {
-  height: 64px;
-}
 .task-list-container {
   height: calc(100vh - 64px);
+}
+
+.task-list-sidenav {
+  width: 256px;
 }
