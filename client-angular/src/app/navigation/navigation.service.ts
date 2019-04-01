@@ -20,26 +20,39 @@
 
 import {Injectable} from '@angular/core';
 import {NavigationServiceModule} from 'app/navigation/navigation-service.module';
+import {BehaviorSubject, Observable} from 'rxjs';
 
 @Injectable({
   providedIn: NavigationServiceModule
 })
 export class NavigationService {
 
-  private currentLocation: string;
-  private showNavigation: boolean;
+  private _currentLocation$: BehaviorSubject<string>;
+  private _showNavigation$: BehaviorSubject<boolean>;
 
   constructor() {
-    //todo actually set it properly.
-    this.currentLocation = 'To-do list';
-    this.showNavigation = true;
+    // TODO:2019-04-01:serhii.lekariev: not supposed to be hardcoded
+    this._currentLocation$ = new BehaviorSubject<string>('To-do list');
+    this._showNavigation$ = new BehaviorSubject<boolean>(true);
   }
 
-  public showNav() {
-    this.showNavigation = true;
+  get showNav$(): Observable<boolean> {
+    return this._showNavigation$.asObservable();
+  }
+
+  get currentLocation$(): Observable<string> {
+    return this._currentLocation$.asObservable();
+  }
+
+  public changeLocation(newLocation: string) {
+    this._currentLocation$.next(newLocation);
+  }
+
+  public showNav(): void {
+    this._showNavigation$.next(true);
   }
 
   public hideNav() {
-    this.showNavigation = false;
+    this._showNavigation$.next(false);
   }
 }

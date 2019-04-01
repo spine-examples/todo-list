@@ -22,6 +22,7 @@ import {Component, OnInit} from '@angular/core';
 import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
 import {TaskService} from 'app/task-service/task.service';
 import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-list-category.component';
+import {NavigationService} from 'app/navigation/navigation.service';
 
 /**
  * A component which displays completed tasks.
@@ -33,7 +34,7 @@ import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-l
 })
 export class CompletedTasksComponent extends TaskListCategoryComponent {
 
-  constructor(taskService: TaskService) {
-    super(taskService, (task: TaskItem) => task.getStatus() === TaskStatus.COMPLETED);
+  constructor(taskService: TaskService, navService: NavigationService) {
+    super(navService, taskService, (task: TaskItem) => task.getStatus() === TaskStatus.COMPLETED);
   }
 }

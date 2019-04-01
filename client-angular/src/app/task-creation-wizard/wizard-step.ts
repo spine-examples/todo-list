@@ -35,7 +35,7 @@ export abstract class WizardStep implements AfterViewInit {
    *
    * Visible for testing.
    */
-  static readonly QUIT_TO = '/task-list/active';
+  static readonly QUIT_TO = 'active';
 
   /**
    * A reference to the Angular Material Stepper which handles the wizard UI.

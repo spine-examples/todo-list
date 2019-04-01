@@ -18,7 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {NavigationService} from 'app/navigation/navigation.service';
 
 /**
  * The main application component displayed in `index.html`.
@@ -28,5 +29,22 @@ import {Component} from '@angular/core';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+
+  private showNav: boolean;
+  private currentLocation: string;
+
+  constructor(private readonly navService: NavigationService, private readonly changeDetector: ChangeDetectorRef) {
+  }
+
+  ngOnInit(): void {
+    this.navService.showNav$.subscribe(show => {
+      this.showNav = show;
+      this.changeDetector.detectChanges();
+    });
+    this.navService.currentLocation$.subscribe(location => {
+      this.currentLocation = location;
+      this.changeDetector.detectChanges();
+    });
+  }
 }
