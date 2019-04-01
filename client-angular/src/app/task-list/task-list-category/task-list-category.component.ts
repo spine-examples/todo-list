@@ -18,7 +18,8 @@ export class TaskListCategoryComponent implements OnInit {
 
   constructor(private readonly navService: NavigationService,
               protected readonly taskService: TaskService,
-              private readonly filter: (task: TaskItem) => boolean) {
+              private readonly filter: (task: TaskItem) => boolean,
+              private readonly categoryName: string) {
   }
 
   ngOnInit() {
@@ -26,5 +27,6 @@ export class TaskListCategoryComponent implements OnInit {
     this.taskService.tasks$.subscribe((taskItems: TaskItem[]) => {
       this.tasks = taskItems.filter(this.filter);
     });
+    this.navService.changeLocation(this.categoryName);
   }
 }

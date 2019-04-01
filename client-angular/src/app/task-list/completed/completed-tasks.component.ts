@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
 import {TaskService} from 'app/task-service/task.service';
 import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-list-category.component';
@@ -35,6 +35,10 @@ import {NavigationService} from 'app/navigation/navigation.service';
 export class CompletedTasksComponent extends TaskListCategoryComponent {
 
   constructor(taskService: TaskService, navService: NavigationService) {
-    super(navService, taskService, (task: TaskItem) => task.getStatus() === TaskStatus.COMPLETED);
+    super(
+      navService,
+      taskService,
+      (task: TaskItem) => task.getStatus() === TaskStatus.COMPLETED,
+      'Completed');
   }
 }

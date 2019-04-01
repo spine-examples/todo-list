@@ -35,6 +35,10 @@ import {NavigationService} from 'app/navigation/navigation.service';
 export class DeletedTasksComponent extends TaskListCategoryComponent {
 
   constructor(taskService: TaskService, navService: NavigationService) {
-    super(navService, taskService, (task: TaskItem) => task.getStatus() === TaskStatus.DELETED);
+    super(
+      navService,
+      taskService,
+      (task: TaskItem) => task.getStatus() === TaskStatus.DELETED,
+      'Deleted');
   }
 }

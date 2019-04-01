@@ -143,6 +143,7 @@ export class TaskCreationWizardComponent implements AfterViewInit {
 
         this.isLoading = false;
         this.navService.hideNav();
+        this.navService.changeLocation('Wizard');
         this.changeDetector.detectChanges();
       })
       .catch(err => TaskCreationWizardComponent.reportFatalError(err));

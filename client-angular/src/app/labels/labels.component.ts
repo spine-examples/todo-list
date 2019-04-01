@@ -19,9 +19,10 @@
  */
 
 import {Location} from '@angular/common';
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 import {LabelService} from 'app/labels/label.service';
+import {NavigationService} from 'app/navigation/navigation.service';
 
 /**
  * The component which displays the label list as well as provides the basic navigation to
@@ -31,9 +32,11 @@ import {LabelService} from 'app/labels/label.service';
   selector: 'app-labels',
   templateUrl: './labels.component.html'
 })
-export class LabelsComponent {
+export class LabelsComponent implements OnInit {
 
-  constructor(private readonly location: Location, private readonly labelService: LabelService) {
+  constructor(private readonly location: Location,
+              private readonly labelService: LabelService,
+              private readonly navService: NavigationService) {
   }
 
   back(): void {
@@ -46,5 +49,9 @@ export class LabelsComponent {
 
   createBasicLabel() {
     this.labelService.createBasicLabel();
+  }
+
+  ngOnInit(): void {
+    this.navService.changeLocation('Labels');
   }
 }
