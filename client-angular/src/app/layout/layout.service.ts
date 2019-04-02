@@ -25,7 +25,7 @@ import {BehaviorSubject, Observable} from 'rxjs';
 /**
  * Configuration of the layout.
  *
- * Defines whether the label value on the toolbar as well as whether a navbar
+ * Defines the toolbar label value on the toolbar as well as whether a navbar
  * is supposed to be shown.
  */
 export interface LayoutConfig {
