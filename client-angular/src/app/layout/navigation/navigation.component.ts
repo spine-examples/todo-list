@@ -18,17 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {TestBed} from '@angular/core/testing';
-import {LayoutService} from 'app/layout/layout.service';
-import {LayoutModule} from 'app/layout/layout.module';
+import {Component} from '@angular/core';
 
-describe('LayoutService', () => {
-  beforeEach(() => TestBed.configureTestingModule({
-    imports: [LayoutModule]
-  }));
-
-  it('should be created', () => {
-    const service: LayoutService = TestBed.get(LayoutService);
-    expect(service).toBeTruthy();
-  });
-});
+/**
+ * A component responsible for displaying navigation bar on the left of the page.
+ */
+@Component({
+  selector: 'app-navigation',
+  templateUrl: './navigation.component.html',
+  styleUrls: ['./navigation.component.css']
+})
+export class NavigationComponent {
+}

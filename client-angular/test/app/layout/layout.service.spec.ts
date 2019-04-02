@@ -18,35 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {MatIconModule} from '@angular/material/icon';
+import {TestBed} from '@angular/core/testing';
+import {LayoutService} from 'app/layout/layout.service';
+import {LayoutModule} from 'app/layout/layout.module';
 import {MatListModule} from '@angular/material/list';
 import {RouterTestingModule} from '@angular/router/testing';
+import {MatIconModule} from '@angular/material/icon';
+import {RouterModule} from '@angular/router';
 
-import {NavigationComponent} from 'app/layout/layout.module';
-import {LayoutService} from 'app/layout/layout.service';
-import {mockLayoutService} from 'test/given/layout-service';
-
-describe('NavigationComponent', () => {
-  let component: NavigationComponent;
-  let fixture: ComponentFixture<NavigationComponent>;
-
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      imports: [RouterTestingModule.withRoutes([]), MatIconModule, MatListModule],
-      declarations: [NavigationComponent],
-      providers: [{provide: LayoutService, useValue: mockLayoutService()}]
-    })
-      .compileComponents();
+describe('LayoutService', () => {
+  beforeEach(() => TestBed.configureTestingModule({
+    imports: [
+      LayoutModule,
+      RouterModule,
+      MatListModule,
+      RouterTestingModule.withRoutes([]), MatIconModule
+    ]
   }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(NavigationComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
-  });
-
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should be created', () => {
+    const service: LayoutService = TestBed.get(LayoutService);
+    expect(service).toBeTruthy();
   });
 });

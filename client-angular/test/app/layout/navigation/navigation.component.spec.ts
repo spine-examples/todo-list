@@ -18,42 +18,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {BrowserModule} from '@angular/platform-browser';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {NgModule} from '@angular/core';
-import {MatToolbarModule} from '@angular/material';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
-import {MatSidenavModule} from '@angular/material/sidenav';
-import {RouterModule} from '@angular/router';
+import {RouterTestingModule} from '@angular/router/testing';
 
-import {AppRoutingModule} from 'app/app-routing.module';
-import {AppComponent} from 'app/app.component';
-import {TaskListModule} from 'app/task-list/task-list.module';
-import {LayoutModule} from 'app/layout/layout.module';
-import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
+import {LayoutService} from 'app/layout/layout.service';
+import {mockLayoutService} from 'test/given/layout-service';
+import {NavigationComponent} from 'app/layout/navigation/navigation.component';
 
-/**
- * The main application module.
- */
-@NgModule({
-  declarations: [
-    AppComponent
-  ],
-  imports: [
-    TaskListRoutingModule,
-    TaskListModule,
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatListModule,
-    MatSidenavModule,
-    LayoutModule,
-    RouterModule
-  ],
-  bootstrap: [AppComponent]
-})
-export class AppModule {
-}
+describe('NavigationComponent', () => {
+  let component: NavigationComponent;
+  let fixture: ComponentFixture<NavigationComponent>;
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      imports: [RouterTestingModule.withRoutes([]), MatIconModule, MatListModule],
+      declarations: [NavigationComponent],
+      providers: [{provide: LayoutService, useValue: mockLayoutService()}]
+    })
+      .compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(NavigationComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+});

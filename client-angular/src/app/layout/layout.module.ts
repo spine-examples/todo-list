@@ -18,22 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, NgModule} from '@angular/core';
+import {NgModule} from '@angular/core';
+import {NavigationComponent} from 'app/layout/navigation/navigation.component';
+import {RouterModule} from '@angular/router';
+import {MatIconModule} from '@angular/material/icon';
+import {MatListModule} from '@angular/material/list';
 
 /**
  * A module which provides the {@link LayoutService}.
  */
-@NgModule({})
-export class LayoutModule {
-}
-
-/**
- * A component responsible for displaying navigation bar on the left of the page.
- */
-@Component({
-  selector: 'app-navigation',
-  templateUrl: './navigation/navigation.component.html',
-  styleUrls: ['./navigation/navigation.component.css']
+@NgModule({
+  imports: [RouterModule, MatIconModule, MatListModule],
+  declarations: [
+    NavigationComponent
+  ],
+  exports: [NavigationComponent]
 })
-export class NavigationComponent {
+export class LayoutModule {
 }

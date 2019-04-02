@@ -29,7 +29,7 @@ import {MatListModule} from '@angular/material/list';
 import {AppComponent} from 'app/app.component';
 import {LayoutService} from 'app/layout/layout.service';
 import {mockLayoutService} from 'test/given/layout-service';
-import {NavigationComponent} from 'app/layout/layout.module';
+import {NavigationComponent} from 'app/layout/navigation/navigation.component';
 
 describe('AppComponent', () => {
   const layoutService = mockLayoutService();

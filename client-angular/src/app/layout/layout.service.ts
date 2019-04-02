@@ -48,27 +48,27 @@ export class LayoutService {
     showNavigation: true
   };
 
-  private _currentConfig$: BehaviorSubject<LayoutConfig>;
+  private _config$: BehaviorSubject<LayoutConfig>;
 
   constructor() {
-    this._currentConfig$ = new BehaviorSubject<LayoutConfig>(LayoutService.DEFAULT_LAYOUT_CONFIG);
+    this._config$ = new BehaviorSubject<LayoutConfig>(LayoutService.DEFAULT_LAYOUT_CONFIG);
   }
 
   /** Obtains an observable that represents the current layout config. */
   get config$(): Observable<LayoutConfig> {
-    return this._currentConfig$.asObservable();
+    return this._config$.asObservable();
   }
 
   /** Updates the label on the toolbar with the specified value. */
   public updateToolbar(toolbarValue: string) {
-    const result = {...this._currentConfig$.getValue(), ...{toolbarLabel: toolbarValue}};
-    this._currentConfig$.next(result);
+    const result = {...this._config$.getValue(), ...{toolbarLabel: toolbarValue}};
+    this._config$.next(result);
   }
 
   /** Updates whether the toolbar is supposed to be showed. */
   public updateShowNav(shouldShowNav: boolean) {
-    const result = {...this._currentConfig$.getValue(), ...{showNavigation: shouldShowNav}};
-    this._currentConfig$.next(result);
+    const result = {...this._config$.getValue(), ...{showNavigation: shouldShowNav}};
+    this._config$.next(result);
   }
 
   /**
@@ -76,6 +76,6 @@ export class LayoutService {
    * `To-do list`.
    */
   public defaultLayout(): void {
-    this._currentConfig$.next(LayoutService.DEFAULT_LAYOUT_CONFIG);
+    this._config$.next(LayoutService.DEFAULT_LAYOUT_CONFIG);
   }
 }
