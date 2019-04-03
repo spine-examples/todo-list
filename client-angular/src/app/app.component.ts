@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {LayoutService} from 'app/layout/layout.service';
 
 /**
@@ -34,13 +34,15 @@ export class AppComponent implements OnInit {
   private showNav: boolean;
   private toolbarLabel: string;
 
-  constructor(private readonly navService: LayoutService) {
+  constructor(private readonly navService: LayoutService,
+              private readonly changeDetector: ChangeDetectorRef) {
   }
 
   ngOnInit(): void {
     this.navService.config$.subscribe(config => {
       this.showNav = config.showNavigation;
       this.toolbarLabel = config.toolbarLabel;
+      this.changeDetector.detectChanges();
     });
   }
 }
