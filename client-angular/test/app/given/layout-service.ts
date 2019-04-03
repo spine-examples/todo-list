@@ -18,35 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-
-import {TaskListComponent} from 'app/task-list/task-list.component';
-
-import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
-import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
-import {DeletedTasksComponent} from 'app/task-list/deleted/deleted-tasks.component';
-import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
-
-const routes: Routes = [
-  {
-    path: '',
-    component: TaskListComponent,
-    children: [
-      {path: 'active', component: ActiveTasksComponent},
-      {path: 'completed', component: CompletedTasksComponent},
-      {path: 'deleted', component: DeletedTasksComponent},
-      {path: 'drafts', component: DraftsComponent}
-    ]
-  }
-];
+import {LayoutService} from 'app/layout/layout.service';
 
 /**
- * The routing configuration of the {@link TaskListModule}.
+ * Obtains a mock `LayoutService`.
  */
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
-})
-export class TaskListRoutingModule {
+export function mockLayoutService() {
+  return jasmine.createSpyObj<LayoutService>('LayoutService',
+    ['config$', 'updateToolbar', 'updateShowNav', 'defaultLayout']);
 }

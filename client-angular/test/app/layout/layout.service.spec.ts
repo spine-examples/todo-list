@@ -18,18 +18,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
-import {TaskItem} from 'proto/todolist/q/projections_pb';
+import {TestBed} from '@angular/core/testing';
+import {LayoutService} from 'app/layout/layout.service';
+import {LayoutModule} from 'app/layout/layout.module';
+import {MatListModule} from '@angular/material/list';
+import {RouterTestingModule} from '@angular/router/testing';
+import {MatIconModule} from '@angular/material/icon';
+import {RouterModule} from '@angular/router';
 
-/**
- * The component aggregating various task list views as well as basic application navigation.
- *
- * Is, in fact, a "main page" of the client.
- */
-@Component({
-  selector: 'app-tasks',
-  templateUrl: './task-list.component.html',
-  styleUrls: ['./task-list.component.css']
-})
-export class TaskListComponent {
-}
+describe('LayoutService', () => {
+  beforeEach(() => TestBed.configureTestingModule({
+    imports: [
+      LayoutModule,
+      RouterModule,
+      MatListModule,
+      RouterTestingModule.withRoutes([]), MatIconModule
+    ]
+  }));
+
+  it('should be created', () => {
+    const service: LayoutService = TestBed.get(LayoutService);
+    expect(service).toBeTruthy();
+  });
+});

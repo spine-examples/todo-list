@@ -22,9 +22,16 @@ import {BrowserModule} from '@angular/platform-browser';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgModule} from '@angular/core';
 import {MatToolbarModule} from '@angular/material';
+import {MatIconModule} from '@angular/material/icon';
+import {MatListModule} from '@angular/material/list';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {RouterModule} from '@angular/router';
 
 import {AppRoutingModule} from 'app/app-routing.module';
 import {AppComponent} from 'app/app.component';
+import {TaskListModule} from 'app/task-list/task-list.module';
+import {LayoutModule} from 'app/layout/layout.module';
+import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
 
 /**
  * The main application module.
@@ -34,10 +41,17 @@ import {AppComponent} from 'app/app.component';
     AppComponent
   ],
   imports: [
+    TaskListRoutingModule,
+    TaskListModule,
     BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatIconModule,
+    MatListModule,
+    MatSidenavModule,
+    LayoutModule,
+    RouterModule
   ],
   bootstrap: [AppComponent]
 })

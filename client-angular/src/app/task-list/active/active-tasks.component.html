@@ -19,11 +19,11 @@
   -->
 
 <form class="add-quick-task-form" [formGroup]="createBasicTaskForms" autocomplete="off">
-    <mat-form-field class="form-field" appearance="outline">
-        <mat-label class="label">Enter task description</mat-label>
+    <mat-form-field class="full-width" appearance="outline">
+        <mat-label>Enter task description</mat-label>
         <input #taskDescription
                (keydown.enter)="createBasicTask(taskDescription.value); taskDescription.value='';"
-               class="task-description-input"
+               class="task-description-textarea"
                autofocus
                matInput
                placeholder="What are you up to?"
@@ -35,7 +35,7 @@
 </form>
 
 <mat-nav-list class="tasks">
-    <a mat-list-item *ngFor="let task of tasks" class="single-task">
+    <a mat-list-item *ngFor="let task of tasks" class="list-item">
         <app-active-task-item class="task-item" [task]="task"></app-active-task-item>
     </a>
 </mat-nav-list>

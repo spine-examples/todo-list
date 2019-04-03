@@ -22,21 +22,33 @@ import {async, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Client} from 'spine-web';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatIconModule} from '@angular/material/icon';
+import {MatListModule} from '@angular/material/list';
 
 import {AppComponent} from 'app/app.component';
-import {mockSpineWebClient} from 'test/given/mock-spine-web-client';
+import {LayoutService} from 'app/layout/layout.service';
+import {mockLayoutService} from 'test/given/layout-service';
+import {NavigationComponent} from 'app/layout/navigation/navigation.component';
 
 describe('AppComponent', () => {
+  const layoutService = mockLayoutService();
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        MatToolbarModule
+        MatToolbarModule,
+        MatSidenavModule,
+        MatIconModule,
+        MatListModule
       ],
       declarations: [
-        AppComponent
+        AppComponent,
+        NavigationComponent
       ],
-      providers: [{provide: Client, useValue: mockSpineWebClient()}]
+      providers: [
+        {provide: LayoutService, useValue: layoutService}
+      ]
     }).compileComponents();
   }));
 

@@ -19,7 +19,7 @@
  */
 
 import {Location} from '@angular/common';
-import {AfterViewInit, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, ViewChild} from '@angular/core';
 import {MatStepper} from '@angular/material';
 import {ActivatedRoute} from '@angular/router';
 
@@ -34,6 +34,7 @@ import {TaskCreationId, TaskId} from 'proto/todolist/identifiers_pb';
 import {TaskCreation} from 'proto/todolist/model_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
 import {SetTaskDetails, StartTaskCreation} from 'proto/todolist/c/commands_pb';
+import {LayoutService} from 'app/layout/layout.service';
 
 /**
  * The main component of the Task Creation Wizard.
@@ -64,7 +65,7 @@ import {SetTaskDetails, StartTaskCreation} from 'proto/todolist/c/commands_pb';
     TaskCreationWizard
   ]
 })
-export class TaskCreationWizardComponent implements AfterViewInit {
+export class TaskCreationWizardComponent implements AfterViewInit, OnDestroy {
 
   /**
    * The task creation stages with a corresponding {@link stepper} page indices.
@@ -111,10 +112,13 @@ export class TaskCreationWizardComponent implements AfterViewInit {
   constructor(private readonly wizard: TaskCreationWizard,
               private readonly changeDetector: ChangeDetectorRef,
               private readonly location: Location,
-              route: ActivatedRoute) {
+              route: ActivatedRoute,
+              private readonly navService: LayoutService) {
     this.isLoading = true;
     const taskCreationId = route.snapshot.paramMap.get('taskCreationId');
     this.initWizard = wizard.init(taskCreationId);
+    this.navService.updateToolbar('Wizard');
+    this.navService.updateShowNav(false);
   }
 
   /**
@@ -138,9 +142,9 @@ export class TaskCreationWizardComponent implements AfterViewInit {
 
         this.taskDefinition.initFromWizard();
         this.labelAssignment.initFromWizard();
-        this.changeDetector.detectChanges();
 
         this.isLoading = false;
+        this.changeDetector.detectChanges();
       })
       .catch(err => TaskCreationWizardComponent.reportFatalError(err));
   }
@@ -188,5 +192,9 @@ export class TaskCreationWizardComponent implements AfterViewInit {
     for (let i = 0; i < this.stepper.steps.length; i++) {
       this.stepper.steps.toArray()[i].completed = i < index;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.navService.defaultLayout();
   }
 }

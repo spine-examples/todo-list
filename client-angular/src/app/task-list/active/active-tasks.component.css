@@ -18,22 +18,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+.list-item {
+  width: 1024px;
+}
+
 .task-item {
   width: 100%;
 }
 
-.add-quick-task-form {
-  font-size: 16px;
-}
-
-.single-task {
-  width: 600px;
-}
-
-.task-description-input {
-  width: 600px;
-}
-
-.form-field {
-  width: 600px;
+.full-width {
+  width: 1024px;
 }

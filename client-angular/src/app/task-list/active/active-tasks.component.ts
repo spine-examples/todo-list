@@ -39,8 +39,11 @@ export class ActiveTasksComponent extends TaskListCategoryComponent {
   private createBasicTaskForms: FormGroup;
 
   constructor(taskService: TaskService, private formBuilder: FormBuilder) {
-    super(taskService, (task: TaskItem) =>
-      task.getStatus() === TaskStatus.OPEN || task.getStatus() === TaskStatus.FINALIZED);
+    super(
+      taskService,
+      (task: TaskItem) => {
+        return task.getStatus() === TaskStatus.OPEN || task.getStatus() === TaskStatus.FINALIZED;
+      });
     this.createBasicTaskForms = formBuilder.group({
       taskDescription: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
     });
