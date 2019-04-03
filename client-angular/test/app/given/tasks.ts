@@ -52,7 +52,8 @@ export function houseTasks(): MyListView {
 export function taskWithId(desiredId: string): TaskItem {
   const taskId = new TaskId();
   taskId.setValue(desiredId);
-  const description = 'Wash my car';
+  const description = new TaskDescription();
+  description.setValue('Wash my car');
   const result = new TaskItem();
   result.setId(taskId);
   result.setDescription(description);
