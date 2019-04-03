@@ -18,16 +18,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-button {
-  float: right;
-}
+import {Component, Input} from '@angular/core';
 
-.task-description {
-  text-align: center;
-  display: inline-block;
-  width: 100%;
-}
+import {TaskItem} from 'proto/todolist/q/projections_pb';
+import {TaskService} from 'app/task-service/task.service';
 
-.task-action-icon {
-  font-size: 24px;
+
+@Component({
+  selector: 'app-task-item',
+  templateUrl: './task-item.component.html',
+  styleUrls: ['./task-item.component.css']
+})
+export class TaskItemComponent {
+
+  constructor(private readonly taskService: TaskService) {
+  }
+
+  @Input()
+  task: TaskItem;
+
+  @Input()
+  displayDeleteButton: boolean;
+
+  @Input()
+  displayCompleteButton: boolean;
+
+  private completeTask() {
+    this.taskService.completeTask(this.task.getId());
+  }
+
+  private deleteTask() {
+    this.taskService.deleteTask(this.task.getId());
+  }
 }

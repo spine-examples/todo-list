@@ -22,17 +22,41 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
-import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
-import {DeletedTasksComponent} from 'app/task-list/deleted/deleted-tasks.component';
 import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
+import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
+import {TaskListComponent} from 'app/task-list/task-list.component';
 
 const routes: Routes = [
   {
     path: 'tasks',
     children: [
-      {path: 'active', component: ActiveTasksComponent},
-      {path: 'completed', component: CompletedTasksComponent},
-      {path: 'deleted', component: DeletedTasksComponent},
+      {
+        path: 'active',
+        component: ActiveTasksComponent,
+        data: {
+          filter: (t: TaskItem) => t.getStatus() === TaskStatus.OPEN,
+          displayDeleteButtons: true,
+          displayCompleteButtons: true
+        }
+      },
+      {
+        path: 'completed',
+        component: TaskListComponent,
+        data: {
+          filter: (t: TaskItem) => t.getStatus() === TaskStatus.COMPLETED,
+          displayDeleteButtons: false,
+          displayCompleteButtons: false
+        }
+      },
+      {
+        path: 'deleted',
+        component: TaskListComponent,
+        data: {
+          filter: (t: TaskItem) => t.getStatus() === TaskStatus.DELETED,
+          displayDeleteButtons: true,
+          displayCompleteButtons: true
+        }
+      },
       {path: 'drafts', component: DraftsComponent}
     ]
   }

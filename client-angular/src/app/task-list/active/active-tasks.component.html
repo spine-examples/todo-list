@@ -33,8 +33,8 @@
             </mat-error>
         </mat-form-field>
     </form>
-    <mat-accordion class="tasks">
-        <app-active-task-item *ngFor="let task of tasks" class="task-item" [task]="task">
-        </app-active-task-item>
-    </mat-accordion>
+    <app-task-list [filter]="filter"
+                   [displayDeleteButtons]="true"
+                   [displayCompleteButtons]="true">
+    </app-task-list>
 </mat-card>

@@ -18,4 +18,11 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<app-task-link *ngFor="let task of tasks" class="task-item" [task]="task"></app-task-link>
+<mat-accordion>
+    <app-task-item *ngFor="let task of tasks"
+                   class="task-item"
+                   [task]="task"
+                   [displayDeleteButton]="displayDeleteButtons"
+                   [displayCompleteButton]="displayCompleteButtons">
+    </app-task-item>
+</mat-accordion>

@@ -23,7 +23,6 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from 'app/task-service/task.service';
 import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
-import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-list-category.component';
 
 /**
  * A component displaying active tasks, i.e. those which are not completed, deleted, or in draft
@@ -34,16 +33,13 @@ import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-l
   templateUrl: './active-tasks.component.html',
   styleUrls: ['./active-tasks.component.css']
 })
-export class ActiveTasksComponent extends TaskListCategoryComponent {
+export class ActiveTasksComponent {
 
   private createBasicTaskForms: FormGroup;
+  private static readonly filter: (t: TaskItem) => boolean =
+    (taskItem) => taskItem.getStatus() === TaskStatus.OPEN || taskItem.getStatus() === TaskStatus.FINALIZED;
 
-  constructor(taskService: TaskService, private formBuilder: FormBuilder) {
-    super(
-      taskService,
-      (task: TaskItem) => {
-        return task.getStatus() === TaskStatus.OPEN || task.getStatus() === TaskStatus.FINALIZED;
-      });
+  constructor(private readonly taskService: TaskService, private formBuilder: FormBuilder) {
     this.createBasicTaskForms = formBuilder.group({
       taskDescription: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
     });

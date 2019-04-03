@@ -22,16 +22,16 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Client} from 'spine-web';
 
-import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
+import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, houseTasks, taskItem} from 'test/given/tasks';
 
-describe('TaskLinkComponent', () => {
+describe('TaskItemComponent', () => {
 
   const mockClient = mockSpineWebClient();
-  let component: TaskLinkComponent;
-  let fixture: ComponentFixture<TaskLinkComponent>;
+  let component: TaskItemComponent;
+  let fixture: ComponentFixture<TaskItemComponent>;
 
   mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
     [], [], [], jasmine.createSpy()
@@ -39,7 +39,7 @@ describe('TaskLinkComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TaskLinkComponent],
+      declarations: [TaskItemComponent],
       imports: [RouterTestingModule.withRoutes([])],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
@@ -48,7 +48,7 @@ describe('TaskLinkComponent', () => {
 
   beforeEach(() => {
     const theTaskItem = taskItem(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
-    fixture = TestBed.createComponent(TaskLinkComponent);
+    fixture = TestBed.createComponent(TaskItemComponent);
     component = fixture.componentInstance;
     component.task = theTaskItem;
     fixture.detectChanges();

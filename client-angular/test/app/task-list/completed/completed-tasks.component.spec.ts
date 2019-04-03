@@ -28,7 +28,7 @@ import {Client} from 'spine-web';
 import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
-import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
+import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
 import {completedTasks} from 'test/given/tasks';
 
 describe('CompletedTasksComponent', () => {
@@ -44,7 +44,7 @@ describe('CompletedTasksComponent', () => {
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [CompletedTasksComponent, TaskLinkComponent],
+      declarations: [CompletedTasksComponent, TaskItemComponent],
       imports: [MatListModule, RouterModule, RouterTestingModule],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })

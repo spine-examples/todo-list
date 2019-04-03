@@ -31,7 +31,7 @@ import {TaskItem} from 'proto/todolist/q/projections_pb';
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {Client} from 'spine-web';
-import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
+import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
 
 describe('ActiveTaskItemComponent', () => {
   const theTaskItem = taskItem(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
@@ -46,7 +46,7 @@ describe('ActiveTaskItemComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ActiveTaskItemComponent, TestHostComponent, TaskLinkComponent],
+      declarations: [ActiveTaskItemComponent, TestHostComponent, TaskItemComponent],
       imports: [RouterTestingModule.withRoutes([]), MatIconModule],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })

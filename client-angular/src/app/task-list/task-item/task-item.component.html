@@ -20,10 +20,15 @@
 
 <mat-expansion-panel class="panel">
     <mat-expansion-panel-header class="header">
-        <mat-panel-title></mat-panel-title>
-        <mat-panel-description>
-            {{task.getDescription()}}
-        </mat-panel-description>
+        <mat-panel-title class="task-description">{{task.getDescription()}}</mat-panel-title>
     </mat-expansion-panel-header>
-    <app-task-details [task]="task"></app-task-details>
+    <button *ngIf="displayDeleteButton" mat-icon-button class="delete-task-button"
+            (click)="deleteTask(); $event.stopPropagation();">
+        <mat-icon class="task-action-icon">delete</mat-icon>
+    </button>
+    <button *ngIf="displayCompleteButton" mat-icon-button class="complete-task-button"
+            (click)="completeTask(); $event.stopPropagation();">
+        <mat-icon class="task-action-icon">done</mat-icon>
+    </button>
+    <app-task-details [(task)]="task"></app-task-details>
 </mat-expansion-panel>
