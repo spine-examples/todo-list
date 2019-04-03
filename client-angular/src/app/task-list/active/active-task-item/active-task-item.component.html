@@ -17,7 +17,7 @@
   ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
-<div class="active-task">
+
 <button mat-icon-button class="delete-task-button"
         (click)="deleteTask(); $event.stopPropagation();">
     <mat-icon class="task-action-icon">delete</mat-icon>
@@ -26,5 +26,4 @@
         (click)="completeTask(); $event.stopPropagation();">
     <mat-icon class="task-action-icon">done</mat-icon>
 </button>
-<app-task-link [(task)]="task"></app-task-link>
-</div>
+<app-task-link [(task)]="task" class="task"></app-task-link>

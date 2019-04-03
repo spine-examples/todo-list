@@ -18,4 +18,12 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<a class="task-description" routerLink="/details/{{task.getId()}}">{{task.getDescription()}}</a>
+<mat-expansion-panel class="panel">
+    <mat-expansion-panel-header class="header">
+        <mat-panel-title></mat-panel-title>
+        <mat-panel-description>
+            {{task.getDescription()}}
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+    <app-task-details [task]="task"></app-task-details>
+</mat-expansion-panel>

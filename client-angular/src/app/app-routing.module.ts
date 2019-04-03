@@ -35,11 +35,6 @@ const routes: Routes = [
   },
 
   {
-    path: 'details',
-    loadChildren: 'app/task-details/task-details.module#TaskDetailsModule'
-  },
-
-  {
     path: 'labels',
     loadChildren: 'app/labels/labels.module#LabelsModule'
   },

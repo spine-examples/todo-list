@@ -26,6 +26,8 @@ import {MatInputModule} from '@angular/material';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatCardModule} from '@angular/material/card';
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
 import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
 import {DeletedTasksComponent} from 'app/task-list/deleted/deleted-tasks.component';
@@ -35,6 +37,7 @@ import {ActiveTaskItemComponent} from 'app/task-list/active/active-task-item/act
 import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
 import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-list-category.component';
 import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
+import {TaskDetailsComponent} from 'app/task-list/task-link/task-details/task-details.component';
 
 /**
  * The module which displays the task list.
@@ -47,7 +50,8 @@ import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
     CompletedTasksComponent,
     DeletedTasksComponent,
     DraftsComponent,
-    TaskListCategoryComponent
+    TaskListCategoryComponent,
+    TaskDetailsComponent
   ],
   imports: [
     TaskListRoutingModule,
@@ -58,7 +62,9 @@ import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
     MatInputModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatExpansionModule,
+    MatCardModule
   ],
   exports: [
     MatInputModule,

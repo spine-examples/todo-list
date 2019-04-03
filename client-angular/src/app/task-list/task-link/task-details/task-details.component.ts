@@ -18,10 +18,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {LayoutService} from 'app/layout/layout.service';
+import {Component, Input} from '@angular/core';
+import {TaskItem} from 'proto/todolist/q/projections_pb';
 
 /**
  * Component responsible for displaying a single task.
@@ -30,27 +28,8 @@ import {LayoutService} from 'app/layout/layout.service';
   selector: 'app-task-details',
   templateUrl: './task-details.component.html'
 })
-export class TaskDetailsComponent implements OnInit, OnDestroy {
+export class TaskDetailsComponent {
 
-  /** Visible for testing. */
-  readonly taskId;
-
-  constructor(private readonly location: Location,
-              route: ActivatedRoute,
-              private readonly layoutService: LayoutService) {
-    this.taskId = route.snapshot.paramMap.get('id');
-  }
-
-  ngOnInit() {
-    this.layoutService.updateShowNav(false);
-    this.layoutService.updateToolbar('Details');
-  }
-
-  ngOnDestroy() {
-    this.layoutService.defaultLayout();
-  }
-
-  back(): void {
-    this.location.back();
-  }
+  @Input()
+  private readonly task: TaskItem;
 }
