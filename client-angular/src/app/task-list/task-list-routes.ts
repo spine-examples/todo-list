@@ -25,8 +25,9 @@ import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component'
 import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
 import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
 import {TaskListComponent} from 'app/task-list/task-list.component';
+import {forActive, forCompleted, forDeleted,} from 'app/task-list/route-filters';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'tasks',
     children: [
@@ -34,7 +35,7 @@ const routes: Routes = [
         path: 'active',
         component: ActiveTasksComponent,
         data: {
-          filter: (t: TaskItem) => t.getStatus() === TaskStatus.OPEN,
+          filter: forActive,
           displayDeleteButtons: true,
           displayCompleteButtons: true
         }
@@ -43,7 +44,7 @@ const routes: Routes = [
         path: 'completed',
         component: TaskListComponent,
         data: {
-          filter: (t: TaskItem) => t.getStatus() === TaskStatus.COMPLETED,
+          filter: forCompleted,
           displayDeleteButtons: false,
           displayCompleteButtons: false
         }
@@ -52,7 +53,7 @@ const routes: Routes = [
         path: 'deleted',
         component: TaskListComponent,
         data: {
-          filter: (t: TaskItem) => t.getStatus() === TaskStatus.DELETED,
+          filter: forDeleted,
           displayDeleteButtons: true,
           displayCompleteButtons: true
         }
