@@ -30,7 +30,6 @@ import {Client, Type} from 'spine-web';
 
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
 import {TaskService} from 'app/task-service/task.service';
-import {ActiveTaskItemComponent} from 'app/task-list/active/active-task-item/active-task-item.component';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {
   HOUSE_TASK_1_DESC,
@@ -56,7 +55,7 @@ describe('ActiveTasksComponent', () => {
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ActiveTasksComponent, ActiveTaskItemComponent, TaskItemComponent],
+      declarations: [ActiveTasksComponent, TaskItemComponent],
       imports: [
         RouterTestingModule.withRoutes([]),
         ReactiveFormsModule,
@@ -88,21 +87,5 @@ describe('ActiveTasksComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should receive active task list on initialization', () => {
-    expect(component.tasks[0].getId().getValue()).toBe(HOUSE_TASK_1_ID);
-    expect(component.tasks[0].getDescription().getValue()).toBe(HOUSE_TASK_1_DESC);
-    expect(component.tasks[1].getId().getValue()).toBe(HOUSE_TASK_2_ID);
-    expect(component.tasks[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
-  });
-
-  it('should create `app-active-task-item` for each of the received tasks', () => {
-    fixture.detectChanges();
-    const elements = fixture.nativeElement.getElementsByTagName('app-active-task-item');
-
-    expect(elements.length).toBe(2);
-    expect(elements[0].textContent).toContain(HOUSE_TASK_1_DESC);
-    expect(elements[1].textContent).toContain(HOUSE_TASK_2_DESC);
   });
 });

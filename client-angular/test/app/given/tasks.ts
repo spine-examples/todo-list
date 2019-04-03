@@ -23,12 +23,7 @@ import {tomorrow} from 'test/given/dates';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskId, TaskListId} from 'proto/todolist/identifiers_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
-import {
-  MyListView,
-  TaskItem,
-  TaskListView,
-  TaskView
-} from 'proto/todolist/q/projections_pb';
+import {MyListView, TaskItem, TaskListView, TaskView} from 'proto/todolist/q/projections_pb';
 import {TaskPriority, TaskStatus} from 'proto/todolist/attributes_pb';
 
 export const HOUSE_TASK_1_ID = 'task-1';
@@ -36,12 +31,6 @@ export const HOUSE_TASK_1_DESC = 'Wash the dishes';
 
 export const HOUSE_TASK_2_ID = 'task-2';
 export const HOUSE_TASK_2_DESC = 'Clean the house';
-
-export function completedTasks(): MyListView {
-  const tasks = houseTasks();
-  tasks.getMyList().getItemsList().forEach(item => item.setStatus(TaskStatus.COMPLETED));
-  return tasks;
-}
 
 export function houseTasks(): MyListView {
   const taskListId = new TaskListId();
@@ -57,6 +46,16 @@ export function houseTasks(): MyListView {
   const result = new MyListView();
   result.setId(taskListId);
   result.setMyList(taskListView);
+  return result;
+}
+
+export function taskWithId(desiredId: string): TaskItem {
+  const taskId = new TaskId();
+  taskId.setValue(desiredId);
+  const description = 'Wash my car';
+  const result = new TaskItem();
+  result.setId(taskId);
+  result.setDescription(description);
   return result;
 }
 
