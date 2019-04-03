@@ -18,39 +18,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {LayoutService} from 'app/layout/layout.service';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
+
+import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
+import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
+import {DeletedTasksComponent} from 'app/task-list/deleted/deleted-tasks.component';
+import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
+
+const routes: Routes = [
+  {
+    path: 'tasks',
+    children: [
+      {path: 'active', component: ActiveTasksComponent},
+      {path: 'completed', component: CompletedTasksComponent},
+      {path: 'deleted', component: DeletedTasksComponent},
+      {path: 'drafts', component: DraftsComponent}
+    ]
+  }
+];
 
 /**
- * Component responsible for displaying a single task.
+ * The routing configuration of the {@link TaskListModule}.
  */
-@Component({
-  selector: 'app-task-details',
-  templateUrl: './task-details.component.html'
+@NgModule({
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule]
 })
-export class TaskDetailsComponent implements OnInit, OnDestroy {
-
-  /** Visible for testing. */
-  readonly taskId;
-
-  constructor(private readonly location: Location,
-              route: ActivatedRoute,
-              private readonly layoutService: LayoutService) {
-    this.taskId = route.snapshot.paramMap.get('id');
-  }
-
-  ngOnInit() {
-    this.layoutService.updateShowNav(false);
-    this.layoutService.updateToolbar('Details');
-  }
-
-  ngOnDestroy() {
-    this.layoutService.defaultLayout();
-  }
-
-  back(): void {
-    this.location.back();
-  }
+export class TaskListRoutingModule {
 }

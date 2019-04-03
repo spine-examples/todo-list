@@ -25,10 +25,11 @@ h1 {
   font-size: 250%;
 }
 
-.page-root {
+.page-content {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  padding: 24px;
 }
 
 h2, h3 {

@@ -35,7 +35,7 @@
 </form>
 
 <mat-nav-list class="tasks">
-    <a mat-list-item *ngFor="let task of tasks">
+    <a mat-list-item *ngFor="let task of tasks" class="list-item">
         <app-active-task-item class="task-item" [task]="task"></app-active-task-item>
     </a>
 </mat-nav-list>

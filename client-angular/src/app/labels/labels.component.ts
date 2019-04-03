@@ -33,7 +33,8 @@ import {LabelService} from 'app/labels/label.service';
 })
 export class LabelsComponent {
 
-  constructor(private readonly location: Location, private readonly labelService: LabelService) {
+  constructor(private readonly location: Location,
+              private readonly labelService: LabelService) {
   }
 
   back(): void {

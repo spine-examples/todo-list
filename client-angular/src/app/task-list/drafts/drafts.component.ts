@@ -28,7 +28,4 @@ import {Component} from '@angular/core';
   templateUrl: './drafts.component.html'
 })
 export class DraftsComponent {
-
-  constructor() {
-  }
 }

@@ -18,39 +18,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {LayoutService} from 'app/layout/layout.service';
+import {NgModule} from '@angular/core';
+import {NavigationComponent} from 'app/layout/navigation/navigation.component';
+import {RouterModule} from '@angular/router';
+import {MatIconModule} from '@angular/material/icon';
+import {MatListModule} from '@angular/material/list';
 
 /**
- * Component responsible for displaying a single task.
+ * A module which provides the {@link LayoutService}.
  */
-@Component({
-  selector: 'app-task-details',
-  templateUrl: './task-details.component.html'
+@NgModule({
+  imports: [RouterModule, MatIconModule, MatListModule],
+  declarations: [
+    NavigationComponent
+  ],
+  exports: [NavigationComponent]
 })
-export class TaskDetailsComponent implements OnInit, OnDestroy {
-
-  /** Visible for testing. */
-  readonly taskId;
-
-  constructor(private readonly location: Location,
-              route: ActivatedRoute,
-              private readonly layoutService: LayoutService) {
-    this.taskId = route.snapshot.paramMap.get('id');
-  }
-
-  ngOnInit() {
-    this.layoutService.updateShowNav(false);
-    this.layoutService.updateToolbar('Details');
-  }
-
-  ngOnDestroy() {
-    this.layoutService.defaultLayout();
-  }
-
-  back(): void {
-    this.location.back();
-  }
+export class LayoutModule {
 }

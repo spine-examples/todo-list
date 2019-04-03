@@ -1,0 +1,23 @@
+.navigation-list a {
+  font-size: 15px;
+  height: 42px;
+}
+
+mat-icon {
+  position: relative;
+  font-size: 25px;
+  margin-right: 18px;
+  padding: 0;
+}
+
+.navigation-list {
+  padding-top: 8px;
+}
+
+a.mat-list-item {
+  height: 25px;
+}
+
+a.mat-list-item:hover {
+  border-radius: 5px;
+}

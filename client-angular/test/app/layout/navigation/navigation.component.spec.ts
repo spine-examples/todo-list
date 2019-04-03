@@ -19,41 +19,29 @@
  */
 
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-import {RouterTestingModule} from '@angular/router/testing';
-import {Client} from 'spine-web';
-import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {RouterTestingModule} from '@angular/router/testing';
 
-import {TaskListComponent} from 'app/task-list/task-list.component';
-import {TaskService} from 'app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
+import {LayoutService} from 'app/layout/layout.service';
+import {mockLayoutService} from 'test/given/layout-service';
+import {NavigationComponent} from 'app/layout/navigation/navigation.component';
 
-describe('TaskListComponent', () => {
-  const mockClient = mockSpineWebClient();
+describe('NavigationComponent', () => {
+  let component: NavigationComponent;
+  let fixture: ComponentFixture<NavigationComponent>;
 
-  let component: TaskListComponent;
-  let fixture: ComponentFixture<TaskListComponent>;
-
-  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [], [], [], jasmine.createSpy()
-  ));
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TaskListComponent],
-      imports: [
-        RouterTestingModule.withRoutes([]),
-        MatSidenavModule,
-        MatListModule,
-        BrowserAnimationsModule
-      ],
-      providers: [TaskService, {provide: Client, useValue: mockClient}]
+      imports: [RouterTestingModule.withRoutes([]), MatIconModule, MatListModule],
+      declarations: [NavigationComponent],
+      providers: [{provide: LayoutService, useValue: mockLayoutService()}]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TaskListComponent);
+    fixture = TestBed.createComponent(NavigationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

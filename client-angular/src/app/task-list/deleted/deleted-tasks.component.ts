@@ -34,6 +34,9 @@ import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-l
 export class DeletedTasksComponent extends TaskListCategoryComponent {
 
   constructor(taskService: TaskService) {
-    super(taskService, (task: TaskItem) => task.getStatus() === TaskStatus.DELETED);
+    super(
+      taskService,
+      (task: TaskItem) => task.getStatus() === TaskStatus.DELETED,
+    );
   }
 }
