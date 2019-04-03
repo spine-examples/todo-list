@@ -17,7 +17,6 @@
   ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
-<mat-card class="card">
     <form class="add-quick-task-form" [formGroup]="createBasicTaskForms" autocomplete="off">
         <mat-form-field class="full-width" appearance="outline">
             <mat-label>Enter task description</mat-label>
@@ -33,8 +32,5 @@
             </mat-error>
         </mat-form-field>
     </form>
-    <app-task-list [filter]="filter"
-                   [displayDeleteButtons]="true"
-                   [displayCompleteButtons]="true">
+    <app-task-list [filter]="filter">
     </app-task-list>
-</mat-card>

@@ -18,18 +18,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
-import {TaskItem} from 'proto/todolist/q/projections_pb';
+import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
 import {TaskService} from 'app/task-service/task.service';
-
 
 @Component({
   selector: 'app-task-item',
   templateUrl: './task-item.component.html',
   styleUrls: ['./task-item.component.css']
 })
-export class TaskItemComponent {
+export class TaskItemComponent implements OnInit {
 
   constructor(private readonly taskService: TaskService) {
   }
@@ -37,11 +36,9 @@ export class TaskItemComponent {
   @Input()
   task: TaskItem;
 
-  @Input()
-  displayDeleteButton: boolean;
+  private displayDeleteButton: boolean;
 
-  @Input()
-  displayCompleteButton: boolean;
+  private displayCompleteButton: boolean;
 
   private completeTask() {
     this.taskService.completeTask(this.task.getId());
@@ -49,5 +46,12 @@ export class TaskItemComponent {
 
   private deleteTask() {
     this.taskService.deleteTask(this.task.getId());
+  }
+
+  ngOnInit(): void {
+    const status = this.task.getStatus();
+    const showButtons = status === TaskStatus.OPEN || status === TaskStatus.FINALIZED;
+    this.displayCompleteButton = showButtons;
+    this.displayDeleteButton = showButtons;
   }
 }

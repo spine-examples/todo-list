@@ -20,13 +20,13 @@
 
 <mat-expansion-panel class="panel">
     <mat-action-row *ngIf="displayCompleteButton || displayDeleteButton">
-        <button *ngIf="displayDeleteButton" mat-icon-button class="delete-task-button"
+        <button *ngIf="displayDeleteButton" mat-button class="delete-task-button"
                 (click)="deleteTask(); $event.stopPropagation();">
-            <mat-icon class="task-action-icon">delete</mat-icon>
+            Delete
         </button>
-        <button *ngIf="displayCompleteButton" mat-icon-button class="complete-task-button"
+        <button *ngIf="displayCompleteButton" mat-button class="complete-task-button"
                 (click)="completeTask(); $event.stopPropagation();">
-            <mat-icon class="task-action-icon">done</mat-icon>
+           Mark as complete
         </button>
     </mat-action-row>
     <mat-expansion-panel-header class="header">

@@ -19,7 +19,7 @@
  */
 
 import {Component} from '@angular/core';
-import {async, TestBed} from '@angular/core/testing';
+import {async, TestBed, fakeAsync, tick} from '@angular/core/testing';
 import {ActivatedRoute, convertToParamMap} from '@angular/router';
 import {RouterTestingModule} from '@angular/router/testing';
 import {TaskId, TaskItem} from 'proto/todolist/q/projections_pb';
@@ -60,15 +60,19 @@ describe('TaskDetailsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should contain information about the specified task', () => {
+  it('should contain information about the specified task', fakeAsync(() => {
     const element = fixture.nativeElement.querySelector('p');
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
+    console.log(element);
     expect(element).toContain(expectedTaskId);
-  });
+  }));
 });
 
 @Component({
   selector: `host-component`,
-  template: `<app-task-details [task]="task"></app-task-details>`
+  template: `<app-task-details [(task)]="task"></app-task-details>`
 })
 class TestHostComponent {
   private readonly task: TaskItem = expectedTask;

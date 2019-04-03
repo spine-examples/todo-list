@@ -1,6 +1,11 @@
 .panel {
   width: 600px;
 }
+
 button {
   float: right;
+}
+
+mat-action-row {
+  padding: 5px 4px 5px 8px;
 }
