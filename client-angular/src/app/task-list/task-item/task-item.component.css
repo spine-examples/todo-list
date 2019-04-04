@@ -1,11 +1,24 @@
-.panel {
-  width: 600px;
-}
-
 button {
   float: right;
 }
 
 mat-action-row {
   padding: 5px 4px 5px 8px;
+}
+
+.description-value {
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.priority-container {
+  width: 100px;
+  padding-right: 50px;
+}
+
+.due-date-container {
+  padding-left: 150px;
+  width: 200px;
 }

@@ -26,11 +26,17 @@
         </button>
         <button *ngIf="displayCompleteButton" mat-button class="complete-task-button"
                 (click)="completeTask(); $event.stopPropagation();">
-           Mark as complete
+            Mark as complete
         </button>
     </mat-action-row>
     <mat-expansion-panel-header class="header">
-        <mat-panel-title class="task-description">{{task.getDescription()}}</mat-panel-title>
+        <mat-panel-title class="task-description">
+            <div class="description-value">{{task.getDescription()}}</div>
+        </mat-panel-title>
+        <mat-panel-description>
+            <div class="priority-container">{{task.getPriority() | taskPriorityName}}</div>
+            <div class="due-date-container">{{task | dueDate}}</div>
+        </mat-panel-description>
     </mat-expansion-panel-header>
     <app-task-details [(task)]="task"></app-task-details>
 </mat-expansion-panel>

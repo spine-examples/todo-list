@@ -35,6 +35,7 @@ import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
 import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
 import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
 import {TaskListComponent} from 'app/task-list/task-list.component';
+import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
 
 /**
  * The module which displays the task list.
@@ -58,7 +59,8 @@ import {TaskListComponent} from 'app/task-list/task-list.component';
     MatButtonModule,
     MatIconModule,
     MatExpansionModule,
-    MatCardModule
+    MatCardModule,
+    TodoListPipesModule
   ],
   exports: [
     MatInputModule,

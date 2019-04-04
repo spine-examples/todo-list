@@ -60,20 +60,4 @@ describe('TaskDetailsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should contain information about the specified task', fakeAsync(() => {
-    const element = fixture.nativeElement.querySelector('p');
-    fixture.detectChanges();
-    tick();
-    fixture.detectChanges();
-    console.log(element);
-    expect(element).toContain(expectedTaskId);
-  }));
 });
-
-@Component({
-  selector: `host-component`,
-  template: `<app-task-details [(task)]="task"></app-task-details>`
-})
-class TestHostComponent {
-  private readonly task: TaskItem = expectedTask;
-}

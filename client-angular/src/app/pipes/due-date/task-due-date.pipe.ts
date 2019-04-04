@@ -19,40 +19,21 @@
  */
 
 import {Pipe, PipeTransform} from '@angular/core';
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
+import {TaskItem} from 'proto/todolist/q/projections_pb';
 
-import {TaskPriority} from 'proto/todolist/attributes_pb';
-
-/**
- * Converts task priority to its display name.
- *
- * Usage:
- *   task.getPriority() | taskPriorityName
- *
- * Example:
- *   {{ TaskPriority.HIGH | taskPriorityName }}
- *   formats to: 'High'
- */
 @Pipe({
-  name: 'taskPriorityName'
+  name: 'dueDate'
 })
-export class TaskPriorityName implements PipeTransform {
+export class TaskDueDatePipe implements PipeTransform {
 
-  private static readonly NAMES: Map<TaskPriority, string> = new Map([
-    [TaskPriority.HIGH, 'High'],
-    [TaskPriority.NORMAL, 'Normal'],
-    [TaskPriority.LOW, 'Low']
-  ]);
-
-  /**
-   * Does the transformation.
-   *
-   * If the given `TaskPriority` value is unknown to this pipe, an error is thrown.
-   */
-  transform(value: TaskPriority): string {
-    const displayName = TaskPriorityName.NAMES.get(value);
-    if (!displayName) {
-      return 'No priority';
+  transform(value: TaskItem): string {
+    const dueDate = value.getDueDate();
+    if (!dueDate) {
+      return 'No due date';
     }
-    return displayName;
+    const date = new Date(0);
+    date.setSeconds(dueDate.getSeconds());
+    return date.toDateString();
   }
 }
