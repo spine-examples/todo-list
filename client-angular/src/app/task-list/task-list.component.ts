@@ -20,6 +20,7 @@
 
 import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
+import {BehaviorSubject} from 'rxjs';
 
 import {TaskService} from 'app/task-service/task.service';
 import {TaskItem} from 'proto/todolist/q/projections_pb';
@@ -41,6 +42,9 @@ export class TaskListComponent implements OnInit {
 
   private tasks: TaskItem[];
 
+  private _hasElements$ = new BehaviorSubject<boolean>(false);
+  public hasElements$ = this._hasElements$.asObservable();
+
   constructor(private route: ActivatedRoute, private readonly taskService: TaskService) {
   }
 
@@ -50,6 +54,7 @@ export class TaskListComponent implements OnInit {
         this.initializeFromRoutedData(data);
         this.taskService.tasks$.subscribe(tasks => {
           this.tasks = tasks.filter(this.filter);
+          this._hasElements$.next(this.tasks.length !== 0);
         });
       });
   }

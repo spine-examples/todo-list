@@ -33,20 +33,20 @@
     </mat-form-field>
 </form>
 
-<div class="urgent-tasks">
-    im an urgent task that is being displayed
-    <app-task-list [filter]="urgentFilter">
-    </app-task-list>
+<div class="priority-label" *ngIf="displayUrgent">
+    Urgent
 </div>
+<app-task-list [filter]="urgentFilter" #urgentList>
+</app-task-list>
 
-<div class="normal-priority-tasks">
-    im a normal task that is being displayed
-    <app-task-list [filter]="normalPriorityFilter">
-    </app-task-list>
+<div class="priority-label" *ngIf="displayNormal">
+    Normal priority
 </div>
+<app-task-list [filter]="normalPriorityFilter" #normalList>
+</app-task-list>
 
-<div class="low-priority-tasks">
-    im a low task that is being displayed
-    <app-task-list [filter]="lowPriorityFilter">
-    </app-task-list>
+<div class="priority-label" *ngIf="displayLow">
+    Low priority
 </div>
+<app-task-list [filter]="lowPriorityFilter" #lowList>
+</app-task-list>

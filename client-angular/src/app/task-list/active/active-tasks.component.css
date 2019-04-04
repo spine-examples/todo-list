@@ -25,3 +25,8 @@
 .card {
   width: 1024px;
 }
+
+.priority-label {
+  font-size: 22px;
+  padding: 20px 5px 10px;
+}

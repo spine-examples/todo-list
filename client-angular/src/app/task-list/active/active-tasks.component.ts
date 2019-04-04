@@ -18,11 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from 'app/task-service/task.service';
 import {TaskItem, TaskPriority, TaskStatus} from 'proto/todolist/q/projections_pb';
+import {TaskListComponent} from 'app/task-list/task-list.component';
 
 /**
  * A component displaying active tasks, i.e. those which are not completed, deleted, or in draft
@@ -33,9 +34,11 @@ import {TaskItem, TaskPriority, TaskStatus} from 'proto/todolist/q/projections_p
   templateUrl: './active-tasks.component.html',
   styleUrls: ['./active-tasks.component.css']
 })
-export class ActiveTasksComponent {
+export class ActiveTasksComponent implements OnInit {
 
-  constructor(private readonly taskService: TaskService, private formBuilder: FormBuilder) {
+  constructor(private readonly taskService: TaskService,
+              private formBuilder: FormBuilder,
+              private readonly changeDetector: ChangeDetectorRef) {
     this.createBasicTaskForms = formBuilder.group({
       taskDescription: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
     });
@@ -44,10 +47,18 @@ export class ActiveTasksComponent {
   private createBasicTaskForms: FormGroup;
 
   private displayUrgent = false;
-
   private displayNormal = false;
-
   private displayLow = false;
+
+  @ViewChild('urgentList')
+  urgentList: TaskListComponent;
+
+  @ViewChild('normalList')
+  normalList: TaskListComponent;
+
+  @ViewChild('lowList')
+  lowList: TaskListComponent;
+
 
   private readonly activeFilter: (t: TaskItem) => boolean =
     (taskItem) => taskItem.getStatus() === TaskStatus.OPEN || taskItem.getStatus() === TaskStatus.FINALIZED
@@ -70,5 +81,21 @@ export class ActiveTasksComponent {
    */
   private createBasicTask(taskDescription: string): void {
     this.taskService.createBasicTask(taskDescription);
+  }
+
+  ngOnInit(): void {
+    this.urgentList.hasElements$.subscribe(hasItems => {
+      console.log(`urgent one has ${hasItems}`);
+      this.displayUrgent = hasItems;
+    });
+    this.normalList.hasElements$.subscribe(hasItems => {
+      console.log(`normal one has ${hasItems}`);
+      this.displayNormal = hasItems;
+    });
+    this.lowList.hasElements$.subscribe(hasItems => {
+      console.log(`low one has ${hasItems}`);
+      this.displayLow = hasItems;
+    });
+    this.changeDetector.detectChanges();
   }
 }
