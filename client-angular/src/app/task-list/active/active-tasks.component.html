@@ -17,20 +17,36 @@
   ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
-    <form class="add-quick-task-form" [formGroup]="createBasicTaskForms" autocomplete="off">
-        <mat-form-field class="full-width" appearance="outline">
-            <mat-label>Enter task description</mat-label>
-            <input #taskDescription
-                   (keydown.enter)="createBasicTask(taskDescription.value); taskDescription.value='';"
-                   class="task-description-textarea"
-                   autofocus
-                   matInput
-                   placeholder="What are you up to?"
-                   [formControlName]="'taskDescription'">
-            <mat-error class="error">
-                Task description must contain at least 3 letters.
-            </mat-error>
-        </mat-form-field>
-    </form>
-    <app-task-list [filter]="filter">
+<form class="add-quick-task-form" [formGroup]="createBasicTaskForms" autocomplete="off">
+    <mat-form-field class="full-width" appearance="outline">
+        <mat-label>Enter task description</mat-label>
+        <input #taskDescription
+               (keydown.enter)="createBasicTask(taskDescription.value); taskDescription.value='';"
+               class="task-description-textarea"
+               autofocus
+               matInput
+               placeholder="What are you up to?"
+               [formControlName]="'taskDescription'">
+        <mat-error class="error">
+            Task description must contain at least 3 letters.
+        </mat-error>
+    </mat-form-field>
+</form>
+
+<div class="urgent-tasks">
+    im an urgent task that is being displayed
+    <app-task-list [filter]="urgentFilter">
     </app-task-list>
+</div>
+
+<div class="normal-priority-tasks">
+    im a normal task that is being displayed
+    <app-task-list [filter]="normalPriorityFilter">
+    </app-task-list>
+</div>
+
+<div class="low-priority-tasks">
+    im a low task that is being displayed
+    <app-task-list [filter]="lowPriorityFilter">
+    </app-task-list>
+</div>

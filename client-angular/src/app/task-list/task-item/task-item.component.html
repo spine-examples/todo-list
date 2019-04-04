@@ -35,7 +35,6 @@
             <div *ngIf="expanded" class="description-value-expanded">{{task.getDescription()}}</div>
         </mat-panel-title>
         <mat-panel-description>
-            <div class="priority-container">{{task.getPriority() | taskPriorityName}}</div>
             <div class="due-date-container">{{task | dueDate}}</div>
         </mat-panel-description>
     </mat-expansion-panel-header>

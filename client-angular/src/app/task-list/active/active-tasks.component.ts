@@ -22,7 +22,7 @@ import {Component} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from 'app/task-service/task.service';
-import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
+import {TaskItem, TaskPriority, TaskStatus} from 'proto/todolist/q/projections_pb';
 
 /**
  * A component displaying active tasks, i.e. those which are not completed, deleted, or in draft
@@ -35,15 +35,31 @@ import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
 })
 export class ActiveTasksComponent {
 
-  private createBasicTaskForms: FormGroup;
-  private static readonly filter: (t: TaskItem) => boolean =
-    (taskItem) => taskItem.getStatus() === TaskStatus.OPEN || taskItem.getStatus() === TaskStatus.FINALIZED;
-
   constructor(private readonly taskService: TaskService, private formBuilder: FormBuilder) {
     this.createBasicTaskForms = formBuilder.group({
       taskDescription: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
     });
   }
+
+  private createBasicTaskForms: FormGroup;
+
+  private displayUrgent = false;
+
+  private displayNormal = false;
+
+  private displayLow = false;
+
+  private readonly activeFilter: (t: TaskItem) => boolean =
+    (taskItem) => taskItem.getStatus() === TaskStatus.OPEN || taskItem.getStatus() === TaskStatus.FINALIZED
+
+  private readonly urgentFilter: (t: TaskItem) => boolean =
+    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.HIGH
+
+  private readonly lowPriorityFilter: (t: TaskItem) => boolean =
+    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.LOW
+
+  private readonly normalPriorityFilter: (t: TaskItem) => boolean =
+    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.TP_UNDEFINED
 
   /**
    * Sends a command to create a basic task, i.e. a task without label, due date, and with a
