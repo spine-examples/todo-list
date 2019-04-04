@@ -43,6 +43,9 @@ export class TaskPriorityName implements PipeTransform {
     [TaskPriority.LOW, 'Low']
   ]);
 
+  /** Visible for testing. */
+  readonly _defaultPriority = 'No priority';
+
   /**
    * Does the transformation.
    *
@@ -51,7 +54,7 @@ export class TaskPriorityName implements PipeTransform {
   transform(value: TaskPriority): string {
     const displayName = TaskPriorityName.NAMES.get(value);
     if (!displayName) {
-      return 'No priority';
+      return this._defaultPriority;
     }
     return displayName;
   }

@@ -35,9 +35,8 @@ describe('TaskPriorityName', () => {
     expect(transform).toEqual('High');
   });
 
-  it('should produce an error when given an unknown `TaskPriority`', () => {
-    expect(() => pipe.transform(TaskPriority.TC_UNDEFINED)).toThrowError(
-      `Task priority ${TaskPriority.TC_UNDEFINED} is unknown`
-    );
+  it('should return a default string if a task has undefined priority', () => {
+    const transform = pipe.transform(TaskPriority.TC_UNDEFINED);
+    expect(transform).toEqual(pipe._defaultPriority);
   });
 });

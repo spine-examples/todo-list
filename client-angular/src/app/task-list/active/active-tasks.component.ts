@@ -85,15 +85,12 @@ export class ActiveTasksComponent implements OnInit {
 
   ngOnInit(): void {
     this.urgentList.hasElements$.subscribe(hasItems => {
-      console.log(`urgent one has ${hasItems}`);
       this.displayUrgent = hasItems;
     });
     this.normalList.hasElements$.subscribe(hasItems => {
-      console.log(`normal one has ${hasItems}`);
       this.displayNormal = hasItems;
     });
     this.lowList.hasElements$.subscribe(hasItems => {
-      console.log(`low one has ${hasItems}`);
       this.displayLow = hasItems;
     });
     this.changeDetector.detectChanges();

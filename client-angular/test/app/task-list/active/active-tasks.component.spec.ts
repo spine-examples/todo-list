@@ -31,13 +31,7 @@ import {Client, Type} from 'spine-web';
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
-import {
-  HOUSE_TASK_1_DESC,
-  HOUSE_TASK_1_ID,
-  HOUSE_TASK_2_DESC,
-  HOUSE_TASK_2_ID,
-  houseTasks
-} from 'test/given/tasks';
+import {houseTasks} from 'test/given/tasks';
 
 import {MyListView, TaskItem, TaskListView} from 'proto/todolist/q/projections_pb';
 import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
@@ -70,7 +64,6 @@ describe('ActiveTasksComponent', () => {
 
     fixture = TestBed.createComponent(ActiveTasksComponent);
     component = fixture.componentInstance;
-    ActiveTasksComponent.filter = () => true;
     tick(); // Wait for the fake subscription fetch.
     fixture.detectChanges();
   }));

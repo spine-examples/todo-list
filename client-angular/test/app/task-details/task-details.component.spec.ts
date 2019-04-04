@@ -19,7 +19,7 @@
  */
 
 import {Component} from '@angular/core';
-import {async, TestBed, fakeAsync, tick} from '@angular/core/testing';
+import {async, TestBed} from '@angular/core/testing';
 import {ActivatedRoute, convertToParamMap} from '@angular/router';
 import {RouterTestingModule} from '@angular/router/testing';
 import {TaskId, TaskItem} from 'proto/todolist/q/projections_pb';
@@ -33,14 +33,14 @@ const expectedTaskId = 'taskId';
 const expectedTask: TaskItem = taskWithId(expectedTaskId);
 
 describe('TaskDetailsComponent', () => {
-  let component: TaskDetailsComponent;
+  let hostFixture;
+  let childComponent: TaskDetailsComponent;
   const ID = 'test-task-ID';
   const activatedRoute = {snapshot: {paramMap: convertToParamMap({id: ID})}};
-  let fixture;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TaskDetailsComponent],
+      declarations: [TestHostComponent, TaskDetailsComponent],
       imports: [RouterTestingModule.withRoutes([])],
       providers: [
         {provide: ActivatedRoute, useValue: activatedRoute},
@@ -51,13 +51,21 @@ describe('TaskDetailsComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TaskDetailsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    hostFixture = TestBed.createComponent(TestHostComponent);
+    childComponent = hostFixture.debugElement.children[0].componentInstance;
+    hostFixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(childComponent).toBeTruthy();
   });
-
 });
+
+@Component({
+  selector: 'app-test-host-component',
+  template: `<app-task-details [(task)]="task"></app-task-details>`
+})
+class TestHostComponent {
+
+  private readonly task: TaskItem = expectedTask;
+}
