@@ -27,6 +27,7 @@
 }
 
 .priority-label {
-  font-size: 22px;
+  font-size: 16px;
   padding: 20px 5px 10px;
+  opacity: 0.7;
 }

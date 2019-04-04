@@ -22,6 +22,11 @@ import {Pipe, PipeTransform} from '@angular/core';
 import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
 import {TaskItem} from 'proto/todolist/q/projections_pb';
 
+/**
+ * Given a `TaskItem`, obtains a string representation of its due date in a human-readable format.
+ *
+ * If the specified task does not have a set due date, a `No due date` message is returned instead.
+ */
 @Pipe({
   name: 'dueDate'
 })

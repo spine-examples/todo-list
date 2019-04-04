@@ -46,10 +46,6 @@ export class ActiveTasksComponent implements OnInit {
 
   private createBasicTaskForms: FormGroup;
 
-  private displayUrgent = false;
-  private displayNormal = false;
-  private displayLow = false;
-
   @ViewChild('urgentList')
   urgentList: TaskListComponent;
 
@@ -84,15 +80,6 @@ export class ActiveTasksComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.urgentList.hasElements$.subscribe(hasItems => {
-      this.displayUrgent = hasItems;
-    });
-    this.normalList.hasElements$.subscribe(hasItems => {
-      this.displayNormal = hasItems;
-    });
-    this.lowList.hasElements$.subscribe(hasItems => {
-      this.displayLow = hasItems;
-    });
     this.changeDetector.detectChanges();
   }
 }
