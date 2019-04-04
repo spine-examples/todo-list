@@ -21,11 +21,15 @@
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Client} from 'spine-web';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, houseTasks, taskItem} from 'test/given/tasks';
+import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
+import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 describe('TaskItemComponent', () => {
 
@@ -39,8 +43,9 @@ describe('TaskItemComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TaskItemComponent],
-      imports: [RouterTestingModule.withRoutes([])],
+      declarations: [TaskItemComponent, TaskDetailsComponent],
+      imports: [RouterTestingModule.withRoutes([]), MatExpansionModule, TodoListPipesModule,
+        BrowserAnimationsModule],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
       .compileComponents();

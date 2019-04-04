@@ -35,6 +35,10 @@ import {houseTasks} from 'test/given/tasks';
 
 import {MyListView, TaskItem, TaskListView} from 'proto/todolist/q/projections_pb';
 import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
+import {TaskListComponent} from 'app/task-list/task-list.component';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
+import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
 
 describe('ActiveTasksComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -49,14 +53,21 @@ describe('ActiveTasksComponent', () => {
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ActiveTasksComponent, TaskItemComponent],
+      declarations: [
+        ActiveTasksComponent,
+        TaskItemComponent,
+        TaskListComponent,
+        TaskDetailsComponent
+      ],
       imports: [
         RouterTestingModule.withRoutes([]),
         ReactiveFormsModule,
         MatInputModule,
         MatListModule,
         MatIconModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        MatExpansionModule,
+        TodoListPipesModule
       ],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
@@ -70,7 +81,7 @@ describe('ActiveTasksComponent', () => {
 
   it('should allow basic task creation', () => {
     const method = spyOn<any>(component, 'createBasicTask');
-    const input = fixture.debugElement.query(By.css('.task-description-input')).nativeElement;
+    const input = fixture.debugElement.query(By.css('.task-description-textarea')).nativeElement;
     input.value = 'Some basic task text';
     const keyPressed = new KeyboardEvent('keydown', {
       key: 'Enter'
