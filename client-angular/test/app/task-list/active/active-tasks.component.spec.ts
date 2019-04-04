@@ -70,6 +70,7 @@ describe('ActiveTasksComponent', () => {
 
     fixture = TestBed.createComponent(ActiveTasksComponent);
     component = fixture.componentInstance;
+    ActiveTasksComponent.filter = () => true;
     tick(); // Wait for the fake subscription fetch.
     fixture.detectChanges();
   }));

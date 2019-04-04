@@ -36,6 +36,8 @@ export class TaskItemComponent implements OnInit {
   @Input()
   task: TaskItem;
 
+  private expanded: boolean;
+
   private displayDeleteButton: boolean;
 
   private displayCompleteButton: boolean;
