@@ -42,8 +42,7 @@ export class TaskListComponent implements OnInit {
 
   private tasks: TaskItem[];
 
-  private _hasElements$ = new BehaviorSubject<boolean>(false);
-  public hasElements$ = this._hasElements$.asObservable();
+  public hasElements: boolean;
 
   constructor(private route: ActivatedRoute, private readonly taskService: TaskService) {
   }
@@ -54,7 +53,7 @@ export class TaskListComponent implements OnInit {
         this.initializeFromRoutedData(data);
         this.taskService.tasks$.subscribe(tasks => {
           this.tasks = tasks.filter(this.filter);
-          this._hasElements$.next(this.tasks.length !== 0);
+          this.hasElements =  this.tasks.length !== 0;
         });
       });
   }
