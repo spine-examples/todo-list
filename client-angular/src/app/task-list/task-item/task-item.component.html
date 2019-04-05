@@ -18,7 +18,28 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<p>
-  Details of task with ID: {{taskId}}.
-</p>
-<button (click)="back()">Back</button>
+<mat-expansion-panel [(expanded)]="expanded">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            <div [ngClass]="{'shortened-description-value': !expanded}">
+                {{task.getDescription()}}
+            </div>
+        </mat-panel-title>
+        <mat-panel-description *ngIf="!expanded">
+            {{task | dueDate}}
+        </mat-panel-description>
+    </mat-expansion-panel-header>
+    <app-task-details [task]="task"></app-task-details>
+    <mat-action-row *ngIf="displayCompleteButton || displayDeleteButton">
+        <button *ngIf="displayDeleteButton"
+                mat-button
+                (click)="deleteTask()">
+            Delete
+        </button>
+        <button *ngIf="displayCompleteButton"
+                mat-button
+                (click)="completeTask()">
+            Complete
+        </button>
+    </mat-action-row>
+</mat-expansion-panel>

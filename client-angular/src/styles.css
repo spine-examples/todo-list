@@ -50,20 +50,3 @@ body, input[type="text"], button {
 * {
   font-family: Arial, Helvetica, sans-serif;
 }
-
-button {
-  margin-top: 20px;
-  font-family: Arial, serif;
-  background-color: #eee;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 4px;
-}
-
-button:hover {
-  background-color: #cfd8dc;
-}
-
-button {
-  border-left: solid 4px #ffffff;
-}

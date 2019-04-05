@@ -18,24 +18,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
-
-import {TaskDetailsComponent} from 'app/task-details/task-details.component';
-
-const routes: Routes = [
-  {
-    path: ':id',
-    component: TaskDetailsComponent
-  }
-];
+import {Component, Input} from '@angular/core';
+import {TaskItem} from 'proto/todolist/q/projections_pb';
 
 /**
- * The routing configuration of the {@link TaskDetailsModule}.
+ * Component responsible for displaying a single task.
  */
-@NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+@Component({
+  selector: 'app-task-details',
+  templateUrl: './task-details.component.html'
 })
-export class TaskDetailsRoutingModule {
+export class TaskDetailsComponent {
+
+  @Input()
+  private task: TaskItem;
 }

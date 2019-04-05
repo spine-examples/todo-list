@@ -18,25 +18,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
+import {Component} from '@angular/core';
 import {async, TestBed} from '@angular/core/testing';
 import {ActivatedRoute, convertToParamMap} from '@angular/router';
 import {RouterTestingModule} from '@angular/router/testing';
+import {TaskId, TaskItem} from 'proto/todolist/q/projections_pb';
 
-import {TaskDetailsComponent} from 'app/task-details/task-details.component';
+import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
 import {LayoutService} from 'app/layout/layout.service';
 import {mockLayoutService} from 'test/given/layout-service';
+import {taskWithId} from 'test/given/tasks';
+import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
+
+const expectedTaskId = 'taskId';
+const expectedTask: TaskItem = taskWithId(expectedTaskId);
 
 describe('TaskDetailsComponent', () => {
-  let component: TaskDetailsComponent;
-
+  let hostFixture;
+  let childComponent: TaskDetailsComponent;
   const ID = 'test-task-ID';
   const activatedRoute = {snapshot: {paramMap: convertToParamMap({id: ID})}};
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TaskDetailsComponent],
-      imports: [RouterTestingModule.withRoutes([])],
+      declarations: [TestHostComponent, TaskDetailsComponent],
+      imports: [RouterTestingModule.withRoutes([]), TodoListPipesModule],
       providers: [
         {provide: ActivatedRoute, useValue: activatedRoute},
         {provide: LayoutService, useValue: mockLayoutService()}
@@ -46,28 +52,21 @@ describe('TaskDetailsComponent', () => {
   }));
 
   beforeEach(() => {
-    const fixture = TestBed.createComponent(TaskDetailsComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    hostFixture = TestBed.createComponent(TestHostComponent);
+    childComponent = hostFixture.debugElement.children[0].componentInstance;
+    hostFixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-
-  it('should receive task ID from route', () => {
-    expect(component.taskId).toBe(ID);
-  });
-
-  it('should navigate back', () => {
-    const location: Location = TestBed.get(Location);
-    const initialPath = '/task-list/tasks/active';
-    location.go(initialPath);
-
-    const nextPath = 'labels';
-    location.go(nextPath);
-    component.back();
-
-    expect(location.path()).toBe(initialPath);
+    expect(childComponent).toBeTruthy();
   });
 });
+
+@Component({
+  selector: 'app-test-host-component',
+  template: `<app-task-details [(task)]="task"></app-task-details>`
+})
+class TestHostComponent {
+
+  private readonly task: TaskItem = expectedTask;
+}

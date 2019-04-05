@@ -18,19 +18,41 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {TaskService} from 'app/task-service/task.service';
+import {TaskItem} from 'proto/todolist/q/projections_pb';
 
-import {TaskDetailsComponent} from 'app/task-details/task-details.component';
-import {TaskDetailsRoutingModule} from 'app/task-details/task-details.routes';
-
-/**
- * The module which displays the details of a single task.
- *
- * Presents the information about a task to the user and allows for task updates.
- */
-@NgModule({
-  declarations: [TaskDetailsComponent],
-  imports: [TaskDetailsRoutingModule]
+@Component({
+  selector: 'app-task-list',
+  templateUrl: './task-list.component.html'
 })
-export class TaskDetailsModule {
+export class TaskListComponent implements OnInit {
+
+  @Input()
+  private filter: (t: TaskItem) => boolean;
+
+  private tasks: TaskItem[];
+
+  public hasElements: boolean;
+
+  constructor(private route: ActivatedRoute, private readonly taskService: TaskService) {
+  }
+
+  ngOnInit(): void {
+    this.route.data
+      .subscribe(data => {
+        this.initializeFromRoutedData(data);
+        this.taskService.tasks$.subscribe(tasks => {
+          this.tasks = tasks.filter(this.filter);
+          this.hasElements = this.tasks.length !== 0;
+        });
+      });
+  }
+
+  private initializeFromRoutedData(data) {
+    if (!this.filter) {
+      this.filter = data.filter;
+    }
+  }
 }

@@ -20,6 +20,7 @@
 
 .task-list-container {
   height: calc(100vh - 64px);
+  width: calc(100vw - 280px);
 }
 
 .task-list-sidenav {

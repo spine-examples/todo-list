@@ -22,17 +22,39 @@ import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
-import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
-import {DeletedTasksComponent} from 'app/task-list/deleted/deleted-tasks.component';
 import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
+import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
+import {TaskListComponent} from 'app/task-list/task-list.component';
 
-const routes: Routes = [
+/**
+ * Task filters for components that access the `TaskListComponent` directly.
+ */
+const completedFilter = (task: TaskItem) => task.getStatus() === TaskStatus.COMPLETED;
+const deletedFilter = (task: TaskItem) => task.getStatus === TaskStatus.DELETED;
+
+
+export const routes: Routes = [
   {
     path: 'tasks',
     children: [
-      {path: 'active', component: ActiveTasksComponent},
-      {path: 'completed', component: CompletedTasksComponent},
-      {path: 'deleted', component: DeletedTasksComponent},
+      {
+        path: 'active',
+        component: ActiveTasksComponent
+      },
+      {
+        path: 'completed',
+        component: TaskListComponent,
+        data: {
+          filter: completedFilter
+        }
+      },
+      {
+        path: 'deleted',
+        component: TaskListComponent,
+        data: {
+          filter: deletedFilter
+        }
+      },
       {path: 'drafts', component: DraftsComponent}
     ]
   }

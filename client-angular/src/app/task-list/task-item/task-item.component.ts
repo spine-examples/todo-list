@@ -18,25 +18,47 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 
 import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
 import {TaskService} from 'app/task-service/task.service';
-import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-list-category.component';
 
-/**
- * A component displaying deleted tasks view.
- */
 @Component({
-  selector: 'app-deleted-tasks',
-  templateUrl: './deleted-tasks.component.html'
+  selector: 'app-task-item',
+  templateUrl: './task-item.component.html',
+  styleUrls: ['./task-item.component.css']
 })
-export class DeletedTasksComponent extends TaskListCategoryComponent {
+export class TaskItemComponent {
 
-  constructor(taskService: TaskService) {
-    super(
-      taskService,
-      (task: TaskItem) => task.getStatus() === TaskStatus.DELETED,
-    );
+  constructor(private readonly taskService: TaskService) {
+  }
+
+  @Input()
+  private readonly task: TaskItem;
+
+  private expanded: boolean;
+
+  private get displayCompleteButton(): boolean {
+    return this.shouldShowButton();
+  }
+
+  private get displayDeleteButton(): boolean {
+    return this.shouldShowButton();
+  }
+
+  private shouldShowButton() {
+    if (this.task) {
+      const status = this.task.getStatus();
+      return status === TaskStatus.OPEN || status === TaskStatus.FINALIZED;
+    }
+    return false;
+  }
+
+  private completeTask() {
+    this.taskService.completeTask(this.task.getId());
+  }
+
+  private deleteTask() {
+    this.taskService.deleteTask(this.task.getId());
   }
 }

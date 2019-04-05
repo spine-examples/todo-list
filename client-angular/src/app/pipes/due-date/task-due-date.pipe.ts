@@ -18,39 +18,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Location} from '@angular/common';
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
-import {LayoutService} from 'app/layout/layout.service';
+import {Pipe, PipeTransform} from '@angular/core';
+import {Timestamp} from 'google-protobuf/google/protobuf/timestamp_pb';
+import {TaskItem} from 'proto/todolist/q/projections_pb';
 
 /**
- * Component responsible for displaying a single task.
+ * Given a `TaskItem`, obtains a string representation of its due date in a human-readable format.
+ *
+ * If the specified task does not have a set due date, a `No due date` message is returned instead.
  */
-@Component({
-  selector: 'app-task-details',
-  templateUrl: './task-details.component.html'
+@Pipe({
+  name: 'dueDate'
 })
-export class TaskDetailsComponent implements OnInit, OnDestroy {
+export class TaskDueDatePipe implements PipeTransform {
 
-  /** Visible for testing. */
-  readonly taskId;
-
-  constructor(private readonly location: Location,
-              route: ActivatedRoute,
-              private readonly layoutService: LayoutService) {
-    this.taskId = route.snapshot.paramMap.get('id');
-  }
-
-  ngOnInit() {
-    this.layoutService.updateShowNav(false);
-    this.layoutService.updateToolbar('Details');
-  }
-
-  ngOnDestroy() {
-    this.layoutService.defaultLayout();
-  }
-
-  back(): void {
-    this.location.back();
+  transform(value: TaskItem): string {
+    const dueDate = value.getDueDate();
+    if (!dueDate) {
+      return 'No due date';
+    }
+    const date = new Date(0);
+    date.setSeconds(dueDate.getSeconds());
+    return date.toDateString();
   }
 }

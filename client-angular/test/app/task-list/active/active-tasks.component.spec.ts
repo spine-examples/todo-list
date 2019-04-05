@@ -30,18 +30,15 @@ import {Client, Type} from 'spine-web';
 
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
 import {TaskService} from 'app/task-service/task.service';
-import {ActiveTaskItemComponent} from 'app/task-list/active/active-task-item/active-task-item.component';
 import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
-import {
-  HOUSE_TASK_1_DESC,
-  HOUSE_TASK_1_ID,
-  HOUSE_TASK_2_DESC,
-  HOUSE_TASK_2_ID,
-  houseTasks
-} from 'test/given/tasks';
+import {houseTasks} from 'test/given/tasks';
 
 import {MyListView, TaskItem, TaskListView} from 'proto/todolist/q/projections_pb';
-import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
+import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
+import {TaskListComponent} from 'app/task-list/task-list.component';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
+import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
 
 describe('ActiveTasksComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -56,14 +53,21 @@ describe('ActiveTasksComponent', () => {
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ActiveTasksComponent, ActiveTaskItemComponent, TaskLinkComponent],
+      declarations: [
+        ActiveTasksComponent,
+        TaskItemComponent,
+        TaskListComponent,
+        TaskDetailsComponent
+      ],
       imports: [
         RouterTestingModule.withRoutes([]),
         ReactiveFormsModule,
         MatInputModule,
         MatListModule,
         MatIconModule,
-        BrowserAnimationsModule
+        BrowserAnimationsModule,
+        MatExpansionModule,
+        TodoListPipesModule
       ],
       providers: [TaskService, {provide: Client, useValue: mockClient}]
     })
@@ -77,7 +81,7 @@ describe('ActiveTasksComponent', () => {
 
   it('should allow basic task creation', () => {
     const method = spyOn<any>(component, 'createBasicTask');
-    const input = fixture.debugElement.query(By.css('.task-description-textarea')).nativeElement;
+    const input = fixture.debugElement.query(By.css('input')).nativeElement;
     input.value = 'Some basic task text';
     const keyPressed = new KeyboardEvent('keydown', {
       key: 'Enter'
@@ -88,21 +92,5 @@ describe('ActiveTasksComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  it('should receive active task list on initialization', () => {
-    expect(component.tasks[0].getId().getValue()).toBe(HOUSE_TASK_1_ID);
-    expect(component.tasks[0].getDescription().getValue()).toBe(HOUSE_TASK_1_DESC);
-    expect(component.tasks[1].getId().getValue()).toBe(HOUSE_TASK_2_ID);
-    expect(component.tasks[1].getDescription().getValue()).toBe(HOUSE_TASK_2_DESC);
-  });
-
-  it('should create `app-active-task-item` for each of the received tasks', () => {
-    fixture.detectChanges();
-    const elements = fixture.nativeElement.getElementsByTagName('app-active-task-item');
-
-    expect(elements.length).toBe(2);
-    expect(elements[0].textContent).toContain(HOUSE_TASK_1_DESC);
-    expect(elements[1].textContent).toContain(HOUSE_TASK_2_DESC);
   });
 });

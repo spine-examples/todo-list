@@ -18,14 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.list-item {
-  width: 1024px;
-}
-
-.task-item {
+.full-width {
   width: 100%;
 }
 
-.full-width {
-  width: 1024px;
+.priority-label {
+  font-size: 16px;
+  padding: 20px 5px 10px;
+  opacity: 0.7;
 }

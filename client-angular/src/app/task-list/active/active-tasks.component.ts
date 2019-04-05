@@ -18,12 +18,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 
 import {TaskService} from 'app/task-service/task.service';
-import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
-import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-list-category.component';
+import {TaskItem, TaskPriority, TaskStatus} from 'proto/todolist/q/projections_pb';
+import {TaskListComponent} from 'app/task-list/task-list.component';
 
 /**
  * A component displaying active tasks, i.e. those which are not completed, deleted, or in draft
@@ -34,20 +34,38 @@ import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-l
   templateUrl: './active-tasks.component.html',
   styleUrls: ['./active-tasks.component.css']
 })
-export class ActiveTasksComponent extends TaskListCategoryComponent {
+export class ActiveTasksComponent implements OnInit {
 
-  private createBasicTaskForms: FormGroup;
-
-  constructor(taskService: TaskService, private formBuilder: FormBuilder) {
-    super(
-      taskService,
-      (task: TaskItem) => {
-        return task.getStatus() === TaskStatus.OPEN || task.getStatus() === TaskStatus.FINALIZED;
-      });
+  constructor(private readonly taskService: TaskService,
+              private formBuilder: FormBuilder,
+              private readonly changeDetector: ChangeDetectorRef) {
     this.createBasicTaskForms = formBuilder.group({
       taskDescription: ['', Validators.pattern('(.*?[a-zA-Z0-9]){3,}.*')]
     });
   }
+
+  private createBasicTaskForms: FormGroup;
+
+  @ViewChild('urgentList')
+  private urgentList: TaskListComponent;
+
+  @ViewChild('normalList')
+  private normalList: TaskListComponent;
+
+  @ViewChild('lowList')
+  private lowList: TaskListComponent;
+
+  private activeFilter: (t: TaskItem) => boolean =
+    (taskItem) => taskItem.getStatus() === TaskStatus.OPEN || taskItem.getStatus() === TaskStatus.FINALIZED;
+
+  private urgentFilter: (t: TaskItem) => boolean =
+    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.HIGH;
+
+  private lowPriorityFilter: (t: TaskItem) => boolean =
+    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.LOW;
+
+  private normalPriorityFilter: (t: TaskItem) => boolean =
+    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.TP_UNDEFINED;
 
   /**
    * Sends a command to create a basic task, i.e. a task without label, due date, and with a
@@ -58,5 +76,9 @@ export class ActiveTasksComponent extends TaskListCategoryComponent {
    */
   private createBasicTask(taskDescription: string): void {
     this.taskService.createBasicTask(taskDescription);
+  }
+
+  ngOnInit(): void {
+    this.changeDetector.detectChanges();
   }
 }

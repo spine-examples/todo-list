@@ -18,6 +18,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.tasks {
-  text-decoration: line-through;
+button {
+  float: right;
+}
+
+mat-action-row {
+  padding: 5px 4px 5px 8px;
+}
+
+.shortened-description-value {
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

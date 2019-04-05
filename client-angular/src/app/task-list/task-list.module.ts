@@ -26,28 +26,27 @@ import {MatInputModule} from '@angular/material';
 import {MatButtonModule} from '@angular/material/button';
 import {MatIconModule} from '@angular/material/icon';
 import {MatListModule} from '@angular/material/list';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatCardModule} from '@angular/material/card';
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
-import {CompletedTasksComponent} from 'app/task-list/completed/completed-tasks.component';
-import {DeletedTasksComponent} from 'app/task-list/deleted/deleted-tasks.component';
 import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
 import {TaskServiceModule} from 'app/task-service/task-service.module';
-import {ActiveTaskItemComponent} from 'app/task-list/active/active-task-item/active-task-item.component';
-import {TaskLinkComponent} from 'app/task-list/task-link/task-link.component';
-import {TaskListCategoryComponent} from 'app/task-list/task-list-category/task-list-category.component';
+import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
 import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
+import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
+import {TaskListComponent} from 'app/task-list/task-list.component';
+import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
 
 /**
  * The module which displays the task list.
  */
 @NgModule({
   declarations: [
-    TaskLinkComponent,
-    ActiveTaskItemComponent,
+    TaskItemComponent,
     ActiveTasksComponent,
-    CompletedTasksComponent,
-    DeletedTasksComponent,
     DraftsComponent,
-    TaskListCategoryComponent
+    TaskDetailsComponent,
+    TaskListComponent
   ],
   imports: [
     TaskListRoutingModule,
@@ -58,7 +57,10 @@ import {TaskListRoutingModule} from 'app/task-list/task-list-routes';
     MatInputModule,
     ReactiveFormsModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatExpansionModule,
+    MatCardModule,
+    TodoListPipesModule
   ],
   exports: [
     MatInputModule,
