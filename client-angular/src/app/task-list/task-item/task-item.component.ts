@@ -18,7 +18,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 
 import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
 import {TaskService} from 'app/task-service/task.service';
@@ -28,19 +28,31 @@ import {TaskService} from 'app/task-service/task.service';
   templateUrl: './task-item.component.html',
   styleUrls: ['./task-item.component.css']
 })
-export class TaskItemComponent implements OnInit {
+export class TaskItemComponent {
 
   constructor(private readonly taskService: TaskService) {
   }
 
   @Input()
-  task: TaskItem;
+  private task: TaskItem;
 
   private expanded: boolean;
 
-  private displayDeleteButton: boolean;
+  private get displayCompleteButton(): boolean {
+    return this.shouldShowButton();
+  }
 
-  private displayCompleteButton: boolean;
+  private get displayDeleteButton(): boolean {
+    return this.shouldShowButton();
+  }
+
+  private shouldShowButton() {
+    if (this.task) {
+      const status = this.task.getStatus();
+      return status === TaskStatus.OPEN || status === TaskStatus.FINALIZED;
+    }
+    return false;
+  }
 
   private completeTask() {
     this.taskService.completeTask(this.task.getId());
@@ -48,12 +60,5 @@ export class TaskItemComponent implements OnInit {
 
   private deleteTask() {
     this.taskService.deleteTask(this.task.getId());
-  }
-
-  ngOnInit(): void {
-    const status = this.task.getStatus();
-    const showButtons = status === TaskStatus.OPEN || status === TaskStatus.FINALIZED;
-    this.displayCompleteButton = showButtons;
-    this.displayDeleteButton = showButtons;
   }
 }
