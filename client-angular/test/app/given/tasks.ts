@@ -54,10 +54,7 @@ export function taskWithId(desiredId: string): TaskItem {
   taskId.setValue(desiredId);
   const description = new TaskDescription();
   description.setValue('Wash my car');
-  const result = new TaskItem();
-  result.setId(taskId);
-  result.setDescription(description);
-  return result;
+  return taskItem(taskId, description);
 }
 
 export function taskItem(id: TaskId, description: TaskDescription): TaskItem {
