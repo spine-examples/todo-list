@@ -21,7 +21,7 @@
     <mat-form-field class="full-width" appearance="outline">
         <mat-label>Enter task description</mat-label>
         <input #taskDescription
-               (keydown.enter)="createBasicTask(taskDescription.value); taskDescription.value='';"
+               (keydown.enter)="createBasicTaskOptimistically(taskDescription.value); taskDescription.value='';"
                class="task-description-textarea"
                autofocus
                matInput
@@ -33,11 +33,11 @@
     </mat-form-field>
 </form>
 
-<div class="priority-label" *ngIf="urgentList.hasElements">
-    Urgent
-</div>
-<app-task-list [filter]="urgentFilter" #urgentList>
-</app-task-list>
+<!--<div class="priority-label" *ngIf="urgentList.hasElements">-->
+    <!--Urgent-->
+<!--</div>-->
+<!--<app-task-list [filter]="urgentFilter" #urgentList>-->
+<!--</app-task-list>-->
 
 <div class="priority-label" *ngIf="normalList.hasElements">
     Normal priority
@@ -45,8 +45,8 @@
 <app-task-list [filter]="normalPriorityFilter" #normalList>
 </app-task-list>
 
-<div class="priority-label" *ngIf="lowList.hasElements">
-    Low priority
-</div>
-<app-task-list [filter]="lowPriorityFilter" #lowList>
-</app-task-list>
+<!--<div class="priority-label" *ngIf="lowList.hasElements">-->
+    <!--Low priority-->
+<!--</div>-->
+<!--<app-task-list [filter]="lowPriorityFilter" #lowList>-->
+<!--</app-task-list>-->

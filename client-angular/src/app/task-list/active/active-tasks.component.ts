@@ -55,7 +55,6 @@ export class ActiveTasksComponent implements OnInit {
   @ViewChild('lowList')
   lowList: TaskListComponent;
 
-
   private readonly activeFilter: (t: TaskItem) => boolean =
     (taskItem) => taskItem.getStatus() === TaskStatus.OPEN || taskItem.getStatus() === TaskStatus.FINALIZED
 
@@ -77,6 +76,11 @@ export class ActiveTasksComponent implements OnInit {
    */
   private createBasicTask(taskDescription: string): void {
     this.taskService.createBasicTask(taskDescription);
+  }
+
+  private createBasicTaskOptimistically(taskDescription: string): void {
+    this.taskService.createBasicTaskOpt(taskDescription);
+    this.changeDetector.detectChanges();
   }
 
   ngOnInit(): void {

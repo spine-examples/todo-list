@@ -20,7 +20,6 @@
 
 import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {BehaviorSubject} from 'rxjs';
 
 import {TaskService} from 'app/task-service/task.service';
 import {TaskItem} from 'proto/todolist/q/projections_pb';
@@ -48,14 +47,22 @@ export class TaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.data
-      .subscribe(data => {
-        this.initializeFromRoutedData(data);
-        this.taskService.tasks$.subscribe(tasks => {
-          this.tasks = tasks.filter(this.filter);
-          this.hasElements =  this.tasks.length !== 0;
+    if (!this.filter) {
+      this.route.data
+        .subscribe(data => {
+          this.initializeFromRoutedData(data);
+          this.performSubscription();
         });
-      });
+    } else {
+      this.performSubscription();
+    }
+  }
+
+  private performSubscription() {
+    this.taskService.tasks$.subscribe(tasks => {
+      this.tasks = tasks.filter(this.filter);
+      this.hasElements = this.tasks.length !== 0;
+    });
   }
 
   private initializeFromRoutedData(data) {

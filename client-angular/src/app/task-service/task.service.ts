@@ -30,6 +30,7 @@ import {TaskDescription} from 'proto/todolist/values_pb';
 import {CompleteTask, CreateBasicTask, DeleteTask} from 'proto/todolist/c/commands_pb';
 import {MyListView, TaskItem, TaskView} from 'proto/todolist/q/projections_pb';
 import {TaskStatus} from 'proto/todolist/attributes_pb';
+import {taskItem} from 'test/given/tasks';
 
 /**
  * A service which performs operations on To-Do List tasks.
@@ -41,6 +42,7 @@ export class TaskService implements OnDestroy {
 
   private _tasks$: BehaviorSubject<TaskItem[]>;
   private _unsubscribe: () => void;
+  private optimisticallyCreatedTasks: TaskItem[] = [];
 
   /**
    * @param spineWebClient a client for accessing Spine backend
@@ -112,7 +114,7 @@ export class TaskService implements OnDestroy {
    *
    * @param description a description of the new task
    */
-  createBasicTask(description: string): void {
+  createBasicTask(description: string): TaskItem {
     const cmd = new CreateBasicTask();
     const id = UuidGenerator.newId(TaskId);
     cmd.setId(id);
@@ -122,6 +124,16 @@ export class TaskService implements OnDestroy {
     cmd.setDescription(taskDescription);
 
     this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
+    return taskItem(id, description);
+  }
+
+  createBasicTaskOpt(description: string): void {
+    const createdTask = this.createBasicTask(description);
+    createdTask.setStatus(TaskStatus.OPEN);
+    this.optimisticallyCreatedTasks.push(createdTask);
+    const tasksToBroadcast: TaskItem[] = [...this._tasks$.getValue(), createdTask];
+    this._tasks$.next(tasksToBroadcast);
+    return createdTask;
   }
 
   /**
@@ -161,7 +173,9 @@ export class TaskService implements OnDestroy {
     const refreshTasks = {
       next: (view: MyListView): void => {
         const taskItems: TaskItem[] = view.getMyList().getItemsList();
-        this._tasks$.next(taskItems);
+        const intersection = taskItems.filter(value => this.optimisticallyCreatedTasks.includes(value));
+        const toBroadcast: TaskItem[] = taskItems.filter(value => !intersection.includes(value));
+        this._tasks$.next(toBroadcast);
       }
     };
     const type = Type.forClass(MyListView);
