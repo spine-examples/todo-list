@@ -34,7 +34,7 @@ export class TaskItemComponent {
   }
 
   @Input()
-  private task: TaskItem;
+  private readonly task: TaskItem;
 
   private expanded: boolean;
 

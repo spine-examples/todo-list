@@ -68,6 +68,11 @@ export function taskItem(id: TaskId, description: TaskDescription): TaskItem {
   const taskDescription = new TaskDescription();
   taskDescription.setValue(description);
   result.setDescription(taskDescription);
+  const dueDate: Timestamp = new Timestamp();
+  dueDate.setSeconds(0);
+  result.setDueDate(dueDate);
+  result.setStatus(TaskStatus.OPEN);
+  result.setPriority(TaskPriority.NORMAL);
   return result;
 }
 

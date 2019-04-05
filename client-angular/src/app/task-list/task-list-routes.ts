@@ -26,8 +26,8 @@ import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
 import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
 import {TaskListComponent} from 'app/task-list/task-list.component';
 
-const oneFilter = (task: TaskItem) => task.getStatus() === TaskStatus.COMPLETED;
-const anotherFilter = (task: TaskItem) => task.getStatus === TaskStatus.DELETED;
+const completedFilter = (task: TaskItem) => task.getStatus() === TaskStatus.COMPLETED;
+const deletedFilter = (task: TaskItem) => task.getStatus === TaskStatus.DELETED;
 export const routes: Routes = [
   {
     path: 'tasks',
@@ -40,14 +40,14 @@ export const routes: Routes = [
         path: 'completed',
         component: TaskListComponent,
         data: {
-          filter: oneFilter
+          filter: completedFilter
         }
       },
       {
         path: 'deleted',
         component: TaskListComponent,
         data: {
-          filter: anotherFilter
+          filter: deletedFilter
         }
       },
       {path: 'drafts', component: DraftsComponent}

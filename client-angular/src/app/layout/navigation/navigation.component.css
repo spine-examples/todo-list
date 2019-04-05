@@ -19,5 +19,11 @@ a.mat-list-item {
 }
 
 a.mat-list-item:hover {
-  border-radius: 5px;
+}
+
+a.mat-list-item:focus {
+}
+
+.active {
+  background: #e6e6e6
 }
