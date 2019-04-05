@@ -12,13 +12,3 @@ mat-action-row {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-
-.priority-container {
-  width: 100px;
-  padding-right: 50px;
-}
-
-.due-date-container {
-  padding-left: 150px;
-  width: 200px;
-}

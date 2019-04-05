@@ -25,31 +25,29 @@ import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component'
 import {DraftsComponent} from 'app/task-list/drafts/drafts.component';
 import {TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
 import {TaskListComponent} from 'app/task-list/task-list.component';
-import {forActive, forCompleted, forDeleted} from 'app/task-list/route-filters';
 
+const oneFilter = (task: TaskItem) => task.getStatus() === TaskStatus.COMPLETED;
+const anotherFilter = (task: TaskItem) => task.getStatus === TaskStatus.DELETED;
 export const routes: Routes = [
   {
     path: 'tasks',
     children: [
       {
         path: 'active',
-        component: ActiveTasksComponent,
-        data: {
-          filter: forActive
-        }
+        component: ActiveTasksComponent
       },
       {
         path: 'completed',
         component: TaskListComponent,
         data: {
-          filter: forCompleted
+          filter: oneFilter
         }
       },
       {
         path: 'deleted',
         component: TaskListComponent,
         data: {
-          filter: forDeleted
+          filter: anotherFilter
         }
       },
       {path: 'drafts', component: DraftsComponent}

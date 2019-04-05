@@ -20,8 +20,6 @@
 
 import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {BehaviorSubject} from 'rxjs';
-
 import {TaskService} from 'app/task-service/task.service';
 import {TaskItem} from 'proto/todolist/q/projections_pb';
 
@@ -33,12 +31,6 @@ export class TaskListComponent implements OnInit {
 
   @Input()
   private filter: (t: TaskItem) => boolean;
-
-  @Input()
-  private displayDeleteButtons: boolean;
-
-  @Input()
-  private displayCompleteButtons: boolean;
 
   private tasks: TaskItem[];
 
@@ -53,7 +45,7 @@ export class TaskListComponent implements OnInit {
         this.initializeFromRoutedData(data);
         this.taskService.tasks$.subscribe(tasks => {
           this.tasks = tasks.filter(this.filter);
-          this.hasElements =  this.tasks.length !== 0;
+          this.hasElements = this.tasks.length !== 0;
         });
       });
   }
@@ -61,12 +53,6 @@ export class TaskListComponent implements OnInit {
   private initializeFromRoutedData(data) {
     if (!this.filter) {
       this.filter = data.filter;
-    }
-    if (!this.displayCompleteButtons) {
-      this.displayCompleteButtons = data.displayCompleteButtons;
-    }
-    if (!this.displayDeleteButtons) {
-      this.displayDeleteButtons = data.displayDeleteButtons;
     }
   }
 }

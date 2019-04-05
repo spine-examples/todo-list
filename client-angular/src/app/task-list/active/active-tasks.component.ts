@@ -47,26 +47,26 @@ export class ActiveTasksComponent implements OnInit {
   private createBasicTaskForms: FormGroup;
 
   @ViewChild('urgentList')
-  urgentList: TaskListComponent;
+  private urgentList: TaskListComponent;
 
   @ViewChild('normalList')
-  normalList: TaskListComponent;
+  private normalList: TaskListComponent;
 
   @ViewChild('lowList')
-  lowList: TaskListComponent;
+  private lowList: TaskListComponent;
 
 
-  private readonly activeFilter: (t: TaskItem) => boolean =
-    (taskItem) => taskItem.getStatus() === TaskStatus.OPEN || taskItem.getStatus() === TaskStatus.FINALIZED
+  private activeFilter: (t: TaskItem) => boolean =
+    (taskItem) => taskItem.getStatus() === TaskStatus.OPEN || taskItem.getStatus() === TaskStatus.FINALIZED;
 
-  private readonly urgentFilter: (t: TaskItem) => boolean =
-    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.HIGH
+  private urgentFilter: (t: TaskItem) => boolean =
+    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.HIGH;
 
-  private readonly lowPriorityFilter: (t: TaskItem) => boolean =
-    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.LOW
+  private lowPriorityFilter: (t: TaskItem) => boolean =
+    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.LOW;
 
-  private readonly normalPriorityFilter: (t: TaskItem) => boolean =
-    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.TP_UNDEFINED
+  private normalPriorityFilter: (t: TaskItem) => boolean =
+    (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.TP_UNDEFINED;
 
   /**
    * Sends a command to create a basic task, i.e. a task without label, due date, and with a
