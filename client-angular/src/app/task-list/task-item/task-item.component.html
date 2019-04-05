@@ -18,9 +18,9 @@
   ~ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 
-<mat-expansion-panel class="panel" [(expanded)] = "expanded">
-    <mat-expansion-panel-header class="header">
-        <mat-panel-title class="task-description">
+<mat-expansion-panel [(expanded)] = "expanded">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
             <div [ngClass]="{'description-value-unexpanded': !expanded}">{{task.getDescription()}}</div>
         </mat-panel-title>
         <mat-panel-description *ngIf="!expanded">
