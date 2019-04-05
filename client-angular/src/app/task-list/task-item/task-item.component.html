@@ -21,7 +21,8 @@
 <mat-expansion-panel [(expanded)]="expanded">
     <mat-expansion-panel-header>
         <mat-panel-title>
-            <div [ngClass]="{'description-value-unexpanded': !expanded}">{{task.getDescription()}}
+            <div [ngClass]="{'shortened-description-value': !expanded}">
+                {{task.getDescription()}}
             </div>
         </mat-panel-title>
         <mat-panel-description *ngIf="!expanded">
@@ -32,12 +33,12 @@
     <mat-action-row *ngIf="displayCompleteButton || displayDeleteButton">
         <button *ngIf="displayDeleteButton"
                 mat-button
-                (click)="deleteTask();">
+                (click)="deleteTask()">
             Delete
         </button>
         <button *ngIf="displayCompleteButton"
                 mat-button
-                (click)="completeTask();">
+                (click)="completeTask()">
             Complete
         </button>
     </mat-action-row>

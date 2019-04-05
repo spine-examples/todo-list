@@ -55,7 +55,6 @@ export class ActiveTasksComponent implements OnInit {
   @ViewChild('lowList')
   private lowList: TaskListComponent;
 
-
   private activeFilter: (t: TaskItem) => boolean =
     (taskItem) => taskItem.getStatus() === TaskStatus.OPEN || taskItem.getStatus() === TaskStatus.FINALIZED;
 
