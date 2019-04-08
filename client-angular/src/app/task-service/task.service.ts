@@ -19,7 +19,15 @@
  */
 
 import {Injectable, OnDestroy} from '@angular/core';
-import {Client, Type} from 'spine-web';
+import {
+  Client,
+  ClientError,
+  CommandHandlingError,
+  ConnectionError,
+  ServerError,
+  SpineError,
+  Type
+} from 'spine-web';
 import {BehaviorSubject, Observable} from 'rxjs';
 
 import {TaskServiceModule} from 'app/task-service/task-service.module';
@@ -30,7 +38,7 @@ import {TaskDescription} from 'proto/todolist/values_pb';
 import {CompleteTask, CreateBasicTask, DeleteTask} from 'proto/todolist/c/commands_pb';
 import {MyListView, TaskItem, TaskView} from 'proto/todolist/q/projections_pb';
 import {TaskPriority, TaskStatus} from 'proto/todolist/attributes_pb';
-import {taskItem} from 'test/given/tasks';
+import {NotificationService} from 'app/notification-service/notification.service';
 
 /**
  * A service which performs operations on To-Do List tasks.
@@ -46,8 +54,10 @@ export class TaskService implements OnDestroy {
 
   /**
    * @param spineWebClient a client for accessing Spine backend
+   * @param notificationService a service that notifies users about events that happen in
+   * the application
    */
-  constructor(private readonly spineWebClient: Client) {
+  constructor(private spineWebClient: Client, private notificationService: NotificationService) {
   }
 
   private static doNothing(): () => void {
@@ -111,7 +121,35 @@ export class TaskService implements OnDestroy {
   completeTask(taskId: TaskId): void {
     const cmd = new CompleteTask();
     cmd.setId(taskId);
-    this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
+    this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, (err) => this.handleError(err, taskId));
+  }
+
+  /**
+   * Handles an error that has occurred as a result of a sent command.
+   *
+   * This method might delete tasks from the `optimisticallyUpdated` list, since some errors signify
+   * that that the update has not happened, and therefore an optimistic update was wrong.
+   *
+   * @param err error that has occurred as a result of a sent command
+   * @param taskId ID of the task related to the sent command.
+   */
+  private handleError(err, taskId: TaskId): void {
+    // TODO:2019-04-08:serhii.lekariev: handle all the lists
+    if (this.shouldUndoOptimisticOperation(err)) {
+      const toBroadcast = this.filterStaleOptimistic(this._tasks$.getValue());
+      this.optimisticallyCreatedTasks = this.optimisticallyCreatedTasks.filter(id => id.value !== taskId.value);
+      this._tasks$.next(toBroadcast);
+      this.notificationService.showSnackbarWith('Task could not be added due to a connection error.');
+    }
+  }
+
+  /**
+   * For the given array, returns a subarray of tasks that have not been confirmed to have came from
+   * the server.
+   */
+  private filterStaleOptimistic(tasks: TaskItem[]) {
+    const intersection = tasks.filter(value => this.optimisticallyCreatedTasks.includes(value));
+    return tasks.filter(value => !intersection.includes(value));
   }
 
   createBasicTask(description: string): void {
@@ -128,7 +166,7 @@ export class TaskService implements OnDestroy {
     createdTask.setDescription(taskDescription);
     createdTask.setStatus(TaskStatus.OPEN);
 
-    this.spineWebClient.sendCommand(cmd, TaskService.doNothing, TaskService.logCmdErr);
+    this.spineWebClient.sendCommand(cmd, TaskService.doNothing, (err) => this.handleError(err, id));
     this.optimisticallyCreatedTasks.push(createdTask);
     const tasksToBroadcast: TaskItem[] = [...this._tasks$.getValue(), createdTask];
     this._tasks$.next(tasksToBroadcast);
@@ -171,10 +209,11 @@ export class TaskService implements OnDestroy {
   private subscribeToTasks(): Promise<() => void> {
     const refreshTasks = {
       next: (view: MyListView): void => {
-        const taskItems: TaskItem[] = view.getMyList().getItemsList();
-        const intersection = taskItems.filter(value => this.optimisticallyCreatedTasks.includes(value));
-        const toBroadcast: TaskItem[] = taskItems.filter(value => !intersection.includes(value));
-        this._tasks$.next(toBroadcast);
+        if (view) {
+          const taskItems: TaskItem[] = view.getMyList().getItemsList();
+          const toBroadcast = this.filterStaleOptimistic(taskItems);
+          this._tasks$.next(toBroadcast);
+        }
       }
     };
     const type = Type.forClass(MyListView);
@@ -201,4 +240,19 @@ export class TaskService implements OnDestroy {
       this._unsubscribe();
     }
   }
+
+  private shouldUndoOptimisticOperation(err: CommandHandlingError) {
+    const shouldUndoFns: Array<(err: CommandHandlingError) => boolean> = [
+      (e: CommandHandlingError) => e.assuresCommandNeglected(),
+      (e: CommandHandlingError) => e._cause.name.startsWith('ConnectionError'),
+      (e: CommandHandlingError) => e instanceof ConnectionError
+    ];
+    for (const key in shouldUndoFns) {
+      if (shouldUndoFns[key](err)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
+

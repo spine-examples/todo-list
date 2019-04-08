@@ -19,15 +19,13 @@
  */
 
 import {NgModule} from '@angular/core';
-
-import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provider.module';
-import {NotificationServiceModule} from "app/notification-service/notification-service.module";
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 
 /**
- * A module which provides the {@link TaskService}.
+ * Module that provides `NotificationService`.
  */
 @NgModule({
-  imports: [SpineClientProvider, NotificationServiceModule]
+  imports: [MatSnackBarModule]
 })
-export class TaskServiceModule {
+export class NotificationServiceModule {
 }

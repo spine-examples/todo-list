@@ -18,16 +18,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
-
-import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provider.module';
-import {NotificationServiceModule} from "app/notification-service/notification-service.module";
+import {Injectable} from '@angular/core';
+import {MatSnackBar} from '@angular/material/snack-bar';
+import {NotificationServiceModule} from 'app/notification-service/notification-service.module';
 
 /**
- * A module which provides the {@link TaskService}.
+ * A service that is responsible for notifying users about notable events, such as an error.
  */
-@NgModule({
-  imports: [SpineClientProvider, NotificationServiceModule]
+@Injectable({
+  providedIn: NotificationServiceModule
 })
-export class TaskServiceModule {
+export class NotificationService {
+
+  constructor(private snackBar: MatSnackBar) {
+  }
+
+  public showSnackbarWith(message: string): void {
+    this.snackBar.open(message, 'Ok', {
+      duration: 4_000
+    });
+  }
 }

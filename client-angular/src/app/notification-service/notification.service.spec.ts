@@ -18,16 +18,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {NgModule} from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 
-import {SpineClientProvider} from 'app/spine-client-provider/spine-client-provider.module';
-import {NotificationServiceModule} from "app/notification-service/notification-service.module";
+import { NotificationService } from './notification.service';
 
-/**
- * A module which provides the {@link TaskService}.
- */
-@NgModule({
-  imports: [SpineClientProvider, NotificationServiceModule]
-})
-export class TaskServiceModule {
-}
+describe('NotificationService', () => {
+  beforeEach(() => TestBed.configureTestingModule({}));
+
+  it('should be created', () => {
+    const service: NotificationService = TestBed.get(NotificationService);
+    expect(service).toBeTruthy();
+  });
+});
