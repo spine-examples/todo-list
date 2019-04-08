@@ -60,7 +60,8 @@ export class TaskService implements OnDestroy {
   constructor(private spineWebClient: Client, private notificationService: NotificationService) {
   }
 
-  private static doNothing(): () => void {
+  /** Visible for testing. */
+  static doNothing(): () => void {
     return () => {
     };
   }
@@ -132,8 +133,10 @@ export class TaskService implements OnDestroy {
    *
    * @param err error that has occurred as a result of a sent command
    * @param taskId ID of the task related to the sent command.
+   *
+   * Visible for testing
    */
-  private handleError(err, taskId: TaskId): void {
+  handleError(err, taskId: TaskId): void {
     // TODO:2019-04-08:serhii.lekariev: handle all the lists
     if (this.shouldUndoOptimisticOperation(err)) {
       const toBroadcast = this.filterStaleOptimistic(this._tasks$.getValue());

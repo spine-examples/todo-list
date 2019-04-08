@@ -51,6 +51,18 @@ export function subscriptionDataOf<T>(added: T[],
   });
 }
 
+export function observableSubscriptionDataOf<T>(added: Observable<T>,
+                                                unsubscribe: () => void)
+  : Promise<EntitySubscriptionObject<T>> {
+  return Promise.resolve({
+    itemAdded: added,
+    itemChanged: observableOf([]),
+    itemRemoved: observableOf([]),
+    unsubscribe
+  });
+}
+
+
 export function mockSpineWebClient() {
   return jasmine.createSpyObj<Client>(
     'Client',

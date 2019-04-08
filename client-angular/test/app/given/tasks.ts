@@ -32,6 +32,17 @@ export const HOUSE_TASK_1_DESC = 'Wash the dishes';
 export const HOUSE_TASK_2_ID = 'task-2';
 export const HOUSE_TASK_2_DESC = 'Clean the house';
 
+export function emptyTaskList(): MyListView {
+  const taskListId = new TaskListId();
+  taskListId.setValue('empty-task-list');
+  const taskListView = new TaskListView();
+  taskListView.setItemsList([]);
+  const result = new MyListView();
+  result.setId(taskListId);
+  result.setMyList(taskListView);
+  return result;
+}
+
 export function houseTasks(): MyListView {
   const taskListId = new TaskListId();
   taskListId.setValue('task-list-ID');

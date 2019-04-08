@@ -18,12 +18,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {fakeAsync, TestBed} from '@angular/core/testing';
+import {fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {Client} from 'spine-web';
 
 import {TaskService} from 'app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
+import {mockSpineWebClient, observableSubscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {
+  emptyTaskList,
   HOUSE_TASK_1_DESC,
   HOUSE_TASK_1_ID,
   HOUSE_TASK_2_DESC,
@@ -31,7 +32,8 @@ import {
   houseTask,
   houseTasks
 } from 'test/given/tasks';
-
+import {BehaviorSubject} from 'rxjs';
+import {TaskItem} from 'proto/todolist/q/projections_pb';
 import {CreateBasicTask} from 'proto/todolist/c/commands_pb';
 import {NotificationServiceModule} from 'app/notification-service/notification-service.module';
 import {mockNotificationService} from 'test/given/layout-service';
@@ -41,8 +43,11 @@ describe('TaskService', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy();
   const notificationService = mockNotificationService();
-  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [houseTasks()], [], [], unsubscribe
+
+  const addedTasksSubject = new BehaviorSubject<TaskItem[]>(houseTasks());
+
+  mockClient.subscribeToEntities.and.returnValue(observableSubscriptionDataOf(
+    addedTasksSubject.asObservable(), unsubscribe
   ));
   let service: TaskService;
   beforeEach(() => {
@@ -60,6 +65,16 @@ describe('TaskService', () => {
     expect(service).toBeTruthy();
   });
 
+  it('should update the task list without relying on server response', fakeAsync(() => {
+    addedTasksSubject.next(emptyTaskList());
+    tick();
+    expect(service.tasks.length).toBe(0);
+    const expectedDescription = 'some task';
+    service.createBasicTask(expectedDescription);
+    const taskDescriptions = service.tasks.map(task => task.getDescription().getValue());
+    expect(taskDescriptions).toContain(expectedDescription);
+  }));
+
   it('should log command acknowledgement', () => {
     console.log = jasmine.createSpy('log');
     TaskService.logCmdAck();
@@ -72,13 +87,6 @@ describe('TaskService', () => {
     TaskService.logCmdErr(errorMessage);
     expect(console.log).toHaveBeenCalledWith(
       'Error when sending command to the server: %s', errorMessage
-    );
-  });
-
-  it('should create basic task', () => {
-    service.createBasicTask(HOUSE_TASK_1_DESC);
-    expect(mockClient.sendCommand).toHaveBeenCalledWith(
-      jasmine.any(CreateBasicTask), TaskService.logCmdAck, TaskService.logCmdErr
     );
   });
 
