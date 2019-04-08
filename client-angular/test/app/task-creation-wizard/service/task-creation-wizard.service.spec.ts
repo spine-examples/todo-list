@@ -44,6 +44,7 @@ import {
   UpdateTaskDetails
 } from 'proto/todolist/c/commands_pb';
 import {TaskView} from 'proto/todolist/q/projections_pb';
+import {NotificationServiceModule} from "app/notification-service/notification-service.module";
 
 describe('TaskCreationWizard', () => {
 
@@ -102,6 +103,9 @@ describe('TaskCreationWizard', () => {
         TaskCreationWizard,
         TaskService,
         {provide: Client, useValue: mockClient}
+      ],
+      imports: [
+        NotificationServiceModule
       ]
     });
     wizard = TestBed.get(TaskCreationWizard);

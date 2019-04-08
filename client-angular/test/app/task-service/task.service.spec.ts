@@ -33,17 +33,25 @@ import {
 } from 'test/given/tasks';
 
 import {CreateBasicTask} from 'proto/todolist/c/commands_pb';
+import {NotificationServiceModule} from 'app/notification-service/notification-service.module';
+import {mockNotificationService} from 'test/given/layout-service';
+import {NotificationService} from 'app/notification-service/notification.service';
 
 describe('TaskService', () => {
   const mockClient = mockSpineWebClient();
   const unsubscribe = jasmine.createSpy();
+  const notificationService = mockNotificationService();
   mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
     [houseTasks()], [], [], unsubscribe
   ));
   let service: TaskService;
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [TaskService, {provide: Client, useValue: mockClient}]
+      imports: [NotificationServiceModule],
+      providers: [
+        TaskService, {provide: Client, useValue: mockClient},
+        NotificationService, {provide: NotificationService, useValue: notificationService}
+      ]
     });
     service = TestBed.get(TaskService);
   });

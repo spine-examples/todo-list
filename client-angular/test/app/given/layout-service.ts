@@ -19,6 +19,7 @@
  */
 
 import {LayoutService} from 'app/layout/layout.service';
+import {NotificationService} from "app/notification-service/notification.service";
 
 /**
  * Obtains a mock `LayoutService`.
@@ -26,4 +27,8 @@ import {LayoutService} from 'app/layout/layout.service';
 export function mockLayoutService() {
   return jasmine.createSpyObj<LayoutService>('LayoutService',
     ['config$', 'updateToolbar', 'updateShowNav', 'defaultLayout']);
+}
+
+export function mockNotificationService() {
+  return jasmine.createSpyObj<NotificationService>('NotificationService', ['showSnackbarWith']);
 }

@@ -36,6 +36,7 @@ import {TaskPriorityName} from 'app/pipes/task-priority-name/task-priority-name.
 import {MomentFromTimestamp} from 'app/pipes/moment-from-timestamp/momentFromTimestamp.pipe';
 import {LayoutService} from "app/layout/layout.service";
 import {mockLayoutService} from "test/given/layout-service";
+import {NotificationServiceModule} from "app/notification-service/notification-service.module";
 
 describe('ConfirmationComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -59,7 +60,8 @@ describe('ConfirmationComponent', () => {
         ]),
 
         TodoListComponentsModule,
-        TodoListPipesModule
+        TodoListPipesModule,
+        NotificationServiceModule
       ],
       providers: [
         TaskCreationWizard,

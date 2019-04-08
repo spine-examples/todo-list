@@ -38,6 +38,8 @@ import {label1, label2} from 'test/given/labels';
 import {WizardStep} from 'app/task-creation-wizard/wizard-step';
 import {LayoutService} from "app/layout/layout.service";
 import {mockLayoutService} from "test/given/layout-service";
+import {NotificationService} from "app/notification-service/notification.service";
+import {NotificationServiceModule} from "app/notification-service/notification-service.module";
 
 describe('LabelAssignmentComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -69,6 +71,7 @@ describe('LabelAssignmentComponent', () => {
 
         TodoListComponentsModule,
         TodoListPipesModule,
+        NotificationServiceModule,
 
         MatChipsModule,
         MatIconModule,

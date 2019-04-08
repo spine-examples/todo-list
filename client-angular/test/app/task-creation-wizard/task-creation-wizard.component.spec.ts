@@ -61,8 +61,10 @@ import {initMockProcess, taskCreationProcess} from 'test/given/task-creation-pro
 import {TaskCreation} from 'proto/todolist/model_pb';
 import {TaskView} from 'proto/todolist/q/projections_pb';
 import {mockStepper} from 'test/task-creation-wizard/given/mock-stepper';
-import {mockLayoutService} from 'test/given/layout-service';
+import {mockLayoutService, mockNotificationService} from 'test/given/layout-service';
 import {LayoutService} from 'app/layout/layout.service';
+import {NotificationService} from 'app/notification-service/notification.service';
+import {NotificationServiceModule} from "app/notification-service/notification-service.module";
 
 describe('TaskCreationWizardComponent', () => {
   const mockClient = mockSpineWebClient();
@@ -71,6 +73,7 @@ describe('TaskCreationWizardComponent', () => {
     [houseTasks()], [], [], unsubscribe
   ));
   const layoutService = mockLayoutService();
+  const notificationService = mockNotificationService();
   const fetch = jasmine.createSpyObj<Client.Fetch>('Fetch', ['atOnce']);
   mockClient.fetchAll.and.returnValue(fetch);
   fetch.atOnce.and.returnValue(Promise.resolve());
@@ -113,6 +116,7 @@ describe('TaskCreationWizardComponent', () => {
         TodoListComponentsModule,
         TodoListPipesModule,
         TaskServiceModule,
+        NotificationServiceModule,
         LabelsModule,
 
         MatMomentDateModule,
@@ -131,9 +135,11 @@ describe('TaskCreationWizardComponent', () => {
         TaskCreationWizard,
         TaskService,
         LabelService,
+        NotificationService,
         {provide: Client, useValue: mockClient},
         {provide: ActivatedRoute, useValue: activatedRoute},
-        {provide: LayoutService, useValue: layoutService}
+        {provide: LayoutService, useValue: layoutService},
+        {provide: NotificationService, useValue: notificationService}
       ]
     })
       .compileComponents();
@@ -154,7 +160,7 @@ describe('TaskCreationWizardComponent', () => {
   it('should re-navigate to URL with process ID if started from `/wizard` URL', fakeAsync(() => {
 
     // Create a component by hand to use a different activated route.
-    const wizard = new TaskCreationWizard(mockClient, new TaskService(mockClient));
+    const wizard = new TaskCreationWizard(mockClient, new TaskService(mockClient, undefined));
     const changeDetector =
       jasmine.createSpyObj<ChangeDetectorRef>('ChangeDetector', ['detectChanges']);
     const location =
