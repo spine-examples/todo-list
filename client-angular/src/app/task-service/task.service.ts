@@ -29,7 +29,7 @@ import {TaskId} from 'proto/todolist/identifiers_pb';
 import {TaskDescription} from 'proto/todolist/values_pb';
 import {CompleteTask, CreateBasicTask, DeleteTask} from 'proto/todolist/c/commands_pb';
 import {MyListView, TaskItem, TaskView} from 'proto/todolist/q/projections_pb';
-import {TaskStatus} from 'proto/todolist/attributes_pb';
+import {TaskPriority, TaskStatus} from 'proto/todolist/attributes_pb';
 import {taskItem} from 'test/given/tasks';
 
 /**
@@ -48,6 +48,11 @@ export class TaskService implements OnDestroy {
    * @param spineWebClient a client for accessing Spine backend
    */
   constructor(private readonly spineWebClient: Client) {
+  }
+
+  private static doNothing(): () => void {
+    return () => {
+    };
   }
 
   /** Visible for testing. */
@@ -109,12 +114,7 @@ export class TaskService implements OnDestroy {
     this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
   }
 
-  /**
-   * Creates a task with a given description and a randomly generated ID.
-   *
-   * @param description a description of the new task
-   */
-  createBasicTask(description: string): TaskItem {
+  createBasicTask(description: string): void {
     const cmd = new CreateBasicTask();
     const id = UuidGenerator.newId(TaskId);
     cmd.setId(id);
@@ -123,13 +123,12 @@ export class TaskService implements OnDestroy {
     taskDescription.setValue(description);
     cmd.setDescription(taskDescription);
 
-    this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
-    return taskItem(id, description);
-  }
-
-  createBasicTaskOpt(description: string): void {
-    const createdTask = this.createBasicTask(description);
+    const createdTask = new TaskItem();
+    createdTask.setId(id);
+    createdTask.setDescription(taskDescription);
     createdTask.setStatus(TaskStatus.OPEN);
+
+    this.spineWebClient.sendCommand(cmd, TaskService.doNothing, TaskService.logCmdErr);
     this.optimisticallyCreatedTasks.push(createdTask);
     const tasksToBroadcast: TaskItem[] = [...this._tasks$.getValue(), createdTask];
     this._tasks$.next(tasksToBroadcast);

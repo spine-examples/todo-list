@@ -78,11 +78,6 @@ export class ActiveTasksComponent implements OnInit {
     this.taskService.createBasicTask(taskDescription);
   }
 
-  private createBasicTaskOptimistically(taskDescription: string): void {
-    this.taskService.createBasicTaskOpt(taskDescription);
-    this.changeDetector.detectChanges();
-  }
-
   ngOnInit(): void {
     this.changeDetector.detectChanges();
   }

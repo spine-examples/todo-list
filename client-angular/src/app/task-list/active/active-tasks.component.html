@@ -21,7 +21,7 @@
     <mat-form-field class="full-width" appearance="outline">
         <mat-label>Enter task description</mat-label>
         <input #taskDescription
-               (keydown.enter)="createBasicTaskOptimistically(taskDescription.value); taskDescription.value='';"
+               (keydown.enter)="createBasicTask(taskDescription.value); taskDescription.value='';"
                class="task-description-textarea"
                autofocus
                matInput
