@@ -40,12 +40,14 @@ export class TaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.route.data
-      .subscribe(data => {
-        this.initializeFromRoutedData(data);
-        this.taskService.tasks$.subscribe(tasks => {
-          this.tasks = tasks.filter(this.filter);
-          this.hasElements = this.tasks.length !== 0;
+    if (this.filter) {
+      this.route.data
+        .subscribe(data => {
+          this.initializeFromRoutedData(data);
+          this.taskService.tasks$.subscribe(tasks => {
+            this.tasks = tasks.filter(this.filter);
+            this.hasElements = this.tasks.length !== 0;
+          });
         });
     } else {
       this.performSubscription();

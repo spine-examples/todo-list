@@ -26,3 +26,7 @@
 .task-list-sidenav {
   width: 256px;
 }
+
+mat-sidenav-content {
+  padding:25px;
+}

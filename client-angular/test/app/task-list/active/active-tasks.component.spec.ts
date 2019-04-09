@@ -52,12 +52,17 @@ describe('ActiveTasksComponent', () => {
   function collectDisplayedTasks(): string[] {
     const taskLists = fixture.debugElement
       .queryAll(By.css('app-task-list'));
-    const taskItems = taskLists[1].queryAll(By.css('.task-item'));
-    return taskItems.map(item => item.query(By.css('.description-value-unexpanded')).nativeElement.innerHTML);
+    const taskItems = taskLists[1].queryAll(By.css('app-task-item'));
+    return taskItems.map(item =>
+      item.query(By.css('mat-panel-title'))
+        .query(By.css('div'))
+        .nativeElement.innerHTML);
   }
 
-  function pressCreateBasicTaskButton(taskDescription: string) {
-    const input = fixture.debugElement.query(By.css('.task-description-textarea')).nativeElement;
+  function pressCreateBasicTask(taskDescription: string) {
+    const input = fixture.debugElement
+      .query(By.css('input'))
+      .nativeElement;
     input.value = taskDescription;
     const keyPressed = new KeyboardEvent('keydown', {
       key: 'Enter'
@@ -106,18 +111,18 @@ describe('ActiveTasksComponent', () => {
 
   it('should allow basic task creation', () => {
     const method = spyOn<any>(component, 'createBasicTask');
-    pressCreateBasicTaskButton('some irrelevant description');
+    pressCreateBasicTask('some irrelevant description');
     expect(method).toHaveBeenCalledTimes(1);
   });
 
   it('should update the list of tasks without waiting for the response from the serve',
     fakeAsync(() => {
       const description = 'Wash my dog';
-      pressCreateBasicTaskButton(description);
+      pressCreateBasicTask(description);
       tick();
       fixture.detectChanges();
       const taskDescriptions: string[] = collectDisplayedTasks();
-      expect(taskDescriptions).toContain(description);
+      expect(taskDescriptions).toContain(` ${description} `);
     }));
 
   it('should rollback invalid optimistic updates', fakeAsync(() => {
@@ -128,7 +133,7 @@ describe('ActiveTasksComponent', () => {
       };
       onError(err);
     });
-    pressCreateBasicTaskButton(description);
+    pressCreateBasicTask(description);
     tick(1_000);
     fixture.detectChanges();
     const taskDescriptions = collectDisplayedTasks();
