@@ -115,7 +115,7 @@ describe('ActiveTasksComponent', () => {
     expect(method).toHaveBeenCalledTimes(1);
   });
 
-  it('should update the list of tasks without waiting for the response from the serve',
+  it('should update the list of tasks without waiting for the response from the serve with a new task',
     fakeAsync(() => {
       const description = 'Wash my dog';
       pressCreateBasicTask(description);
@@ -125,7 +125,7 @@ describe('ActiveTasksComponent', () => {
       expect(taskDescriptions).toContain(` ${description} `);
     }));
 
-  it('should rollback invalid optimistic updates', fakeAsync(() => {
+  it('should rollback invalid optimistic task creations', fakeAsync(() => {
     const description = 'Walk my dog';
     mockClient.sendCommand.and.callFake((cmd: Message, onSuccess: () => void, onError: (err) => void) => {
       const err = {
@@ -139,4 +139,15 @@ describe('ActiveTasksComponent', () => {
     const taskDescriptions = collectDisplayedTasks();
     expect(taskDescriptions.includes(description)).toBe(false);
   }));
+
+  it('should update the task list immediately once the task is completed',
+    fakeAsync(() => {
+      const taskLists = fixture.debugElement
+        .queryAll(By.css('app-task-list'));
+      const tasks = taskLists[1].queryAll(By.css('app-task-item'));
+      console.log(tasks);
+      // Find a task.
+      // Press complete.
+      // Check if its updated
+    }));
 });

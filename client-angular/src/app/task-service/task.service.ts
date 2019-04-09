@@ -234,7 +234,7 @@ export class TaskService implements OnDestroy {
   handleError(err, taskOperation: TaskOperation): void {
     if (this.shouldUndoOptimisticOperation(err)) {
       this.undoOptimisticOperation(taskOperation);
-      this.notificationService.showSnackbarWith('Task could not be added due to a connection error.');
+      this.notificationService.showSnackbarWith('Could not handle your request due to a connection error.');
     }
   }
 
