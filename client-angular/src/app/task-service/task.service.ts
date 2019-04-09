@@ -41,6 +41,16 @@ import {TaskPriority, TaskStatus} from 'proto/todolist/attributes_pb';
 import {NotificationService} from 'app/notification-service/notification.service';
 
 /**
+ * An operation that involves a task with the specified ID.
+ *
+ * `undoOperation` specifies a way to undo this operation.
+ */
+interface TaskOperation {
+  taskId: TaskId;
+  undoOperation: (t: TaskItem) => void;
+}
+
+/**
  * A service which performs operations on To-Do List tasks.
  */
 @Injectable({
@@ -50,7 +60,7 @@ export class TaskService implements OnDestroy {
 
   private _tasks$: BehaviorSubject<TaskItem[]>;
   private _unsubscribe: () => void;
-  private optimisticallyCreatedTasks: TaskItem[] = [];
+  private optimisticallyChanged: TaskItem[] = [];
 
   /**
    * @param spineWebClient a client for accessing Spine backend
@@ -122,39 +132,38 @@ export class TaskService implements OnDestroy {
   completeTask(taskId: TaskId): void {
     const cmd = new CompleteTask();
     cmd.setId(taskId);
-    this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, (err) => this.handleError(err, taskId));
+    const toBroadcast = this.tasks.map(task => {
+      if (task.getId() === taskId) {
+        task.setStatus(TaskStatus.COMPLETED);
+        this.optimisticallyChanged.push(task);
+      }
+      return task;
+    });
+    this._tasks$.next(toBroadcast);
+    this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck,
+      (err) => this.handleError(err, {
+        taskId,
+        undoOperation: () => {
+          const tasksWithCompleteUndone = this.tasks.map(task => {
+            if (task.getId() === taskId) {
+              task.setStatus(TaskStatus.OPEN);
+            }
+            return task;
+          });
+          this._tasks$.next(tasksWithCompleteUndone);
+        }
+      }));
   }
 
   /**
-   * Handles an error that has occurred as a result of a sent command.
+   * Creates a task with the specified description and `OPENED` status.
    *
-   * This method might delete tasks from the `optimisticallyUpdated` list, since some errors signify
-   * that that the update has not happened, and therefore an optimistic update was wrong.
+   * The created task is immediately broadcast via `tasks$` observable.
    *
-   * @param err error that has occurred as a result of a sent command
-   * @param taskId ID of the task related to the sent command.
+   * If the command to create a task could not be handled, task creation gets undone.
    *
-   * Visible for testing
+   * @param description description of a new task
    */
-  handleError(err, taskId: TaskId): void {
-    // TODO:2019-04-08:serhii.lekariev: handle all the lists
-    if (this.shouldUndoOptimisticOperation(err)) {
-      const toBroadcast = this.filterStaleOptimistic(this._tasks$.getValue());
-      this.optimisticallyCreatedTasks = this.optimisticallyCreatedTasks.filter(id => id.value !== taskId.value);
-      this._tasks$.next(toBroadcast);
-      this.notificationService.showSnackbarWith('Task could not be added due to a connection error.');
-    }
-  }
-
-  /**
-   * For the given array, returns a subarray of tasks that have not been confirmed to have came from
-   * the server.
-   */
-  private filterStaleOptimistic(tasks: TaskItem[]) {
-    const intersection = tasks.filter(value => this.optimisticallyCreatedTasks.includes(value));
-    return tasks.filter(value => !intersection.includes(value));
-  }
-
   createBasicTask(description: string): void {
     const cmd = new CreateBasicTask();
     const id = UuidGenerator.newId(TaskId);
@@ -169,10 +178,46 @@ export class TaskService implements OnDestroy {
     createdTask.setDescription(taskDescription);
     createdTask.setStatus(TaskStatus.OPEN);
 
-    this.optimisticallyCreatedTasks.push(createdTask);
+    this.optimisticallyChanged.push(createdTask);
     const tasksToBroadcast: TaskItem[] = [...this._tasks$.getValue(), createdTask];
     this._tasks$.next(tasksToBroadcast);
-    this.spineWebClient.sendCommand(cmd, TaskService.doNothing, (err) => this.handleError(err, id));
+    this.spineWebClient.sendCommand(cmd, TaskService.doNothing,
+      (err) => {
+        return this.handleError(err, {
+          taskId: id,
+          undoOperation: () => {
+            const undoneBasicTaskCreation = this.tasks.filter(task => task.getId() !== id);
+            this._tasks$.next(undoneBasicTaskCreation);
+          }
+        });
+      });
+  }
+
+  /**
+   * Handles an error that has occurred as a result of a sent command.
+   *
+   * This method might delete tasks from the `optimisticallyUpdated` list, since some errors signify
+   * that that the update has not happened, and therefore an optimistic update was wrong.
+   *
+   * @param err error that has occurred as a result of a sent command
+   * @param taskOperation task operation which was the result of a failed command
+   *
+   * Visible for testing
+   */
+  handleError(err, taskOperation: TaskOperation): void {
+    if (this.shouldUndoOptimisticOperation(err)) {
+      this.undoOptimisticOperation(taskOperation);
+      this.notificationService.showSnackbarWith('Task could not be added due to a connection error.');
+    }
+  }
+
+  private undoOptimisticOperation(taskOperation: TaskOperation) {
+    const idToUndo = taskOperation.taskId;
+    const taskToUndo = this.optimisticallyChanged.find(task => task.getId() === idToUndo);
+    if (taskToUndo) {
+      taskOperation.undoOperation(taskToUndo);
+      this.optimisticallyChanged = this.optimisticallyChanged.filter(t => t.getId() !== idToUndo);
+    }
   }
 
   /**
@@ -213,7 +258,8 @@ export class TaskService implements OnDestroy {
       next: (view: MyListView): void => {
         if (view) {
           const taskItems: TaskItem[] = view.getMyList().getItemsList();
-          const toBroadcast = this.filterStaleOptimistic(taskItems);
+          const intersection = taskItems.filter(value => this.optimisticallyChanged.includes(value));
+          const toBroadcast = taskItems.filter(value => !intersection.includes(value));
           this._tasks$.next(toBroadcast);
         }
       }
