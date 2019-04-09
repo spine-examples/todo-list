@@ -75,6 +75,16 @@ describe('TaskService', () => {
     expect(taskDescriptions).toContain(expectedDescription);
   }));
 
+  it('should override optimistically updated task items with the ones that came from the server',
+    fakeAsync(() => {
+      addedTasksSubject.next(emptyTaskList());
+      tick();
+      expect(service.tasks.length).toBe(0);
+      service.createBasicTask('some irrelevant description');
+      tick();
+      expect(service.tasks.length).toBe(0);
+    }));
+
   it('should log command acknowledgement', () => {
     console.log = jasmine.createSpy('log');
     TaskService.logCmdAck();
@@ -103,7 +113,6 @@ describe('TaskService', () => {
   it('should fetch a single task view by ID', fakeAsync(() => {
     const theTask = houseTask();
     mockClient.fetchById.and.callFake((cls, id, resolve) => resolve(theTask));
-
     service.fetchById(theTask.getId())
       .then(taskView => expect(taskView).toEqual(theTask))
       .catch(err =>
