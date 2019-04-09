@@ -169,11 +169,10 @@ export class TaskService implements OnDestroy {
     createdTask.setDescription(taskDescription);
     createdTask.setStatus(TaskStatus.OPEN);
 
-    this.spineWebClient.sendCommand(cmd, TaskService.doNothing, (err) => this.handleError(err, id));
     this.optimisticallyCreatedTasks.push(createdTask);
     const tasksToBroadcast: TaskItem[] = [...this._tasks$.getValue(), createdTask];
     this._tasks$.next(tasksToBroadcast);
-    return createdTask;
+    this.spineWebClient.sendCommand(cmd, TaskService.doNothing, (err) => this.handleError(err, id));
   }
 
   /**
@@ -244,7 +243,15 @@ export class TaskService implements OnDestroy {
     }
   }
 
-  private shouldUndoOptimisticOperation(err: CommandHandlingError) {
+  /**
+   * Based on the error that has occurred during command handling, decides whether the optimistic
+   * operation associated with the command should be undone.
+   *
+   * @param err error that has occurred during command handling.
+   *
+   * Visible for testing.
+   */
+  shouldUndoOptimisticOperation(err: CommandHandlingError) {
     const shouldUndoFns: Array<(err: CommandHandlingError) => boolean> = [
       (e: CommandHandlingError) => e.assuresCommandNeglected(),
       (e: CommandHandlingError) => e._cause.name.startsWith('ConnectionError'),

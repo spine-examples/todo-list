@@ -26,11 +26,12 @@ import {MatListModule} from '@angular/material/list';
 import {MatIconModule} from '@angular/material/icon';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {By} from '@angular/platform-browser';
-import {Client, Type} from 'spine-web';
+import {Client, Message, Type} from 'spine-web';
+import {BehaviorSubject} from 'rxjs';
 
 import {ActiveTasksComponent} from 'app/task-list/active/active-tasks.component';
 import {TaskService} from 'app/task-service/task.service';
-import {mockSpineWebClient, subscriptionDataOf} from 'test/given/mock-spine-web-client';
+import {mockSpineWebClient, observableSubscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {houseTasks} from 'test/given/tasks';
 
 import {MyListView, TaskItem, TaskListView} from 'proto/todolist/q/projections_pb';
@@ -48,16 +49,34 @@ describe('ActiveTasksComponent', () => {
   let component: ActiveTasksComponent;
   let fixture: ComponentFixture<ActiveTasksComponent>;
 
-  mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
-    [houseTasks()], [], [], unsubscribe
+  function collectDisplayedTasks(): string[] {
+    const taskLists = fixture.debugElement
+      .queryAll(By.css('app-task-list'));
+    const taskItems = taskLists[1].queryAll(By.css('.task-item'));
+    return taskItems.map(item => item.query(By.css('.description-value-unexpanded')).nativeElement.innerHTML);
+  }
+
+  function pressCreateBasicTaskButton(taskDescription: string) {
+    const input = fixture.debugElement.query(By.css('.task-description-textarea')).nativeElement;
+    input.value = taskDescription;
+    const keyPressed = new KeyboardEvent('keydown', {
+      key: 'Enter'
+    });
+    input.dispatchEvent(keyPressed);
+  }
+
+  const addedTasksSubject = new BehaviorSubject<TaskItem[]>(houseTasks());
+
+  mockClient.subscribeToEntities.and.returnValue(observableSubscriptionDataOf(
+    addedTasksSubject.asObservable(), unsubscribe
   ));
 
   beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       declarations: [
         ActiveTasksComponent,
-        TaskItemComponent,
         TaskListComponent,
+        TaskItemComponent,
         TaskDetailsComponent
       ],
       imports: [
@@ -81,18 +100,38 @@ describe('ActiveTasksComponent', () => {
     fixture.detectChanges();
   }));
 
-  it('should allow basic task creation', () => {
-    const method = spyOn<any>(component, 'createBasicTask');
-    const input = fixture.debugElement.query(By.css('.task-description-textarea')).nativeElement;
-    input.value = 'Some basic task text';
-    const keyPressed = new KeyboardEvent('keydown', {
-      key: 'Enter'
-    });
-    input.dispatchEvent(keyPressed);
-    expect(method).toHaveBeenCalledTimes(1);
-  });
-
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should allow basic task creation', () => {
+    const method = spyOn<any>(component, 'createBasicTask');
+    pressCreateBasicTaskButton('some irrelevant description');
+    expect(method).toHaveBeenCalledTimes(1);
+  });
+
+  it('should update the list of tasks without waiting for the response from the serve',
+    fakeAsync(() => {
+      const description = 'Wash my dog';
+      pressCreateBasicTaskButton(description);
+      tick();
+      fixture.detectChanges();
+      const taskDescriptions: string[] = collectDisplayedTasks();
+      expect(taskDescriptions).toContain(description);
+    }));
+
+  it('should rollback invalid optimistic updates', fakeAsync(() => {
+    const description = 'Walk my dog';
+    mockClient.sendCommand.and.callFake((cmd: Message, onSuccess: () => void, onError: (err) => void) => {
+      const err = {
+        assuresCommandNeglected: () => true
+      };
+      onError(err);
+    });
+    pressCreateBasicTaskButton(description);
+    tick(1_000);
+    fixture.detectChanges();
+    const taskDescriptions = collectDisplayedTasks();
+    expect(taskDescriptions.includes(description)).toBe(false);
+  }));
 });

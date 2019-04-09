@@ -33,11 +33,11 @@
     </mat-form-field>
 </form>
 
-<!--<div class="priority-label" *ngIf="urgentList.hasElements">-->
-    <!--Urgent-->
-<!--</div>-->
-<!--<app-task-list [filter]="urgentFilter" #urgentList>-->
-<!--</app-task-list>-->
+<div class="priority-label" *ngIf="urgentList.hasElements">
+    Urgent
+</div>
+<app-task-list [filter]="urgentFilter" #urgentList>
+</app-task-list>
 
 <div class="priority-label" *ngIf="normalList.hasElements">
     Normal priority
@@ -45,8 +45,8 @@
 <app-task-list [filter]="normalPriorityFilter" #normalList>
 </app-task-list>
 
-<!--<div class="priority-label" *ngIf="lowList.hasElements">-->
-    <!--Low priority-->
-<!--</div>-->
-<!--<app-task-list [filter]="lowPriorityFilter" #lowList>-->
-<!--</app-task-list>-->
+<div class="priority-label" *ngIf="lowList.hasElements">
+    Low priority
+</div>
+<app-task-list [filter]="lowPriorityFilter" #lowList>
+</app-task-list>

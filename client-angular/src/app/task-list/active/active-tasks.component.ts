@@ -36,7 +36,7 @@ import {TaskListComponent} from 'app/task-list/task-list.component';
 })
 export class ActiveTasksComponent implements OnInit {
 
-  constructor(private readonly taskService: TaskService,
+  constructor(public readonly taskService: TaskService,
               private formBuilder: FormBuilder,
               private readonly changeDetector: ChangeDetectorRef) {
     this.createBasicTaskForms = formBuilder.group({
