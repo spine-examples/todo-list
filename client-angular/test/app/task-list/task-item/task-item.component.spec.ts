@@ -18,10 +18,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {async, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {RouterTestingModule} from '@angular/router/testing';
 import {Client} from 'spine-web';
 import {MatExpansionModule} from '@angular/material/expansion';
+import {Component} from '@angular/core';
 
 import {TaskItemComponent} from 'app/task-list/task-item/task-item.component';
 import {TaskService} from 'app/task-service/task.service';
@@ -30,13 +31,13 @@ import {HOUSE_TASK_1_DESC, HOUSE_TASK_1_ID, taskItem} from 'test/given/tasks';
 import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
 import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-details.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {NotificationServiceModule} from "app/notification-service/notification-service.module";
+import {NotificationServiceModule} from "app/notification-service/notification-service.module"
 
 describe('TaskItemComponent', () => {
 
   const mockClient = mockSpineWebClient();
-  let component: TaskItemComponent;
-  let fixture: ComponentFixture<TaskItemComponent>;
+  let hostFixture;
+  let childComponent: TaskDetailsComponent;
 
   mockClient.subscribeToEntities.and.returnValue(subscriptionDataOf(
     [], [], [], jasmine.createSpy()
@@ -55,14 +56,22 @@ describe('TaskItemComponent', () => {
   }));
 
   beforeEach(() => {
-    const theTaskItem = taskItem(HOUSE_TASK_1_ID, HOUSE_TASK_1_DESC);
-    fixture = TestBed.createComponent(TaskItemComponent);
-    component = fixture.componentInstance;
-    component.task = theTaskItem;
-    fixture.detectChanges();
+    hostFixture = TestBed.createComponent(TestHostComponent);
+    childComponent = hostFixture.debugElement.children[0].componentInstance;
+    hostFixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(childComponent).toBeTruthy();
   });
 });
+
+@Component({
+  selector: `app-test-host-component`,
+  template: `<app-task-item [task]="task"></app-task-item>`
+})
+class TestHostComponent {
+
+  private task: TaskItem = expectedTask;
+}
+

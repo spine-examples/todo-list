@@ -31,5 +31,5 @@ import {TaskItem} from 'proto/todolist/q/projections_pb';
 export class TaskDetailsComponent {
 
   @Input()
-  private readonly task: TaskItem;
+  private task: TaskItem;
 }

@@ -28,6 +28,7 @@ import {TaskDetailsComponent} from 'app/task-list/task-item/task-details/task-de
 import {LayoutService} from 'app/layout/layout.service';
 import {mockLayoutService} from 'test/given/layout-service';
 import {taskWithId} from 'test/given/tasks';
+import {TodoListPipesModule} from 'app/pipes/todo-list-pipes.module';
 
 const expectedTaskId = 'taskId';
 const expectedTask: TaskItem = taskWithId(expectedTaskId);
@@ -41,7 +42,7 @@ describe('TaskDetailsComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TestHostComponent, TaskDetailsComponent],
-      imports: [RouterTestingModule.withRoutes([])],
+      imports: [RouterTestingModule.withRoutes([]), TodoListPipesModule],
       providers: [
         {provide: ActivatedRoute, useValue: activatedRoute},
         {provide: LayoutService, useValue: mockLayoutService()}
