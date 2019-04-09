@@ -114,18 +114,45 @@ export class TaskService implements OnDestroy {
   }
 
   /**
-   * Deletes the task with the specified ID.
+   * Deletes the task with the specified ID, immediately broadcasting the new task list via the
+   * `tasks$`.
+   *
+   * If handling of the task deletion command fails, task deletion is undone and the `tasks$`
+   * observable is updated accordingly.
    *
    * @param taskId ID of the task to delete.
    */
   deleteTask(taskId: TaskId): void {
     const cmd = new DeleteTask();
     cmd.setId(taskId);
-    this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck, TaskService.logCmdErr);
+    const toBroadcast = this.tasks.map(task => {
+      if (task.getId() === taskId) {
+        task.setStatus(TaskStatus.DELETED);
+      }
+      return task;
+    });
+    this._tasks$.next(toBroadcast);
+    this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck,
+      err => this.handleError(err, {
+        taskId,
+        undoOperation: () => {
+          const tasksWithDeleteUndone = this.tasks.map(task => {
+            if (task.getId() === taskId) {
+              task.setStatus(TaskStatus.OPEN);
+            }
+            return task;
+          });
+          this._tasks$.next(tasksWithDeleteUndone);
+        }
+      }));
   }
 
   /**
-   * Completes the task with the specified ID, changing its status respectively.
+   * Completes the task with the specified ID, changing its status respectively, immediately
+   * broadcasting the new task list via the `tasks$` observable.
+   *
+   * If handling of the task completion command fails, the completion is undone and the `tasks$`
+   * observable is updated accordingly
    *
    * @param taskId ID of the task to complete
    */
