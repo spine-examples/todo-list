@@ -18,10 +18,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { NotificationService } from 'app/notification-service/notification.service';
-import {NotificationServiceModule} from "app/notification-service/notification-service.module";
+import {NotificationService} from 'app/notification-service/notification.service';
+import {NotificationServiceModule} from 'app/notification-service/notification-service.module';
 
 describe('NotificationService', () => {
   beforeEach(() => TestBed.configureTestingModule({

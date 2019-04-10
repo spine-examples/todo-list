@@ -24,7 +24,6 @@ import {Client, Message} from 'spine-web';
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, observableSubscriptionDataOf} from 'test/given/mock-spine-web-client';
 import {
-  emptyTaskList,
   HOUSE_TASK_1_DESC,
   HOUSE_TASK_1_ID,
   HOUSE_TASK_2_DESC,

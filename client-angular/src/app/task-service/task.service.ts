@@ -43,7 +43,8 @@ import {NotificationService} from 'app/notification-service/notification.service
 /**
  * An operation that involves a task with the specified ID.
  *
- * `undoOperation` specifies a way to undo this operation.
+ * `undoOperation` specifies a way to undo this operation, i.e. to bring the task list to the state
+ * which it had before the operation occurred.
  */
 interface TaskOperation {
   taskId: TaskId;
@@ -145,22 +146,6 @@ export class TaskService implements OnDestroy {
   }
 
   /**
-   * Sets the status of the specified task to `OPEN` and updates the `tasks$` observable
-   * with a list with the updated task
-   *
-   * @param taskId ID of the task to recover
-   */
-  private recoverTask(taskId) {
-    const tasksWithDeleteUndone = this.tasks.map(task => {
-      if (task.getId() === taskId) {
-        task.setStatus(TaskStatus.OPEN);
-      }
-      return task;
-    });
-    this._tasks$.next(tasksWithDeleteUndone);
-  }
-
-  /**
    * Completes the task with the specified ID, changing its status respectively, immediately
    * broadcasting the new task list via the `tasks$` observable.
    *
@@ -223,6 +208,22 @@ export class TaskService implements OnDestroy {
           }
         });
       });
+  }
+
+  /**
+   * Sets the status of the specified task to `OPEN` and updates the `tasks$` observable
+   * with a list with the updated task
+   *
+   * @param taskId ID of the task to recover
+   */
+  private recoverTask(taskId) {
+    const tasksWithDeleteUndone = this.tasks.map(task => {
+      if (task.getId() === taskId) {
+        task.setStatus(TaskStatus.OPEN);
+      }
+      return task;
+    });
+    this._tasks$.next(tasksWithDeleteUndone);
   }
 
   /**

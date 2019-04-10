@@ -56,16 +56,16 @@ export class ActiveTasksComponent implements OnInit {
 
   lowList: TaskListComponent;
 
-  private readonly activeFilter: (t: TaskItem) => boolean =
+  private activeFilter: (t: TaskItem) => boolean =
     (taskItem) => taskItem.getStatus() === TaskStatus.OPEN || taskItem.getStatus() === TaskStatus.FINALIZED;
 
-  private readonly urgentFilter: (t: TaskItem) => boolean =
+  private urgentFilter: (t: TaskItem) => boolean =
     (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.HIGH;
 
-  private readonly lowPriorityFilter: (t: TaskItem) => boolean =
+  private lowPriorityFilter: (t: TaskItem) => boolean =
     (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.LOW;
 
-  private readonly normalPriorityFilter: (t: TaskItem) => boolean =
+  private normalPriorityFilter: (t: TaskItem) => boolean =
     (taskItem) => this.activeFilter(taskItem) && taskItem.getPriority() === TaskPriority.TP_UNDEFINED;
 
   /**

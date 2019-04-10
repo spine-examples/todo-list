@@ -33,6 +33,7 @@ export class NotificationService {
   constructor(private snackBar: MatSnackBar) {
   }
 
+  /** Shows the snack-bar with the specified message for four seconds. */
   public showSnackbarWith(message: string): void {
     this.snackBar.open(message, 'Ok', {
       duration: 4_000
