@@ -104,8 +104,10 @@ export class TaskService implements OnDestroy {
 
   /**
    * Makes sure that array of tasks is initialized.
+   *
+   * Visible for testing.
    */
-  private assureTasksInitialized() {
+  public assureTasksInitialized() {
     if (!this._tasks$) {
       this._tasks$ = new BehaviorSubject<TaskItem[]>([]);
       this.subscribeToTasks()
@@ -128,6 +130,7 @@ export class TaskService implements OnDestroy {
     const toBroadcast = this.tasks.map(task => {
       if (task.getId() === taskId) {
         task.setStatus(TaskStatus.DELETED);
+        this.optimisticallyChanged.push(task);
       }
       return task;
     });
@@ -136,15 +139,25 @@ export class TaskService implements OnDestroy {
       err => this.handleError(err, {
         taskId,
         undoOperation: () => {
-          const tasksWithDeleteUndone = this.tasks.map(task => {
-            if (task.getId() === taskId) {
-              task.setStatus(TaskStatus.OPEN);
-            }
-            return task;
-          });
-          this._tasks$.next(tasksWithDeleteUndone);
+          this.recoverTask(taskId);
         }
       }));
+  }
+
+  /**
+   * Sets the status of the specified task to `OPEN` and updates the `tasks$` observable
+   * with a list with the updated task
+   *
+   * @param taskId ID of the task to recover
+   */
+  private recoverTask(taskId) {
+    const tasksWithDeleteUndone = this.tasks.map(task => {
+      if (task.getId() === taskId) {
+        task.setStatus(TaskStatus.OPEN);
+      }
+      return task;
+    });
+    this._tasks$.next(tasksWithDeleteUndone);
   }
 
   /**
@@ -170,15 +183,7 @@ export class TaskService implements OnDestroy {
     this.spineWebClient.sendCommand(cmd, TaskService.logCmdAck,
       (err) => this.handleError(err, {
         taskId,
-        undoOperation: () => {
-          const tasksWithCompleteUndone = this.tasks.map(task => {
-            if (task.getId() === taskId) {
-              task.setStatus(TaskStatus.OPEN);
-            }
-            return task;
-          });
-          this._tasks$.next(tasksWithCompleteUndone);
-        }
+        undoOperation: () => this.recoverTask(taskId)
       }));
   }
 

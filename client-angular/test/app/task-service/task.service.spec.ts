@@ -19,7 +19,7 @@
  */
 
 import {fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {Client} from 'spine-web';
+import {Client, Message} from 'spine-web';
 
 import {TaskService} from 'app/task-service/task.service';
 import {mockSpineWebClient, observableSubscriptionDataOf} from 'test/given/mock-spine-web-client';
@@ -33,7 +33,7 @@ import {
   houseTasks
 } from 'test/given/tasks';
 import {BehaviorSubject} from 'rxjs';
-import {TaskItem} from 'proto/todolist/q/projections_pb';
+import {TaskId, TaskItem, TaskStatus} from 'proto/todolist/q/projections_pb';
 import {CreateBasicTask} from 'proto/todolist/c/commands_pb';
 import {NotificationServiceModule} from 'app/notification-service/notification-service.module';
 import {mockNotificationService} from 'test/given/layout-service';
@@ -46,11 +46,21 @@ describe('TaskService', () => {
 
   const addedTasksSubject = new BehaviorSubject<TaskItem[]>(houseTasks());
 
+  function makeCommandFail() {
+    mockClient.sendCommand.and.callFake((cmd: Message, onSuccess: () => void, onError: (err) => void) => {
+      const error = {
+        assuresCommandNeglected: () => true
+      };
+      onError(error);
+      tick();
+    });
+  }
+
   mockClient.subscribeToEntities.and.returnValue(observableSubscriptionDataOf(
     addedTasksSubject.asObservable(), unsubscribe
   ));
   let service: TaskService;
-  beforeEach(() => {
+  beforeEach(fakeAsync(() => {
     TestBed.configureTestingModule({
       imports: [NotificationServiceModule],
       providers: [
@@ -59,6 +69,13 @@ describe('TaskService', () => {
       ]
     });
     service = TestBed.get(TaskService);
+    service.assureTasksInitialized();
+    tick();
+  }));
+
+  afterEach(() => {
+    addedTasksSubject.next(houseTasks());
+    mockClient.sendCommand.and.callThrough();
   });
 
   it('should be created', () => {
@@ -66,24 +83,47 @@ describe('TaskService', () => {
   });
 
   it('should update the task list without relying on server response', fakeAsync(() => {
-    addedTasksSubject.next(emptyTaskList());
-    tick();
-    expect(service.tasks.length).toBe(0);
     const expectedDescription = 'some task';
     service.createBasicTask(expectedDescription);
     const taskDescriptions = service.tasks.map(task => task.getDescription().getValue());
     expect(taskDescriptions).toContain(expectedDescription);
   }));
 
-  it('should override optimistically updated task items with the ones that came from the server',
-    fakeAsync(() => {
-      addedTasksSubject.next(emptyTaskList());
-      tick();
-      expect(service.tasks.length).toBe(0);
-      service.createBasicTask('some irrelevant description');
-      tick();
-      expect(service.tasks.length).toBe(0);
-    }));
+  it('should optimistically broadcast added tasks', () => {
+    const idToComplete = service.tasks[0].getId();
+    service.completeTask(idToComplete);
+    const tasks: TaskItem[] = service.tasks;
+    const firstHouseTask = tasks.find(task => task.getId() === idToComplete);
+    expect(firstHouseTask).toBeTruthy();
+    expect(firstHouseTask.getStatus()).toBe(TaskStatus.COMPLETED);
+  });
+
+  it('should roll optimistic completions back if the command handling fails', fakeAsync(() => {
+    const idToComplete = service.tasks[0].getId();
+    makeCommandFail();
+    service.completeTask(idToComplete);
+    tick();
+    const noTasksAreCompleted = service.tasks.every(value => value.getStatus() === TaskStatus.OPEN);
+    expect(noTasksAreCompleted).toBe(true);
+  }));
+
+  it('should update task list with a deleted task without waiting for the server response', () => {
+    const idToDelete = service.tasks[0].getId();
+    service.deleteTask(idToDelete);
+    const tasks: TaskItem[] = service.tasks;
+    const firstHouseTask = tasks.find(task => task.getId() === idToDelete);
+    expect(firstHouseTask).toBeTruthy();
+    expect(firstHouseTask.getStatus()).toBe(TaskStatus.DELETED);
+  });
+
+  it('should rollback deleted tasks if the deletion command fails', fakeAsync(() => {
+    const idToDelete = service.tasks[0].getId();
+    makeCommandFail();
+    service.deleteTask(idToDelete);
+    tick();
+    const noneAreDeleted = service.tasks.every(value => value.getStatus() === TaskStatus.OPEN);
+    expect(noneAreDeleted).toBe(true);
+  }));
 
   it('should log command acknowledgement', () => {
     console.log = jasmine.createSpy('log');

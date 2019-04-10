@@ -59,7 +59,7 @@ describe('ActiveTasksComponent', () => {
         .nativeElement.innerHTML);
   }
 
-  function pressCreateBasicTask(taskDescription: string) {
+  function addBasicTaskWith(taskDescription: string) {
     const input = fixture.debugElement
       .query(By.css('input'))
       .nativeElement;
@@ -111,14 +111,14 @@ describe('ActiveTasksComponent', () => {
 
   it('should allow basic task creation', () => {
     const method = spyOn<any>(component, 'createBasicTask');
-    pressCreateBasicTask('some irrelevant description');
+    addBasicTaskWith('some irrelevant description');
     expect(method).toHaveBeenCalledTimes(1);
   });
 
   it('should update the list of tasks without waiting for the response from the serve with a new task',
     fakeAsync(() => {
       const description = 'Wash my dog';
-      pressCreateBasicTask(description);
+      addBasicTaskWith(description);
       tick();
       fixture.detectChanges();
       const taskDescriptions: string[] = collectDisplayedTasks();
@@ -133,21 +133,10 @@ describe('ActiveTasksComponent', () => {
       };
       onError(err);
     });
-    pressCreateBasicTask(description);
+    addBasicTaskWith(description);
     tick(1_000);
     fixture.detectChanges();
     const taskDescriptions = collectDisplayedTasks();
     expect(taskDescriptions.includes(description)).toBe(false);
   }));
-
-  it('should update the task list immediately once the task is completed',
-    fakeAsync(() => {
-      const taskLists = fixture.debugElement
-        .queryAll(By.css('app-task-list'));
-      const tasks = taskLists[1].queryAll(By.css('app-task-item'));
-      console.log(tasks);
-      // Find a task.
-      // Press complete.
-      // Check if its updated
-    }));
 });
